@@ -32,6 +32,7 @@ It does not hold:
 - a boss camp's defeats, whose return waits on the claim or the next jump, so a reload brings the boss back ([enemies](../enemies/design.md));
 - the exploration's camps cleared, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md));
 - the Archive's opened entries and each Living Being's defeat count, which a reload starts over ([archive](../archive/design.md)). The [archive change](../../../changes/genshin-archive/design.md) adds them as a slice.
+- the tips the world has shown, by their push tip id, so each tip is shown once per save ([archive](../archive/design.md), its tutorials).
 
 Some values are derived on load and never saved: a character's Friendship Level is read from its Companionship EXP, and a namecard is held by its character's level or its category's completion, so no save keeps it. The one the player equips is the save's, as `namecardItemId`, since the choice is what the player did. The save holds what the player did and nothing derived.
 

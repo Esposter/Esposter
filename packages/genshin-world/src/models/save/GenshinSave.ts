@@ -26,6 +26,7 @@ import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationP
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
+import { tipSaveSchema } from "#src/models/tip/TipSave";
 import { characterTrialSaveSchema } from "#src/models/trial/CharacterTrialSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
@@ -94,6 +95,8 @@ export const genshinSaveSchema = z
     spiralAbyss: spiralAbyssSaveSchema,
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
+    // The tips the world has shown, each once by its id
+    tips: tipSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),

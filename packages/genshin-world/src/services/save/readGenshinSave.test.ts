@@ -260,6 +260,11 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
   });
 
+  test("the tips shown return after a visit", () => {
+    expect.hasAssertions();
+    expect(visit({ ...EMPTY_GENSHIN_SAVE, tips: { shown: [1001] } }).shownTipIds).toStrictEqual(new Set([1001]));
+  });
+
   test("the deployed team and member on field return after a visit", () => {
     expect.hasAssertions();
     const { party } = visit({ ...EMPTY_GENSHIN_SAVE, party: PARTY_SAVE });

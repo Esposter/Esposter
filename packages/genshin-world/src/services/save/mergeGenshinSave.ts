@@ -289,6 +289,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),
+    tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {

@@ -70,6 +70,7 @@ export interface GenshinSaveState {
   reputation: ReputationProgress;
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
+  shownTipIds: ReadonlySet<number>;
   // The Abyss's progress by cycle, keyed as the save keys it
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
   solvedPuzzleIds: ReadonlySet<string>;
