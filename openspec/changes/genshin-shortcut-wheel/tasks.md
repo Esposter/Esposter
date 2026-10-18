@@ -8,6 +8,7 @@
 ## 2. The wheel on the world
 
 - [x] 2.1 Show the wheel while Tab or the left bumper is held, and open the picked entry's screen on release. Verify: tests named after the scenarios 'Holding Tab opens the wheel' and 'Releasing on an entry opens its screen' written first and seen failing. Blocked on the parity loop's traced layout for the drawn wheel.
+- [ ] 2.2 Hold the character still while the wheel is open, so its move only picks the entry. Verify: a test named after the scenario 'Holding Tab stops the character walking', not yet written: it needs the character mounted with its kit context, which only the browser suite can do, and the wheel's move is read raw either way.
 
 ## 3. Customization
 

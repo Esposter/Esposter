@@ -1631,6 +1631,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :grass-trail
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
+          :is-move-held="isShortcutWheelOpen || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
           :kit-context
           :landmark-collider
