@@ -197,7 +197,7 @@ export const createNoelleKitBehaviour = ({
         ? COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => createCountedAttack(breastplateHealBehaviour, hits.length)),
-    onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+    onKitEvent: (event, { activeCombatant, characterIdCombatantMap, kitEffectState, party }, combatant) => {
       if (event.kind === KitEventKind.EnemyDefeated) {
         if (
           combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION &&
@@ -222,7 +222,9 @@ export const createNoelleKitBehaviour = ({
         return;
       castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Cryo,
-        health: DEVOTION_DEFENSE_MULTIPLIER * combatant.attributes.defense,
+        health:
+          DEVOTION_DEFENSE_MULTIPLIER *
+          getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes.defense,
         secondsRemaining: DEVOTION_SECONDS,
       });
     },

@@ -244,6 +244,40 @@ describe("noelle kit", () => {
     expect(context.kitEffectState.effects).toHaveLength(1);
   });
 
+  test("its Devotion shield reads her DEF as buffed at the drain", () => {
+    expect.hasAssertions();
+    const shieldedContext = createKitTestContext({ ...createNoelleCombatant(), ascension: 1 });
+    getPartyMember(shieldedContext.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
+    buffKitMember(shieldedContext.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+    NOELLE_KIT.onKitEvent?.(
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        healthShare: -0.5,
+        bondOfLifeShare: 0,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        sourceCharacterId: NOELLE_CHARACTER_ID,
+      },
+      shieldedContext,
+      shieldedContext.activeCombatant,
+    );
+    expect(
+      shieldedContext.kitEffectState.effects.find(
+        (effect) => effect.kind === "shield" && effect.characterId === NOELLE_CHARACTER_ID,
+      ),
+    ).toStrictEqual({
+      characterId: NOELLE_CHARACTER_ID,
+      element: Element.Cryo,
+      health: 4 * (DEFENSE + 100),
+      kind: "shield",
+      secondsRemaining: 20,
+    });
+  });
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
     // Ascension 1: a drain that takes the active character under 30% HP shields it with 4 times Noelle's DEF for 20 seconds
