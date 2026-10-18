@@ -1,4 +1,5 @@
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
@@ -7,6 +8,7 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
@@ -22,6 +24,7 @@ import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoS
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
@@ -278,6 +281,49 @@ describe("adventurer's Bandana", () => {
 });
 
 describe("aquila Favonia", () => {
+  const AQUILA_FAVONIA_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: AQUILA_FAVONIA_ID,
+    isLocation: false,
+    kind: GcgCardKind.Weapon,
+    nameTextId: 1,
+    weapon: "SWORD",
+  };
+  const createWielder = (id: number, weapon: string) => ({
+    ...createCharacterState(id),
+    character: { ...createCharacterState(id).character, weapon },
+  });
+
+  test("it is equipped on a character who wields a sword", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createWielder(1105, "SWORD")]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [AQUILA_FAVONIA_ID];
+    takeOne(duel.sides, 0).cards = [AQUILA_FAVONIA_CARD];
+
+    expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).characters[0]?.equipments.map(({ cardId }) => cardId)).toStrictEqual([
+      AQUILA_FAVONIA_ID,
+    ]);
+  });
+
+  test("it is refused on a character who does not wield a sword", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createWielder(1305, "BOW")]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [AQUILA_FAVONIA_ID];
+    takeOne(duel.sides, 0).cards = [AQUILA_FAVONIA_CARD];
+
+    expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Unavailable);
+    expect(takeOne(duel.sides, 0).characters[0]?.equipments).toStrictEqual([]);
+  });
+
   test("the character it is attached to deals 1 more DMG", () => {
     expect.hasAssertions();
     const weaponed = {
