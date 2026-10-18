@@ -15,7 +15,7 @@
 
 ## 4. Placement
 
-- [ ] 4.1 Refuse a placement that takes an area past its load. Verify: a test named after the scenario 'A placement past the area's load is refused'. Blocked until the area load is located.
+- [x] 4.1 Refuse a placement that takes an area past its load. Verify: a test named after the scenario 'A placement past the area's load is refused'.
 - [ ] 4.2 Keep each placement with the player's progress. Verify: a test named after the scenario 'Placements are kept across a return to the realm'.
 
 ## 5. Gardens and companions' earnings
