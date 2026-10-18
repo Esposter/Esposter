@@ -22,6 +22,10 @@ import { takeOne } from "@esposter/shared";
 const ELECTRO_SIGIL_MAX_COUNT = 3;
 const ELECTRO_SIGIL_SOURCE = "Electro Sigil";
 const LIGHTNING_FANG_SOURCE = "Lightning Fang";
+const WOLFS_INSTINCT_CONSTELLATION = 1;
+const WOLFS_INSTINCT_DAMAGE_BONUS = 0.1;
+const WOLFS_INSTINCT_SECONDS = 8;
+const WOLFS_INSTINCT_SOURCE = "Wolf's Instinct";
 const WOLF_WITHIN_ID = "razor-wolf-within";
 // Awakening, from Ascension 1, cuts Claw and Thunder's cooldown by 18% and resets it as Lightning Fang hits, as the wiki's
 // Passive page and gcsim v2.47.2 (MIT) razor/asc.go give it
@@ -51,7 +55,6 @@ const CONSTELLATION_2_HEALTH_SHARE = 0.3;
 // Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
 // Fulguris's lightning
 // Constellation 4 needs an enemy DEF decrease on Claw and Thunder's hits, which EnemyStatus does not carry
-// Constellation 1 needs an all-damage DMG Bonus, which no buff attribute carries
 export const createRazorKitBehaviour = ({
   kit,
   readHits,
@@ -164,6 +167,17 @@ export const createRazorKitBehaviour = ({
     }),
     // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
     onKitEvent: (event, { kitEffectState }, combatant) => {
+      // Wolf's Instinct, from Constellation 1: a particle or orb reaching the party raises his all-DMG bonus for 8 seconds
+      if (
+        event.kind === KitEventKind.EnergyParticleCollected &&
+        combatant.constellationCount >= WOLFS_INSTINCT_CONSTELLATION
+      )
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: WOLFS_INSTINCT_DAMAGE_BONUS,
+          attribute: Attribute.AllDamageBonus,
+          secondsRemaining: WOLFS_INSTINCT_SECONDS,
+          source: WOLFS_INSTINCT_SOURCE,
+        });
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       removeKitEffects(
         kitEffectState,
