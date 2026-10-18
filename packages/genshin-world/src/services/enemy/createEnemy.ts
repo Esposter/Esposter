@@ -7,8 +7,8 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeSpawnLevel } from "#src/services/adventureRank/computeSpawnLevel";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
-import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { getEnemyKindTraits } from "#src/services/enemy/getEnemyKindTraits";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 
 // A camp member as it spawns under a World Level: idle at its spawn, its health and poise full, no element on it and no
@@ -22,7 +22,8 @@ export const createEnemy = (
 ): Enemy => {
   const spawnLevel = computeSpawnLevel(worldLevelRows, level, worldLevel);
   const { maxHealth } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemyKindId), spawnLevel);
-  const { length } = PoiseTypeSettingsMap[EnemyKindTraitsMap[enemyKindId].poiseType];
+  const traits = getEnemyKindTraits(enemyKindMap, enemyKindId);
+  const { length } = PoiseTypeSettingsMap[traits.poiseType];
   return {
     attackCooldownSeconds: 0,
     campId,
@@ -47,5 +48,6 @@ export const createEnemy = (
     state: EnemyState.Idle,
     stateSeconds: 0,
     statuses: [],
+    traits,
   };
 };

@@ -4,7 +4,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
-import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { ENEMY_STRIKE_GAUGE } from "#src/services/kit/constants";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
@@ -26,7 +25,7 @@ export const strikePartyMember = (
     computeEnemyStrikeDamage(enemyTables, enemy, combatant),
   );
   damagePartyMember(party, combatant.characterId, overflow / combatant.attributes.maxHealth);
-  const { attackElement } = EnemyKindTraitsMap[enemy.enemyKindId];
+  const { attackElement } = enemy.traits;
   if (attackElement !== undefined)
     applyPartyMemberElement(
       party,

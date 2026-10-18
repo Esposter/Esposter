@@ -3,7 +3,6 @@ import type { EnemyHit } from "#src/models/enemy/EnemyHit";
 import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 
@@ -14,7 +13,7 @@ import { setEnemyState } from "#src/services/enemy/setEnemyState";
 export const damageEnemy = (enemy: Enemy, { damage, poiseDamage }: EnemyHit): EnergyDrop[] => {
   if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) return [];
   enemy.hitSeconds = 0;
-  const { energyDrops, poiseType } = EnemyKindTraitsMap[enemy.enemyKindId];
+  const { energyDrops, poiseType } = enemy.traits;
   enemy.health = Math.max(0, enemy.health - damage);
   const healthPercent = (enemy.health / enemy.maxHealth) * 100;
   const droppedEnergy: EnergyDrop[] = [];

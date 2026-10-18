@@ -76,8 +76,8 @@ describe(strikePartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     EnemyKindTraitsMap[EnemyKindId.HilichurlFighter] = { ...hilichurlFighterTraits, attackElement: Element.Cryo };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
     strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] });
 

@@ -18,7 +18,6 @@ import {
   ENEMY_WALK_SPEED,
   ENEMY_WINDUP_SECONDS,
 } from "#src/services/enemy/constants";
-import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -45,7 +44,7 @@ const walkToward = (enemy: Enemy, point: GroundPoint, distance: number): boolean
 };
 
 const stepPoise = (enemy: Enemy, stepSeconds: number): void => {
-  const { length, refillPerSecond } = PoiseTypeSettingsMap[EnemyKindTraitsMap[enemy.enemyKindId].poiseType];
+  const { length, refillPerSecond } = PoiseTypeSettingsMap[enemy.traits.poiseType];
   if (enemy.poiseBrokenSeconds > 0) {
     enemy.poiseBrokenSeconds = Math.max(0, enemy.poiseBrokenSeconds - stepSeconds);
     if (enemy.poiseBrokenSeconds === 0) enemy.poise = length;
@@ -112,7 +111,7 @@ export const stepEnemy = (
       // Home, it is healed and its poise restored, as the game heals an enemy that gives up
       if (walkToward(enemy, enemy.home, ENEMY_RUN_SPEED * stepSeconds)) {
         enemy.health = enemy.maxHealth;
-        enemy.poise = PoiseTypeSettingsMap[EnemyKindTraitsMap[enemy.enemyKindId].poiseType].length;
+        enemy.poise = PoiseTypeSettingsMap[enemy.traits.poiseType].length;
         enemy.poiseBrokenSeconds = 0;
         setEnemyState(enemy, EnemyState.Idle);
       }
