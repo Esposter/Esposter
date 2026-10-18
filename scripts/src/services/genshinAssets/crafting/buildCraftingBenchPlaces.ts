@@ -3,10 +3,7 @@ import type { RegionMapPoint } from "#src/services/genshinAssets/residents/class
 import type { SceneGroups } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import {
-  MONDSTADT_CRAFTING_BENCH_GROUP_ID,
-  MONDSTADT_CRAFTING_BENCH_NPC_ID,
-} from "#src/services/genshinAssets/crafting/constants";
+import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/findCraftingBenchMember";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
@@ -15,7 +12,7 @@ import { toResidentPlace } from "#src/services/genshinAssets/residents/toResiden
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { GameDataset, SceneGroupMemberKind } from "genshin-world";
+import { GameDataset } from "genshin-world";
 
 // The crafting bench's place in its region's axes, carried as a resident's is: the NPC member the scene group record
 // Places in the bench's group, classified into the fitted region it stands in, with its turn. The runtime cannot carry
@@ -25,14 +22,13 @@ export const toCraftingBenchPlaces = (
   origin: readonly [number, number, number],
   regionMapPoints: readonly RegionMapPoint[],
 ): GameDataBuild => {
-  const place = sceneGroups.groups[MONDSTADT_CRAFTING_BENCH_GROUP_ID]?.find(
-    ({ kind, objectId }) => kind === SceneGroupMemberKind.Npc && objectId === MONDSTADT_CRAFTING_BENCH_NPC_ID,
-  )?.place;
-  if (!place) return { notes: ["the scene group record places no crafting bench, so none is published"], objects: {} };
-  const region = classifyPlacementRegion(place.position, regionMapPoints, REGION_MAX_DISTANCE);
+  const member = findCraftingBenchMember(sceneGroups);
+  if (!member?.place)
+    return { notes: ["the scene group record places no crafting bench, so none is published"], objects: {} };
+  const region = classifyPlacementRegion(member.place.position, regionMapPoints, REGION_MAX_DISTANCE);
   if (region === undefined)
     return { notes: ["the crafting bench stands in no fitted region, so none is published"], objects: {} };
-  const { position, rotation } = toResidentPlace(MONDSTADT_CRAFTING_BENCH_NPC_ID, place, region, origin);
+  const { position, rotation } = toResidentPlace(member.objectId, member.place, region, origin);
   return {
     notes: [`${region}: the crafting bench's place`],
     objects: { [`${GameDataset.CraftingBenchPlaces}/${region}`]: { position, rotation } },

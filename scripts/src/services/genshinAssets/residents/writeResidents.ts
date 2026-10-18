@@ -4,6 +4,7 @@ import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/findCraftingBenchMember";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import { REGION_DATA_DIRECTORY, RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
@@ -52,8 +53,8 @@ export const writeResidents = async (): Promise<string> => {
   const regionMapPoints = toRegionMapPoints(points, transform).filter(({ region }) =>
     fittedRegions.some((fitted) => fitted.region === region),
   );
-  const { groups } = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
-  const npcPlaces = Object.values(groups).flatMap((members) =>
+  const sceneGroups = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
+  const npcPlaces = Object.values(sceneGroups.groups).flatMap((members) =>
     members.flatMap(({ kind, objectId, place }): [number, SceneGroupPlace][] =>
       kind === SceneGroupMemberKind.Npc && place ? [[objectId, place]] : [],
     ),
@@ -70,13 +71,14 @@ export const writeResidents = async (): Promise<string> => {
   const talkConfigs = await readTalkConfigs();
   const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
-  const invisibleNpcIds = new Set(npcs.flatMap(({ id, invisiable }) => (invisiable ? [id] : [])));
+  const craftingBench = findCraftingBenchMember(sceneGroups);
+  const craftingBenchNpcIds = new Set(craftingBench ? [craftingBench.objectId] : []);
   const residentJoin = joinResidents(
     placements,
     nameTextIdMap,
     talkIdMap,
     (region, position) => findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
-    invisibleNpcIds,
+    craftingBenchNpcIds,
   );
   const reports = regionFiles.map(({ data, path, region }) => {
     const residents: Resident[] = residentSchema
@@ -92,6 +94,6 @@ export const writeResidents = async (): Promise<string> => {
   });
   return [
     ...reports,
-    `${residentJoin.invisible} marked invisible, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
+    `${residentJoin.craftingBench} at a crafting bench, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
   ].join("\n");
 };
