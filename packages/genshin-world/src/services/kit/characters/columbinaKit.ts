@@ -11,6 +11,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
@@ -30,8 +31,10 @@ import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { countDew } from "#src/services/party/countDew";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { spendDew } from "#src/services/party/spendDew";
 import { takeOne } from "@esposter/shared";
 
 export const COLUMBINA_CHARACTER_ID = 10_000_125;
@@ -109,6 +112,11 @@ const MOONRIDGE_DEW_ICD_SECONDS = toKitSeconds(3);
 const MOONRIDGE_DEW_WINDOW_ID = "columbina-moonridge-dew-window";
 const MOONRIDGE_DEW_WINDOW_SECONDS = toKitSeconds(18 * 60);
 const MOONRIDGE_DEW_GAINS_PER_WINDOW = 3;
+// Moondew Cleanse spends one Dew, the verdant first, and its Lunar-Bloom hits ignore all of each enemy's DEF, as gcsim's
+// ChargeAttackBloom gives them (charge.go 101 and 110). It spends at the press rather than at gcsim's ConsumeDew frame, which
+// Only a Dew read by another member's press in the frames between the two tells apart
+const MOONDEW_CLEANSE_DEW_COUNT = 1;
+const MOONDEW_CLEANSE_DEFENCE_IGNORED = 1;
 
 // Gains the party a Moonridge Dew for a Lunar-Bloom in the burst's window, as gcsim's a4OnLunarBloom does. The window
 // Counts the gains it has taken and runs from the first, and the gains come no faster than the cooldown lets them
@@ -354,12 +362,24 @@ export const createColumbinaKitBehaviour = ({
         });
       },
     },
+    chargedAttackVariant: {
+      checkIsActive: ({ party }) => countDew(party) > 0,
+      onStart: ({ party }) => {
+        spendDew(party, MOONDEW_CLEANSE_DEW_COUNT);
+      },
+    },
     getPartyStrikeBonus: (_member, strike, _enemy, _party, effects) => ({
       criticalDamageBonus: getConstellation6CriticalDamage(strike, effects),
     }),
     getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) => getConstellation6CriticalDamage(strike, effects),
     getStrikeCriticalRateBonus: ({ combatant }, _enemy, _party, effects) =>
       countKitHolds(effects, combatant.characterId, LUNACY_ID) * LUNACY_CRIT_RATE_PER_STACK,
+    // Moondew Cleanse's Lunar-Bloom hits ignore all of each enemy's DEF, as gcsim's IgnoreDefPercent gives them; her
+    // Charged attack's other hits carry no Lunar reaction
+    getStrikeDefenceIgnored: ({ attackTag, hit }) =>
+      attackTag === AttackTag.ChargedAttack && hit.lunarHit?.lunarReactionType === LunarReactionType.LunarBloom
+        ? MOONDEW_CLEANSE_DEFENCE_IGNORED
+        : 0,
     moonsignBenediction: {
       getBaseDamageBonus: ({ attributes }) => getBenedictionBaseDamageBonus(attributes.maxHealth),
     },

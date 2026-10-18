@@ -6,11 +6,13 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -559,6 +561,53 @@ describe(createColumbinaKitBehaviour, () => {
       COLUMBINA_KIT.elementalBurst?.onStart?.(context);
       triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
       expect(context.party.moonridgeDew).toBe(1);
+    });
+  });
+
+  describe("charged attack variant, Moondew Cleanse", () => {
+    test("a charged attack with Dew to spend stands as Moondew Cleanse, and one without Dew is her normal charged attack", () => {
+      expect.hasAssertions();
+
+      const context = createKitTestContext(createColumbinaCombatant(), {
+        party: createParty([COLUMBINA_CHARACTER_ID]),
+      });
+      expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+
+      context.party.moonridgeDew = 1;
+      expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
+    });
+
+    test("a Moondew Cleanse spends one Dew, from the verdant first", () => {
+      expect.hasAssertions();
+
+      const context = createKitTestContext(createColumbinaCombatant(), {
+        party: createParty([COLUMBINA_CHARACTER_ID]),
+      });
+      context.party.verdantDew.count = 1;
+      context.party.moonridgeDew = 2;
+      COLUMBINA_KIT.chargedAttackVariant?.action.onStart?.(context);
+
+      expect(context.party.verdantDew.count).toBe(0);
+      expect(context.party.moonridgeDew).toBe(2);
+    });
+
+    test("each of Moondew Cleanse's Lunar-Bloom hits ignores all of the enemy's DEF, and her normal charged attack ignores none", () => {
+      expect.hasAssertions();
+
+      const columbina = createColumbinaCombatant();
+      const context = createKitTestContext(columbina, { party: createParty([COLUMBINA_CHARACTER_ID]) });
+      const readDefenceIgnored = (hit: KitHit) =>
+        COLUMBINA_KIT.getStrikeDefenceIgnored?.(
+          { attackTag: AttackTag.ChargedAttack, body: kitBody, combatant: columbina, hit },
+          c6Enemy,
+          context.party,
+          context.kitEffectState.effects,
+        ) ?? 0;
+      const variantHits = COLUMBINA_KIT.chargedAttackVariant?.action.hits ?? [];
+
+      expect(variantHits).toHaveLength(3);
+      for (const hit of variantHits) expect(readDefenceIgnored(hit)).toBe(1);
+      expect(readDefenceIgnored(takeOne(COLUMBINA_KIT.chargedAttack.hits))).toBe(0);
     });
   });
 });
