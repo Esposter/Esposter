@@ -58,6 +58,12 @@ A nation's exploration reaching a threshold SHALL pay that threshold's Reputatio
 - **WHEN** the player unlocks a statue that takes the nation past the threshold
 - **THEN** the threshold's Reputation experience and item rewards are paid once
 
+#### Scenario: An unlock before the reads settle pays its threshold once
+
+- **GIVEN** the areas, Mondstadt's Reputation or a region is still being read
+- **WHEN** the player unlocks a statue that takes the nation past a threshold, and the reads then settle
+- **THEN** the threshold's Reputation experience and item rewards are paid once
+
 #### Scenario: Reaching a passed threshold again pays nothing
 
 - **GIVEN** a nation's exploration has already passed a threshold and paid its reward

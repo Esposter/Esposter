@@ -124,6 +124,29 @@ describe(useWorldMap, () => {
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
   });
 
+  test("an unlock before the reads settle pays its threshold once", async () => {
+    expect.hasAssertions();
+
+    // Every read is still pending when the statue is unlocked, so the unlock lands before the areas, the regions and the
+    // Reputation are in
+    const regionRead = Promise.withResolvers<RegionData>();
+    const explorationAreasRead = Promise.withResolvers<ExplorationArea[]>();
+    const reputationRead = Promise.withResolvers<ReputationCity>();
+    vi.mocked(readRegionData).mockReturnValue(regionRead.promise);
+    vi.mocked(readMondstadtExplorationAreas).mockReturnValue(explorationAreasRead.promise);
+    vi.mocked(readMondstadtReputation).mockReturnValue(reputationRead.promise);
+    const { activateLandmark, reputation, wallet } = createWorldMap();
+
+    activateLandmark(statue.id);
+    regionRead.resolve(region);
+    explorationAreasRead.resolve(explorationAreas);
+    reputationRead.resolve(reputationCity);
+    await waitForReads();
+
+    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+  });
+
   test("an unlocked waypoint is never pointed to", async () => {
     expect.hasAssertions();
 

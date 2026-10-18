@@ -18,6 +18,7 @@ import { readMondstadtReputation } from "#src/services/reputation/readMondstadtR
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { computed, shallowRef, watch } from "vue";
 
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a jump
 // Lands at. A landmark is unlocked by resonating with it, and each is paid once
@@ -46,7 +47,7 @@ export const useWorldMap = ({
 }) => {
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
-  const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl, catalogue);
+  const { isLoaded: isJumpLandmarksLoaded, jumpLandmarks } = useJumpLandmarks(regionDataBaseUrl, catalogue);
   // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
   const explorationAreas = useExplorationAreas(gameDataBaseUrl);
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
@@ -85,12 +86,21 @@ export const useWorldMap = ({
       },
     );
   };
-  // Each exploration threshold this unlock carries the nation's percentage past pays its Reputation EXP and wallet items
-  // Once, and a threshold the percentage already held pays nothing. Nothing is paid until the areas and Reputation are read
-  const payReputationExplores = (previousPercentage: number) => {
-    if (!mondstadtReputation.value || explorationAreas.value.length === 0) return;
+  // The unlocked landmarks whose exploration thresholds are paid: the saved ones, which paid when they were unlocked, and
+  // The ones the settle below has counted. An unlock made before every read has landed waits outside this set
+  let thresholdPaidLandmarkIds: ReadonlySet<string> = savedUnlockedLandmarkIds;
+  // Each exploration threshold the nation's percentage passes since the last settle pays its Reputation EXP and wallet
+  // Items once, and a threshold the percentage already held pays nothing. Nothing settles until the areas, the Reputation
+  // And every region are in, so the percentage before the unlocks is the one the saved landmarks reach
+  const settleExplorationThresholds = () => {
+    if (!mondstadtReputation.value || explorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
     const { explores, levels } = mondstadtReputation.value;
+    const previousPercentage = computeNationExplorationPercentage(
+      explorationAreas.value,
+      jumpLandmarks.value.filter(({ id }) => thresholdPaidLandmarkIds.has(id)),
+    );
     const percentage = computeNationExplorationPercentage(explorationAreas.value, unlockedLandmarks.value);
+    thresholdPaidLandmarkIds = unlockedLandmarkIds.value;
     for (const { reward } of computeReputationExploresReached(previousPercentage, percentage, explores)) {
       setReputation(addReputationExp(reputation.value, reward.exp, levels));
       const nextWallet = { ...wallet.value };
@@ -102,12 +112,13 @@ export const useWorldMap = ({
       setWallet(nextWallet);
     }
   };
+  // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
+  watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
   // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
   const activateLandmark = (landmarkId: string) => {
-    const previousPercentage = computeNationExplorationPercentage(explorationAreas.value, unlockedLandmarks.value);
     unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
     payFirstUnlockReward(landmarkId);
-    payReputationExplores(previousPercentage);
+    settleExplorationThresholds();
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
   };
 
