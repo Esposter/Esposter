@@ -9,7 +9,5 @@
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6732 } },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 } },
-  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6732 } },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "skill.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6732 } }
 }
