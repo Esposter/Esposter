@@ -1,5 +1,5 @@
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
-import { parseNode } from "#src/services/compiler/parseNode.test";
+import { parseNode } from "#src/services/compiler/parseNode.fixture";
 import { generateSumFormula } from "#src/services/parser/generateSumFormula.fixture";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";

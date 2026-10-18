@@ -1,5 +1,5 @@
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
-import { parseNode } from "#src/services/compiler/parseNode.test";
+import { parseNode } from "#src/services/compiler/parseNode.fixture";
 import { getMathExpressionNames } from "#src/services/names/getMathExpressionNames";
 import { describe, expect, test } from "vitest";
 
