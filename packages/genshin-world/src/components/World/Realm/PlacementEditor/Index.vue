@@ -4,8 +4,11 @@ import type { HomeFurnishing } from "#src/models/home/HomeFurnishing";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 import type { GameText } from "genshin-text";
 
+import { HomeFurnishingLimit } from "#src/models/home/HomeFurnishingLimit";
 import { computeHomeAreaLoad } from "#src/services/home/computeHomeAreaLoad";
 import { computeHomeLoadState } from "#src/services/home/computeHomeLoadState";
+import { getHomeAreaPlacements } from "#src/services/home/getHomeAreaPlacements";
+import { getHomeFurnishingLimit } from "#src/services/home/getHomeFurnishingLimit";
 import { placeHomeFurnishing } from "#src/services/home/placeHomeFurnishing";
 import { GameButton, GameButtonKind, GameScreen, ProgressBar } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -29,9 +32,8 @@ const { area, furnishings, gameText, held, placements, position, rotation } = de
 const emit = defineEmits<{ place: [placement: HomePlacement] }>();
 const selectedItemId = ref<number>();
 const itemIdFurnishingMap = computed(() => new Map(furnishings.map((furnishing) => [furnishing.itemId, furnishing])));
-const areaPlacements = computed(() =>
-  placements.filter(({ areaId, sceneId }) => areaId === area.areaId && sceneId === area.sceneId),
-);
+// The area's own placements, read by the placement's own filter, so the meter and the placement count the same set
+const areaPlacements = computed(() => getHomeAreaPlacements(placements, area));
 // The placement the picked furnishing would make at the picked point, undefined until a furnishing is picked
 const candidate = computed<HomePlacement | undefined>(() =>
   selectedItemId.value === undefined
@@ -51,6 +53,14 @@ const shownLoad = computed(() =>
     itemIdFurnishingMap.value,
   ),
 );
+// The notice for the limit the candidate would pass, in the game's own words for it, undefined while the candidate fits
+const notice = computed(() => {
+  if (candidate.value === undefined) return undefined;
+  const limit = getHomeFurnishingLimit([...areaPlacements.value, candidate.value], area, itemIdFurnishingMap.value);
+  if (limit === HomeFurnishingLimit.Count) return gameText[GameTextKey.RetHomeFurnitureArrangeLimit];
+  if (limit === HomeFurnishingLimit.Load) return gameText[GameTextKey.RetHomeFurnitureExceedLimit];
+  return undefined;
+});
 const loadRatio = computed(() => Math.min(shownLoad.value / area.loadLimit, 1));
 const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
 </script>
@@ -71,12 +81,13 @@ const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
     <div :data-load-state="loadState">
       <ProgressBar :progress="loadRatio" />
     </div>
+    <p v-if="notice" role="status">{{ notice }}</p>
     <GameButton
       :disabled="placeable === undefined"
       :kind="GameButtonKind.Pill"
       @click="placeable && emit('place', placeable)"
     >
-      {{ gameText[GameTextKey.Confirm] }}
+      {{ gameText[GameTextKey.HomeDeploy] }}
     </GameButton>
   </GameScreen>
 </template>

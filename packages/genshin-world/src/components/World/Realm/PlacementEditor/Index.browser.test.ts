@@ -16,7 +16,7 @@ describe("placementEditor", () => {
     render(PlacementEditorContainer, { props, onPlace });
 
     await page.getByText("Chair", { exact: true }).click();
-    await page.getByRole("button", { name: props.gameText[GameTextKey.Confirm] }).click();
+    await page.getByRole("button", { name: props.gameText[GameTextKey.HomeDeploy] }).click();
 
     expect(onPlace.mock.calls[0]?.[0]).toStrictEqual({
       areaId: props.area.areaId,
@@ -36,7 +36,10 @@ describe("placementEditor", () => {
 
     await page.getByText("Chair", { exact: true }).click();
 
-    await expect.element(page.getByRole("button", { name: props.gameText[GameTextKey.Confirm] })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: props.gameText[GameTextKey.HomeDeploy] })).toBeDisabled();
+    await expect
+      .element(page.getByText(props.gameText[GameTextKey.RetHomeFurnitureExceedLimit], { exact: true }))
+      .toBeVisible();
     expect(onPlace).not.toHaveBeenCalled();
   });
 });

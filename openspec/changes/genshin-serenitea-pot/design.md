@@ -34,7 +34,7 @@ Tubby's making, the Trust Rank, Adeptal Energy and the realm's Realm Currency an
 
 - **The save written before the placements slice is backfilled, not defaulted.** The genshin save is one blob per player, `{userId}/save.json` in the `genshin-assets` container, holding the session lease beside the save. A blob without `homePlacements` fails the schema and is never overwritten, so the start and the save answer an error until it is brought to shape. The run is the backfills skill's: a scratchpad script adds `homePlacements: []` to each blob that lacks it, keeps the session field and the zstd frame, and writes under the listed etag, a dry run and then a write on dev, then prod, re-running until nothing changes, then deleting the script. It is owed once this schema reaches dev; the main session runs it, and nothing is committed.
 
-- **The placement editor is a Genshin screen on the interface's parts, and its meter reads the area's own loads.** The editor is `components/World/Realm/PlacementEditor`, built on `genshin-interface`'s `GameScreen`, `GameButton` and `ProgressBar`. Its load is `computeHomeAreaLoad` over the area's placements with the candidate on them, and its state is `computeHomeLoadState` against the area's `orangeLoad` and `redLoad`, so the meter and the refusal, `placeHomeFurnishing`, read one computation. Its Confirm label is `UI_BEYOND_CONFIRM` until the placement mode's own word is read from a recording, and a refused placement shows a disabled Confirm rather than the notices, which have no text keys yet. The colours and layout are provisional until the parity pass reads the game's placement mode.
+- **The placement editor is a Genshin screen on the interface's parts, and its meter and notice read the placement's own rules.** The editor is `components/World/Realm/PlacementEditor`, built on `genshin-interface`'s `GameScreen`, `GameButton` and `ProgressBar`. Its area is `getHomeAreaPlacements` over the realm's placements, its load is `computeHomeAreaLoad` with the candidate on them, and its state is `computeHomeLoadState` against the area's `orangeLoad` and `redLoad`. Its placement is `placeHomeFurnishing`, which reads the same `getHomeFurnishingLimit` the notice does, so the limit a placement refuses for is the one its notice names. Its confirm reads the game's own placement word, `HomeDeploy` ("Place"), and a refused placement shows a disabled confirm and the notice for the limit it passed: `RetHomeFurnitureArrangeLimit` for the count, `RetHomeFurnitureExceedLimit` for the load. The colours and layout are provisional until the parity pass reads the game's placement mode.
 
 ## How it works
 
@@ -73,18 +73,21 @@ flowchart TD
 
 ## Key files
 
-| File                                                                          | Role after the change                                    |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Session/Index.vue`               | Enters a realm's scene and returns to the world          |
-| `packages/genshin-world/src/models/world/BuildingKit.ts`                      | The kits a furnishing is drawn by                        |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                     | Gains Realm Currency, once its game text name has a key  |
-| `packages/genshin-world/src/models/inventory/Inventory.ts`                    | Furnishings and blueprints, in the bag's Furnishings tab |
-| `packages/genshin-world/src/services/home/settleHomeStores.ts`                | Settles Realm Currency and Realm Bounty on the one clock |
-| `packages/genshin-world/src/services/home/claimHomeCurrency.ts`               | Pays out the Realm Currency a store holds at the claim   |
-| `packages/genshin-world/src/components/World/Realm/PlacementEditor/Index.vue` | Picks a held furnishing and places it within load        |
-| `packages/genshin-world/src/services/home/computeHomeAreaLoad.ts`             | The load an area's placements hold, read once            |
-| `packages/genshin-world/src/services/home/computeHomeLoadState.ts`            | The green, orange or red state a load reads at           |
-| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`               | Tubby, keyed to the realm depot's shop type              |
+| File                                                                          | Role after the change                                                     |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/World/Session/Index.vue`               | Enters a realm's scene and returns to the world                           |
+| `packages/genshin-world/src/models/world/BuildingKit.ts`                      | The kits a furnishing is drawn by                                         |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                     | Gains Realm Currency, once its game text name has a key                   |
+| `packages/genshin-world/src/models/inventory/Inventory.ts`                    | Furnishings and blueprints, in the bag's Furnishings tab                  |
+| `packages/genshin-world/src/services/home/settleHomeStores.ts`                | Settles Realm Currency and Realm Bounty on the one clock                  |
+| `packages/genshin-world/src/services/home/claimHomeCurrency.ts`               | Pays out the Realm Currency a store holds at the claim                    |
+| `packages/genshin-world/src/components/World/Realm/PlacementEditor/Index.vue` | Picks a held furnishing and places it within load                         |
+| `packages/genshin-world/src/services/home/computeHomeAreaLoad.ts`             | The load an area's placements hold, read once                             |
+| `packages/genshin-world/src/services/home/computeHomeLoadState.ts`            | The green, orange or red state a load reads at                            |
+| `packages/genshin-world/src/services/home/getHomeAreaPlacements.ts`           | The placements in one area, the filter the placement and the editor share |
+| `packages/genshin-world/src/services/home/getHomeFurnishingLimit.ts`          | The count or the load a placement would pass, read once                   |
+| `packages/genshin-world/src/models/home/HomeFurnishingLimit.ts`               | The limit a placement passes: the count or the load                       |
+| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`               | Tubby, keyed to the realm depot's shop type                               |
 
 ## Sources
 
