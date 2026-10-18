@@ -3,5 +3,7 @@
 export enum ExplorationKind {
   Camp = "Camp",
   Chest = "Chest",
+  Oculus = "Oculus",
+  Puzzle = "Puzzle",
   Waypoint = "Waypoint",
 }

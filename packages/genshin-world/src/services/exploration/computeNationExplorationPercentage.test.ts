@@ -36,7 +36,7 @@ describe(computeNationExplorationPercentage, () => {
   test("mondstadt's percentage uses summed totals when every ratio is zero", () => {
     expect.hasAssertions();
 
-    expect(computeNationExplorationPercentage(areas, [statue])).toBe(10);
+    expect(computeNationExplorationPercentage(areas, [statue], new Set())).toBe(10);
   });
 
   test("liyue's percentage weighs each area by its ratio", () => {
@@ -60,7 +60,7 @@ describe(computeNationExplorationPercentage, () => {
     ];
     const secondStatue: StatueLandmark = { ...statue, areaId: SECOND_AREA_ID };
 
-    expect(computeNationExplorationPercentage(ratioAreas, [statue, secondStatue])).toBe(42);
+    expect(computeNationExplorationPercentage(ratioAreas, [statue, secondStatue], new Set())).toBe(42);
   });
 
   test("a whole share reads whole when its ratio is a float that multiplies just under it", () => {
@@ -76,12 +76,12 @@ describe(computeNationExplorationPercentage, () => {
       },
     ];
 
-    expect(computeNationExplorationPercentage(floatAreas, [statue])).toBe(57);
+    expect(computeNationExplorationPercentage(floatAreas, [statue], new Set())).toBe(57);
   });
 
   test("should read zero while no statue is unlocked", () => {
     expect.hasAssertions();
 
-    expect(computeNationExplorationPercentage(areas, [])).toBe(0);
+    expect(computeNationExplorationPercentage(areas, [], new Set())).toBe(0);
   });
 });

@@ -4,6 +4,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { TransPointUnlock } from "#src/models/transPoint/TransPointUnlock";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { Ref } from "vue";
@@ -14,6 +15,7 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeNationExplorationPercentage } from "#src/services/exploration/computeNationExplorationPercentage";
+import { placeExplorationDoings } from "#src/services/exploration/placeExplorationDoings";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
@@ -30,13 +32,16 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { computed, shallowRef, watch } from "vue";
 
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a jump
-// Lands at. A landmark is unlocked by resonating with it, and each is paid once
+// Lands at. A landmark is unlocked by resonating with it, and each is paid once. The doings the save records count toward
+// The exploration the map shows and the thresholds pay on, against the placed doings each area holds
 export const useWorldMap = ({
   catalogue,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  placedDoings,
   questStepTargets,
+  recordedDoingIds,
   regionDataBaseUrl,
   reputation,
   setReputation,
@@ -48,7 +53,11 @@ export const useWorldMap = ({
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
+  // The placed doings the world holds, each a chest, an Oculus, a puzzle or a camp, by the point it stands at
+  placedDoings: Readonly<Ref<PlacedDoing[]>>;
   questStepTargets: Readonly<Ref<{ named: ReadonlySet<string>; reached: ReadonlySet<string> }>>;
+  // The doings the save records as done, by id, which count toward their areas whatever the statues have unlocked
+  recordedDoingIds: Readonly<Ref<ReadonlySet<string>>>;
   regionDataBaseUrl: string;
   reputation: Ref<ReputationProgress>;
   setReputation: (nextReputation: ReputationProgress) => void;
@@ -59,8 +68,11 @@ export const useWorldMap = ({
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
   const { isLoaded: isJumpLandmarksLoaded, jumpLandmarks } = useJumpLandmarks(regionDataBaseUrl, catalogue);
-  // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
+  // The areas the map counts the exploration of, read as the world opens, each with the placed doings that stand in it
   const explorationAreas = useExplorationAreas(gameDataBaseUrl);
+  const placedExplorationAreas = computed(() =>
+    placeExplorationDoings(explorationAreas.value, catalogue, placedDoings.value),
+  );
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
   const mondstadtReputation = shallowRef<ReputationCity>();
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -124,9 +136,11 @@ export const useWorldMap = ({
       },
     );
   };
-  // The unlocked landmarks whose exploration thresholds are paid: the saved ones, which paid when they were unlocked, and
-  // The ones the settle below has counted. An unlock made before every read has landed waits outside this set
+  // The unlocked landmarks and the recorded doings whose exploration thresholds are paid: the saved ones, which paid when
+  // They were made, and the ones the settle below has counted. An unlock or a doing made before every read has landed
+  // Waits outside these sets
   let thresholdPaidLandmarkIds: ReadonlySet<string> = savedUnlockedLandmarkIds;
+  let thresholdPaidDoingIds: ReadonlySet<string> = recordedDoingIds.value;
   // Each exploration threshold the nation's percentage passes since the last settle pays its Reputation EXP and wallet
   // Items once, and a threshold the percentage already held pays nothing. Nothing settles until the areas, the Reputation
   // And every region are in, so the percentage before the unlocks is the one the saved landmarks reach
@@ -144,19 +158,29 @@ export const useWorldMap = ({
     setWallet(nextWallet);
   };
   const settleExplorationThresholds = () => {
-    if (!mondstadtReputation.value || explorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
+    if (!mondstadtReputation.value || placedExplorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
     const { explores } = mondstadtReputation.value;
     const previousPercentage = computeNationExplorationPercentage(
-      explorationAreas.value,
+      placedExplorationAreas.value,
       jumpLandmarks.value.filter(({ id }) => thresholdPaidLandmarkIds.has(id)),
+      thresholdPaidDoingIds,
     );
-    const percentage = computeNationExplorationPercentage(explorationAreas.value, unlockedLandmarks.value);
+    const percentage = computeNationExplorationPercentage(
+      placedExplorationAreas.value,
+      unlockedLandmarks.value,
+      recordedDoingIds.value,
+    );
     thresholdPaidLandmarkIds = unlockedLandmarkIds.value;
+    thresholdPaidDoingIds = recordedDoingIds.value;
     for (const { reward } of computeReputationExploresReached(previousPercentage, percentage, explores))
       payReputationReward(reward);
   };
-  // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
-  watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
+  // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are
+  // In, and again as a doing is recorded or a placed doing is found
+  watch(
+    [mondstadtReputation, placedExplorationAreas, isJumpLandmarksLoaded, recordedDoingIds],
+    settleExplorationThresholds,
+  );
   // A finished quest pays the Reputation request it is, once: the event is emitted on the move that finishes it, and each
   // Request binds its quest once, so a quest the groups repeat pays its first row's reward. A quest finished before the
   // Reputation has loaded is paid once it has, as the event is not emitted again
@@ -206,7 +230,7 @@ export const useWorldMap = ({
   };
   return {
     activateLandmark,
-    explorationAreas,
+    explorationAreas: placedExplorationAreas,
     jumpLandmarks,
     jumpPose,
     jumpTo,

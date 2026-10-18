@@ -18,6 +18,7 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
+import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
@@ -75,6 +76,7 @@ import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
@@ -221,6 +223,7 @@ const {
   achievementProgressMap,
   archiveKillsMap,
   archiveProgressMap,
+  clearedCamps,
   craftedCountMap,
   craftingProgress,
   foundOculusIds,
@@ -421,7 +424,7 @@ const { puzzleChestPlaces, puzzleSeelies, settledSeelieIds, solvedPuzzleIds, ste
     timeTrialPlaces,
   });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
-const { chestInteractables, digChestById, openChestById } = useWorldChests({
+const { chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -612,6 +615,41 @@ getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
     console.error(error);
   },
 );
+// The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
+// Touch radius finds one, and those near the camera within the minimap's distance are marked on it
+const oculusPlaces = shallowRef<OculusPlace[]>([]);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
+  (places) => {
+    oculusPlaces.value = places;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+// The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks
+// And Seelies at their courts, and the camps the save records as cleared
+const placedDoings = computed<PlacedDoing[]>(() => [
+  ...worldChestPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Chest, position })),
+  ...oculusPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Oculus, position })),
+  ...[...monumentPlaces.filter(({ monument }) => monument !== undefined), ...timeTrialPlaces].map(
+    ({ id, position }) => ({ id, kind: ExplorationKind.Puzzle, position }),
+  ),
+  ...puzzleSeelies.map(({ court, id }) => ({ id, kind: ExplorationKind.Puzzle, position: court })),
+  ...clearedCamps.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Camp, position })),
+]);
+// The doings the save records as done, by id: the chests opened, the Oculi found, the puzzles and Seelies settled, and
+// The camps cleared
+const recordedDoingIds = computed<ReadonlySet<string>>(
+  () =>
+    new Set([
+      ...openedChestIds.value,
+      ...foundOculusIds.value,
+      ...solvedPuzzleIds.value,
+      ...settledSeelieIds.value,
+      ...clearedCamps.value.map(({ id }) => id),
+    ]),
+);
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const {
   activateLandmark,
@@ -626,7 +664,9 @@ const {
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  placedDoings,
   questStepTargets,
+  recordedDoingIds,
   regionDataBaseUrl,
   reputation,
   setReputation: (nextReputation) => {
@@ -650,6 +690,7 @@ useWorldSaveSync({
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
+    clearedCamps: clearedCamps.value,
     commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
@@ -779,18 +820,6 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
 // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
-// The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
-// Touch radius finds one, and those near the camera within the minimap's distance are marked on it
-const oculusPlaces = shallowRef<OculusPlace[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
-  (places) => {
-    oculusPlaces.value = places;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
 const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
 const nearOculusPlaces = computed(() =>
   getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, mapCamera.value, OCULUS_MINIMAP_DISTANCE),
@@ -1073,6 +1102,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :world-level
         :world-level-rows="adventureRankTables.worldLevelRows"
         @charge="chargeParty()"
+        @camp-cleared="(camp) => events.emit('campCleared', camp)"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
@@ -1157,6 +1187,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
+          :recorded-doing-ids="recordedDoingIds"
           :server-clock-offset-ms
           :wallet
           @close="screenKind = ScreenKind.World"

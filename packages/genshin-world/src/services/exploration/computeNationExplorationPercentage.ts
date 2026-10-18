@@ -11,14 +11,18 @@ import { computeExploredDoingIds } from "#src/services/exploration/computeExplor
 export const computeNationExplorationPercentage = (
   areas: readonly ExplorationArea[],
   unlockedLandmarks: readonly Landmark[],
+  recordedDoingIds: ReadonlySet<string>,
 ): number => {
   if (areas.every(({ reputationRatio }) => reputationRatio === 0))
     return computeExplorationProgress(
       { doings: areas.flatMap(({ doings }) => doings), total: areas.reduce((sum, { total }) => sum + total, 0) },
-      new Set(areas.flatMap((area) => [...computeExploredDoingIds(area, unlockedLandmarks)])),
+      new Set(areas.flatMap((area) => [...computeExploredDoingIds(area, unlockedLandmarks, recordedDoingIds)])),
     );
   const percentage = areas.reduce((sum, area) => {
-    const doneWeight = computeDoneWeight(area.doings, computeExploredDoingIds(area, unlockedLandmarks));
+    const doneWeight = computeDoneWeight(
+      area.doings,
+      computeExploredDoingIds(area, unlockedLandmarks, recordedDoingIds),
+    );
     return sum + (area.reputationRatio * doneWeight * 100) / area.total;
   }, 0);
   // A ratio is a float, so a share that is whole in exact arithmetic can sum a little under it, and rounding first keeps it whole

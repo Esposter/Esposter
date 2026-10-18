@@ -21,6 +21,7 @@ export const readGenshinSave = (
     adventureExp,
     archive,
     characters,
+    clearedCamps,
     commissionDay,
     companionshipExp,
     crafting,
@@ -55,6 +56,7 @@ export const readGenshinSave = (
     archiveProgressMap: toArchiveProgressMap(archive.progress),
     characterCopyCountMap: new Map(characters.map(({ copyCount, id }) => [id, copyCount])),
     characters: toCharacters(characters, companionshipExpMap),
+    clearedCamps,
     commissionDay: toCommissionDay(commissionDay),
     companionshipExpMap,
     craftedCountMap: new Map(

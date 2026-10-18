@@ -19,6 +19,7 @@ import {
   MAX_ARCHIVE_ENTRY_COUNT,
   MAX_ARCHIVE_KILL_COUNT,
   MAX_CHARACTER_COUNT,
+  MAX_CLEARED_CAMP_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_FOUND_OCULUS_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
@@ -115,6 +116,10 @@ describe("genshinSaveSchema", () => {
           level: maxNumber,
           refinement: MAX_WEAPON_REFINEMENT,
         },
+      })),
+      clearedCamps: Array.from({ length: MAX_CLEARED_CAMP_COUNT }, (_value, index) => ({
+        id: String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+        position: { x: maxNumber, z: maxNumber },
       })),
       commissionDay: {
         claimedCommissionIds: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => maxNumber - index),

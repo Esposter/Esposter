@@ -32,13 +32,13 @@ describe(computeExploredDoingIds, () => {
   test("should name no doing while the area's statue is locked", () => {
     expect.hasAssertions();
 
-    expect(computeExploredDoingIds(area, [])).toStrictEqual(new Set());
+    expect(computeExploredDoingIds(area, [], new Set())).toStrictEqual(new Set());
   });
 
   test("should name the area's waypoint once its statue is unlocked, and no chest", () => {
     expect.hasAssertions();
 
-    expect(computeExploredDoingIds(area, [statue])).toStrictEqual(new Set([WAYPOINT_ID]));
+    expect(computeExploredDoingIds(area, [statue], new Set())).toStrictEqual(new Set([WAYPOINT_ID]));
   });
 
   test("a doing repeated adds its weight only once", () => {
@@ -46,8 +46,8 @@ describe(computeExploredDoingIds, () => {
 
     // The waypoint's ten of the area's 146 reads six percent, however many times its statue is counted
     expect([
-      computeExplorationProgress(area, computeExploredDoingIds(area, [statue])),
-      computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue])),
+      computeExplorationProgress(area, computeExploredDoingIds(area, [statue], new Set())),
+      computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue], new Set())),
     ]).toStrictEqual([6, 6]);
   });
 });
