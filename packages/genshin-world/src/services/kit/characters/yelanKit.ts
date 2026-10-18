@@ -23,6 +23,9 @@ export const YELAN_CHARACTER_ID = 10_000_060;
 // Yelan's behaviour: Depth-Clarion Dice sets its field as it is cast, which waves an Exquisite Throw each second from a
 // Second after its hit for its seconds, and each Lingering Lifeline hit throws one more while the field stands.
 // Her Breakthrough Barb's own hit, her passives and constellations are not built
+// Constellation 2 needs Exquisite Throw's coordinated attack and its extra arrow, which the kit does not build
+// Constellation 4 needs the marked opponents on Lifeline's explosion, which the kit does not build
+// Constellation 6 needs the Mastermind state after Depth-Clarion Dice, which the kit does not build
 export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const depthClarionDiceSeconds = readParameter("depthClarionDiceSeconds");
