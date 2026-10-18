@@ -271,11 +271,11 @@ const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => active
   lightUniforms,
   rampTexture,
 });
-const { baseGround, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
+const { baseGrounds, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
 // The ground's quadtree, which the terrain streams and the grass reads, bounded by Windrise's ground, which every
 // Region's ground laid over it stands within, and the records each terrain worker computes its tiles over
-const terrainOptions = createWindriseTerrainOptions([baseGround]);
-const terrainWorkerGround: TerrainWorkerGround = { baseGround, groundLayers, surfaces, waterLevel: water.level };
+const terrainOptions = createWindriseTerrainOptions(baseGrounds);
+const terrainWorkerGround: TerrainWorkerGround = { baseGrounds, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
 const treeSpeciesOptionsMap = createTreeSpeciesOptionsMap(oak);
 // The paving stones round the statue, cut from the stone the statue is made of
