@@ -146,7 +146,7 @@
     "lowlight": "catalog:",
     "lru-cache": "catalog:",
     "marked": "catalog:",
-    "mathjs": "catalog:",
+    "math-expression-compiler": "workspace:*",
     "minisearch": "catalog:",
     "mjml": "catalog:",
     "node-html-parser": "catalog:",

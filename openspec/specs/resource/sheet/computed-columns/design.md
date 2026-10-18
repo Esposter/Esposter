@@ -8,7 +8,7 @@ A `ComputedColumn` is an ordinary column (`ColumnType.Computed`) whose `transfor
 
 Every read goes through one pipeline, `compileSheetColumns(columns)(rows)(row, column, rowIndex?)`, in three steps:
 
-- **Compile** — once per column list. Each computed column's transformation is turned into a binder by `ColumnTransformationCompileMap[transformation.type]`: a mathjs expression is parsed once, a regex is built once, and a DatePart checks once that its source is a `Date` column. The source ids of every computed column are gathered (`ColumnTransformationSourceIdsMap`), and a Tarjan strongly-connected-components pass (`getCyclicColumnIds`) finds every column on a cycle up front.
+- **Compile** — once per column list. Each computed column's transformation is turned into a binder by `ColumnTransformationCompileMap[transformation.type]`: a math expression is parsed and compiled once, a regex is built once, and a DatePart checks once that its source is a `Date` column. A transformation that cannot compile — a formula the parser refuses, a pattern that is no regular expression — binds to a reader that answers `null`. The source ids of every computed column are gathered (`ColumnTransformationSourceIdsMap`), and a Tarjan strongly-connected-components pass (`getCyclicColumnIds`) finds every column on a cycle up front.
 - **Bind** — once per row list, by the caller's `rows`. A column's reader is built from its binder: a binder reads its sources through `readSource`, which resolves each source's reader the same way, so a source two columns share is bound once. An aggregation builds its whole-column result (the total, the descending ranks, the running sums) at this point. A cyclic column binds to a reader that answers `null`, so a cycle never recurses.
 - **Read** — per cell. A stored column's reader is `row.data[column.name]`; a computed column's reader looks up what its binding already built. An aggregation answers by `rowIndex`, so a read with no row index answers `null`.
 
@@ -40,12 +40,12 @@ Single-source transformations carry `sourceColumnId`; `StringPattern` carries `s
 
 ### Math
 
-A [mathjs](https://mathjs.org) expression string with column values bound as variables:
+An expression in the language of [math-expression-compiler](../../../../../packages/math-expression-compiler/README.md), mathjs's numeric language over plain numbers, with column values bound as variables:
 
-- `expression` — e.g. `col0 * (1 - col1)`; supports the full mathjs operator set (`+ - * / ^ %`, comparisons) and built-in functions (`abs`, `round`, `sqrt`, …).
-- `variables` — an ordered list of `{ name, sourceColumnId }` bindings. Names are auto-generated `col0`, `col1`, … — valid mathjs identifiers that never collide with built-ins; users insert them via the form rather than typing them.
+- `expression` — e.g. `col0 * (1 - col1)`; mathjs's operators and precedence, comparisons yielding `1` or `0`, and its numeric functions over numbers and flat lists (`abs`, `round`, `sqrt`, `sum([col0, col1])`, …).
+- `variables` — an ordered list of `{ name, sourceColumnId }` bindings. Names are auto-generated `col0`, `col1`, … — valid names in the language that never collide with its functions or constants; users insert them via the form rather than typing them.
 
-The expression is compiled once (mathjs `compile`) and evaluated per row (`evaluate` with the row's variable scope). Evaluation coerces `null` source values to `0` and returns `null` for non-finite results (`NaN`, `Infinity`). The schema validates the expression at edit time by running mathjs `parse` inside a `superRefine`, so the exact parser message (e.g. "Unexpected end of expression") surfaces as the form error.
+`compileMathTransformation` parses and compiles the expression once into a function of the variables' values, which runs per row. Evaluation coerces `null` source values to `0` and returns `null` for non-finite results (`NaN`, `Infinity`). The stored schema checks only the expression's size, because it runs on every read and patch of a sheet: a stored expression the parser refuses leaves its column empty rather than stopping the sheet opening. The edit form's schema parses the expression in a `superRefine` and refuses a name the formula reads before anything binds it, so the parser's positioned message (e.g. "Unexpected end of expression (char 4)") or `Unknown variable "b"` surfaces as the form error.
 
 ### String operations
 
@@ -84,22 +84,23 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 Paths relative to `apps/web`.
 
-| File                                                                                          | Role                                                                 |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                            |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                   |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                    |
-| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell       |
-| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set  |
-| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                  |
-| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                         |
-| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind) |
-| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                          |
-| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | mathjs `compile` once, `evaluate` per row with variable scope        |
-| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                            |
-| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                       |
-| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                              |
-| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                              |
+| File                                                                                          | Role                                                                  |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                             |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                    |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                     |
+| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell        |
+| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set   |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                   |
+| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                          |
+| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind)  |
+| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                           |
+| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | Parse and compile once, run per row over the variables' values        |
+| `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`                 | Edit form schemas: the math expression's parse and unbound-name check |
+| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                             |
+| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                        |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                               |
+| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                               |
 
 ## Datasets
 

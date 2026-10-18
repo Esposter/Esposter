@@ -38,7 +38,6 @@ export const vite: NuxtConfig["vite"] = {
       "drizzle-orm/zod",
       "fflate",
       "livekit-client",
-      "mathjs",
       "minisearch",
       "@esposter/shared > neverthrow",
       "node-html-parser",

@@ -159,7 +159,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `lowlight`                              | —                     | Keep — engine     | required by the tiptap code-block extension                                                            |
 | `lru-cache`                             | —                     | Keep — framework  | `@nuxt/scripts` mounts its storage on unstorage's lru-cache driver; knip cannot see the runtime load   |
 | `marked`                                | —                     | Keep — engine     | the client's markdown parser                                                                           |
-| `mathjs`                                | —                     | Keep — engine     | the expression engine                                                                                  |
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
 | `mjml`                                  | —                     | Keep — engine     | the MJML compiler, which mjml-blocks' tests compile under strict validation                            |

@@ -15,6 +15,7 @@ import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/c
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { createUniqueArraySchema } from "@esposter/shared";
+import { getMathExpressionNames, parseMathExpression } from "math-expression-compiler";
 import { z } from "zod";
 
 // Which of the form's context lists feeds a source-column picker is a rendering decision, so the key naming
@@ -47,9 +48,24 @@ const mathVariableFormSchema = mathVariableSchema.safeExtend(
   createSourceColumnIdFormShape(ColumnFormContextPropertyNames.numberColumnItems),
 );
 
+// The parse runs here rather than in the stored schema, so a stored formula the parser refuses never stops a sheet opening.
+// A name the formula reads before it assigns it must be a variable, or every cell of the column is empty
 const mathTransformationFormSchema = mathTransformationSchema
   .safeExtend({
     [mathTransformationSchema.keyof().enum.variables]: createUniqueArraySchema(mathVariableFormSchema, "name"),
+  })
+  .superRefine(({ expression, variables }, ctx) => {
+    parseMathExpression(expression).match(
+      (node) => {
+        const variableNames = new Set(variables.map(({ name }) => name));
+        for (const name of getMathExpressionNames(node))
+          if (!variableNames.has(name))
+            ctx.addIssue({ code: "custom", message: `Unknown variable "${name}"`, path: ["expression"] });
+      },
+      (error) => {
+        ctx.addIssue({ code: "custom", message: error.message, path: ["expression"] });
+      },
+    );
   })
   .meta({ title: ColumnTransformationType.Math });
 

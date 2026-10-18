@@ -15,9 +15,24 @@ describe("columnTransformationFormSchema", () => {
   test("keeps the refinements of the schema the server parses", () => {
     expect.hasAssertions();
 
-    const transformation = { type: ColumnTransformationType.Math, variables: [] };
+    const transformation = { sourceColumnIds: [], type: ColumnTransformationType.StringPattern };
 
-    expect(columnTransformationFormSchema.safeParse({ ...transformation, expression: "1 + 1" }).success).toBe(true);
-    expect(columnTransformationFormSchema.safeParse({ ...transformation, expression: "1 +" }).success).toBe(false);
+    expect(columnTransformationFormSchema.safeParse({ ...transformation, pattern: "" }).success).toBe(true);
+    expect(columnTransformationFormSchema.safeParse({ ...transformation, pattern: "{0}" }).success).toBe(false);
+  });
+
+  test.each([
+    ["Expression that cannot be parsed", "1 +", ["Unexpected end of expression (char 4)"]],
+    ["Expression naming an unbound column", "a + b", ['Unknown variable "b"']],
+  ])("%s", (_title, expression, messages) => {
+    expect.hasAssertions();
+
+    const result = columnTransformationFormSchema.safeParse({
+      expression,
+      type: ColumnTransformationType.Math,
+      variables: [{ name: "a", sourceColumnId: "" }],
+    });
+
+    expect(result.error?.issues.map(({ message }) => message)).toStrictEqual(messages);
   });
 });

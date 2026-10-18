@@ -2,6 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { MathTransformation } from "#shared/models/resource/sheet/column/transformation/MathTransformation";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+import { mathTransformationSchema } from "#shared/models/resource/sheet/column/transformation/MathTransformation";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { compileMathTransformation } from "#shared/services/resource/sheet/column/transformation/compileMathTransformation";
 import { describe, expect, test } from "vitest";
@@ -68,5 +69,22 @@ describe(compileMathTransformation, () => {
     const result = readMath(createTransformation("2 ^ 2", []), () => null);
 
     expect(result).toBe(4);
+  });
+
+  test.each([["A comparison shows one or zero"]])("%s", (_title) => {
+    expect.hasAssertions();
+
+    const result = readMath(createTransformation("price > 50", [{ name: "price", sourceColumnId: "price" }]), () => 80);
+
+    expect(result).toBe(1);
+  });
+
+  test.each([["A stored expression the parser refuses"]])("%s", (_title) => {
+    expect.hasAssertions();
+
+    const transformation = createTransformation("1 +", []);
+
+    expect(mathTransformationSchema.safeParse(transformation).success).toBe(true);
+    expect(readMath(transformation, () => null)).toBeNull();
   });
 });

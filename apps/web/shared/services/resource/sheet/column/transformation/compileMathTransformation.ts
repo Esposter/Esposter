@@ -1,30 +1,29 @@
 import type { ColumnTransformationCompiler } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationCompiler";
 import type { MathTransformation } from "#shared/models/resource/sheet/column/transformation/MathTransformation";
 
-import { getResult } from "@esposter/shared";
-import { compile } from "mathjs";
+import { compileMathExpression, parseMathExpression } from "math-expression-compiler";
 
-// The expression is parsed once here rather than per cell; mathjs's compiled form is the only place it is read
+// The expression is parsed and compiled once here rather than per cell, so a row runs only its arithmetic. A formula the
+// Parser refuses reads empty, as does any answer that is not a finite number
 export const compileMathTransformation: ColumnTransformationCompiler<MathTransformation> = (transformation) =>
-  getResult(() => compile(transformation.expression)).match(
-    (compiledExpression) =>
-      ({ readSource }) => {
-        const readVariables = transformation.variables.map(({ name, sourceColumnId }) => ({
-          name,
-          readValue: readSource(sourceColumnId),
-        }));
+  parseMathExpression(transformation.expression).match(
+    (node) => {
+      const evaluate = compileMathExpression(
+        node,
+        transformation.variables.map(({ name }) => name),
+      );
+      return ({ readSource }) => {
+        const readValues = transformation.variables.map(({ sourceColumnId }) => readSource(sourceColumnId));
         return (row, rowIndex) => {
-          const scope = Object.fromEntries(
-            readVariables.map(({ name, readValue }) => {
+          const result = evaluate(
+            readValues.map((readValue) => {
               const value = readValue(row, rowIndex);
-              return [name, value === null ? 0 : Number(value)];
+              return value === null ? 0 : Number(value);
             }),
           );
-          return getResult(() => compiledExpression.evaluate(scope)).match(
-            (result) => (typeof result === "number" && Number.isFinite(result) ? result : null),
-            () => null,
-          );
+          return Number.isFinite(result) ? result : null;
         };
-      },
-    () => () => null,
+      };
+    },
+    () => () => () => null,
   );

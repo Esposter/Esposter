@@ -40,7 +40,7 @@ describe(compileSheetColumns, () => {
     expect(compileSheetColumns(dataSource.columns)(dataSource.rows)(row, computedColumn, 0)).toBeNull();
   });
 
-  test("two math columns depend on each other", () => {
+  test.each([["Two math columns depend on each other"]])("%s", (_title) => {
     expect.hasAssertions();
 
     const firstColumn = createComputedColumn("a", "");
