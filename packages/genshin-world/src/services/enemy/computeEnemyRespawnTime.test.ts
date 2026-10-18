@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe(computeEnemyRespawnTime, () => {
   const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
+  const place = { x: 0, z: 0 };
   const dailyReset = epoch.toPlainDate().toZonedDateTime({ plainTime: DAILY_RESET_TIME, timeZone: "UTC" });
 
   test("a common camp's member comes back after its respawn duration", () => {
@@ -28,14 +29,22 @@ describe(computeEnemyRespawnTime, () => {
   test("a normal boss returns five seconds after its blossom is claimed", () => {
     expect.hasAssertions();
 
-    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, epoch)?.toString()).toBe(
-      epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString(),
-    );
+    expect(
+      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { claimedAt: epoch, place })?.toString(),
+    ).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
   });
 
   test("an unclaimed blossom keeps the boss defeated until the player teleports away", () => {
     expect.hasAssertions();
 
-    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, undefined)).toBeUndefined();
+    const teleportedAt = epoch.add({ seconds: 1 });
+
+    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place })).toBeUndefined();
+    expect(
+      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place }, epoch.subtract({ seconds: 1 })),
+    ).toBeUndefined();
+    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place }, teleportedAt)?.toString()).toBe(
+      teleportedAt.toString(),
+    );
   });
 });

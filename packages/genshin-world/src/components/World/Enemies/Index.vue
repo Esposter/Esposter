@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
+import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { RegionData } from "#src/models/world/RegionData";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture, Scene } from "three";
 
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { computeDefeatTrounceBlossom } from "#src/services/bosses/computeDefeatTrounceBlossom";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
@@ -39,6 +42,7 @@ import { useLoop } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import { createFixedStepLoop, createInstancedMesh, createToonMaterial } from "genshin-engine";
 import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
+import { watch } from "vue";
 
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
@@ -49,6 +53,8 @@ interface Props {
   getGroundHeight: (x: number, z: number) => number;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
+  // The pose of the last jump, which a teleport sets and which brings back a boss whose blossom is unclaimed
+  jumpPose?: WorldJumpPose;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
   lightUniforms: LightUniforms;
@@ -69,6 +75,7 @@ const {
   enemyTables,
   getGroundHeight,
   isHeld,
+  jumpPose,
   kitEffectState,
   lightUniforms,
   rampTexture,
@@ -87,8 +94,23 @@ const { onBeforeRender } = useLoop();
 const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARATOR}${memberId}`;
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
-// When each boss's Trounce Blossom was claimed, which brings the boss back five seconds on
-const spawnKeyBossClaimedAtMap = new Map<string, Temporal.ZonedDateTime>();
+// Each defeated boss's Trounce Blossom where it fell, kept until the boss comes back
+const spawnKeyTrounceBlossomMap = new Map<string, TrounceBlossom>();
+// When the player last jumped, which brings back a boss whose blossom is unclaimed
+let lastTeleportAt: Temporal.ZonedDateTime | undefined;
+watch(
+  () => jumpPose,
+  (pose) => {
+    if (pose) lastTeleportAt = Temporal.Now.zonedDateTimeISO();
+  },
+);
+// Marks a boss's Trounce Blossom claimed now, which brings the boss back five seconds on
+const markTrounceBlossomClaimed = (spawnKey: string) => {
+  const trounceBlossom = spawnKeyTrounceBlossomMap.get(spawnKey);
+  if (trounceBlossom)
+    spawnKeyTrounceBlossomMap.set(spawnKey, { ...trounceBlossom, claimedAt: Temporal.Now.zonedDateTimeISO() });
+};
+defineExpose({ markTrounceBlossomClaimed });
 const loadedCampIds = new Set<string>();
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
@@ -115,10 +137,16 @@ watchImmediate(
         const spawnKey = getSpawnKey(id, member.id);
         const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
         if (defeatedAt) {
-          const respawnAt = computeEnemyRespawnTime(campEnemyTypes, defeatedAt, spawnKeyBossClaimedAtMap.get(spawnKey));
+          const respawnAt = computeEnemyRespawnTime(
+            campEnemyTypes,
+            defeatedAt,
+            spawnKeyTrounceBlossomMap.get(spawnKey),
+            lastTeleportAt,
+          );
           if (!respawnAt || Temporal.ZonedDateTime.compare(respawnAt, now) > 0) continue;
         }
         spawnKeyDefeatedAtMap.delete(spawnKey);
+        spawnKeyTrounceBlossomMap.delete(spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
       }
     }
@@ -134,11 +162,15 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
     else if (enemyEvent === EnemyEvent.Defeated) {
       isAnyDefeated = true;
-      spawnKeyDefeatedAtMap.set(getSpawnKey(enemy.campId, enemy.id), Temporal.Now.zonedDateTimeISO());
+      const enemyKind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
+      const spawnKey = getSpawnKey(enemy.campId, enemy.id);
+      spawnKeyDefeatedAtMap.set(spawnKey, Temporal.Now.zonedDateTimeISO());
+      const trounceBlossom = computeDefeatTrounceBlossom(enemyKind.enemyType, enemy.position);
+      if (trounceBlossom) spawnKeyTrounceBlossomMap.set(spawnKey, trounceBlossom);
       emit(
         "defeat",
         enemy,
-        computeEnemyDrops(getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId), enemy.level, () => Math.random()),
+        computeEnemyDrops(enemyKind, enemy.level, () => Math.random()),
       );
     }
   }
