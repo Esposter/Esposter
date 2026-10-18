@@ -4,6 +4,7 @@ import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
+import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
@@ -30,10 +31,11 @@ import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
 import { takeOne } from "@esposter/shared";
 
-// One damage a skill deals to the opposing active character, from the side at sourceSideIndex. An element applies its aura
-// Or reacts with the aura there, a reaction's damage and effects settle with it, and a defeated character is cleared, with
-// A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement. It
-// Returns each hit it landed on a standing character, with the reaction that hit triggered
+// One damage from the side at sourceSideIndex to the opposing active character. Its side's field bears on it first, every
+// Damage it deals alike, then the element applies its aura or reacts with the aura there, a reaction's damage and effects
+// Settle with it, and a defeated character is cleared, with a side that has none standing losing the duel, and a side whose
+// Active fell with one standing owing a replacement. It returns each hit it landed on a standing character, with the
+// Reaction that hit triggered
 export const applyGcgDamage = (
   duel: GcgDuel,
   sourceSideIndex: number,
@@ -50,7 +52,7 @@ export const applyGcgDamage = (
       duel,
       sourceSideIndex,
       hit,
-      reduceGcgReceivedDamage(duel, targetSideIndex, damage),
+      reduceGcgReceivedDamage(duel, targetSideIndex, modifyGcgDamageDealt(context, damage)),
       rule,
       dealt,
       context,
@@ -125,21 +127,28 @@ const applyGcgReactionEffects = (
   const sourceSide = takeOne(duel.sides, sourceSideIndex);
   const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
   const otherTargets = targetSide.characters.filter((character) => character !== hit && character.hp > 0);
-  if (reaction === GcgReactionKind.Superconduct || reaction === GcgReactionKind.ElectroCharged)
-    for (const other of otherTargets) {
-      recordGcgHit(dealt, other, GcgDamageKind.Piercing);
-      hurtGcgCharacter(other, GCG_PIERCING_DAMAGE, true);
+  // The piercing or spread the reaction sends to the other opposing characters is one damage its side deals, so the
+  // Modifiers bear on it once however many characters it reaches. It carries the skill, but not the Plunging Attack bonus,
+  // Which is the skill's own hit's
+  const eventContext: GcgEffectContext = { duel, sideIndex: sourceSideIndex, skill: context.skill };
+  if (reaction === GcgReactionKind.Superconduct || reaction === GcgReactionKind.ElectroCharged) {
+    if (otherTargets.length > 0) {
+      const piercing = modifyGcgDamageDealt(eventContext, {
+        damageType: GcgDamageKind.Piercing,
+        value: GCG_PIERCING_DAMAGE,
+      }).value;
+      for (const other of otherTargets) {
+        recordGcgHit(dealt, other, GcgDamageKind.Piercing);
+        hurtGcgCharacter(other, piercing, true);
+      }
     }
-  else if (reaction === GcgReactionKind.Swirl) {
-    // Each spread hit is a damage its side deals, so the modifiers bear on it. It carries the skill's context, but not the
-    // Plunging Attack bonus, which is the skill's own hit's
-    for (const other of otherTargets) {
-      const spread = modifyGcgDamageDealt(
-        { duel, sideIndex: sourceSideIndex, skill: context.skill },
-        { damageType: aura, value: GCG_SPREAD_DAMAGE },
-      );
-      recordGcgHit(dealt, other, spread.damageType);
-      hurtGcgCharacter(other, spread.value + takeGcgFrozenBonus(other, spread.damageType), false);
+  } else if (reaction === GcgReactionKind.Swirl) {
+    if (otherTargets.length > 0) {
+      const spread = modifyGcgDamageDealt(eventContext, { damageType: aura, value: GCG_SPREAD_DAMAGE });
+      for (const other of otherTargets) {
+        recordGcgHit(dealt, other, spread.damageType);
+        hurtGcgCharacter(other, spread.value + takeGcgFrozenBonus(other, spread.damageType), false);
+      }
     }
     for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
@@ -205,17 +214,31 @@ const notifyGcgOpposingDefeat = (duel: GcgDuel, sideIndex: number): void => {
     );
 };
 
-// A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect deals it past its
-// Target. A defeated character is cleared, as an active one's would be
-export const applyGcgStandbyPiercing = (duel: GcgDuel, sourceSideIndex: number, value: number): GcgDealtDamage[] => {
+// A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect or an End Phase
+// Deals it past its target. Its side's field bears on it once, carrying the skill but not the Plunging Attack bonus. A
+// Defeated character is cleared, as an active one's would be
+export const applyGcgStandbyPiercing = (
+  duel: GcgDuel,
+  sourceSideIndex: number,
+  value: number,
+  skill?: GcgSkill,
+): GcgDealtDamage[] => {
   const standingBefore = listGcgStandingCharacters(duel);
   const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
   const dealt: GcgDealtDamage[] = [];
-  for (const [index, character] of targetSide.characters.entries())
-    if (index !== targetSide.activeIndex) {
+  const standbyCharacters = targetSide.characters.filter(
+    (character, index) => index !== targetSide.activeIndex && character.hp > 0,
+  );
+  if (standbyCharacters.length > 0) {
+    const piercing = modifyGcgDamageDealt(
+      { duel, sideIndex: sourceSideIndex, skill },
+      { damageType: GcgDamageKind.Piercing, value },
+    ).value;
+    for (const character of standbyCharacters) {
       recordGcgHit(dealt, character, GcgDamageKind.Piercing);
-      hurtGcgCharacter(character, value, true);
+      hurtGcgCharacter(character, piercing, true);
     }
+  }
   settleGcgDefeats(duel, standingBefore);
   for (const side of duel.sides) pruneGcgZoneCards(side);
   return dealt;

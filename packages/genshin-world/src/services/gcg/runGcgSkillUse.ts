@@ -6,7 +6,6 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
@@ -34,9 +33,11 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
     sideState,
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
-  const dealt: GcgDealtDamage[] = damage ? dealGcgSkillDamage(context, damage) : [];
+  const dealt: GcgDealtDamage[] = damage
+    ? applyGcgDamage(context.duel, context.sideIndex, damage, context.duel.rule, context)
+    : [];
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
-  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing));
+  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
   skillModule?.afterDamage?.(context);
   side.usedSkillIds.push(skill.id);
   for (const zoneCard of fieldCards) {
@@ -47,7 +48,13 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
       zoneCard,
       dealt,
     );
-    if (skillDamage) applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule);
+    // A card's damage on a skill is not the skill's own hit, so the Plunging Attack bonus does not bear on it
+    if (skillDamage)
+      applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule, {
+        ...context,
+        characterIndex,
+        isPlunge: false,
+      });
   }
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
