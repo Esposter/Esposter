@@ -186,6 +186,33 @@ describe(advanceAchievements, () => {
     });
   });
 
+  test("an any-target trigger counts each doing, whichever id it names", () => {
+    expect.hasAssertions();
+    const OTHER_CHEST_ID = "32";
+    const anyChest: Achievement = {
+      ...counted,
+      progress: 2,
+      trigger: { parameters: [[]], type: "TRIGGER_OPEN_WORLD_CHEST" },
+    };
+    const firstOpening = advanceAchievements(
+      [anyChest],
+      new Map(),
+      { kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: CHEST_ID },
+      EPOCH,
+    );
+    expect(firstOpening).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 1 }]]) });
+    const secondOpening = advanceAchievements(
+      [anyChest],
+      firstOpening.progressMap,
+      { kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: OTHER_CHEST_ID },
+      EPOCH,
+    );
+    expect(secondOpening).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 2, finishedAt: EPOCH }]]),
+    });
+  });
+
   test("a material trigger counts the quantity the event gains", () => {
     expect.hasAssertions();
     const material: Achievement = {

@@ -19,11 +19,11 @@ export const advanceAchievements = (
   let primogems = 0;
   for (const achievement of achievements) {
     const watch = AchievementTriggerEventKindMap[achievement.trigger.type];
-    if (
-      watch?.kind !== event.kind ||
-      achievement.trigger.parameters[watch.targetSlot]?.includes(event.targetId) !== true
-    )
-      continue;
+    if (watch?.kind !== event.kind) continue;
+    // A slot that names no id is an any-target trigger, which takes every doing of its kind
+    const namedTargetIds = achievement.trigger.parameters[watch.targetSlot] ?? [];
+    const isAnyTarget = namedTargetIds.length === 0;
+    if (!isAnyTarget && !namedTargetIds.includes(event.targetId)) continue;
     const isTierDone =
       achievement.preStageAchievementId === 0 ||
       checkIsAchievementFinished(achievement.preStageAchievementId, nextProgressMap);
@@ -32,7 +32,8 @@ export const advanceAchievements = (
     const countedTargetIds = progress?.countedTargetIds ?? [];
     const levelSlot = watch.levelSlot;
     const isLevel = levelSlot !== undefined;
-    if (!isLevel && !watch.countsQuantity && countedTargetIds.includes(event.targetId)) continue;
+    const isCountedOnce = !isLevel && !isAnyTarget && !watch.countsQuantity;
+    if (isCountedOnce && countedTargetIds.includes(event.targetId)) continue;
     const target = isLevel ? Number(achievement.trigger.parameters[levelSlot]?.[0]) : achievement.progress;
     if (!Number.isInteger(target) || target <= 0) continue;
     const count = isLevel
@@ -41,9 +42,7 @@ export const advanceAchievements = (
     if (count < target)
       nextProgressMap.set(
         achievement.id,
-        watch.countsQuantity || isLevel
-          ? { count }
-          : { count, countedTargetIds: [...countedTargetIds, event.targetId] },
+        isCountedOnce ? { count, countedTargetIds: [...countedTargetIds, event.targetId] } : { count },
       );
     else {
       nextProgressMap.set(achievement.id, { count, finishedAt: now });
