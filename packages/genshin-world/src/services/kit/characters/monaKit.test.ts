@@ -496,6 +496,44 @@ describe("mona kit", () => {
     }).toStrictEqual({ below: 0, omened: 0.15, plain: 0 });
   });
 
+  test("constellation 4 gives 15% CRIT Rate to a Lunar-Charged or Lunar-Crystallize reaction on an enemy under an Omen, and nothing below it or on another enemy", () => {
+    expect.hasAssertions();
+    const other = createOther();
+    const context = createKitTestContext(other, { party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]) });
+    const readRate = (constellationCount: number, enemy: Enemy, reactionType: ReactionType) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        { ...createMonaCombatant(), constellationCount },
+        { combatant: other, element: Element.Electro, enemy, reactionType },
+        context,
+      )?.criticalRateBonus ?? 0;
+
+    expect({
+      below: readRate(3, createOmenedEnemy(), LunarReactionType.LunarCharged),
+      electroCharged: readRate(4, createOmenedEnemy(), TransformativeReactionType.ElectroCharged),
+      lunarCharged: readRate(4, createOmenedEnemy(), LunarReactionType.LunarCharged),
+      lunarCrystallize: readRate(4, createOmenedEnemy(), LunarReactionType.LunarCrystallize),
+      plain: readRate(4, createSturdyEnemy(), LunarReactionType.LunarCharged),
+    }).toStrictEqual({ below: 0, electroCharged: 0, lunarCharged: 0.15, lunarCrystallize: 0.15, plain: 0 });
+  });
+
+  test("constellation 4 gives 15% CRIT DMG to a Hexerei member's Lunar-Charged reaction on an Omen while the team is Hexerei", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 4 };
+    const omened = createOmenedEnemy();
+    const context = createKitTestContext(mona, { party: createParty([MONA_CHARACTER_ID, HEXEREI_CHARACTER_ID]) });
+    const readDamage = (striker: Combatant) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        mona,
+        { combatant: striker, element: Element.Electro, enemy: omened, reactionType: LunarReactionType.LunarCharged },
+        context,
+      )?.criticalDamageBonus ?? 0;
+
+    expect({
+      hexereiReaction: readDamage(createOther(HEXEREI_CHARACTER_ID)),
+      otherReaction: readDamage(createOther()),
+    }).toStrictEqual({ hexereiReaction: 0.15, otherReaction: 0 });
+  });
+
   test("constellation 4 counts a bubble holding the enemy as an Omen, for Mona's own strikes too", () => {
     expect.hasAssertions();
     const mona = { ...createMonaCombatant(), constellationCount: 4 };
