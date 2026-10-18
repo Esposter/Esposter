@@ -300,4 +300,34 @@ describe(stepKit, () => {
     expect(landStrike(0)).toStrictEqual([]);
     expect(landStrike(0.08)).toStrictEqual([firstHit]);
   });
+
+  test("plays a normal attack faster by the Normal ATK SPD the kit's own hook adds to its infusion's", () => {
+    expect.hasAssertions();
+    const [firstHit] = TRAVELER_KIT.normalAttacks[0]?.hits ?? [];
+    const hitmarkSeconds = firstHit?.hitmarkSeconds ?? 0;
+    // The hits a strike has landed once the seconds given have passed, under the Normal ATK SPD the kit's hook gives
+    const landStrike = (normalAttackSpeedBonus: number): KitHit[] => {
+      const kit: Kit = { ...TRAVELER_KIT, getNormalAttackSpeedBonus: () => normalAttackSpeedBonus };
+      const kitState = createKitState();
+      const landedHits: KitHit[] = [];
+      const step = (isAttackPressed: boolean, stepSeconds: number): void => {
+        stepKit(
+          kitState,
+          kit,
+          { ...IDLE_INPUT, isAttackPressed },
+          createPartyMember(),
+          createStamina(STAMINA_MAX),
+          stepSeconds,
+          landedHits,
+          createKitTestContext(TRAVELER_COMBATANT),
+        );
+      };
+      step(true, 0);
+      step(false, hitmarkSeconds / 1.04);
+      return landedHits;
+    };
+
+    expect(landStrike(0)).toStrictEqual([]);
+    expect(landStrike(0.08)).toStrictEqual([firstHit]);
+  });
 });
