@@ -1,3 +1,4 @@
+import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { AttackArea } from "genshin-world";
@@ -9,19 +10,22 @@ import { readGcsimHoldHitmarks } from "#src/services/genshinAssets/kits/gcsim/re
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
 // Firing its first literal, at its damage delay, joined to its multiplier by its place and to its own hitbox, else to the
-// Ability's hitbox of its place where the ability's hitboxes are as many as its hits. A call firing another literal is a DoT's or a passive's, not one of its hits
+// Ability's hitbox of its place where the ability's hitboxes are as many as its hits. A call firing another literal is a DoT's or a passive's, not one of its hits, and a call firing an excluded
+// Literal is another action's, such as a charged attack's variant's
 export const addGcsimQueuedHits = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   gcsim: GcsimCharacter,
   {
     abilityName,
     attackTags,
+    excludedAttacks = [],
     framesName,
     path,
     targetingArea,
   }: {
     abilityName: string;
     attackTags: readonly string[];
+    excludedAttacks?: readonly GcsimAttack[];
     framesName: string;
     path: string;
     targetingArea: AttackArea;
@@ -34,9 +38,9 @@ export const addGcsimQueuedHits = (
     attacks.find(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag))?.file;
   // A call firing at a hold's hitmark is the hold's hit, which the hold reads, so it is none of this ability's
   const heldHitmarks = readGcsimHoldHitmarks(gcsim);
-  const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file)).filter(
-    ({ delay, file: hitFile }) => !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay),
-  );
+  const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file))
+    .filter(({ delay, file: hitFile }) => !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay))
+    .filter(({ attack }) => !excludedAttacks.includes(attack));
   const [firstHit] = fileHits;
   if (firstHit === undefined) return;
   const queuedHits = fileHits.filter(({ attack }) => attack === firstHit.attack);
