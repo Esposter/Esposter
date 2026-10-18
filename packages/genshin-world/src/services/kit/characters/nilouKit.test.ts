@@ -9,6 +9,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -40,9 +41,9 @@ const findStatuses = (kitEffectState: KitEffectState) => kitEffectState.effects.
 const findBuffs = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "buff");
 
 describe(createNilouKitBehaviour, () => {
-  // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
-  const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
-    (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1, [], []) ?? []).map(
+  // The conversion bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
+  const getConversionBonusPairs = (constellationCount: number): [Attribute, number][] =>
+    (NILOU_KIT.getConversionBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(
       ({ amount, attribute }) => [attribute, Math.round(amount * 1000) / 1000],
     );
 
@@ -199,7 +200,7 @@ describe(createNilouKitBehaviour, () => {
 
   test("constellation 6 gives CRIT Rate and CRIT DMG for each 1,000 Max HP, capped at 30% and 60%", () => {
     expect.hasAssertions();
-    expect({ constellation5: getPassiveBonusPairs(5), constellation6: getPassiveBonusPairs(6) }).toStrictEqual({
+    expect({ constellation5: getConversionBonusPairs(5), constellation6: getConversionBonusPairs(6) }).toStrictEqual({
       constellation5: [],
       constellation6: [
         [Attribute.CriticalRate, 0.06],
@@ -347,7 +348,17 @@ describe(createNilouKitBehaviour, () => {
     const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
       const combatant = createNilouCombatant(0, ascension, maxHealth);
       const bonus =
-        NILOU_KIT.getPartyDendroCoreDamageBonus?.(combatant, coreKind, createTeamContext(combatant, [])) ?? 0;
+        NILOU_KIT.getPartyReactionBonus?.(
+          combatant,
+          {
+            combatant,
+            coreKind,
+            element: Element.Dendro,
+            enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+            reactionType: ReactionType.Bloom,
+          },
+          createTeamContext(combatant, []),
+        )?.damageBonus ?? 0;
       return Math.round(bonus * 1000) / 1000;
     };
 

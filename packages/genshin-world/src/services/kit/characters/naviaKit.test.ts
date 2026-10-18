@@ -18,6 +18,8 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -115,6 +117,21 @@ describe(createNaviaKitBehaviour, () => {
   const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
   const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
   const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
+
+  // The team's Energy and burst cooldown after a press that spends the shrapnel the given cannon hits gain
+  const readAfterPress = (constellationCount: number, shrapnelStacks: number) => {
+    const combatant = createNaviaCombatant(constellationCount);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty([NAVIA_CHARACTER_ID]);
+    getPartyMember(party, NAVIA_CHARACTER_ID).burstCooldownSeconds = 10;
+    for (let strike = 0; strike < shrapnelStacks; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+    NAVIA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
+    const { burstCooldownSeconds, energy } = getPartyMember(party, NAVIA_CHARACTER_ID);
+    return { burstCooldownSeconds, energy };
+  };
 
   test("reads her strikes', charged attack's, plunges', and burst's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -266,6 +283,19 @@ describe(createNaviaKitBehaviour, () => {
         resistanceReduction: { Rock: 0.2 },
         secondsRemaining: 8,
       },
+    });
+  });
+
+  test("constellation 1 gives Navia 3 Energy and cuts her burst cooldown a second for each shrapnel a press spends, up to three", () => {
+    expect.hasAssertions();
+    expect({
+      constellation0: readAfterPress(0, 2),
+      constellation1Five: readAfterPress(1, 5),
+      constellation1Two: readAfterPress(1, 2),
+    }).toStrictEqual({
+      constellation0: { burstCooldownSeconds: 10, energy: 0 },
+      constellation1Five: { burstCooldownSeconds: 7, energy: 9 },
+      constellation1Two: { burstCooldownSeconds: 8, energy: 6 },
     });
   });
 });

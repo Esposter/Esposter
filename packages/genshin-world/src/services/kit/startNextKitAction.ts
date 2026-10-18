@@ -12,6 +12,7 @@ import {
   CHARGED_ATTACK_HOLD_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
 } from "#src/services/kit/constants";
+import { checkCanStartKitAction } from "#src/services/kit/checkCanStartKitAction";
 import { checkIsKitSkillChargeComplete } from "#src/services/kit/effects/checkIsKitSkillChargeComplete";
 import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getKitFieldCooldownMultiplier } from "#src/services/kit/effects/getKitFieldCooldownMultiplier";
@@ -28,8 +29,6 @@ import { takeOne } from "@esposter/shared";
 // Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each field the body
 // Casts it inside that lowers cooldowns. An action whose
 // Start gate fails starts nothing, and what it would have spent or advanced stays as it was
-const checkCanStart = (action: KitAction, context: KitContext) => action.canStart?.(context) !== false;
-
 export const startNextKitAction = (
   kitState: KitState,
   kit: Kit,
@@ -42,8 +41,7 @@ export const startNextKitAction = (
 ): KitAction | undefined => {
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
-  const canStartAttack = kit.checkCanStartAttack?.(context) !== false;
-  if (canStartAttack && isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
+  if (isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
     const chargedAttackStamina = kit.chargedAttackStamina * (kit.getChargedAttackStaminaMultiplier?.(context) ?? 1);
     const chargedAttackAction = kit.chargedAttackVariant?.checkIsActive(context)
       ? kit.chargedAttackVariant.action
@@ -51,7 +49,7 @@ export const startNextKitAction = (
     // A charged attack still needs some stamina in the pool when its cost is cut to none, as the wiki's note on Bloodstained
     // Chivalry says, so an empty pool starts none
     if (
-      checkCanStart(chargedAttackAction, context) &&
+      checkCanStartKitAction(chargedAttackAction, context) &&
       stamina.value > 0 &&
       stamina.checkCanSpend(chargedAttackStamina)
     ) {
@@ -63,7 +61,7 @@ export const startNextKitAction = (
         chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
           ? chargeSeconds
           : 0;
-      return startKitAction(kitState, chargedAttackAction, landedHits, startSeconds);
+      return startKitAction(kitState, chargedAttackAction, landedHits, context, startSeconds);
     }
   }
 
@@ -72,11 +70,11 @@ export const startNextKitAction = (
     const burstAction = kit.elementalBurstVariant?.checkIsActive(context)
       ? kit.elementalBurstVariant.action
       : kit.elementalBurst;
-    if (checkCanStart(burstAction, context)) {
+    if (checkCanStartKitAction(burstAction, context)) {
       partyMember.energy = 0;
       partyMember.burstCooldownSeconds =
         kit.burstCooldownSeconds * getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position);
-      return startKitAction(kitState, burstAction, landedHits);
+      return startKitAction(kitState, burstAction, landedHits, context);
     }
   }
 
@@ -91,16 +89,16 @@ export const startNextKitAction = (
   if (isSkillTriggered && isSkillOrBurstState && kit.elementalSkill.checkIsStateEndingPress?.(context)) {
     kitState.skillChainCount = 0;
     kitState.skillChainSeconds = 0;
-    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits);
+    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits, context);
   }
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
     if (isChaining) {
       const followUps = kit.elementalSkillChain?.followUps ?? [];
       const followUp = takeOne(followUps, kitState.skillChainCount - 1);
-      if (!checkCanStart(followUp, context)) return undefined;
+      if (!checkCanStartKitAction(followUp, context)) return undefined;
       kitState.skillChainCount = kitState.skillChainCount < followUps.length ? kitState.skillChainCount + 1 : 0;
       kitState.skillChainSeconds = 0;
-      return startKitAction(kitState, followUp, landedHits);
+      return startKitAction(kitState, followUp, landedHits, context);
     }
     // The hold a release's seconds reach, if the skill has holds, and the cooldown its level or the skill adds to the
     // Seconds until every charge is back
@@ -113,7 +111,7 @@ export const startNextKitAction = (
     );
     const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;
     const skillAction = holdAction ?? kit.elementalSkill;
-    if (checkCanStart(skillAction, context)) {
+    if (checkCanStartKitAction(skillAction, context)) {
       clearKitSkillCharge(kitEffectState, activeCombatant.characterId);
       const cooldownSeconds = hold?.cooldownSeconds ?? kit.skillCooldownSeconds;
       partyMember.skillCooldownSeconds +=
@@ -123,16 +121,16 @@ export const startNextKitAction = (
         getImpetuousWindsSkillCooldownMultiplier(context.activeCombatant.elementalResonances);
       kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
       kitState.skillChainSeconds = 0;
-      return startKitAction(kitState, skillAction, landedHits);
+      return startKitAction(kitState, skillAction, landedHits, context);
     }
   }
 
-  if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot && canStartAttack) {
+  if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot) {
     const { comboIndex } = kitState;
     const normalAttack = takeOne(kit.normalAttacks, comboIndex);
-    if (!checkCanStart(normalAttack, context)) return undefined;
+    if (!checkCanStartKitAction(normalAttack, context)) return undefined;
     kitState.comboIndex = (comboIndex + 1) % kit.normalAttacks.length;
-    return startKitAction(kitState, normalAttack, landedHits);
+    return startKitAction(kitState, normalAttack, landedHits, context);
   }
 
   return undefined;

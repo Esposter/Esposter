@@ -16,6 +16,10 @@ export const getPassiveKit = (
       (product, passive) => product * (passive.getChargedAttackStaminaMultiplier?.(context) ?? 1),
       1,
     ),
+  getConversionBonuses: (combatant, healthShare) =>
+    [kit, ...passiveModules].flatMap(
+      ({ getConversionBonuses }) => getConversionBonuses?.(combatant, healthShare) ?? [],
+    ),
   getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) =>
     [kit, ...passiveModules].flatMap(
       ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
@@ -47,10 +51,11 @@ export const getPassiveKit = (
       },
       { additiveBaseDamageBonus: 0, criticalDamageBonus: 0, criticalRateBonus: 0, damageBonus: 0, defenseIgnored: 0 },
     ),
-  getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
-    (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +
+  getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects, characterIdCombatantMap) =>
+    (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0) +
     passiveModules.reduce(
-      (sum, passive) => sum + (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0),
+      (sum, passive) =>
+        sum + (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0),
       0,
     ),
   getStrikeCriticalRateBonus: (strike, enemy, party, effects) =>

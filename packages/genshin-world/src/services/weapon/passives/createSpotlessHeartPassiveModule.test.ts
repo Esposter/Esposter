@@ -62,6 +62,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.defense);
     expect(
@@ -70,6 +71,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -88,6 +90,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.defense);
 
@@ -99,6 +102,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -118,6 +122,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
 
@@ -130,6 +135,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.defense);
   });

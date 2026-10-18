@@ -2,7 +2,6 @@ import type { Attribute } from "#src/models/character/Attribute";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -28,6 +27,8 @@ export interface Kit {
   chargedAttack: KitAction;
   chargedAttackStamina: number;
   chargedAttackVariant?: KitVariant;
+  // The action the body plays as it enters a dash, if the kit has one, which a stance may give in place of its own
+  dash?: KitAction;
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
@@ -42,11 +43,13 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
-  // Whether the character may start a normal attack, a charged attack or a plunge as it stands, which a state it holds
-  // Can restrict, as gcsim's ActionReady does for Mizuki's Dreamdrifter; a kit without the hook may start all of them
-  checkCanStartAttack?: (context: KitContext) => boolean;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
+  // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
+  // Passive, buff and Enduring Rock bonus leaves it, so its Max HP is the buffed one, and its HP as a share of its
+  // Max HP, which a conversion gated on low HP reads. No conversion reads another's output: the kit's and each weapon's
+  // Hook are handed the same character, before any conversion's output is on it
+  getConversionBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
   // Hit that landed and the normal attack's place in the kit's chain, from 0, so a hook can tell its last hit or its attack
   getNormalAttackExtraHit?: (context: KitContext, hit: KitHit, chainIndex: number) => KitHit | undefined;
@@ -63,9 +66,11 @@ export interface Kit {
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
-  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a reaction a member makes, given
-  // The member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the deployed
-  // Team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being itself
+  // The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and Elevation a deployed member's kit adds to a reaction a member
+  // Makes, given the member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the
+  // Deployed team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being
+  // Itself. The Elevation multiplies a Lunar or Stellar reaction's damage and a direct Lunar hit's last, the only damage the
+  // Game elevates
   getPartyReactionBonus?: (
     member: Combatant,
     reaction: KitReaction,
@@ -75,6 +80,7 @@ export interface Kit {
     criticalDamageBonus?: number;
     criticalRateBonus?: number;
     damageBonus?: number;
+    elevationBonus?: number;
   };
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
@@ -88,20 +94,18 @@ export interface Kit {
   // Reads for a bonus its kit's actions set going
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
-  // Stats, given the enemy as it stands, the deployed team and the effects on it
+  // Stats, given the enemy as it stands, the deployed team, the effects on it and the team's built combatants by id, which
+  // A share of the team's elements is read from
   getStrikeAdditiveBaseDamageBonus?: (
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => number;
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
-  // The share of a Dendro Core's burst that a deployed member's kit adds to its reaction damage, given the member whose
-  // Kit it is, the core's kind and the context it bursts in. A Bountiful Core's burst takes every deployed kit's share,
-  // and a Bloom's takes none of them
-  getPartyDendroCoreDamageBonus?: (member: Combatant, coreKind: DendroCoreKind, context: KitContext) => number;
   // The CRIT DMG a strike of the kit's own adds as it lands on an enemy, if a constellation raises it on the strike, given the
   // Enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalDamageBonus?: (
@@ -116,7 +120,7 @@ export interface Kit {
   // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
   // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team, the effects on
   // It and the team's built combatants by id, which a member's current attributes are read from. A member's own strikes
-  // Are priced by its own hooks, not this one. The defence it ignores joins the hit's
+  // Are priced by its own hooks, not this one. The defence it ignores joins the hit's defenseIgnored
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
@@ -132,6 +136,8 @@ export interface Kit {
     defenseIgnored?: number;
   };
   highPlunge: KitAction;
+  // The action the body plays as it enters a jump, if the kit has one, which a stance may give in place of its own
+  jump?: KitAction;
   // Whether a skill with holds releases at its top level whatever seconds it was held, as a counter window on its
   // Character does, given the context the release starts in
   jumpsSkillHoldToTop?: (context: KitContext) => boolean;

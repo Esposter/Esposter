@@ -1,5 +1,4 @@
 {
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 37 },
   "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
   "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },
   "hits.piercingFragmentsStrikeGem.length": { "cause": "Unclassified", "value": 2 },
@@ -134,7 +133,6 @@
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
   "normalAttacks.length": { "cause": "Unclassified", "value": 2 },
   "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 66 },
   "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

@@ -16,8 +16,8 @@ Zibai's kit is its record and one behaviour module, `createZibaiKitBehaviour`, a
 ## Not built
 
 - **Her shift's entry, Phase Shift Radiance and Spirit Steed's Stride are built.** Heaven and Earth Made Manifest enters the Lunar Phase Shift for her record's seconds, which the wiki gives as at most 15. The shift gains 10 Radiance a second, 5 for a normal attack once every half second, and 35 for each nearby Lunar-Crystallize while Ascendant Gleam holds, once every four seconds. Spirit Steed's Stride spends 70 of it, resets that Moonsign cooldown, and the fourth Stride ends the shift. A Stride with less than 70 Radiance does not start, its action's start gate refusing it. Not built: a normal attack's Radiance is read at its first hit's hitmark, not at a hit on an enemy, since no event tells the two apart.
-- **The fourth normal attack's Moonsign gate is not built.** Her stance hit is gated in behaviour, and the wiki text for that gate is not yet read into the record.
-- **The second instance of Spirit Steed's Stride as Lunar-Crystallize is not on her record.** A Lunar reaction is the `lunarReactionType` field of a hit's record, which her overlay does not set, so that hit is Geo until it does. The type would be `LunarCrystallize`, Unsourced, from the wiki's Lunar Phase Shift text, which says the second instance is Lunar-Crystallize Reaction DMG; the hit's scaling stat is not read yet.
+- **The fourth normal attack's extra instance is built, gated by Ascendant Gleam.** The stance's fourth strike keeps its second hit, the Additional DMG the record and the label map already carry, and that hit lands only while the team is at Ascendant Gleam, through its landing condition, which reads the same Moonsign check as her Radiance. The wiki's Lunar Phase Shift text describes that hit as the extra Geo instance.
+- **The second instance of Spirit Steed's Stride is Lunar-Crystallize.** Its hit's `lunarReactionType` is `LunarCrystallize`, Unsourced, from the wiki's Lunar Phase Shift text, which says the second instance is Lunar-Crystallize Reaction DMG. The hit keeps its Geo element, and its scaling stat is not read yet.
 
 ## Key files
 

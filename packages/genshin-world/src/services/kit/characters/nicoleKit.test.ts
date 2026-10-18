@@ -662,7 +662,13 @@ describe(createNicoleKitBehaviour, () => {
     };
 
     expect(
-      NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects),
+      NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(
+        strike,
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+        context.characterIdCombatantMap,
+      ),
     ).toBe(700);
   });
 

@@ -25,7 +25,8 @@ const STALWART_AND_TRUE_TICK_COUNT = 5;
 // Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves, with
 // its DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and
 // Incineration Drive. Her Ascension 1 passive waits on the Sanctum
-// Constellation 1 needs her Max HP raised by 20%, which the attributes do not read back, and Molten Inferno's DMG on it
+// A Max HP buff of 20% reaches her damage reads, so Constellation 1 needs Molten Inferno's DMG, whose DoT waits on the
+// Sanctum Molten Inferno leaves
 // Constellation 2 needs the Fiery Sanctum field that Molten Inferno: Ranging Flame recreates, not built by the burst
 // Constellation 4 needs the Flame-Mane's Fist and Incineration Drive hits during Leonine Bite, not built
 // Constellation 6 needs Leonine Bite's CRIT Rate and the Flame-Mane's Fist follow-up, not built

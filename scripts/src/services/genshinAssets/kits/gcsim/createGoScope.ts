@@ -281,6 +281,15 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   };
 
   return {
+    // The numbers an argument of a call takes at the call's position: each of the two a clamp of the action's hold bounds
+    // A local to, else the one number it evaluates to, and none where it evaluates to none
+    readArgumentValues: (callPosition: number, argumentStart: number): number[] | undefined => {
+      const argument = parseGoExpression(tokens, argumentStart).expression;
+      const clampValues = readClampedArgument(argument, callPosition);
+      if (clampValues !== undefined) return clampValues;
+      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, 0));
+      return value === undefined ? undefined : [value];
+    },
     // Every combination of the numbers a position's function's parameters take at their call sites, a parameter no
     // Single number reaches left out of each
     readParameterIterations: (position: number): Map<string, number>[] => {
