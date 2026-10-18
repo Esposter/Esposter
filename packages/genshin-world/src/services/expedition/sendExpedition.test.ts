@@ -38,7 +38,7 @@ describe(sendExpedition, () => {
     ]);
   });
 
-  test("should refuse the Traveler, a character down and one already away", () => {
+  test("a send the rules refuse is refused", () => {
     expect.hasAssertions();
 
     const away: Expedition[] = [{ characterId: CHARACTER_ID, hours: HOURS, leftAt: context.now, placeId: PLACE_ID }];
