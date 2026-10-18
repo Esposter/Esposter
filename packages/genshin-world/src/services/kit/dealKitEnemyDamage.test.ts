@@ -3,6 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -72,6 +73,14 @@ describe(dealKitEnemyDamage, () => {
     expect.hasAssertions();
     const { bursts, context, striker } = createNatlanTeam();
     dealKitEnemyDamage(createSturdyEnemy(), { damage: 0, poiseDamage: 0 }, true, striker, context);
+    expect(bursts).toHaveLength(0);
+  });
+
+  test("elemental damage on an enemy already Dead, which takes no health, sets off no Nightsoul burst", () => {
+    expect.hasAssertions();
+    const { bursts, context, striker } = createNatlanTeam();
+    const enemy = { ...createSturdyEnemy(), health: 0, state: EnemyState.Dead };
+    dealKitEnemyDamage(enemy, { damage: 100, poiseDamage: 0 }, true, striker, context);
     expect(bursts).toHaveLength(0);
   });
 
