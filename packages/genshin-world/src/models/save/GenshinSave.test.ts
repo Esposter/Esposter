@@ -70,6 +70,20 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      archive: {
+        kills: Object.fromEntries(
+          Array.from({ length: MAX_ARCHIVE_KILL_COUNT }, (_value, index) => [
+            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+            maxNumber,
+          ]),
+        ),
+        progress: Object.fromEntries(
+          Object.values(ArchiveSection).map((section) => [
+            section,
+            Array.from({ length: MAX_ARCHIVE_ENTRY_COUNT }, (_value, index) => maxNumber - index),
+          ]),
+        ),
+      },
       characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
           experience: maxNumber,
@@ -116,20 +130,6 @@ describe("genshinSaveSchema", () => {
           Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
-      },
-      archive: {
-        kills: Object.fromEntries(
-          Array.from({ length: MAX_ARCHIVE_KILL_COUNT }, (_value, index) => [
-            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-            maxNumber,
-          ]),
-        ),
-        progress: Object.fromEntries(
-          Object.values(ArchiveSection).map((section) => [
-            section,
-            Array.from({ length: MAX_ARCHIVE_ENTRY_COUNT }, (_value, index) => maxNumber - index),
-          ]),
-        ),
       },
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({

@@ -10,7 +10,6 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
-import { BannerKind } from "genshin-interface/save";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 

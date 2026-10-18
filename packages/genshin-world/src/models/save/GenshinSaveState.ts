@@ -21,8 +21,8 @@ import type { BannerKind } from "genshin-interface/save";
 // Its id, the day's Commissions with the moment they were dealt, each kind of wish's Counters, the wish history, the
 // Bench's learned recipes and each recipe's Crafted count by its id, the Archive's opened entries by section and its
 // Defeat counts by entry id, the Frostbearing Tree's offering Progress, each Region's Statues of The Seven progress by
-// The Region's id, the ids of the Oculi found, the ids of the Seelies settled And the puzzles solved, the World Level
-// Adjustment, the name chosen for The Traveler and the party. The save's slices Convert to and from these
+// The Region's id, the ids of the Oculi found, the ids of the Seelies settled and the puzzles solved, the World Level
+// Adjustment, the name chosen for The Traveler and the party. The save's slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
