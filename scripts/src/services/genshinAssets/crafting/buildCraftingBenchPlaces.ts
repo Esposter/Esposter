@@ -7,7 +7,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/findCraftingBenchMember";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
-import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
+import { toFittedMapPoints } from "#src/services/genshinAssets/residents/toFittedMapPoints";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
@@ -36,15 +36,11 @@ export const toCraftingBenchPlaces = (
 };
 
 export const buildCraftingBenchPlaces = async (): Promise<GameDataBuild> => {
-  const [origin, { points, regions, transform }, sceneGroups] = await Promise.all([
+  const [origin, fittedMapPoints, sceneGroups] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFittedMapPoints(),
     readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY),
   ]);
-  // A region the fit matched no statue or waypoint in is left out, since a place classified into it cannot be trusted
-  const fittedRegions = regions.filter(({ residual }) => residual !== undefined);
-  const regionMapPoints = toRegionMapPoints(points, transform).filter(({ region }) =>
-    fittedRegions.some((fitted) => fitted.region === region),
-  );
+  const { regionMapPoints } = toFittedMapPoints(fittedMapPoints);
   return toCraftingBenchPlaces(sceneGroups, origin, regionMapPoints);
 };

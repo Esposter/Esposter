@@ -3,7 +3,7 @@ import type { RegionMapPoint } from "#src/services/genshinAssets/residents/class
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
-import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
+import { toFittedMapPoints } from "#src/services/genshinAssets/residents/toFittedMapPoints";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -18,20 +18,17 @@ export const readFittedRegions = async (): Promise<{
   regionFiles: { data: RegionDataFile; file: string; region: string }[];
   regionMapPoints: RegionMapPoint[];
 }> => {
-  const [origin, { points, regions, transform }] = await Promise.all([
+  const [origin, fittedMapPoints] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFittedMapPoints(),
   ]);
-  const fittedRegions = regions.filter(({ residual }) => residual !== undefined);
+  const { fittedRegions, regionMapPoints } = toFittedMapPoints(fittedMapPoints);
   const regionFiles = await Promise.all(
     fittedRegions.map(async ({ region }) => {
       const file = join("regions", `${region}.json`);
       const data = parseMachineJson<RegionDataFile>(await readFile(join(WORLD_DATA_DIRECTORY, file), "utf8"));
       return { data, file, region };
     }),
-  );
-  const regionMapPoints = toRegionMapPoints(points, transform).filter(({ region }) =>
-    fittedRegions.some((fitted) => fitted.region === region),
   );
   return { origin, regionFiles, regionMapPoints };
 };
