@@ -38,3 +38,5 @@ export const DOMAIN_DAY_PAIRS: number[][] = [
 ];
 // Every day of the week, which a Domain of Blessing is open on
 export const ALL_DAYS_OF_WEEK: number[] = [1, 2, 3, 4, 5, 6, 7];
+// The Sunday every stage of a Domain of Forgery or Mastery is open on, in the same numbering
+export const SUNDAY_DAYS_OF_WEEK: number[] = [7];

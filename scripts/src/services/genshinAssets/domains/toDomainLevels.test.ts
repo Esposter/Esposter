@@ -101,7 +101,7 @@ describe(toDomainLevels, () => {
               resinCost: 20,
               scheduledDaysOfWeek: [1, 4],
               treeArtifacts: [],
-              treeRewards: [{ itemId: 101, maxCount: 4, minCount: 3 }],
+              treeRewards: [{ averageCount: 3.2, itemId: 101, maxCount: 4, minCount: 3 }],
             },
           ],
         },
@@ -244,7 +244,7 @@ describe(toDomainLevels, () => {
     );
   });
 
-  test("a level naming several days' materials is open on Sunday only and pays no book", () => {
+  test("a level naming several days' materials is open on Sunday and pays its first weekday counterpart's book", () => {
     expect.hasAssertions();
 
     expect(
@@ -258,9 +258,9 @@ describe(toDomainLevels, () => {
             enemyLevel: 37,
             recommendedRank: 25,
             resinCost: 20,
-            scheduledDaysOfWeek: [],
+            scheduledDaysOfWeek: [7],
             treeArtifacts: [],
-            treeRewards: [],
+            treeRewards: [{ averageCount: 3.2, itemId: 101, maxCount: 4, minCount: 3 }],
           },
         ],
       },

@@ -12,6 +12,7 @@ import {
   DUNGEON_TABLE_NAME,
   DungeonEntryTypeDomainKindMap,
   REWARD_PREVIEW_TABLE_NAME,
+  SUNDAY_DAYS_OF_WEEK,
 } from "#src/services/genshinAssets/domains/constants";
 import {
   BLESSING_TREE_ARTIFACT_ROWS,
@@ -56,8 +57,8 @@ const toWholeRewards = (preview: ExcelRewardPreviewRow): RewardItem[] =>
   });
 
 // A Domain of Forgery's or Mastery's level pays its pair's books, each drawn between the least and most its rarity has in
-// The Adventure Rank's row. A rarity the row has no count for is not paid, and a book whose rarity the materials do not
-// Name is refused rather than paid at no rarity
+// The Adventure Rank's row and to that row's average. A rarity the row has no count for is not paid, and a book whose rarity
+// The materials do not name is refused rather than paid at no rarity
 const toBookRewards = (
   kind: DomainKind.Forgery | DomainKind.Mastery,
   books: number[],
@@ -70,7 +71,9 @@ const toBookRewards = (
     if (rarity === undefined)
       throw new InvalidOperationError(Operation.Read, MATERIAL_TABLE_NAME, `has no material ${itemId}`);
     const range = counts[rarity];
-    return range === undefined ? [] : [{ itemId, maxCount: range.maxCount, minCount: range.minCount }];
+    return range === undefined
+      ? []
+      : [{ averageCount: range.avg, itemId, maxCount: range.maxCount, minCount: range.minCount }];
   });
 };
 
@@ -150,12 +153,18 @@ export const toDomainLevels = (
     if (matches.some((other) => other.entry.id !== match.entry.id))
       throw new InvalidOperationError(Operation.Read, DUNGEON_TABLE_NAME, `names level ${dungeon.id} in two domains`);
     // A level naming one pair's material is open on that pair's days and pays that pair's books. One naming several pairs'
-    // Materials is open on Sunday only and pays none, since the dump does not say which of them its claim gives
+    // Materials is a Sunday, which every stage is open on, and pays its weekday counterpart's books: the same tier's level on
+    // The first of its pairs' days, since the counterparts' books differ only by pair (PROVISIONAL: the dump does not say which
+    // Of them a Sunday claim gives)
     const isOnePair = matches.every((other) => other.pair === match.pair);
-    const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : [];
-    const bookRewards = isOnePair
-      ? toBookRewards(match.kind, match.entry.descriptionCycleRewardList[match.pair], rarities, dungeon.limitLevel)
-      : [];
+    const counterpartPair = Math.min(...matches.map(({ pair }) => pair));
+    const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : SUNDAY_DAYS_OF_WEEK;
+    const bookRewards = toBookRewards(
+      match.kind,
+      match.entry.descriptionCycleRewardList[counterpartPair],
+      rarities,
+      dungeon.limitLevel,
+    );
     addLevel(match.entry.id, match.kind, toDomainLevel(dungeon, scheduledDaysOfWeek, previewMap, bookRewards, []));
   }
 
