@@ -28,6 +28,7 @@ import InteractionPromptList from "#src/components/Interaction/PromptList/Index.
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
+import MenuTime from "#src/components/Menu/Time/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -875,6 +876,20 @@ defineExpose({ jumpTo, readCameraPosition });
           :stat-tables
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
+        />
+      </template>
+      <!-- The Time screen dials the hour and confirming sets the world's clock to it, from which the world runs on -->
+      <template v-if="windrise" #[ScreenKind.Time]>
+        <MenuTime
+          :clock-minutes="windrise.gameClock.minutes"
+          :game-text
+          @close="screenKind = ScreenKind.World"
+          @confirm="
+            (minutes) => {
+              windrise.gameClock.minutes = minutes;
+              screenKind = ScreenKind.World;
+            }
+          "
         />
       </template>
     </MenuScreen>

@@ -415,8 +415,8 @@ if (isTuning)
   });
 
 // The regions' data and grounds, and the spot each resident is shown at, which the world screen reads the residents
-// And the world's ground from
-defineExpose({ regionDataMap, regionGroundMap, residentSpots });
+// And the world's ground from, and the clock the Time screen sets the hour of
+defineExpose({ gameClock, regionDataMap, regionGroundMap, residentSpots });
 onUnmounted(() => {
   rampTexture.dispose();
   pavingGeometry.dispose();
