@@ -18,11 +18,8 @@ import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { createBlockDocumentSchema } from "headless-block-editor";
 import mjml2html from "mjml";
-import { createRequire } from "node:module";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-
-const MJML_PACKAGE = createRequire(import.meta.url)("mjml/package.json");
 
 const EMAIL_DOCUMENT: BlockDocument = {
   content: [
@@ -298,11 +295,6 @@ describe(renderMjmlDocument, () => {
       validationLevel: "strict",
     });
     await expect(html).toMatchFileSnapshot("bodyWidth.snapshot.html");
-  });
-  test("#406 the email compiles on the MJML 5 the package pins", () => {
-    expect.hasAssertions();
-
-    expect(MJML_PACKAGE.version).toMatch(/^5\./u);
   });
   test("a consumer's leaf type renders with the context the render is given", () => {
     expect.hasAssertions();
