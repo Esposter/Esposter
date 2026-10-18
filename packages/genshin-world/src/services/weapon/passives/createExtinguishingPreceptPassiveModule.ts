@@ -14,7 +14,7 @@ const CONSUMMATION_ID = "consummation";
 // Extinguishing Precept at its rank: its All Elemental DMG Bonus is a passive bonus on each element. After the wielder uses an
 // Elemental Skill, it obtains Consummation for the rank's seconds, and its ATK rises by the rank's amount for each second that
 // Has passed since, up to the rank's stacks, doubled while the wielder is off the field. The stacks are read from the seconds
-// The status has left, so they need no clock of their own
+// The status has left, so they need no clock of their own. The rank's second value is not read
 export const createExtinguishingPreceptPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const attackBonusPerSecond = takeOne(params, 2);
