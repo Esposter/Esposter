@@ -22,6 +22,8 @@ export interface KitState {
   locomotionState: LocomotionState;
   nextHitIndex: number;
   plungeStartHeight: number;
+  // The dash or jump entered during an action, which starts once that action ends
+  queuedMovementAction?: KitAction;
   // The presses of a skill chain played so far, zero once none is open, and the seconds since the last of them
   skillChainCount: number;
   skillChainSeconds: number;

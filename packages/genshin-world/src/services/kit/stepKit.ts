@@ -58,6 +58,7 @@ export const stepKit = (
   const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
   const previousLocomotionState = kitState.locomotionState;
+  const enteredMovementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
   // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it twice
@@ -85,6 +86,7 @@ export const stepKit = (
     if (!wasPlunging) {
       endKitAction(kitState, kit, false);
       kitState.isAttackQueued = false;
+      kitState.queuedMovementAction = undefined;
       kitState.plungeStartHeight = height;
     }
     kitState.actionSeconds += stepSeconds;
@@ -153,6 +155,8 @@ export const stepKit = (
         }
       if (kitState.actionSeconds < kitState.actionLengthSeconds) {
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
+        // Cancel frames are not built, so a dash or jump entered during the action waits for the action's end
+        if (enteredMovementAction) kitState.queuedMovementAction = enteredMovementAction;
         return undefined;
       }
       queueKitHits(action, kitState, context);
@@ -163,7 +167,8 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
-  const movementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
+  const movementAction = enteredMovementAction ?? kitState.queuedMovementAction;
+  kitState.queuedMovementAction = undefined;
   if (movementAction && movementAction.canStart?.(context) !== false)
     return startKitAction(kitState, movementAction, landedHits, context);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);

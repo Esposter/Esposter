@@ -790,4 +790,51 @@ describe(stepKit, () => {
       step({ locomotionState: LocomotionState.Jump }),
     ]).toStrictEqual([undefined, undefined]);
   });
+
+  // A kit whose skill runs for two steps, so a jump entered on its first step is the one its end starts
+  const createSkillJumpFixture = (jump: KitAction) =>
+    createFixture({ ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, seconds: 0.2 }, jump });
+
+  test("holds a jump entered during a skill that has not run its length, starting none at once", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBeUndefined();
+  });
+
+  test("starts a jump entered during a skill on the step the skill's length elapses", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBe(jump);
+  });
+
+  test("clears a queued jump its start gate refuses as the skill ends, starting none after", () => {
+    expect.hasAssertions();
+
+    let isStartAllowed = false;
+    const jump: KitAction = {
+      canStart: () => isStartAllowed,
+      hits: [],
+      seconds: 0.5,
+      targetingArea: STRIKE_TARGETING_AREA,
+    };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+    const refused = step({ locomotionState: LocomotionState.Jump });
+    isStartAllowed = true;
+
+    expect([refused, step({ locomotionState: LocomotionState.Jump })]).toStrictEqual([undefined, undefined]);
+  });
 });
