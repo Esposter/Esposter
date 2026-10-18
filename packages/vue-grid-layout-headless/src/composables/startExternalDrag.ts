@@ -10,12 +10,25 @@ export const startExternalDrag = (event: PointerEvent, item: Pick<GridItem, "h" 
   const element = event.currentTarget;
   const { pointerId } = event;
   element.setPointerCapture(pointerId);
-  const handlePointerUp = (releaseEvent: PointerEvent) => {
-    if (releaseEvent.pointerId !== pointerId) return;
+  // A cancelled press never releases, so the listeners end on either pointer event rather than on the release alone
+  const controller = new AbortController();
+  const { signal } = controller;
+  element.addEventListener(
+    "pointerup",
+    (releaseEvent) => {
+      if (releaseEvent.pointerId !== pointerId) return;
 
-    element.removeEventListener("pointerup", handlePointerUp);
-    const point = { x: releaseEvent.clientX, y: releaseEvent.clientY };
-    findGridAt(point)?.accept(item, point);
-  };
-  element.addEventListener("pointerup", handlePointerUp);
+      controller.abort();
+      const point = { x: releaseEvent.clientX, y: releaseEvent.clientY };
+      findGridAt(point)?.accept(item, point);
+    },
+    { signal },
+  );
+  element.addEventListener(
+    "pointercancel",
+    (cancelEvent) => {
+      if (cancelEvent.pointerId === pointerId) controller.abort();
+    },
+    { signal },
+  );
 };

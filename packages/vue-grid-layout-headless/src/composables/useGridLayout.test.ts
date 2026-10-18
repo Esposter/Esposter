@@ -1,13 +1,12 @@
 // @vitest-environment happy-dom
+import type { GridCommit } from "#src/models/GridCommit";
 import type { GridItem } from "#src/models/GridItem";
+import type { GridLayout } from "#src/models/GridLayout";
 
 import { startExternalDrag } from "#src/composables/startExternalDrag";
 import { useGridLayout } from "#src/composables/useGridLayout";
 import { CollisionMode } from "#src/models/CollisionMode";
 import { CompactType } from "#src/models/CompactType";
-import type { GridCommit } from "#src/models/GridCommit";
-import type { GridLayout } from "#src/models/GridLayout";
-
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -401,6 +400,27 @@ describe(useGridLayout, () => {
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding, pointerId };
     palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
     palette.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, ...point }));
+    palette.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, ...point }));
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [{ changes: [{ h: 2, id: "palette", w: 2, x: 2, y: 0 }], removed: [] }],
+    ]);
+  });
+
+  test("a cancelled palette press drops nothing on a later release", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid([]);
+    await flushPromises();
+    const palette = document.createElement("div");
+    document.body.append(palette);
+    onTestFinished(() => palette.remove());
+    palette.addEventListener("pointerdown", (event) => startExternalDrag(event, { h: 2, id: "palette", w: 2 }));
+    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding, pointerId };
+    palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
+    palette.dispatchEvent(new PointerEvent("pointercancel", { bubbles: true, ...point }));
+    palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
     palette.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, ...point }));
 
     expect(onCommit.mock.calls).toStrictEqual([
