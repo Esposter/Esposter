@@ -73,4 +73,27 @@ describe("mailScreen", () => {
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaimAll] }))
       .toBeDisabled();
   });
+
+  // Delete Read is pressed once a read mail has nothing left to claim, and says so to the screen's owner
+  test("should delete read mail when delete read is pressed", async () => {
+    expect.hasAssertions();
+
+    const onDeleteRead = vi.fn<() => void>();
+    render(MailScreen, { ...props, mails: [{ ...mail(true), isRead: true }], onDeleteRead });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
+
+    expect(onDeleteRead).toHaveBeenCalledTimes(1);
+  });
+
+  // Delete Read is disabled while every held mail is unread or still holds an unclaimed attachment
+  test("should disable delete read while no read mail can go", async () => {
+    expect.hasAssertions();
+
+    render(MailScreen, { ...props, mails: [mail(false)] });
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }))
+      .toBeDisabled();
+  });
 });

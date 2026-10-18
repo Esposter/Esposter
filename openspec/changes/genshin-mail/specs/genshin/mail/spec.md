@@ -53,3 +53,25 @@ The mails a player holds, with their claim and read state, SHALL be saved with t
 - **GIVEN** the player holds a mail whose row is no longer in the mail table
 - **WHEN** the mailbox loads
 - **THEN** the other mails load, the mail is left off the Mail screen, and the save keeps it
+
+### Requirement: Delete Read removes the read mail with nothing left to claim
+
+The Mail screen SHALL offer Delete Read, which removes every read mail whose attachments are claimed or absent, and keeps every unread mail, every read mail still holding an unclaimed attachment, and every pinned mail.
+
+#### Scenario: Delete Read removes a read mail whose attachment is claimed
+
+- **GIVEN** the player holds a read mail whose attachment is claimed
+- **WHEN** the player presses Delete Read
+- **THEN** the mail is removed from the mailbox
+
+#### Scenario: Delete Read keeps a read mail with an unclaimed attachment
+
+- **GIVEN** the player holds a read mail with an attachment not yet claimed
+- **WHEN** the player presses Delete Read
+- **THEN** the mail is kept
+
+#### Scenario: Delete Read keeps a pinned mail
+
+- **GIVEN** the player holds a read pinned mail
+- **WHEN** the player presses Delete Read
+- **THEN** the mail is kept

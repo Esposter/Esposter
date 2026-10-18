@@ -10,8 +10,9 @@ import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
+import { deleteReadMails } from "#src/services/mail/deleteReadMails";
+import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MailExpiryGameTextKeyMap } from "#src/services/mail/MailExpiryGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { GameButton, GameButtonKind } from "genshin-interface";
@@ -43,7 +44,13 @@ interface MailEntry {
 
 const { birthdayMailIds, gameText, isBagFull, mailRows, mails, materialDataMap, names, now, textMap } =
   defineProps<Props>();
-const emit = defineEmits<{ claim: [mailId: number]; claimAll: []; close: []; read: [mailId: number] }>();
+const emit = defineEmits<{
+  claim: [mailId: number];
+  claimAll: [];
+  close: [];
+  deleteRead: [];
+  read: [mailId: number];
+}>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
   sortMails(mails, mailRows).flatMap((mail) => {
@@ -58,6 +65,7 @@ const selectedEntry = computed(
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
 );
+const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows).length < mails.length);
 const selectMail = (mailId: number) => {
   selectedMailId.value = mailId;
   emit("read", mailId);
@@ -80,12 +88,20 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 <template>
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
-       every mail's items the bag can take. Not yet built: the Delete Read and the Gift Mail Box's own list, the mail's
-       Date line, and the look the English client draws -->
+       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. Not yet
+       built: the Gift Mail Box's own list, the mail's Date line, and the look the English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
     <template #tabs>
       <GameButton class="claim-all" :disabled="!hasClaimable" :kind="GameButtonKind.Pill" @click="emit('claimAll')">
         {{ gameText[GameTextKey.MailClaimAll] }}
+      </GameButton>
+      <GameButton
+        class="delete-read"
+        :disabled="!hasDeletableMail"
+        :kind="GameButtonKind.Pill"
+        @click="emit('deleteRead')"
+      >
+        {{ gameText[GameTextKey.MailDeleteRead] }}
       </GameButton>
     </template>
     <template #list>
