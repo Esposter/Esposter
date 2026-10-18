@@ -16,9 +16,259 @@ export interface DomainChallengeLevel {
 // With `//` between waves and `;` between groups. A tier with no wiki table has no entry here, so its level is Closed.
 // The domain's scene export gives the real waves, time limits and member spawns, which replace these
 export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<number, DomainChallengeLevel>>>> = {
-  // Domain of Guyun, a Blessing domain from the wiki's Domain Enemies table
-  // Its protect levels give no time limit on the wiki, so the 360 seconds of its first levels are PROVISIONAL
+  // Midsummer Courtyard, a Blessing domain from the wiki's Domain Enemies table
   1: {
+    20: {
+      defeatTarget: 26,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 5, name: "Cryo Slime" },
+          { count: 1, name: "Large Cryo Slime" },
+          { count: 2, name: "Hydro Slime" },
+          { count: 2, name: "Large Hydro Slime" },
+          { count: 15, name: "Wooden Shield Hilichurl Guard" },
+          { count: 1, name: "Cryo Abyss Mage" },
+        ],
+      ],
+    },
+    25: {
+      defeatTarget: 12,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 7, name: "Electro Slime" },
+          { count: 1, name: "Large Electro Slime" },
+          { count: 1, name: "Large Electro Slime" },
+          { count: 2, name: "Mutant Electro Slime" },
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+    30: {
+      defeatTarget: 14,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 9, name: "Cryo Slime" },
+          { count: 4, name: "Large Cryo Slime" },
+          { count: 1, name: "Cryo Abyss Mage" },
+        ],
+      ],
+    },
+    35: {
+      defeatTarget: 15,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 8, name: "Hydro Slime" },
+          { count: 4, name: "Large Hydro Slime" },
+          { count: 1, name: "Large Hydro Slime" },
+          { count: 1, name: "Hydro Abyss Mage" },
+          { count: 1, name: "Hydro Samachurl" },
+        ],
+      ],
+    },
+    40: {
+      defeatTarget: 5,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 2, name: "Large Cryo Slime" },
+          { count: 1, name: "Large Cryo Slime" },
+          { count: 1, name: "Cryo Abyss Mage" },
+          { count: 1, name: "Cryo Abyss Mage" },
+        ],
+      ],
+    },
+    45: {
+      defeatTarget: 7,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 2, name: "Large Electro Slime" },
+          { count: 1, name: "Large Electro Slime" },
+          { count: 2, name: "Mutant Electro Slime" },
+        ],
+        [
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+  },
+  // Cecilia Garden, a Forgery domain from the wiki's Domain Enemies table
+  // Its levels with no total time limit on the wiki, the protect and between-kill ones, take 360 seconds, PROVISIONAL
+  2: {
+    15: {
+      defeatTarget: 20,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 19, name: "Hydro Slime" },
+          { count: 1, name: "Large Hydro Slime" },
+        ],
+      ],
+    },
+    21: {
+      defeatTarget: 23,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 12, name: "Hydro Slime" },
+          { count: 3, name: "Large Hydro Slime" },
+          { count: 8, name: "Hilichurl Fighter" },
+        ],
+      ],
+    },
+    30: {
+      defeatTarget: 22,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 13, name: "Hydro Slime" },
+          { count: 6, name: "Large Hydro Slime" },
+          { count: 3, name: "Hydro Samachurl" },
+        ],
+      ],
+    },
+    40: {
+      defeatTarget: 10,
+      timeLimitSeconds: 360,
+      waves: [[{ count: 8, name: "Large Hydro Slime" }], [{ count: 2, name: "Fatui Pyro Agent" }]],
+    },
+  },
+  // Hidden Palace of Lianshan Formula, a Forgery domain from the wiki's Domain Enemies table
+  3: {
+    15: {
+      defeatTarget: 20,
+      timeLimitSeconds: 360,
+      waves: [
+        [{ count: 15, name: "Electro Slime" }],
+        [
+          { count: 3, name: "Electro Slime" },
+          { count: 1, name: "Large Electro Slime" },
+          { count: 1, name: "Mutant Electro Slime" },
+        ],
+      ],
+    },
+    21: {
+      defeatTarget: 16,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 7, name: "Electro Slime" },
+          { count: 3, name: "Large Electro Slime" },
+          { count: 3, name: "Mutant Electro Slime" },
+        ],
+        [
+          { count: 2, name: "Large Electro Slime" },
+          { count: 1, name: "Mutant Electro Slime" },
+        ],
+      ],
+    },
+    30: {
+      defeatTarget: 10,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 6, name: "Large Electro Slime" },
+          { count: 3, name: "Mutant Electro Slime" },
+        ],
+        [{ count: 1, name: "Fatui Electro Cicin Mage" }],
+      ],
+    },
+    40: {
+      defeatTarget: 8,
+      timeLimitSeconds: 480,
+      waves: [
+        [
+          { count: 4, name: "Large Electro Slime" },
+          { count: 2, name: "Mutant Electro Slime" },
+          { count: 2, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+  },
+  // Valley of Remembrance, a Blessing domain from the wiki's Domain Enemies table
+  6: {
+    25: {
+      defeatTarget: 23,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 10, name: "Treasure Hoarders: Cryo Potioneer" },
+          { count: 5, name: "Treasure Hoarders: Handyman" },
+          { count: 5, name: "Treasure Hoarders: Pugilist" },
+          { count: 2, name: "Treasure Hoarders: Gravedigger" },
+          { count: 1, name: "Treasure Hoarders: Seaman" },
+        ],
+      ],
+    },
+    30: {
+      defeatTarget: 16,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 4, name: "Treasure Hoarders: Scout" },
+          { count: 3, name: "Treasure Hoarders: Pyro Potioneer" },
+          { count: 5, name: "Treasure Hoarders: Hydro Potioneer" },
+          { count: 1, name: "Treasure Hoarders: Handyman" },
+          { count: 1, name: "Treasure Hoarders: Crusher" },
+          { count: 1, name: "Treasure Hoarders: Pugilist" },
+          { count: 1, name: "Fatui Pyro Agent" },
+        ],
+      ],
+    },
+    35: {
+      defeatTarget: 20,
+      timeLimitSeconds: 60,
+      waves: [
+        [
+          { count: 2, name: "Treasure Hoarders: Scout" },
+          { count: 4, name: "Treasure Hoarders: Pyro Potioneer" },
+          { count: 4, name: "Treasure Hoarders: Electro Potioneer" },
+          { count: 4, name: "Treasure Hoarders: Handyman" },
+          { count: 1, name: "Treasure Hoarders: Crusher" },
+          { count: 2, name: "Treasure Hoarders: Pugilist" },
+          { count: 1, name: "Treasure Hoarders: Gravedigger" },
+          { count: 1, name: "Fatui Pyro Agent" },
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+    40: {
+      defeatTarget: 7,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 1, name: "Treasure Hoarders: Pyro Potioneer" },
+          { count: 1, name: "Treasure Hoarders: Hydro Potioneer" },
+          { count: 1, name: "Treasure Hoarders: Electro Potioneer" },
+          { count: 1, name: "Treasure Hoarders: Cryo Potioneer" },
+          { count: 1, name: "Treasure Hoarders: Seaman" },
+        ],
+        [
+          { count: 1, name: "Fatui Pyro Agent" },
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+    45: {
+      defeatTarget: 5,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 3, name: "Treasure Hoarders: Cryo Potioneer" },
+          { count: 1, name: "Fatui Pyro Agent" },
+          { count: 1, name: "Fatui Electro Cicin Mage" },
+        ],
+      ],
+    },
+  },
+  // Domain of Guyun, a Blessing domain from the wiki's Domain Enemies table
+  // Its levels with no total time limit on the wiki, the protect and between-kill ones, take 360 seconds, PROVISIONAL
+  7: {
     20: {
       defeatTarget: 28,
       timeLimitSeconds: 360,
@@ -87,10 +337,46 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
       ],
     },
   },
-  // Clear Pool and Mountain Cavern, a Forgery domain from the wiki's Domain Enemies table
-  // Its top tier, rank 40, has no wiki table, so that level is Closed
-  2: {
-    15: {
+  // Hidden Palace of Zhou Formula, a Blessing domain from the wiki's Domain Enemies table
+  // Its levels with no total time limit on the wiki, the protect and between-kill ones, take 360 seconds, PROVISIONAL
+  8: {
+    30: {
+      defeatTarget: 20,
+      timeLimitSeconds: 360,
+      waves: [[{ count: 13, name: "Pyro Slime" }], [{ count: 7, name: "Large Pyro Slime" }]],
+    },
+    35: {
+      defeatTarget: 6,
+      timeLimitSeconds: 360,
+      waves: [[{ count: 4, name: "Hilichurl Berserker" }], [{ count: 2, name: "Blazing Axe Mitachurl" }]],
+    },
+    40: {
+      defeatTarget: 10,
+      timeLimitSeconds: 360,
+      waves: [
+        [{ count: 5, name: "Hilichurl Fighter" }],
+        [
+          { count: 2, name: "Hilichurl Fighter" },
+          { count: 2, name: "Hilichurl Berserker" },
+          { count: 1, name: "Blazing Axe Mitachurl" },
+        ],
+      ],
+    },
+    45: {
+      defeatTarget: 4,
+      timeLimitSeconds: 60,
+      waves: [
+        [{ count: 2, name: "Blazing Axe Mitachurl" }],
+        [
+          { count: 1, name: "Dendro Samachurl" },
+          { count: 1, name: "Pyro Abyss Mage" },
+        ],
+      ],
+    },
+  },
+  // Clear Pool and Mountain Cavern, a Blessing domain from the wiki's Domain Enemies table
+  9: {
+    35: {
       defeatTarget: 12,
       timeLimitSeconds: 300,
       waves: [
@@ -100,7 +386,7 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
         ],
       ],
     },
-    21: {
+    40: {
       defeatTarget: 10,
       timeLimitSeconds: 360,
       waves: [
@@ -110,7 +396,106 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
         ],
       ],
     },
-    30: { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "Ruin Guard" }]] },
+    45: { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "Ruin Guard" }]] },
+  },
+  // Forsaken Rift, a Mastery domain from the wiki's Domain Enemies table
+  // Rank 45's wiki target is 8 but its listed enemies are 6, so its target is the enemies' count, PROVISIONAL
+  10: {
+    25: {
+      defeatTarget: 18,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 15, name: "Cryo Slime" },
+          { count: 3, name: "Large Cryo Slime" },
+        ],
+      ],
+    },
+    28: {
+      defeatTarget: 20,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 7, name: "Hilichurl Fighter" },
+          { count: 10, name: "Cryo Slime" },
+          { count: 3, name: "Large Cryo Slime" },
+        ],
+      ],
+    },
+    36: {
+      defeatTarget: 8,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 3, name: "Cryo Slime" },
+          { count: 2, name: "Large Cryo Slime" },
+        ],
+        [{ count: 3, name: "Large Cryo Slime" }],
+      ],
+    },
+    45: {
+      defeatTarget: 6,
+      timeLimitSeconds: 480,
+      waves: [
+        [{ count: 3, name: "Large Cryo Slime" }],
+        [{ count: 2, name: "Large Cryo Slime" }],
+        [{ count: 1, name: "Cryo Abyss Mage" }],
+      ],
+    },
+  },
+  // Taishan Mansion, a Mastery domain from the wiki's Domain Enemies table
+  11: {
+    25: {
+      defeatTarget: 20,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 10, name: "Large Pyro Slime" },
+          { count: 5, name: "Pyro Slime" },
+        ],
+        [
+          { count: 1, name: "Large Pyro Slime" },
+          { count: 4, name: "Pyro Slime" },
+        ],
+      ],
+    },
+    28: {
+      defeatTarget: 12,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 3, name: "Large Pyro Slime" },
+          { count: 1, name: "Large Pyro Slime" },
+          { count: 6, name: "Pyro Slime" },
+        ],
+        [
+          { count: 1, name: "Large Pyro Slime" },
+          { count: 1, name: "Large Pyro Slime" },
+        ],
+      ],
+    },
+    36: {
+      defeatTarget: 8,
+      timeLimitSeconds: 360,
+      waves: [
+        [
+          { count: 5, name: "Large Pyro Slime" },
+          { count: 1, name: "Large Pyro Slime" },
+        ],
+        [{ count: 2, name: "/Large Pyro Slime" }],
+      ],
+    },
+    45: {
+      defeatTarget: 4,
+      timeLimitSeconds: 480,
+      waves: [
+        [{ count: 2, name: "Blazing Axe Mitachurl" }],
+        [
+          { count: 1, name: "Fatui Pyro Agent" },
+          { count: 1, name: "Fatui Pyro Agent" },
+        ],
+      ],
+    },
   },
   // Peak of Vindagnyr, a Blessing domain from the wiki's Domain Enemies table
   12: {
@@ -1130,6 +1515,49 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
     },
     45: { defeatTarget: 3, timeLimitSeconds: 300, waves: [[{ count: 3, name: "Eroding Avatar of Lava" }]] },
   },
+  // Derelict Masonry Dock, a Blessing domain from the wiki's Domain Enemies table
+  32: {
+    30: {
+      defeatTarget: 6,
+      timeLimitSeconds: 300,
+      waves: [
+        [{ count: 3, name: "Tatankasaur Whelp" }],
+        [
+          { count: 2, name: "Tatankasaur Whelp" },
+          { count: 1, name: "Tatankasaurus" },
+        ],
+      ],
+    },
+    35: {
+      defeatTarget: 6,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 2, name: "Ferocious Warrior: Human Ram" },
+          { count: 1, name: "Ferocious Warrior: Wrestler" },
+        ],
+        [
+          { count: 2, name: "Ferocious Warrior: Grappler" },
+          { count: 1, name: "Tatankasaurus Warrior: Skybreaker" },
+        ],
+      ],
+    },
+    40: {
+      defeatTarget: 6,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 2, name: "Ferocious Warrior: Human Ram" },
+          { count: 1, name: "Tatankasaurus Warrior: Skybreaker" },
+        ],
+        [
+          { count: 2, name: "Tatankasaurus Warrior: Spiritlight Chaser" },
+          { count: 1, name: "Tatankasaurus Warrior: Skybreaker" },
+        ],
+      ],
+    },
+    45: { defeatTarget: 1, timeLimitSeconds: 300, waves: [[{ count: 1, name: "Furnace Shell Mountain Weasel" }]] },
+  },
   // Lightless Capital, a Mastery domain from the wiki's Domain Enemies table
   33: {
     25: {
@@ -1328,5 +1756,130 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
     35: { defeatTarget: 1, timeLimitSeconds: 300, waves: [[{ count: 1, name: "Stonehide Lawachurl" }]] },
     40: { defeatTarget: 1, timeLimitSeconds: 300, waves: [[{ count: 1, name: "Ruin Drake: Earthguard" }]] },
     45: { defeatTarget: 2, timeLimitSeconds: 300, waves: [[{ count: 2, name: "Domain Keeper" }]] },
+  },
+  // Relics of the Fallen Grace, a Mastery domain from the wiki's Domain Enemies table
+  38: {
+    25: {
+      defeatTarget: 6,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 2, name: "Volkodlak Raider" },
+          { count: 1, name: "Volkodlak Sharpshooter" },
+        ],
+        [
+          { count: 2, name: "Volkodlak Sharpshooter" },
+          { count: 1, name: "Volkodlak Lobber" },
+        ],
+      ],
+    },
+    28: {
+      defeatTarget: 5,
+      timeLimitSeconds: 300,
+      waves: [[{ count: 3, name: "Winged Soarer Knight" }], [{ count: 2, name: "Winged Halberd-Knight" }]],
+    },
+    36: { defeatTarget: 9, timeLimitSeconds: 300, waves: [[{ count: 9, name: "Juvenile Tree Segment" }]] },
+    45: {
+      defeatTarget: 6,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 1, name: "Rugged Elder Leshy" },
+          { count: 2, name: "Juvenile Tree Segment" },
+        ],
+        [
+          { count: 1, name: "Rugged Elder Leshy" },
+          { count: 2, name: "Juvenile Tree Segment" },
+        ],
+      ],
+    },
+  },
+  // Scars of Cursed Obsession, a Forgery domain from the wiki's Domain Enemies table
+  39: {
+    15: {
+      defeatTarget: 5,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 2, name: "Volkodlak Raider" },
+          { count: 1, name: "Volkodlak Sharpshooter" },
+        ],
+        [{ count: 2, name: "Volkodlak Lobber" }],
+      ],
+    },
+    21: {
+      defeatTarget: 5,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 2, name: "Volkodlak Raider" },
+          { count: 1, name: "Volkodlak Sharpshooter" },
+        ],
+        [{ count: 2, name: "Volkodlak Basher" }],
+      ],
+    },
+    30: {
+      defeatTarget: 4,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 1, name: "Long-Eared Striker" },
+          { count: 1, name: "Leomastiff Guard" },
+        ],
+        [
+          { count: 1, name: "Channel Contact" },
+          { count: 1, name: "Voywolf Hunter" },
+        ],
+      ],
+    },
+    40: {
+      defeatTarget: 2,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 1, name: "Voywolf Hunter" },
+          { count: 1, name: "Fanged Zealot" },
+        ],
+      ],
+    },
+  },
+  // Inverted Glacier, a Blessing domain from the wiki's Domain Enemies table
+  // Rank 40's wiki target is 7 but its listed enemies are 3, so its target is the enemies' count, PROVISIONAL
+  40: {
+    30: {
+      defeatTarget: 4,
+      timeLimitSeconds: 300,
+      waves: [[{ count: 2, name: "Volkodlak Basher" }], [{ count: 2, name: "Volkodlak Basher" }]],
+    },
+    35: {
+      defeatTarget: 5,
+      timeLimitSeconds: 300,
+      waves: [[{ count: 3, name: "Glaciomancer" }], [{ count: 2, name: "Chimeric Winged Elephant" }]],
+    },
+    40: {
+      defeatTarget: 3,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 1, name: "Chimeric Burrowbeast" },
+          { count: 1, name: "Chimeric Armored Beast" },
+        ],
+        [{ count: 1, name: "Chimeric Horned Bear" }],
+      ],
+    },
+    45: {
+      defeatTarget: 4,
+      timeLimitSeconds: 300,
+      waves: [
+        [
+          { count: 1, name: "Glacial Warden" },
+          { count: 1, name: "Glaciomancer" },
+        ],
+        [
+          { count: 1, name: "Chimeric Horned Bear" },
+          { count: 1, name: "Chimeric Armored Beast" },
+        ],
+      ],
+    },
   },
 };
