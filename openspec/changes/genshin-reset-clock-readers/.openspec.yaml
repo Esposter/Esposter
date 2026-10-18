@@ -1,0 +1,16 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/genshin-world/src/components/World/Enemies/**",
+    "packages/genshin-world/src/components/World/Windrise/**",
+    "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/services/domains/**",
+    "packages/genshin-world/src/services/enemy/**",
+    "openspec/specs/genshin/domains/**",
+    "openspec/specs/genshin/enemies/**",
+    "openspec/specs/genshin/reset-clock/**",
+    "openspec/specs/genshin/save-data/**",
+  ]
