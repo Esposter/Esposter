@@ -14,6 +14,7 @@ import { dandelionField } from "#src/services/gcg/cards/dandelionField";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
 import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
+import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { ellin } from "#src/services/gcg/cards/ellin";
@@ -98,6 +99,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [114_011, oz],
   [114021, theWolfWithin],
   [114_031, lightningStiletto],
+  [114_032, electroInfusion],
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
   [116_011, jadeScreen],

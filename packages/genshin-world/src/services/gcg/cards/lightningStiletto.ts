@@ -6,9 +6,10 @@ import { takeOne } from "@esposter/shared";
 const KEQING_ID = 1403;
 const STELLAR_RESTORATION_ID = 14_032;
 
-// Lightning Stiletto, Keqing's talent: Keqing is switched in for free, and she uses Stellar Restoration once in its talent
-// Variant, which creates no other Lightning Stiletto. The Electro Infusion it grants is not modelled. The duel plays every
-// Card as a fast action, so the card does not end the turn as the game's combat action does
+// Lightning Stiletto, Keqing's talent: Keqing is switched in for free, through the switch path, and she uses Stellar
+// Restoration once in its talent variant, which grants her Electro Infusion and creates no other Lightning Stiletto. The
+// Duel plays every card as a fast action, so the card passes no turn; the game's text marks it a combat action, which the
+// Duel does not model
 export const lightningStiletto: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) =>
     takeOne(duel.sides, sideIndex).characters.some(({ character, hp }) => character.id === KEQING_ID && hp > 0),
