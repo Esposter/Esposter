@@ -21,11 +21,6 @@
   },
   "hitFields.talismanSpiritTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
-  "parameters.icyQuillAttackRatio": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6332 } },
-  "parameters.icyQuillHoldSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 6332 } },
-  "parameters.icyQuillHoldTriggers": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 6332 } },
-  "parameters.icyQuillPressSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 6332 } },
-  "parameters.icyQuillPressTriggers": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 6332 } },
   "parameters.talismanSpiritSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 6339 } },
   "parameters.talismanSpiritResistanceReduction": {
     "cause": "Unsourced",
