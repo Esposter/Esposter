@@ -50,6 +50,7 @@ import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
+import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldMap } from "#src/composables/useWorldMap";
@@ -63,6 +64,7 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
+import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
@@ -422,6 +424,17 @@ const {
   statTables,
   wildlifePlaces,
 });
+// The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
+const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
+const useBagEntry = (entryId: number) => {
+  const nextInventory = useInventoryEntry(inventory.value, entryId, {
+    dishUseMap: dishUseMap.value,
+    eaterId: getActiveCharacterId(party),
+    getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
+    party,
+  });
+  if (nextInventory) setInventory(nextInventory);
+};
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does
 const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
@@ -1049,6 +1062,7 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
+          :dish-use-map
           :game-text
           :gadget-rows="gadgetRows"
           :initial-category="ItemCategory.Weapon"
@@ -1059,6 +1073,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @close="screenKind = ScreenKind.World"
           @destroy="(destruction) => applyDestruction(destruction)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
+          @use="(entryId) => useBagEntry(entryId)"
         />
       </template>
       <template #[ScreenKind.Wish]>

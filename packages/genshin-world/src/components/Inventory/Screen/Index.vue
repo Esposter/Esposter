@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { DishUse } from "#src/models/cooking/DishUse";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -10,6 +11,7 @@ import type { GameText } from "genshin-text";
 import { Currency } from "#src/models/inventory/Currency";
 import { equipGadget } from "#src/services/gadget/equipGadget";
 import { checkIsInventoryItemDestroyable } from "#src/services/inventory/checkIsInventoryItemDestroyable";
+import { checkIsInventoryItemUsable } from "#src/services/inventory/checkIsInventoryItemUsable";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
 import { EQUIPMENT_CATEGORIES, INVENTORY_CURRENCIES, PRECIOUS_CURRENCIES } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
@@ -27,6 +29,8 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The dishes' uses by the item id each is eaten from, which decides the entries the bag offers a Use
+  dishUseMap: ReadonlyMap<number, DishUse>;
   // The widget config's gadgets, whose equipable ones the gadget tab offers to equip to the quick-use slot
   gadgetRows: readonly GadgetRow[];
   // The game's words in the reader's language
@@ -41,11 +45,13 @@ interface Props {
   wallet: Wallet;
 }
 
-const { gadgetRows, gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
+const { dishUseMap, gadgetRows, gameText, initialCategory, inventory, materialDataMap, names, wallet } =
+  defineProps<Props>();
 const emit = defineEmits<{
   close: [];
   destroy: [destruction: InventoryDestruction];
   "update:inventory": [inventory: Inventory];
+  use: [entryId: number];
 }>();
 const category = ref(initialCategory);
 const selectedId = ref("");
@@ -105,6 +111,7 @@ const cells = computed((): InventoryCell[] => {
       isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
       isEquipable: equipableGadgetIds.value.has(item.definition.id) || undefined,
       isSelected: chosenIds.value.includes(String(id)) || undefined,
+      isUsable: checkIsInventoryItemUsable(item, dishUseMap) || undefined,
       name,
       rarity,
     };
@@ -221,6 +228,7 @@ const currencies = computed(() =>
       :sort-labels
       :tab-labels
       :title="gameText[GameTextKey.Inventory]"
+      :use-label="gameText[GameTextKey.InventoryUse]"
       @cancel-destroy="isConfirming = false"
       @choose="(id) => chooseCell(id)"
       @close="emit('close')"
@@ -229,6 +237,7 @@ const currencies = computed(() =>
       @quick-select="(rarity) => quickSelect(rarity)"
       @quick-use="(id) => quickUse(id)"
       @toggle-destroy="toggleDestroy()"
+      @use="(id) => emit('use', Number(id))"
     />
   </GameScreen>
 </template>

@@ -35,9 +35,7 @@ describe(eatDish, () => {
       createInventory(2),
       DISH_ID,
       { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-      party,
-      EATER_ID,
-      getMaxHealth,
+      { eaterId: EATER_ID, getMaxHealth, party },
     );
 
     expect(countInventoryItem(inventory?.items ?? [], DISH_ID)).toBe(1);
@@ -55,9 +53,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { heal: { flat: 100, healthShare: 0.1 }, target: DishTarget.Party },
-      party,
-      EATER_ID,
-      getMaxHealth,
+      { eaterId: EATER_ID, getMaxHealth, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
@@ -73,9 +69,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { heal: { flat: 0, healthShare: 0.3 }, target: DishTarget.Selected },
-      party,
-      EATER_ID,
-      getMaxHealth,
+      { eaterId: EATER_ID, getMaxHealth, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(1);
@@ -90,9 +84,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { revive: { flat: 500 }, target: DishTarget.Selected },
-      party,
-      EATER_ID,
-      getMaxHealth,
+      { eaterId: EATER_ID, getMaxHealth, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.5);
@@ -109,9 +101,7 @@ describe(eatDish, () => {
         createInventory(0),
         DISH_ID,
         { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-        party,
-        EATER_ID,
-        getMaxHealth,
+        { eaterId: EATER_ID, getMaxHealth, party },
       ),
     ).toBeUndefined();
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(0.5);

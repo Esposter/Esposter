@@ -59,6 +59,8 @@ interface Props {
   sortLabels: Record<InventorySort, string>;
   tabLabels: Record<ItemCategory, string>;
   title: string;
+  // The detail panel's button that uses the selected entry, in the reader's language
+  useLabel: string;
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });
@@ -95,6 +97,7 @@ const {
   sortLabels,
   tabLabels,
   title,
+  useLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{
   cancelDestroy: [];
@@ -105,6 +108,7 @@ const emit = defineEmits<{
   quickSelect: [rarity: number];
   quickUse: [id: string];
   toggleDestroy: [];
+  use: [id: string];
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
 // The dialog takes the focus as it opens, the bag behind it inert until it closes, so nothing behind it changes what OK
@@ -165,6 +169,14 @@ watch(
       <section v-if="selectedCell" class="detail" :data-rarity="selectedCell.rarity">
         <p class="detail-name">{{ selectedCell.name }}</p>
         <p class="detail-caption">{{ selectedCell.caption }}</p>
+        <button
+          v-if="selectedCell.isUsable && !isDestroying"
+          class="use"
+          type="button"
+          @click="emit('use', selectedCell.id)"
+        >
+          {{ useLabel }}
+        </button>
       </section>
       <button
         ref="trashButton"
@@ -417,6 +429,19 @@ watch(
   margin: calc(var(--unit) * 230) 0 0;
   padding: 0 calc(var(--unit) * 28);
   font-size: calc(var(--unit) * 20);
+  font-weight: 600;
+}
+
+/* The Use button under the detail panel's caption, provisional until the bag's Use is recorded */
+.use {
+  position: absolute;
+  bottom: calc(var(--unit) * 28);
+  left: calc(var(--unit) * 28);
+  width: calc(var(--unit) * 437);
+  height: calc(var(--unit) * 52);
+  background: #a154de;
+  color: #ece3d8;
+  font-size: calc(var(--unit) * 22);
   font-weight: 600;
 }
 
