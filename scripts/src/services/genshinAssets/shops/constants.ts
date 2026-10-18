@@ -68,12 +68,11 @@ export const PAIMON_BARGAINS_ROYAL_ORDER = 1;
 export const PAIMON_BARGAINS_BLACKCLIFF_ORDER = 2;
 // The item use that gives a character card's avatar, and where the avatar's id sits in its parameters
 export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";
-// The Sigils a region's Souvenir Shop is paid in, by their item ids in the game's tables: Anemo for Mondstadt and Geo for
-// Liyue. A Souvenir good is one priced in one of them, which is how the builder finds the shops, whose table numbers the
-// Dump's names do not match
-// Each region's Sigil, which its Souvenir Shop takes: the eight Elemental Sigils, named by the region whose Souvenir Shop
-// Each one's shop is. Pyro, Hydro, Electro and Dendro are the four the wiki's Elemental Sigils page places in Natlan,
-// Fontaine, Inazuma and Sumeru; Luna's Nod-Krai follows the element, which no page here names
+// Each region's Sigil, the currency its Souvenir Shop takes: the eight Elemental Sigils, named by the region whose
+// Souvenir Shop each one is. A Souvenir good is one priced in one of them, which is how the builder finds the shops,
+// Since the dump's table numbers do not match its names. Pyro, Hydro, Electro and Dendro are the four the wiki's
+// Elemental Sigils page places in Natlan, Fontaine, Inazuma and Sumeru; Luna's Nod-Krai follows the element, which no
+// Page here names
 export const SOUVENIR_SIGIL_ITEM_IDS = {
   fontaine: 302,
   inazuma: 304,
