@@ -14,16 +14,16 @@ describe(toImaginariumSeason, () => {
   const scheduleRow: ExcelRoleCombatScheduleRow = {
     avatarConfigId: 3,
     beginTimeStr: toGameTime(BEGIN_DATE),
-    IENPIBICGCC: toGameTime(END_DATE),
-    LNCBPPGCCOA: [1, 2],
+    difficultyIds: [1, 2],
+    endTimeStr: toGameTime(END_DATE),
     rewardGroupId: 2,
     scheduleId: 1,
   };
   const avatarConfigRow: ExcelRoleCombatAvatarConfigRow = {
     avatarConfigId: 3,
-    FKFHFHFGMEM: [4],
-    FMNCKJDCADH: [2, 5, 6, 0],
-    MFNFDFPOAMC: [1, 2],
+    elementCodes: [2, 5, 6, 0],
+    openingCharacterIds: [1, 2],
+    specialGuestIds: [4],
   };
 
   test("reads Pyro, Electro and Cryo from the codes, the trailing 0 dropped", () => {
