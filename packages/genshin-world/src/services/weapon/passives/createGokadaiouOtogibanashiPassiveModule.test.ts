@@ -11,6 +11,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createGokadaiouOtogibanashiPassiveModule } from "#src/services/weapon/passives/createGokadaiouOtogibanashiPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -49,7 +50,6 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
-          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([0.4 * wielder.attributes.defense, 0.4 * wielder.attributes.defense]);
@@ -70,13 +70,19 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
       attributeTotalMap[Attribute.BaseDefense] * (1 + attributeTotalMap[Attribute.DefensePercent] + 0.5) +
       attributeTotalMap[Attribute.Defense];
 
+    // The strike carries the wielder as the hit prices it, with its buffs on
+    const pricedWielder = getBuffedCombatant(
+      wielder,
+      context.kitEffectState.effects,
+      context.party,
+      context.characterIdCombatantMap,
+    );
     expect(
       gokadaiouOtogibanashiPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        { ...createStrike(AttackTag.NormalAttack), combatant: pricedWielder },
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toStrictEqual(0.4 * buffedDefense);
   });
@@ -91,7 +97,6 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
