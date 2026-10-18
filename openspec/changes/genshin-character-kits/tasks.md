@@ -1,6 +1,6 @@
 ## 1. Traveler's element
 
-- [ ] 1.1 Give the Traveler's skill and burst the element of the resonated statue. Verify: tests named after the scenarios 'the Traveler's skill deals the element of the resonated statue' and 'the Traveler deals no element before any statue is resonated with', seen failing first.
+- [x] 1.1 Give the Traveler's skill and burst the element of the resonated statue. Verify: tests named after the scenarios 'the Traveler's skill deals the element of the resonated statue' and 'the Traveler deals no element before any statue is resonated with', seen failing first.
 
 ## 2. Characters' kits
 

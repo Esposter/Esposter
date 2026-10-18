@@ -15,11 +15,16 @@ export const applyKitHitBehaviour = (hit: KitHit, behaviour: KitHitBehaviour, pa
     healPartyChance,
     onStrike,
     stackedHitStatusId,
+    takesWielderElement,
   } = behaviour;
   const fail = (reason: string) => new InvalidOperationError(Operation.Update, path, reason);
   if (additiveBaseDamageBonus) {
     if (hit.additiveBaseDamageBonus) throw fail("its record already scales its damage with a stat");
     hit.additiveBaseDamageBonus = additiveBaseDamageBonus;
+  }
+  if (takesWielderElement) {
+    if (!hit.element) throw fail("its record names no element for it to take from its wielder");
+    delete hit.element;
   }
   if (enemyStatus) hit.enemyStatus = enemyStatus;
   if (healAttackShare) hit.healAttackShare = healAttackShare;

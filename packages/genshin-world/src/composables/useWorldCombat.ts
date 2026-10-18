@@ -1,3 +1,4 @@
+import type { Element } from "#src/models/Element";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
@@ -40,6 +41,8 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
+import type { Ref } from "vue";
+
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -55,6 +58,7 @@ export const useWorldCombat = ({
   savedParty,
   startingCharacterIdKitMap,
   statTables,
+  travelerElement,
   wildlifePlaces,
 }: {
   enemyTables: EnemyTables;
@@ -66,6 +70,8 @@ export const useWorldCombat = ({
   savedParty: Party;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
+  // The element the Traveler holds, which the statue she resonated with last gives her, none until one is resonated with
+  travelerElement: Readonly<Ref<Element | undefined>>;
   wildlifePlaces: readonly WildlifePlace[];
 }) => {
   // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party
@@ -109,15 +115,21 @@ export const useWorldCombat = ({
     const combatantMap = new Map<number, Combatant>();
     // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
     const { characterDataMap } = statTables;
+    const getElement = (characterId: number) =>
+      characterId === TRAVELER_CHARACTER_ID ? travelerElement.value : characterDataMap.get(characterId)?.element;
     const elementalResonances = getElementalResonances(
       deployedCharacterIds.value.flatMap((characterId) => {
-        const element = characterDataMap.get(characterId)?.element;
+        const element = getElement(characterId);
         return element ? [element] : [];
       }),
     );
     for (const character of characters.value.filter(({ id }) => deployedCharacterIds.value.includes(id))) {
       const kit = characterIdKitMap.value.get(character.id);
-      if (kit) combatantMap.set(character.id, createCombatant(character, kit, elementalResonances, statTables));
+      if (kit)
+        combatantMap.set(
+          character.id,
+          createCombatant(character, kit, elementalResonances, statTables, getElement(character.id)),
+        );
     }
     return combatantMap;
   });
