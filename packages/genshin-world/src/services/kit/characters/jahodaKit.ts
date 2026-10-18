@@ -20,8 +20,8 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { takeOne } from "@esposter/shared";
 
-// Savvy Strategy's flask fills to 100 over the pursuit, as gcsim (MIT, main) jahoda/skill.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/jahoda/skill.go
+// Savvy Strategy's flask fills to 100 over the pursuit, as gcsim (MIT, v2.47.2) jahoda/skill.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/skill.go
 const FLASK_GAUGE_MAXIMUM = 100;
 const PURSUIT_FIELD_ID = "jahoda-pursuit";
 const DRAIN_FIELD_ID = "jahoda-drain";
