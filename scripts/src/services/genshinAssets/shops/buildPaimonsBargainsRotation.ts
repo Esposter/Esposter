@@ -41,8 +41,6 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
       return avatarUse ? [[id, Number(avatarUse.useParam[0])] as const] : [];
     }),
   );
-  // The price and monthly limit of a rotation's goods, the same for every rotation of a set, which the table gives on each
-  // Good of the rotation by its rotate id
   // The one good of Paimon's Bargains a rotation sells, by its rotate id, which the table gives once a rotation
   const goodOfRotation = (rotateId: number): ExcelShopGoodsRow => {
     const row = goodRows.find(
@@ -52,6 +50,8 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
       throw new InvalidOperationError(Operation.Read, "Paimon's Bargains rotation", `rotation ${rotateId} has no good`);
     return row;
   };
+  // The price and monthly limit of a rotation's goods, the same for every rotation of a set, which the table gives on each
+  // Good of the rotation by its rotate id
   const priceOfRotations = (rotateIds: readonly number[]): PaimonsBargainsPrice => {
     const prices = rotateIds.map((rotateId) => {
       const row = goodOfRotation(rotateId);
