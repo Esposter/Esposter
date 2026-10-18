@@ -60,6 +60,7 @@ import { statuesCommand } from "#src/services/genshinAssets/commands/statuesComm
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
 import { transPointsCommand } from "#src/services/genshinAssets/commands/transPointsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
+import { waypointsCommand } from "#src/services/genshinAssets/commands/waypointsCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
@@ -115,6 +116,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     cooking: cookingCommand,
     forging: forgingCommand,
     domains: domainsCommand,
+    waypoints: waypointsCommand,
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,
