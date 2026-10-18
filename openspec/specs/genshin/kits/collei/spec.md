@@ -1,6 +1,6 @@
 ## Purpose
 
-Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with her passives and constellations 1, 2 and 6 left unbuilt.
+Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with Constellation 1's Energy Recharge off the field built, and her other passives and constellations 2 and 6 left unbuilt.
 
 ## Requirements
 
@@ -98,3 +98,25 @@ From her fourth constellation, Trump-Card Kitty SHALL raise the Elemental Master
 - **GIVEN** Collei has three constellations and a teammate is deployed
 - **WHEN** the player casts Trump-Card Kitty
 - **THEN** no member gains Elemental Mastery from it
+
+### Requirement: Constellation 1 gives Energy Recharge off the field
+
+From Constellation 1, Collei SHALL gain 20% Energy Recharge while she is not the character on the field.
+
+#### Scenario: Off the field
+
+- **GIVEN** Collei has Constellation 1 and is deployed off the field
+- **WHEN** her passive bonuses are read
+- **THEN** she gains 20% Energy Recharge
+
+#### Scenario: On the field
+
+- **GIVEN** Collei has Constellation 1 and is the character on the field
+- **WHEN** her passive bonuses are read
+- **THEN** she gains no Energy Recharge from it
+
+#### Scenario: Constellation 0
+
+- **GIVEN** Collei has no constellation
+- **WHEN** her passive bonuses are read off the field
+- **THEN** she gains no Energy Recharge from it
