@@ -18,7 +18,7 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Aino's Ascension 1 at a Moonsign of 2, which shortens the balls' interval and widens them, and Constellation 6's Lunar
 // DMG bonus, both wait on the Lunar and Moonsign hook; Constellation 2's ball on each enemy another member hits while the
 // Burst lasts, which waits on a hook that reads another member's hits; Constellation 1's Elemental Mastery on the active
-// Member and Constellation 4's energy on the skill's hits, which the kit does not hold yet; and Aino's passives.
+// Member and Constellation 4's energy on the skill's hits, which the kit does not hold yet.
 // Musecatcher's hold is not built, as gcsim does not implement it either
 export const createAinoKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");

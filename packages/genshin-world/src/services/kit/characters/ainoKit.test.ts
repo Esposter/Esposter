@@ -1,9 +1,37 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/characters/ainoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const AINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AINO_CHARACTER_ID);
+
+const createAinoCombatant = (ascension: number): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: 100 }]),
+  characterId: AINO_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: AINO_KIT,
+  level: 90,
+  weaponType: WeaponType.Catalyst,
+});
+
+// The additive bonus the first water ball her burst drops adds to its base DMG, priced as the combatant stands
+const getFirstWaterBallBonus = (combatant: Combatant): number => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  AINO_KIT.elementalBurst.onStart?.(context);
+  const [{ hit }] = stepKitTestEffects(20, context);
+  return hit.additiveBaseDamageBonus?.(combatant) ?? 0;
+};
 
 describe(createAinoKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from her proud skill groups", () => {
@@ -53,5 +81,19 @@ describe(createAinoKitBehaviour, () => {
       burstHits: AINO_KIT.elementalBurst.hits,
       skillHitmarkFrames: AINO_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
     }).toStrictEqual({ burstHits: [], skillHitmarkFrames: [15, 33] });
+  });
+
+  describe("the Ascension 4 passive, Structured Power Booster", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getFirstWaterBallBonus(createAinoCombatant(4))).toBeGreaterThan(0);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getFirstWaterBallBonus(createAinoCombatant(3))).toBe(0);
+    });
   });
 });
