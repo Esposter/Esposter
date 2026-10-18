@@ -11,4 +11,6 @@ x-touches:
     "packages/genshin-world/src/models/character/**",
     "packages/genshin-world/src/components/Wish/Screen/**",
     "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/services/kit/**",
+    "packages/genshin-world/src/services/kit/characters/**",
   ]
