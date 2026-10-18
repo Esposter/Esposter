@@ -46,8 +46,8 @@ export enum GameTextKey {
   ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
   ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
   ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
-  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
-  // Is active
+  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no
+  // Bonus is active
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
@@ -142,7 +142,8 @@ export enum GameTextKey {
   Cecilia = "3828726124",
   // The namecard picker's title, the Change Namecard the Paimon profile opens with
   ChangeNamecard = "3755125824",
-  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
+  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change
+  // Sets
   ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
