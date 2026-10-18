@@ -1,14 +1,10 @@
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -19,18 +15,6 @@ const GRAND_HYMN_ID = "grandHymn";
 const GRAND_HYMN_COOLDOWN_ID = "grandHymnCooldown";
 const GRAND_HYMN_MAXIMUM_STACKS = 3;
 const GRAND_HYMN_SOURCE = "sunkenSongOfTheSands";
-
-// The Grand Hymn stack that runs out soonest is the one a trigger at the maximum restarts
-const refreshSoonestGrandHymnHold = (kitEffectState: KitEffectState, characterId: number, seconds: number): void => {
-  const holds = kitEffectState.effects.filter((effect): effect is KitStatus =>
-    checkIsKitHold(effect, characterId, GRAND_HYMN_ID),
-  );
-  const soonestHold = takeOne(
-    holds.toSorted((firstHold, secondHold) => firstHold.secondsRemaining - secondHold.secondsRemaining),
-    0,
-  );
-  addKitStatus(kitEffectState, characterId, { id: soonestHold.id, secondsRemaining: seconds });
-};
 
 // Key of Khaj-Nisut at its rank: its HP line is the table's. Each Elemental Skill hit adds a stack of the rank's share of the
 // Wielder's Max HP as Elemental Mastery, up to three and once every cooldown, each stack running the rank's seconds. Whenever
@@ -61,13 +45,12 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
       )
         return;
       const { characterId } = combatant;
-      if (countKitHolds(kitEffectState.effects, characterId, GRAND_HYMN_ID) < GRAND_HYMN_MAXIMUM_STACKS)
-        addKitHold(kitEffectState, characterId, {
-          id: GRAND_HYMN_ID,
-          maximum: GRAND_HYMN_MAXIMUM_STACKS,
-          seconds: stackSeconds,
-        });
-      else refreshSoonestGrandHymnHold(kitEffectState, characterId, stackSeconds);
+      addKitHold(kitEffectState, characterId, {
+        id: GRAND_HYMN_ID,
+        maximum: GRAND_HYMN_MAXIMUM_STACKS,
+        replacesOldest: true,
+        seconds: stackSeconds,
+      });
       if (countKitHolds(kitEffectState.effects, characterId, GRAND_HYMN_ID) < GRAND_HYMN_MAXIMUM_STACKS) return;
       const amount = teamShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       for (const memberId of getDeployedCharacterIds(party))
