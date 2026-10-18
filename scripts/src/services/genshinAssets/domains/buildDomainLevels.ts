@@ -2,6 +2,7 @@ import type { GameDataPublication } from "#src/models/gameData/GameDataPublicati
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import {
   DUNGEON_ENTRY_TABLE_NAME,
@@ -10,6 +11,7 @@ import {
 } from "#src/services/genshinAssets/domains/constants";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
@@ -23,6 +25,7 @@ export const buildDomainLevels = async (): Promise<{ notes: string[]; publicatio
     readExcelTable<ExcelDungeonRow>(DUNGEON_TABLE_NAME),
     readExcelTable<ExcelRewardPreviewRow>(REWARD_PREVIEW_TABLE_NAME),
     points,
+    readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
   );
   const levelCount = Object.values(schedules).reduce((count, { levels }) => count + levels.length, 0);
   return {
