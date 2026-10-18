@@ -37,6 +37,7 @@ import { createEssenceOfFalsityPassiveModule } from "#src/services/weapon/passiv
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
+import { createFangsFlyingToAndFroPassiveModule } from "#src/services/weapon/passives/createFangsFlyingToAndFroPassiveModule";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
 import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passives/createFlowerFeatherSongPassiveModule";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
@@ -434,4 +435,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1741516147": createWhitehillsBestowalPassiveModule,
   // Without Heed for Day nor Night (Clash of Kings)
   "407790963": createWithoutHeedForDayNorNightPassiveModule,
+  // Fangs Flying To and Fro (Waveriding Whirl)
+  "2004975019": createFangsFlyingToAndFroPassiveModule,
 };
