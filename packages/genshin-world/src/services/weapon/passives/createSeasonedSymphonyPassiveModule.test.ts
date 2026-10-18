@@ -16,8 +16,8 @@ const readAttackPercent = (context: KitContext, combatant: Combatant): number =>
     .attributes.attributeTotalMap[Attribute.AttackPercent];
 
 describe(createSeasonedSymphonyPassiveModule, () => {
-  // Synthetic params, not the weapon's row: 25% ATK, 50% more off-field, and 20% for two seconds to the wielder and each
-  // Character it heals
+  // Synthetic params, not the weapon's row: 25% ATK, 50% more off-field, and 20% for two seconds to the wielder and
+  // Each character it heals
   const seasonedSymphonyPassiveModule = createSeasonedSymphonyPassiveModule([0.25, 0.5, 0.2, 2]);
   const wielder: Combatant = createWielderCombatant();
   const healedCharacterId = 1;

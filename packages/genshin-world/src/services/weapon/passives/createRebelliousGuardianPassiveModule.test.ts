@@ -10,8 +10,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
-// Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a fifth DMG
-// Bonus
+// Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a
+// Fifth DMG Bonus
 const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.3, 3, 0.2]);
 
 describe(createRebelliousGuardianPassiveModule, () => {

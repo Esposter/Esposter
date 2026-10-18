@@ -20,8 +20,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createSamuraiConductPassiveModule, () => {
-  // Synthetic params, not the weapon's row: half Elemental Skill DMG, two energy spent, three regenerated on each two-second
-  // Tick for four seconds, and a five-second cooldown
+  // Synthetic params, not the weapon's row: half Elemental Skill DMG, two energy spent, three regenerated on each
+  // Two-second tick for four seconds, and a five-second cooldown
   const samuraiConductPassiveModule = createSamuraiConductPassiveModule([0.5, 2, 3, 4, 5]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();

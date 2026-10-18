@@ -19,8 +19,8 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds on an Elemental Reaction, and a fifth ATK
-// for three seconds on a Stellar Glimmer reaction
+// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds on an Elemental Reaction, and a fifth
+// ATK for three seconds on a Stellar Glimmer reaction
 const repentanceAndRedemptionPassiveModule = createRepentanceAndRedemptionPassiveModule([5, 2, 0.2, 3]);
 const createReaction = (reactionType: ReactionType, element: Element) => ({
   enemy,
