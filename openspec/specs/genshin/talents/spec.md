@@ -63,7 +63,7 @@ A refused upgrade SHALL leave the character, the wallet and the bag exactly as t
 
 ### Requirement: Talent levels need their ascension phases
 
-Talent levels two and three SHALL need the second and third ascension phases in order, with each further pair of levels needing the next phase, so that level ten needs the sixth.
+Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth.
 
 #### Scenario: First-phase character levelled to one only
 
