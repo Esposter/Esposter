@@ -217,7 +217,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vitest`                                | —                     | Keep — tooling    | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling    | browser-mode component tests                                                                           |
 | `vue`                                   | —                     | Keep — framework  | the UI framework                                                                                       |
-| `vue-codemirror`                        | —                     | Absorb — own code | a component over the code editor's view, rebuilt as the app's own (code view engine)                   |
 | `vue-eslint-parser`                     | —                     | Keep — tooling    | ESLint's Vue parser                                                                                    |
 | `vue-pdf-embed`                         | —                     | Absorb — own code | a component over the PDF renderer, rebuilt as the app's own (PDF viewer)                               |
 | `vue-router`                            | —                     | Keep — framework  | routing                                                                                                |
