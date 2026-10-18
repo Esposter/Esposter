@@ -1,3 +1,4 @@
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -6,9 +7,14 @@ import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYunjinKitBehaviour, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -16,6 +22,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const YUNJIN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YUNJIN_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createYunjinCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([
@@ -34,6 +41,27 @@ const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitE
   const context = createKitTestContext(combatant);
   action.onStart?.(context);
   return context.kitEffectState;
+};
+
+// The buffs Yun Jin's own reactions give her, at a constellation count, as her kit reads them
+const readReactionBuffs = (constellationCount: number, reactions: Reaction[]) => {
+  const combatant = { ...createYunjinCombatant(), constellationCount };
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  YUNJIN_KIT.onKitEvent?.(
+    {
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.ReactionTriggered,
+      reactions,
+      striker: combatant,
+    },
+    context,
+    combatant,
+  );
+
+  return kitEffectState.effects.flatMap((effect) =>
+    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
+  );
 };
 
 describe(createYunjinKitBehaviour, () => {
@@ -105,5 +133,22 @@ describe(createYunjinKitBehaviour, () => {
     expect(hit.hitArea.radius).toBe(6);
     expect(hit.poiseDamage).toBe(200);
     expect(Math.round(hit.hitmarkSeconds * 60)).toBe(35);
+  });
+
+  test("a Constellation 4 Crystallize of hers gives her 20% DEF for 12 seconds", () => {
+    expect.hasAssertions();
+
+    expect(readReactionBuffs(4, [{ element: Element.Geo, reactionType: ReactionType.Crystallize }])).toStrictEqual([
+      [Attribute.DefensePercent, 0.2, 12],
+    ]);
+  });
+
+  test("a Constellation 3 switch, or a reaction that is not Crystallize, gives no DEF", () => {
+    expect.hasAssertions();
+
+    expect([
+      readReactionBuffs(3, [{ element: Element.Geo, reactionType: ReactionType.Crystallize }]),
+      readReactionBuffs(4, [{ element: Element.Electro, reactionType: ReactionType.Superconduct }]),
+    ]).toStrictEqual([[], []]);
   });
 });
