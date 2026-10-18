@@ -112,5 +112,7 @@
   },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.8 } },
   "skill.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
-  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 13 }
+  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 13 },
+  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 1 },
+  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarBloom" }
 }

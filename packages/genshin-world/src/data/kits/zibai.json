@@ -84,5 +84,7 @@
     "donor": { "characterId": 10000042, "path": "normalAttacks.3.hits.0.hitmarkFrames" }
   },
   "skill.animationFrames": { "cause": "Unsourced", "value": 51 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 1 },
+  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarCrystallize" }
 }
