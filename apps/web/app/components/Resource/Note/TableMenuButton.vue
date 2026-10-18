@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { editor } = defineProps<Props>();
-const isTableActive = ref(editor?.isActive("table") ?? false);
+const isTableActive = ref(false);
 const items = computed<Item[]>(() => [
   {
     icon: "i-mdi:table-row-plus-before",
