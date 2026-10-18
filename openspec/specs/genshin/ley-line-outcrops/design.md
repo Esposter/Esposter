@@ -29,7 +29,7 @@ flowchart TD
 
 ## Not built yet
 
-- **Touching, fighting and claiming.** No outcrop is placed, so none spawns its region's enemies on a touch, reveals its blossom or offers its claim. The places wait on [spawned places](../../../changes/genshin-spawned-places/design.md), and the enemies per region on the wiki's table, which is not in the dump.
+- **Touching, fighting and claiming in play.** Mondstadt's outcrops stand at the official map's 35 Ley Line Blossom points, written into its region data as outcrop places, as the [spawned places](../../../changes/genshin-spawned-places/design.md) page sets out. A touch spawns the camp its place holds, and an outcrop with no camp spawns none. No source pairs a wiki location with a map point, so no place has a camp yet. The daily draw still starts over the dump's places, not these, so no outcrop is in play. The enemies per place come from the wiki's table, which is not in the dump, and the claim's F prompt is built but not wired.
 - **The claims' rewards.** Not read yet: each refresh row lists its reward previews, one a World Level, which name them, as the [proposal](../../../changes/genshin-ley-line-outcrops/design.md) sets out.
 - **Fontaine, Natlan and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
 - **Nod-Krai.** The refresh rows name no kind for it.
@@ -37,17 +37,19 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role                                                                              |
-| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/leyLine/writeLeyLineTables.ts`       | writes each city's region slice from the dump's three tables                      |
-| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`         | each city's kinds, places and ordered sections from the tables                    |
-| `scripts/src/services/genshinAssets/leyLine/constants.ts`                | the refresh types and the two conditions the kinds open by                        |
-| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`               | the Revelation and the Wealth                                                     |
-| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`           | a kind's Adventure Rank and the nations whose areas it needs unlocked             |
-| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`             | a region's kinds, sections and places, as its slice is written                    |
-| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`  | whether a kind is open at a rank with the listed areas unlocked                   |
-| `packages/genshin-world/src/services/leyLine/drawOutcropPlace.ts`        | a kind's starting place, from a drawn section's lowest numbered place             |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | a claimed outcrop's next place, or the one after when the other kind stands there |
+| File                                                                     | Role                                                                                |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/leyLine/writeLeyLineTables.ts`       | writes each city's region slice from the dump's three tables                        |
+| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`         | each city's kinds, places and ordered sections from the tables                      |
+| `scripts/src/services/genshinAssets/leyLine/constants.ts`                | the refresh types and the two conditions the kinds open by                          |
+| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`               | the Revelation and the Wealth                                                       |
+| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`           | a kind's Adventure Rank and the nations whose areas it needs unlocked               |
+| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`             | a region's kinds, sections and places, as its slice is written                      |
+| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`  | whether a kind is open at a rank with the listed areas unlocked                     |
+| `packages/genshin-world/src/services/leyLine/drawOutcropPlace.ts`        | a kind's starting place, from a drawn section's lowest numbered place               |
+| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`            | the Ley Line Blossoms of the official map written into each region's outcrop places |
+| `packages/genshin-world/src/services/leyLine/computeOutcropCamp.ts`      | the camp a touch spawns at a waiting outcrop's place                                |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | a claimed outcrop's next place, or the one after when the other kind stands there   |
 
 ## Sources
 

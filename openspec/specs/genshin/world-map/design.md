@@ -26,19 +26,19 @@ flowchart TD
 
 ## Key files
 
-| File                                                              | Role                                                                 |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/data/catalogue.json`                  | Every region, area and subarea the game ships, and their layers      |
-| `packages/genshin-world/src/services/world/readCatalogue.ts`      | The catalogue read from the hosted game data at the world's gate     |
-| `packages/genshin-world/src/models/world/Catalogue.ts`            | The catalogue's shape: regions, areas, subareas and outlines         |
-| `packages/genshin-world/src/models/world/RegionData.ts`           | A region's authored data: its landmarks                              |
-| `packages/genshin-world/src/models/world/Landmark.ts`             | A landmark, by kind, with the options its kit builds it from         |
-| `packages/genshin-world/src/data/regions/mondstadt.json`          | Mondstadt's landmarks: Windrise's oak and statue                     |
-| `packages/genshin-world/src/composables/useRegionData.ts`         | Regions fetched by reach, validated and released                     |
-| `packages/genshin-engine/src/world/computeOutlineDistance.ts`     | How far a point is from an area's outline                            |
-| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`       | Each area's and subarea's outline, the game's own                    |
-| `packages/genshin-world/src/models/world/AreaTerrainType.ts`      | The kind of ground the game files an area under, a city's among them |
-| `packages/genshin-world/src/components/World/Landmarks/Index.vue` | Every landmark in reach, built by its kind's kit                     |
+| File                                                              | Role                                                                     |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| `packages/genshin-world/src/data/catalogue.json`                  | Every region, area and subarea the game ships, and their layers          |
+| `packages/genshin-world/src/services/world/readCatalogue.ts`      | The catalogue read from the hosted game data at the world's gate         |
+| `packages/genshin-world/src/models/world/Catalogue.ts`            | The catalogue's shape: regions, areas, subareas and outlines             |
+| `packages/genshin-world/src/models/world/RegionData.ts`           | A region's authored data: its landmarks and its outcrop places           |
+| `packages/genshin-world/src/models/world/Landmark.ts`             | A landmark, by kind, with the options its kit builds it from             |
+| `packages/genshin-world/src/data/regions/mondstadt.json`          | Mondstadt's landmarks: Windrise's oak and statue, and its outcrop places |
+| `packages/genshin-world/src/composables/useRegionData.ts`         | Regions fetched by reach, validated and released                         |
+| `packages/genshin-engine/src/world/computeOutlineDistance.ts`     | How far a point is from an area's outline                                |
+| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`       | Each area's and subarea's outline, the game's own                        |
+| `packages/genshin-world/src/models/world/AreaTerrainType.ts`      | The kind of ground the game files an area under, a city's among them     |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue` | Every landmark in reach, built by its kind's kit                         |
 
 ## Notes
 
