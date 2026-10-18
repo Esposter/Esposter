@@ -3,13 +3,18 @@ import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChall
 import { describe, expect, test } from "vitest";
 
 describe(resolveDomainChallenge, () => {
-  const ENDS_AT = 360_000;
-  const progress = { defeatTarget: 10, defeats: 4, endsAt: ENDS_AT };
+  const TIME_LIMIT_MILLISECONDS = 360_000;
+  const progress = {
+    defeatTarget: 10,
+    defeats: 4,
+    elapsedMilliseconds: 100_000,
+    timeLimitMilliseconds: TIME_LIMIT_MILLISECONDS,
+  };
 
   test("clearing a domain raises its petrified tree", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge({ ...progress, defeats: 10 }, { now: 100_000, partyDown: false })).toStrictEqual(
+    expect(resolveDomainChallenge({ ...progress, defeats: 10 }, { partyDown: false })).toStrictEqual(
       DomainChallengeOutcome.Cleared,
     );
   });
@@ -17,24 +22,20 @@ describe(resolveDomainChallenge, () => {
   test("running out of time returns the player to the entrance", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge(progress, { now: ENDS_AT, partyDown: false })).toStrictEqual(
-      DomainChallengeOutcome.TimedOut,
-    );
+    expect(
+      resolveDomainChallenge({ ...progress, elapsedMilliseconds: TIME_LIMIT_MILLISECONDS }, { partyDown: false }),
+    ).toStrictEqual(DomainChallengeOutcome.TimedOut);
   });
 
   test("every member down returns the player to the entrance", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge(progress, { now: 100_000, partyDown: true })).toStrictEqual(
-      DomainChallengeOutcome.Wiped,
-    );
+    expect(resolveDomainChallenge(progress, { partyDown: true })).toStrictEqual(DomainChallengeOutcome.Wiped);
   });
 
   test("a challenge with time and members left keeps running", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge(progress, { now: 100_000, partyDown: false })).toStrictEqual(
-      DomainChallengeOutcome.Running,
-    );
+    expect(resolveDomainChallenge(progress, { partyDown: false })).toStrictEqual(DomainChallengeOutcome.Running);
   });
 });

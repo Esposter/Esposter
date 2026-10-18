@@ -1,54 +1,99 @@
-import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
+import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
+import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCount } from "#src/models/inventory/ItemCount";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
+import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
+import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
+import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
+import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
+import { claimPetrifiedTree } from "#src/services/domains/claimPetrifiedTree";
+import { computeDomainChallengeElapsed } from "#src/services/domains/computeDomainChallengeElapsed";
 import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevelRows";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
+import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
+import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
-interface DomainChallenge {
-  camp: EnemyCamp;
-  defeatTarget: number;
-  defeats: number;
-  endsAt: number;
+// The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items its
+// Tree grants when cleared
+interface DomainArena {
+  areaId: string;
+  center: GroundPoint;
+  enemyLevel: number;
   entryId: number;
+  // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
+  startedAt: number;
+  level: DomainChallengeLevel;
+  treeRewards: ItemCount[];
 }
 
-// The domain entrances the player has unlocked, the one whose screen is open, and the challenge run in its arena: its
-// Level's stand-in camp spawns beside the entrance, the defeats of that camp count toward the level's target, and the
-// Challenge ends as the rule says. A cleared domain raises its Petrified Tree at its entrance, and the player leaves
+// A challenge run in the arena: the camp of the wave in play, and the defeats and the time it has counted so far
+interface DomainChallengeRun {
+  camp: EnemyCamp;
+  defeats: number;
+  defeatsInWave: number;
+  elapsedMilliseconds: number;
+  waveIndex: number;
+}
+
+// The domain entrances the player has unlocked, the one whose screen is open, and the arena its level runs in. A level's
+// Waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target, and the
+// Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the domain
 export const useWorldDomains = ({
+  adventureExp,
+  adventureRankTables,
+  completedMainQuestIds,
   events,
   gameDataBaseUrl,
   getWorldNow,
+  inventory,
   jumpTo,
+  materialDataMap,
+  nameText,
   random,
   rank,
+  setInventory,
+  setWallet,
   unlockedLandmarks,
+  wallet,
 }: {
+  adventureExp: Ref<number>;
+  adventureRankTables: AdventureRankTables;
+  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   events: WorldEvents;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
+  inventory: Ref<Inventory>;
   jumpTo: (pose: WorldJumpPose) => void;
+  materialDataMap: ReadonlyMap<number, MaterialData>;
+  nameText: Readonly<Record<string, string>>;
   random: () => number;
   rank: Ref<number>;
+  setInventory: (nextInventory: Inventory) => void;
+  setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
+  wallet: Ref<Wallet>;
 }) => {
   const unlockedDomainEntrances = computed(() =>
     unlockedLandmarks.value.filter(
@@ -58,9 +103,10 @@ export const useWorldDomains = ({
   const domainEntrance = shallowRef<DomainEntranceLandmark>();
   const domainSchedule = shallowRef<DomainSchedule>();
   const domainLevelRows = computed<DomainLevelRow[]>(() =>
-    domainSchedule.value
+    domainSchedule.value && domainEntrance.value
       ? computeDomainLevelRows(
           domainSchedule.value,
+          DOMAIN_CHALLENGE_LEVELS[domainEntrance.value.entryId] ?? {},
           rank.value,
           getWorldNow().toZonedDateTimeISO(GAME_TIME_ZONE).toPlainDate(),
         )
@@ -82,66 +128,174 @@ export const useWorldDomains = ({
     );
   };
 
-  const domainChallenge = shallowRef<DomainChallenge>();
+  const domainArena = shallowRef<DomainArena>();
+  const domainChallenge = shallowRef<DomainChallengeRun>();
+  // Whether a clear has raised the Petrified Tree the player has not claimed yet
+  const isDomainTreeRaised = shallowRef(false);
+  const domainClaimOffers = shallowRef<BlossomClaimOffer[]>();
   const isDomainChallengeActive = computed(() => domainChallenge.value !== undefined);
-  // The stand-in camp of the challenge running, which the enemies spawn while it runs
+  // The camp of the wave in play, which the enemies spawn while the challenge runs
   const domainCamps = computed(() => (domainChallenge.value ? [domainChallenge.value.camp] : []));
-  // The domains whose Petrified Tree is raised by a clear and not yet claimed
-  const raisedTreeEntryIds = shallowRef<ReadonlySet<number>>(new Set());
+  const spawnWaveCamp = (arena: DomainArena, waveIndex: number) =>
+    createDomainArenaCamp(
+      arena.areaId,
+      `domain-${arena.entryId}-${arena.startedAt}-${waveIndex}`,
+      arena.center,
+      arena.level.waves[waveIndex] ?? [],
+      arena.enemyLevel,
+      random,
+    );
+  // A defeat of the wave in play counts toward the level, and the wave that follows spawns when the wave's last enemy falls
   events.on("defeatEnemy", (enemy) => {
+    const arena = domainArena.value;
     const challenge = domainChallenge.value;
-    if (challenge && enemy.campId === challenge.camp.id)
-      domainChallenge.value = { ...challenge, defeats: challenge.defeats + 1 };
+    if (!arena || !challenge || enemy.campId !== challenge.camp.id) return;
+    const defeats = challenge.defeats + 1;
+    const defeatsInWave = challenge.defeatsInWave + 1;
+    const waveIndex = computeDomainWaveAfterDefeat(arena.level.waves, challenge.waveIndex, defeatsInWave);
+    if (waveIndex === challenge.waveIndex) {
+      domainChallenge.value = { ...challenge, defeats, defeatsInWave };
+      return;
+    }
+    domainChallenge.value = {
+      ...challenge,
+      camp: spawnWaveCamp(arena, waveIndex),
+      defeats,
+      defeatsInWave: 0,
+      waveIndex,
+    };
   });
 
-  // A level entered from the screen fades into its stand-in arena beside the entrance, where its challenge's camp spawns
+  // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A level
+  // With no challenge data does not enter, and an arena already entered is not entered again
   const enterDomain = (dungeonId: number) => {
     const entrance = domainEntrance.value;
     const schedule = domainSchedule.value;
-    // A challenge already running is not restarted, so its timer cannot be reset by entering again from the entrance
-    if (domainChallenge.value || !entrance || !schedule) return;
-    const levelIndex = schedule.levels.findIndex((level) => level.dungeonId === dungeonId);
-    const level = DOMAIN_CHALLENGE_LEVELS[entrance.entryId]?.[levelIndex];
-    if (!level) return;
+    if (domainArena.value || !entrance || !schedule) return;
+    const scheduledLevel = schedule.levels.find((level) => level.dungeonId === dungeonId);
+    const level = scheduledLevel && DOMAIN_CHALLENGE_LEVELS[entrance.entryId]?.[scheduledLevel.recommendedRank];
+    if (!scheduledLevel || !level) return;
     const now = getWorldNow().epochMilliseconds;
     const scenePose = computeDomainScenePose(entrance.arrival);
-    domainChallenge.value = {
-      camp: createDomainArenaCamp(
-        entrance.areaId,
-        `domain-${entrance.entryId}-${now}`,
-        scenePose.point,
-        level,
-        schedule.levels[levelIndex].enemyLevel,
-        random,
-      ),
-      defeatTarget: level.defeatTarget,
-      defeats: 0,
-      endsAt: now + level.timeLimitSeconds * 1000,
+    const arena: DomainArena = {
+      areaId: entrance.areaId,
+      center: scenePose.point,
+      enemyLevel: scheduledLevel.enemyLevel,
       entryId: entrance.entryId,
+      level,
+      startedAt: now,
+      treeRewards: scheduledLevel.treeRewards,
+    };
+    domainArena.value = arena;
+    domainChallenge.value = {
+      camp: spawnWaveCamp(arena, 0),
+      defeats: 0,
+      defeatsInWave: 0,
+      elapsedMilliseconds: 0,
+      waveIndex: 0,
     };
     jumpTo(scenePose);
   };
-  // The challenge's step, each frame and when the party falls: a challenge that has ended is left, its clear raising the tree
-  const stepDomainChallenge = (partyDown: boolean) => {
-    const challenge = domainChallenge.value;
+  // The player leaves the arena for the entrance: the tree they have not claimed is forfeited with it
+  const leaveDomain = () => {
     const entrance = domainEntrance.value;
-    if (!challenge || !entrance) return;
-    const outcome = resolveDomainChallenge(challenge, { now: getWorldNow().epochMilliseconds, partyDown });
-    if (outcome === DomainChallengeOutcome.Running) return;
-    if (outcome === DomainChallengeOutcome.Cleared)
-      raisedTreeEntryIds.value = new Set([...raisedTreeEntryIds.value, challenge.entryId]);
+    domainArena.value = undefined;
     domainChallenge.value = undefined;
-    jumpTo(computeJumpPose(entrance));
+    isDomainTreeRaised.value = false;
+    domainClaimOffers.value = undefined;
+    if (entrance) jumpTo(computeJumpPose(entrance));
+  };
+  // The challenge's step, each frame and when the party falls. The clock counts only while the world is open. A clear
+  // Raises the tree and keeps the player in the arena, while a timed-out or wiped run returns the player to the entrance
+  const stepDomainChallenge = ({
+    deltaMilliseconds,
+    isPlaying,
+    partyDown,
+  }: {
+    deltaMilliseconds: number;
+    isPlaying: boolean;
+    partyDown: boolean;
+  }) => {
+    const arena = domainArena.value;
+    if (!arena) return;
+    const challenge = domainChallenge.value;
+    if (!challenge) {
+      if (partyDown) leaveDomain();
+      return;
+    }
+    const elapsedMilliseconds = computeDomainChallengeElapsed(
+      challenge.elapsedMilliseconds,
+      deltaMilliseconds,
+      isPlaying,
+    );
+    const outcome = resolveDomainChallenge(
+      {
+        defeatTarget: arena.level.defeatTarget,
+        defeats: challenge.defeats,
+        elapsedMilliseconds,
+        timeLimitMilliseconds: arena.level.timeLimitSeconds * 1000,
+      },
+      { partyDown },
+    );
+    if (outcome === DomainChallengeOutcome.Running) {
+      domainChallenge.value = { ...challenge, elapsedMilliseconds };
+      return;
+    }
+    if (outcome === DomainChallengeOutcome.Cleared) {
+      domainChallenge.value = undefined;
+      isDomainTreeRaised.value = true;
+      return;
+    }
+    leaveDomain();
+  };
+
+  // Pressing F at the raised tree offers the claims the held resin affords, and offers none where it affords none
+  const openDomainTreeClaim = (now: Temporal.Instant) => {
+    if (!isDomainTreeRaised.value) return;
+    const { offers } = computeBlossomClaimPrompt(BlossomKind.Domain, 0, wallet.value, inventory.value, now);
+    domainClaimOffers.value = offers.length > 0 ? offers : undefined;
+  };
+  const closeDomainTreeClaim = () => {
+    domainClaimOffers.value = undefined;
+  };
+  // Choosing a claim spends its resin and grants the tree's items. The tree is claimed once, by the offer's claims
+  const chooseDomainTreeClaim = (offer: BlossomClaimOffer, now: Temporal.Instant) => {
+    const arena = domainArena.value;
+    if (!arena || !isDomainTreeRaised.value) return;
+    domainClaimOffers.value = undefined;
+    const claim = claimPetrifiedTree(
+      adventureRankTables,
+      wallet.value,
+      inventory.value,
+      offer,
+      () => arena.treeRewards,
+      adventureExp.value,
+      completedMainQuestIds.value,
+      now,
+      nameText,
+      materialDataMap,
+    );
+    if (!claim) return;
+    setWallet(claim.wallet);
+    setInventory(claim.inventory);
+    adventureExp.value = claim.adventureExp;
+    isDomainTreeRaised.value = false;
   };
 
   return {
+    chooseDomainTreeClaim,
+    closeDomainTreeClaim,
+    domainArena,
     domainCamps,
+    domainClaimOffers,
     domainEntrance,
     domainLevelRows,
     enterDomain,
     isDomainChallengeActive,
+    isDomainTreeRaised,
+    leaveDomain,
     openDomain,
-    raisedTreeEntryIds,
+    openDomainTreeClaim,
     stepDomainChallenge,
     unlockedDomainEntrances,
   };
