@@ -5,6 +5,8 @@ export enum QuestId {
   BirdsEyeView = "352",
   CandidatureAnalysis = "11019",
   ForegoneConclusion = "11026",
+  InazumaOpening = "7280801",
+  LiyueOpening = "2211102",
   NewHorizonsOfAdventure = "22111",
   ReputationRequest7070001 = "7070001",
   ReputationRequest7070101 = "7070101",
@@ -19,6 +21,7 @@ export enum QuestId {
   ReputationRequest7071301 = "7071301",
   ReputationRequest7071401 = "7071401",
   SevenStarSelection = "11018",
+  SumeruOpening = "7380201",
   TheSeventhSamurai = "72154",
   WanderersTrail = "351",
 }
@@ -42,8 +45,8 @@ export const ReputationRequestQuestIds: readonly QuestId[] = [
 
 // The carried quests in the order the world reads them. The prologue begins the game, so its first quests come first, in
 // The order the Archon quests run, which the enum's members, sorted by name, do not keep, then the world quests a
-// Talk offers, the series the world carries whole, each quest in the order its series runs, then the Reputation
-// Requests the keeper offers
+// Talk offers, the series the world carries whole, each quest in the order its series runs, then each city's opening
+// Quest, which its region's commissions join the deal behind, then the Reputation Requests the keeper offers
 export const QuestIds: readonly QuestId[] = [
   QuestId.WanderersTrail,
   QuestId.BirdsEyeView,
@@ -52,5 +55,8 @@ export const QuestIds: readonly QuestId[] = [
   QuestId.CandidatureAnalysis,
   QuestId.ForegoneConclusion,
   QuestId.NewHorizonsOfAdventure,
+  QuestId.LiyueOpening,
+  QuestId.InazumaOpening,
+  QuestId.SumeruOpening,
   ...ReputationRequestQuestIds,
 ];
