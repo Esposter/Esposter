@@ -375,12 +375,9 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("a region a copy started takes its Oculi offered from level one", () => {
+  test("a region only one save holds is kept as it is", () => {
     expect.hasAssertions();
-    const account = {
-      ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 0, level: 0 } } },
-    };
+    const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
       statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 2, level: 1 } } },
@@ -389,7 +386,7 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({ [REGION_ID]: { heldCount: 2, level: 1 } });
   });
 
-  test("a region both copies hold keeps the copy further on", () => {
+  test("a region both saves hold is the save further on", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
