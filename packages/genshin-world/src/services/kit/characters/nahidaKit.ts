@@ -10,6 +10,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
+import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -17,6 +18,7 @@ import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
@@ -140,7 +142,7 @@ export const createNahidaKitBehaviour = ({
       const electroCut = isInWindow && electroCount > 0 ? takeOne(electroCuts, electroCount - 1) : 0;
       addKitStatus(kitEffectState, characterId, {
         id: TRI_KARMA_CLOCK_STATUS_ID,
-        secondsRemaining: (TRI_KARMA_INTERVAL_FRAMES - Math.trunc(electroCut * 60)) / 60,
+        secondsRemaining: toKitSeconds(TRI_KARMA_INTERVAL_FRAMES - Math.trunc(electroCut * KIT_FRAMES_PER_SECOND)),
       });
       const damageBonus = isInWindow && pyroCount > 0 ? takeOne(pyroBonuses, pyroCount - 1) : 0;
       for (const enemy of context.enemyMap.values())
