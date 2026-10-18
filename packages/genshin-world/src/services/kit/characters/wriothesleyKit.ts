@@ -8,4 +8,6 @@ export const WRIOTHESLEY_CHARACTER_ID = 10_000_086;
 // Combatant does not carry, and the enhancement ends when the skill's ten seconds do or the wearer swaps off. Darkgold
 // Wolfbite's Surging Blade hits past the burst's animation, so it waits on a timed hit. The charged attack's ascension and
 // Constellation boxes are not built, nor are his passives and constellations
+// Constellation 1 needs the Gracious Rebuke's change, which waits on the wearer's HP that a kit does not read
+// Constellation 2 needs the Prosecution Edict stacks on Darkgold Wolfbite, which the kit does not build
 export const createWriothesleyKitBehaviour = (): KitBehaviour => ({});

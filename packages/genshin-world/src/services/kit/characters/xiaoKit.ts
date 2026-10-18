@@ -36,6 +36,7 @@ export const XIAO_CHARACTER_ID = 10_000_026;
 // Heaven Fall's stacks of the dashes before it. Bane of All Evil is an Anemo infusion converting his attacks with its
 // DMG Bonus, ended as he leaves the field, which drains his HP each second and from Ascension 1 gives Tamer of Demons'
 // Anemo DMG Bonus while it stands
+// Constellation 6 needs a Plunging Attack hit on two opponents as an event, which the kit does not emit
 export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const baneOfAllEvilDamageBonus = readParameter("baneOfAllEvilDamageBonus");
   const drainShare = readParameter("drainShare");
