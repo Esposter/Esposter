@@ -87,12 +87,12 @@ Mizuki's skill press SHALL enter the Dreamdrifter state for five seconds, and a 
 - **WHEN** the player presses her skill
 - **THEN** the Dreamdrifter state ends
 
-### Requirement: Clouds, snacks and constellations not yet built
+### Requirement: Snacks, the windup and constellations not yet built
 
-Mizuki's Dreamdrifter clouds, the state's restriction of her actions, the snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension and constellation effects that read them SHALL NOT take effect.
+Mizuki's snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension and constellation effects that wait on the Dreamdrifter state's hook or on the snacks SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Mizuki has a cloud, snack or constellation effect unlocked
+- **GIVEN** Mizuki has a snack or constellation effect unlocked
 - **WHEN** the player fights with Mizuki
 - **THEN** those effects have no effect
