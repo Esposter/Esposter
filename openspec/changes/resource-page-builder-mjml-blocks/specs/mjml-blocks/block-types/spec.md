@@ -1,0 +1,106 @@
+## ADDED Requirements
+
+### Requirement: A block document nests as MJML nests
+
+The MJML blocks SHALL accept a child in a slot only when MJML allows that tag inside its parent, and SHALL accept in the document's content only what MJML allows in the body.
+
+#### Scenario: A section accepts only columns and groups
+
+- **GIVEN** an email document holding a section
+- **WHEN** a text is placed directly in the section
+- **THEN** the document is refused
+- **AND** the refusal names the section's slot
+
+#### Scenario: A text at the root is refused
+
+- **GIVEN** an empty email document
+- **WHEN** a text is placed directly in its content
+- **THEN** the document is refused
+
+### Requirement: Attributes take only what MJML accepts
+
+Every block type SHALL take exactly the attributes its MJML component allows, and SHALL refuse a value MJML's type for that attribute refuses.
+
+#### Scenario: An attribute value MJML's type refuses
+
+- **GIVEN** a button
+- **WHEN** its padding is set to a value with five lengths
+- **THEN** the button is refused
+- **AND** the refusal names the padding
+
+### Requirement: An unset attribute resolves through MJML's cascade
+
+An attribute the author did not set SHALL stay absent from the node, and SHALL resolve to the root's default for its type, else the root's default for all components, else MJML's own default.
+
+#### Scenario: An unset attribute resolves through the cascade
+
+- **GIVEN** a root whose default for all components sets a font family
+- **WHEN** the font family of a text that sets none is resolved
+- **THEN** it resolves to the root's font family
+
+#### Scenario: A set attribute wins over the cascade
+
+- **GIVEN** a root whose default for texts sets a font size
+- **WHEN** the font size of a text that sets its own is resolved
+- **THEN** it resolves to the text's own font size
+
+### Requirement: Content is safe before it reaches MJML
+
+An image SHALL carry its alternative text or be marked decorative, raw HTML SHALL be stored only as the sanitiser returns it, and every attribute value SHALL reach MJML escaped exactly once.
+
+#### Scenario: An image without alternative text is refused
+
+- **GIVEN** an image with a source
+- **WHEN** it has no alternative text and is not marked decorative
+- **THEN** the image is refused
+
+#### Scenario: A decorative image renders an empty alternative text
+
+- **GIVEN** an image marked decorative
+- **WHEN** the document is rendered
+- **THEN** the image's alternative text is empty
+
+#### Scenario: Raw HTML is cleaned before it is stored
+
+- **GIVEN** a raw block holding a script element beside a paragraph
+- **WHEN** the block is parsed
+- **THEN** it holds the paragraph alone
+
+#### Scenario: An attribute holding a quote is escaped once
+
+- **GIVEN** a button whose link carries a double quote and an ampersand
+- **WHEN** the document is rendered and compiled
+- **THEN** the compiled email's link carries each as one escaped entity
+
+### Requirement: A rendered email compiles and reads back
+
+A document the registry accepts SHALL render to MJML that compiles under MJML's strict validation, and MJML source SHALL read back into the document it came from, refusing a tag, attribute or value the package does not take.
+
+#### Scenario: A valid email compiles under strict validation
+
+- **GIVEN** a document of a section holding a column with a text, a button and an image
+- **WHEN** it is rendered and compiled with strict validation
+- **THEN** the compile returns email HTML with no validation error
+
+#### Scenario: Rendering a parsed email returns its source
+
+- **GIVEN** MJML source holding every block type with its attributes
+- **WHEN** it is read into a document and rendered again
+- **THEN** the rendered JSON equals the source's parsed JSON
+
+#### Scenario: An import holding a tag the package leaves out is refused
+
+- **GIVEN** MJML source whose head holds an included file
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the included tag
+
+### Requirement: The blocks run where there is no document object model
+
+The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.
+
+#### Scenario: Rendering where there is no document object model
+
+- **GIVEN** a runtime with no document object model
+- **WHEN** an email document is checked and rendered
+- **THEN** it renders to MJML's JSON form

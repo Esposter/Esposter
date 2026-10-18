@@ -7,11 +7,13 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 ## Sub-pages
 
 - [Headless core](../../specs/headless-block-editor/editor-core/design.md) (built) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
+- [Registry root and render fold](../headless-block-editor-root-and-render/design.md) — the root a registry declares beside its types, and the fold from the leaves up that every renderer goes through
+- [MJML blocks](../resource-page-builder-mjml-blocks/design.md) — MJML's components as block types in the `mjml-blocks` package: their attributes, nesting, cascade, render and read back
 - [Document model](../resource-page-builder-document-model/design.md) — the typed node tree, the node types a registry holds for each editor, and how a document renders and publishes
 - [Canvas](../resource-page-builder-canvas/design.md) — the same-origin frame, its overlays, and the pointer, keyboard and layers paths that select and move nodes
 - [Style panel](../resource-page-builder-style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
 - [Undo as patches](../resource-page-builder-undo-as-patches/design.md) — every edit a JSON Patch with its inverse, so undo and redo are patch lists
-- [Email](../resource-page-builder-email/design.md) — the email node types over MJML compiled on the server, with the design canvas and Preview
+- [Email](../resource-page-builder-email/design.md) — the email editor over the MJML blocks: the design canvas, Preview compiled on the server, merge fields and the MJML import
 - [Performance and proof](../resource-page-builder-performance-and-proof/design.md) — the targets the editors hold, and how their output is proved against the published page
 - [Cutover](../resource-page-builder-cutover/design.md) — the one change that ships the editors, deletes every webpage and email, and removes GrapesJS
 
@@ -35,7 +37,7 @@ The stop list keeps accessibility-shaped engines because "our own version reliab
 
 What is kept, and why:
 
-- **MJML** stays the email engine. Email-client HTML is a decade of table and conditional-comment workarounds MJML encodes; we write the MJML, it writes the HTML. It moves to the server, where its weight costs the reader nothing.
+- **MJML** stays the email engine. Email-client HTML is a decade of table and conditional-comment workarounds MJML encodes; we write the MJML, it writes the HTML. Its components become block types in a package of their own, `mjml-blocks`, in place of `grapesjs-mjml`, and its compile moves to the server, where its weight costs the reader nothing.
 - **TipTap and ProseMirror** hold the text inside a text block, in the ProseMirror JSON the Note already stores and renders server-side through `@tiptap/html`. Rich text is on the stop list for good reason, and the app already pays for it.
 - **CodeMirror** edits the raw-HTML block, through the code viewer the app already themes.
 - **The shared sanitiser** cleans the raw-HTML block, in place of GrapesJS's parser, whose checks the [custom code page](../../specs/resource/webpage-plugin-custom-code/design.md) records as weaker than they look.
@@ -79,7 +81,7 @@ The editor shell is library parts: `UiTabs` over the Content, Style and Theme pa
 
 Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap. Nothing in the first four touches what GrapesJS reads or writes: the new documents, their stores and their renderers sit beside `WebpageEditor`, `EmailEditor` and the two editors' stores, each store loaded and saved through functions its tests pass in, and the cutover binds them to the two resource types — the content classes, the content stores and their hooks, the views, publishing and the exports — in the change that removes GrapesJS. Binding any of it earlier would leave GrapesJS saving documents the new schemas refuse, with every webpage and email broken until the swap.
 
-1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then the webpage and email node types over it; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests and the MJML defaults test.
+1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then its declared root and render fold; then the MJML blocks package, holding MJML's components with their attribute tables and nesting held equal to the installed release; then the webpage node types and the email registry over them; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and the survey invite's MJML; the server's compile service on MJML's Node package. Unit tests throughout.
 2. **The webpage editor.** The canvas frame, overlays and toolbar; the pointer drag and every keyboard path; the layers tree; the palette; the content, style and theme panels; text editing; device widths; Export. Component tests and a browser suite for what only a layout engine can show.
 3. **The email editor.** The email canvas components, Preview, merge fields, the preview text, survey invites, and the personalized export from compiled HTML.
 4. **The proof.** The render, patch and compile benches, and the browser proofs of both canvases against their published output.
@@ -115,12 +117,13 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 New code lands here:
 
 ```text
-packages/headless-block-editor/                the tree, registry contract, document schema, commands, navigation, history
+packages/headless-block-editor/                the tree, registry contract, document schema, commands, navigation, history, render fold
+packages/mjml-blocks/                          MJML's components as block types: attributes, nesting, cascade, render, read back
 packages/shared/src/services/jsonPatch/        applyPatches, the RFC 6902 applier the core and the content tools share
 apps/web/shared/models/pageBuilder/            the webpage and email documents, the element-tree and style models
 apps/web/shared/services/pageBuilder/          the serialiser, CSS emitter
 apps/web/shared/services/pageBuilder/webpage/  WebpageNodeType, WebpageNodeTypeMap, one module per type
-apps/web/shared/services/pageBuilder/email/    EmailNodeType, EmailNodeTypeMap, one module per type, the MJML render
+apps/web/shared/services/pageBuilder/email/    the email registry: the MJML blocks' types with the survey invite added
 apps/web/server/services/emailEditor/          the MJML compile service
 apps/web/app/store/pageBuilder/                selection, active breakpoint and state, history — keyed by resource
 apps/web/app/components/PageBuilder/           the shell, canvas frame, overlays, toolbar, palette, panels, fields

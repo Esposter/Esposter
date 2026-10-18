@@ -10,6 +10,7 @@ A webpage and an email gain a document of typed nodes, with the renderers that t
 
 - A webpage or an email is a tree of typed nodes. Node ids are unique within a document, and a document over a fixed node limit is refused.
 - Each node type declares its fields, the child types each of its slots accepts, and its published output. The editor and the server share the registry.
+- The email types are MJML's components from the MJML blocks package, with the survey invite added.
 - The webpage types are Section and Columns for layout; Text, Button, Image, an uploaded Video and Custom HTML for content; Countdown, Tabs, Tooltip and Typed text for extras; and one Survey invite type for each published survey.
 - Each webpage type publishes accessible output by construction: an image needs its alternative text or a decorative flag, a video needs a title, and a button is a real link.
 - A webpage document renders to one HTML document, and the server compiles an email document, refusing markup that fails strict validation with the validator's message.
@@ -22,7 +23,8 @@ A webpage and an email gain a document of typed nodes, with the renderers that t
 
 ## Waiting on
 
-None.
+- `headless-block-editor-root-and-render`, whose declared root each registry needs and whose fold the webpage renderer goes through.
+- `resource-page-builder-mjml-blocks`, whose types the email registry is.
 
 ## Impact
 

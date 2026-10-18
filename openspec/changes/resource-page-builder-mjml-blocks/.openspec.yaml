@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [resource, mjml-blocks]
+x-model: claude-opus-5-5
+x-waiting: "headless-block-editor-root-and-render, whose declared root narrows the body's content and whose fold every render goes through"

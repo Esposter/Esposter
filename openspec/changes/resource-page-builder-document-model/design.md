@@ -1,6 +1,6 @@
 # Document model
 
-The webpage and email editors' documents: the node types each editor registers over the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets.
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. The webpage's types are the app's own. The email's types are the [MJML blocks](../resource-page-builder-mjml-blocks/design.md) package's, with the app's survey invite added.
 
 ## The document model
 
@@ -30,13 +30,13 @@ interface PageDocument<TRootProps, TNode> {
 
 **Beside the live editors.** The two documents are new classes, built beside `WebpageEditor` and `EmailEditor` rather than in place of them, and each open one sits in the page builder's document store, keyed by its resource, loaded and saved through functions its caller passes in. GrapesJS still mounts and saves its own shape until the [cutover](../resource-page-builder-cutover/design.md), so nothing it reads or writes changes here, as the [program](../resource-page-builder-program/design.md)'s phases require. The cutover puts these documents into the two content classes, under the same names, and removes `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through, so the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks. Rejected: changing the two classes here, which would leave GrapesJS saving documents the new schemas refuse.
 
-The tree, the registry contract and the schema below are the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry: each node's shape is parsed first, then a refinement walks the tree checking every type against the registry and its slot, every props schema, ids unique within the document, and the node count under a named `MAX_*` limit this page passes in, so a refusal names the slot that refused. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
+The tree, the registry contract and the schema below are the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. Since the [registry root](../headless-block-editor-root-and-render/design.md) change, a registry also says what may sit at the top of a document and what the document-wide props must hold. The webpage's root accepts every placeable type, and its props hold the page's language. The email's root is the MJML blocks', taking only what MJML's body takes, with the head as its props. Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry: each node's shape is parsed first, then a refinement walks the tree checking the root's props, every type against the registry and its slot, every props schema, ids unique within the document, and the node count under a named `MAX_*` limit this page passes in, so a refusal names the slot that refused. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
 
 The text inside a text node is the ProseMirror JSON the Note stores, validated by the node schema `apps/web/shared/models/resource/note/NoteResource.ts` already declares, exported for its second consumer. Portable Text was weighed for it and lost: it would need an editor of its own — Portable Text's is React — or a converter each way, against a format the app already stores, edits and renders on the server.
 
 ## Node types replace the plugin belt
 
-A plugin is a typed node-type registration, collected in maps keyed by an enum — one enum for each editor, so an Email type can never be dropped into a webpage. A registration has two halves because two runtimes read it: the server renders a type when it publishes, and only the editor draws one. Each half is a `Record` over the enum, so a type missing either fails the typecheck:
+A plugin is a typed node-type registration. The webpage's are collected in maps keyed by an enum of the webpage's types, and the email's are the MJML blocks' types, named by their MJML tags, so neither editor's type can be dropped into the other's document. A webpage registration has two halves because two runtimes read it: the server renders a type when it publishes, and only the editor draws one. Each half is a `Record` over the enum, so a type missing either fails the typecheck. The shared half extends the core's `BlockTypeDefinition`:
 
 ```ts
 // Shared with the server: what a type is and what it emits
@@ -46,7 +46,7 @@ interface NodeTypeDefinition<TType extends string, TProps> {
   // The editable content props, drawn by UiSchemaForm
   formSchema: z.ZodType;
   propsSchema: z.ZodType<TProps>;
-  // Pure: props and rendered slots in, an element tree out — HTML for a webpage type, MJML for an email type
+  // Pure: props and rendered slots in, an element tree out, folded by the core's renderBlockNodes
   render: (props: TProps, slots: Record<string, HtmlNode[]>, context: RenderContext) => HtmlNode;
   // A self-contained runtime emitted once per published page holding the type
   script?: () => void;
@@ -82,7 +82,7 @@ Each type's contract makes its published output accessible by construction rathe
 
 `render` returns a small element tree — a tag, typed attributes, children — and one serialiser turns a tree into HTML, escaping every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it, every URL prop passes `checkIsAllowedUrl` at its schema, and the one raw-HTML type stores what `sanitizeHtml` returns. That closes the vectors GrapesJS's parser leaves open — a `javascript:` URL behind a leading space or another case, `srcdoc`, an SVG `xlink:href` — and each becomes a regression test on Custom HTML.
 
-A webpage renders to one document: `<html lang>` from the root, then a single stylesheet of each present type's structural CSS, which the [style panel](../resource-page-builder-style-panel/design.md) later opens with the page's tokens and closes with every styled node's rules; then the body; then each present type's script, once. An email renders to MJML: the root's `lang`, the preview text as `mj-preview` in `mj-head`, the sections in `mj-body`.
+A webpage renders to one document through the core's `renderBlockNodes`. The document opens with `<html lang>` from the root, then a single stylesheet of each present type's structural CSS. The [style panel](../resource-page-builder-style-panel/design.md) later opens that stylesheet with the page's tokens and closes it with every styled node's rules. Then come the body, and each present type's script, once. An email renders through the MJML blocks' `renderMjmlDocument` to MJML's JSON form, with the head built from the root's props and the body from its content. The app's survey invite renders as an `mj-button` beside the package's own types.
 
 ```mermaid
 flowchart TD
@@ -99,7 +99,7 @@ flowchart TD
   RENDERE --> VIEW
 ```
 
-This change builds and tests what the publish branch of that diagram calls: the webpage renderer, a pure function the browser's export also runs, and the server's compile service on MJML's Node package, which refuses markup failing strict validation with MJML's own message. The cutover wires both into publishing, the views and the exports, as its "Binding the new editors" describes.
+This change builds and tests what the publish branch of that diagram calls: the webpage renderer, a pure function the browser's export also runs, and the server's compile service. The compile service hands the MJML blocks' JSON to `mjml2html` on MJML's Node package and refuses an email failing strict validation with MJML's own message. The cutover wires both into publishing, the views and the exports, as its "Binding the new editors" describes.
 
 ## Key files
 
@@ -116,13 +116,15 @@ New code lands here:
 
 ```text
 apps/web/shared/models/pageBuilder/            the webpage and email documents, beside the classes GrapesJS still saves
-apps/web/shared/services/pageBuilder/          the two registries, one module per type, the serialiser and the renderers
+apps/web/shared/services/pageBuilder/          the webpage registry, one module per type, the serialiser and the renderer
+apps/web/shared/services/pageBuilder/email/    the email registry: the MJML blocks' types with the survey invite added
 apps/web/server/services/emailEditor/          the MJML compile service
 apps/web/app/store/pageBuilder/                each open document, keyed by its resource, loaded and saved through what its caller passes
 ```
 
 ## Sources
 
+- [MJML documentation — Using MJML in JSON](https://documentation.mjml.io/#using-mjml-in-json) — the object form the compile service hands `mjml2html`.
 - [Puck — Data](https://puckeditor.com/docs/api-reference/data), [ComponentData](https://puckeditor.com/docs/api-reference/data-model/component-data), [the slot field](https://puckeditor.com/docs/api-reference/fields/slot) and [migrate](https://puckeditor.com/docs/api-reference/functions/migrate) — the document's shape: `{ root, content }`, a node as `{ type, props }` with the id inside props, slots as props holding nodes with allow and disallow lists, and zones deprecated in their favour.
 - [BlockNote — Document structure](https://www.blocknotejs.org/docs/foundations/document-structure) — the `{ id, type, props, content, children }` block weighed against Puck's; its columns as blocks.
 - [Portable Text — Specification](https://portabletext.org/specification/) — a text model of typed blocks, spans and mark definitions, weighed for the text node's content.

@@ -1,7 +1,7 @@
 ## 1. Document
 
 - [ ] 1.1 Define the webpage and email documents beside `WebpageEditor` and `EmailEditor`, each schema the core's over its registry with a named node limit. Verify: tests named after the scenarios 'A document with a duplicate node id is refused' and 'A document over the node limit is refused'.
-- [ ] 1.2 Define the two node-type registries, with each type's fields, slots and allowed child types, shared by the editor and the server. Verify: a test named after the scenario 'A Columns node holds only columns'.
+- [ ] 1.2 Define the webpage's node-type registry, with each type's fields, slots and allowed child types and its root's props, and the email's as the MJML blocks' registry with the Note's rich text and the survey invite added, both shared by the editor and the server. Verify: tests named after the scenarios 'A Columns node holds only columns' and 'A survey invite sits in an email column'.
 - [ ] 1.3 Keep each open document in the page builder's document store, keyed by its resource, loaded and saved through functions its caller passes, touching nothing GrapesJS reads. Verify: a test named after the scenario 'Two open webpages keep their own documents'.
 
 ## 2. Node types
@@ -15,7 +15,7 @@
 ## 4. Rendering
 
 - [ ] 4.1 Render a webpage document to one HTML document, as a pure function the browser can also run. Verify: a test named after the scenario 'A webpage document renders as one HTML document'.
-- [ ] 4.2 Add `mjml` at its version in the catalog and `apps/web/package.json`, the server's compile dependency, then compile an email document on the server with its Node package, refusing markup that fails strict validation. Verify: tests named after the scenarios 'An email document with invalid markup is refused by the compile' and 'A valid email document compiles to email HTML'.
+- [ ] 4.2 Add `mjml` at its version in the catalog and `apps/web/package.json`, the server's compile dependency, then compile an email document on the server by handing the MJML blocks' JSON form to its Node package, refusing an email that fails strict validation. Verify: tests named after the scenarios 'An email document with invalid markup is refused by the compile' and 'A valid email document compiles to email HTML'.
 
 ## 5. The record
 

@@ -11,6 +11,8 @@ x-touches:
     "packages/shared/src/services/jsonPatch/**",
     "packages/shared/src/models/jsonPatch/**",
     "apps/web/app/components/Ui/**",
+    "packages/headless-block-editor/**",
+    "packages/mjml-blocks/**",
     "openspec/specs/resource/**",
     "openspec/specs/architecture/**",
     ".agents/skills/**",

@@ -26,6 +26,12 @@ A node SHALL hold only the child types its slot allows.
 - **WHEN** the owner tries to place a text node directly in the Columns node
 - **THEN** the text node is not placed there
 
+#### Scenario: A survey invite sits in an email column
+
+- **GIVEN** an email whose section holds a column
+- **WHEN** the owner places a survey invite in the column
+- **THEN** the invite is placed there
+
 ### Requirement: Each node type publishes accessible output
 
 Each node type SHALL publish output that meets its accessibility contract, and SHALL refuse a document whose node breaks that contract.

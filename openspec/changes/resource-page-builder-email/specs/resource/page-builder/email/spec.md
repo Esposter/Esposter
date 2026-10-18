@@ -1,25 +1,5 @@
 ## ADDED Requirements
 
-### Requirement: An email is built from its email node types
-
-An email SHALL be built from email node types, and a section SHALL hold only columns.
-
-#### Scenario: A section accepts only columns
-
-- **GIVEN** a section in an email
-- **WHEN** the owner tries to place a text block directly in the section
-- **THEN** the text block is not placed there
-
-### Requirement: An email image requires alternative text
-
-An image in an email SHALL carry alternative text before the email can be saved.
-
-#### Scenario: An image without alternative text is refused
-
-- **GIVEN** an image in an email with no alternative text
-- **WHEN** the owner saves the email
-- **THEN** the save is refused
-
 ### Requirement: The design canvas stacks columns below the mobile breakpoint
 
 The design canvas SHALL draw a section's columns side by side at desktop width and SHALL stack them below 480 pixels.
@@ -33,7 +13,7 @@ The design canvas SHALL draw a section's columns side by side at desktop width a
 
 ### Requirement: The design canvas shows the email engine's default look
 
-Each element on the design canvas SHALL show the email engine's default look until the owner sets a field that overrides it.
+Each element on the design canvas SHALL show what its attributes resolve to: its own value, else the email's default for its kind or for all elements, else the email engine's default look.
 
 #### Scenario: A new text shows the default font and padding
 
@@ -95,3 +75,27 @@ An email node SHALL offer no breakpoints or states, and its style fields SHALL b
 - **WHEN** the owner opens its style fields
 - **THEN** no breakpoint or state choice is shown
 - **AND** the fields include its padding, colours and font
+
+#### Scenario: Clearing a field restores the root's default
+
+- **GIVEN** an email whose default font size for texts is 16 pixels, and a text whose own font size is 20 pixels
+- **WHEN** the owner clears the text's font size
+- **THEN** the text is shown at 16 pixels
+
+### Requirement: MJML source imports as an email
+
+The email editor SHALL replace the open email with imported MJML source as one undoable edit, and SHALL leave the email unchanged and name what did not fit when the source holds anything the email types do not take.
+
+#### Scenario: Importing MJML replaces the email
+
+- **GIVEN** an email open in the editor
+- **WHEN** the owner imports MJML source of a section holding a column with a button
+- **THEN** the email holds that section, column and button
+- **AND** one undo restores the email as it was
+
+#### Scenario: An import that does not fit leaves the email as it was
+
+- **GIVEN** an email open in the editor
+- **WHEN** the owner imports MJML source that includes a file
+- **THEN** the email is unchanged
+- **AND** the refusal names the included tag

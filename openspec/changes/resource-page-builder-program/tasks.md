@@ -1,8 +1,9 @@
 ## 1. Phase one: model and output
 
 - [x] 1.1 Build the headless core, as the headless-core change specifies. Verify: a test named after the scenario 'Reversing a move' in that change.
-- [ ] 1.2 Build the document model and undo as patches over the headless core, as the document-model and undo-as-patches changes specify. Verify: a test named after the scenarios 'Undo restores the document before the last edit' and 'Redo reapplies an undone edit' in the undo-as-patches change.
-- [ ] 1.3 Build the webpage renderer and the server's email compile beside the editor that runs today, as the document-model change specifies. Verify: tests named after the scenarios 'A webpage document renders as one HTML document' and 'A valid email document compiles to email HTML' in the document-model change.
+- [ ] 1.2 Build the registry root and render fold, then the MJML blocks package over it, as those two changes specify. Verify: the MJML blocks change's test named after its scenario 'A valid email compiles under strict validation', which runs over a registry whose root that change declares.
+- [ ] 1.3 Build the document model and undo as patches over the headless core, as the document-model and undo-as-patches changes specify. Verify: a test named after the scenarios 'Undo restores the document before the last edit' and 'Redo reapplies an undone edit' in the undo-as-patches change.
+- [ ] 1.4 Build the webpage renderer and the server's email compile beside the editor that runs today, as the document-model change specifies. Verify: tests named after the scenarios 'A webpage document renders as one HTML document' and 'A valid email document compiles to email HTML' in the document-model change.
 
 ## 2. Phase two: webpage editor
 
