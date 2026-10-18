@@ -34,6 +34,7 @@ export const createCombatant = (
     elementalResonances,
     kit: getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),
     level: character.level,
+    regionId: characterData?.regionId,
     weaponType: characterData?.weaponType,
   };
 };

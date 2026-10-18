@@ -1,5 +1,4 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -43,7 +42,7 @@ export interface Kit {
   getPassiveBonuses?: (
     combatant: Combatant,
     healthShare: number,
-    deployedElements: readonly Element[],
+    deployedCombatants: readonly Combatant[],
   ) => { amount: number; attribute: Attribute }[];
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;

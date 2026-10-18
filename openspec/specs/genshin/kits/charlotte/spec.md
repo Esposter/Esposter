@@ -71,6 +71,22 @@ Still Photo SHALL heal every party member by a flat amount and a share of Charlo
 - **WHEN** one of its ticks lands and the character on the field stands farther than 7 metres from the cast point
 - **THEN** that character is not healed by that tick
 
+### Requirement: Ascension 4 adds Healing Bonus and Cryo DMG Bonus by region
+
+From Ascension 4 Charlotte SHALL gain 5% Healing Bonus for each other member of the deployed team from Fontaine, and 5% Cryo DMG Bonus for each other member from outside Fontaine.
+
+#### Scenario: Ascension 4 counts each other member by region
+
+- **GIVEN** Charlotte is at Ascension 4 with a Fontaine member and a Mondstadt member in the deployed team
+- **WHEN** her hits are priced
+- **THEN** her Healing Bonus is 5% higher and her Cryo DMG Bonus is 5% higher
+
+#### Scenario: Ascension 4 is not reached below Ascension 4
+
+- **GIVEN** Charlotte is at Ascension 3 with a Fontaine member in the deployed team
+- **WHEN** her hits are priced
+- **THEN** her Healing Bonus is not raised
+
 ### Requirement: Provisional timings and values
 
 Charlotte's strikes, charged attack and plunges SHALL keep their damage and poise provisional until a recording of the game settles them.
