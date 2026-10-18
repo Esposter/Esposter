@@ -44,7 +44,7 @@ export const buildStandingTalks = async (): Promise<GameDataBuild> => {
       return talk ? [talk] : [];
     });
   const talks = readTalks(standingTalkIds);
-  const favourTalkIds = new Set(readHomeFavourRows().map(({ talkID }) => talkID));
+  const favourTalkIds = new Set(readHomeFavourRows().flatMap(({ talkID }) => (talkID ? [talkID] : [])));
   const favourTalks = readTalks(favourTalkIds);
   const textIds = new Set([...talks, ...favourTalks].flatMap((talk) => getTalkTextIds(talk)));
   textIds.delete("");

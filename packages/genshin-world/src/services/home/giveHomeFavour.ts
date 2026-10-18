@@ -6,7 +6,7 @@ import type { HomeProgress } from "#src/models/home/HomeProgress";
 export const giveHomeFavour = (
   favour: HomeFavour,
   progress: HomeProgress,
-): undefined | { progress: HomeProgress; rewardId?: number; talkId: number } => {
+): undefined | { progress: HomeProgress; rewardId?: number; talkId?: number } => {
   if (!progress.companionIds.includes(favour.avatarId)) return undefined;
   if (progress.claimedRewardIds.includes(favour.rewardId)) return { progress, talkId: favour.talkId };
   return {

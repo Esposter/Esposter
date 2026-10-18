@@ -10,7 +10,7 @@ export const buildHomeEvents = (): Record<string, unknown> => ({
         avatarId: avatarID,
         furnitureSuitId: furnitureSuitID,
         rewardId: rewardID,
-        talkId: talkID,
+        ...(talkID ? { talkId: talkID } : {}),
       }))
       .toSorted(
         (firstFavour, secondFavour) =>
