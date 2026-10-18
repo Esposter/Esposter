@@ -6,7 +6,6 @@ import type { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
