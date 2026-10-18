@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -13,8 +14,10 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -77,6 +80,46 @@ const fillFlaskUntilDrained = (
     if (context.kitEffectState.effects.some(({ kind }) => kind === "summon")) return;
   }
   throw new Error("The flask never drains");
+};
+
+// Jahoda and a partner on a team of two, with her burst cast, each member at the health share given. Her Max HP is large,
+// So a heal moves a share too small to lift her past 70% of it over the burst's ticks
+const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number) => {
+  const combatant: Combatant = {
+    ...createJahodaCombatant(),
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
+    kit: JAHODA_KIT,
+  };
+  const partner: Combatant = { ...combatant, characterId: MOONSIGN_PARTNER_CHARACTER_ID };
+  const party = createParty([combatant.characterId, partner.characterId]);
+  const setHealthShare = (characterId: number, healthShare: number): void => {
+    const member = party.characterIdMemberMap.get(characterId);
+    if (member) party.characterIdMemberMap.set(characterId, { ...member, healthShare });
+  };
+  setHealthShare(combatant.characterId, activeHealthShare);
+  setHealthShare(partner.characterId, partnerHealthShare);
+  const context = createKitTestContext(combatant, {
+    characterIdCombatantMap: new Map([
+      [combatant.characterId, combatant],
+      [partner.characterId, partner],
+    ]),
+    party,
+  });
+  JAHODA_KIT.elementalBurst?.onStart?.(context);
+  return context;
+};
+
+// The frames, counted from the cast, on which a member's health share rises, over the burst's frames
+const readHealedFrames = (context: ReturnType<typeof createBurstHealContext>, characterId: number): number[] => {
+  const healedFrames: number[] = [];
+  let healthShare = getPartyMember(context.party, characterId).healthShare;
+  for (let frame = 1; frame <= 800; frame++) {
+    stepKitEffects(1 / 60, context);
+    const nextHealthShare = getPartyMember(context.party, characterId).healthShare;
+    if (nextHealthShare > healthShare) healedFrames.push(frame);
+    healthShare = nextHealthShare;
+  }
+  return healedFrames;
 };
 
 describe(createJahodaKitBehaviour, () => {
@@ -167,5 +210,19 @@ describe(createJahodaKitBehaviour, () => {
     const { context, pursuit } = createConstellation6Context(5, true);
     fillFlaskUntilDrained(pursuit, context);
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
+  });
+  test("Hidden Aces heals the active character on each of its nine ticks, from the 12th frame every 87 frames", () => {
+    const context = createBurstHealContext(0.1, 1);
+    expect(readHealedFrames(context, JAHODA_CHARACTER_ID)).toStrictEqual([12, 99, 186, 273, 360, 447, 534, 621, 708]);
+  });
+
+  test("above 70% of her health, Hidden Aces heals the lowest member as well, on its first tick", () => {
+    const context = createBurstHealContext(0.9, 0.4);
+    expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toContain(12);
+  });
+
+  test("at 70% of her health or below, Hidden Aces heals no member but the active one", () => {
+    const context = createBurstHealContext(0.5, 0.4);
+    expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toStrictEqual([]);
   });
 });

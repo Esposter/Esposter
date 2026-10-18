@@ -10,18 +10,19 @@ Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`,
 - **The flask's absorb reads the first element in the framework's order, not in gcsim's.** gcsim checks the element the flask has already absorbed before the others; the framework's absorb check reads its own fixed order. The two agree while an enemy holds one element's aura; they differ only when an enemy holds two.
 - **Constellation 6 is read at each full drain, to every Moonsign member.** gcsim applies its buffs when the flask drains full at Ascendant Gleam, to each character with a Moonsign, Jahoda included, for 20 seconds at 5% Crit Rate and 40% Crit DMG, each restarted by the drain that gives it. The drain reads the team as the press lands, so the buff follows the team it was drained for.
 - **The second press's drain is a summon, not a hit of the press.** Whether the drain is a filled or an unfilled hit depends on the gauge when the press lands, which an action's own hit list cannot choose between. The summon is cast where she stands and lands 2 frames after the press when the gauge is full, or 4 frames after it when not, gcsim's frames.
+- **Hidden Aces' heals run on a whole-world schedule, not a field's.** gcsim queues each heal tick on her clock, so the heals fall wherever the body stands: nine ticks from frame 12, every 87 frames, stopping at the burst's 790. `schedulePeriodicKitTask` runs them as a whole-world field with a tick interval, cut at its end. Each heal is priced by Jahoda as she stood at the cast, a flat amount and a share of her ATK from proud skill group 12439, and the lowest member gets the second heal too while she has over 70% of her health. Ascension 1's heal multiplier is not built, and neither is Ascension 4's Elemental Mastery buff.
 
 ## Not yet built
 
 - **Her robots, which absorb an aura and strike the three nearest enemies, and Meowball.** Both exist only at Moonsign level 2 and above (gcsim's `GetMoonsignLevel() >= 2`), which the deployed team reads from each member's Moonsign Benediction. Jahoda's own record holds her benediction, Rooftop Dash, which raises the party's Moonsign by one level and names no lunar reaction, so it carries no lunar reaction types. gcsim gives her only the Moonsign flag, and the wiki's page names the same team bonus without any Lunar reactions to turn the team's reactions into. Her record also holds no robot or Meowball hits yet, so they wait on those.
-- **Hidden Aces' heal ticks, the party's heals every 87 frames for the burst's 790 frames.** The framework's heals are carried by a hit, and no timed heal of the party runs on a field's clock. They wait on a timed party heal hook.
 - **Ascension 1 and 4, and Constellations 1, 2 and 4.** Ascension 1 scales the burst's damage and heal by the party's elements, Ascension 4 adds Elemental Mastery while she heals above 70% HP, Constellation 1 bounces Meowball, Constellation 2 reads the party's elements and the robots' absorbs, and Constellation 4 gives energy on each robot's absorb. They wait on the robots and Meowball, which wait on her record.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                    |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/jahodaKit.ts` | `createJahodaKitBehaviour`, Jahoda's kit with her strikes, charged shot, plunges, Savvy Strategy's pursuit and flask drains, and Hidden Aces' first hit |
+| File                                                                         | Role                                                                                                                                                    |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/jahodaKit.ts`            | `createJahodaKitBehaviour`, Jahoda's kit with her strikes, charged shot, plunges, Savvy Strategy's pursuit and flask drains, and Hidden Aces' first hit |
+| `packages/genshin-world/src/services/kit/effects/schedulePeriodicKitTask.ts` | The whole-world schedule Hidden Aces' heals run on, its tick count cut at its end                                                                       |
 
 ## Sources
 
