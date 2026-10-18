@@ -25,7 +25,7 @@ flowchart TD
 
 1. **The reference.** `menu-paimon-current.png`, the menu on the current build at 1080 high with no screen open, is the frame at 25 seconds of `yt-jHr2bERjkYc`, a 2026 recording of the English PC client, and replaces the one still held, which is the 1.3 build's. The parity map's `paimon-menu` row names it. Its opening is read with `pnpm -C scripts genshin:parity frames <file> 25 21 3`. Its closing awaits `menu-paimon.mkv`, which must show Back closing the menu.
 2. **Paimon beside the menu** waits on her official model pack among the developer's extracted packs (the user, who downloads it), read as every character's is ([characters](../../specs/genshin/characters/README.md)).
-3. **The profile card's fields.** The signature, birthday and UID each join as the system behind it lands, its rank and World Level being built. The namecard joins with its picker: the profile card's namecard is the held one the player equips, and the picker is untitled until its game text (`Change Namecard`, text id 3755125824) has a `GameTextKey` member and is generated.
+3. **The profile card's fields.** The signature, birthday and UID each join as the system behind it lands, its rank and World Level being built. The namecard joins with its picker: the profile card's namecard is the held one the player equips. The picker's title is the game's `Change Namecard` (text id 3755125824), read as `GameTextKey.ChangeNamecard`; it renders empty until that key's chunk is generated.
 
 ## What this does not propose
 

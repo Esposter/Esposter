@@ -113,6 +113,8 @@ export enum GameTextKey {
   Cecilia = "3828726124",
   // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
   ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
+  // The namecard picker's title, the Change Namecard the Paimon profile opens with
+  ChangeNamecard = "3755125824",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
