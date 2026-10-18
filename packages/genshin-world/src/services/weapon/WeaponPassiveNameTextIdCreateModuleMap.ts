@@ -7,11 +7,13 @@ import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
+import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
 import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/createCritEnergyPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
+import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
@@ -30,6 +32,7 @@ import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
+import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
@@ -183,4 +186,10 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1971972187": createComposedPassiveModule,
   // Composed (Sacrificial Bow)
   "4136879547": createComposedPassiveModule,
+  // Chord (The Flute)
+  "3057490131": createChordPassiveModule,
+  // Rebellious Guardian (The Bell)
+  "896844259": createRebelliousGuardianPassiveModule,
+  // Debut (The Widsith)
+  "4145255819": createDebutPassiveModule,
 };
