@@ -1,7 +1,6 @@
 import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -24,7 +23,7 @@ export const createSpotlessHeartPassiveModule = (params: number[]): WeaponPassiv
         !checkIsKitStatusActive(effects, strike.combatant.characterId, SPOTLESS_HEART_ID)
       )
         return 0;
-      return defenseShare * strike.combatant.attributes.attributeTotalMap[Attribute.Defense];
+      return defenseShare * strike.combatant.attributes.defense;
     },
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
