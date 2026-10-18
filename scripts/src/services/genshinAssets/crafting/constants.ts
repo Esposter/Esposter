@@ -30,3 +30,8 @@ export const CombineTypeCraftingRecipeKindMap: Record<number, CraftingRecipeKind
 // Of its own, invisible and named Craft, so the bench is its interaction and no person
 export const MONDSTADT_CRAFTING_BENCH_GROUP_ID = 133_004_082;
 export const MONDSTADT_CRAFTING_BENCH_NPC_ID = 10_256;
+// The keeper Timaeus, who stands beside Mondstadt's bench. The scene group record holds no birth of his, so his place is
+// The bench's, moved along the game's x axis by the distance below: the wiki gives him beside the bench but no distance,
+// So both the distance and the place it gives are provisional until a recording confirms them
+export const MONDSTADT_CRAFTING_KEEPER_NPC_ID = 9706;
+export const CRAFTING_KEEPER_BENCH_OFFSET_METRES = 2;

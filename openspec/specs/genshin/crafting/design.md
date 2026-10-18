@@ -71,6 +71,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-interface/src/components/CraftingScreen/Index.vue`                | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft |
 | `scripts/src/services/genshinAssets/items/buildItems.ts`                            | The item table's rows, now with every crafting recipe's materials and result                |
 | `scripts/src/services/genshinAssets/crafting/buildCraftingBenchPlaces.ts`           | The bench's place in its region's axes, published as `craftingBenchPlaces/mondstadt`        |
+| `scripts/src/services/genshinAssets/crafting/toCraftingKeeperPlace.ts`              | The keeper's place beside the bench, moved along x by the reckoned offset                   |
 | `scripts/src/services/genshinAssets/crafting/findCraftingBenchMember.ts`            | The bench's NPC member of its scene group record, found by its group and NPC ids            |
 | `packages/genshin-world/src/models/crafting/CraftingBenchPlace.ts`                  | The bench's ground point and turn in its region                                             |
 | `packages/genshin-world/src/services/crafting/readMondstadtCraftingBenchPlace.ts`   | Mondstadt's bench place, fetched by its key from the hosted game data                       |
@@ -82,7 +83,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 ## Notes
 
 - **Each recipe carries its result's name.** A recipe's `nameTextId` is the text id of the item it makes, read from the material table, and `genshin:text names` publishes it in the world's `nameText` record per language, so a bench screen can show it without a game text key.
-- **Only Mondstadt's bench is placed.** `findCraftingBenchMember` finds the bench by its scene group and NPC id, which names Mondstadt's alone, so the other cities' benches stand nowhere. The keeper Timaeus, who stands beside Mondstadt's bench, has no birth in the dump and is not placed; the wiki's location for him is not yet carried into the world.
+- **Only Mondstadt's bench is placed.** `findCraftingBenchMember` finds the bench by its scene group and NPC id, which names Mondstadt's alone, so the other cities' benches stand nowhere. The keeper Timaeus, who stands beside Mondstadt's bench, has no birth in the scene group record, so `toCraftingKeeperPlace` places him two metres along x from the bench's place, as a resident the residents write carries into Mondstadt's region data. The wiki gives him beside the bench with no distance, so the offset is provisional. His name is the game's own, read from his NPC row, and his talk is the standing talk the game's table gives him (6970601), the rule every resident's talk follows. That talk is a Genius Invokation line in the dump, so whether it reads as a world talk is not confirmed.
 - **The gadget instructions' sources are not read.** Each gadget's recipe is offered once its instruction is learned, but where the instruction is obtained in the world is left to the pages that place those sources.
 - **The screen's look is not yet matched.** The recipe list, the crafter's pick, the count and the craft are the `CraftingScreen` unit under `genshin-interface`, wrapped by the world's `Crafting/Screen`, which the bench's prompt opens. Its words are the game's own text ids, and its look waits on the bench's passes against the clip.
 - **A batch's talent extra with no room is left out.** The craft is checked whole first, so the bag's room goes to the craft's own results before a talent's extra is added, and an extra that finds no room is dropped rather than refusing the craft.
@@ -91,5 +92,6 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Sources
 
+- [Timaeus](https://genshin-impact.fandom.com/wiki/Timaeus), Genshin Impact Wiki: stands next to the Crafting Bench at the fountain plaza in Mondstadt.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `CombineExcelConfigData`, each craft's materials, Mora, rank and result, and `MaterialExcelConfigData`, whose instructions' uses name the recipes they open.
 - [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: the 60 resin a craft takes and the five a player can hold, the figures the proposal settles its decisions from.
