@@ -17,6 +17,7 @@ import { addReputationExp } from "#src/services/reputation/addReputationExp";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
+import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { computed, shallowRef, watch } from "vue";
@@ -77,10 +78,10 @@ export const useWorldMap = ({
     domainEntranceLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
   );
 
-  // The Primogems and Adventure EXP a statue pays on its first unlock, from the open world's transport points by its scene
-  // Point. Only a locked landmark is offered to resonate with, so each is paid once
+  // The Primogems and Adventure EXP a statue or a waypoint pays on its first unlock, from the open world's transport points
+  // By its scene point. A domain entrance has no point, so pays nothing
   const payFirstUnlockReward = (landmarkId: string) => {
-    const pointId = LandmarkIdStatuePointIdMap[landmarkId];
+    const pointId = computeLandmarkPointId(landmarkId);
     if (pointId === undefined) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() => readOpenWorldTransPointRewards(gameDataBaseUrl)).match(
@@ -125,8 +126,9 @@ export const useWorldMap = ({
   watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
   // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
   const activateLandmark = (landmarkId: string) => {
+    const isFirstUnlock = !unlockedLandmarkIds.value.has(landmarkId);
     unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
-    payFirstUnlockReward(landmarkId);
+    if (isFirstUnlock) payFirstUnlockReward(landmarkId);
     settleExplorationThresholds();
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
     const pointId = LandmarkIdStatuePointIdMap[landmarkId];

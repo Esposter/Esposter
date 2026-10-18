@@ -14,4 +14,4 @@
 
 ## 3. First-unlock rewards
 
-- [ ] 3.1 Match each waypoint to its reward row by its point id and pay its Adventure EXP and Primogems on the first unlock only. Verify: tests named after the scenarios "The first unlock pays the waypoint's reward" and "A later unlock pays nothing again", written first and seen failing.
+- [x] 3.1 Match each waypoint to its reward row by its point id and pay its Adventure EXP and Primogems on the first unlock only. Verify: tests named after the scenarios "The first unlock pays the waypoint's reward" and "A later unlock pays nothing again", written first and seen failing.
