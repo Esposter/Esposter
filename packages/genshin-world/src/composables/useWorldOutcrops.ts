@@ -9,6 +9,7 @@ import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -29,6 +30,7 @@ import { readOutcropRegion } from "#src/services/leyLine/readOutcropRegion";
 import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
+import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -102,8 +104,8 @@ export const useWorldOutcrops = ({
     computeOutcropInteractables(outcrops.value, placements.value, gameText, getGroundHeight),
   );
   // The claims F offers at a cleared outcrop's blossom, and the place they are offered at, none where the held resin
-  // Affords none
-  const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; placeId: number } | undefined>(undefined);
+  // Affords none and no Fragile Resin can restore it
+  const claimPrompt = shallowRef<(BlossomClaimPrompt & { placeId: number }) | undefined>(undefined);
   // An event moves the one outcrop it names, and the place the other kind holds is kept out of its move
   const applyEvent = (placeId: number, event: OutcropEvent) => {
     outcrops.value = outcrops.value.map((outcrop) =>
@@ -152,13 +154,27 @@ export const useWorldOutcrops = ({
     outcrops.value.find((outcrop) => outcrop.placeId === placeId && outcrop.stage === OutcropStage.Cleared);
   // Pressing F at a cleared outcrop's blossom offers the claims the held resin affords, and offers none where it affords
   // None
+  const showOutcropClaim = (placeId: number, held: Wallet, bag: Inventory, now: Temporal.Instant) => {
+    const prompt = computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, held, bag, now);
+    claimPrompt.value = prompt.offers.length > 0 || prompt.canRestore ? { ...prompt, placeId } : undefined;
+  };
   const openOutcropClaim = (placeId: number, now: Temporal.Instant) => {
     if (!findClearedOutcrop(placeId)) return;
-    const { offers } = computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, wallet.value, inventory.value, now);
-    claimPrompt.value = offers.length > 0 ? { offers, placeId } : undefined;
+    showOutcropClaim(placeId, wallet.value, inventory.value, now);
   };
   const closeOutcropClaim = () => {
     claimPrompt.value = undefined;
+  };
+  // Restoring spends one Fragile Resin for the Original Resin it restores, and offers the claims again from the holdings
+  // It leaves, as the prompt's restore row does
+  const restoreOutcropClaim = (now: Temporal.Instant) => {
+    const prompt = claimPrompt.value;
+    if (!prompt?.canRestore) return;
+    const restored = refillOriginalResinWithFragileResin(inventory.value, wallet.value, now);
+    if (!restored) return;
+    setWallet(restored.wallet);
+    setInventory(restored.inventory);
+    showOutcropClaim(prompt.placeId, restored.wallet, restored.inventory, now);
   };
   // Choosing a claim spends its resin, grants the rewards each of its claims draws, and moves the outcrop on. The claim
   // Is refused where the resin or the bag cannot pay it whole
@@ -205,6 +221,7 @@ export const useWorldOutcrops = ({
     outcropCamps,
     outcropInteractables,
     outcrops,
+    restoreOutcropClaim,
     touchOutcropsNear,
   };
 };

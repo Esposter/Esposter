@@ -12,10 +12,11 @@ import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
-import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
+import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { takeOne } from "@esposter/shared";
+import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 import { ref } from "vue";
 
@@ -69,7 +70,7 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
   outcrops.touchOutcropsNear(0, 0, () => 0);
   // The defeat of the camp's only enemy, which reveals the blossom
   events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-  return { adventureExp, events, outcrops, wallet };
+  return { adventureExp, events, inventory, outcrops, wallet };
 };
 
 describe("useWorldOutcrops", () => {
@@ -102,6 +103,36 @@ describe("useWorldOutcrops", () => {
     expect(outcrops.outcrops.value).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: 2, stage: OutcropStage.Waiting },
     ]);
+  });
+
+  test("a short original resin restores with a fragile resin, and the claims are offered again", () => {
+    expect.hasAssertions();
+
+    const { inventory, outcrops } = createOutcrops(0);
+    inventory.value = {
+      items: [
+        {
+          definition: {
+            category: ItemCategory.Material,
+            id: FRAGILE_RESIN_ITEM_ID,
+            name: "",
+            rank: 0,
+            rarity: 0,
+            stackLimit: 2000,
+          },
+          id: 1,
+          quantity: 1,
+        },
+      ],
+      nextId: 2,
+    };
+    outcrops.openOutcropClaim(1, epoch);
+    expect(outcrops.claimPrompt.value?.canRestore).toBe(true);
+
+    outcrops.restoreOutcropClaim(epoch);
+    expect(inventory.value.items).toStrictEqual([]);
+    expect(outcrops.claimPrompt.value?.canRestore).toBe(false);
+    expect(outcrops.claimPrompt.value?.offers.length).toBeGreaterThan(0);
   });
 
   test("a cleared challenge never claimed gives nothing", () => {
