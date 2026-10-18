@@ -1,17 +1,8 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
+import { createRecordingGcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/createRecordingGcsimKitCandidateWriter.test";
 import { addGcsimFrameListCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates";
 import { describe, expect, test } from "vitest";
-
-// A writer that keeps each value it is given at its path, its file and line
-const createWriter = (added: Map<string, { file: string; line: number; value: unknown }>): GcsimKitCandidateWriter => ({
-  add: (path, value, file, line) => void added.set(path, { file, line, value }),
-  addFrames: () => undefined,
-  addHit: () => undefined,
-  addNoActionFileRule: () => undefined,
-  toFile: (name) => name,
-});
 
 // A queue call of the attack a literal names, from the file's line, landing at its damage delay
 const call = (delay: number, line: number) => ({ attackName: "ai", delay, delayLine: line, file: "cons.go", line });
@@ -30,7 +21,7 @@ describe(addGcsimFrameListCandidates, () => {
     const gcsim = createCharacter("Boundless Origin (C6)", [call(22, 9), call(20, 8)]);
 
     addGcsimFrameListCandidates(
-      createWriter(added),
+      createRecordingGcsimKitCandidateWriter(added),
       gcsim,
       new Set([
         "frames.boundlessOriginHitmarks.0",
@@ -52,12 +43,12 @@ describe(addGcsimFrameListCandidates, () => {
     const hits = new Set(["frames.icewhirlHitmark.0", "frames.icewhirlHitmark.1", "frames.icewhirlHitmark.2"]);
 
     addGcsimFrameListCandidates(
-      createWriter(added),
+      createRecordingGcsimKitCandidateWriter(added),
       createCharacter("Icetide Vortex (Icewhirl)", [call(30, 9), call(40, 8)]),
       hits,
     );
     addGcsimFrameListCandidates(
-      createWriter(added),
+      createRecordingGcsimKitCandidateWriter(added),
       createCharacter("Icetide Vortex (Icewhirl)", [call(30, 9), call(30, 8), call(40, 7)]),
       hits,
     );
