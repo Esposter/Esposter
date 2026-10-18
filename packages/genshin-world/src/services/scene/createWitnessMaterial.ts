@@ -43,13 +43,8 @@ export const createWitnessMaterial = (
   if (shader === LEAF_SHADER) {
     material.userData.isLeafCard = true;
     material.side = DoubleSide;
-    // The export's own texture cuts its cards: the stand-in's oval would cut them again, and an alpha test on the opacity
-    // Node left the cut-out texels drawn, so the cut is a mask node
-    if (diffuse) {
-      material.opacityNode = null;
-      material.alphaTest = 0;
-      material.maskNode = texture(diffuse).a.greaterThan(floats[WitnessProperty.Cutoff] ?? 0);
-    }
+    // The export's own texture cuts its cards, in place of the stand-in's oval
+    if (diffuse) material.maskNode = texture(diffuse).a.greaterThan(floats[WitnessProperty.Cutoff] ?? 0);
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) material.normalNode = normalMap(texture(normal));

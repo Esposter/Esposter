@@ -141,6 +141,7 @@ export const renderWitnessTargets = async (
     // The source's cut and its sides, so a card its material clips is drawn clipped in every target too, the shadow's
     // Among them, and a face it draws from behind is drawn from behind, as the source draws it
     if (mesh.material instanceof NodeMaterial) {
+      material.maskNode = mesh.material.maskNode;
       material.opacityNode = mesh.material.opacityNode;
       material.alphaTest = mesh.material.alphaTest;
       material.side = mesh.material.side;

@@ -17,7 +17,7 @@ export const bakeTreeImpostor = (
     renderer,
     [
       { color: barkColor, geometry: branchGeometry },
-      { color: leafColor, geometry: leafGeometry, opacityNode: createLeafShapeNode() },
+      { color: leafColor, geometry: leafGeometry, maskNode: createLeafShapeNode() },
     ],
     IMPOSTOR_RESOLUTION,
   );

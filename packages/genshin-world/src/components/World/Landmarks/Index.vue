@@ -95,8 +95,8 @@ const leafMaterial = createLeafMaterial(
     rampTexture,
   },
   windUniforms,
+  treeMeshMask,
 );
-leafMaterial.maskNode = treeMeshMask;
 const treeImpostorMap = new Map<TreeSpecies, TreeImpostor>();
 
 // Gives the collider the landmarks that arrived since the last sync, whose colliders it builds on the main thread, timed
