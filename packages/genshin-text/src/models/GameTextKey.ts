@@ -475,6 +475,14 @@ export enum GameTextKey {
   MoveRight = "CONTROL_MOVE_RIGHT",
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
+  // The Mystic Offering at the Crafting Bench: its title, the Create button, the tip naming how many five-star artifacts make
+  // A strongbox, the tip that it needs five-star artifacts, the tip that the choice falls short, and the confirm dialog
+  MysticOffering = "UI_MELTING_TITLE_A",
+  MysticOfferingConfirm = "UI_MELTING_TIPS_F",
+  MysticOfferingCreate = "UI_MELTING_BUTTON_A",
+  MysticOfferingNotEnough = "UI_MELTING_TIPS_C",
+  MysticOfferingRequirement = "UI_MELTING_TIPS_B",
+  MysticOfferingRequiresFiveStar = "UI_MELTING_DETAILS_TIPS_B",
   NakuWeed = "3623663804",
   Natlan = "Natlan",
   NilotpalaLotus = "774700468",
