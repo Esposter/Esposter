@@ -204,6 +204,25 @@ describe(parseMjmlDocument, () => {
     );
     expect(inHead.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
   });
+  test("a second document or text outside the mjml is refused, not dropped", () => {
+    expect.hasAssertions();
+
+    const secondDocument = parseMjmlDocument(
+      "<mjml><mj-body></mj-body></mjml><mjml><mj-body></mj-body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(secondDocument.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#document"']);
+
+    const outsideText = parseMjmlDocument(
+      "<mjml><mj-body></mj-body></mjml>a",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(outsideText.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
+  });
 
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();

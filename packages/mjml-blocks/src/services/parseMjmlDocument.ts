@@ -36,6 +36,16 @@ const readMjmlRoot = <TContent>(
   return { content, root: { props } };
 };
 
+// The top level beside the one mjml, refused by name: text outside it by the stray text type, a tag before it by its own name,
+// and a second element by #document. A source of one mjml and nothing else reads no refusal here
+const readMjmlTopLevel = (root: HTMLElement): Record<string, unknown> => {
+  const [mjml, ...others] = root.children;
+  const props: Record<string, unknown> = readMjmlStrayText(root);
+  if (mjml?.rawTagName !== "mjml") props[mjml?.rawTagName ?? "#document"] = {};
+  else if (others.length > 0) props["#document"] = {};
+  return props;
+};
+
 // The MJML source as a document, read by the registry's document schema: a tag the package leaves out, an attribute it does not take
 // Or a value its type refuses is refused there, at the node it names
 export const parseMjmlDocument = <TContent>(
@@ -50,9 +60,10 @@ export const parseMjmlDocument = <TContent>(
     lowerCaseTagName: false,
   });
   const [mjml] = root.children;
+  const topLevelProps = readMjmlTopLevel(root);
   const candidate =
-    mjml?.rawTagName === "mjml"
+    mjml?.rawTagName === "mjml" && Object.keys(topLevelProps).length === 0
       ? readMjmlRoot(mjml, registry, richText)
-      : { content: [], root: { props: { [mjml?.rawTagName ?? "#document"]: {} } } };
+      : { content: [], root: { props: topLevelProps } };
   return createBlockDocumentSchema(registry, maxNodes).safeParse(candidate);
 };

@@ -101,6 +101,13 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names the included tag
 
+#### Scenario: A second document or text outside the mjml is refused, not dropped
+
+- **GIVEN** MJML source holding a second `mjml` element, or text, beside its one `mjml`
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the second element or the text
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.
