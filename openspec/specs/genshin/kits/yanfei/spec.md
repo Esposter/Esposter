@@ -1,6 +1,6 @@
 ## Purpose
 
-Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, and what is left of her Ascension 4 shot and Constellations 2 and 4.
+Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, Constellation 2's CRIT Rate, and what is left of her Ascension 4 shot and Constellation 4.
 
 ## Requirements
 
@@ -71,9 +71,25 @@ From Ascension 1, each seal spent SHALL give Yanfei 5% Pyro DMG Bonus for 6 seco
 - **WHEN** Yanfei uses her charged attack
 - **THEN** Done Deal's DMG Bonus applies to it
 
+### Requirement: Constellation 2 Charged Attack CRIT Rate
+
+From Constellation 2, Yanfei's Charged Attacks SHALL have 20% more CRIT Rate against enemies below 50% HP.
+
+#### Scenario: Constellation 2 raises CRIT Rate below half HP
+
+- **GIVEN** Yanfei has Constellation 2
+- **WHEN** a Charged Attack strikes an enemy below 50% HP
+- **THEN** its CRIT Rate is raised by 20%
+
+#### Scenario: Constellation 1 changes nothing
+
+- **GIVEN** Yanfei has Constellation 1
+- **WHEN** a Charged Attack strikes an enemy below 50% HP
+- **THEN** its CRIT Rate is unchanged
+
 ### Requirement: Unbuilt effects
 
-Yanfei's Ascension 4 shot, her Constellation 2 CRIT Rate and her Constellation 4 shield SHALL have no effect in the world yet.
+Yanfei's Ascension 4 shot and her Constellation 4 shield SHALL have no effect in the world yet.
 
 #### Scenario: Constellation 4 shield absent
 

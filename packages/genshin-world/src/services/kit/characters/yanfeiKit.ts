@@ -7,6 +7,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -68,12 +69,16 @@ const checkIsDoneDealActive = (kitEffectState: KitEffectState, characterId: numb
 
 export const YANFEI_CHARACTER_ID = 10_000_048;
 
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_CRIT_RATE_BONUS = 0.2;
+const CONSTELLATION_2_HEALTH_SHARE = 0.5;
+
 // Yanfei's behaviour: her strikes each gain a Scarlet Seal on each enemy they strike, and Signed Edict's and Done Deal's
 // Hits give her the full seals, three, four from Constellation 6. Her charged attack spends the seals as it starts, its
 // Hit a summon cast at the body, whose multiplier and radius the seals spent pick, with Done Deal's Pyro DMG bonus while
 // It is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation 1. Done Deal adds a
-// Seal each second while it stands. Her Ascension 4 shot, her Constellation 2 CRIT Rate and her Constellation 4 shield
-// Are not built, as no kit event reaches the enemy's health or the shield's health
+// Seal each second while it stands. Her Ascension 4 shot and her Constellation 4 shield
+// Are not built, as no kit event reaches the shield's health. Constellation 2's CRIT Rate reads the enemy's health
 // Constellation 4 needs the Done Deal shield's Pyro absorption at 250%, which the kit does not build
 export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");
@@ -132,6 +137,13 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
           : CHARGED_ATTACK_STAMINA_REDUCTION;
       return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
     },
+    // Right of Final Interpretation, from Constellation 2: her Charged Attacks crit 20% more often below half enemy HP
+    getStrikeCriticalRateBonus: ({ attackTag, combatant }, enemy) =>
+      combatant.constellationCount >= CONSTELLATION_2 &&
+      attackTag === AttackTag.ChargedAttack &&
+      enemy.health / enemy.maxHealth < CONSTELLATION_2_HEALTH_SHARE
+        ? CONSTELLATION_2_CRIT_RATE_BONUS
+        : 0,
     normalAttacks: [{ hits: [strikeHit] }, { hits: [strikeHit] }, { hits: [strikeHit] }],
     skill: { hits: [fullSealsHit] },
   };
