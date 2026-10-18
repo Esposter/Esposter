@@ -1,48 +1,60 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
-import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
+import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
+import { toGroundPiece } from "#src/services/genshinAssets/fit/toGroundPiece";
+
+// A region's ground in pieces, one fit per area its catalogue outlines, each named by its area so `--only` runs one
+const readRegionGroundFits = async (
+  region: DerivedAssetComponent,
+): Promise<Record<string, () => Promise<GameDataBuild>>> =>
+  Object.fromEntries(
+    (await readGroundPieceAreas(region)).map((area) => [
+      area.id,
+      () => fitGroundPieces(region, toGroundPiece(region, area), true),
+    ]),
+  );
 
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
-// Keys: every fit of the component's, or only those named. A component with no fit yet has no entry. A region's centre is
-// Its capital's landmark in its region data, in the same axes its ground is fitted in
+// Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
 export const DerivedAssetFitMap: Partial<
   Record<DerivedAssetComponent, (only?: readonly string[]) => Promise<GameDataBuild>>
 > = {
-  [DerivedAssetComponent.Fontaine]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Fontaine, { x: 1554.31, z: -5721.47 }) }, only),
+  [DerivedAssetComponent.Fontaine]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Fontaine), only),
   [DerivedAssetComponent.Hud]: fitHud,
-  [DerivedAssetComponent.Inazuma]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Inazuma, { x: -4942.86, z: 3135.69 }) }, only),
-  [DerivedAssetComponent.Liyue]: (only = []) =>
+  [DerivedAssetComponent.Inazuma]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Inazuma), only),
+  [DerivedAssetComponent.Liyue]: async (only = []) =>
     runFits(
       {
-        ground: () => fitRegionGround(DerivedAssetComponent.Liyue, { x: -2392.4, z: -1562.44 }),
+        ...(await readRegionGroundFits(DerivedAssetComponent.Liyue)),
         waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Liyue),
       },
       only,
     ),
   [DerivedAssetComponent.Login]: fitLoginScene,
-  [DerivedAssetComponent.Mondstadt]: (only = []) =>
+  [DerivedAssetComponent.Mondstadt]: async (only = []) =>
     runFits(
       {
-        ground: () => fitRegionGround(DerivedAssetComponent.Mondstadt, { x: 391.51, z: -517.41 }),
+        ...(await readRegionGroundFits(DerivedAssetComponent.Mondstadt)),
         waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Mondstadt),
       },
       only,
     ),
-  [DerivedAssetComponent.Natlan]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Natlan, { x: -4568.99, z: -10185.85 }) }, only),
-  [DerivedAssetComponent.NodKrai]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.NodKrai, { x: -252.53, z: -10724.89 }) }, only),
-  [DerivedAssetComponent.Snezhnaya]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Snezhnaya, { x: 3750, z: -10730 }) }, only),
-  [DerivedAssetComponent.Sumeru]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Sumeru, { x: -2306.31, z: -4053.85 }) }, only),
+  [DerivedAssetComponent.Natlan]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Natlan), only),
+  [DerivedAssetComponent.NodKrai]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.NodKrai), only),
+  [DerivedAssetComponent.Snezhnaya]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Snezhnaya), only),
+  [DerivedAssetComponent.Sumeru]: async (only = []) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Sumeru), only),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };
