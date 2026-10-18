@@ -26,6 +26,7 @@ import {
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import {
   DEFAULT_PARTY_TEAM_COUNT,
   PARTY_TEAM_MAX_COUNT,
@@ -208,6 +209,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   clearedCamps: [],
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
+  investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: MAX_SAVE_INSTANT },
   encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
   companionshipExp: {},
@@ -354,6 +356,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   clearedCamps: [],
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
+  investigationDay: { count: 0, dayKey: "" },
   encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
   longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
   companionshipExp: {},

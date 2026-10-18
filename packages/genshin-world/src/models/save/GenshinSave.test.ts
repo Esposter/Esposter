@@ -10,6 +10,7 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
+import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
@@ -155,6 +156,7 @@ describe("genshinSaveSchema", () => {
           dealtRank: maxNumber,
         })),
       },
+      investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: maxInstant },
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),

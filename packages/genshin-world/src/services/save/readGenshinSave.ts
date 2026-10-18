@@ -12,6 +12,7 @@ import { toEncounterPoints } from "#src/services/save/toEncounterPoints";
 import { toHomePlanting } from "#src/services/save/toHomePlanting";
 import { toHomeProgress } from "#src/services/save/toHomeProgress";
 import { toInventory } from "#src/services/save/toInventory";
+import { toInvestigationDay } from "#src/services/save/toInvestigationDay";
 import { toParty } from "#src/services/save/toParty";
 import { toProcessingJobs } from "#src/services/save/toProcessingJobs";
 import { toShopPurchases } from "#src/services/save/toShopPurchases";
@@ -42,6 +43,7 @@ export const readGenshinSave = (
     homePlantings,
     homeProgress,
     inventory,
+    investigationDay,
     mails,
     namecardItemId,
     offerings,
@@ -97,6 +99,7 @@ export const readGenshinSave = (
     homePlantings: homePlantings.map((planting) => toHomePlanting(planting)),
     homeProgress: toHomeProgress(homeProgress),
     inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
+    investigationDay: toInvestigationDay(investigationDay),
     mails,
     namecardItemId,
     openedChestIds: new Set(openedChests),

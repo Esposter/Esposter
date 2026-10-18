@@ -10,6 +10,7 @@ import { toEncounterPointsSave } from "#src/services/save/toEncounterPointsSave"
 import { toHomePlantingSave } from "#src/services/save/toHomePlantingSave";
 import { toHomeProgressSave } from "#src/services/save/toHomeProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
+import { toInvestigationDaySave } from "#src/services/save/toInvestigationDaySave";
 import { toPartySave } from "#src/services/save/toPartySave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
@@ -43,6 +44,7 @@ export const toGenshinSave = ({
   homePlantings,
   homeProgress,
   inventory,
+  investigationDay,
   mails,
   namecardItemId,
   openedChestIds,
@@ -90,6 +92,7 @@ export const toGenshinSave = ({
   homePlantings: homePlantings.map((planting) => toHomePlantingSave(planting)),
   homeProgress: toHomeProgressSave(homeProgress),
   inventory: toInventorySave(inventory),
+  investigationDay: toInvestigationDaySave(investigationDay),
   mails,
   namecardItemId,
   offerings: { frostbearingTree: frostbearingTreeProgress },
