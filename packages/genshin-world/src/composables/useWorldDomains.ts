@@ -35,6 +35,7 @@ import { toWeeklyBossSchedule } from "#src/services/domains/toWeeklyBossSchedule
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
 import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
+import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
 import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
@@ -282,6 +283,23 @@ export const useWorldDomains = ({
     setInventory(granted.inventory);
     clearedDomainIds.value = claim.clearedDomainIds;
   };
+  // A weekly boss's quick challenge reads its schedule, enters the tier the rank reaches and starts the fight there. It
+  // Resolves whether a level was entered
+  const quickChallengeDomain = (landmark: DomainEntranceLandmark, adventureRank: number, isDomainLocked: boolean) =>
+    getResultAsync(() => readDomainSchedule(landmark)).match(
+      (schedule) => {
+        domainEntrance.value = landmark;
+        domainSchedule.value = schedule;
+        const dungeonId = computeWeeklyBossQuickChallengeDungeonId(schedule.levels, adventureRank, isDomainLocked);
+        if (dungeonId === undefined) return false;
+        enterDomain(dungeonId);
+        return domainArena.value !== undefined;
+      },
+      (error) => {
+        console.error(error);
+        return false;
+      },
+    );
   // Pressing F at the raised tree offers the claims the held resin affords, and offers none where it affords none
   const openDomainTreeClaim = (now: Temporal.Instant) => {
     if (!isDomainTreeRaised.value) return;
@@ -330,6 +348,7 @@ export const useWorldDomains = ({
     leaveDomain,
     openDomain,
     openDomainTreeClaim,
+    quickChallengeDomain,
     stepDomainChallenge,
     unlockedDomainEntrances,
   };

@@ -85,6 +85,7 @@ import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossom
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
@@ -858,6 +859,7 @@ const {
   leaveDomain,
   openDomain,
   openDomainTreeClaim,
+  quickChallengeDomain,
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
@@ -970,10 +972,15 @@ const handbookDomains = computed(() =>
     },
   ),
 );
-// A locked weekly boss is challenged from the handbook by jumping to its entrance, where its domain's screen opens
-const challengeWeeklyBoss = (landmark: DomainEntranceLandmark) => {
-  jumpTo(computeJumpPose(landmark));
-  screenKind.value = ScreenKind.World;
+// A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank reaches
+// And the world opens once that fight has started
+const challengeWeeklyBoss = async (landmark: DomainEntranceLandmark) => {
+  const isEntered = await quickChallengeDomain(
+    landmark,
+    rank.value,
+    !checkIsWeeklyBossEntryOpen(landmark.entryId, completedMainQuestIds.value),
+  );
+  if (isEntered) screenKind.value = ScreenKind.World;
 };
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
