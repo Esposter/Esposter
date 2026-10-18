@@ -437,8 +437,7 @@ export enum GameTextKey {
   LoginUserLabel = "2272745789",
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
-  // The Long-Term Encounter Points, their title and the count of them stored past the daily points
-  LongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_TITLE",
+  // The count of Long-Term Encounter Points stored past the daily points, under the stage rewards
   LongTermEncounterPointsStored = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM_POINT",
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
