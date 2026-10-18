@@ -20,6 +20,7 @@ import { createDebutPassiveModule } from "#src/services/weapon/passives/createDe
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
+import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
@@ -285,4 +286,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3335241819": createFlowingPurityPassiveModule,
   // Starfire Upon the Snowplains (Emberwell)
   "953016699": createStarfireUponTheSnowplainsPassiveModule,
+  // Echo of a Vow (Echoes of the Heart)
+  "2626267635": createEchoOfAVowPassiveModule,
 };
