@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -17,6 +21,10 @@ import {
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { getTalentRows } from "#src/services/character/getTalentRows";
+import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
+import { upgradeCharacterTalent } from "#src/services/character/upgradeCharacterTalent";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
@@ -34,8 +42,8 @@ import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } f
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The player's characters, across the screen's top in the order given
-  characters: Character[];
+  // The kit each character's combat talents are read from, the proud skill group each of them names
+  characterTalentKits: CharacterTalentKit[];
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
@@ -46,12 +54,16 @@ interface Props {
   initialTab: CharacterMenuTab;
   // The reader's game language, whose text the Profile tab shows
   language?: GameLanguage;
+  // The game's material table by item id, which the materials a talent's next level takes are named from
+  materialDataMap: ReadonlyMap<number, MaterialData>;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
   // The names the stat tables cite, in the reader's language, by their text id
   nameText: Readonly<Record<string, string>>;
   // The game's tables the characters' attributes are summed from
   statTables: StatTables;
+  // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
+  talentUpgradeMap: TalentUpgradeMap;
 }
 
 // What the host lays behind the screen, the scene the open tab is shown over, and over it for the character it shows,
@@ -62,23 +74,30 @@ defineSlots<{
 }>();
 const {
   activeCharacterId,
-  characters,
+  characterTalentKits,
   companionshipExpMap = new Map<number, number>(),
   gameDataBaseUrl,
   gameText,
   initialTab,
   language = GameLanguage.English,
+  materialDataMap,
   maxStamina,
   nameText,
   statTables,
+  talentUpgradeMap,
 } = defineProps<Props>();
+// The player's characters, across the screen's top in the order given, and a talent's raised level is written into
+const characters = defineModel<Character[]>("characters", { required: true });
+// The bag and the wallet a talent's next level takes its materials and Mora from
+const inventory = defineModel<Inventory>("inventory", { required: true });
+const wallet = defineModel<Wallet>("wallet", { required: true });
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
-const character = computed(() => characters.find(({ id }) => id === characterId.value));
+const character = computed(() => characters.value.find(({ id }) => id === characterId.value));
 // The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>
-  characters.map(({ id }) => ({
+  characters.value.map(({ id }) => ({
     id,
     name:
       id === TRAVELER_CHARACTER_ID
@@ -130,8 +149,59 @@ const artifactsEquipped = computed(() =>
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
 );
-// Each combat talent's level in the order the Talents tab lists them
-const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => character.value?.talentLevels[talent] ?? 0));
+// The proud skill group each of the character's combat talents names in its kit, which its upgrades are read by
+const talentGroupIds = computed(
+  () =>
+    characterTalentKits.find(({ characterId: kitCharacterId }) => kitCharacterId === character.value?.id)
+      ?.talentGroupIds,
+);
+const toItemCountText = (name: string, count: number) =>
+  fillGameTextValues(gameText[GameTextKey.ItemCount], name, count);
+// The Talents tab's panel for the chosen character: each combat talent's level, the phase and the cost of its next level,
+// And why it cannot rise now, its Upgrade disabled while it cannot
+const talentPanel = computed(() => {
+  if (!character.value || !talentGroupIds.value) return undefined;
+  const rows = getTalentRows(character.value, talentGroupIds.value, talentUpgradeMap, {
+    inventory: inventory.value,
+    wallet: wallet.value,
+  });
+  return {
+    costs: rows.map(({ upgrade }) =>
+      upgrade
+        ? [
+            toItemCountText(gameText[GameTextKey.Mora], upgrade.coinCost),
+            ...upgrade.costItems.map(({ count, id }) =>
+              toItemCountText(getItemDefinition(id, nameText, materialDataMap).name, count),
+            ),
+          ]
+        : [],
+    ),
+    isUpgradeDisabled: rows.map(({ refusal }) => refusal !== undefined),
+    levels: rows.map(({ level }) => level),
+    phases: rows.map(({ upgrade }) =>
+      upgrade ? fillGameTextValues(gameText[GameTextKey.TalentPhaseRequired], upgrade.phase) : "",
+    ),
+    reasons: rows.map(({ refusal }) =>
+      refusal === undefined ? "" : gameText[TalentUpgradeRefusalGameTextKeyMap[refusal]],
+    ),
+  };
+});
+// The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
+// Never refuses
+const upgradeTalentAt = (index: number) => {
+  const talent = COMBAT_TALENT_ORDER[index];
+  if (!character.value || !talentGroupIds.value || !talent) return;
+  const raised = upgradeCharacterTalent(
+    characters.value,
+    character.value,
+    talent,
+    talentUpgradeMap[talentGroupIds.value[talent]] ?? [],
+    { inventory: inventory.value, wallet: wallet.value },
+  );
+  characters.value = raised.characters;
+  inventory.value = raised.inventory;
+  wallet.value = raised.wallet;
+};
 </script>
 
 <template>
@@ -157,7 +227,12 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
         v-else-if="character && tab === CharacterMenuTab.Constellation"
         :activated="constellationsActivated"
       />
-      <CharacterMenuTalents v-else-if="character && tab === CharacterMenuTab.Talents" :levels="talentLevels" />
+      <CharacterMenuTalents
+        v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
+        :="talentPanel"
+        :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
+        @upgrade="upgradeTalentAt"
+      />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"
         :key="`${character.id}-${language}-${companionshipExpMap.get(character.id) ?? 0}`"

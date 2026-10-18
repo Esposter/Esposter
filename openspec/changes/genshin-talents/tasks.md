@@ -5,8 +5,8 @@
 
 ## 2. Talents tab
 
-- [ ] 2.1 List each talent's level, next phase and cost on the Talents tab, with its Upgrade disabled and its reason shown when it cannot rise. Verify: tests named after 'A talent row shows its next level's phase and cost' and 'A talent at its last level cannot be upgraded'.
-- [ ] 2.2 Press Upgrade to raise a talent, taking its Mora and materials, and keep the raised level with the world. Verify: tests named after 'Pressing Upgrade raises a talent by one and takes its Mora and materials' and 'A raised talent is kept after a reload'.
+- [x] 2.1 List each talent's level, next phase and cost on the Talents tab, with its Upgrade disabled and its reason shown when it cannot rise. Verify: tests named after 'A talent row shows its next level's phase and cost' and 'A talent at its last level cannot be upgraded'.
+- [x] 2.2 Press Upgrade to raise a talent, taking its Mora and materials, and keep the raised level with the world. Verify: tests named after 'Pressing Upgrade raises a talent by one and takes its Mora and materials' and 'A raised talent is kept after a reload'.
 
 ## 3. Constellation additions
 

@@ -7,6 +7,7 @@ import WorldSession from "#src/components/World/Session/Index.vue";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readTalentTables } from "#src/services/character/readTalentTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
@@ -34,6 +35,7 @@ getResultAsync(() =>
     Promise.all([
       measureLoadStep("name-text", NameTextLoaderMap[props.language](props.gameDataBaseUrl)),
       measureLoadStep("stat-tables", readStatTables(props.gameDataBaseUrl)),
+      measureLoadStep("talent-tables", readTalentTables(props.gameDataBaseUrl)),
       measureLoadStep("enemy-tables", readEnemyTables(props.gameDataBaseUrl)),
       measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
       measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
@@ -49,6 +51,7 @@ getResultAsync(() =>
   ([
     nameText,
     statTables,
+    talentTables,
     enemyTables,
     adventureRankTables,
     materialDataMap,
@@ -62,6 +65,7 @@ getResultAsync(() =>
     tables.value = {
       adventureRankTables,
       catalogue,
+      characterTalentKits: talentTables.characterTalentKits,
       enemyTables,
       frostbearingTreePlaces,
       hudInterfaceRects,
@@ -71,6 +75,7 @@ getResultAsync(() =>
       seelies: [],
       startingCharacterIdKitMap,
       statTables,
+      talentUpgradeMap: talentTables.talentUpgradeMap,
       wildlifePlaces,
       windriseData,
     };

@@ -7,6 +7,7 @@ The levelling is built: each combat talent rises from 1 to 10 by its phase, Mora
 - **The level a kit reads is the talent's own plus what its constellations add.** The kit reads the level the character holds, plus `getConstellationTalentAdditions` for that talent, and nothing else. Materials never pay for a level past 10, so a level past it is a constellation's alone.
 - **The Talents tab presses the upgrade.** It lists each combat talent with its level, the phase its next level needs, and its cost, and presses `upgradeTalent`. Its look is the [character screen](../genshin-character-screen/design.md)'s.
 - **A refusal is read before the press, never caught after it.** `upgradeTalent` throws on a refusal, and try/catch is banned, so the tab asks first: one function names why a level cannot be taken now, and `upgradeTalent` throws on that same answer, so the tab and the rule never disagree.
+- **A row says why in the game's words, and its numbers in its cost.** A refused row's reason is one of the game's short reasons (`Max level reached`, `Character Ascension Phase too low`, `Insufficient Mora`, `Insufficient materials`), and the phase the next level needs and the Mora and items it takes are the row's own lines, so no reason carries a number.
 - **The screen takes the bag and the wallet as the wish screen does.** `CharacterScreen` gains `v-model:characters`, `v-model:wallet` and `inventory` with `update:inventory`, wired in `World/Session` exactly as `WishScreen` is, so a raised level is saved with the rest of the world.
 
 ## How it works
@@ -32,8 +33,9 @@ packages/genshin-world/src/services/character/getTalentUpgradeRefusal.ts
 
 1. **The Talents tab's upgrade, on the tab the character screen already draws.**
    - **The rule.** A new `getTalentUpgradeRefusal.ts` returns why a combat talent cannot rise now, a `TalentUpgradeRefusal` (`models/character/TalentUpgradeRefusal.ts`: `LastLevel`, `Phase`, `Mora`, `Materials`), or `undefined` when it can, counting the bag with `countInventoryItem`. `upgradeTalent` throws on its answer in place of its own checks. `getTalentUpgradeRefusal.test.ts` asserts each refusal and none when all is met; `upgradeTalent.test.ts` keeps passing unchanged.
-   - **The tables.** `World/Session` loads `readTalentTables()`, which nothing calls yet, beside the stat tables, and hands `CharacterScreen` its `talentUpgradeMap` and `characterTalentKits`; a talent's upgrades are `talentUpgradeMap[kit.talentGroupIds[talent]]`.
-   - **The tab.** `CharacterMenuTalents` (`packages/genshin-interface/src/components/CharacterMenuTalents/Index.vue`) gains `isUpgradeDisabled: boolean[]` and emits `upgrade: [index]` from an Upgrade button on each row, labelled by the `GameTextKey` `pnpm -C scripts genshin:text find "^Upgrade$"` finds and `genshin:text write` writes. `Character/Screen` disables a row whose refusal is set, and on `upgrade` calls `upgradeTalent` and emits the character, the bag and the wallet it returns. Its fixture gains a variant with one talent at 10, and the button's place, provisional in the row, is queued for the user's eyes against `character-talents`.
+   - **The tables.** `World/Screen` loads `readTalentTables()` beside the stat tables, into `WorldTables`, and `World/Session` hands them to `CharacterScreen` as its `talentUpgradeMap` and `characterTalentKits`; a talent's upgrades are `talentUpgradeMap[kit.talentGroupIds[talent]]`. The loader is `World/Screen`, not `World/Session`, because that is where the stat tables are read.
+   - **The rows and the press.** `getTalentRows` returns each combat talent's row, its level, the upgrade its next level takes and its refusal, and `upgradeCharacterTalent` raises one character's talent through `upgradeTalent` and returns the roster, the bag and the wallet. `Character/Screen` builds the tab's lines from the rows and presses through `upgradeCharacterTalent`, writing the three back through its v-models.
+   - **The tab.** `CharacterMenuTalents` (`packages/genshin-interface/src/components/CharacterMenuTalents/Index.vue`) takes its rows as parallel arrays, as its siblings take theirs: `levels`, `phases`, `costs`, `reasons` and `isUpgradeDisabled`, and emits `upgrade: [index]` from a `GameButton` on each row. Its Upgrade is labelled `GameTextKey.TalentLevelUp`, the game's `UI_TALENT_LEVEL_UP`, "Level Up": the press of a talent's level is the game's own word for it, and `find "^Upgrade$"` matches only the Mechanicus's. Its fixture gains a `rising` variant, with its first talent at 9 and enabled, and the button's place, provisional in the row, is queued for the user's eyes against `character-talents`.
 2. **The kit's read of the additions**, which comes with the [character kits](../genshin-character-kits/design.md).
 
 ## Data and measures
@@ -43,10 +45,12 @@ packages/genshin-world/src/services/character/getTalentUpgradeRefusal.ts
 
 ## Key files
 
-| File                                                                               | Role after the change                                       |
-| :--------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/services/character/upgradeTalent.ts`                   | Its caller is the Talents tab, which presses the upgrade    |
-| `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | Its caller is the kit, which reads a talent at these levels |
+| File                                                                               | Role after the change                                               |
+| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/character/upgradeTalent.ts`                   | Its caller is `upgradeCharacterTalent`, which the press calls       |
+| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts`          | Its caller is the Talents tab's press, which writes the roster back |
+| `packages/genshin-world/src/services/character/getTalentRows.ts`                   | Its caller is the Talents tab, which lists each talent's row        |
+| `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | Its caller is the kit, which reads a talent at these levels         |
 
 ## Sources
 

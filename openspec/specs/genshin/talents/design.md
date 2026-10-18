@@ -1,6 +1,6 @@
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and nothing calls `upgradeTalent` or `readTalentTables` yet; it stays in the [talents proposal](../../../changes/genshin-talents/design.md). A constellation's extra levels are added by the [constellations](../constellations/design.md) page, which no kit reads yet.
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab lists each talent's level, next phase and cost, and presses an upgrade through `upgradeCharacterTalent`, which calls `upgradeTalent`; the world screen reads `readTalentTables` beside the stat tables. A constellation's extra levels are added by the [constellations](../constellations/design.md) page, which no kit reads yet; the [talents proposal](../../../changes/genshin-talents/design.md)'s constellation section is what has a kit read them.
 
 ## The tables
 
@@ -44,20 +44,22 @@ A passive has no level. It is open where the character's ascension phase has rea
 
 ## Key files
 
-| File                                                                | Role                                                                                |
-| :------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/Character.ts`          | Each combat talent's level, kept with the character                                 |
-| `packages/genshin-world/src/models/character/CombatTalent.ts`       | The three combat talents                                                            |
-| `packages/genshin-world/src/models/character/TalentUpgrade.ts`      | A level's phase, Mora and items                                                     |
-| `packages/genshin-world/src/models/character/TalentUpgradeMap.ts`   | Each proud skill group's upgrades, from the second level                            |
-| `packages/genshin-world/src/models/character/CharacterTalentKit.ts` | A character's talent groups and passives                                            |
-| `packages/genshin-world/src/models/character/Passive.ts`            | A passive's group and the phase it opens at                                         |
-| `packages/genshin-world/src/services/character/upgradeTalent.ts`    | The upgrade rule: phase, Mora and items checked before any is taken                 |
-| `packages/genshin-world/src/services/character/readTalentTables.ts` | The two tables, fetched by their keys and checked against their shapes              |
-| `packages/genshin-world/src/services/character/createCharacter.ts`  | Every combat talent at level 1                                                      |
-| `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`  | A character's talents from the first skill set that names all three                 |
-| `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`    | Each named group's levels from the second to the tenth, costs as the table has them |
-| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`       | Builds both tables with the other stat tables, published under their `stats/` keys  |
+| File                                                                      | Role                                                                                |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/Character.ts`                | Each combat talent's level, kept with the character                                 |
+| `packages/genshin-world/src/models/character/CombatTalent.ts`             | The three combat talents                                                            |
+| `packages/genshin-world/src/models/character/TalentUpgrade.ts`            | A level's phase, Mora and items                                                     |
+| `packages/genshin-world/src/models/character/TalentUpgradeMap.ts`         | Each proud skill group's upgrades, from the second level                            |
+| `packages/genshin-world/src/models/character/CharacterTalentKit.ts`       | A character's talent groups and passives                                            |
+| `packages/genshin-world/src/models/character/Passive.ts`                  | A passive's group and the phase it opens at                                         |
+| `packages/genshin-world/src/services/character/upgradeTalent.ts`          | The upgrade rule: phase, Mora and items checked before any is taken                 |
+| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts` | The press: a character's talent raised, the roster, bag and wallet it leaves        |
+| `packages/genshin-world/src/services/character/getTalentRows.ts`          | Each combat talent's row on the Talents tab: its level, next upgrade and refusal    |
+| `packages/genshin-world/src/services/character/readTalentTables.ts`       | The two tables, fetched by their keys and checked against their shapes              |
+| `packages/genshin-world/src/services/character/createCharacter.ts`        | Every combat talent at level 1                                                      |
+| `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`        | A character's talents from the first skill set that names all three                 |
+| `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`          | Each named group's levels from the second to the tenth, costs as the table has them |
+| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`             | Builds both tables with the other stat tables, published under their `stats/` keys  |
 
 ## Sources
 
