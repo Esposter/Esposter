@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -23,10 +24,8 @@ const getTriggerCooldownId = (attackTag: AttackTag): string =>
 // Param, and a stack past that replaces the one that runs out first
 export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
-  if (bonus.pieceCount === 2) {
-    const damageBonus = takeOne(params, 0);
-    return { getStrikeDamageBonus: (strike) => (strike.attackTag === AttackTag.PlungingAttack ? damageBonus : 0) };
-  }
+  if (bonus.pieceCount === 2)
+    return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.PlungingAttack });
   const stacksByAttackTag = new Map<AttackTag, number>([
     [AttackTag.PlungingAttack, takeOne(params, 0)],
     [AttackTag.ChargedAttack, takeOne(params, 1)],

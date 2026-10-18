@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { endPartyMemberSkillCooldown } from "#src/services/party/endPartyMemberSkillCooldown";
@@ -15,10 +16,8 @@ const GAMBLER_COOLDOWN_ID = "gamblerCooldown";
 // The table's second param is its chance, a whole one, so the end is never rolled
 export const createGamblerSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
-  if (bonus.pieceCount === 2) {
-    const damageBonus = takeOne(params, 0);
-    return { getStrikeDamageBonus: (strike) => (strike.attackTag === AttackTag.ElementalSkill ? damageBonus : 0) };
-  }
+  if (bonus.pieceCount === 2)
+    return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.ElementalSkill });
   const cooldownSeconds = takeOne(params, 0);
   return {
     onKitEvent: (event, context, combatant) => {

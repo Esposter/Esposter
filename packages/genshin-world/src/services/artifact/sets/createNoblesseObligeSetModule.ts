@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { createUsedActionTeamBuffSetModule } from "#src/services/artifact/sets/createUsedActionTeamBuffSetModule";
 import { takeOne } from "@esposter/shared";
 
@@ -11,10 +12,8 @@ import { takeOne } from "@esposter/shared";
 // Table's first param for the seconds in its second, after its wearer uses its Elemental Burst, and a use restarts it
 export const createNoblesseObligeSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
-  if (bonus.pieceCount === 2) {
-    const damageBonus = takeOne(params, 0);
-    return { getStrikeDamageBonus: (strike) => (strike.attackTag === AttackTag.ElementalBurst ? damageBonus : 0) };
-  }
+  if (bonus.pieceCount === 2)
+    return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.ElementalBurst });
   return createUsedActionTeamBuffSetModule({
     actions: ["burst"],
     amount: takeOne(params, 0),
