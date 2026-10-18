@@ -14,6 +14,7 @@ Much of the game's exploration is puzzles: monuments lit by an element, Seelies 
 - **Shrines of Depths.** A shrine is opened with one of its region's Shrine of Depths keys, which the region's statues give ([Statues of The Seven](../genshin-statues-of-the-seven/design.md)), and holds a Luxurious chest. Each region keeps its own keys.
 - **The map's labels settle each kind.** The official map gives each mark a label, and the label names the kind: the Seelie variants it names beside the Seelie (Electro and Warming) are Seelies, and each nation's shrine label is one Shrine of Depths kind. A mark's element, timing and wiring are not on the map, so those come from the wiki or a recording, never from the points.
 - **A region's own mechanisms come with it.** Sumeru's ruins and Withering, Fontaine's devices, Natlan's and every other region's are each written on this framework by the page that builds the region.
+- **Settled Seelies and solved puzzles are a save slice.** The save's `puzzles` slice holds `settledSeelieIds` and `solvedPuzzleIds`, each a unique list of ids bounded like the other id slices, with no default: a save stored before the slice is backfilled to it, never defaulted, as the [save data](../../specs/genshin/save-data/design.md) page's rule says. Two copies of a save merge by the union of both copies' ids, since a Seelie settled or a puzzle solved is kept once it has happened.
 
 ## How it works
 

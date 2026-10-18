@@ -422,6 +422,8 @@ useWorldSaveSync({
     quests: questProgressMap.value,
     regionStatueProgressMap: savedState.regionStatueProgressMap,
     reputation: reputation.value,
+    settledSeelieIds: savedState.settledSeelieIds,
+    solvedPuzzleIds: savedState.solvedPuzzleIds,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,

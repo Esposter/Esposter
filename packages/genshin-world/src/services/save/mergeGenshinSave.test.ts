@@ -17,6 +17,9 @@ describe(mergeGenshinSave, () => {
   const SHARED_OCULUS_ID = "2";
   const GUEST_OCULUS_ID = "3";
   const REGION_ID = "mondstadt";
+  const SEELIE_ID = "seelie-1";
+  const OTHER_SEELIE_ID = "seelie-2";
+  const PUZZLE_ID = "puzzle-1";
   const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
   const OTHER_REFILL_DAY = Temporal.PlainDate.from(REFILL_DAY).add({ days: 1 }).toString();
   const ACCOUNT_REFILL_COUNT = 2;
@@ -70,6 +73,20 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [OTHER_LANDMARK_ID, LANDMARK_ID] };
 
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
+  });
+
+  test("unions the settled Seelies and the solved puzzles of both copies", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, puzzles: { settledSeelieIds: [SEELIE_ID], solvedPuzzleIds: [PUZZLE_ID] } };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      puzzles: { settledSeelieIds: [OTHER_SEELIE_ID, SEELIE_ID], solvedPuzzleIds: [] },
+    };
+
+    expect(mergeGenshinSave(account, guest).puzzles).toStrictEqual({
+      settledSeelieIds: [SEELIE_ID, OTHER_SEELIE_ID],
+      solvedPuzzleIds: [PUZZLE_ID],
+    });
   });
 
   test("keeps the account's opened chests over the guest's", () => {

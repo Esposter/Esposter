@@ -30,6 +30,10 @@ export const MAX_OPENED_CHEST_COUNT = 4096;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
 export const MAX_FOUND_OCULUS_COUNT = 4096;
+// The Seelies a player settles in their courts once each, and the puzzles a player solves once each, across every region
+// The game has, so each bound is the map's with room to spare
+export const MAX_SETTLED_SEELIE_COUNT = 1024;
+export const MAX_SOLVED_PUZZLE_COUNT = 1024;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
@@ -105,6 +109,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
   openedChests: [],
+  puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   statues: { foundOculusIds: [], regions: {} },
@@ -152,6 +157,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_SETTLED_SEELIE_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_SOLVED_PUZZLE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
   MAX_INVENTORY_ITEM_COUNT *
@@ -177,6 +184,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   inventory: EMPTY_INVENTORY_SAVE,
   offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
   openedChests: [],
+  puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
   statues: { foundOculusIds: [], regions: {} },
