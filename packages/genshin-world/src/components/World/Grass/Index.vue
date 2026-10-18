@@ -80,9 +80,11 @@ const grassRings = rings.map((ring) => {
     clipFromModel,
     density,
     groundCapture,
+    grassTrail,
     ring,
     segmentCount: GRASS_BLADE_SEGMENT_COUNT,
     waterUniforms,
+    windUniforms,
   });
   const grassGeometry = createGrassGeometry(GRASS_BLADE_SEGMENT_COUNT, ring.cellsPerSide * ring.cellsPerSide);
   grassGeometry.setIndirect(culling.indirect);

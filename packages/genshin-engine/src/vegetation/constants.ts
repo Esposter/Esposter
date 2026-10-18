@@ -30,3 +30,6 @@ export const GRASS_TRAIL_BEND_SHARE = 0.9;
 // The trail fades to nothing between these shares of its half extent, so the texels past its reach never bend a blade
 export const GRASS_TRAIL_FADE_START_SHARE = 0.8;
 export const GRASS_TRAIL_FADE_END_SHARE = 0.95;
+// How far a blade bends for a unit of wind, and how far its top dips for each metre it bends, as a share of its height
+export const GRASS_BEND_PER_WIND = 0.9;
+export const GRASS_DIP_PER_BEND = 0.3;
