@@ -225,8 +225,6 @@ const talentPanel = computed(() => {
     ),
   };
 });
-// The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
-// Never refuses
 // The chosen character raised one level with its Character EXP materials, or undefined where that is refused now
 const levelUpResult = computed(() => {
   if (!character.value) return undefined;
@@ -291,6 +289,8 @@ const ascendCharacterAt = () => {
   inventory.value = ascended.inventory;
   wallet.value = ascended.wallet;
 };
+// The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
+// Never refuses
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
   if (!character.value || !talentGroupIds.value || !talent) return;
