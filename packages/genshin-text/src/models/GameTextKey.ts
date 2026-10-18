@@ -83,7 +83,6 @@ export enum GameTextKey {
   // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
   CityReputation = "81370119",
   ClearwaterJade = "2720928108",
-  Close = "UI_TEXT_CLOSE",
   // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
   CombineTypeBait = "COMBINE_TYPE_NAME10",
   CombineTypeCharacterAscension = "COMBINE_TYPE_NAME5",
