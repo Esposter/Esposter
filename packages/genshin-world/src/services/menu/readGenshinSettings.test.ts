@@ -25,4 +25,12 @@ describe(readGenshinSettings, () => {
 
     expect(readGenshinSettings(storedSettings, GENSHIN_SETTINGS_DEFAULTS).defaultDistance).toBe(5.5);
   });
+
+  test("a chosen slope pitch is kept on this device", () => {
+    expect.hasAssertions();
+
+    const storedSettings = JSON.stringify({ ...GENSHIN_SETTINGS_DEFAULTS, slopePitch: true });
+
+    expect(readGenshinSettings(storedSettings, GENSHIN_SETTINGS_DEFAULTS).slopePitch).toBe(true);
+  });
 });

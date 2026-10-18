@@ -6,6 +6,7 @@ x-needs: [game-exports, media-engine, parity-page]
 x-touches:
   [
     "packages/genshin-world/src/components/Menu/Settings/**",
+    "packages/genshin-world/src/models/menu/**",
     "packages/genshin-world/src/services/menu/**",
     "packages/genshin-world/src/components/World/Session/**",
   ]

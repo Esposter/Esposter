@@ -7,6 +7,7 @@ import type { GameText } from "genshin-text";
 import { RangeSetting } from "#src/models/menu/RangeSetting";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
+import { ToggleSetting } from "#src/models/menu/ToggleSetting";
 import { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import { CAMERA_DISTANCE_RANGE, CAMERA_SENSITIVITY_RANGE, VOLUME_RANGE } from "#src/services/menu/constants";
 import { fillGameTextValues, GameLanguage, GameTextKey, getLanguageDisplayName } from "genshin-text";
@@ -28,6 +29,12 @@ const getRange = (labelKey: GameTextKey, setting: RangeSetting, range: SettingRa
   range,
   setting,
 });
+// A switch the world flips between On and Off, drawn with the words its setting holds
+const getToggle = (labelKey: GameTextKey, setting: ToggleSetting): SettingsRow => ({
+  kind: SettingsRowKind.Toggle,
+  labelKey,
+  setting,
+});
 const getVolume = (labelKey: GameTextKey, setting: VolumeSetting): SettingsRow => ({
   kind: SettingsRowKind.Volume,
   labelKey,
@@ -44,8 +51,8 @@ const getUnbackedSlider = (labelKey: GameTextKey, range: SettingRange, value: nu
 // The rows of each tab built, in the game's order under its headings, with the values the English PC client's settings
 // Show in `yt-5EmJX_RyuY8-menu-settings`: the Controls tab at 13 seconds, its Key Bindings at 30, the Graphics tab at
 // 144.5 seconds and scrolled to its end at 170, the Audio tab at 178, and the Language tab at 190. The world backs the
-// Camera's sensitivities and default distance, the graphics quality, the game language and the three volume settings the
-// Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it stands
+// Camera's sensitivities, default distance and Y-axis reset, the graphics quality, the game language and the three volume
+// Settings the Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it stands
 export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, SettingsSection[]>>> = {
   [Tab.Audio]: [
     { headingKey: GameTextKey.SettingsAudioTitle, rows: [getVolume(GameTextKey.SettingsVolume, VolumeSetting.Master)] },
@@ -82,7 +89,7 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
         getRange(GameTextKey.SettingsVerticalSensitivity, RangeSetting.VerticalSensitivity, CAMERA_SENSITIVITY_RANGE),
         getUnbackedSlider(GameTextKey.SettingsAimedHorizontalSensitivity, CAMERA_SENSITIVITY_RANGE, 3),
         getUnbackedSlider(GameTextKey.SettingsAimedVerticalSensitivity, CAMERA_SENSITIVITY_RANGE, 3),
-        getChoice(GameTextKey.SettingsCameraYAxisReset, GameTextKey.SettingsOn),
+        getToggle(GameTextKey.SettingsCameraYAxisReset, ToggleSetting.SlopePitch),
         getChoice(GameTextKey.SettingsCombatCamera, GameTextKey.SettingsOn),
         getRange(GameTextKey.SettingsDefaultCameraDistance, RangeSetting.DefaultDistance, CAMERA_DISTANCE_RANGE),
         getChoice(GameTextKey.SettingsBoatCameraCorrection, GameTextKey.SettingsOnlyWhenNotInCombat),

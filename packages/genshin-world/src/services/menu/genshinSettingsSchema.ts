@@ -22,6 +22,7 @@ export const genshinSettingsSchema = z
     musicVolume: volumeLevelSchema,
     qualityTier: z.enum(QualityTier),
     sfxVolume: volumeLevelSchema,
+    slopePitch: z.boolean(),
     verticalSensitivity: sensitivitySchema,
     volume: volumeLevelSchema,
   })

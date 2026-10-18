@@ -109,6 +109,7 @@ export const GENSHIN_SETTINGS_DEFAULTS: GenshinSettings = {
   musicVolume: VOLUME_LEVEL_MAXIMUM,
   qualityTier: QualityTier.High,
   sfxVolume: VOLUME_LEVEL_MAXIMUM,
+  slopePitch: FOLLOW_CAMERA_DEFAULT_SETTINGS.slopePitch,
   verticalSensitivity: FOLLOW_CAMERA_DEFAULT_SETTINGS.verticalSensitivity,
   volume: VOLUME_LEVEL_MAXIMUM,
 };

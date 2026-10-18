@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { SettingsRow } from "#src/models/menu/SettingsRow";
+import type { ToggleSetting } from "#src/models/menu/ToggleSetting";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
@@ -102,8 +103,17 @@ const openedOptions = computed(() => {
 });
 const checkIsListRow = (row: SettingsRow): boolean =>
   row.kind === SettingsRowKind.Quality || row.kind === SettingsRowKind.Language;
+// A row the player acts on: a list row opens its list, and a toggle flips its setting
+const checkIsActiveRow = (row: SettingsRow): boolean => checkIsListRow(row) || row.kind === SettingsRowKind.Toggle;
 const toggleList = (kind: SettingsRowKind): void => {
   openedList.value = openedList.value === kind ? undefined : kind;
+};
+const flipToggle = (setting: ToggleSetting): void => {
+  settings.value = { ...settings.value, [setting]: !settings.value[setting] };
+};
+const activateRow = (row: SettingsRow): void => {
+  if (row.kind === SettingsRowKind.Toggle) flipToggle(row.setting);
+  else toggleList(row.kind);
 };
 type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
 // A track row's value: the setting the world backs it with, or the value an unbacked slider is drawn at
@@ -255,9 +265,9 @@ onMounted(() => {
                 class="choice"
                 :aria-label="shownGameText[row.labelKey]"
                 :aria-expanded="checkIsListRow(row) ? openedList === row.kind : undefined"
-                :disabled="!checkIsListRow(row)"
+                :disabled="!checkIsActiveRow(row)"
                 type="button"
-                @click="toggleList(row.kind)"
+                @click="activateRow(row)"
               >
                 <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
                   <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
@@ -268,6 +278,9 @@ onMounted(() => {
                 <span class="value">
                   <template v-if="row.kind === SettingsRowKind.Quality">{{ qualityValue }}</template>
                   <template v-else-if="row.kind === SettingsRowKind.Language">{{ languageValue }}</template>
+                  <template v-else-if="row.kind === SettingsRowKind.Toggle">{{
+                    shownGameText[settings[row.setting] ? GameTextKey.SettingsOn : GameTextKey.SettingsOff]
+                  }}</template>
                   <template v-else-if="row.kind === SettingsRowKind.Action">{{ shownGameText[row.valueKey] }}</template>
                   <template v-else>{{ row.getValue(shownGameText, settings.language) }}</template>
                 </span>

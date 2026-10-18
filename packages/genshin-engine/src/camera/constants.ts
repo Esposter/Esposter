@@ -12,10 +12,12 @@ export const FREE_CAMERA_CLEARANCE = 1.5;
 export const FREE_CAMERA_MAX_PITCH: number = Math.PI / 2 - 0.01;
 // The settings the follow camera starts at, and the sensitivity its look turns at as it always has, the middle of the
 // Game's 1 to 5 range
-// Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export
+// Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export. The wiki's Settings
+// Page gives no default for the slope pitch, so it starts off and the camera changes only where a player turns it on
 export const FOLLOW_CAMERA_DEFAULT_SETTINGS: FollowCameraSettings = {
   defaultDistance: 5,
   horizontalSensitivity: 3,
+  slopePitch: false,
   verticalSensitivity: 3,
 };
 export const FOLLOW_CAMERA_NEUTRAL_SENSITIVITY = 3;
@@ -35,6 +37,9 @@ export const FOLLOW_CAMERA_MAX_DISTANCE = 6;
 // Out once what pulled it in has cleared, in metres a second
 export const FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP = 0.5;
 export const FOLLOW_CAMERA_EASE_OUT_SPEED = 4;
+// Provisional, read off no recording yet: how fast the pitch closes the gap to the slope, as the share of it closed each
+// Second, so the camera settles on a new slope within a few seconds
+export const FOLLOW_CAMERA_SLOPE_PITCH_SPEED = 4;
 // The room the eye keeps from the ground, the water's surface and the landmarks, the radius of the sphere its arm casts,
 // And how far apart the arm is stepped through the terrain's height function, in metres
 export const FOLLOW_CAMERA_CLEARANCE = 0.2;

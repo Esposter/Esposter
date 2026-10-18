@@ -24,6 +24,9 @@ describe(createFollowCamera, () => {
   // A pivot low enough that a look up from below puts the arm's reach under the ground
   const LOW_PIVOT_HEIGHT = 0.5;
   const LOOK_PAST_LIMIT = 10;
+  // A ground rising one metre for every two along the eye's side, and enough frames for the pitch to settle on it
+  const SLOPE_RISE_PER_METRE = 0.5;
+  const SLOPE_FRAMES = 60;
   const STILL_INPUT: InputState = {
     heldActions: new Set(),
     lookPitch: 0,
@@ -153,5 +156,38 @@ describe(createFollowCamera, () => {
     followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
 
     expect(camera.position.z).toBeCloseTo(DEFAULT_DISTANCE);
+  });
+
+  test("pitch follows the slope when enabled", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery((_x, z) => z * SLOPE_RISE_PER_METRE, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, slopePitch: true },
+    });
+    for (let frame = 0; frame < SLOPE_FRAMES; frame++)
+      followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    // The eye sits on the arm that runs parallel to the ground rising behind it, so the pitch looks up along that slope
+    expect(new Euler().setFromQuaternion(camera.quaternion, "YXZ").x).toBeCloseTo(-Math.atan(SLOPE_RISE_PER_METRE));
+  });
+
+  test("pitch stays level when disabled", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery((_x, z) => z * SLOPE_RISE_PER_METRE, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, slopePitch: false },
+    });
+    for (let frame = 0; frame < SLOPE_FRAMES; frame++)
+      followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(camera.position.toArray()).toStrictEqual([0, PIVOT_HEIGHT, FOLLOW_CAMERA_DEFAULT_SETTINGS.defaultDistance]);
   });
 });

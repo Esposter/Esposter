@@ -5,8 +5,11 @@ x-model: claude-opus-5-5
 x-needs: [game-exports, media-engine]
 x-touches:
   [
+    "packages/genshin-engine/src/camera/**",
     "packages/genshin-engine/src/models/camera/**",
     "packages/genshin-world/src/components/World/Character/**",
     "packages/genshin-world/src/components/Menu/Settings/**",
+    "packages/genshin-world/src/models/menu/**",
+    "packages/genshin-world/src/services/menu/**",
   ]
-x-waiting: "the camera's slope pitch: createFollowCamera has no slope pitch yet, so 3.1's pitch scenarios cannot pass; the sensitivities and default distance are read from Settings"
+x-waiting: "3.1's zoom, combat or teleport scenario waits on combat's entry: the world has no enter-combat event for the camera to return its distance on (useWorldCombat has none), so only the zoom and the teleport are built; 3.2 waits on the game's default camera values, read off the PC's export of the Settings screen, since the recording shows the player's values and the wiki gives only the ranges"

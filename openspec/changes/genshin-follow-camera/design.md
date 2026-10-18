@@ -6,6 +6,7 @@ The [follow camera](../../specs/genshin/follow-camera/design.md) stands behind t
 
 - **What the camera profile cannot say is read off one recording.** The profile holds the zoom's input ratio and the radius's lerp-back ratios, but the Zoom module eases a velocity and what the game computes from each ratio lives in code no dump holds. So the wheel's step and the eye's return are measured on `follow-camera.mkv`, the clip the roadmap owes, as the eye's distance over time. Its reset before a flat horizon tells whether the game levels the camera or tilts it down by the default elevation the profile's first words hold, and its tilt from level to straight down whether the arm lengthens as the profile's radius added at the steepest elevation says.
 - **The game's settings for this camera.** Its horizontal and vertical sensitivity, its default distance between 4.5 and 6.0, which the camera returns to after a zoom, after combat and after a teleport, and whether its pitch follows the slope as the character climbs or descends, are read from the [menu screens](../genshin-menu-settings/design.md)' Settings, each with the game's range and default. The default distance is metres of the arm: its span is the profile's setting adjustment and its top the profile's furthest radius on foot.
+- **The slope pitch settles on the slope at a provisional rate.** With the slope pitch on, the pitch closes the gap to the slope the ground rises or falls at along the eye's side, a share of it each second (`FOLLOW_CAMERA_SLOPE_PITCH_SPEED`), so the eye keeps its height above the slope as the character climbs or descends, as the wiki's Settings page describes the Y-axis reset. The slope pitch is off until a player turns it on, since the wiki gives no default for it. The rate is provisional until a recording of a climb reads how fast the game's camera settles.
 - **Photo mode's range is the game's, solved off recordings.** Photo mode moves its camera round the character by the game's two sliders, one horizontal and one vertical, and its zoom, within the game's range. Until a recording solves that range, photo mode shares the follow camera's range, a provisional call the [as-built page](../../specs/genshin/follow-camera/design.md) records.
 
 ## How it works
@@ -25,12 +26,12 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the field of view, the pitch limits and the wheel's range are the game's, and the pivot is measured; a notch's zoom and the ease back out are provisional, the reset levels the camera, its sensitivity and default distance are read from the settings at the game's defaults, which the Settings screen does not set yet, and photo mode orbits the held character within the follow camera's range, not the game's.
+**Today:** the field of view, the pitch limits and the wheel's range are the game's, and the pivot is measured; a notch's zoom and the ease back out are provisional, the reset levels the camera, its sensitivity, default distance and slope pitch are read from the stored Settings, at provisional defaults until the Controls tab's export gives the game's, and photo mode orbits the held character within the follow camera's range, not the game's.
 
 **This adds, in order:**
 
 1. **The recording.** `follow-camera.mkv` on the roadmap's References sought list, each of the four readings above kept in the character's reference and written over its provisional constant. Photo mode's sliders and zoom at their ends, `photo-mode-range.mkv`, solve its range.
-2. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](../genshin-menu-settings/design.md) build its Controls tab. The defaults the camera starts at are read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values.
+2. **The defaults.** The settings' rows and the slope's pitch are built on the Settings screen's Controls tab by the [menu screens](../genshin-menu-settings/design.md). What waits is the defaults the camera starts at, read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values (3.2).
 
 The camera is approved by its own measure: at each reading of the recording, the eye's distance and its ease match the camera's within the reading's noise.
 
@@ -42,11 +43,11 @@ The camera is approved by its own measure: at each reading of the recording, the
 
 ## Key files
 
-| File                                                                        | Role after the change                                                            |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/camera/constants.ts`                           | The notch's zoom and the ease, read off the recording                            |
-| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | Reads the settings' sensitivity and distance, and resets to the game's elevation |
-| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | Each reading of the recording                                                    |
+| File                                                                        | Role after the change                                                                                                         |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/camera/constants.ts`                           | The notch's zoom and the ease, read off the recording                                                                         |
+| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | Reads the settings' sensitivity, distance and slope pitch, settles the pitch on the slope, and resets to the game's elevation |
+| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | Each reading of the recording                                                                                                 |
 
 ## Sources
 
