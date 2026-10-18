@@ -1,4 +1,4 @@
-import type { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGrammarRule";
+import type { MathExpressionParse } from "#src/models/parser/MathExpressionParse";
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
@@ -18,7 +18,7 @@ export const parseCall = (
   state: MathExpressionParserState,
   name: string,
   column: number,
-  parse: (state: MathExpressionParserState, rule: MathExpressionGrammarRule) => MathExpressionNode,
+  parse: MathExpressionParse,
 ): MathExpressionNode => {
   const signatures = getMathExpressionSignatures(name);
   if (signatures === undefined) {

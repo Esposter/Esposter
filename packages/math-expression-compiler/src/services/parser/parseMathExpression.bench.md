@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T10:39:51.357Z
-- Commit: 10421b3666
+- Date: 2026-10-18T11:08:02.249Z
+- Commit: 7a4bad44ed
 - Node: v26.12.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,19 +20,35 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| literals | 1.00×   | 0.0741    | ±12.96% | 0.0961   | 10      |
-| columns  | 0.83×   | 0.0889    | ±11.26% | 0.1096   | 10      |
+| literals | 1.00×   | 0.0772    | ±21.24% | 0.1205   | 10      |
+| columns  | 0.81×   | 0.0949    | ±14.35% | 0.1243   | 10      |
 
 ## parseMathExpression > a sum of 1000 numbers
 
 | task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------- | ------- | --------- | ------- | -------- | ------- |
-| operators | 1.00×   | 3.7379    | ±11.80% | 4.9624   | 10      |
-| arguments | 0.58×   | 6.4342    | ±6.10%  | 7.3650   | 10      |
+| operators | 1.00×   | 3.6603    | ±11.25% | 4.5009   | 10      |
+| arguments | 0.56×   | 6.5100    | ±5.82%  | 7.2831   | 10      |
 
 ## parseMathExpression > a sum of 100000 numbers
 
 | task      | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | --------- | ------- | --------- | ------ | -------- | ------- |
-| operators | 1.00×   | 259.2739  | ±4.98% | 289.7998 | 10      |
-| arguments | 0.46×   | 558.4213  | ±8.79% | 653.8622 | 10      |
+| operators | 1.00×   | 318.8148  | ±4.39% | 351.1403 | 10      |
+| arguments | 0.56×   | 571.5551  | ±2.73% | 607.3734 | 10      |
+
+## parseMathExpression > parse ten nested groups
+
+| task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------- | ------- | --------- | ------- | -------- | ------- |
+| plain    | 1.00×   | 0.0925    | ±15.50% | 0.1331   | 10      |
+| percent  | 0.85×   | 0.1090    | ±17.77% | 0.1594   | 10      |
+| division | 0.46×   | 0.2020    | ±60.74% | 0.6426   | 10      |
+
+## parseMathExpression > parse forty nested groups
+
+| task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------- | ------- | --------- | ------- | -------- | ------- |
+| plain    | 1.00×   | 0.2699    | ±7.72%  | 0.3075   | 10      |
+| division | 0.61×   | 0.4411    | ±13.19% | 0.6399   | 10      |
+| percent  | 0.49×   | 0.5540    | ±27.05% | 0.9783   | 10      |

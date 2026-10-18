@@ -1,7 +1,8 @@
 import type { MathExpressionSignature } from "#src/models/function/MathExpressionSignature";
 
 import { MathExpressionFunctionMap } from "#src/services/function/MathExpressionFunctionMap";
+import { getOwnValue } from "#src/services/shared/getOwnValue";
 
-// An own-key lookup, so a name the table does not hold is undefined rather than a property inherited from the prototype
+// The signatures of a function the table holds, or undefined for a name it does not
 export const getMathExpressionSignatures = (name: string): MathExpressionSignature[] | undefined =>
-  Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  getOwnValue(MathExpressionFunctionMap, name);

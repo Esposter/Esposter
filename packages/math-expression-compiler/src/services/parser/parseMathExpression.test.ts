@@ -10,35 +10,37 @@ const getParseError = (formula: string): null | string =>
 
 describe(parseMathExpression, () => {
   test.each([
-    ["An unclosed parenthesis", "(1 + 2", /Parenthesis \) expected/u],
-    ["An unknown function", "foo(1)", /Unknown function "foo" \(char 1\)/u],
-    ["A function given too many arguments", "round(1, 2, 3)", /"round" takes 1 or 2 arguments \(char 1\)/u],
+    ["an unclosed parenthesis", "(1 + 2", "Parenthesis ) expected (char 7)"],
+    ["an unknown function", "foo(1)", 'Unknown function "foo" (char 1)'],
+    ["a function given too many arguments", "round(1, 2, 3)", '"round" takes 1 or 2 arguments (char 1)'],
     [
-      "A function given too many arguments after another operand",
+      "a function given too many arguments after another operand",
       "2 + round(1, 2, 3)",
-      /"round" takes 1 or 2 arguments \(char 5\)/u,
+      '"round" takes 1 or 2 arguments (char 5)',
     ],
-    ["a function given one argument too many", "sin(1, 2)", /"sin" takes 1 argument \(char 1\)/u],
-    ["a function given fewer arguments than it takes", "hypot()", /"hypot" takes at least 1 argument \(char 1\)/u],
-    ["A list given to a function that takes none", "sin([1])", /"sin" does not take a list argument \(char 1\)/u],
-    ["A list-only function given a single value", "count(5)", /"count" takes a list argument \(char 1\)/u],
-    ["A sign with no operand", "1 +", /Unexpected end of expression/u],
-    ["A word size too small for its literal", "1 + 0x1FFi8", /String "0x1FF" is out of range \(char 5\)/u],
-    ["A decimal point right after an exponent marker", "2e.5", /Digit expected, got "\." \(char 2\)/u],
-    ["A decimal point right after an exponent sign", "2e+.5", /Digit expected, got "\." \(char 1\)/u],
-    ["A decimal point after the digits of an exponent", "1e5.5", /Digit expected, got "\." \(char 1\)/u],
+    ["a function given one argument too many", "sin(1, 2)", '"sin" takes 1 argument (char 1)'],
+    ["a function given fewer arguments than it takes", "hypot()", '"hypot" takes at least 1 argument (char 1)'],
+    ["a list given to a function that takes none", "sin([1])", '"sin" does not take a list argument (char 1)'],
+    ["a list-only function given a single value", "count(5)", '"count" takes a list argument (char 1)'],
+    ["a sign with no operand", "1 +", "Unexpected end of expression (char 4)"],
+    ["a word size too small for its literal", "1 + 0x1FFi8", 'String "0x1FF" is out of range (char 5)'],
+    ["a decimal point right after an exponent marker", "2e.5", 'Digit expected, got "." (char 2)'],
+    ["a decimal point right after an exponent sign", "2e+.5", 'Digit expected, got "." (char 1)'],
+    ["a decimal point after the digits of an exponent", "1e5.5", 'Digit expected, got "." (char 1)'],
   ])("%s is an error", (_title, formula, message) => {
     expect.hasAssertions();
 
-    expect(getParseError(formula)).toMatch(message);
+    expect(getParseError(formula)).toBe(message);
   });
 
-  test.each([["Nesting beyond the limit"]])("%s", (_title) => {
+  test.each([["nesting beyond the limit"]])("%s is an error", (_title) => {
     expect.hasAssertions();
 
     const nested = `${"(".repeat(MAX_MATH_EXPRESSION_DEPTH + 1)}1${")".repeat(MAX_MATH_EXPRESSION_DEPTH + 1)}`;
 
-    expect(getParseError(nested)).toMatch(/nests deeper than/u);
+    expect(getParseError(nested)).toBe(
+      `Formula nests deeper than ${MAX_MATH_EXPRESSION_DEPTH} levels (char ${MAX_MATH_EXPRESSION_DEPTH + 1})`,
+    );
   });
 
   test("a formula of a few nested parentheses parses", () => {
@@ -56,7 +58,7 @@ describe(parseMathExpression, () => {
     expect(getParseError(`${open.repeat(40)}1${")".repeat(40)}`)).toBeNull();
   });
 
-  test.each([["A list inside a list is refused"]])("%s", (_title) => {
+  test.each([["a list inside a list is refused"]])("%s", (_title) => {
     expect.hasAssertions();
 
     expect(getParseError("det([[1, 2], [3, 4]])")).toMatchInlineSnapshot(`"Value expected (char 6)"`);

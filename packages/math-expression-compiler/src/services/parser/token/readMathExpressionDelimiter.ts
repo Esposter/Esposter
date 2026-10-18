@@ -18,7 +18,7 @@ export const readMathExpressionDelimiter = (state: MathExpressionParserState): n
   state.token = state.source.slice(state.index, state.index + length);
   state.index += length;
   state.tokenType = MathExpressionTokenType.Delimiter;
-  if (state.token === "(" || state.token === "[") state.nestingLevel++;
-  if (state.token === ")" || state.token === "]") state.nestingLevel--;
+  if (["(", "["].includes(state.token)) state.nestingLevel++;
+  if ([")", "]"].includes(state.token)) state.nestingLevel--;
   return length;
 };

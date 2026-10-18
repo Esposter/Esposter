@@ -6,7 +6,6 @@ import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeTyp
 import { checkIsToken } from "#src/services/parser/checkIsToken";
 import { checkIsUnaryStart } from "#src/services/parser/checkIsUnaryStart";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
-import { restoreMathExpressionParserState } from "#src/services/parser/restoreMathExpressionParserState";
 
 // A `%` after an operand is a percentage unless an operand follows it, when it is the modulo operator
 export const parsePercentage: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
@@ -19,7 +18,7 @@ export const parsePercentage: MathExpressionRuleParser = (state, parse): MathExp
   const isModulo =
     state.error === null && !checkIsToken(state, "+") && !checkIsToken(state, "-") && checkIsUnaryStart(state);
   if (isModulo) {
-    restoreMathExpressionParserState(state, snapshot);
+    Object.assign(state, snapshot);
     return node;
   }
 

@@ -12,6 +12,13 @@ const SUM_100K_FORMULA = generateSumFormula(100000);
 // The same ones as SUM_1K_FORMULA and SUM_100K_FORMULA, joined by operators rather than passed as arguments
 const CHAIN_1K_FORMULA = generateOnes(1000, " + ");
 const CHAIN_100K_FORMULA = generateOnes(100000, " + ");
+// Nesting is the axis the doubling grew on, so each depth holds the plain group and the two that begin with a division and a percent sign
+const PLAIN_10_FORMULA = `${"(".repeat(10)}1${")".repeat(10)}`;
+const DIVISION_10_FORMULA = `${"1/(".repeat(10)}1${")".repeat(10)}`;
+const PERCENT_10_FORMULA = `${"8%(".repeat(10)}1${")".repeat(10)}`;
+const PLAIN_40_FORMULA = `${"(".repeat(40)}1${")".repeat(40)}`;
+const DIVISION_40_FORMULA = `${"1/(".repeat(40)}1${")".repeat(40)}`;
+const PERCENT_40_FORMULA = `${"8%(".repeat(40)}1${")".repeat(40)}`;
 
 // Parsing is linear in the formula's length, so each group holds one scale and its second task holds the same operands in another shape
 // The chain is not the same length: it joins with " + " where the sum joins with ", " and wraps them in "sum(" and ")"
@@ -36,6 +43,24 @@ describe(parseMathExpression, () => {
     await bench.compare(
       bench("arguments", () => parseMathExpression(SUM_100K_FORMULA)),
       bench("operators", () => parseMathExpression(CHAIN_100K_FORMULA)),
+      BENCHMARK_RUN_OPTIONS,
+    );
+  });
+
+  test("parse ten nested groups", async ({ bench }) => {
+    await bench.compare(
+      bench("plain", () => parseMathExpression(PLAIN_10_FORMULA)),
+      bench("division", () => parseMathExpression(DIVISION_10_FORMULA)),
+      bench("percent", () => parseMathExpression(PERCENT_10_FORMULA)),
+      BENCHMARK_RUN_OPTIONS,
+    );
+  });
+
+  test("parse forty nested groups", async ({ bench }) => {
+    await bench.compare(
+      bench("plain", () => parseMathExpression(PLAIN_40_FORMULA)),
+      bench("division", () => parseMathExpression(DIVISION_40_FORMULA)),
+      bench("percent", () => parseMathExpression(PERCENT_40_FORMULA)),
       BENCHMARK_RUN_OPTIONS,
     );
   });

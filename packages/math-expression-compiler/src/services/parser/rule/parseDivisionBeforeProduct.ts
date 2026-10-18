@@ -3,7 +3,6 @@ import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGrammarRule";
 import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
-import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 import { checkIsSignedNumber } from "#src/services/parser/checkIsSignedNumber";
 import { checkIsToken } from "#src/services/parser/checkIsToken";
 import { createBinaryNode } from "#src/services/parser/createBinaryNode";
@@ -17,8 +16,8 @@ export const parseDivisionBeforeProduct: MathExpressionRuleParser = (state, pars
 
   const snapshot = { ...state };
   getMathExpressionToken(state);
-  // Mathjs takes only an unsigned divisor into the exception: a signed one binds to the name after it, so 1/-2 col0
-  // is 1/-6
+  // Mathjs takes only an unsigned divisor into the exception, since a signed one binds to the name after it:
+  // So 1/-2 col0 is 1/-6
   const isNumber = state.tokenType === MathExpressionTokenType.Number;
   if (isNumber) getMathExpressionToken(state);
   const isProductFactor =

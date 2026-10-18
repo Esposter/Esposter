@@ -1,3 +1,4 @@
+import type { MathExpressionParse } from "#src/models/parser/MathExpressionParse";
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
@@ -8,10 +9,7 @@ import { getMathExpressionToken } from "#src/services/parser/getMathExpressionTo
 import { parseSequence } from "#src/services/parser/parseSequence";
 
 // A list is a call's argument alone, and holds numbers only, so a list inside it is refused as any other value is
-export const parseList = (
-  state: MathExpressionParserState,
-  parse: (state: MathExpressionParserState, rule: MathExpressionGrammarRule) => MathExpressionNode,
-): MathExpressionNode => {
+export const parseList = (state: MathExpressionParserState, parse: MathExpressionParse): MathExpressionNode => {
   getMathExpressionToken(state);
   const elements = parseSequence(state, "]", (item) => parse(item, MathExpressionGrammarRule.Assignment));
   if (state.error !== null) return PLACEHOLDER;

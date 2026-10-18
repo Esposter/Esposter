@@ -9,7 +9,7 @@ import { takeMathExpressionMatching } from "#src/services/parser/token/takeMathE
 // Takes the exponent after a number's digits, if it has one, and yields the number's text with it
 export const takeExponent = (state: MathExpressionParserState, text: string): string => {
   const exponentMarker = getMathExpressionCharacter(state, 0);
-  if (exponentMarker !== "e" && exponentMarker !== "E") return text;
+  if (!["e", "E"].includes(exponentMarker)) return text;
 
   const afterMarker = getMathExpressionCharacter(state, 1);
   if (checkIsDecimalMark(afterMarker, getMathExpressionCharacter(state, 2))) {
@@ -17,11 +17,11 @@ export const takeExponent = (state: MathExpressionParserState, text: string): st
     failExponent(state, text);
     return text;
   }
-  if (!DIGIT_REGEX.test(afterMarker) && afterMarker !== "+" && afterMarker !== "-") return text;
+  if (!DIGIT_REGEX.test(afterMarker) && !["+", "-"].includes(afterMarker)) return text;
 
   state.index++;
   let exponent = "e";
-  if (afterMarker === "+" || afterMarker === "-") {
+  if (["+", "-"].includes(afterMarker)) {
     exponent += afterMarker;
     state.index++;
   }

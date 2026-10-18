@@ -6,7 +6,7 @@ export const checkIsSignedNumber = (node: MathExpressionNode): boolean => {
   if (node.type === MathExpressionNodeType.Number) return true;
   return (
     node.type === MathExpressionNodeType.Unary &&
-    (node.name === "unaryMinus" || node.name === "unaryPlus") &&
+    ["unaryMinus", "unaryPlus"].includes(node.name) &&
     node.operand.type === MathExpressionNodeType.Number
   );
 };
