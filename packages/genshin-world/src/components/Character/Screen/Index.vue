@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { Constellation } from "#src/models/character/Constellation";
@@ -79,6 +80,8 @@ interface Props {
   // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
   talentUpgradeMap: TalentUpgradeMap;
   // The element the Traveler holds from the statue it resonated with last, none before any resonance
+  // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
+  travelerBonusLines?: AttributeLine[];
   travelerElement?: Element;
 }
 
@@ -102,6 +105,7 @@ const {
   nameText,
   statTables,
   talentUpgradeMap,
+  travelerBonusLines = [],
   travelerElement,
 } = defineProps<Props>();
 // The player's characters, across the screen's top in the order given, a character's activated constellation and a
@@ -289,6 +293,7 @@ const activate = () => {
         :game-text
         :is-level-upable="levelUpResult !== undefined"
         :is-liftable="isLiftable"
+        :traveler-bonus-lines="travelerBonusLines"
         :max-stamina
         :name="characterName"
         :stat-tables

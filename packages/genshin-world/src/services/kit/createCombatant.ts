@@ -2,6 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
@@ -18,11 +19,15 @@ export const createCombatant = (
   elementalResonances: ElementalResonance[],
   statTables: StatTables,
   element = statTables.characterDataMap.get(character.id)?.element,
+  travelerBonusLines: AttributeLine[] = [],
 ): Combatant => {
   const characterData = statTables.characterDataMap.get(character.id);
   return {
     ascension: character.ascension,
-    attributes: computeCharacterAttributes(getCharacterAttributeLines(character, statTables), elementalResonances),
+    attributes: computeCharacterAttributes(
+      getCharacterAttributeLines(character, statTables, travelerBonusLines),
+      elementalResonances,
+    ),
     characterId: character.id,
     constellationCount: character.constellationCount,
     element,

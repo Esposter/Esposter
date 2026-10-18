@@ -78,6 +78,7 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
+import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_POINTER_START, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { openCookingStove } from "#src/services/cooking/openCookingStove";
@@ -116,6 +117,7 @@ import { computeTravelerElement } from "#src/services/statue/computeTravelerElem
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
+import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
@@ -470,9 +472,13 @@ const { offerFrostbearingTree } = useWorldOfferings({
   setWallet,
   wallet,
 });
-// The Traveler's element, which the statue last resonated with gives. The unlocked landmarks, which hold the
-// Resonances, set it again as they change, below the map
-const travelerElement = shallowRef(computeTravelerElement(getResonatedRegionIds(savedState.unlockedLandmarkIds)));
+// The regions whose statues the Traveler resonated with, which give its element and, once Welkin Moon's Homecoming is
+// Done, its bonuses. The unlocked landmarks, which hold the resonances, set them again as they change, below the map
+const resonatedRegionIds = shallowRef(getResonatedRegionIds(savedState.unlockedLandmarkIds));
+const travelerElement = computed(() => computeTravelerElement(resonatedRegionIds.value));
+const travelerBonusLines = computed(() =>
+  getTravelerElementBonusLines(resonatedRegionIds.value, finishedMainQuestIds.value.has(TRAVELER_BONUS_QUEST_ID)),
+);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   characterIdSkillGlyphsMap,
@@ -503,6 +509,7 @@ const {
   savedParty: savedState.party,
   startingCharacterIdKitMap,
   statTables,
+  travelerBonusLines,
   travelerElement,
   wildlifePlaces,
 });
@@ -630,7 +637,7 @@ const {
   wallet,
 });
 watch(unlockedLandmarkIds, (landmarkIds) => {
-  travelerElement.value = computeTravelerElement(getResonatedRegionIds(landmarkIds));
+  resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
 });
 // The Companionship EXP, the day's commissions, the statues, the solved puzzles, the realm's placements and the
 // Traveler's name no source changes yet, so they are carried as they were saved
@@ -1234,6 +1241,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :name-text
           :stat-tables
           :talent-upgrade-map
+          :traveler-bonus-lines="travelerBonusLines"
           :traveler-element="travelerElement"
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"

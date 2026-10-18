@@ -2,9 +2,10 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { RegionIdTravelerElementMap } from "#src/services/statue/RegionIdTravelerElementMap";
 
-// The stat each element resonated with adds to the Traveler once the quest the game names is done, as the wiki's Traveler
-// Page gives them. Provisional until the game's table is published
+// The stat each element adds to the Traveler once Welkin Moon's Homecoming is done, as the wiki's Traveler page gives
+// Them. Provisional until the game's table is published
 const ELEMENT_BONUS_LINE_MAP: Readonly<Record<Element, AttributeLine>> = {
   [Element.Anemo]: { attribute: Attribute.CriticalRate, value: 0.1 },
   [Element.Cryo]: { attribute: Attribute.CriticalDamage, value: 0.2 },
@@ -15,7 +16,19 @@ const ELEMENT_BONUS_LINE_MAP: Readonly<Record<Element, AttributeLine>> = {
   [Element.Pyro]: { attribute: Attribute.AttackPercent, value: 0.2 },
 };
 
-// The attribute line each element the Traveler has resonated with adds, in the order they were resonated with. The caller
-// Passes none until the quest's step is done
-export const getTravelerElementBonusLines = (resonatedElements: readonly Element[]): AttributeLine[] =>
-  resonatedElements.map((element) => ({ ...ELEMENT_BONUS_LINE_MAP[element] }));
+// Anemo and Pyro the Traveler holds before the quest is done, so their bonuses come with it rather than with a resonance
+const ELEMENTS_HELD_BEFORE_HOMECOMING: Element[] = [Element.Anemo, Element.Pyro];
+
+// The bonus line of each element the Traveler holds once Welkin Moon's Homecoming is done: Anemo and Pyro, and each
+// Element of the statues among the regions it resonated with. None before the quest is done
+export const getTravelerElementBonusLines = (
+  resonatedRegionIds: string[],
+  isHomecomingDone: boolean,
+): AttributeLine[] => {
+  if (!isHomecomingDone) return [];
+  const elements = new Set([
+    ...ELEMENTS_HELD_BEFORE_HOMECOMING,
+    ...resonatedRegionIds.flatMap((regionId) => RegionIdTravelerElementMap[regionId] ?? []),
+  ]);
+  return [...elements].map((element) => ELEMENT_BONUS_LINE_MAP[element]);
+};

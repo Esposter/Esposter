@@ -4,11 +4,12 @@ import type { StatTables } from "#src/models/character/StatTables";
 
 import { getArtifactSetAttributeLines } from "#src/services/artifact/getArtifactSetAttributeLines";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every attribute line a character carries: its own at its level and phase and those every level of it starts with,
 // Its weapon's at the weapon's, each artifact's main affix at its rarity and level and its minor affixes, and the
-// Bonuses of the sets its artifacts make
+// Bonuses of the sets its artifacts make, and for the Traveler the bonuses of the elements it holds
 export const getCharacterAttributeLines = (
   { artifacts, ascension, id, level, weapon }: Character,
   {
@@ -19,6 +20,7 @@ export const getCharacterAttributeLines = (
     weaponDataMap,
     weaponGrowCurveMap,
   }: StatTables,
+  travelerBonusLines: AttributeLine[] = [],
 ): AttributeLine[] => {
   const characterData = characterDataMap.get(id);
   if (!characterData)
@@ -39,5 +41,6 @@ export const getCharacterAttributeLines = (
       return [{ attribute: artifact.mainAffix, value }, ...artifact.minorAffixes];
     }),
     ...getArtifactSetAttributeLines(artifacts, artifactSetDataMap),
+    ...(id === TRAVELER_CHARACTER_ID ? travelerBonusLines : []),
   ];
 };
