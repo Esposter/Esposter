@@ -1,5 +1,6 @@
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { InputAction } from "genshin-engine";
+import { GameTextKey } from "genshin-text";
 
 // The team the world starts deployed with, the Traveler alone as a new player's, whose kits the world's gate reads before
 // It opens
@@ -12,6 +13,13 @@ export const PARTY_SWITCH_COOLDOWN_SECONDS = 1;
 export const DEFAULT_PARTY_TEAM_COUNT = 4;
 // The most teams Party Setup keeps, the default ones included
 export const PARTY_TEAM_MAX_COUNT = 15;
+// The game's name for each of the default teams, Party 1 to 4, which a team keeps until it is renamed
+export const DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS: readonly GameTextKey[] = [
+  GameTextKey.PartyDefaultName1,
+  GameTextKey.PartyDefaultName2,
+  GameTextKey.PartyDefaultName3,
+  GameTextKey.PartyDefaultName4,
+];
 // The name an added team is given until it is renamed
 // Provisional: the game's own words for it, to be taken from its text id in the decoded client
 export const PARTY_ADDED_TEAM_NAME = "Team Standing By";

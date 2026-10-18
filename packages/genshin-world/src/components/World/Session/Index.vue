@@ -30,6 +30,7 @@ import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
+import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -941,6 +942,17 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind = ScreenKind.World;
             }
           "
+        />
+      </template>
+      <template #[ScreenKind.PartySetup]>
+        <PartyScreen
+          :character-data-map="statTables.characterDataMap"
+          :characters
+          :game-text
+          :name-text="nameText"
+          :party
+          :traveler-name="savedState.travelerName"
+          @close="screenKind = ScreenKind.World"
         />
       </template>
     </MenuScreen>
