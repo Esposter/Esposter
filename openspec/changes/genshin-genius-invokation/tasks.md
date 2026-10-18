@@ -14,6 +14,6 @@
 
 ## 4. Invitationals, tavern challengers and the Card Shop
 
-- [ ] 4.1 Add the invitational and tavern challengers' duels, their rewards and the EXP they pay into the Player Level. Verify: tests named after the scenarios "A won duel pays cards, Lucky Coins and EXP" and "Passing a level's EXP raises the Player Level". Built so far: decks 11105 and 12005 as records, and their duels (games 1011, 1012 and 1083) in the games record. The rewards, the EXP and the other 36 decks are not built.
+- [ ] 4.1 Add the invitational and tavern challengers' duels, their rewards and the EXP they pay into the Player Level. Verify: tests named after the scenarios "A won duel pays cards, Lucky Coins and EXP" and "Passing a level's EXP raises the Player Level". Built so far: decks 11105 and 12005 as records and duels (games 1011, 1012 and 1083), with 12005's created cards modelled. The rewards, the EXP and the other 36 decks are not built.
 - [x] 4.2 Add the Card Shop's sales in Lucky Coins. Verify: tests named after the scenarios "A card is bought with Lucky Coins" and "A card the player cannot afford is not sold". A bought card goes into the bag: no collection state exists yet.
 - [ ] 4.3 Open the card game at Adventure Rank 32 with its tutorial quest. Verify: tests named after the scenarios "Reaching Adventure Rank 32 opens the card game" and "Below Adventure Rank 32 the card game stays closed".

@@ -12,6 +12,8 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 // The additive hooks, then the multiplying ones, so a doubling is taken after every bonus
 export interface GcgCardModule {
   canPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => boolean;
+  // The Piercing DMG a card deals to each opposing character on standby at the end phase, before its onEndPhase damage
+  endPhaseStandbyPiercing?: number;
   immuneElement?: Element;
   initialRounds?: number;
   initialUsages?: number;

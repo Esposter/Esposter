@@ -22,17 +22,20 @@ import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { guardiansOath } from "#src/services/gcg/cards/guardiansOath";
 import { guoba } from "#src/services/gcg/cards/guoba";
+import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { iHaventLostYet } from "#src/services/gcg/cards/iHaventLostYet";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
 import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
+import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
+import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
 import { magicGuide } from "#src/services/gcg/cards/magicGuide";
 import { maskOfSolitudeBasalt } from "#src/services/gcg/cards/maskOfSolitudeBasalt";
@@ -52,6 +55,7 @@ import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { quickKnit } from "#src/services/gcg/cards/quickKnit";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
+import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
 import { sendOff } from "#src/services/gcg/cards/sendOff";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
@@ -78,6 +82,8 @@ import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } fro
 
 // Every card a duel's module covers, by the card's id in the game's table
 export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, GcgCardModule>([
+  [111_011, sacredCryoPearl],
+  [111_012, iceLotus],
   [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
@@ -91,8 +97,10 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [113052, aurousBlaze],
   [114_011, oz],
   [114021, theWolfWithin],
+  [114_031, lightningStiletto],
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
+  [116_011, jadeScreen],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
