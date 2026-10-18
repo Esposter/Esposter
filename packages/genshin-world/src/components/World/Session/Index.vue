@@ -349,6 +349,7 @@ const {
   savedParty: savedState.party,
   startingCharacterIdKitMap,
   statTables,
+  wildlifePlaces,
 });
 // The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the
 // Host's
@@ -720,7 +721,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :scene-export-base-url
         :frostbearing-tree-places
         :seelies="puzzleSeelies"
-        :wildlife-places
+        :wildlife-list="kitContext.wildlifeList"
         :windrise-data
         :world-level
         :world-level-rows="adventureRankTables.worldLevelRows"

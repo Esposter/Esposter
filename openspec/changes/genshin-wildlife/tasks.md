@@ -5,7 +5,7 @@
 
 ## 2. Strikes reach the animals
 
-- [ ] 2.1 Move the animals into the session's combat beside the enemies, so the strike loop tests each against the attack area. Verify: tests named after 'A hit in the attack area strikes a bird' and 'A hit outside the attack area does not strike a bird'.
+- [x] 2.1 Move the animals into the session's combat beside the enemies, so the strike loop tests each against the attack area. Verify: tests named after 'A hit in the attack area strikes a bird' and 'A hit outside the attack area does not strike a bird'.
 - [ ] 2.2 Trigger a weapon's passive on a hit on wildlife, never an artifact set's. Verify: a test named after 'A weapon passive triggers on wildlife, an artifact set does not'.
 
 ## 3. Material sources

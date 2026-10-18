@@ -7,7 +7,8 @@ import { createParty } from "#src/services/party/createParty";
 import { describe } from "vitest";
 
 // The combat state a kit's suite runs it in: the combatant on the field, alone in the deployed team, standing at the
-// Origin with no enemies, no effects, no events raised and every roll the lowest, each part replaced by the one given
+// Origin with no enemies or animals, no effects, no events raised and every roll the lowest, each part replaced by the
+// One given
 export const createKitTestContext = (combatant: Combatant, context: Partial<KitContext> = {}): KitContext => ({
   activeCombatant: combatant,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -19,8 +20,10 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   oreStrikes: [],
   outbox: [],
   party: createParty([combatant.characterId]),
+  placeWildlifeDrops: () => undefined,
   random: () => 0,
   strikes: [],
+  wildlifeList: [],
   ...context,
 });
 
