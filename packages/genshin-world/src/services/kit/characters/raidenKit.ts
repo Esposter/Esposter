@@ -59,6 +59,10 @@ const ASCENSION_1_ICD_ID = "raiden-a1-icd";
 const ASCENSION_4 = 4;
 const ASCENSION_4_RESTORE_BONUS_PER_PERCENT = 0.006;
 const ASCENSION_4_ELECTRO_BONUS_PER_SHARE = 0.4;
+// Measured: gcsim (MIT) raiden/cons.go, Constellation 2's 60% DEF ignored on her hits while her burst's state stands, which
+// Here is the Musou Isshin stance from the burst's cast until its seconds past the Musou no Hitotachi hit
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_DEFENCE_IGNORED = 0.6;
 // Measured: gcsim (MIT) raiden/cons.go, Constellation 4's 30% ATK for 10 seconds to the team but Raiden as Musou Isshin
 // Ends, and Constellation 6's second off the other members' burst cooldowns on the strikes that restore energy
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/cons.go
@@ -68,6 +72,12 @@ const CONSTELLATION_4_SECONDS = 10;
 const CONSTELLATION_4_SOURCE = "raiden-c4";
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 1;
+
+// Whether a Musou Isshin stance her character holds stands among the team's effects
+const checkIsMusouIsshinStanding = (effects: readonly KitEffect[], characterId: number): boolean =>
+  effects.some(
+    (effect) => effect.kind === "stance" && effect.characterId === characterId && effect.secondsRemaining > 0,
+  );
 
 // Whether she holds the Eye, or her skill's task is about to give it
 const checkHasEye = (effects: readonly KitEffect[], characterId: number): boolean =>
@@ -95,10 +105,9 @@ export const RAIDEN_CHARACTER_ID = 10_000_052;
 // Its coordinated attacks. Another member's burst gives her Resolve by its energy cost, and Musou Shinsetsu spends her
 // Resolve stacks into Musou no Hitotachi and every attack of the Musou Isshin stance it takes, whose strikes restore the
 // Team's energy. The Eye's Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast. Ascension 1's
-// Resolve from particles, Ascension 4 and Constellations 1, 4 and 6 are built. The Eye's bonus to another member's
-// Burst, Constellation 2's DEF ignored, the Musou Isshin plunges and the skill's particles are not, as no kit reaches
-// Another kit's pricing, a hit's DEF ignored, a stance's plunges or a particle a skill makes
-// Constellation 2 needs a DEF ignore on the Musou no Hitotachi strikes, which no strike hook carries
+// Resolve from particles, Ascension 4 and Constellations 1, 2, 4 and 6 are built. The Eye's bonus to another member's
+// Burst, the Musou Isshin plunges and the skill's particles are not, as no kit reaches
+// Another kit's pricing, a stance's plunges or a particle a skill makes
 export const createRaidenKitBehaviour = ({
   kit,
   readHit,
@@ -168,6 +177,11 @@ export const createRaidenKitBehaviour = ({
       },
     },
     getPassiveBonuses,
+    // Constellation 2 ignores a share of each enemy's DEF on her hits while the Musou Isshin stance stands
+    getStrikeDefenceIgnored: ({ combatant }, _enemy, _party, effects) =>
+      combatant.constellationCount >= CONSTELLATION_2 && checkIsMusouIsshinStanding(effects, combatant.characterId)
+        ? CONSTELLATION_2_DEFENCE_IGNORED
+        : 0,
     // Another member's burst gives her Resolve, and from Ascension 1 the party's particles and orbs give her 2 stacks
     // Once every 3 seconds. The end of Musou Isshin, which leaving the field brings, gives the rest of the team
     // Constellation 4's ATK. A Musou Isshin attack that lands restores the team's energy, and from Constellation 6 cuts
