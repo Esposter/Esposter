@@ -7,14 +7,15 @@ describe(dismissHomeCompanion, () => {
   const CHARACTER_ID = 10_000_001;
   const OTHER_CHARACTER_ID = 10_000_002;
   const progress: HomeProgress = {
-    accruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     claimedRewardIds: [],
     companionIds: [CHARACTER_ID, OTHER_CHARACTER_ID],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     realmCurrency: 0,
+    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     trustExp: 0,
   };
 

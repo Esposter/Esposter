@@ -66,14 +66,15 @@ describe(readGenshinSave, () => {
   // The realm's progress and a seed in its garden, each instant as the save holds it, at a made-up moment after the epoch
   const REALM_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
   const HOME_PROGRESS_SAVE = {
-    accruedAt: REALM_AT,
     claimedRewardIds: [6],
     companionIds: [7],
     learnedBlueprintIds: [8],
     madeBlueprintIds: [8],
     orders: [{ blueprintId: 8, startedAt: REALM_AT }],
     realmBounty: 9,
+    realmBountyAccruedAt: REALM_AT,
     realmCurrency: 10,
+    realmCurrencyAccruedAt: REALM_AT,
     trustExp: 11,
   };
   const PLANTING_SAVE = { plantedAt: REALM_AT, plotId: 4, seedItemId: 5 };

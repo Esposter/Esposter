@@ -202,14 +202,15 @@ describe("genshinSaveSchema", () => {
         seedItemId: maxNumber,
       })),
       homeProgress: {
-        accruedAt: maxInstant,
         claimedRewardIds: Array.from({ length: MAX_HOME_REWARD_CLAIM_COUNT }, (_value, index) => maxNumber - index),
         companionIds: Array.from({ length: MAX_HOME_COMPANION_COUNT }, (_value, index) => maxNumber - index),
         learnedBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
         madeBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
         orders: Array.from({ length: MAX_HOME_ORDER_COUNT }, () => ({ blueprintId: maxNumber, startedAt: maxInstant })),
         realmBounty: maxNumber,
+        realmBountyAccruedAt: maxInstant,
         realmCurrency: maxNumber,
+        realmCurrencyAccruedAt: maxInstant,
         trustExp: maxNumber,
       },
       inventory: {
