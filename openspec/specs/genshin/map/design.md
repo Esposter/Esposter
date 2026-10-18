@@ -10,7 +10,8 @@ flowchart TD
   SCR --> OV["The overlay: the map on the player, its names, pointer and controls"]
   REG["Every region's data, read once"] --> LM["The landmarks a jump lands at"]
   LM --> OV
-  OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: the landmark's arrival, facing its turn"]
+  OV -->|"a landmark chosen, on the map or in the jump list"| PANEL["The teleport panel: the area's name, its kind and Teleport"]
+  PANEL -->|"Teleport"| POSE["The jump's pose: the landmark's arrival, facing its turn"]
   POSE --> CLOSE["The map closes to the world"]
   CLOSE --> FADE["The screen fades to the loading screen's pale grey"]
   FADE -->|"the fade ends"| PLACE["The character placed on the ground there, the camera behind it"]
@@ -22,6 +23,7 @@ flowchart TD
 - **The game's chrome sits where the reference puts it.** The close button stands at the top right and the zoom slider down the left, each at its place in the wiki's 1080 high screenshot and drawn in `--unit`. The slider's thumb sits at the zoom the map shows.
 - **The map is a screen.** It is the `Map` screen kind, opened by M through the input's `OpenMap` action ([controls](../controls/design.md)) and closed by M, Escape or its own button, as every screen opens and closes ([screens](../screens/design.md)). It holds the world under it as the game's menus do, and the HUD is hidden while it is open.
 - **The map pans and zooms.** A drag moves the view by the metres its pixels cover at the zoom shown, and a drag that travels more than `MAP_DRAG_THRESHOLD_PIXELS` is no choice of the landmark it ends on. The wheel zooms by `MAP_WHEEL_ZOOM_SHARE` of the slider's track per wheel unit, and a press or drag on the slider sets the zoom where the pointer is, a place past either end of the track taking that end. The zoom runs on a logarithm from `MAP_VIEW_METRES_MIN` to `MAP_VIEW_METRES_MAX` metres across the width, so each step along the track zooms by the same share of the view. The view is one viewBox from the pan and the zoom, so the names, the marks and the pointer keep their size at any scale.
+- **A chosen landmark opens its teleport panel, and only its Teleport button jumps.** The panel names the area the landmark stands in and its kind in the game's words, and Teleport jumps there as a drag or a stray click on the map does not. Its place and size are provisional until a recording of the English PC client's map measures them.
 - **The jump list is for the keyboard and a screen reader.** The game shows no list, so the jumps are a visually hidden list beside the map, each landmark a button carrying its area's name and its kind in the game's own words, grouped under its region's name. The drawing itself is hidden from a screen reader, since the list says everything it jumps to. Focus starts on the overlay's close button.
 - **Every region, not only those in reach.** The map shows the whole continent, so `useJumpLandmarks` reads every region's data once, through the same `readRegionData` the world's reach uses, and keeps the landmarks whose kind a jump lands at. A region that fails is logged and left off the map.
 
