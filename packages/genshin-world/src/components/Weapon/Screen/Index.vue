@@ -179,7 +179,7 @@ const act = () => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
       v-model:tab="tab"
-      :action-label="actionLabel"
+      :action-label
       :close-label="gameText[GameTextKey.Back]"
       :ascension="weapon.ascension"
       :experience-ratio

@@ -1,11 +1,12 @@
+import type { Weapon } from "#src/models/weapon/Weapon";
+
 import { props, variants } from "#src/components/Weapon/Screen/Index.fixture";
 import WeaponScreenContainer from "#src/components/Weapon/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
-import type { Weapon } from "#src/models/weapon/Weapon";
+import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
-import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 
 const weaponName = props.nameText[props.weaponData.nameTextId] ?? "";
 const levelText = fillGameTextValues(

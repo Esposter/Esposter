@@ -55,7 +55,7 @@ export const buildSpiralAbyss = (): Record<string, unknown> => {
     [`${GameDataset.SpiralAbyss}/rewards`]: {
       floorRewards,
       rewardItems: Object.fromEntries(
-        [...rewardIds].map((rewardId) => [rewardId, toAbyssRewardItems(rewardId, rewardMap)]),
+        Array.from(rewardIds, (rewardId) => [rewardId, toAbyssRewardItems(rewardId, rewardMap)]),
       ),
     },
   };

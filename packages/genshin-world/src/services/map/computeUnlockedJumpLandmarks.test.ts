@@ -7,8 +7,8 @@ import { describe, expect, test } from "vitest";
 
 const ARRIVAL = { heightOffset: 0, position: { x: 1, z: 2 }, rotation: 0 };
 const domainEntrance: Landmark = {
-  arrival: ARRIVAL,
   areaId: "area-1",
+  arrival: ARRIVAL,
   domainKind: DomainKind.Blessing,
   entryId: 1,
   heightOffset: 0,

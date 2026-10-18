@@ -3,8 +3,8 @@ import { WeaponMenuTab } from "#src/models/WeaponMenuTab";
 // The Enhance tab open on a three-star weapon at level one with no EXP yet, the three tabs the level and its phase allow
 export const props = {
   actionLabel: "Enhance",
-  closeLabel: "Back",
   ascension: 0,
+  closeLabel: "Back",
   experienceRatio: 0,
   experienceText: "0/400",
   isActionDisabled: true,

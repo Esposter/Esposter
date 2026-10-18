@@ -100,8 +100,8 @@ describe(useWorldMap, () => {
     rotation: 0,
   };
   const domainEntrance: DomainEntranceLandmark = {
-    arrival: { heightOffset: 0, position: { x: 600, z: 0 }, rotation: 0 },
     areaId: AREA_ID,
+    arrival: { heightOffset: 0, position: { x: 600, z: 0 }, rotation: 0 },
     domainKind: DomainKind.Blessing,
     entryId: 1,
     heightOffset: 0,
@@ -177,6 +177,7 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        questStepTargets,
         regionDataBaseUrl: "region-data",
         reputation,
         setReputation: (nextReputation) => {
@@ -185,7 +186,6 @@ describe(useWorldMap, () => {
         setWallet: (nextWallet) => {
           wallet.value = nextWallet;
         },
-        questStepTargets,
         unlockedLandmarkIds,
         wallet,
       }),

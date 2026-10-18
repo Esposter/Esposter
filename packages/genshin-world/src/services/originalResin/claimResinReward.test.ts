@@ -8,8 +8,8 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
-import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
+import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 

@@ -6,6 +6,8 @@ import { ASCENSION_PHASE_COUNT } from "#src/services/constants";
 interface Props {
   // The action the panel's button takes, in the game's words for the open tab
   actionLabel: string;
+  // The weapon's ascension phase, from none to the last one
+  ascension: number;
   // The way back's name for assistive tech, the game's "Back" line
   closeLabel: string;
   // The share of the EXP towards the next level the bar fills, from none to whole, none at the level cap
@@ -18,8 +20,6 @@ interface Props {
   levelText: string;
   // The weapon's name in the reader's language
   name: string;
-  // The weapon's ascension phase, from none to the last one
-  ascension: number;
   // The weapon's rarity in stars
   rarity: number;
   // The weapon's refinement rank, from one to five

@@ -27,7 +27,7 @@ describe(computeQuestStepTargets, () => {
     const progress: QuestProgress = { objectiveCounts: [], stepIndex: 0 };
 
     expect(computeQuestStepTargets([quest], new Map([[quest.id, progress]]))).toStrictEqual({
-      named: new Set(["9", "7"]),
+      named: new Set(["7", "9"]),
       reached: new Set(["9"]),
     });
   });
@@ -38,8 +38,8 @@ describe(computeQuestStepTargets, () => {
     const progress: QuestProgress = { objectiveCounts: [], stepIndex: quest.steps.length };
 
     expect(computeQuestStepTargets([quest], new Map([[quest.id, progress]]))).toStrictEqual({
-      named: new Set(["9", "7"]),
-      reached: new Set(["9", "7"]),
+      named: new Set(["7", "9"]),
+      reached: new Set(["7", "9"]),
     });
   });
 
@@ -47,7 +47,7 @@ describe(computeQuestStepTargets, () => {
     expect.hasAssertions();
 
     expect(computeQuestStepTargets([quest], new Map())).toStrictEqual({
-      named: new Set(["9", "7"]),
+      named: new Set(["7", "9"]),
       reached: new Set(),
     });
   });

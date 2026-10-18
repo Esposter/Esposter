@@ -2,12 +2,12 @@ import type { ExcelRoleCombatAvatarConfigRow } from "#src/models/genshinAssets/i
 import type { ExcelRoleCombatDifficultyRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatDifficultyRow";
 import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatScheduleRow";
 
+import { checkIsOpeningElementsMatched } from "#src/services/genshinAssets/imaginarium/checkIsOpeningElementsMatched";
 import {
   ROLE_COMBAT_AVATAR_CONFIG_TABLE_NAME,
   ROLE_COMBAT_DIFFICULTY_TABLE_NAME,
   ROLE_COMBAT_SCHEDULE_TABLE_NAME,
 } from "#src/services/genshinAssets/imaginarium/constants";
-import { checkIsOpeningElementsMatched } from "#src/services/genshinAssets/imaginarium/checkIsOpeningElementsMatched";
 import { toImaginariumDifficulty } from "#src/services/genshinAssets/imaginarium/toImaginariumDifficulty";
 import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toImaginariumSeason";
 import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacterDatas";

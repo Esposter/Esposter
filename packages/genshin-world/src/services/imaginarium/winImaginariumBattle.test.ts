@@ -1,6 +1,6 @@
 import type { ImaginariumMember } from "#src/models/imaginarium/ImaginariumMember";
 
-import { IMAGINARIUM_BATTLE_FLOWERS, IMAGINARIUM_BATTLE_CHOICE_COUNT } from "#src/services/imaginarium/constants";
+import { IMAGINARIUM_BATTLE_CHOICE_COUNT, IMAGINARIUM_BATTLE_FLOWERS } from "#src/services/imaginarium/constants";
 import { winImaginariumBattle } from "#src/services/imaginarium/winImaginariumBattle";
 import { describe, expect, test } from "vitest";
 

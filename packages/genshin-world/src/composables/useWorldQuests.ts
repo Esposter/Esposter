@@ -8,8 +8,8 @@ import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
-import { computeQuestStepTargets } from "#src/services/quest/computeQuestStepTargets";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
+import { computeQuestStepTargets } from "#src/services/quest/computeQuestStepTargets";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
