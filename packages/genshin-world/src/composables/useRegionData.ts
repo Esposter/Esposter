@@ -4,8 +4,7 @@ import type { RegionGround } from "#src/models/world/RegionGround";
 import type { Vector3 } from "three";
 
 import { regionGroundSchema } from "#src/models/world/RegionGround";
-import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
 import { REGION_REACH } from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
@@ -36,7 +35,7 @@ export const useRegionData = (
   const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
   // Each ground laid over Windrise's, by its lock key, set once as it arrives and kept after
   const regionGroundMap = shallowReactive(new Map<string, RegionGround>());
-  const groundKeys = selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key)));
+  const groundKeys = selectLaidGroundKeys(gameDataLockKeys);
   const pendingGroundKeys = new Set<string>();
   const requestedGroundKeys = new Set<string>();
   const pendingRegionIds = new Set<string>();

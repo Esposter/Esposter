@@ -4,10 +4,9 @@ import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessag
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
+import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
-import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
-import { gameDataLock } from "#src/services/data/gameDataLock";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { SOURCE_CONDITION } from "@esposter/configuration";
@@ -18,9 +17,7 @@ import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vites
 
 const { baseGrounds, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
-  selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key))).map((key) =>
-    readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema),
-  ),
+  selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
 );
 
 describe("terrainTile.worker", () => {
