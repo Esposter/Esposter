@@ -39,6 +39,6 @@ packages/genshin-world/src/components/Hud/ShortcutWheel/ ← the wheel drawn fro
 
 ## Notes
 
-- The wheel is an overlay over the world, not a screen in `ScreenKind`, so `getNextScreenKind` does not change: the entry it picks is opened through the same screen path a shortcut takes.
+- The wheel is an overlay over the world, not a screen in `ScreenKind`, so `getNextScreenKind` does not change: the entry it picks is opened through the same screen path a shortcut takes. A screen that takes the world closes the wheel without opening its entry, so a wheel still held across the change does not open on the world's first frame back.
 - The 8- and 4-direction counts come from Settings once customization lands, so the direction count is a parameter here, not a constant the wheel reads.
 - The move that picks the entry is the stick's or the keys' move. While the wheel is open the character holds still on it: `WorldCharacter` takes `isMoveHeld`, which steps the body on the still input as a kit action does, and the wheel reads the raw move.
