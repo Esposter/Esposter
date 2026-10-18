@@ -1,6 +1,6 @@
 ## Purpose
 
-The ApexCharts v6 investigation surface on dashboard visuals — undo/redo, context menu, ruler, annotation authoring, linked highlighting and shareable view state, and the watermark they are accepted with. The features apply to dashboard visuals only.
+The ApexCharts investigation surface on dashboard visuals — undo/redo, context menu, ruler, annotation authoring, linked highlighting and shareable view state, and the watermark they are accepted with. The features apply to dashboard visuals only.
 
 ## Requirements
 
