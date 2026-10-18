@@ -47,43 +47,51 @@ const BLIND_SPOT_HALF_ANGLE = (35 * Math.PI) / 180;
 const CANNON_POINTS_SPEND_FRAMES = 36;
 const CANNON_BLIND_SPOT_APPEARANCE_FRAMES = 41;
 
-// The blind spot lies a quarter turn either side of Kinich's bearing from the enemy his press turns to, on the side the
-// Random source draws, as gcsim's createBlindSpot does, at the distance he stands from it. Its circle is the chord of its
-// Window, which Kinich's body must stand within on the frame the blind spot is due, or any frame after it until it is filled
-const castBlindSpot = (context: KitContext, target: Enemy, appearanceFrames: number) => {
-  const {
-    activeCombatant: { characterId },
-    body,
-    kitEffectState,
-    random,
-  } = context;
-  const { x, z } = target.position;
-  const distance = Math.hypot(body.position.x - x, body.position.z - z);
-  const bearing = Math.atan2(body.position.x - x, body.position.z - z);
-  const side = Math.floor(random() * 2) * 2 - 1;
-  const centreAngle = bearing + (side * Math.PI) / 2;
-  const blindSpot = castKitField(
-    kitEffectState,
-    characterId,
-    { x: x + distance * Math.sin(centreAngle), z: z + distance * Math.cos(centreAngle) },
-    {
-      nextTickSeconds: toKitSeconds(appearanceFrames),
-      onTick: (tickContext) => {
-        // A field no longer on the team gives nothing, and neither does a body that is not Kinich's standing in it
-        if (
-          !tickContext.kitEffectState.effects.includes(blindSpot) ||
-          tickContext.activeCombatant.characterId !== characterId
-        )
-          return;
-        generateKitNightsoulPoints(tickContext, BLIND_SPOT_POINTS, NIGHTSOUL_MAXIMUM, characterId);
-        removeKitEffects(tickContext.kitEffectState, (effect) => effect === blindSpot);
-      },
-      radius: 2 * distance * Math.sin(BLIND_SPOT_HALF_ANGLE / 2),
-      secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
-      tickIntervalSeconds: toKitSeconds(1),
+// The blind spot is placed when it appears, as gcsim's createBlindSpot places it on its frame (skill.go line 189): a quarter
+// Turn either side of Kinich's bearing from the enemy his press turns to, at the distance she stands from it and on the side
+// The random source draws then. Its circle is the chord of its window, which her body must stand within from the frame
+// After it appears until it is filled
+const castBlindSpot = (context: KitContext, target: Enemy, appearanceFrames: number) =>
+  scheduleKitTask(
+    context.kitEffectState,
+    context.activeCombatant.characterId,
+    toKitSeconds(appearanceFrames),
+    (appearContext) => {
+      const {
+        activeCombatant: { characterId },
+        body,
+        kitEffectState,
+        random,
+      } = appearContext;
+      const { x, z } = target.position;
+      const distance = Math.hypot(body.position.x - x, body.position.z - z);
+      const bearing = Math.atan2(body.position.x - x, body.position.z - z);
+      const side = Math.floor(random() * 2) * 2 - 1;
+      const centreAngle = bearing + (side * Math.PI) / 2;
+      const blindSpot = castKitField(
+        kitEffectState,
+        characterId,
+        { x: x + distance * Math.sin(centreAngle), z: z + distance * Math.cos(centreAngle) },
+        {
+          // Its first check is the frame after it appears, and then one every second while it lasts
+          nextTickSeconds: toKitSeconds(1),
+          onTick: (tickContext) => {
+            // A field no longer on the team gives nothing, and neither does a body that is not Kinich's standing in it
+            if (
+              !tickContext.kitEffectState.effects.includes(blindSpot) ||
+              tickContext.activeCombatant.characterId !== characterId
+            )
+              return;
+            generateKitNightsoulPoints(tickContext, BLIND_SPOT_POINTS, NIGHTSOUL_MAXIMUM, characterId);
+            removeKitEffects(tickContext.kitEffectState, (effect) => effect === blindSpot);
+          },
+          radius: 2 * distance * Math.sin(BLIND_SPOT_HALF_ANGLE / 2),
+          secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
+          tickIntervalSeconds: toKitSeconds(1),
+        },
+      );
     },
   );
-};
 
 // Kinich's behaviour: the burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn from
 // The world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted in
@@ -163,6 +171,7 @@ export const createKinichKitBehaviour = ({
         const { activeCombatant: combatant, kitEffectState } = context;
         if (hasKitNightsoulBlessing(kitEffectState.effects, combatant.characterId)) return;
         enterKitNightsoulBlessing(kitEffectState, combatant.characterId, {
+          isEndedOnSwap: true,
           nightsoulRate: { maximum: NIGHTSOUL_MAXIMUM, perSecond: NIGHTSOUL_POINTS_PER_SECOND },
           points: 0,
           secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,

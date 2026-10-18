@@ -56,6 +56,12 @@ Kinich's elemental skill press SHALL enter the Nightsoul Blessing with no points
 - **WHEN** the player presses the elemental skill
 - **THEN** the press is not used
 
+#### Scenario: The blessing ends when Kinich leaves the field
+
+- **GIVEN** Kinich is in the blessing with points
+- **WHEN** she swaps out
+- **THEN** the blessing ends and its points go with it
+
 ### Requirement: The Scalespiker Cannon in the blessing
 
 In the Nightsoul Blessing Kinich's elemental skill press SHALL be the Scalespiker Cannon. It SHALL start only with all twenty of his Nightsoul points, SHALL spend all of them as its windup ends, at its thirty-sixth frame, SHALL set no skill cooldown, and SHALL deal one Dendro hit on the circle of radius three round the primary target at its forty-eighth frame. Its blind spot SHALL appear at its forty-first frame.
@@ -147,7 +153,13 @@ Kinich's Loop Shots SHALL replace his normal attacks while the Nightsoul Blessin
 
 ### Requirement: The blind spot
 
-When Kinich's skill press enters the Nightsoul Blessing with an enemy in reach, a blind spot SHALL appear 30 frames after the press, a quarter turn either side of his bearing from that enemy, on a side drawn at random. Kinich standing within its thirty-five degree window SHALL gain four Nightsoul points once, and only his own body fills it.
+When Kinich's skill press enters the Nightsoul Blessing with an enemy in reach, a blind spot SHALL appear 30 frames after the press, a quarter turn either side of his bearing from that enemy when it appears, on a side drawn at random. Kinich standing within its thirty-five degree window SHALL gain four Nightsoul points once, and only his own body fills it.
+
+#### Scenario: The blind spot is placed where Kinich stands when it appears
+
+- **GIVEN** Kinich pressed her skill at an enemy and then moved before the blind spot appears
+- **WHEN** the blind spot appears
+- **THEN** it lies a quarter turn from where she stands then, not from where she pressed
 
 #### Scenario: Standing in the blind spot gains four points
 

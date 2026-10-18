@@ -14,8 +14,10 @@ import { createKinichKitBehaviour, KINICH_CHARACTER_ID } from "#src/services/kit
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
@@ -152,9 +154,10 @@ describe(createKinichKitBehaviour, () => {
   test("Kinich standing in the blind spot at its thirtieth frame gains four points on top of the Blessing's", () => {
     expect.hasAssertions();
     const context = createBlessingContext(() => 0.9);
-    stepKitSeconds(context, toKitSeconds(15));
+    // The blind spot appears where Kinich stands at its thirtieth frame, a quarter turn from the enemy, and she steps into it after
+    stepKitSeconds(context, toKitSeconds(30));
     context.body.position = { x: 0, z: -3 };
-    stepKitSeconds(context, toKitSeconds(45));
+    stepKitSeconds(context, toKitSeconds(30));
     expect(countKinichPoints(context)).toBeCloseTo(6);
   });
 
@@ -187,9 +190,9 @@ describe(createKinichKitBehaviour, () => {
   test("a blind spot's four points come once, however often Kinich enters it afterwards", () => {
     expect.hasAssertions();
     const context = createBlessingContext(() => 0.9);
-    stepKitSeconds(context, toKitSeconds(15));
-    context.body.position = { x: 0, z: -3 };
     stepKitSeconds(context, toKitSeconds(30));
+    context.body.position = { x: 0, z: -3 };
+    stepKitSeconds(context, toKitSeconds(15));
     context.body.position = { x: 3, z: 0 };
     stepKitSeconds(context, toKitSeconds(15));
     context.body.position = { x: 0, z: -3 };
@@ -223,22 +226,35 @@ describe(createKinichKitBehaviour, () => {
     expect(countKinichPoints(context)).toBeLessThan(1);
   });
 
-  test("the Scalespiker Cannon's blind spot appears at its forty-first frame, and gives Kinich four points standing in it", () => {
+  test("the Scalespiker Cannon's blind spot appears at its forty-first frame, from where Kinich stands then, and gives four points standing in it", () => {
     expect.hasAssertions();
     const context = createBlessingContext(() => 0.9);
     const stance = findKitStance(context.kitEffectState.effects, KINICH_CHARACTER_ID);
     const [loopShot] = stance?.combatant.kit.normalAttacks ?? [];
     const cannon = stance?.combatant.kit.elementalSkill;
     // Nine seconds in, a Loop Shot tops the blessing up to twenty, so the Cannon is pressed with the blessing still on at its
-    // Forty-first frame, the points it regenerates in that time being the only ones below four
+    // Forty-first frame. Kinich stands at (-3, 0) when the blind spot appears, so it lies a quarter turn from there, at (0, 3)
     stepKitSeconds(context, 9);
     loopShot?.onStart?.(context);
     cannon?.onStart?.(context, createEnemyAt(0, 0));
     stepKitSeconds(context, toKitSeconds(40));
     expect(countKinichPoints(context)).toBeLessThan(4);
-    context.body.position = { x: 0, z: -3 };
+    context.body.position = { x: -3, z: 0 };
+    stepKitSeconds(context, toKitSeconds(1));
+    context.body.position = { x: 0, z: 3 };
     stepKitSeconds(context, toKitSeconds(1));
     expect(countKinichPoints(context)).toBeGreaterThan(4);
+  });
+
+  test("the Nightsoul Blessing ends as Kinich leaves the field, and its points with it, as gcsim's exit on a swap does", () => {
+    expect.hasAssertions();
+    const context = createBlessingContext(() => 0.9);
+    stepKitSeconds(context, 5);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, KINICH_CHARACTER_ID)).toBe(true);
+    endKitSwapEffects(context.kitEffectState.effects, KINICH_CHARACTER_ID);
+    stepKitSeconds(context, toKitSeconds(1));
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, KINICH_CHARACTER_ID)).toBe(false);
+    expect(countKinichPoints(context)).toBe(0);
   });
 
   test("the Scalespiker Cannon's press sets no cooldown, and the skill's cooldown does not hold it in the blessing", () => {

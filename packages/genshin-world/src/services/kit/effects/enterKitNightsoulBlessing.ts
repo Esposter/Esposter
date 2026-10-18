@@ -8,17 +8,24 @@ import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 
 // Enters the Nightsoul's Blessing for the seconds given, with the points it starts with in place of any it held, as gcsim
 // (MIT) nightsoul/nightsoul.go EnterTimedBlessing sets them outright. Entering again restarts the blessing, and the rate
-// it runs on is the one given, if it has one
+// it runs on is the one given, if it has one. A blessing given isEndedOnSwap ends as its character leaves the field, with its
+// Points, as gcsim's exit on a swap does
 export const enterKitNightsoulBlessing = (
   kitEffectState: KitEffectState,
   characterId: number,
   {
+    isEndedOnSwap,
     nightsoulRate,
     points,
     secondsRemaining,
-  }: { nightsoulRate?: KitNightsoulRate; points: number; secondsRemaining: number },
+  }: { isEndedOnSwap?: boolean; nightsoulRate?: KitNightsoulRate; points: number; secondsRemaining: number },
 ): void => {
   spendKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID);
   gainKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID, points, Number.POSITIVE_INFINITY);
-  addKitStatus(kitEffectState, characterId, { id: NIGHTSOUL_BLESSING_STATUS_ID, nightsoulRate, secondsRemaining });
+  addKitStatus(kitEffectState, characterId, {
+    id: NIGHTSOUL_BLESSING_STATUS_ID,
+    nightsoulRate,
+    secondsRemaining,
+    ...(isEndedOnSwap && { isEndedOnSwap }),
+  });
 };
