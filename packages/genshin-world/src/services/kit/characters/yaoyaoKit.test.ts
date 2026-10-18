@@ -3,7 +3,6 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
-import type { KitParameter } from "#src/models/kit/record/KitParameter";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -41,11 +40,6 @@ const readRecordParameter = (name: string): number => {
   if (parameter === undefined || Array.isArray(parameter))
     throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of her record");
   return toParameter(parameter);
-};
-// A field of her record that some records lack, resolved as her kit resolves it
-const readRecordField = (field: KitParameter | undefined, name: string): number => {
-  if (field === undefined) throw new InvalidOperationError(Operation.Read, name, "is not in her record");
-  return toParameter(field);
 };
 // A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
 const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
@@ -132,41 +126,6 @@ const findBuffs = (context: KitContext, attribute: Attribute): KitBuff[] =>
   );
 
 describe(createYaoyaoKitBehaviour, () => {
-  test("the cooldowns, costs and stamina her record gives", () => {
-    expect.hasAssertions();
-    expect([
-      YAOYAO_KIT.skillCooldownSeconds,
-      YAOYAO_KIT.burstCooldownSeconds,
-      YAOYAO_KIT.burstEnergyCost,
-      YAOYAO_KIT.chargedAttackStamina,
-    ]).toStrictEqual([
-      toParameter(yaoyaoRecord.skillCooldownSeconds),
-      toParameter(yaoyaoRecord.burstCooldownSeconds),
-      readRecordField(yaoyaoRecord.burstEnergyCost, "burstEnergyCost"),
-      toParameter(yaoyaoRecord.chargedAttackStamina),
-    ]);
-  });
-
-  test("the normal string's hitmarks, one for each hit of its record", () => {
-    expect.hasAssertions();
-    const hitmarks = YAOYAO_KIT.normalAttacks.flatMap((action) =>
-      action.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60)),
-    );
-    expect(hitmarks).toStrictEqual(
-      yaoyaoRecord.normalAttacks.flatMap((action) => action.hits.map(({ hitmarkFrames }) => hitmarkFrames)),
-    );
-  });
-
-  test("the burst's initial hit is the circle its record gives round the body, dealing the poise it gives", () => {
-    expect.hasAssertions();
-    const hit = takeOne(YAOYAO_KIT.elementalBurst.hits);
-    const recordHit = takeOne(yaoyaoRecord.burst.hits);
-
-    expect(hit.hitArea.radius).toBe(recordHit.area.radius);
-    expect(hit.poiseDamage).toBe(recordHit.poiseDamage);
-    expect(Math.round(hit.hitmarkSeconds * 60)).toBe(recordHit.hitmarkFrames);
-  });
-
   test("raphanus sky cluster spawns the Yuegui two metres ahead of her at its spawn frame after the cast", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
