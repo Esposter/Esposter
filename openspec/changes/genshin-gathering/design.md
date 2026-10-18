@@ -33,7 +33,7 @@ flowchart TD
 
 | File                                                                     | Role after the change                                        |
 | :----------------------------------------------------------------------- | :----------------------------------------------------------- |
-| `packages/genshin-world/src/services/leyLine/drawOutcropPlace.ts`        | The daily draw a mining outcrop's place reuses               |
+| `packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`    | The daily draw a mining outcrop's place reuses               |
 | `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | Where an outcrop moves once mined, shared with the ley lines |
 
 ## Sources
