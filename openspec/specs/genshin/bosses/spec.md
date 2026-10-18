@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's bosses as pure rules in genshin-world. A normal boss stays defeated until its Trounce Blossom is claimed and comes back five seconds after the claim. A week's weekly-boss claims are counted from the Monday 04:00 reset in the reader's own time zone, the count pricing each claim 30 resin for the first three and 60 after. The fights, the blossom's offer and the boss's rewards are the proposal's still. The rules are built as pure services that the world does not yet call.
+The game's bosses as pure rules in genshin-world. A normal boss stays defeated until its Trounce Blossom is claimed and comes back five seconds after the claim. A week's weekly-boss claims are counted from the Monday 04:00 reset on the server's clock, the count pricing each claim 30 resin for the first three and 60 after. The fights, the blossom's offer and the boss's rewards are the proposal's still. The rules are built as pure services that the world does not yet call.
 
 ## Requirements
 
@@ -22,17 +22,17 @@ A normal boss SHALL stay defeated until its Trounce Blossom is claimed, and SHAL
 
 ### Requirement: The weekly reset falls on Monday at 04:00
 
-The weekly reset SHALL fall on Monday at 04:00 in the reader's own time zone.
+The weekly reset SHALL fall on Monday at 04:00 on the server's clock.
 
 #### Scenario: Moment before the reset belongs to the week before
 
-- **GIVEN** a moment just before Monday 04:00 in the reader's time zone
+- **GIVEN** a moment just before Monday 04:00 on the server's clock
 - **WHEN** the week is worked out
 - **THEN** the moment belongs to the week before
 
 #### Scenario: Moment at or after the reset belongs to the new week
 
-- **GIVEN** a moment at or after Monday 04:00 in the reader's time zone
+- **GIVEN** a moment at or after Monday 04:00 on the server's clock
 - **WHEN** the week is worked out
 - **THEN** the moment belongs to the new week
 
