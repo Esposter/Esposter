@@ -34,6 +34,7 @@ import {
 import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
+import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
@@ -188,10 +189,14 @@ const hurtGcgCharacter = (character: GcgCharacterState, value: number, isPiercin
 // Clears what each character at no HP held, asks a side for a replacement when its active fell and another stands, and
 // Ends the duel for the other side once a side has none standing
 const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
+  const defeatedSideIndices: number[] = [];
   for (const [sideIndex, side] of duel.sides.entries()) {
     for (const [characterIndex, character] of side.characters.entries()) {
       if (character.hp > 0) continue;
-      if (standingBefore[sideIndex]?.[characterIndex]) side.hasDefeatedCharacter = true;
+      if (standingBefore[sideIndex]?.[characterIndex]) {
+        side.hasDefeatedCharacter = true;
+        defeatedSideIndices.push(sideIndex);
+      }
       character.aura = GcgAura.None;
       character.energy = 0;
       character.isFrozen = false;
@@ -206,6 +211,18 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
       duel.winnerSideIndex = 1 - sideIndex;
     }
   }
+  for (const sideIndex of defeatedSideIndices) notifyGcgOpposingDefeat(duel, 1 - sideIndex);
+};
+
+// Tells the cards on a side's field that an opposing character was defeated, each with the index of the character it is
+// Attached to
+const notifyGcgOpposingDefeat = (duel: GcgDuel, sideIndex: number): void => {
+  const side = takeOne(duel.sides, sideIndex);
+  for (const zoneCard of listGcgFieldCards(side, undefined))
+    GcgCardIdModuleMap.get(zoneCard.cardId)?.onOpposingDefeated?.(
+      { characterIndex: findGcgZoneCardOwner(side.characters, zoneCard), duel, sideIndex },
+      zoneCard,
+    );
 };
 
 // A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect deals it past its
