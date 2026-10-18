@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "a Seelie standing in the world with its court placed, from the official map's Seelie Court label (the puzzles unit, any machine)"
+x-waiting: "1.1 a bounty's target, which genshin-reputation task 2.2 spawns when a bounty is taken (unbuilt); 1.2 a quest's go-to place, which genshin-quests task 1.1 places in region data from the PC's scene3_dummy_points.lua (unbuilt)"

@@ -6,7 +6,7 @@ The sight's range, its mute, its element-coloured highlights and the enemies' co
 
 ## What Changes
 
-While Elemental Sight is on, a white ground trail leads the character toward each objective whose end is placed, starting with the Seelies' courts.
+While Elemental Sight is on, a white ground trail leads the character toward each objective whose end is placed. The Seelies' courts are built; the bounty and quest trails wait on their pages.
 
 - A trail runs on the ground from the character toward its end and stops at the sight's reach.
 - A trail is drawn only for an end its page has placed, so no trail points at nothing.
@@ -18,7 +18,6 @@ While Elemental Sight is on, a white ground trail leads the character toward eac
 
 ## Waiting on
 
-- A Seelie standing in the world with its court placed, from the official map's Seelie Court label. This is the puzzles unit, `openspec/changes/genshin-puzzles/`, on any machine.
 - `openspec/changes/genshin-reputation/`: a bounty's target, for the bounty trails.
 - `openspec/changes/genshin-quests/`: the go-to places a quest names, for the clue trails.
 
