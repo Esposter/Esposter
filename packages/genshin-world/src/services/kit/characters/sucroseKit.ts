@@ -14,7 +14,6 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -168,9 +167,7 @@ export const createSucroseKitBehaviour = ({
         if (combatant.constellationCount < CONSTELLATION_4 || activeCombatant.characterId !== combatant.characterId)
           return;
         const { characterId } = combatant;
-        const previousStacks = checkIsKitStatusActive(kitEffectState.effects, characterId, ALCHEMANIA_STATUS_ID)
-          ? (findKitStatus(kitEffectState.effects, characterId, ALCHEMANIA_STATUS_ID)?.stacks ?? 0)
-          : 0;
+        const previousStacks = findKitStatus(kitEffectState.effects, characterId, ALCHEMANIA_STATUS_ID)?.stacks ?? 0;
         // The count is the status's stacks, which do not run out, so the seventh attack is the one that finds six
         const stacks = (previousStacks + 1) % ALCHEMANIA_ATTACKS;
         addKitStatus(kitEffectState, characterId, { id: ALCHEMANIA_STATUS_ID, secondsRemaining: Infinity, stacks });
