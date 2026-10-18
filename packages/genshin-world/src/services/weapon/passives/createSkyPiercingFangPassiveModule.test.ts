@@ -12,7 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createSkywardBladePassiveModule } from "#src/services/weapon/passives/createSkywardBladePassiveModule";
+import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -29,7 +29,7 @@ const wielder: Combatant = {
 };
 // Sky-Piercing Fang at its first rank: a burst gives Movement SPD and Normal Attack SPD of ten per cent each, and Normal and
 // Charged hits deal twenty per cent of ATK more for twelve seconds
-const skywardBladePassiveModule = createSkywardBladePassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
+const skywardBladePassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
@@ -38,7 +38,7 @@ const createStrike = (attackTag: AttackTag): KitStrike => ({
   hit: TRAVELER_KIT.plungeCollision,
 });
 
-describe(createSkywardBladePassiveModule, () => {
+describe(createSkyPiercingFangPassiveModule, () => {
   test("a burst raises the wielder's Movement SPD and Normal Attack SPD for twelve seconds", () => {
     expect.hasAssertions();
 

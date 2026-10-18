@@ -2,7 +2,6 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { createAquilaFavoniaPassiveModule } from "#src/services/weapon/passives/createAquilaFavoniaPassiveModule";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
@@ -20,6 +19,7 @@ import { createDecimatePassiveModule } from "#src/services/weapon/passives/creat
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
+import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
@@ -44,8 +44,8 @@ import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/pass
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
+import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
-import { createSkywardBladePassiveModule } from "#src/services/weapon/passives/createSkywardBladePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
@@ -226,9 +226,9 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   // Echoing Ballad (Skyward Harp)
   "2971867387": createEchoingBalladPassiveModule,
   // Falcon's Defiance (Aquila Favonia)
-  "1362579531": createAquilaFavoniaPassiveModule,
+  "1362579531": createFalconsDefiancePassiveModule,
   // Sky-Piercing Fang (Skyward Blade)
-  "2711925235": createSkywardBladePassiveModule,
+  "2711925235": createSkyPiercingFangPassiveModule,
   // Sky-ripping Dragon Spine (Skyward Pride)
   "3265578323": createSkyRippingDragonSpinePassiveModule,
 };
