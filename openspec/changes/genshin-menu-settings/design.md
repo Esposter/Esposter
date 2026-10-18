@@ -22,17 +22,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                             | Role after the change                                                       |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Menu/Settings/Index.vue`  | The tabs and the Graphics and Audio tabs' rows, not yet opened by the world |
-| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | The tiers the Graphics Quality row chooses between                          |
-| `packages/genshin-text/src/models/GameTextKey.ts`                | Gains every label of Settings                                               |
-
-New files:
-
-```text
-packages/genshin-world/src/components/Menu/Settings/Index.fixture.ts
-```
+| File                                                                   | Role after the change                                                       |
+| :--------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`        | The tabs and the Graphics and Audio tabs' rows, not yet opened by the world |
+| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`       | The tiers the Graphics Quality row chooses between                          |
+| `packages/genshin-text/src/models/GameTextKey.ts`                      | Gains every label of Settings                                               |
+| `packages/genshin-world/src/components/Menu/Settings/Index.fixture.ts` | The fixture the screen is shot with, already in the tree                    |
 
 ## Sources
 
