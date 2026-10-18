@@ -49,7 +49,7 @@
     "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
+  "plunges.high.hits.0.element": { "cause": "DiffersFromSource", "value": "Water" },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 38 },
   "plunges.low.hits.length": { "cause": "NoActionFile", "value": 1 },
   "plunges.low.hits.0.area": {
