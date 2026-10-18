@@ -12,9 +12,9 @@ import { computeNumberLiteral } from "#src/services/computeNumberLiteral";
 import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
 import { failMathExpression, failMathExpressionAt, getMathExpressionColumn } from "#src/services/failMathExpression";
 import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
+import { getMathExpressionSignatures } from "#src/services/getMathExpressionSignatures";
 import { getMathExpressionToken } from "#src/services/getMathExpressionToken";
 import { matchMathExpressionSignature } from "#src/services/matchMathExpressionSignature";
-import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { err, ok } from "neverthrow";
 
 // The operators of each level, from the loosest binding to the tightest, as the function each one computes. Each
@@ -154,7 +154,7 @@ const parseArgument = (state: MathExpressionParserState): MathExpressionNode =>
 
 // Every error of a call is reported at the function's name, which the caller read before the call's parenthesis
 const parseCall = (state: MathExpressionParserState, name: string, column: number): MathExpressionNode => {
-  const signatures = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  const signatures = getMathExpressionSignatures(name);
   if (signatures === undefined) {
     failMathExpressionAt(state, `Unknown function "${name}"`, column);
     return PLACEHOLDER;
@@ -188,7 +188,7 @@ const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
 
   const isName =
     state.tokenType === MathExpressionTokenType.Symbol ||
-    (state.tokenType === MathExpressionTokenType.Delimiter && Object.hasOwn(MathExpressionFunctionMap, state.token));
+    (state.tokenType === MathExpressionTokenType.Delimiter && getMathExpressionSignatures(state.token) !== undefined);
   if (isName) {
     const name = state.token;
     const column = getMathExpressionColumn(state);

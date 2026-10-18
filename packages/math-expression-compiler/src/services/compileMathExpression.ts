@@ -7,9 +7,9 @@ import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
 import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
 import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
+import { getMathExpressionSignatures } from "#src/services/getMathExpressionSignatures";
 import { matchMathExpressionSignature } from "#src/services/matchMathExpressionSignature";
 import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantMap";
-import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { toNumber } from "#src/services/toNumber";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -36,8 +36,7 @@ const NO_LOCALS: Result[] = [];
 
 // An operator's function takes one signature, the first of its table entry, which a call matches by its arguments
 const getCompute = (name: string): MathExpressionSignature["compute"] =>
-  (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.[0]?.compute : undefined) ??
-  (() => null);
+  getMathExpressionSignatures(name)?.[0]?.compute ?? (() => null);
 
 // A percentage expression is a percentage, or a sum or difference of percentage expressions
 const checkIsPercentageExpression = (node: MathExpressionNode): boolean => {
@@ -220,7 +219,7 @@ const compileArgument = (node: MathExpressionNode, context: CompileContext): Com
 // A call of one or two arguments hands its values straight to its function, and a longer call gathers them in a loop.
 // The signature a call takes is the one its argument kinds match, the same one the parser checked it against
 const compileCall = (name: string, argumentNodes: MathExpressionNode[], context: CompileContext): Compiled => {
-  const signatures = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  const signatures = getMathExpressionSignatures(name);
   const parameterTypes = argumentNodes.map((argument) => getMathExpressionParameterType(argument));
   const compute = matchMathExpressionSignature(signatures ?? [], parameterTypes)?.compute ?? (() => null);
   const compiledArguments = argumentNodes.map((argument) => compileArgument(argument, context));
