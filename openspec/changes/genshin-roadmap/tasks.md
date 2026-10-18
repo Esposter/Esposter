@@ -163,7 +163,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Does a polearm's combo break a Crystal Chunk in 43 hits, and an Iron Chunk in 6?** — [Gathering](../../specs/genshin/gathering/design.md): provisional, the rule over Xiao's melee poise, 25 to 87 a hit, against 2000 and 200.
 - [ ] **Does Overloaded break a Crystal Chunk in 4 reactions, and an Iron Chunk in 1?** — [Gathering](../../specs/genshin/gathering/design.md): provisional, the wiki's 90 blunt poise against 286 and 29.
 - [ ] **Does Zhongli's pressed stele break a Crystal Chunk in 2, and an Iron Chunk in 1?** — [Gathering](../../specs/genshin/gathering/design.md): provisional, its 200 blunt poise against 286 and 29.
-- [ ] **Do the capitals' falls stand where the game's do, and do their streaks fall at the game's pace?** — [Flowing water](../../specs/genshin/flowing-water/design.md): the sheets are drawn from the fitted lip, drop and width, and the flat and zero-width records are left out; the streaks' rate and band are the engine's own values, read off no recording.
+- [ ] **Do the capitals' falls stand where the game's do, and do their streaks fall at the game's pace?** — [Flowing water](../../specs/genshin/flowing-water/design.md): the sheets are drawn from the fitted lip, drop and width, and flat or zero-width records stay out; the streaks' rate and band are the engine's own, read off no recording.
 
 ## References sought
 
