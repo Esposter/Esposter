@@ -15,6 +15,7 @@ describe(getGadgetCooldownSeconds, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    maxPoints: 0,
     region: "",
   };
   const readyAtMap: CooldownGroupReadyAtMap = new Map([[1, epoch.add({ seconds: 30 })]]);

@@ -10,4 +10,5 @@ export interface ConfigWidgetRow {
   coolDownOnFail?: number;
   gatherPointType?: number;
   isEquipable?: boolean;
+  maxPoints?: number;
 }

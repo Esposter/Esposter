@@ -15,6 +15,7 @@ describe(checkIsGadgetReady, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    maxPoints: 0,
     region: "",
   };
   const groupMate: GadgetRow = { ...gadget, id: 220009 };

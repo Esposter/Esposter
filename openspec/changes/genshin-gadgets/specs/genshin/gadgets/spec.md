@@ -73,3 +73,13 @@ Holding Z SHALL open a quick swap of up to four gadgets chosen from the bag.
 - **GIVEN** the quick swap already holds four gadgets
 - **WHEN** the player chooses a fifth gadget
 - **THEN** the fifth gadget is not added to the quick swap
+
+### Requirement: A collector stores its points up to its maximum
+
+A collector SHALL hold the points it gathers up to its maximum, and SHALL lose the points gathered beyond it.
+
+#### Scenario: A collector stores its points up to its maximum
+
+- **GIVEN** a collector holds 4 of its 5 points
+- **WHEN** it gathers 2 more points
+- **THEN** it holds 5 points and the 1 point beyond its maximum is lost
