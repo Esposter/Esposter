@@ -5,6 +5,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { QuestMark } from "#src/models/quest/QuestMark";
+import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -29,6 +30,7 @@ import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
@@ -50,6 +52,7 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -60,6 +63,7 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -68,6 +72,7 @@ import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
@@ -348,13 +353,15 @@ const {
   keepAccountCharacterPack,
   removeAccountCharacterPack,
 });
+// The residents of the regions in reach, which the talks and a keeper's screen are read from
+const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
   useWorldTalks({
     gameDataBaseUrl,
     getGroundHeight,
-    getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
+    getResidents,
     getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
     language,
     nameText,
@@ -365,6 +372,18 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
   });
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
+// Mondstadt's levels and their rewards, which the keeper's Reputation screen draws, and the level it is picked at
+const reputationCity = shallowRef<ReputationCity>();
+const reputationLevel = shallowRef(reputation.value.level);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
+  (city) => {
+    reputationCity.value = city;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const {
   activateLandmark,
@@ -612,7 +631,8 @@ defineExpose({ jumpTo, readCameraPosition });
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               talkDuelGameId = getTalkDuelGameId(interactable.id);
-              screenKind = ScreenKind.Dialogue;
+              screenKind = getTalkScreenKind(interactable.id, getResidents());
+              reputationLevel = reputation.level;
             }
           }
         }
@@ -892,6 +912,16 @@ defineExpose({ jumpTo, readCameraPosition });
         screenKind = ScreenKind.GcgDuel;
       "
       @end="endTalk()"
+    />
+    <ReputationScreen
+      v-if="screenKind === ScreenKind.Reputation && reputationCity"
+      v-model:level="reputationLevel"
+      :game-text
+      :material-data-map="materialDataMap"
+      :name-text="nameText"
+      :progress="reputation"
+      :reputation="reputationCity"
+      @close="screenKind = ScreenKind.World"
     />
     <GcgSession
       v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"

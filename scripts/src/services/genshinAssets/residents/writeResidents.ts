@@ -3,7 +3,10 @@ import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
-import { RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
+import {
+  REPUTATION_KEEPER_NPC_ID_MAP,
+  RESIDENT_DUEL_GAME_ID_MAP,
+} from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
 import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpeakerTalkIds";
@@ -26,12 +29,19 @@ import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 // Left out
 export const writeResidents = async (): Promise<string> => {
   const { origin, regionFiles, regionMapPoints } = await readFittedRegions();
-  const { groups } = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
-  const npcPlaces = Object.values(groups).flatMap((members) =>
-    members.flatMap(({ kind, objectId, place }): [number, SceneGroupPlace][] =>
-      kind === SceneGroupMemberKind.Npc && place ? [[objectId, place]] : [],
+  const { buildings, groups } = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
+  const npcPlaces = [
+    ...Object.values(groups).flatMap((members) =>
+      members.flatMap(({ kind, objectId, place }): [number, SceneGroupPlace][] =>
+        kind === SceneGroupMemberKind.Npc && place ? [[objectId, place]] : [],
+      ),
     ),
-  );
+    ...Object.values(buildings).flatMap(({ name, place }): [number, SceneGroupPlace][] => {
+      const keeperNpcId = REPUTATION_KEEPER_NPC_ID_MAP.get(name);
+      return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
+    }),
+  ];
+  const reputationKeeperIds = new Set([...REPUTATION_KEEPER_NPC_ID_MAP.values()].map(String));
   const placements = npcPlaces.flatMap(([npcId, place]) => {
     const region = classifyPlacementRegion(place.position, regionMapPoints, REGION_MAX_DISTANCE);
     return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];
@@ -53,7 +63,10 @@ export const writeResidents = async (): Promise<string> => {
         .array()
         .parse(
           (residentJoin.regions.get(region) ?? []).map((resident) =>
-            Object.assign(resident, { duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id) }),
+            Object.assign(resident, {
+              duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id),
+              keepsReputation: reputationKeeperIds.has(resident.id) ? true : undefined,
+            }),
           ),
         );
       if (JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
