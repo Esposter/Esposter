@@ -25,7 +25,7 @@ Every character on the [character kits](../../specs/genshin/kits/README.md) inde
 ## Data and measures
 
 - **Still to read:** each talent's name and description by their text ids. The multipliers are read from `ProudSkillExcelConfigData` already.
-- **Still to choose:** the Traveler's per-element sets, their cooldowns and energy cost, read from the game data that holds them. Until then the Anemo set's values hold for every element, and the element itself is the statue's, read from the [statues page](../genshin-statues-of-the-seven/design.md).
+- **Still to choose:** the Traveler's per-element sets. The game data holds them: each element form's skill and burst have their own proud skill groups, and the cooldowns and energy costs sit in those groups' entries. The published talent kit names one group per slot, and the published multipliers hold only the Anemo form's groups, so the per-element sets wait on a publish that carries each form's groups and on a record key per form. Until then the Anemo set's values hold for every element, and the element itself is the statue's, read from the [statues page](../genshin-statues-of-the-seven/design.md).
 - **Still to find:** a source for each strike's, the charged attack's and the plunge collision's poise damage. gcsim's Anemo attack file has none.
 - **Measured:** the least height a plunge starts from is what the wiki does not give, so it waits on the References sought list's `world-attacks.mkv`. Until then it is a provisional constant with its character's module.
 - **Wanderer's normal attack.** gcsim sets its hitmarks and frames in `init()` (`attackReleaseNormal`, `attackFramesNormal`), which the builder does not evaluate, so the strikes have no source for their hitmarks, frames or element.
