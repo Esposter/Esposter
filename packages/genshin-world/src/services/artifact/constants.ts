@@ -31,6 +31,22 @@ export const NOBLESSE_OBLIGE_ARTIFACT_SET_ID = 15_007;
 export const RETRACING_BOLIDE_ARTIFACT_SET_ID = 15_015;
 // Heart of Depth's id in the set table
 export const HEART_OF_DEPTH_ARTIFACT_SET_ID = 15_016;
+// Brave Heart's id in the set table
+export const BRAVE_HEART_ARTIFACT_SET_ID = 10_002;
+// Emblem of Severed Fate's id in the set table
+export const EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID = 15_020;
+// Gambler's id in the set table
+export const GAMBLER_ARTIFACT_SET_ID = 10_008;
+// Lavawalker's id in the set table
+export const LAVAWALKER_ARTIFACT_SET_ID = 14_003;
+// Marechaussee Hunter's id in the set table
+export const MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID = 15_031;
+// Obsidian Codex's id in the set table
+export const OBSIDIAN_CODEX_ARTIFACT_SET_ID = 15_038;
+// Resolution of Sojourner's id in the set table
+export const RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID = 10_001;
+// Thundersoother's id in the set table
+export const THUNDERSOOTER_ARTIFACT_SET_ID = 14_002;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
