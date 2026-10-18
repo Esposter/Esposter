@@ -1,6 +1,6 @@
 ## Purpose
 
-Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his Ascension 1 passive left unbuilt, and his Ascension 4 passive built.
+Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his Ascension 1 passive left unbuilt, his Ascension 4 passive built, and Constellations 1 and 4 built, with Constellation 4's reaction raise left out.
 
 ## Requirements
 
@@ -59,12 +59,28 @@ From Constellation 1, Tighnari's charged attacks SHALL have 15% more CRIT Rate.
 - **WHEN** a charged attack's strike is read
 - **THEN** its CRIT Rate is unchanged
 
+### Requirement: Constellation 4's team Elemental Mastery
+
+From Constellation 4, the burst's start SHALL give every deployed member 60 Elemental Mastery for 8 seconds.
+
+#### Scenario: Burst gives the team Elemental Mastery
+
+- **GIVEN** Tighnari has Constellation 4
+- **WHEN** the player casts his burst
+- **THEN** every deployed member gains 60 Elemental Mastery for 8 seconds
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Tighnari has Constellation 3
+- **WHEN** the player casts his burst
+- **THEN** no member gains Elemental Mastery from the burst
+
 ### Requirement: Unbuilt Tighnari effects
 
-Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, and Tighnari's Ascension 1 passive and Constellations 2, 4 and 6 SHALL NOT take effect.
+Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, Tighnari's Ascension 1 passive, the reaction raise of Constellation 4 and Constellations 2 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Tighnari has a suffusion, Ascension 1 passive or Constellation 2, 4 or 6 unlocked
+- **GIVEN** Tighnari has a suffusion, Ascension 1 passive or Constellation 2 or 6 unlocked
 - **WHEN** the player fights with Tighnari
 - **THEN** that effect has no effect
