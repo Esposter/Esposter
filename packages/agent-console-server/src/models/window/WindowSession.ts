@@ -5,4 +5,5 @@ import type { SessionChild } from "#src/models/window/SessionChild";
 // The host lists it from the transcript on disk
 export interface WindowSession extends Pick<SessionSummary, "cwd" | "lastActivityAt" | "state" | "title"> {
   child: SessionChild;
+  isSideChat: boolean;
 }

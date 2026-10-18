@@ -14,8 +14,8 @@ export interface Driver {
   closeSession: (sessionId: string) => void;
   // Each opening command resolves to the id of the session it opened
   createSession: (cwd: string) => Promise<string>;
-  // An empty message uuid forks the whole conversation
-  forkSession: (sessionId: string, messageUuid: string) => Promise<string>;
+  // An empty message uuid forks the whole conversation; a side chat's fork is never saved and opens in plan mode
+  forkSession: (sessionId: string, messageUuid: string, isSideChat: boolean) => Promise<string>;
   interrupt: (sessionId: string) => Promise<void>;
   listSessions: () => Promise<SessionSummary[]>;
   prompt: (sessionId: string, text: string, attachments: Attachment[]) => void;

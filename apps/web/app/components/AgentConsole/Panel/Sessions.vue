@@ -84,7 +84,11 @@ const requestNotificationPermission = async () => {
             <!-- The terminal's own resume picker leaves out a session the page started, so its command is
                  Copied instead -->
             <UiCopyButton label="Copy the command that resumes it in a terminal" :source="getResumeCommand(cwd, id)" />
-            <UiButton @click="sendCommand({ messageUuid: '', sessionId: id, type: CommandType.Fork })"> Fork </UiButton>
+            <UiButton
+              @click="sendCommand({ isSideChat: false, messageUuid: '', sessionId: id, type: CommandType.Fork })"
+            >
+              Fork
+            </UiButton>
             <UiButton
               v-if="state !== SessionState.Closed"
               @click="sendCommand({ sessionId: id, type: CommandType.CloseSession })"

@@ -92,15 +92,16 @@ export const createWindowDriver = (
   };
 
   // The session the window opened, or brought back, is held by it from now on
-  const holdSession = (child: SessionChild, sessionId: string) => {
+  const holdSession = (child: SessionChild, sessionId: string, isSideChat: boolean) => {
     windowSessionMap.set(sessionId, {
       child,
       cwd: child.cwd,
+      isSideChat,
       lastActivityAt: new Date(),
       state: SessionState.Idle,
       title: "",
     });
-    onSessionOpen(sessionId);
+    onSessionOpen(sessionId, isSideChat);
   };
 
   const handleChildMessage = (child: SessionChild, childMessage: ChildMessage) => {
@@ -130,18 +131,18 @@ export const createWindowDriver = (
       }
       // Each session the window held comes back as it opened, then its whole log at once
       case ChildMessageType.Rejoin:
-        for (const { events, sessionId } of childMessage.sessions) {
+        for (const { events, isSideChat, sessionId } of childMessage.sessions) {
           child.cwd =
             events.findLast((event): event is SessionInitEvent => event.type === AgentEventType.SessionInit)?.cwd ??
             child.cwd;
-          holdSession(child, sessionId);
+          holdSession(child, sessionId, isSideChat);
           writeLine(`A session in ${child.cwd} came back from its window.`);
           handleChildMessage(child, { events, sessionId, type: ChildMessageType.Events });
         }
         onSessionsChange();
         return;
       case ChildMessageType.SessionOpen:
-        holdSession(child, childMessage.sessionId);
+        holdSession(child, childMessage.sessionId, childMessage.isSideChat);
         writeLine(`A session in ${child.cwd} opened in a window of its own.`);
         return;
       case ChildMessageType.SessionsChange:
@@ -290,9 +291,10 @@ export const createWindowDriver = (
       closeWindowSession(sessionId, getWindowSession(sessionId));
     },
     createSession: (cwd) => openInWindow(cwd, { cwd, id: crypto.randomUUID(), type: CommandType.CreateSession }),
-    forkSession: async (sessionId, messageUuid) =>
+    forkSession: async (sessionId, messageUuid, isSideChat) =>
       openInWindow(await readSessionCwd(sessionId), {
         id: crypto.randomUUID(),
+        isSideChat,
         messageUuid,
         sessionId,
         type: CommandType.Fork,

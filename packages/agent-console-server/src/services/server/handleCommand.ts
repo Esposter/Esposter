@@ -17,7 +17,7 @@ export const handleCommand = async (driver: Driver, command: DriverCommand): Pro
     case CommandType.CreateSession:
       return driver.createSession(command.cwd);
     case CommandType.Fork:
-      return driver.forkSession(command.sessionId, command.messageUuid);
+      return driver.forkSession(command.sessionId, command.messageUuid, command.isSideChat);
     case CommandType.Interrupt:
       await driver.interrupt(command.sessionId);
       return "";

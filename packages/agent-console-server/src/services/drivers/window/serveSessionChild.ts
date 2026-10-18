@@ -35,6 +35,8 @@ export const serveSessionChild = async (
   // Ephemeral event is kept from it, as the host keeps it from its own log, so the log a long session hands back
   // Holds its blocks and never every piece of them
   const sessionEventMap = new Map<string, AgentEvent[]>();
+  // The side chats among the sessions held, which a rejoining window reports so the new host lists them as it did
+  const sideChatSessionIdSet = new Set<string>();
   let webSocket: undefined | WebSocket;
   const send = (childMessage: ChildMessage) => {
     if (webSocket?.readyState === WebSocket.OPEN) webSocket.send(JSON.stringify(childMessage));
@@ -52,9 +54,11 @@ export const serveSessionChild = async (
         sessionEventMap.delete(sessionId);
       send({ events, sessionId, type: ChildMessageType.Events });
     },
-    onSessionOpen: (sessionId) => {
+    onSessionOpen: (sessionId, isSideChat) => {
       sessionEventMap.set(sessionId, []);
-      send({ sessionId, type: ChildMessageType.SessionOpen });
+      if (isSideChat) sideChatSessionIdSet.add(sessionId);
+      else sideChatSessionIdSet.delete(sessionId);
+      send({ isSideChat, sessionId, type: ChildMessageType.SessionOpen });
     },
     onSessionsChange: () => {
       send({ type: ChildMessageType.SessionsChange });
@@ -104,7 +108,11 @@ export const serveSessionChild = async (
       currentWebSocket.once("open", () => {
         writeLine("The host is back, and has this session again.");
         send({
-          sessions: Array.from(sessionEventMap, ([sessionId, events]) => ({ events, sessionId })),
+          sessions: Array.from(sessionEventMap, ([sessionId, events]) => ({
+            events,
+            isSideChat: sideChatSessionIdSet.has(sessionId),
+            sessionId,
+          })),
           type: ChildMessageType.Rejoin,
         });
       });

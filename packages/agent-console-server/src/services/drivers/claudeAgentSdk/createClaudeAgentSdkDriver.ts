@@ -92,7 +92,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
   const resumeSession = async (sessionId: string) => {
     if (openSessionMap.has(sessionId)) return sessionId;
     const cwd = await readSessionCwd(sessionId);
-    return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+    return openSessionQuery({ cwd, isFork: false, isSideChat: false, resumeAt: "", resumeFrom: sessionId, sessionId });
   };
 
   return {
@@ -105,12 +105,20 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     },
     closeSession,
     createSession: (cwd) =>
-      openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: "", sessionId: crypto.randomUUID() }),
-    forkSession: async (sessionId, messageUuid) => {
+      openSessionQuery({
+        cwd,
+        isFork: false,
+        isSideChat: false,
+        resumeAt: "",
+        resumeFrom: "",
+        sessionId: crypto.randomUUID(),
+      }),
+    forkSession: async (sessionId, messageUuid, isSideChat) => {
       const cwd = await readSessionCwd(sessionId);
       return openSessionQuery({
         cwd,
         isFork: true,
+        isSideChat,
         resumeAt: messageUuid,
         resumeFrom: sessionId,
         sessionId: crypto.randomUUID(),
@@ -129,7 +137,14 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     resumeAt: async (sessionId, messageUuid) => {
       const cwd = await readSessionCwd(sessionId);
       if (openSessionMap.has(sessionId)) closeSession(sessionId);
-      return openSessionQuery({ cwd, isFork: false, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
+      return openSessionQuery({
+        cwd,
+        isFork: false,
+        isSideChat: false,
+        resumeAt: messageUuid,
+        resumeFrom: sessionId,
+        sessionId,
+      });
     },
     resumeSession,
     // The checkpoints are the session's, kept on disk beside its transcript, so a closed session is resumed to reach

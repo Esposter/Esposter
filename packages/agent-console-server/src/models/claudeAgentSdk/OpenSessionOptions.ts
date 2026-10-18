@@ -3,6 +3,8 @@
 export interface OpenSessionOptions {
   cwd: string;
   isFork: boolean;
+  // A side chat's fork, which is opened in plan mode and never saved
+  isSideChat: boolean;
   resumeAt: string;
   resumeFrom: string;
   sessionId: string;

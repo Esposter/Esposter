@@ -8,6 +8,8 @@ import type { Query, SDKUserMessage } from "@anthropic-ai/claude-agent-sdk";
 export interface OpenSession {
   cwd: string;
   input: InputQueue<SDKUserMessage>;
+  // A side chat's fork: never saved, and left out of the sessions list while it is open
+  isSideChat: boolean;
   lastActivityAt: Date;
   mapper: SdkMessageMapper;
   // The SDK's permission callbacks still waiting on a verdict, keyed by request id — each settles exactly once,

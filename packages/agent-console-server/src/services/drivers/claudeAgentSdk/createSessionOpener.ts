@@ -4,6 +4,7 @@ import type { SessionOpenerContext } from "#src/models/claudeAgentSdk/SessionOpe
 import type { SDKUserMessage } from "@anthropic-ai/claude-agent-sdk";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
+import { PermissionMode } from "#src/models/session/PermissionMode";
 import { SessionState } from "#src/models/session/SessionState";
 import { SETTING_SOURCES } from "#src/services/drivers/claudeAgentSdk/constants";
 import { createInputQueue } from "#src/services/drivers/claudeAgentSdk/createInputQueue";
@@ -20,7 +21,7 @@ import { query } from "@anthropic-ai/claude-agent-sdk";
 // Its transcript, so the page shows the conversation it is continuing exactly as `claude --resume` would.
 export const createSessionOpener =
   ({ emit, onSessionOpen, onSessionsChange, openSessionMap, taskRegistry }: SessionOpenerContext) =>
-  async ({ cwd, isFork, resumeAt, resumeFrom, sessionId }: OpenSessionOptions): Promise<string> => {
+  async ({ cwd, isFork, isSideChat, resumeAt, resumeFrom, sessionId }: OpenSessionOptions): Promise<string> => {
     const mapper = createSdkMessageMapper();
     const history = resumeFrom ? await readSessionHistory(resumeFrom, cwd, resumeAt) : [];
     const toolUseResultMap = resumeFrom ? await readToolUseResultMap(resumeFrom) : new Map<string, unknown>();
@@ -48,6 +49,8 @@ export const createSessionOpener =
         systemPrompt: { preset: "claude_code", type: "preset" },
         // Summarized rather than the SDK's default of omitted, which streams every thinking block empty
         thinking: { display: "summarized", type: "adaptive" },
+        // A side chat is asked questions, not given work: plan mode from its first message, and no transcript written
+        ...(isSideChat ? { permissionMode: PermissionMode.Plan, persistSession: false } : {}),
         ...(resumeFrom ? { resume: resumeFrom } : {}),
         ...(resumeAt ? { resumeSessionAt: resumeAt } : {}),
         // A new session or a fork takes the id the host chose; a resumed one keeps its own
@@ -58,6 +61,7 @@ export const createSessionOpener =
     const openSession: OpenSession = {
       cwd,
       input,
+      isSideChat,
       lastActivityAt: new Date(),
       mapper,
       pendingPermissionMap,
@@ -66,7 +70,7 @@ export const createSessionOpener =
       title: "",
     };
 
-    onSessionOpen(sessionId);
+    onSessionOpen(sessionId, isSideChat);
     openSessionMap.set(sessionId, openSession);
     const createdAt = new Date();
     emit(sessionId, [

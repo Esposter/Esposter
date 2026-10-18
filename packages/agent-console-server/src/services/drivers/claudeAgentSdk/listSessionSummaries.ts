@@ -6,14 +6,17 @@ import { getSessionTitle } from "#src/services/drivers/claudeAgentSdk/getSession
 import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 
 // The sessions on disk, each open one shown as it is now. A session opened but not yet prompted has no transcript on
-// Disk, and is listed all the same
+// Disk, and is listed all the same — except a side chat, which is never saved and is left out while it is open
 export const listSessionSummaries = async (
-  openSessionMap: ReadonlyMap<string, Pick<SessionSummary, "cwd" | "lastActivityAt" | "state" | "title">>,
+  openSessionMap: ReadonlyMap<
+    string,
+    Pick<SessionSummary, "cwd" | "lastActivityAt" | "state" | "title"> & { isSideChat: boolean }
+  >,
 ): Promise<SessionSummary[]> => {
   const sessionInfos = await listSessions({ limit: SESSION_LIST_LIMIT });
   const savedSessionIds = new Set(sessionInfos.map(({ sessionId }) => sessionId));
   const unsavedSessions = [...openSessionMap]
-    .filter(([id]) => !savedSessionIds.has(id))
+    .filter(([id, { isSideChat }]) => !savedSessionIds.has(id) && !isSideChat)
     .map(([id, { cwd, lastActivityAt, state, title }]) => ({ cwd, id, lastActivityAt, state, title }));
   const savedSessions = sessionInfos.map((sessionInfo) => {
     const openSession = openSessionMap.get(sessionInfo.sessionId);

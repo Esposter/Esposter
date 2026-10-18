@@ -51,7 +51,13 @@ const items = computed<UiMenuItem<MessageActionType>[]>(() => [
       @select="
         (value) => {
           if (value === MessageActionType.Copy) copy(text);
-          else sendCommand({ messageUuid, sessionId: currentSessionId, type: MessageActionCommandTypeMap[value] });
+          else
+            sendCommand({
+              isSideChat: false,
+              messageUuid,
+              sessionId: currentSessionId,
+              type: MessageActionCommandTypeMap[value],
+            });
         }
       "
     >

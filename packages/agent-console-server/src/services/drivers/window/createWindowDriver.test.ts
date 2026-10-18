@@ -78,7 +78,7 @@ describe(createWindowDriver, () => {
             close: childClose,
             closeSession: vi.fn<Driver["closeSession"]>(),
             createSession: () => {
-              childCallbacks.onSessionOpen(sessionId);
+              childCallbacks.onSessionOpen(sessionId, false);
               return Promise.resolve(sessionId);
             },
             forkSession: vi.fn<Driver["forkSession"]>(),
@@ -120,7 +120,7 @@ describe(createWindowDriver, () => {
 
     await driver.interrupt(sessionId);
 
-    expect(onSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId);
+    expect(onSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId, false);
     expect(childInterrupt).toHaveBeenCalledExactlyOnceWith(sessionId);
   });
 
@@ -230,7 +230,7 @@ describe(createWindowDriver, () => {
     childWebSocket.terminate();
     await sessionOpen;
 
-    expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId);
+    expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId, false);
     expect(nextOnEvents).toHaveBeenCalledExactlyOnceWith(sessionId, [runningEvent]);
     expect(childClose).not.toHaveBeenCalled();
 
@@ -269,11 +269,14 @@ describe(createWindowDriver, () => {
     const rejoiningWebSocket = connect({ port: readSessionWindows(stateDirectory).port, secret });
     await once(rejoiningWebSocket, "open");
     rejoiningWebSocket.send(
-      JSON.stringify({ sessions: [{ events, sessionId: rejoiningSessionId }], type: ChildMessageType.Rejoin }),
+      JSON.stringify({
+        sessions: [{ events, isSideChat: false, sessionId: rejoiningSessionId }],
+        type: ChildMessageType.Rejoin,
+      }),
     );
     await sessionsChange;
 
-    expect(onSessionOpen).toHaveBeenLastCalledWith(rejoiningSessionId);
+    expect(onSessionOpen).toHaveBeenLastCalledWith(rejoiningSessionId, false);
     expect(onEvents).toHaveBeenLastCalledWith(rejoiningSessionId, events);
     expect((await driver.listSessions()).find(({ id }) => id === rejoiningSessionId)?.state).toBe(SessionState.Running);
 

@@ -6,13 +6,16 @@ import { z } from "zod";
 
 // The window's session is about to open under this id — the driver's onSessionOpen
 export interface ChildSessionOpenMessage extends BaseChildMessage<ChildMessageType.SessionOpen> {
+  isSideChat: boolean;
   sessionId: string;
 }
 
 export const childSessionOpenMessageSchema: z.ZodObject<{
+  isSideChat: z.ZodBoolean;
   sessionId: z.ZodString;
   type: z.ZodLiteral<ChildMessageType.SessionOpen>;
 }> = z.object({
   ...createBaseChildMessageSchema(z.literal(ChildMessageType.SessionOpen)).shape,
+  isSideChat: z.boolean(),
   sessionId: z.string().min(1),
 }) satisfies z.ZodType<ChildSessionOpenMessage>;
