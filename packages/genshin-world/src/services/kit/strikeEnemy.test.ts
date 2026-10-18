@@ -768,12 +768,7 @@ describe(strikeEnemy, () => {
 
     const DEFENSE_REDUCTION = 0.15;
     const enemy = createSturdyEnemy();
-    addEnemyStatus(enemy, {
-      damageTakenBonus: 0,
-      defenseReduction: DEFENSE_REDUCTION,
-      id: "razor-constellation-4",
-      secondsRemaining: 1,
-    });
+    addEnemyStatus(enemy, { damageTakenBonus: 0, defenseReduction: DEFENSE_REDUCTION, id: "", secondsRemaining: 1 });
     const damage = getDamage({
       attackerLevel: LEVEL,
       defense,
