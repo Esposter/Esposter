@@ -221,15 +221,15 @@ Every issue of [surmon-china/vue-codemirror](https://github.com/surmon-china/vue
 
 ## Key files
 
-| File                                                              | Role                                                           |
-| :---------------------------------------------------------------- | :------------------------------------------------------------- |
-| `apps/web/app/components/Message/Model/FileRenderer/Code.vue`     | Fetches the text and mounts the read-only view                 |
-| `apps/web/app/components/Message/Model/FileRenderer/Code.test.ts` | The view's teardown, grammar arrival and mount                 |
-| `apps/web/app/services/codemirror/getLanguage.ts`                 | Filename to language, through `LanguageRegexMap`               |
-| `apps/web/app/services/codemirror/constants.ts`                   | `EXTENDED_LANGUAGES`: the language-data list with Vue appended |
-| `apps/web/app/services/codemirror/getLanguageExtension.ts`        | Loads a language's grammar when its file first opens           |
-| `apps/web/app/services/codemirror/uiEditorExtensions.ts`          | The chrome, in the app's tokens                                |
-| `apps/web/app/services/codemirror/uiHighlightSpecs.ts`            | The highlight styles, in the app's tokens                      |
+| File                                                              | Role                                                              |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `apps/web/app/components/Message/Model/FileRenderer/Code.vue`     | Fetches the text and mounts the read-only view                    |
+| `apps/web/app/components/Message/Model/FileRenderer/Code.test.ts` | The view's mount, failed fetch, preview cap, teardown and grammar |
+| `apps/web/app/services/codemirror/getLanguage.ts`                 | Filename to language, through `LanguageRegexMap`                  |
+| `apps/web/app/services/codemirror/constants.ts`                   | `EXTENDED_LANGUAGES`: the language-data list with Vue appended    |
+| `apps/web/app/services/codemirror/getLanguageExtension.ts`        | Loads a language's grammar when its file first opens              |
+| `apps/web/app/services/codemirror/uiEditorExtensions.ts`          | The chrome, in the app's tokens                                   |
+| `apps/web/app/services/codemirror/uiHighlightSpecs.ts`            | The highlight styles, in the app's tokens                         |
 
 ## Notes
 

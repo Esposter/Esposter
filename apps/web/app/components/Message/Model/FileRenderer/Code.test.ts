@@ -7,6 +7,7 @@ import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { language, StreamLanguage } from "@codemirror/language";
 import { FileEntity } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { EditorView } from "codemirror";
@@ -72,7 +73,9 @@ describe("messageModelFileRendererCode", () => {
     const view = findView();
 
     expect(view.state.doc.toString()).toBe("");
-    expect(consoleError).toHaveBeenCalledOnce();
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(
+      new InvalidOperationError(Operation.Read, url, `HTTP ${failedStatus} `),
+    );
   });
 
   test("Previewed code attachment is capped", async () => {
