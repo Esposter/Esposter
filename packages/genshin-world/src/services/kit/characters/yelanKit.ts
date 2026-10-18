@@ -34,6 +34,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const depthClarionDiceSeconds = readParameter("depthClarionDiceSeconds");
   const exquisiteThrows = readHits("exquisiteThrow");
   return {
+    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
+    // Ticks do not depend on where the body stands
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { facing, height, position } = body;
@@ -47,8 +49,6 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         });
       },
     },
-    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
-    // Ticks do not depend on where the body stands
     // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's marked
