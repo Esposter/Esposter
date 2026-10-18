@@ -1,6 +1,6 @@
 ## Purpose
 
-Kirara's kit as built: four strikes, a charged attack, Tail-Flicking Flying Kick with its shield and holds, and Secret Art: Surprise Dispatch's Cat Grass Cardamoms, with her passives and constellations not built.
+Kirara's kit as built: four strikes, a charged attack, Tail-Flicking Flying Kick with its shield and holds, and Secret Art: Surprise Dispatch's Cat Grass Cardamoms, with her Ascension 4 passive built, and her Ascension 1 passive and constellations not built.
 
 ## Requirements
 
@@ -65,12 +65,12 @@ Kirara's strikes, charged attack, skill and burst SHALL deal no poise damage, pr
 - **WHEN** any of Kirara's strikes, charged attack, skill or burst hits an enemy
 - **THEN** the enemy's poise is not reduced
 
-### Requirement: Kirara's passives and constellations not yet built
+### Requirement: Kirara's Ascension 1 passive and constellations not yet built
 
-Kirara's passives and constellations SHALL NOT take effect.
+Kirara's Ascension 1 passive and constellations SHALL NOT take effect.
 
 #### Scenario: Passives and constellations do nothing
 
-- **GIVEN** Kirara has a passive or constellation unlocked
+- **GIVEN** Kirara has her Ascension 1 passive or a constellation unlocked
 - **WHEN** the player fights with Kirara
 - **THEN** that passive or constellation has no effect

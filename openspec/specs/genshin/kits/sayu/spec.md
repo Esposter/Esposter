@@ -1,6 +1,6 @@
 ## Purpose
 
-Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her passives, constellations and the roll's elemental kick left unbuilt.
+Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her Ascension 1 heal and Ascension 4 wider Daruma built, and her constellations and the roll's elemental kick left unbuilt.
 
 ## Requirements
 
@@ -66,10 +66,10 @@ Mujina Flurry SHALL land an initial hit and leave a field that heals the active 
 
 ### Requirement: Unbuilt Sayu effects
 
-Sayu's passives, constellations and the roll's elemental kick SHALL NOT take effect.
+Sayu's constellations and the roll's elemental kick SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Sayu has a passive, a constellation or the roll's kick unlocked
+- **GIVEN** Sayu has a constellation or the roll's kick unlocked
 - **WHEN** the player fights with Sayu
 - **THEN** that effect has no effect

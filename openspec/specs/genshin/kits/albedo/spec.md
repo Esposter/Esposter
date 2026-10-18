@@ -1,6 +1,6 @@
 ## Purpose
 
-Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, and his passives and Constellations 2, 4 and 6 left unbuilt.
+Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 4 passive built, and his Ascension 1 passive and Constellations 2, 4 and 6 left unbuilt.
 
 ## Requirements
 
