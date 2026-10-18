@@ -105,6 +105,9 @@ export enum GameTextKey {
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
+  // The cooking screen's title and the Stop button that ends its indicator
+  CookingStop = "UI_COOKING_QTE_END_BUTTON",
+  CookingTitle = "UI_COOKING_QTE_TITLE",
   CorLapis = "2764520484",
   // The crafting bench: its title and Craft button, the amount slider beside the picked recipe, the Crafting Performed
   // Count, the Required line over its Mora, and the Crafting Materials heading
@@ -146,6 +149,17 @@ export enum GameTextKey {
   ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
   // The quit prompt's button that leaves the world for the login interface
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
+  // The picker of the characters a send is made with, headed as the game heads its character list
+  ExpeditionCharacterSelection = "UI_AVATAR_SELECT_PS4",
+  // The expedition screen's words: the claim of a returned expedition, its recall, its send and its limit
+  ExpeditionClaim = "UI_ACTIVITY_EXPEDITION_RECEIVE_REWARD",
+  ExpeditionExploring = "UI_EXPLORE_EXPLORING",
+  ExpeditionLimit = "UI_EXPLORE_LINELEFT",
+  ExpeditionNoBonus = "COOKING_QTE_NO_BONUS_DESC",
+  ExpeditionRecall = "UI_ACTIVITY_EXPEDITION_RECALL",
+  ExpeditionRewards = "UI_ACTIVITY_EXPEDITION_REWARD1",
+  ExpeditionSelectCharacter = "UI_ACTIVITY_EXPEDITION_CHOOSE_CHAR",
+  ExpeditionTitle = "UI_EXPLORE_PAGETITLE",
   // The map's line under an area's name, its percentage filled in, and the same line once the area is fully explored,
   // Its percentage in the game's gold
   ExplorationProgress = "UI_EXPLORE_COUNT",
@@ -160,6 +174,7 @@ export enum GameTextKey {
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
   // The Amount line over the forge slider, "Amount: {0}"
+  Fontaine = "Fontaine",
   ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
@@ -238,6 +253,7 @@ export enum GameTextKey {
   Horsetail = "1247603844",
   HydroSigil = "33541556",
   IcyPebble = "2856476780",
+  Inazuma = "Inazuma",
   IntertwinedFate = "4203128180",
   Inventory = "UI_STC_BAGPAGE_BAG",
   // The bag's tabs, and a tab's room as its name, its count and its limit fill `{0} {1}/{2}`
@@ -273,6 +289,10 @@ export enum GameTextKey {
   InventoryMaterials = "ITEM_MATERIAL",
   InventoryPreciousItems = "ITEM_CONSUME",
   InventoryQuest = "ITEM_QUEST",
+  // The bag's gadget action that equips a gadget to the quick-use slot, which Z uses
+  InventoryQuickUseGadget = "UI_BEYOND_HALL_WIDGET_USE_BUTTON_SET",
+  // The detail panel's button that uses the selected entry of the bag
+  InventoryUse = "BAG_USE_BUTTON",
   InventoryWeapons = "ITEM_WEAPON",
   IronChunk = "4060716292",
   // An item and its count, its name in place of `{0}` and the count in place of `{1}`
@@ -290,6 +310,7 @@ export enum GameTextKey {
   // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort = "2960839764",
+  Liyue = "Liyue",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept
   LoginBegin = "3535917252",
@@ -333,6 +354,7 @@ export enum GameTextKey {
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
   NakuWeed = "3623663804",
+  Natlan = "Natlan",
   NilotpalaLotus = "774700468",
   NoctilucousJade = "2726159796",
   NocturnalBlossom = "2957600892",
@@ -476,6 +498,7 @@ export enum GameTextKey {
   SmallLampGrass = "144892988",
   Snapdragon = "3558597948",
   // The weapons' and artifacts' sort, by level or quality, ascending or descending
+  Snezhnaya = "Snezhnaya",
   SortAscending = "UI_RelicIterations_Ordering_Ascending",
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
@@ -498,6 +521,7 @@ export enum GameTextKey {
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title
   StoryUnlocksAt = "2616170868",
   StrangeTooth = "2715317724",
+  Sumeru = "Sumeru",
   SumeruRose = "691451364",
   SweetFlower = "1330975132",
   // The touch layout's aim button a bow's wielder has, as the controls list name it, said in place of its glyph
