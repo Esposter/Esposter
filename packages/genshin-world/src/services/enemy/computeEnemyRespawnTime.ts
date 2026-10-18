@@ -8,7 +8,7 @@ import { COMMON_ENEMY_RESPAWN_DURATION, DAILY_RESET_TIME } from "#src/services/e
 export const computeEnemyRespawnTime = (
   campEnemyTypes: EnemyType[],
   defeatedAt: Temporal.ZonedDateTime,
-  bossClaimedAt: Temporal.ZonedDateTime | undefined,
+  bossClaimedAt?: Temporal.ZonedDateTime,
 ): Temporal.ZonedDateTime | undefined => {
   if (campEnemyTypes.includes(EnemyType.Boss)) return computeBossRespawnTime(bossClaimedAt);
   else if (campEnemyTypes.includes(EnemyType.Elite)) {

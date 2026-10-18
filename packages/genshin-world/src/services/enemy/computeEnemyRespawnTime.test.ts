@@ -11,7 +11,7 @@ describe(computeEnemyRespawnTime, () => {
   test("a common camp's member comes back after its respawn duration", () => {
     expect.hasAssertions();
 
-    expect(computeEnemyRespawnTime([EnemyType.Common], epoch).toString()).toBe(
+    expect(computeEnemyRespawnTime([EnemyType.Common], epoch)?.toString()).toBe(
       epoch.add(COMMON_ENEMY_RESPAWN_DURATION).toString(),
     );
   });
@@ -19,8 +19,8 @@ describe(computeEnemyRespawnTime, () => {
   test("a camp with an elite comes back at the next daily reset", () => {
     expect.hasAssertions();
 
-    expect(computeEnemyRespawnTime([EnemyType.Common, EnemyType.Elite], epoch).toString()).toBe(dailyReset.toString());
-    expect(computeEnemyRespawnTime([EnemyType.Elite], dailyReset).toString()).toBe(
+    expect(computeEnemyRespawnTime([EnemyType.Common, EnemyType.Elite], epoch)?.toString()).toBe(dailyReset.toString());
+    expect(computeEnemyRespawnTime([EnemyType.Elite], dailyReset)?.toString()).toBe(
       dailyReset.add({ days: 1 }).toString(),
     );
   });
