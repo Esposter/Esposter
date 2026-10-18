@@ -1,7 +1,7 @@
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 
-import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingPool, toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPool";
 import { FishingStockType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
@@ -20,6 +20,7 @@ describe(toFishingPool, () => {
 
     const row: ExcelFishPoolRow = {
       cityId: 1,
+      excludeFish: [],
       id: POOL_ID,
       maxNum: MAX_NUM,
       stockList: [NIGHT_STOCK_ID, DAY_STOCK_ID],
@@ -44,10 +45,30 @@ describe(toFishingPool, () => {
   test("a stock the table does not hold is an error rather than a pool missing it", () => {
     expect.hasAssertions();
 
-    const row: ExcelFishPoolRow = { cityId: 1, id: POOL_ID, maxNum: MAX_NUM, stockList: [DAY_STOCK_ID, 0] };
+    const row: ExcelFishPoolRow = {
+      cityId: 1,
+      excludeFish: [],
+      id: POOL_ID,
+      maxNum: MAX_NUM,
+      stockList: [DAY_STOCK_ID, 0],
+    };
 
     expect(() => toFishingPool(row, stocks)).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: fishing stock, stock 0 is not in the stock table]`,
     );
+  });
+
+  test("a pool's fish are those of its stocks less the ones it excludes", () => {
+    expect.hasAssertions();
+
+    const row: ExcelFishPoolRow = {
+      cityId: 1,
+      excludeFish: [4],
+      id: POOL_ID,
+      maxNum: MAX_NUM,
+      stockList: [DAY_STOCK_ID, NIGHT_STOCK_ID],
+    };
+
+    expect(toFishingPoolFishIds(row, stocks)).toStrictEqual(new Set([1, 5]));
   });
 });

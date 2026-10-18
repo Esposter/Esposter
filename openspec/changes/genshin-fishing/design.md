@@ -5,7 +5,7 @@ Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line 
 ## Decisions
 
 - **A point's stock is its region's pools, for now.** Each region's pools are the game's, filed by city. Neither the official map's points nor the dump's tables tie a point to one pool, so until a recording shows which pool a point draws from, a point draws from every pool of its region. Nod-Krai's city is filed under no pool, so its points draw nothing, and the fifty-four pools filed under city zero, which no region names, are left out until a recording places them.
-- **Bait is not tied to a fish yet.** The bait table's feature tags name no fish, and no fish row names the tags it wants, so which bait draws which fish is read from the wiki's fish pages, each of which names its bait. Each kind is drawn only by its own bait, crafted from its recipe. A cast draws only among the fish its bait names (`drawFishingPointFish`), the set passed in until that reading fills it.
+- **Each bait draws its fish from the dump.** A bait names either pools, as the Glowgrass Bait names pool 10007, or feature tags it weights. A pool draws its fish less the ones it excludes, and a tag draws each fish whose monster is filed under a feature tag group holding that tag (`toFishingBait`). This joins 118 of the 121 fish. Fish 1019 is excluded from its pool and holds no bait's tag. Fish 1046 and 1062, both naming reward 242045, are filed under no group and no pool, and no wiki fish page names their items either. Fish 5, 6, 7 and 15 draw a second bait through pool 10007, which no wiki fish page names. Of the 59 wiki fish pages naming an item and a bait, 55 name exactly the join's bait and the other four name its tag bait alone, so the wiki is a cross-check and the dump is the join. Each kind is drawn only by its own bait, crafted from its recipe, which waits on [crafting](../genshin-crafting/design.md). A cast draws only among the fish its bait names (`drawFishingPointFish`), the set the screen passes in from the bait's record.
 - **The bite is the fish's own.** A fish nibbles for a time within its feeler range and bites, and the bite is struck within its `biteTimeout` or lost. The timing and the caller's clock are not yet built.
 - **The nibble's length is drawn from the fish's feeler times.** `feelerTimes` is a range in seconds, its least and its most (from `[0.75, 1]` to `[2, 8]` across the table), so a fish nibbles for a time drawn evenly between them by the caller's random source, as `claimExpedition` draws a count. A strike while it only nibbles scares it off and the cast is back to aiming, as a strike after `biteTimeout` seconds of biting is. The owed `fishing-reel.mkv` checks the scare; it does not gate the build.
 - **The reel's zone travels by the fish's own fields, provisionally.** The zone's width is the fish's `bonusWidth`, and its offset, speed and duration are drawn from the fish's `bonusOffset`, `bonusSpeed` and `bonusDuration` ranges by the caller, as the nibble is. The zone starts at its offset, moves at its speed for its duration, holds where that leaves it and is kept within the bar (`computeFishingZone`). This is a best estimate, marked provisional as the Provisional section says: no table gives the travel's direction or its hold, and the `fishing-reel.mkv` recording re-measures it.
@@ -47,13 +47,13 @@ packages/genshin-world/src/
    - `stepFishingBite.ts`: the bite after `seconds`, given whether the strike was pressed, returning its next `FishingPhase` and bite: `Waiting` while it nibbles, `Biting` from `nibbleSeconds`, `Reeling` on a strike while biting, and `Aiming` on a strike while nibbling or once `biteTimeout` seconds of biting pass unstruck.
    - `stepFishingBite.test.ts` beside it asserts each of those four transitions on a fish with `biteTimeout: 5` and a bite with `nibbleSeconds: 1`.
 2. **The reel's zone and tension.** The zone travels on the fish's own `bonusWidth`, `bonusSpeed`, `bonusOffset` and `bonusDuration`, and the tension moves at the gear's `inSpeed` and `outSpeed`; both are read provisionally until `fishing-reel.mkv` re-measures them. The skills from `FishSkillExcelConfigData` stay unapplied, as the decision above names.
-3. **Bait and the rod's choice**, which fish each bait draws read from the wiki's fish pages, each naming its bait, through the repository's wiki reader, with the crafting recipes and the rod's multiplier and accuracy.
+3. **Bait and the rod's choice**, which fish each bait draws joined from the dump's pools and feature tag groups, with the crafting recipes and the rod's multiplier and accuracy.
 4. **The screen, the prompt in reach, the cast's input and the catch into the bag.**
 5. **The Fishing Associations' exchanges.**
 
 ## Data and measures
 
-- **Read from the game's tables:** the fish, pool, stock and rod tables, and now `FishSkillExcelConfigData`, `FishBaitExcelConfigData` and `FishProficientExcelConfigData` and each fish's catch reward row, published as `fishing/skills`, `fishing/baits`, `fishing/proficiency` and `fishing/rewards`.
+- **Read from the game's tables:** the fish, pool, stock and rod tables, and now `FishSkillExcelConfigData`, `FishBaitExcelConfigData`, `FeatureTagGroupExcelConfigData` and `FishProficientExcelConfigData` and each fish's catch reward row, published as `fishing/skills`, `fishing/baits` (each with the fish it draws), `fishing/proficiency` and `fishing/rewards`.
 - **Provisional until a clip shows them:** the gear's rates in the reel and the allowance, the zone's travel over its duration, and which pool a point draws from. Each ships as a best estimate, held provisional, and is listed on the [roadmap](../genshin-roadmap/tasks.md)'s References sought list until a published clip sets it.
 
 ## Key files
@@ -69,7 +69,7 @@ packages/genshin-world/src/
 ## Sources
 
 - [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the unlock after the Serenitea Pot, one bait per fish, the cast's distance, the bite and the tension, points emptied and back every 72 hours with separate day and night fish, and the Fishing Associations.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the skill, bait and proficiency tables, which the build does not read yet.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the skill, bait, feature tag and proficiency tables, which the build reads.
 
 ## Reference
 
