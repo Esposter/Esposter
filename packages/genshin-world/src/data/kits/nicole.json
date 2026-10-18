@@ -1,1 +1,6 @@
-{}
+{
+  "parameters.skillBuffMax": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 13132 } },
+  "parameters.skillBuffRatio": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 13132 } },
+  "parameters.skillShieldAtk": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13132 } },
+  "parameters.skillShieldFlat": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 13132 } }
+}

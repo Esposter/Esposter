@@ -45,6 +45,20 @@ Nicole's burst SHALL deal Pyro damage in a 6.5-metre circle on the primary targe
 - **WHEN** the player casts the burst
 - **THEN** the burst does not start
 
+### Requirement: Nicole's skill shields the team and buffs its ATK
+
+Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her attack, and SHALL give each deployed member an ATK buff scaled by her attack and capped, both 8 frames after the cast and each lasting 20 seconds.
+
+#### Scenario: Shield lands 8 frames after the cast
+
+- **WHEN** the player presses Nicole's skill
+- **THEN** a Pyro shield of 2.21184 times her attack plus 1386.6697, at level 1, covers the team 8 frames later, for 20 seconds
+
+#### Scenario: Team ATK buff is capped
+
+- **WHEN** the skill's buff lands on a deployed member at level 1
+- **THEN** the member gets 8.25% of Nicole's attack as ATK, up to 330, for 20 seconds
+
 ### Requirement: Projections and passives not yet built
 
 Nicole's burst projections and her passives SHALL NOT take effect.
