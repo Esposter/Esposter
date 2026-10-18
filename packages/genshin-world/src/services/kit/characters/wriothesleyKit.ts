@@ -10,4 +10,6 @@ export const WRIOTHESLEY_CHARACTER_ID = 10_000_086;
 // Constellation boxes are not built, nor are his passives and constellations
 // Constellation 1 needs the Gracious Rebuke's change, which waits on the wearer's HP that a kit does not read
 // Constellation 2 needs the Prosecution Edict stacks on Darkgold Wolfbite, which the kit does not build
+// Constellation 4 needs the Rebuke: Vaulting Fist heal and its healed-amount effect, which the kit does not build
+// Constellation 6 needs Rebuke: Vaulting Fist's CRIT bonus and its extra icicle, which the kit does not build
 export const createWriothesleyKitBehaviour = (): KitBehaviour => ({});

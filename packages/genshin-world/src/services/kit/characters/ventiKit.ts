@@ -49,6 +49,7 @@ export const VENTI_CHARACTER_ID = 10_000_022;
 // Its energy
 // Constellation 2 needs a Physical RES cut, which EnemyStatus cannot key, and a launched state, not built
 // Constellation 6's RES cut on an absorbed element, which the kit does not build
+// Constellation 4 needs the Elemental Orb or Particle pickup and the team's buff after his skill and burst, not built
 export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const splittingGalesHits = readHits("splittingGalesArrows");
   const stormeyeHits = readHits("stormeyeTicks", {
