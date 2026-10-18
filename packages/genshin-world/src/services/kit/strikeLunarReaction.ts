@@ -8,8 +8,7 @@ import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/Charact
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
 import { LunarReactionElementMap } from "#src/services/combat/damage/LunarReactionElementMap";
 import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContributions";
-import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
-import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
+import { strikeReactionContributors } from "#src/services/kit/strikeReactionContributors";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { takeOne } from "@esposter/shared";
 
@@ -29,10 +28,13 @@ export const strikeLunarReaction = (
   const { characterIdCombatantMap, kitEffectState, party } = context;
   const element = LunarReactionElementMap[lunarReactionType];
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
-  const damages = priceReactionContributors(
+  return strikeReactionContributors({
     contributorIds,
     context,
-    (level, attributeTotalMap, partyDamageBonus) =>
+    element,
+    enemy,
+    owner,
+    price: (level, attributeTotalMap, partyDamageBonus) =>
       getLunarDamage(
         lunarReactionType,
         takeOne(CharacterLevelMultiplierMap, level),
@@ -40,9 +42,7 @@ export const strikeLunarReaction = (
         moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
         moonsign.reactionBonus + partyDamageBonus,
       ),
-    { element, enemy, reactionType: lunarReactionType },
-  );
-  if (damages.length === 0) return false;
-  strikeReactionDamage(enemy, element, sumLunarContributions(damages), owner, context);
-  return true;
+    reaction: { element, enemy, reactionType: lunarReactionType },
+    total: sumLunarContributions,
+  });
 };

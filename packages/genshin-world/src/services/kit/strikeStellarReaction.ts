@@ -9,8 +9,7 @@ import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/Charact
 import { getReactionDamage } from "#src/services/combat/damage/getReactionDamage";
 import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContributions";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
-import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
-import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
+import { strikeReactionContributors } from "#src/services/kit/strikeReactionContributors";
 import { getPartyStellarBaseDamageBonus } from "#src/services/party/getPartyStellarBaseDamageBonus";
 import { takeOne } from "@esposter/shared";
 
@@ -42,10 +41,13 @@ export const strikeStellarReaction = (
     party,
     context.body.position,
   );
-  const damages = priceReactionContributors(
+  return strikeReactionContributors({
     contributorIds,
     context,
-    (level, attributeTotalMap) =>
+    element,
+    enemy,
+    owner,
+    price: (level, attributeTotalMap) =>
       getReactionDamage(
         coefficient,
         takeOne(CharacterLevelMultiplierMap, level),
@@ -53,15 +55,8 @@ export const strikeStellarReaction = (
         baseDamageBonus,
         attributeTotalMap[Attribute.StellarGlimmerReactionDamageBonus] + (bonuses?.damageBonus ?? 0),
       ),
-    reactionType ? { element, enemy, reactionType } : undefined,
-  );
-  if (damages.length === 0) return false;
-  strikeReactionDamage(
-    enemy,
-    element,
-    (sumLunarContributions(damages) + (bonuses?.additiveBaseDamageBonus ?? 0)) * (1 + (bonuses?.elevationBonus ?? 0)),
-    owner,
-    context,
-  );
-  return true;
+    reaction: reactionType ? { element, enemy, reactionType } : undefined,
+    total: (damages) =>
+      (sumLunarContributions(damages) + (bonuses?.additiveBaseDamageBonus ?? 0)) * (1 + (bonuses?.elevationBonus ?? 0)),
+  });
 };
