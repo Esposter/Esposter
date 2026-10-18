@@ -174,6 +174,19 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
 
+  // Two saves' re-reads can land newest first, and the older one must not overwrite the newer content it trails
+  test("drops an older adoption that lands after a newer one", async () => {
+    expect.hasAssertions();
+
+    const todoListStore = await setupStore();
+    const { storeSaveResourceContent } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    storeSaveResourceContent({ items: [new TodoListItem({ name: newItemName })] }, 2);
+    storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
+
+    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
+  });
+
   // A row written with no dialog is refused the same way while another device's content lands, and that device's value
   // Is what stands — this write never reached it, so there is nothing of it to put back
   test("keeps an adopted todo's value when its row write is refused", async () => {

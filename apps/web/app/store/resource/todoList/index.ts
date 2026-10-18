@@ -38,10 +38,13 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const searchQuery = ref("");
   // Another device saved — adopt its content and contentVersion so this client renders live data
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
+  // Re-reads for two saves can land out of order, so content older than the version already held is dropped
   const storeSaveResourceContent = (
     content: TodoListResource,
     contentVersion: ResourceInResource["contentVersion"],
   ) => {
+    if (resourceStore.resource && contentVersion < resourceStore.resource.contentVersion) return;
+
     todoList.value = content;
     storeContentVersion(contentVersion);
     setPersistedContent(content);
