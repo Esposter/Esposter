@@ -27,7 +27,7 @@ const readComponent = (component: object) => ({
 
 describe("components", () => {
   const preset = PRESET_SCHEMA.parse(createRequire(import.meta.url)("mjml-preset-core"));
-  const components = preset.components.map(readComponent);
+  const components = preset.components.map((component) => readComponent(component));
   const { dependencies } = preset;
   const SPECIFICATION_ROWS = MJML_COMPONENT_SPECIFICATIONS.map(
     (specification) => [specification.type, specification] as const,
