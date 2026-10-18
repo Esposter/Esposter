@@ -6,10 +6,10 @@ The [ley line outcrops](../../specs/genshin/ley-line-outcrops/design.md) page ho
 
 ## Decisions
 
-- **Touched, fought, revealed.** Touching an outcrop spawns its place's enemies at the World Level's level, within its fight radius. Once every one is defeated the Ley Line Blossom appears, and its reward is the resin claim. The enemies drop what they always drop.
+- **Touched, fought, revealed.** Touching a waiting outcrop starts its fight, which spawns a camp of `OUTCROP_CAMP_SIZE` members of the kinds `EnemyKindId` holds, spread within `OUTCROP_FIGHT_RADIUS` of its place at the World Level's level. Once every member is defeated the Ley Line Blossom appears, and its reward is the resin claim. The enemies drop what they always drop. Provisional: the wiki's per-place enemies are not paired with kinds, so the camp's size and kinds stand until they are.
 - **Rewards by World Level, from the reward previews.** Each ley line refresh row lists its rewards under the dump's key `OFGHJMOLMNA`, one pair per World Level in order from World Level 0: `DANEGNOIKLH`, the `RewardPreviewExcelConfigData` id a claim draws from, and `EPOBLCBBIMB`, the server's own id, which the client holds no row for and no reader reads. The last preview stands for every World Level past the list, so World Level 9 claims World Level 8's. Mondstadt's Wealth row lists nine (4101 and 4103 to 4110, `摩拉玩法_11级` to `_56级`) paying 12,000, 20,000, 28,000, 36,000, 44,000 and 52,000 Mora, then 60,000 from World Level 6 on, as the wiki's table gives each World Level; its Revelation row's first preview gives 7 to 8 Wanderer's Advice and 3 to 4 Adventurer's Experience at World Level 0. Each preview also counts 100 Adventure EXP and the Companionship EXP (10, 15 or 20), which the claim leaves out of its draw. The Companionship EXP is granted apart, as the [original resin](../../specs/genshin/original-resin/design.md) page holds; the 100 Adventure EXP is settled under the decisions below.
 - **Cleared but unclaimed stays until the reset.** One cleared but unclaimed stays where it is until the daily reset, and nothing moves meanwhile.
-- **Claimed outcrops move on, or stay claimed.** A claim moves the outcrop to the first place its place lists as next, or to the place after when the other kind stands there, where it waits again. Where neither place is free, it stays claimed in its place, a stage no event moves until the daily reset, as the [as-built page](../../specs/genshin/ley-line-outcrops/design.md) already states.
+- **Claimed outcrops move on, or stay claimed.** Provisional: a claim moves the outcrop to the nearest other fitted place of its region, not the one the other kind stands at, where it waits again. It maps to the dump's place chain by position once the scene-group export lands. Where no place is free, it stays claimed in its place until the daily reset, as the [as-built page](../../specs/genshin/ley-line-outcrops/design.md) states.
 - **Liyue opens at Adventure Rank 18, as the dump's table has it.** The dump is the game's latest data, so its table wins over the wiki's 8 and 12 for Liyue. The reference clip of the map at ranks 8 and 18 is a check of this, no longer the thing that decides it. The [as-built page](../../specs/genshin/ley-line-outcrops/design.md) already reads the table.
 - **A claim grants the spent resin's Adventure EXP, once.** Each preview's 100 Adventure EXP is the EXP of the 20 resin a claim spends, five a point, which `claimOriginalResin` grants through `gainAdventureExp`. `claimResinReward` leaves the preview's Adventure EXP item out of the reward list it takes in, so it is granted once through that path and never again. Two claims at twice the price grant two claims' worth, and a Condensed Resin claim, which spends no resin, grants none.
 
@@ -21,13 +21,13 @@ The [ley line outcrops](../../specs/genshin/ley-line-outcrops/design.md) page ho
 
 ```mermaid
 stateDiagram-v2
-  [*] --> Waiting: daily reset, at a drawn group's first place
+  [*] --> Waiting: daily reset, at a drawn fitted place
   Waiting --> Fighting: touched
   Fighting --> Cleared: every enemy defeated
   Cleared --> Claimed: resin spent at the blossom
   Cleared --> [*]: daily reset
   Cleared --> Claimed: claimed where no place is free
-  Claimed --> Waiting: moved to the next place in its group
+  Claimed --> Waiting: moved to the nearest other place
 ```
 
 ## Scope and order

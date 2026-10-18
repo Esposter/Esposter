@@ -8,17 +8,17 @@ The rules a region's two ley line blossoms follow, read from the game's tables b
 flowchart TD
   D["Dump: the blossom refresh, group and section order tables"] -->|"genshin:assets outcrops"| R["data/leyLine/regions: one slice per city, with kinds"]
   R --> O{"computeOutcropKindOpen: the rank and nations' areas"}
-  R --> S["drawOutcropPlace: a section from the day's random, its first place"]
-  R --> N["computeNextOutcropPlace: next place, or the one after if the other kind stands there"]
+  R --> S["computeDailyOutcrops: each kind's place drawn from the fitted places, the day's random picking"]
+  R --> N["computeNextOutcropPlace: the nearest other fitted place, not the one the other kind stands at"]
 ```
 
 ## Decisions
 
 - **Two kinds per region, read off the refresh rows.** A ley line kind is a blossom refresh whose type is `BLOSSOM_REFRESH_EXP`, the Revelation, or `BLOSSOM_REFRESH_SCOIN`, the Wealth. The rows name the city ids 1 to 7, Mondstadt to Snezhnaya in the game's order, and each of those regions gets its two kinds. Dragonspine, Blitz Rush and the Blossom Island refreshes are other challenges and read no kind.
 - **Opened by rank, and by a nation's area, as the table says.** Mondstadt opens Revelation at Adventure Rank 8 and Wealth at 12. Liyue's rows open both at 18 with no area condition, which differs from the wiki's 8 and 12 for Liyue: the table is read, and the difference is a [recording owed](../../../changes/genshin-roadmap/tasks.md). Every other region opens both at 18 once a nation's area is unlocked. The table's "UNLOCK_ANY_AREA_IN_CITY" is read as that nation's Statue of The Seven activated, since a statue unlocks its area.
-- **Sections in the game's order.** A region's sections are its city's section order rows, in their `order`, those with no place left out. Fontaine, Natlan and Snezhnaya have kinds but no section order rows, so their draw has no section and starts no outcrop.
-- **Started at a drawn section's first place.** Each kind starts in a section drawn at random from the region's, with the day's seeded random, at the section's lowest numbered place. The table names no start. The lowest is a place no other place in its section moves to, in every section of Mondstadt, Liyue, Inazuma and Sumeru except Sumeru's 4004, whose places form a loop with no such place, where the lowest is taken too.
-- **Moved on along the places each names.** A claimed outcrop moves to the first place its place lists as next, the rest of that list read by no rule yet. When the other kind stands there, it moves to the place after, the next of that next. Where neither is free, or the place lists no next, it stays until the daily reset. A next place may sit in another section of the same city, and the move follows it.
+- **Sections kept, read by no rule yet.** A region's sections are kept in the data in their order, so the dump's place chain can be joined to the fitted places by position once the scene-group export lands. No draw reads them yet.
+- **Started at a drawn fitted place.** Each kind starts at a fitted place drawn at random from those no kind before it holds, with the day's seeded random. A kind with no place left starts none.
+- **Moved on to the nearest place.** A claimed outcrop moves to the nearest fitted place of its region but its own and not the one the other kind stands at, where it waits; where none is free it stays claimed. Provisional until the dump's place chain is joined to the fitted places by position.
 - **The daily reset is 04:00.** The refresh rows' `refreshTime` is 04:00 in the game's day, the reset every kind starts over at. The random stream a reset draws from is the caller's, and nothing wires the reset yet.
 - **Settled calls on the rest of the table.** The rank each city's "BlossomOpenExcelConfigData" row gives gates nothing a kind opens by, so it is not read. Each ley kind's "BlossomChestExcelConfigData" resin is 20, the price Original Resin already charges. The groups' refresh type numbers are not read, since the dump holds no enum naming them: a kind's draw ranges over every place of its region's sections.
 
@@ -46,10 +46,9 @@ flowchart TD
 | `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`           | a kind's Adventure Rank and the nations whose areas it needs unlocked               |
 | `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`             | a region's kinds, sections and places, as its slice is written                      |
 | `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`  | whether a kind is open at a rank with the listed areas unlocked                     |
-| `packages/genshin-world/src/services/leyLine/drawOutcropPlace.ts`        | a kind's starting place, from a drawn section's lowest numbered place               |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`            | the Ley Line Blossoms of the official map written into each region's outcrop places |
 | `packages/genshin-world/src/services/leyLine/computeOutcropCamp.ts`      | the camp a touch spawns at a waiting outcrop's place                                |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | a claimed outcrop's next place, or the one after when the other kind stands there   |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | the nearest other fitted place, or none where no place is free                      |
 
 ## Sources
 

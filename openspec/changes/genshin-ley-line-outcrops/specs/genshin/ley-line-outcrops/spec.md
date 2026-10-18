@@ -61,15 +61,15 @@ A cleared but unclaimed outcrop SHALL stay where it is until the daily reset.
 - **THEN** the outcrop stays in its place
 - **AND** nothing moves
 
-### Requirement: A claimed outcrop moves to the next place in its group
+### Requirement: A claimed outcrop moves to the nearest other place
 
-A claimed outcrop SHALL move to the next place in its group.
+A claimed outcrop SHALL move to the nearest other fitted place of its region.
 
-#### Scenario: Claiming moves the outcrop to its group's next place
+#### Scenario: Claiming moves the outcrop to the nearest other place
 
 - **GIVEN** an outcrop has been claimed
 - **WHEN** the claim completes
-- **THEN** the outcrop waits at the next place in its group
+- **THEN** the outcrop waits at the nearest other place
 
 ### Requirement: The daily reset draws new outcrop places
 
