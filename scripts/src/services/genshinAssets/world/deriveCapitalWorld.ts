@@ -5,6 +5,7 @@ import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { GENSHIN_ANIMESTUDIO_OPTIONS, TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
@@ -29,6 +30,7 @@ import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDeri
 import { readLodPathHashes } from "#src/services/genshinAssets/world/readLodPathHashes";
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
+import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectCityAreasInView";
@@ -154,9 +156,13 @@ export const deriveCapitalWorld = async (
       return prefab ? [{ prefab, prefabId }] : [];
     }),
   }));
-  // The 2x2 of terrain tiles from the capital's own tile, each TerrainData found in the blocks naming a terrain tile
+  // The terrain tiles the capital's 2x2 and every area outline reach, each TerrainData found in the blocks naming a tile
   const capitalTile = { column: Math.floor(place.x / TERRAIN_TILE_SIZE), row: Math.floor(place.z / TERRAIN_TILE_SIZE) };
-  const terrainNames = getTerrainTileNames(capitalTile);
+  const terrainNames = getTerrainTileNames(
+    capitalTile,
+    await readGroundPieceAreas(component),
+    await readWorldOrigin(component),
+  );
   const terrainAssets = await readIndexedAssets(
     ({ name }) => name.startsWith(TERRAIN_NAME_PREFIX),
     GENSHIN_ANIMESTUDIO_OPTIONS,
