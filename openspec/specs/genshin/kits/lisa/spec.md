@@ -38,6 +38,22 @@ Violet Arc's press SHALL apply one Conductive stack to each enemy it strikes, up
 - **WHEN** the player uses a normal attack that strikes an enemy
 - **THEN** no Conductive stack is applied
 
+### Requirement: Ascension 1 charged attack stacks
+
+From Ascension 1, each enemy Lisa's charged attack strikes SHALL gain one Conductive stack, up to three per enemy.
+
+#### Scenario: Charged attack at Ascension 1 adds a stack
+
+- **GIVEN** Lisa has her first ascension
+- **WHEN** her charged attack strikes an enemy
+- **THEN** that enemy gains one Conductive stack
+
+#### Scenario: Charged attack below Ascension 1 adds none
+
+- **GIVEN** Lisa has not reached her first ascension
+- **WHEN** her charged attack strikes an enemy
+- **THEN** no Conductive stack is applied
+
 ### Requirement: Violet Arc's hold
 
 Holding Violet Arc SHALL release the hold on its own after 4 seconds, and the hold SHALL strike each enemy for more damage and poise the more Conductive stacks it has, consuming those stacks.

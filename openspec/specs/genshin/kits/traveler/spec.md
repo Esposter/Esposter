@@ -30,7 +30,7 @@ The Traveler's hits SHALL deal the element of her form, which is none until a st
 
 ### Requirement: The Traveler's skill and burst
 
-The Traveler's skill SHALL last 5 seconds with one charge, and her burst SHALL be a 15-second burst costing 60 energy.
+The Traveler's skill SHALL have a 5-second cooldown and one charge, and her burst SHALL have a 15-second cooldown and cost 60 energy.
 
 #### Scenario: Burst cast with enough energy
 
