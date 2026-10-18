@@ -12,7 +12,7 @@ Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line 
 - **The fish fights back with its skills.** Each fish's skills from `FishSkillExcelConfigData` act on the tension and the hit points on a clock of their own; the rod's pull and the struggles are read from the skill rows once the reel's zone is.
 - **The stock limits stay unread.** Each pool's two limit numbers have scrambled names, and their meaning is not settled by any table here, so they wait on a reading.
 - **What a catch gives.** The fish itself into the bag, its reward row, and proficiency toward the Fishing Association's rewards, exchanged at its shop ([shops](../genshin-shops/design.md)).
-- **Opened as the game opens it**, once the Serenitea Pot is owned and its quest is done, as the wiki gives the unlock.
+- **Opened as the game opens it**, once the Serenitea Pot is owned and its quest is done, as the wiki gives the unlock. The realm's Adventure Rank 28 (`checkIsHomeRealmOpen`) opens the pot's realm and does not gate fishing; `checkIsFishingOpen` holds this rule.
 
 ## How it works
 

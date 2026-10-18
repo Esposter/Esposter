@@ -1,7 +1,7 @@
 ## 1. The bite
 
 - [x] 1.1 Write the bite as a pure step: the nibble drawn from the fish's feeler range, the bite, the strike, and the lapse at the bite timeout. Verify: stepFishingBite.test.ts written first and seen failing, named after the scenarios 'A strike while nibbling scares the fish off', 'A bite left unstruck lapses' and 'A strike while biting starts the reel'.
-- [ ] 1.2 Open fishing at a point only once the Serenitea Pot is owned and its quest is done. Verify: tests named after the scenarios 'Fishing stays closed before the Serenitea Pot is owned' and 'Fishing opens at a point once the Serenitea Pot is owned' written first and seen failing.
+- [x] 1.2 Open fishing at a point only once the Serenitea Pot is owned and its quest is done. Verify: tests named after the scenarios 'Fishing stays closed before the Serenitea Pot is owned' and 'Fishing opens at a point once the Serenitea Pot is owned' written first and seen failing.
 
 ## 2. The reel
 
