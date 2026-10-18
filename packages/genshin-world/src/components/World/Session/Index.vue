@@ -42,6 +42,7 @@ import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
@@ -296,6 +297,8 @@ const { chestInteractables, openChestById } = useWorldChests({
   setWallet,
   wallet,
 });
+// The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
+const { quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
@@ -588,6 +591,8 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
+          if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.QuickUseGadget))
+            quickUseEquippedGadget(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
             (action, index) =>
