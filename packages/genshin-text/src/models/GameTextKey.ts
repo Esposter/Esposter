@@ -92,6 +92,8 @@ export enum GameTextKey {
   CandlecapMushroom = "767225220",
   Carrot = "3407195260",
   Cecilia = "3828726124",
+  // The namecard picker's title, the Change Namecard the Paimon profile opens with
+  ChangeNamecard = "3755125824",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs

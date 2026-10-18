@@ -21,7 +21,8 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
 </script>
 
 <template>
-  <div class="namecard-dialog" role="dialog" aria-modal="true">
+  <div class="namecard-dialog" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ChangeNamecard]">
+    <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.ChangeNamecard] }}</p>
     <GameButton
       v-for="{ itemId, name } of namecards"
       :key="itemId"
@@ -57,6 +58,15 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
   padding: calc(var(--unit) * 16);
   background: rgb(14 22 32 / 92%);
   transform: translate(-50%, -50%);
+}
+
+/* Provisional: the title's size and colour are the game's heading colour until the parity compare fits it */
+.title {
+  margin: 0;
+  color: #d0bf9f;
+  font-size: calc(var(--unit) * 27);
+  font-weight: 600;
+  text-align: center;
 }
 
 .close {
