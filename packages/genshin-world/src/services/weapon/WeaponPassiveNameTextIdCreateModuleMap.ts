@@ -21,6 +21,7 @@ import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/cre
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
 import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
+import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/createDeathlyPactPassiveModule";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
@@ -356,4 +357,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1301139739": createByakuyaKougetsuPassiveModule,
   // Extinguishing Precept (Calamity Queller)
   "131958235": createExtinguishingPreceptPassiveModule,
+  // Deathly Pact (Absolution)
+  "2056241443": createDeathlyPactPassiveModule,
 };
