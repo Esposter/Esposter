@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -26,7 +27,13 @@ import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-// Adds a passive whose strike damage bonus is gated on the team's effects being passed, keeping the real passives as they are
+// The team's effects the gated passive is given, a non-empty list so only that list itself passes the gate
+const { GATED_EFFECTS } = vi.hoisted(() => ({
+  GATED_EFFECTS: [{ characterId: 1, id: "test", kind: "status", secondsRemaining: 1 }] satisfies KitEffect[],
+}));
+
+// Adds a passive whose strike damage bonus is gated on the team's effects being the list the test passes, keeping the
+// real passives as they are
 vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (importOriginal) => {
   const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal<{
     WeaponPassiveNameTextIdCreateModuleMap: Record<string, unknown>;
@@ -34,7 +41,9 @@ vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (im
   return {
     WeaponPassiveNameTextIdCreateModuleMap: {
       ...WeaponPassiveNameTextIdCreateModuleMap,
-      GATED: (): PassiveModule => ({ getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects ? 0.1 : 0) }),
+      GATED: (): PassiveModule => ({
+        getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects === GATED_EFFECTS ? 0.1 : 0),
+      }),
     },
   };
 });
@@ -238,7 +247,7 @@ describe(getWeaponPassiveKit, () => {
         },
         createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
         createParty([TRAVELER_CHARACTER_ID]),
-        [],
+        GATED_EFFECTS,
       ),
     ).toBe(0.1);
   });
