@@ -13,7 +13,9 @@ describe(healPartyMember, () => {
     healPartyMember(party, 1, 0.75, 2);
 
     expect({ healthChanges: party.healthChanges, healthShare: getPartyMember(party, 1).healthShare }).toStrictEqual({
-      healthChanges: [{ characterId: 1, healthShare: 0.5, overflowHealthShare: 0.25, sourceCharacterId: 2 }],
+      healthChanges: [
+        { bondOfLifeShare: 0, characterId: 1, healthShare: 0.5, overflowHealthShare: 0.25, sourceCharacterId: 2 },
+      ],
       healthShare: 1,
     });
   });

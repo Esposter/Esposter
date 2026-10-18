@@ -31,6 +31,7 @@ const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0.2, 1, 2
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
 });
@@ -45,6 +46,7 @@ describe(createFalconsDefiancePassiveModule, () => {
 
     expect(context.party.healthChanges).toStrictEqual([
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: wielder.attributes.attack / wielder.attributes.maxHealth,
         overflowHealthShare: 0,

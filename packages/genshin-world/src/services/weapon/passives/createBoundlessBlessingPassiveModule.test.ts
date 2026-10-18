@@ -92,7 +92,13 @@ describe(createBoundlessBlessingPassiveModule, () => {
     boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), context, wielder);
     stepKitSeconds(context, 4.5);
     boundlessBlessingPassiveModule.onKitEvent?.(
-      { characterId: TRAVELER_CHARACTER_ID, healthShare: 0, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare: 0,
+        bondOfLifeShare: 0,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
       context,
       wielder,
     );

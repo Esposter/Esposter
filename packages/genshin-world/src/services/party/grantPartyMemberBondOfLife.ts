@@ -6,6 +6,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // The wiki's stacking examples, Clorinde's and Sigewinne's, read as additive)
 export const grantPartyMemberBondOfLife = (party: Party, characterId: number, bondOfLifeShare: number): void => {
   const partyMember = getPartyMember(party, characterId);
-  if (!partyMember.bondOfLifeShare) partyMember.bondOfLifeClearedShare = 0;
-  partyMember.bondOfLifeShare = (partyMember.bondOfLifeShare ?? 0) + bondOfLifeShare;
+  if (partyMember.bondOfLifeShare === 0) partyMember.bondOfLifeClearedShare = 0;
+  partyMember.bondOfLifeShare += bondOfLifeShare;
 };

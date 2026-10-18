@@ -107,7 +107,7 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
     partyMember.healthShare = 0.5;
     partyMember.bondOfLifeClearedShare = 0.25;
     finaleOfTheDeepPassiveModule.onKitEvent?.(
-      { ...clearHealth(0), healthShare: 0.25, bondOfLifeShare: undefined },
+      { ...clearHealth(0), healthShare: 0.25, bondOfLifeShare: 0 },
       context,
       wielder,
     );

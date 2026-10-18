@@ -26,6 +26,7 @@ const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([8, 10, 0, 0
 const healthGained: KitEvent = {
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0.5,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 };

@@ -27,6 +27,7 @@ const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.24, 8, 0, 0])
 const createHealthChanged = (characterId: number, healthShare: number): KitEvent => ({
   characterId,
   healthShare,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 });
