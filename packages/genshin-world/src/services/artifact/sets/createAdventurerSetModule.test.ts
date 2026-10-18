@@ -75,4 +75,23 @@ describe(createAdventurerSetModule, () => {
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
+  test("a chest opened during the restoration restarts it", () => {
+    expect.hasAssertions();
+
+    const party = createParty(PARTY_CHARACTER_IDS);
+    getPartyMember(party, wearer.characterId).healthShare = 0.1;
+    const context = createKitTestContext(wearer, { party });
+    const openChest = () =>
+      adventurerSetModule.onKitEvent?.(
+        { characterId: wearer.characterId, kind: KitEventKind.ChestOpened },
+        context,
+        wearer,
+      );
+    openChest();
+    stepSeconds(context, 2);
+    openChest();
+    stepSeconds(context, 6);
+
+    expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.52);
+  });
 });

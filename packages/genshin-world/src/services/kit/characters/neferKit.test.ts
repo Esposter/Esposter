@@ -1,7 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createNeferKitBehaviour, NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

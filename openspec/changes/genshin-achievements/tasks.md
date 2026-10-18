@@ -5,7 +5,7 @@
 
 ## 2. Quest triggers
 
-- [ ] 2.1 Count a quest trigger by its named sub-quest and a parent-quest trigger by its main quest. Verify: tests named after the scenarios 'a parent-quest trigger counts when its main quest finishes' and 'an OR trigger counts each named quest once', seen failing first.
+- [x] 2.1 Count a quest trigger by its named sub-quest and a parent-quest trigger by its main quest. Verify: tests named after the scenarios 'a parent-quest trigger counts when its main quest finishes' and 'an OR trigger counts each named quest once', seen failing first.
 
 ## 3. Server-fired achievements
 

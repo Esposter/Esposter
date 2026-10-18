@@ -43,7 +43,10 @@ describe(advanceAchievements, () => {
       { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
       EPOCH,
     );
-    expect(firstAdvance).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 1 }]]) });
+    expect(firstAdvance).toStrictEqual({
+      primogems: 0,
+      progressMap: new Map([[COUNTED_ID, { count: 1, countedTargetIds: [FIRST_QUEST_ID] }]]),
+    });
     const secondAdvance = advanceAchievements(
       [counted],
       firstAdvance.progressMap,
@@ -54,6 +57,24 @@ describe(advanceAchievements, () => {
       primogems: PRIMOGEMS,
       progressMap: new Map([[COUNTED_ID, { count: 2, finishedAt: EPOCH }]]),
     });
+  });
+
+  test("an OR trigger counts each named quest once", () => {
+    expect.hasAssertions();
+    const fiveQuests: Achievement = { ...counted, progress: 5 };
+    const firstAdvance = advanceAchievements(
+      [fiveQuests],
+      new Map(),
+      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
+      EPOCH,
+    );
+    const repeatedAdvance = advanceAchievements(
+      [fiveQuests],
+      firstAdvance.progressMap,
+      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
+      EPOCH,
+    );
+    expect(repeatedAdvance).toStrictEqual(firstAdvance);
   });
 
   test("an unwatched trigger leaves its achievements at zero", () => {
@@ -92,7 +113,7 @@ describe(advanceAchievements, () => {
     expect.hasAssertions();
     const secondQuestEvent = { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: SECOND_QUEST_ID };
     const held = advanceAchievements([counted, tier], new Map(), secondQuestEvent, EPOCH);
-    expect(held.progressMap).toStrictEqual(new Map([[COUNTED_ID, { count: 1 }]]));
+    expect(held.progressMap).toStrictEqual(new Map([[COUNTED_ID, { count: 1, countedTargetIds: [SECOND_QUEST_ID] }]]));
     const tierFinishing = advanceAchievements(
       [counted, tier],
       held.progressMap,
@@ -135,7 +156,7 @@ describe(advanceAchievements, () => {
         { kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: CHEST_ID },
         EPOCH,
       ),
-    ).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 1 }]]) });
+    ).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 1, countedTargetIds: [CHEST_ID] }]]) });
   });
 
   test("a material trigger counts the quantity the event gains", () => {

@@ -136,22 +136,18 @@ describe(createAlbedoKitBehaviour, () => {
     expect(hitmarks).toStrictEqual([145, 150, 155, 160, 165, 170, 175]);
   });
 
-  describe("ascension 4's team Elemental Mastery", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  // Ascension 4's team Elemental Mastery
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(
-        tectonicTideBuffs(createAlbedoCombatant(4)).map(({ amount, secondsRemaining }) => ({
-          amount,
-          secondsRemaining,
-        })),
-      ).toStrictEqual([{ amount: 125, secondsRemaining: 10 }]);
-    });
+    expect(
+      tectonicTideBuffs(createAlbedoCombatant(4)).map(({ amount, secondsRemaining }) => ({ amount, secondsRemaining })),
+    ).toStrictEqual([{ amount: 125, secondsRemaining: 10 }]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
-    });
+    expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
   });
 });

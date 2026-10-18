@@ -45,26 +45,21 @@ describe(createKeqingKitBehaviour, () => {
     ]);
   });
 
-  describe("ascension 4's Starward Sword buffs", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  // Ascension 4's Starward Sword buffs
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(
-        castStarwardSword(4).map(({ amount, attribute, secondsRemaining }) => ({
-          amount,
-          attribute,
-          secondsRemaining,
-        })),
-      ).toStrictEqual([
-        { amount: 0.15, attribute: Attribute.CriticalRate, secondsRemaining: 8 },
-        { amount: 0.15, attribute: Attribute.EnergyRecharge, secondsRemaining: 8 },
-      ]);
-    });
+    expect(
+      castStarwardSword(4).map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
+    ).toStrictEqual([
+      { amount: 0.15, attribute: Attribute.CriticalRate, secondsRemaining: 8 },
+      { amount: 0.15, attribute: Attribute.EnergyRecharge, secondsRemaining: 8 },
+    ]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castStarwardSword(3)).toStrictEqual([]);
-    });
+    expect(castStarwardSword(3)).toStrictEqual([]);
   });
 });

@@ -31,6 +31,6 @@ describe(rollChestDrops, () => {
   test("pours nothing from a kind with no pool", () => {
     expect.hasAssertions();
 
-    expect(rollChestDrops(ChestKind.Luxurious, () => 0.999)).toStrictEqual([]);
+    expect(rollChestDrops(ChestKind.Remarkable, () => 0.999)).toStrictEqual([]);
   });
 });

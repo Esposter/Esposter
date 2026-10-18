@@ -3,6 +3,7 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
+import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -44,7 +45,7 @@ const regionJumps = computed(() =>
         @click="emit('jump', landmark)"
       >
         <span>{{ areaName }}</span>
-        <span class="kind">{{ gameText[GameTextKey.StatueOfTheSeven] }}</span>
+        <span class="kind">{{ gameText[computeJumpLandmarkTextKey(landmark)] }}</span>
       </GameButton>
     </section>
   </nav>
