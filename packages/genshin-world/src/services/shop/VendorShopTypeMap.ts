@@ -5,4 +5,18 @@ export const VendorShopTypeMap: Partial<Record<string, number>> = {
   "1423": 1004,
   // Marjorie, who runs With Wind Comes Glory as the Souvenir Shop that trades Anemo Sigils
   "1435": 1002,
+  // Flora, Mondstadt, on the Flora shop
+  "1425": 1011,
+  // Charles, Mondstadt, on the Charles shop
+  "1465": 1012,
+  // Shiliu, Mondstadt, on the Shiliu shop
+  "1640": 1013,
+  // Schulz, Mondstadt, on the Schulz shop
+  "1638": 1014,
+  // Brook, Mondstadt, on the Brook shop
+  "1541": 1015,
+  // Draff, Mondstadt, on the Draff shop
+  "1537": 1017,
+  // Chloris, Mondstadt, on the Chloris shop
+  "1657": 1018,
 };
