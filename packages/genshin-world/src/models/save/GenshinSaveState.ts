@@ -13,10 +13,12 @@ import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { MailSave } from "#src/models/mail/MailSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
@@ -58,6 +60,7 @@ export interface GenshinSaveState {
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];
   inventory: Inventory;
+  mails: MailSave[];
   namecardItemId: number;
   openedChestIds: ReadonlySet<string>;
   party: Party;
@@ -70,6 +73,7 @@ export interface GenshinSaveState {
   // The Abyss's progress by cycle, keyed as the save keys it
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
   solvedPuzzleIds: ReadonlySet<string>;
+  travelerBirthday: TravelerBirthdaySave | undefined;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;

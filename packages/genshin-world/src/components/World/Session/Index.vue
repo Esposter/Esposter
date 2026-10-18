@@ -51,6 +51,7 @@ import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
+import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
@@ -73,6 +74,7 @@ import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
+import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
@@ -476,6 +478,28 @@ const { achievementData } = useWorldAchievements({
   getWorldNow,
   language,
   screenKind,
+  setWallet,
+  wallet,
+});
+// The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
+// The Mail screen claims them into the bag and wallet
+const {
+  claim: claimMail,
+  claimAll: claimAllMails,
+  isBagFull: isMailBagFull,
+  mailData,
+  mails,
+  markMailRead,
+} = useWorldMail({
+  gameDataBaseUrl,
+  getWorldNow,
+  inventory,
+  language,
+  materialDataMap,
+  names: nameText,
+  savedMails: savedState.mails,
+  savedTravelerBirthday: savedState.travelerBirthday,
+  setInventory,
   setWallet,
   wallet,
 });
@@ -927,6 +951,7 @@ useWorldSaveSync({
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
     inventory: inventory.value,
+    mails: mails.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
     party,
@@ -938,6 +963,7 @@ useWorldSaveSync({
     shopPurchases: shopPurchases.value,
     spiralAbyssProgressMap: abyssProgressMap.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
+    travelerBirthday: savedState.travelerBirthday,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
@@ -1802,6 +1828,23 @@ defineExpose({ jumpTo, readCameraPosition });
           :text-map="archiveData.textMap"
           @close="screenKind = ScreenKind.World"
           @read-book="(entryId) => readBook(entryId)"
+        />
+      </template>
+      <template v-if="mailData" #[ScreenKind.Mail]>
+        <MailScreen
+          :birthday-mail-ids="mailData.birthdayMailIds"
+          :game-text
+          :is-bag-full="isMailBagFull"
+          :mail-rows="mailData.mailRows"
+          :mails
+          :material-data-map="materialDataMap"
+          :names="nameText"
+          :now="getWorldNow()"
+          :text-map="mailData.textMap"
+          @claim="(mailId) => claimMail(mailId)"
+          @claim-all="claimAllMails()"
+          @close="screenKind = ScreenKind.World"
+          @read="(mailId) => markMailRead(mailId)"
         />
       </template>
       <template #[ScreenKind.Quests]>
