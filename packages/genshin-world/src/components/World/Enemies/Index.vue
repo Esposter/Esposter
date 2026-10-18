@@ -198,7 +198,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       emit(
         "defeat",
         enemy,
-        computeEnemyDrops(enemyKind, enemy.level, () => Math.random()),
+        computeEnemyDrops(enemyKind, enemy.traits, enemy.level, () => Math.random()),
       );
       // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
       const camp = [...regionDataMap.values()]
@@ -257,7 +257,7 @@ onBeforeRender(({ delta }) => {
   if (!isHeld) fixedStepLoop.advance(delta);
   let count = 0;
   let flashCount = 0;
-  for (const { elementalState, enemyKindId, heading, hitSeconds, position, state } of enemyMap.values()) {
+  for (const { elementalState, heading, hitSeconds, position, state, traits } of enemyMap.values()) {
     if (count === ENEMY_CAPACITY) break;
     point.set(position.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
     enemyMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
@@ -265,7 +265,7 @@ onBeforeRender(({ delta }) => {
       count,
       color.setHex(hitSeconds < ENEMY_HIT_TINT_SECONDS ? HIT_TINT_COLOR : EnemyStateColorMap[state]),
     );
-    sightProxy.setColorAt(count, sightColor.set(computeEnemySightColor(elementalState, enemyKindId)));
+    sightProxy.setColorAt(count, sightColor.set(computeEnemySightColor(elementalState, traits.element)));
     if (hitSeconds < ENEMY_HIT_FLASH_SECONDS) {
       hitFlashMesh.setMatrixAt(flashCount, matrix.makeTranslation(point.x, point.y, point.z));
       flashCount += 1;

@@ -1,7 +1,7 @@
 import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 import type { Reaction } from "#src/models/combat/Reaction";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { MoondriftHarmonyHit } from "#src/models/enemy/MoondriftHarmonyHit";
@@ -27,7 +27,7 @@ export interface Enemy {
   // The reactions its elements brought on their own as they aged, held until the kit on the field prices them
   elementalReactions: Reaction[];
   elementalState: ElementalState;
-  enemyKindId: EnemyKindId;
+  enemyKindId: number;
   heading: number;
   health: number;
   hitSeconds: number;
@@ -47,4 +47,6 @@ export interface Enemy {
   state: EnemyState;
   stateSeconds: number;
   statuses: EnemyStatus[];
+  // The traits its kind has, as the traits map writes them or its family's defaults give them, fixed when it is created
+  traits: EnemyKindTraits;
 }

@@ -1,6 +1,7 @@
 // The kinds the world places, each by the game's own monster id. A kind is added with the first camp that places it,
 // With its traits, and its row is then read from the game's data into the kinds' table; a boss is added ahead of its
 // Camp, with its blossom, so its claim has a kind to read
+// A kind only a Spiral Abyss chamber fights is not added here: its traits are its family's defaults, from its row
 export enum EnemyKindId {
   AnemoSlime = 20010301,
   EyeOfTheStorm = 20020101,

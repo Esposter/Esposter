@@ -1,6 +1,5 @@
 import { Element } from "#src/models/Element";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
-import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { z } from "zod";
 
@@ -18,7 +17,8 @@ export interface EnemyKind {
   enemyFamily: EnemyFamily;
   enemyType: EnemyType;
   healthCurve: string;
-  id: EnemyKindId;
+  // The monster id the kind is read from in the game's monster table, which the regions' camps place or a Spiral Abyss chamber fights
+  id: number;
   // The text id of the kind's name in the game's text, which the names of the world's language are read by
   nameTextId: string;
   physicalResistance: number;
@@ -35,7 +35,7 @@ export const enemyKindSchema = z.object({
   enemyFamily: z.enum(EnemyFamily) satisfies z.ZodType<EnemyFamily>,
   enemyType: z.enum(EnemyType) satisfies z.ZodType<EnemyType>,
   healthCurve: z.string().min(1),
-  id: z.enum(EnemyKindId) satisfies z.ZodType<EnemyKindId>,
+  id: z.int().positive(),
   nameTextId: z.string().min(1),
   physicalResistance: z.number(),
 }) satisfies z.ZodType<EnemyKind>;
