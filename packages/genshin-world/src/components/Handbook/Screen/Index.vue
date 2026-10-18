@@ -23,10 +23,16 @@ interface Props {
   dayCommissions: HandbookDayCommission[];
   // The Domains tab's rows, top to bottom: each domain with the one action the player can take with it
   domains: HandbookDomain[];
+  // The most daily Encounter Points the storage holds, in whole points, which the panel's count reads against
+  encounterPointLimit: number;
+  // The daily Encounter Points held, as whole points, which the panel's count shows
+  encounterPoints: number;
   // The game's words in the reader's language
   gameText: GameText;
   // The panel's rewards, in the game's order
   investigationRewards: HandbookReward[];
+  // Whether the Adventure Encounters panel is open at the player's Adventure Rank, so its stage rewards show
+  isAdventureEncountersUnlocked: boolean;
   // The panel's reward footer, shown once every reward is taken
   isRewardClaimed?: true;
   // The names the commissions' titles cite, by their name text id, in the reader's language
@@ -42,8 +48,11 @@ const {
   completedCount,
   dayCommissions,
   domains,
+  encounterPointLimit,
+  encounterPoints,
   gameText,
   investigationRewards,
+  isAdventureEncountersUnlocked,
   longTermEncounterPoints,
   nameText,
   totalCount,
@@ -185,8 +194,10 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
           </svg>
         </li>
         <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
-        <li class="encounter-points">
+        <li v-if="isAdventureEncountersUnlocked" class="encounter-points">
           <p class="encounter-points-title">{{ gameText[GameTextKey.AdventureEncounterRewards] }}</p>
+          <!-- The daily points held over the storage's limit. The dump has no label for this count, so it stands bare until a recording measures the panel -->
+          <p class="encounter-points-daily">{{ encounterPoints }}/{{ encounterPointLimit }}</p>
           <p class="encounter-points-stored">
             {{ gameText[GameTextKey.LongTermEncounterPointsStored] }}
             <span>{{ longTermEncounterPoints }}</span>
@@ -648,6 +659,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 }
 
 .encounter-points-title,
+.encounter-points-daily,
 .encounter-points-stored {
   margin: 0;
   font-weight: 600;

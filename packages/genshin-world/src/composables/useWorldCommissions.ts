@@ -8,6 +8,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ComputedRef, Ref } from "vue";
 
 import { advanceCommissionForQuest } from "#src/services/commission/advanceCommissionForQuest";
+import { checkIsAdventureEncountersUnlocked } from "#src/services/commission/checkIsAdventureEncountersUnlocked";
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
 import { computeEncounterPointOverflow } from "#src/services/commission/computeEncounterPointOverflow";
 import { computeEncounterPointStorage } from "#src/services/commission/computeEncounterPointStorage";
@@ -131,17 +132,31 @@ export const useWorldCommissions = ({
         HALF_POINTS_PER_ENCOUNTER_POINT,
     ),
   );
+  // The Adventure Encounters panel opens at its unlock rank, below which no Encounter Point is spent from the Commissions tab
+  const isAdventureEncountersUnlocked = computed(() => checkIsAdventureEncountersUnlocked(rank.value));
+  // The daily points the storage holds at most, in whole points, which the panel shows beside the points held
+  const encounterPointLimit = computed(() =>
+    Math.floor(
+      computeEncounterPointStorage(commissionDay.value, commissionSlice.value) / HALF_POINTS_PER_ENCOUNTER_POINT,
+    ),
+  );
   // The day's four as the Adventurer Handbook's Commissions tab lists them, none while no region's tasks are read
   const handbookDayCommissions = computed(() =>
     commissionSlice.value
-      ? toHandbookDayCommissions(commissionDay.value, commissionSlice.value, wholeEncounterPoints.value)
+      ? toHandbookDayCommissions(
+          commissionDay.value,
+          commissionSlice.value,
+          isAdventureEncountersUnlocked.value ? wholeEncounterPoints.value : 0,
+        )
       : [],
   );
   return {
     commissionDay,
     commissionSlice,
+    encounterPointLimit,
     encounterPoints,
     handbookDayCommissions,
+    isAdventureEncountersUnlocked,
     longTermEncounterPoints,
     wholeEncounterPoints,
     wholeLongTermEncounterPoints,
