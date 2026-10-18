@@ -94,8 +94,9 @@ export const genshinSaveSchema = z
     homeProgress: homeProgressSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
     homePlantings: homePlantingSaveSchema,
-    // The mails the player holds, each once by its id, with when it was delivered and whether it was claimed and read
-    mails: createUniqueArraySchema(mailSaveSchema, "id").max(MAX_MAIL_COUNT),
+    // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
+    // Claimed and read
+    mails: createUniqueArraySchema(mailSaveSchema, ["id", "deliveredAt"]).max(MAX_MAIL_COUNT),
     // The mining outcrops mined since the last reset, each once by its place's id, absent while none is mined
     minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
     inventory: inventorySaveSchema,

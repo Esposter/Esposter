@@ -3,10 +3,11 @@ import type { Primitive } from "type-fest";
 import type { z } from "zod";
 
 // The no-key overload compares items through a Set, which is reference equality, so it is closed to object
-// Output — two structurally equal objects are separate references and would pass as unique
+// Output — two structurally equal objects are separate references and would pass as unique. A composite key is a
+// List of keys whose parts are primitives, as the identifiers joined by the one separator are
 export type CreateUniqueArraySchema = (<TOutput extends object, TInput, TSchema extends z.ZodType<TOutput, TInput>>(
   schema: TSchema,
-  key: UniqueArraySchemaKey<TSchema>,
+  key: UniqueArraySchemaKey<TSchema> | readonly UniqueArraySchemaKey<TSchema>[],
 ) => z.ZodArray<TSchema>) &
   (<TOutput extends Primitive, TInput, TSchema extends z.ZodType<TOutput, TInput>>(
     schema: TSchema,

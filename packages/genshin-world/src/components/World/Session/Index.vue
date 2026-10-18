@@ -1686,11 +1686,9 @@ defineExpose({ jumpTo, readCameraPosition });
           input.readInput(context.delta);
           hudFrame.seconds = context.elapsed;
           if (!isPaused)
-            screenKind = getNextScreenKind(
-              screenKind,
-              inputState.pressedActions,
-              checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
-            );
+            screenKind = getNextScreenKind(screenKind, inputState.pressedActions, {
+              isPaimonMenuLocked: checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
+            });
           if (!isPaused && screenKind === ScreenKind.World)
             stepShortcutWheel(
               inputState.heldActions.has(InputAction.OpenShortcutWheel),
@@ -2174,13 +2172,13 @@ defineExpose({ jumpTo, readCameraPosition });
           :names="nameText"
           :now="worldNow"
           :text-map="mailData.textMap"
-          @claim="(mailId) => claimMail(mailId)"
+          @claim="(mail) => claimMail(mail)"
           @claim-all="claimAllMails()"
           @close="screenKind = ScreenKind.World"
-          @delete-gift="(mailId) => deleteGiftMail(mailId)"
+          @delete-gift="(mail) => deleteGiftMail(mail)"
           @delete-read="deleteReadMails()"
-          @read="(mailId) => markMailRead(mailId)"
-          @pin="(mailId) => toggleMailPin(mailId)"
+          @read="(mail) => markMailRead(mail)"
+          @pin="(mail) => toggleMailPin(mail)"
         />
       </template>
       <template #[ScreenKind.Quests]>

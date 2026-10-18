@@ -134,7 +134,7 @@ Pressing F at a resonated statue SHALL open the Worship Statue, which shows each
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level, then its held count, and each region's level claimed taken from the account's copy, so a level only the guest's copy claimed is claimed again on the account.
+The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the account's found Oculi and each region the account's, its level claimed included, so a level only the guest's copy claimed is claimed again on the account.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -142,27 +142,33 @@ The statues' levels, levels claimed, held counts and found Oculi SHALL be kept w
 - **WHEN** the world opens
 - **THEN** no region is started and no Oculus is found
 
-#### Scenario: Merged saves keep every found Oculus
+#### Scenario: Merged saves keep the account's found Oculi
 
 - **GIVEN** a guest save and an account save with different found Oculi
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds every Oculus either save found
+- **THEN** the merged save holds the Oculi the account found, and not one only the guest found
 
-#### Scenario: A region only one save holds is kept as it is
+#### Scenario: A region only the account holds is kept as it is
 
-- **GIVEN** a region one save holds and the other does not
+- **GIVEN** a region only the account holds
 - **WHEN** the two saves are merged
 - **THEN** the merged save holds that region as it is
 
-#### Scenario: A region both saves hold is the save further on
+#### Scenario: A region only the guest holds is not carried
 
-- **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by the Oculi it holds
+- **GIVEN** a region only the guest holds
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the region of the save further on, its level and held count as they are, with the account's level claimed
+- **THEN** the merged save holds no such region, and the Oculi it held stay found but not held
 
-#### Scenario: A level the account claimed is kept when the copy further on has claimed none
+#### Scenario: A region both saves hold is the account's
 
-- **GIVEN** the account has claimed a level of a region, and the save further on has claimed no level of it
+- **GIVEN** a region both saves hold, the guest's further on by its level or on the same level holding more Oculi
+- **WHEN** the two saves are merged
+- **THEN** the merged save holds the account's region as it is, its level, level claimed and held count together
+
+#### Scenario: A level the account claimed is kept when the guest's copy is further on with none claimed
+
+- **GIVEN** the account has claimed a level of a region, and the guest's copy of it is further on with no level claimed
 - **WHEN** the two saves are merged
 - **THEN** the merged save keeps the level claimed, so its rewards are not paid again
 

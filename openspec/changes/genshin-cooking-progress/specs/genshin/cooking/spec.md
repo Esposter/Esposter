@@ -10,15 +10,15 @@ The dishes learned, each dish's proficiency and each processing's queue SHALL be
 - **WHEN** the save is written and read back
 - **THEN** the learned dish, the proficiency and the queue are the same as before
 
-### Requirement: Two copies of the cooking progress merge without loss
+### Requirement: Two copies of the cooking progress merge, each queue from the account's copy
 
-When two copies of a save are merged, each dish SHALL keep the higher proficiency, the learned dishes SHALL union, and each processing queue SHALL keep the copy started later.
+When two copies of a save are merged, each dish SHALL keep the account's proficiency, the learned dishes SHALL union, and each processing queue SHALL be the account's copy.
 
-#### Scenario: A dish keeps the higher proficiency of the two copies
+#### Scenario: A dish keeps the account's proficiency
 
-- **GIVEN** one copy has a dish's proficiency at three and the other at five
+- **GIVEN** the account's copy has a dish's proficiency at three and the guest's at five
 - **WHEN** the copies are merged
-- **THEN** the dish's proficiency is five
+- **THEN** the dish's proficiency is three
 
 #### Scenario: The learned dishes of both copies union
 
@@ -26,11 +26,11 @@ When two copies of a save are merged, each dish SHALL keep the higher proficienc
 - **WHEN** the copies are merged
 - **THEN** both dishes are learned
 
-#### Scenario: A processing queue keeps the copy started later
+#### Scenario: A processing queue is the account's copy
 
-- **GIVEN** one copy's queue for a processing started earlier than the other's
+- **GIVEN** one copy's queue for a processing started later than the other's
 - **WHEN** the copies are merged
-- **THEN** the queue of the copy started later is kept
+- **THEN** the account's queue is kept, and the guest's is not
 
 ### Requirement: The stove lists the dishes the cook knows
 

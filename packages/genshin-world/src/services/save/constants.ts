@@ -79,10 +79,10 @@ export const MAX_SHOP_PURCHASE_COUNT = 5134;
 // The Corridor's eight floors of three
 export const MAX_ABYSS_CYCLE_COUNT = 256;
 export const MAX_ABYSS_CHAMBER_COUNT = 24;
-// The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
-// To spare
 // The character trials' stages: the dump holds 120 of them, and the cap leaves headroom over that
 export const MAX_CHARACTER_TRIAL_STAGE_COUNT = 256;
+// The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
+// To spare
 export const MAX_STATUE_REGION_COUNT = 32;
 // The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to spare
 export const MAX_OFFERING_ITEM_KIND_COUNT = 8;

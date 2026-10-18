@@ -74,7 +74,7 @@ describe(claimRewards, () => {
     });
   });
 
-  test("a claim is refused whole when the bag has no room", () => {
+  test("a claim is refused whole when the material's stack is full", () => {
     expect.hasAssertions();
 
     const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT);

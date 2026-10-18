@@ -5,7 +5,7 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The cooking as the save holds it: the ids of the dishes learned from instructions, each unique, each dish's proficiency
-// By its id, and each processing's queue by its id, so a queue started on one copy and collected on the other is not lost
+// By its id, and each processing's queue by its id
 export const cookingSaveSchema = z.object({
   learnedRecipeIds: createUniqueArraySchema(z.int().positive()).max(MAX_COOKING_RECIPE_COUNT),
   processingJobs: z

@@ -1,22 +1,12 @@
-import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
-
 import { englishNameText } from "#parity/englishNameText";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
+import { takeOne } from "@esposter/shared";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-const chamber = (id: number, index: number) => ({
-  conditions: [],
-  halfMonsterDescribeIds: [],
-  id,
-  index,
-  monsterLevel: 1,
-});
-// A made-up floor with its three chambers, beside a blessing read by its game text hashes over the English names
-const floors: AbyssFloor[] = [
-  { chambers: [chamber(11, 1), chamber(12, 2), chamber(13, 3)], id: 1, index: 1, teamCount: 1, unlockStarCount: 1 },
-];
-export const props = {
-  blessing: { descriptionTextHash: 2415435448, icon: "UI_TowerBlessing_107", nameTextHash: 1867767671 },
-  floors,
-  gameText: ENGLISH_GAME_TEXT,
-  nameText: englishNameText,
-};
+const periods = await readAbyssPeriods(GAME_DATA_LOCAL_BASE_URL);
+// The Moon Spire's latest period the mirror holds, read with the floors it runs, over the English words and names
+const period = takeOne(periods, periods.length - 1);
+const floors = (await readAbyssFloors(GAME_DATA_LOCAL_BASE_URL)).filter(({ id }) => period.floorIds.includes(id));
+export const props = { blessing: period.blessing, floors, gameText: ENGLISH_GAME_TEXT, nameText: englishNameText };

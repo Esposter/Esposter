@@ -14,8 +14,10 @@ import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
-import { MailExpiryGameTextKeyMap } from "#src/services/mail/MailExpiryGameTextKeyMap";
+import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
+import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -46,13 +48,13 @@ interface MailEntry {
 const { birthdayMailIds, gameText, isBagFull, mailRows, mails, materialDataMap, names, now, textMap } =
   defineProps<Props>();
 const emit = defineEmits<{
-  claim: [mailId: number];
+  claim: [mail: MailSave];
   claimAll: [];
   close: [];
-  deleteGift: [mailId: number];
+  deleteGift: [mail: MailSave];
   deleteRead: [];
-  read: [mailId: number];
-  pin: [mailId: number];
+  read: [mail: MailSave];
+  pin: [mail: MailSave];
 }>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
@@ -61,7 +63,11 @@ const sortedEntries = computed<MailEntry[]>(() =>
     return row ? [{ mail, row }] : [];
   }),
 );
-const selectedMailId = ref<number>();
+const selectedMail = ref<MailSave>();
+// Each delivery of a mail is an entry of its own, so the key takes the delivery as well as the mail's id
+const getEntryKey = ({ mail }: MailEntry): string => [mail.id, mail.deliveredAt].join(ID_SEPARATOR);
+const isSelected = (mail: MailSave): boolean =>
+  selectedMail.value !== undefined && isSameHeldMail(mail, selectedMail.value);
 // Delete Read asks first, and the screen's owner hears of it only once the player confirms
 const isConfirmingDeleteRead = ref(false);
 // Delete on a Gift Mail Box mail asks first, the same way, and closes when the player picks another mail or tab
@@ -72,7 +78,7 @@ const visibleEntries = computed(() =>
   sortedEntries.value.filter(({ mail, row }) => checkIsGiftBoxed(mail, row, birthdayMailIds) === isGiftBoxTab.value),
 );
 const selectedEntry = computed(
-  () => visibleEntries.value.find(({ mail }) => mail.id === selectedMailId.value) ?? visibleEntries.value[0],
+  () => visibleEntries.value.find(({ mail }) => isSelected(mail)) ?? visibleEntries.value[0],
 );
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
@@ -95,7 +101,7 @@ const getItemName = (itemId: number): string => {
 const getStatusText = ({ mail, row }: MailEntry): string => {
   if (checkIsGiftBoxed(mail, row, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
-  return fillGameTextValues(gameText[MailExpiryGameTextKeyMap[unit]], count);
+  return fillGameTextValues(gameText[MailExpiryUnitGameTextKeyMap[unit]], count);
 };
 </script>
 
@@ -141,14 +147,14 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
       <div v-if="visibleEntries.length > 0" class="list" role="tablist" aria-orientation="vertical">
         <MenuListScreenTab
           v-for="entry of visibleEntries"
-          :key="entry.mail.id"
-          :aria-selected="entry.mail.id === selectedEntry?.mail.id"
+          :key="getEntryKey(entry)"
+          :aria-selected="selectedEntry !== undefined && isSameHeldMail(entry.mail, selectedEntry.mail)"
           :data-read="entry.mail.isRead || undefined"
           @click="
             () => {
-              selectedMailId = entry.mail.id;
+              selectedMail = entry.mail;
               isConfirmingDeleteGift = false;
-              emit('read', entry.mail.id);
+              emit('read', entry.mail);
             }
           "
         >
@@ -211,11 +217,11 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           v-else-if="selectedEntry.row.items.length > 0"
           class="claim"
           :kind="GameButtonKind.Pill"
-          @click="emit('claim', selectedEntry.mail.id)"
+          @click="emit('claim', selectedEntry.mail)"
         >
           {{ gameText[GameTextKey.MailClaim] }}
         </GameButton>
-        <GameButton class="pin" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail.id)">
+        <GameButton class="pin" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail)">
           {{ gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
         <GameButton
@@ -243,7 +249,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
             @click="
               () => {
                 isConfirmingDeleteGift = false;
-                emit('deleteGift', selectedEntry.mail.id);
+                emit('deleteGift', selectedEntry.mail);
               }
             "
           >

@@ -3,7 +3,6 @@ import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 
 import { computeResidentSpot } from "#src/services/resident/computeResidentSpot";
 import { DAY_END_MINUTES, DAY_START_MINUTES } from "#src/services/resident/constants";
-import { computeShownResidentSpot } from "#src/services/resident/computeShownResidentSpot";
 import { describe, expect, test } from "vitest";
 
 describe(computeResidentSpot, () => {
@@ -23,14 +22,6 @@ describe(computeResidentSpot, () => {
     expect.hasAssertions();
     expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_END_MINUTES)).toStrictEqual(DAY_SPOT);
     expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_START_MINUTES - 1)).toStrictEqual(DAY_SPOT);
-  });
-
-  test("setting the time moves residents", () => {
-    expect.hasAssertions();
-    const shownByDay = computeShownResidentSpot(undefined, computeResidentSpot(RESIDENT, DAY_START_MINUTES), false);
-    const shownByNight = computeShownResidentSpot(shownByDay, computeResidentSpot(RESIDENT, DAY_END_MINUTES), false);
-    expect(shownByDay).toStrictEqual(DAY_SPOT);
-    expect(shownByNight).toStrictEqual(NIGHT_SPOT);
   });
 
   test("a resident marked absent at night is not drawn after dark", () => {

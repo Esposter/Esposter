@@ -431,6 +431,27 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
+  // A mail is held once per delivery, so a birthday mail delivered again on a later birthday is kept beside the copy held
+  test("a mail held on two deliveries is kept", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: new Date(0).toISOString(), id: 1, isClaimed: true, isPinned: false, isRead: true };
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [mail, { ...mail, deliveredAt: new Date(1).toISOString(), isClaimed: false, isRead: false }],
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(true);
+  });
+
+  // A mail held twice on the same delivery is refused, since one delivery is one held mail
+  test("a mail held twice on the same delivery is refused", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: new Date(0).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
+    const save = { ...EMPTY_GENSHIN_SAVE, mails: [mail, { ...mail, isRead: true }] };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
   // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
   test("a save without quick swap slots is refused", () => {
     expect.hasAssertions();

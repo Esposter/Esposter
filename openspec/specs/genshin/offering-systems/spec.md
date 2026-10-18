@@ -89,7 +89,7 @@ The save SHALL keep the tree's held count and level so that a reload resumes the
 
 - **GIVEN** a guest has offered items at the tree
 - **WHEN** the guest's save merges into an account
-- **THEN** the further level and the held count are kept
+- **THEN** the account's level and held count are kept, and not a further level only the guest holds
 
 ### Requirement: Statues follow the same offering rule
 

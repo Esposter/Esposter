@@ -16,5 +16,8 @@ export const WATATSUMI_SEA_SKY_COLOR = 0x6fb3c9;
 export const SEIRAI_ROCK_COLOR = 0x3b3d42;
 export const TSURUMI_FOG_COLOR = 0xa9aeb3;
 export const TSURUMI_BARE_TREE_COLOR = 0x5a4a40;
+// The timber and roof tile a building kit keeps where its palette leaves them out
+export const INAZUMA_TIMBER_COLOR = 0x5c4033;
+export const INAZUMA_ROOF_TILE_COLOR = 0x3a3f4a;
 // Provisional: the plaster a building kit is coloured with, a trim panel in the game's atlases that the palette does not sample
 export const INAZUMA_PLASTER_COLOR = 0xe9e4d6;

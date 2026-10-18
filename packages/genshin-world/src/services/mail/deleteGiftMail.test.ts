@@ -34,22 +34,31 @@ describe(deleteGiftMail, () => {
   test("removes the gift mail it is asked to delete and keeps the rest", () => {
     expect.hasAssertions();
 
-    expect(deleteGiftMail([mail(1, true), mail(2, false)], mailRows, birthdayMailIds, 1)).toStrictEqual([
+    expect(deleteGiftMail([mail(1, true), mail(2, false)], mailRows, birthdayMailIds, mail(1, true))).toStrictEqual([
       mail(2, false),
     ]);
+  });
+
+  // A held mail is one delivery of its mail, so a delete removes the delivery it names and keeps the other delivery
+  test("removes only the delivery of the gift mail it is asked to delete", () => {
+    expect.hasAssertions();
+
+    const later = { ...mail(1, true), deliveredAt: new Date(1).toISOString() };
+
+    expect(deleteGiftMail([mail(1, true), later], mailRows, birthdayMailIds, later)).toStrictEqual([mail(1, true)]);
   });
 
   // A claimed mail the table flags is in the Gift Mail Box as well, so its delete removes it
   test("removes a claimed mail the table flags", () => {
     expect.hasAssertions();
 
-    expect(deleteGiftMail([mail(2, true)], mailRows, new Set(), 2)).toStrictEqual([]);
+    expect(deleteGiftMail([mail(2, true)], mailRows, new Set(), mail(2, true))).toStrictEqual([]);
   });
 
   // A birthday mail not yet claimed is outside the Gift Mail Box, so the delete leaves it
   test("keeps a mail outside the Gift Mail Box", () => {
     expect.hasAssertions();
 
-    expect(deleteGiftMail([mail(1, false)], mailRows, birthdayMailIds, 1)).toStrictEqual([mail(1, false)]);
+    expect(deleteGiftMail([mail(1, false)], mailRows, birthdayMailIds, mail(1, false))).toStrictEqual([mail(1, false)]);
   });
 });

@@ -9,7 +9,7 @@ export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTex
   [ScreenKind.AdventurerHandbook]: GameTextKey.AdventurerHandbook,
   [ScreenKind.Archive]: GameTextKey.Archive,
   [ScreenKind.BattlePass]: GameTextKey.BattlePass,
-  [ScreenKind.Blessing]: GameTextKey.DomainTitle,
+  [ScreenKind.Blessing]: GameTextKey.StatueBlessing,
   [ScreenKind.Character]: GameTextKey.Character,
   [ScreenKind.CharacterArchive]: GameTextKey.CharacterArchive,
   [ScreenKind.Chat]: GameTextKey.Chat,

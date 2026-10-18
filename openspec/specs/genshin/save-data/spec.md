@@ -187,12 +187,13 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 - **WHEN** the guest signs in
 - **THEN** the account claims that rank's reward again, and is paid for it once from its own bag and wallet
 
-#### Scenario: A mail is kept once by its id, and read or claimed on either copy stays so
+#### Scenario: A mail is kept once per delivery, read on either copy stays so, and a claim only the guest made is not kept
 
-- **GIVEN** a guest and the account each hold a mail with the same id, the account having read it and the guest having claimed it
+- **GIVEN** a guest and the account each hold a mail with the same id and delivery, the account having read it and the guest having claimed it
 - **WHEN** the guest signs in
-- **THEN** the account holds that mail once, read and claimed
-- **AND** a mail only the guest holds is kept
+- **THEN** the account holds that mail once, read and unclaimed
+- **AND** a mail only the guest holds is kept, unclaimed
+- **AND** a mail the guest holds on a later delivery than the account's copy of the same mail is kept beside that copy
 
 ### Requirement: A replaced player is told at once when subscribed and otherwise at the next refused save
 
@@ -302,7 +303,7 @@ The save SHALL NOT hold expeditions, forge queues or the camps cleared, and thos
 
 ### Requirement: The save holds each defeated enemy's respawn time in a camp with no boss
 
-The save SHALL hold the instant each defeated enemy in a camp with no boss comes back, by its spawn key, as an ISO string on the server's clock, and SHALL NOT hold one for an enemy in a camp with a boss. A merge SHALL keep the later of the two copies' instants for each enemy.
+The save SHALL hold the instant each defeated enemy in a camp with no boss comes back, by its spawn key, as an ISO string on the server's clock, and SHALL NOT hold one for an enemy in a camp with a boss. A merge SHALL keep the account's instant for each enemy.
 
 #### Scenario: A defeat in a camp with no boss is saved with its respawn time
 
@@ -316,11 +317,11 @@ The save SHALL hold the instant each defeated enemy in a camp with no boss comes
 - **WHEN** the save is written
 - **THEN** it holds no instant for the member
 
-#### Scenario: The later respawn time is kept when two saves merge
+#### Scenario: The account's respawn time is kept when two saves merge
 
 - **GIVEN** a guest save and an account save each holding a respawn time for the same enemy, the guest's the later
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the guest's respawn time for the enemy
+- **THEN** the merged save holds the account's respawn time for the enemy
 
 ### Requirement: The save holds each mined outcrop until its respawn
 

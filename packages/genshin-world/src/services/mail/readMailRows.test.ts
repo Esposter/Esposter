@@ -5,13 +5,7 @@ import { readMailRows } from "#src/services/mail/readMailRows";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const { INDEX_HASH, ROW_HASH } = vi.hoisted(() => ({ INDEX_HASH: "1".repeat(64), ROW_HASH: "2".repeat(64) }));
-
-// The committed lock names no mail index until the mail table is published, so the test names one with made-up hashes
-vi.mock(import("#src/services/data/gameDataLock"), async (importOriginal) => {
-  const { gameDataLock } = await importOriginal();
-  return { gameDataLock: { ...gameDataLock, indexes: { ...gameDataLock.indexes, "mail/mail": INDEX_HASH } } };
-});
+const ROW_HASH = "2".repeat(64);
 
 describe(readMailRows, () => {
   const gameDataBaseUrl = "mail-rows";

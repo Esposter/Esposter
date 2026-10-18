@@ -1,6 +1,6 @@
-import type { AbyssCarryMember } from "#src/models/spiralAbyss/AbyssCarryMember";
 import type { AbyssChallenge } from "#src/models/spiralAbyss/AbyssChallenge";
 import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
+import type { AbyssClearSettlement } from "#src/models/spiralAbyss/AbyssClearSettlement";
 import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssFloorReward } from "#src/models/spiralAbyss/AbyssFloorReward";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
@@ -12,14 +12,6 @@ import type { PartyMember } from "#src/models/party/PartyMember";
 
 import { claimRewards } from "#src/services/reward/claimRewards";
 import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
-
-// A clear settled: the cycle's progress after it, the party's carry into the next chamber, and the bag and wallet its rewards paid
-export interface AbyssClearSettlement {
-  carry: AbyssCarryMember[];
-  inventory: Inventory;
-  progress: AbyssProgress;
-  wallet: Wallet;
-}
 
 // A chamber's clear recorded and its first-time rewards claimed together. A bag with no room for the rewards refuses the whole
 // Claim, so the clear records nothing and is settled again the next time the chamber is cleared
