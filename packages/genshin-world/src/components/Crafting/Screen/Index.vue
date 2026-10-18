@@ -11,13 +11,13 @@ import { Currency } from "#src/models/inventory/Currency";
 import { checkIsRecipeOpen } from "#src/services/crafting/checkIsRecipeOpen";
 import { CombineTypeGameTextKeyMap } from "#src/services/crafting/CombineTypeGameTextKeyMap";
 import { computeCraftableCount } from "#src/services/crafting/computeCraftableCount";
+import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearnedRecipeCells";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { getItemName } from "#src/services/inventory/getItemName";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { takeOne } from "@esposter/shared";
 import { CraftingScreen, GameScreen } from "genshin-interface";
@@ -68,7 +68,13 @@ const pickedTabId = computed(() =>
 );
 const tabRecipes = computed(() => openRecipes.value.filter((recipe) => recipe.combineType === pickedTabId.value));
 const recipeCells = computed(() =>
-  tabRecipes.value.map((recipe) => ({ id: recipe.id, name: getItemName(recipe.nameTextId, nameText) })),
+  computeLearnedRecipeCells(recipes, {
+    adventureRank,
+    combineType: pickedTabId.value,
+    craftedCountMap: craftedCountMap.value,
+    nameText,
+    progress,
+  }),
 );
 // The recipe the player picked in the tab, or the tab's first while none of its own is picked
 const pickedRecipe = computed(

@@ -88,6 +88,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
         <li v-for="recipe of recipes" :key="recipe.id">
           <button class="recipe" :aria-pressed="recipe.id === recipeId" type="button" @click="recipeId = recipe.id">
             <span class="recipe-name">{{ recipe.name }}</span>
+            <span v-if="recipe.count !== undefined" class="recipe-count">{{ recipe.count }}</span>
           </button>
         </li>
       </ul>
@@ -234,6 +235,13 @@ const emit = defineEmits<{ close: []; craft: [] }>();
 
 .recipe[aria-pressed="true"] {
   outline: calc(var(--unit) * 2) solid #fdfdfd;
+}
+
+.recipe-count {
+  position: absolute;
+  top: calc(var(--unit) * 4);
+  right: calc(var(--unit) * 4);
+  font-size: calc(var(--unit) * 14);
 }
 
 .recipe-name {
