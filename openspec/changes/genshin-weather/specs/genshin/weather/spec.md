@@ -4,9 +4,9 @@
 
 A regular area's weather SHALL turn at each change through the game's standard chain of weathers, with each weather's next turn drawn from the chain's weights for it.
 
-#### Scenario: Rain always turns to clear or cloudy at the next change
+#### Scenario: Rain turns to clear or cloudy at the next change where the area's weathers hold one
 
-- **GIVEN** an area in rain
+- **GIVEN** an area in rain whose weathers include sunny or cloudy
 - **WHEN** the area's weather changes
 - **THEN** the weather becomes sunny or cloudy
 
