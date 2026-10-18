@@ -84,4 +84,14 @@ describe(createLanYanKitBehaviour, () => {
       },
     ]);
   });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    expect(LAN_YAN_KIT.getSkillChargeBonus?.(createLanYanCombatant(6))).toBe(1);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    expect(LAN_YAN_KIT.getSkillChargeBonus?.(createLanYanCombatant(5))).toBe(0);
+  });
 });
