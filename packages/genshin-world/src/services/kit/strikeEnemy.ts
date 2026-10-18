@@ -37,7 +37,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Reactions' own poise through damageEnemy, against the enemy's RES as its statuses leave it. Its element reacts as the
 // Party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's
 // Bonuses instead. It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and
-// Those of them that landed and reach round the enemy
+// Those of them that landed and reach round the enemy, and the element it applied at a gauge its cooldown let through
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -60,6 +60,7 @@ export const strikeEnemy = (
     (elementalState.auras.has(AuraType.Freeze) || elementalState.auras.has(AuraType.Cryo));
   const reactions: Reaction[] = checkIsBluntHit(combatant, kitHit) ? applyBluntHit(elementalState, poiseDamage) : [];
   const element = getKitHitElement(kitHit, combatant);
+  let appliedElement: Element | undefined;
   if (gauge !== undefined && gauge > 0 && element !== undefined) {
     // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown,
     // Counted under its tag's own group where it has one
@@ -81,6 +82,7 @@ export const strikeEnemy = (
         stellarReactionTypes,
       ),
     );
+    if (gauge * share > 0) appliedElement = element;
   }
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
@@ -130,6 +132,7 @@ export const strikeEnemy = (
         talentMultiplier,
       });
   return {
+    appliedElement,
     energyDrops: damageEnemy(enemy, {
       damage: damage + transformativeDamage,
       poiseDamage: poiseDamage + reactionPoiseDamage,

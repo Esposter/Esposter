@@ -38,7 +38,7 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 
 ### Requirement: A Polestar Field on a Stellar-Conduct
 
-A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%.
+A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
@@ -54,6 +54,16 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 
 - **WHEN** a Polestar Field stands and an enemy is inside it
 - **THEN** the enemy's Physical RES is 40% lower, and an enemy outside the field is unchanged
+
+#### Scenario: a recorded hit raises the next 4 seconds' DMG Bonus
+
+- **WHEN** a Cryo is applied to an enemy inside a Polestar Field, and the field's next tick passes with the body inside it
+- **THEN** the body's Cryo and Electro DMG Bonus is 29% for the 4 seconds that follow
+
+#### Scenario: an application outside the field, or of another element, is not recorded
+
+- **WHEN** a Cryo is applied to an enemy outside the field, or a Pyro is applied to an enemy inside it, and a tick passes with the body inside
+- **THEN** the body's Cryo and Electro DMG Bonus stays at 20% for the 4 seconds that follow
 
 ### Requirement: A Stellar Vortex on a Stellar Swirl
 

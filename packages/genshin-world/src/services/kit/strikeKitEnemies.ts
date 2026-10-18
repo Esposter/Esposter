@@ -96,7 +96,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         damageBonus:
           (enemyHit.damageBonus ?? 0) + (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party) ?? 0),
       };
-      const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
+      const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,
         pricedHit,
@@ -105,6 +105,11 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         moonsign,
         stellarReactionTypes,
       );
+      if (appliedElement !== undefined)
+        emitKitEvent(
+          { element: appliedElement, enemy, kind: KitEventKind.ElementApplied, striker: combatant },
+          context,
+        );
       collectKitEnergyDrops(
         [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],
         combatant.element,
