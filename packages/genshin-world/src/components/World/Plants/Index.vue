@@ -114,8 +114,6 @@ if (domeMatrices.length > 0)
       color: surfaces.Ground.color,
       detail: surfaces.Ground.detail,
       instanceMatrix,
-      // The outline pass draws from the geometry's own place, which an instance's matrix moves, so the domes are unoutlined
-      isOutlined: false,
       lightUniforms,
       rampTexture,
     }),

@@ -11,6 +11,8 @@ import { MeshToonNodeMaterial } from "three/webgpu";
 export class ToonNodeMaterial extends MeshToonNodeMaterial {
   edge?: ToonEdge;
   emissiveNode: Node | null = null;
+  // The matrix a placed copy is drawn by, read by its outline as by its fill, so the two stay in one place
+  instanceMatrix?: Node<"mat4">;
   readonly isMeshToonMaterial: boolean;
   override readonly isMeshToonNodeMaterial: boolean;
   sphereMap?: Texture;

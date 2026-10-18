@@ -54,6 +54,7 @@ export const createToonMaterial = ({
   toonMaterial.emissiveNode = createRimNode(lightUniforms).add(createWetSheenNode(lightUniforms));
   if (instanceMatrix) {
     // The geometry's own place and normal, carried by each instance's matrix, its normal turned by the same matrix
+    toonMaterial.instanceMatrix = instanceMatrix;
     toonMaterial.positionNode = instanceMatrix.mul(vec4(positionGeometry, 1)).xyz;
     toonMaterial.normalNode = transformNormalToView(transformNormal(normalGeometry, instanceMatrix)).normalize();
   }
