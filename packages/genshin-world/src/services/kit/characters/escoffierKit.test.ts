@@ -1,6 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -80,5 +83,33 @@ describe(createEscoffierKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
+  });
+  describe("ascension 4's Hydro and Cryo RES shred", () => {
+    // The RES Low-Temperature Cooking's first Frosty Parfait tick shreds from the enemy it hits, as the team stands
+    const getShred = (ascension: number, deployedElements: (Element | undefined)[]): number | undefined => {
+      const combatant = { ...createEscoffierCombatant(ascension), deployedElements };
+      const kitEffectState: KitEffectState = { effects: [] };
+      ESCOFFIER_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+      const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+      return summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction?.[Element.Cryo];
+    };
+
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Pyro, Element.Pyro])).toBeCloseTo(0.1);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getShred(3, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeUndefined();
+    });
+
+    test("the shred steps up with each Hydro or Cryo member, to 55% for four", () => {
+      expect.hasAssertions();
+
+      expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeCloseTo(0.55);
+    });
   });
 });
