@@ -2,6 +2,7 @@
 import type { PDFDocumentLoadingTask } from "pdfjs-dist";
 
 import PdfViewer from "@/components/Pdf/Viewer.vue";
+import { PDF_ROTATION_STEP } from "@/services/pdf/constants";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -61,7 +62,10 @@ vi.mock("@/services/pdf/loadPdfViewer", () => ({
     PDFViewer: pdfjsStubs.PdfJsViewerStub,
   }),
 }));
-vi.mock(import("pdfjs-dist"), () => ({ PasswordResponses: { INCORRECT_PASSWORD: 2, NEED_PASSWORD: 1 } }) as unknown as typeof import("pdfjs-dist"));
+vi.mock(
+  import("pdfjs-dist"),
+  () => ({ PasswordResponses: { INCORRECT_PASSWORD: 2, NEED_PASSWORD: 1 } }) as unknown as typeof import("pdfjs-dist"),
+);
 
 describe("pdfViewer", () => {
   const filename = "document.pdf";
@@ -74,7 +78,15 @@ describe("pdfViewer", () => {
   const SEARCH_QUERY = "word";
   const CURRENT_MATCH = 1;
   const TOTAL_MATCHES = 3;
-  const pdfDocument = { getData: vi.fn(), numPages: PAGES_COUNT };
+  const pdfPage = {
+    getViewport: ({ scale }: { scale: number }) => ({ height: scale, width: scale }),
+    render: () => ({ promise: Promise.resolve() }),
+  };
+  const pdfDocument = {
+    getData: vi.fn(),
+    getPage: vi.fn<(pageNumber: number) => Promise<typeof pdfPage>>(async () => pdfPage),
+    numPages: PAGES_COUNT,
+  };
   const destroy = vi.fn();
   const createTask = (promise: Promise<unknown>) =>
     ({ destroy, onPassword: vi.fn(), promise }) as unknown as PDFDocumentLoadingTask;
@@ -85,6 +97,7 @@ describe("pdfViewer", () => {
   afterEach(() => {
     document.body.innerHTML = "";
     destroy.mockClear();
+    vi.restoreAllMocks();
   });
 
   // Closing the dialog during a password prompt unmounts the viewer, and the load it asked the password for stops
@@ -97,6 +110,23 @@ describe("pdfViewer", () => {
     await flushPromises();
     task.onPassword(() => {}, NEED_PASSWORD);
     component.unmount();
+
+    expect(destroy).toHaveBeenCalledOnce();
+  });
+
+  // Closing the dialog while the renderer is still being imported leaves no task to destroy yet, so the one that
+  // arrives afterwards is destroyed on arrival
+  test("Closing the viewer before its document arrives destroys it", async () => {
+    expect.hasAssertions();
+
+    const task = createTask(new Promise(() => {}));
+    const { promise, resolve } = Promise.withResolvers<PDFDocumentLoadingTask>();
+    vi.mocked(loadPdfDocument).mockReturnValue(promise);
+    const component = await mountViewer();
+    await flushPromises();
+    component.unmount();
+    resolve(task);
+    await flushPromises();
 
     expect(destroy).toHaveBeenCalledOnce();
   });
@@ -175,7 +205,73 @@ describe("pdfViewer", () => {
     });
     await flushPromises();
 
-    expect(pdfjsStubs.EventBusStub.last?.dispatch).toHaveBeenCalledWith("find", expect.objectContaining({ query: SEARCH_QUERY }));
+    expect(pdfjsStubs.EventBusStub.last?.dispatch).toHaveBeenCalledWith(
+      "find",
+      expect.objectContaining({ query: SEARCH_QUERY }),
+    );
     expect(component.text()).toContain(`${CURRENT_MATCH} of ${TOTAL_MATCHES}`);
+  });
+
+  test("Fit width, fit page and actual size set the scale", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Fit width")?.trigger("click");
+
+    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-width");
+    await findButton(component, "Fit page")?.trigger("click");
+
+    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-fit");
+    await findButton(component, "Actual size")?.trigger("click");
+
+    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-actual");
+  });
+
+  test("Rotating turns the pages a step", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Rotate")?.trigger("click");
+
+    expect(pdfjsStubs.PdfJsViewerStub.last?.pagesRotation).toBe(PDF_ROTATION_STEP);
+  });
+
+  test("Download saves the original bytes", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    Object.assign(URL, {
+      createObjectURL: vi.fn<(object: Blob) => string>(() => "blob:document"),
+      revokeObjectURL: vi.fn<(url: string) => void>(),
+    });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Download")?.trigger("click");
+    await flushPromises();
+
+    expect(URL.createObjectURL).toHaveBeenCalledOnce();
+    expect(click).toHaveBeenCalledOnce();
+  });
+
+  test("Print renders each page and opens the print dialog", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
+    vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,");
+    const print = vi.fn<() => void>();
+    Object.assign(window, { print });
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Print")?.trigger("click");
+    await flushPromises();
+
+    expect(pdfDocument.getPage).toHaveBeenCalledTimes(PAGES_COUNT);
+    expect(print).toHaveBeenCalledOnce();
   });
 });

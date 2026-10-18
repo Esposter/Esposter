@@ -126,4 +126,20 @@ describe("pdfThumbnail", () => {
 
     expect(component.text()).toContain("could not be loaded");
   });
+
+  // A row scrolled out while its document is still being imported has no task yet, so the document that arrives
+  // after the unmount is destroyed on arrival rather than kept for the rest of the session
+  test("Unmounting before the document arrives destroys it", async () => {
+    expect.hasAssertions();
+
+    const task = createTask(new Promise(() => {}));
+    const { promise, resolve } = Promise.withResolvers<PDFDocumentLoadingTask>();
+    vi.mocked(loadPdfDocument).mockReturnValue(promise);
+    const component = await mountThumbnail(url);
+    component.unmount();
+    resolve(task);
+    await flushPromises();
+
+    expect(task.destroy).toHaveBeenCalledOnce();
+  });
 });

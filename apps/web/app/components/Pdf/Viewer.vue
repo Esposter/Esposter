@@ -20,6 +20,7 @@ import {
   PDF_PRINT_STYLE,
   PDF_ROTATION_STEP,
 } from "@/services/pdf/constants";
+import { destroyLoadingTask } from "@/services/pdf/destroyLoadingTask";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
@@ -51,10 +52,9 @@ let loadingTask: PDFDocumentLoadingTask | undefined;
 let loadedDocument: PDFDocumentProxy | undefined;
 let submitPasswordCallback: ((password: string) => void) | undefined;
 let printContainer: HTMLDivElement | undefined;
+// Set on unmount, for a load still waiting on its import, which has no task yet for unmount to destroy
+let isUnmounted = false;
 
-const destroyLoadingTask = getSynchronizedFunction(async (task: PDFDocumentLoadingTask) => {
-  await task.destroy();
-});
 const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: number) => {
   const page = await pdfDocument.getPage(pageNumber);
   const viewport = page.getViewport({ scale: PDF_PRINT_SCALE });
@@ -106,6 +106,10 @@ const mountViewer = async () => {
     });
 
     const task = await loadPdfDocument(url);
+    if (isUnmounted) {
+      destroyLoadingTask(task);
+      return;
+    }
     loadingTask = task;
     // pdf.js asks again with the reason when a password is wrong, so the prompt says so rather than starting over
     task.onPassword = (updatePassword: (password: string) => void, reason: number) => {
@@ -224,6 +228,7 @@ watch(
 );
 onMounted(getSynchronizedFunction(mountViewer));
 onUnmounted(() => {
+  isUnmounted = true;
   if (loadingTask) destroyLoadingTask(loadingTask);
   loadingTask = undefined;
 });
