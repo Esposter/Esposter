@@ -13,8 +13,10 @@ const SKILL = CombatTalent.ElementalSkill;
 // Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
 // Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
-  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
-  // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
+  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and
+  // Each of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do. Her skill rows read
+  // Onto the parameters her module names, a row's values in order, so Impale the Night Healing's low and full heals are
+  // Its first and second
   [
     10_000_098,
     {
@@ -25,6 +27,19 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         "hits.swiftHuntPiercingShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
         "hits.swiftHuntPiercingShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
         "hits.swiftHuntPiercingShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "parameters.bondOfLifeConversionHealing": { combatTalent: SKILL, label: "Bond of Life Conversion" },
+        "parameters.impaleTheNightLowBondOfLifeHealing": {
+          combatTalent: SKILL,
+          label: "Impale the Night Healing",
+          position: 0,
+        },
+        "parameters.impaleTheNightFullBondOfLifeHealing": {
+          combatTalent: SKILL,
+          label: "Impale the Night Healing",
+          position: 1,
+        },
+        "parameters.nightVigilSeconds": { combatTalent: SKILL, label: "Night Vigil Duration" },
+        "parameters.swiftHuntBondOfLifeGain": { combatTalent: SKILL, label: "Swift Hunt Bond of Life Gain" },
       },
     },
   ],

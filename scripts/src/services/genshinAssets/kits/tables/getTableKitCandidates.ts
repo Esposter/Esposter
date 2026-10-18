@@ -53,17 +53,6 @@ const BURST_PARAMETER_NAMES: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lunar Reaction DMG Bonus", ["burstLunarReactionDamageBonus"]],
 ]);
 
-// A character's own elemental skill rows, each read onto the parameters its module reads by name. A row's parameters are
-// Taken in order, one name to each, so Impale the Night Healing's low and full heals are its first and second parameters
-const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
-  Clorinde: {
-    "Bond of Life Conversion": ["bondOfLifeConversionHealing"],
-    "Impale the Night Healing": ["impaleTheNightLowBondOfLifeHealing", "impaleTheNightFullBondOfLifeHealing"],
-    "Night Vigil Duration": ["nightVigilSeconds"],
-    "Swift Hunt Bond of Life Gain": ["swiftHuntBondOfLifeGain"],
-  },
-};
-
 // Every value a character's published tables give its kit, by its path in the record, each as its group and parameter
 // Index: the normal attack's labels, `3-Hit DMG` each hit of the third strike in turn, the charged attack's, a spin's
 // And its final blow's or a bow's fully charged shot's among them, its stamina's and the plunges', the skill's cooldown
@@ -72,7 +61,6 @@ const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Recor
 export const getTableKitCandidates = ({
   characterId,
   labelMap,
-  name,
   talentGroupIdMap,
 }: KitTables): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
@@ -161,7 +149,6 @@ export const getTableKitCandidates = ({
       addLabel(`plunges.${KitPlunge.High}.hits.0.multiplier`, CombatTalent.NormalAttack, tableLabel, 1);
     }
   }
-  const characterSkillParameterNameMap = CHARACTER_SKILL_PARAMETER_NAME_MAP[name] ?? {};
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalSkill]) ?? []) {
     const hitPaths = SKILL_HIT_PATHS.get(tableLabel.label);
     const parameterNames = SKILL_PARAMETER_NAMES.get(tableLabel.label);
@@ -173,12 +160,7 @@ export const getTableKitCandidates = ({
       addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
       const listLengthPath = NAMED_HIT_LIST_LENGTH_PATHS.get(tableLabel.label);
       if (listLengthPath !== undefined) addLength(listLengthPath, CombatTalent.ElementalSkill, tableLabel);
-    } else
-      addParameterLabel(
-        parameterNames ?? characterSkillParameterNameMap[tableLabel.label] ?? [],
-        CombatTalent.ElementalSkill,
-        tableLabel,
-      );
+    } else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
   }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? []) {
     const parameterNames = BURST_PARAMETER_NAMES.get(tableLabel.label);
