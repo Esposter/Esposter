@@ -52,6 +52,31 @@ describe(runParityPasses, () => {
     ]);
   });
 
+  test("a pass within its gate on every reference is frozen", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce({
+      notes: [],
+      readings: [
+        { gate: 1, name: "a", unit: "", value: 0 },
+        { gate: 1, name: "b", unit: "", value: 1 },
+      ],
+    });
+    measureLayout.mockResolvedValueOnce({
+      notes: [],
+      readings: [
+        { gate: 1, name: "a", unit: "", value: 0 },
+        { gate: 0, name: "b", unit: "", value: 1 },
+      ],
+    });
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results.map(({ isHeld, pass }) => ({ isHeld, pass }))).toStrictEqual([
+      { isHeld: true, pass: ParityPass.Inventory },
+      { isHeld: false, pass: ParityPass.Layout },
+    ]);
+  });
+
   test("prints a pass the scene is not owed and runs on past it", async () => {
     expect.hasAssertions();
 
