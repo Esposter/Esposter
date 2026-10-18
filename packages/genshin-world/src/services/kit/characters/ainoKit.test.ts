@@ -93,7 +93,7 @@ const strikeSkillHit = (context: KitContext, hit: KitHit): void => {
 // The teammate's hits in, with the zone the burst left standing
 const createTeammateTeam = (constellationCount: number) => {
   const aino = { ...createAinoCombatant(0), constellationCount };
-  const teammate = { ...aino, characterId: MOONSIGN_CHARACTER_IDS[0] };
+  const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
   const kitEffectState: KitEffectState = { effects: [] };
   const context = createKitTestContext(aino, {
     characterIdCombatantMap: new Map<number, Combatant>([
@@ -195,6 +195,17 @@ describe(createAinoKitBehaviour, () => {
     field?.onTick(context, 0);
     const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     expect(summon?.hits[0]?.hitArea.radius).toBe(14);
+  });
+
+  test("a Water Ball's hitmark counts from the tick that drops it, ten frames on, not from the burst's start", () => {
+    expect.hasAssertions();
+
+    const { context, kitEffectState } = castBurstInTeam(0, [AINO_CHARACTER_ID]);
+
+    // The first tick drops the first ball at its first tick's seconds, so the ball lands ten frames on from its drop
+    stepKitTestEffects(2.1, context);
+    const [summon] = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+    expect(summon?.hits[0]?.hitmarkSeconds).toBeCloseTo(10 / 60);
   });
 
   test("below Ascendant Gleam or below Ascension 1, her burst keeps the base beat", () => {

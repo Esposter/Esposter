@@ -34,6 +34,7 @@ describe(computeCommissionDay, () => {
     const day = {
       claimedCommissionIds: [1],
       dealtAt: dailyReset.subtract({ minutes: 1 }),
+      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
     };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
@@ -48,7 +49,7 @@ describe(computeCommissionDay, () => {
 
   test("a day dealt with no commissions is dealt again once the rank allows", () => {
     expect.hasAssertions();
-    const day = { claimedCommissionIds: [], dealtAt: dailyReset, dealtCommissions: [] };
+    const day = { claimedCommissionIds: [], dealtAt: dailyReset, dealtCommissions: [], isBonusClaimed: false };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
     expect(dealtDay.dealtCommissions).toHaveLength(4);
   });
@@ -58,6 +59,7 @@ describe(computeCommissionDay, () => {
     const day = {
       claimedCommissionIds: [],
       dealtAt: dailyReset,
+      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 2, count: 0, dealtRank: RANK }],
     };
     expect(computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0)).toBe(day);

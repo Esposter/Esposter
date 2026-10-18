@@ -16,6 +16,8 @@ export interface ShopGood {
   priceCount: number;
   priceItemId: number;
   refresh: ShopRefresh;
+  // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, by the table's sub tab id
+  tabId?: number;
   reputationDiscountLevel?: number;
 }
 
@@ -34,5 +36,6 @@ export const shopGoodSchema = z.object({
   priceCount: z.int().nonnegative(),
   priceItemId: z.int().positive(),
   refresh: z.enum(ShopRefresh),
+  tabId: z.int().positive().optional(),
   reputationDiscountLevel: z.int().positive().optional(),
 }) satisfies z.ZodType<ShopGood>;

@@ -25,6 +25,7 @@ export const gcgDeckSchema = z.object({
       isLocation: z.boolean(),
       kind: z.enum(GcgCardKind),
       nameTextId: z.int().positive(),
+      weapon: z.string().optional(),
     }),
   ),
   characterIds: z.array(z.int().positive()),

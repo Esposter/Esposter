@@ -85,6 +85,7 @@
   },
   "plunges.high.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 225 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 46 },
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 46 },
   "plunges.low.animationFrames": { "cause": "Unclassified", "value": 62 },
   "plunges.low.hits.0.convertedArea": {
     "cause": "Unclassified",

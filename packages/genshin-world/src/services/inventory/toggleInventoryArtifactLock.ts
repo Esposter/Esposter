@@ -12,10 +12,11 @@ export const toggleInventoryArtifactLock = (inventory: Inventory, entryId: numbe
       toggleInventoryArtifactLock.name,
       `entry ${entryId} is not an artifact`,
     );
+  const artifact = entry.artifact;
   return {
     ...inventory,
     items: inventory.items.map((item) =>
-      item === entry ? { ...item, artifact: { ...entry.artifact, isLocked: !entry.artifact.isLocked } } : item,
+      item === entry ? { ...item, artifact: { ...artifact, isLocked: !artifact.isLocked } } : item,
     ),
   };
 };

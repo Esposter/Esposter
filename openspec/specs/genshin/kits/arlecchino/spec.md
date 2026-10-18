@@ -62,6 +62,16 @@ Balemoon Rising SHALL strike once at 110 frames of its 146 frame animation, SHAL
 - **WHEN** the burst is checked again within 15 seconds
 - **THEN** it is not available
 
+### Requirement: Balemoon Rising resets her skill's cooldown
+
+Balemoon Rising SHALL reset Arlecchino's skill cooldown 107 frames after it starts, so the skill is ready again at that point.
+
+#### Scenario: her burst resets her skill's cooldown 107 frames after it starts
+
+- **GIVEN** Arlecchino's skill is on cooldown
+- **WHEN** Balemoon Rising's animation reaches 107 frames
+- **THEN** her skill's cooldown is zero
+
 ### Requirement: Arlecchino's skill has a cooldown of 30 seconds
 
 Arlecchino's elemental skill SHALL have a cooldown of 30 seconds.

@@ -6,8 +6,10 @@ export const toCommissionDay = ({
   claimedCommissionIds,
   dealtAt,
   dealtCommissions,
+  isBonusClaimed,
 }: CommissionDaySave): CommissionDay => ({
   claimedCommissionIds,
   dealtAt: Temporal.Instant.from(dealtAt),
   dealtCommissions,
+  isBonusClaimed,
 });

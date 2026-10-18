@@ -34,6 +34,9 @@ export interface BaseKitHitRecord {
   // The Lunar reaction a direct Lunar hit deals its damage as
   lunarReactionType?: LunarReactionType;
   multiplier: KitParameter;
+  // A second table the multiplier is multiplied by, read at the level of the talent its proud skill group belongs to, as an
+  // Enhanced normal attack is its normal attack's multiplier times its skill's
+  multiplierFactor?: KitParameter;
   poiseDamage: number;
   // The stat the multiplier is a share of, where it is not ATK
   scalingAttribute?: Attribute;
@@ -53,6 +56,7 @@ export const baseKitHitRecordSchema = z.strictObject({
   internalCooldownTag: z.enum(InternalCooldownTag).optional(),
   lunarReactionType: z.enum(LunarReactionType).optional(),
   multiplier: kitParameterSchema,
+  multiplierFactor: kitParameterSchema.optional(),
   poiseDamage: z.number().nonnegative(),
   scalingAttribute: z.enum(Attribute).optional(),
   stackedHit: kitStackedHitRecordSchema.optional(),

@@ -12,6 +12,7 @@ describe(claimHomeCurrency, () => {
   const COMFORT = 0;
   const progress: HomeProgress = {
     accruedAt: EPOCH,
+    claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],

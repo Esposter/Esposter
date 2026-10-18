@@ -1,7 +1,9 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
@@ -41,13 +43,13 @@ vi.mock("#src/services/artifact/ArtifactSetIdCreateModuleMap", async (importOrig
   return {
     ArtifactSetIdCreateModuleMap: {
       ...ArtifactSetIdCreateModuleMap,
-      [10_007]: (bonus: Parameters<typeof createInstructorModule>[0]) => {
-        const setModule = createInstructorModule(bonus);
+      [10_007]: (bonus: Parameters<NonNullable<typeof createInstructorModule>>[0]) => {
+        const setModule = createInstructorModule?.(bonus);
         return {
           ...setModule,
-          onKitEvent: (event, context, combatant) => {
+          onKitEvent: (event: KitEvent, context: KitContext, combatant: Combatant) => {
             receivedKinds.push(event.kind);
-            setModule.onKitEvent?.(event, context, combatant);
+            setModule?.onKitEvent?.(event, context, combatant);
           },
         };
       },

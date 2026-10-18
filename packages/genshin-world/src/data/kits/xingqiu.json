@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "frames.rainSwordsTickInterval": { "cause": "Unclassified", "value": 135 },
   "frames.raincutterExtra": { "cause": "Unclassified", "value": 33 },
   "frames.rainSwordsBurstFirstTick": { "cause": "Unclassified", "value": 19 },
@@ -50,10 +50,7 @@
   "hits.rainscreen.1.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
   "hits.rainscreen.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 2532 } },
   "hits.rainscreen.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
-  "hits.sword.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
+  "hits.sword.area": { "cause": "TargetCentred", "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 } },
   "hits.sword.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2539 } },
   "hits.sword.poiseDamage": { "cause": "Unclassified", "value": 25 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },

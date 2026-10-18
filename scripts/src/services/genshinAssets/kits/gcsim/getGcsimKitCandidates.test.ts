@@ -4,9 +4,10 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
-import { CombatTalent, WeaponType } from "genshin-world";
+import { CombatTalent, Element, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
@@ -32,6 +33,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -72,6 +74,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -118,6 +121,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "itto.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -141,43 +145,6 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([[2], [40], [1]]);
   });
 
-  test("gives a normal attack's hitmark the attackHitmarks literal, not the queued delay its travel lands it at", () => {
-    expect.hasAssertions();
-
-    const gcsim: GcsimCharacter = {
-      animationFrameNameMap: new Map(),
-      attacks: [],
-      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
-      configFile: "config.yml",
-      constantMap: new Map([["attackHitmarks", toConstant([[15], [11]])]]),
-      filePaths: [],
-      folder: "made-up",
-      queuedAttacks: [],
-      talentFile: "made-up.go",
-      talentParameterMap: new Map(),
-      travelMap: new Map([["attackHitmarks", { file: "attack.go", frames: 10, line: 3 }]]),
-    };
-    const tables: KitTables = {
-      characterId: 0,
-      labelMap: new Map(),
-      name: "Made Up",
-      talentGroupIdMap: {
-        [CombatTalent.ElementalBurst]: 0,
-        [CombatTalent.ElementalSkill]: 0,
-        [CombatTalent.NormalAttack]: 0,
-      },
-      talentMultiplierMap: {},
-      weaponType: WeaponType.Claymore,
-    };
-    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
-
-    expect(
-      ["normalAttacks.0.hits.0.hitmarkFrames", "normalAttacks.1.hits.0.hitmarkFrames"].map((path) =>
-        candidateMap.get(path)?.map(({ value }) => value),
-      ),
-    ).toStrictEqual([[15], [11]]);
-  });
-
   test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
     expect.hasAssertions();
 
@@ -189,6 +156,7 @@ describe(getGcsimKitCandidates, () => {
           fieldLineMap: {},
           file: "burst.go",
           line: 6,
+          siteLine: 6,
           variableName: "ai",
         },
       ],
@@ -200,6 +168,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -223,6 +192,87 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([[1], [55]]);
   });
 
+  test("joins a burst's hit to the talent variable of the attack its queue call fires at its hitmark, where a second attack under the burst tag has its own", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          abil: "Lightning Fang",
+          attackTag: "attacks.AttackTagElementalBurst",
+          element: "attributes.Electro",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 51,
+          siteLine: 51,
+          talentVariable: "burstDmg",
+          variableName: "ai",
+        },
+        {
+          abil: "The Wolf Within",
+          attackTag: "attacks.AttackTagElementalBurst",
+          element: "attributes.Electro",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 90,
+          siteLine: 90,
+          talentVariable: "wolfDmg",
+          variableName: "ai",
+        },
+      ],
+      config: {
+        abilityHitboxesMap: new Map(),
+        names: [],
+        talentVariables: [
+          {
+            leaves: [{ path: [], reference: { label: "Burst DMG", selector: 0, type: GcsimTalentType.Burst } }],
+            line: 6,
+            name: "burstDmg",
+          },
+          {
+            leaves: [
+              { path: [], reference: { label: "Soul Companion DMG", selector: 0, type: GcsimTalentType.Burst } },
+            ],
+            line: 7,
+            name: "wolfDmg",
+          },
+        ],
+      },
+      configFile: "config.yml",
+      constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 24, value: 32 }]]),
+      filePaths: [],
+      folder: "razor",
+      queuedAttacks: [
+        { attackName: "ai", delay: 32, delayLine: 67, file: "burst.go", line: 67 },
+        { attackName: "ai", delay: 1, delayLine: 110, file: "burst.go", line: 110 },
+      ],
+      talentFile: "zz_razor.go",
+      talentParameterMap: new Map([["burst|Burst DMG", { indexes: [3], line: 40 }]]),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Razor",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 2039,
+        [CombatTalent.ElementalSkill]: 2032,
+        [CombatTalent.NormalAttack]: 2031,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.multiplier", "burst.hits.0.element"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [{ index: 3, proudSkillGroupId: 2039 }], [Element.Electro]]);
+  });
+
   test("reads a skill's frames from the first state of its list of frames", () => {
     expect.hasAssertions();
 
@@ -237,6 +287,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "mona.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -272,6 +323,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "navia.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -305,6 +357,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "barbara.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -341,6 +394,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "aino.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -378,6 +432,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "aino.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const fallback: GcsimCharacter = {
@@ -440,6 +495,7 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {

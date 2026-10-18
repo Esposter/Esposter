@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { InteractionState } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import MenuBirthdayDialog from "#src/components/Menu/BirthdayDialog/Index.vue";
 import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuNamecardDialog from "#src/components/Menu/NamecardDialog/Index.vue";
@@ -45,6 +47,8 @@ interface Props {
   // The namecard the player equipped by its item id, 0 for none, and the held namecards the profile can show
   namecardItemId: number;
   namecards: ProfileNamecard[];
+  // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
+  travelerBirthday?: TravelerBirthdaySave;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
   // When the World Level last changed, for the cooldown its dialog's button waits on
@@ -64,6 +68,7 @@ const {
   isWorldLevelLowered,
   namecardItemId,
   namecards,
+  travelerBirthday,
   worldLevel,
   worldLevelChangedAt,
 } = defineProps<Props>();
@@ -72,6 +77,7 @@ const emit = defineEmits<{
   open: [screenKind: TitledScreenKind];
   pickNamecard: [itemId: number];
   quit: [];
+  setBirthday: [birthday: TravelerBirthdaySave];
   toggleWorldLevel: [];
 }>();
 const backButton = useTemplateRef("backButton");
@@ -85,6 +91,12 @@ const equippedNamecard = computed(() => namecards.find(({ itemId }) => itemId ==
 const pickNamecard = (itemId: number) => {
   isNamecardDialogOpen.value = false;
   emit("pickNamecard", itemId);
+};
+// The birthday is set once from its dialog, which closes back to the menu, and the row shows the date after that
+const isBirthdayDialogOpen = ref(false);
+const setBirthday = (birthday: TravelerBirthdaySave) => {
+  isBirthdayDialogOpen.value = false;
+  emit("setBirthday", birthday);
 };
 // The info button is inert until the menu is patched, so the focus goes back to it on the tick after the dialog closes
 const closeWorldLevelDialog = async () => {
@@ -200,6 +212,16 @@ onBeforeUnmount(() => {
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
         <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
+        <p v-if="travelerBirthday" class="birthday-value">{{ travelerBirthday.month }}/{{ travelerBirthday.day }}</p>
+        <GameButton v-else class="set-birthday" :kind="GameButtonKind.Plain" @click="isBirthdayDialogOpen = true">
+          {{ gameText[GameTextKey.BirthdaySet] }}
+        </GameButton>
+        <MenuBirthdayDialog
+          v-if="isBirthdayDialogOpen"
+          :game-text
+          @close="isBirthdayDialogOpen = false"
+          @confirm="setBirthday"
+        />
         <GameButton
           class="namecard"
           :disabled="namecards.length === 0"
@@ -483,6 +505,16 @@ onBeforeUnmount(() => {
 
 .birthday {
   top: calc(var(--unit) * 286);
+}
+
+/* Provisional: the birthday's date, or the button that sets it once, sits under its label until the parity compare fits it */
+.birthday-value,
+.set-birthday {
+  position: absolute;
+  top: calc(var(--unit) * 304);
+  left: calc(var(--unit) * 313.5);
+  margin: 0;
+  font-size: calc(var(--unit) * 20);
 }
 
 /* Provisional: the namecard's button sits under the birthday, to be fitted beside the card's avatar by the parity compare */

@@ -16,17 +16,12 @@ const maximumRoll = () => 0.999;
 describe(claimCommissionReward, () => {
   const DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0);
   const DEALT_RANK = 12;
-  const CURRENT_RANK = 20;
   const FINISH_PROGRESS = 3;
   const MORA_ID = 202;
-  const PRIMOGEM_ID = 201;
   const REWARD_TIER = 2;
-  // Rank 12 is the third band and rank 20 the fourth, so each band's items name which one a claim paid from
+  // Rank 12 is the third band, so the band's items name the one a claim paid from
   const rewardBands = emptyBands();
   rewardBands[2] = [{ itemId: MORA_ID, maxCount: 20, minCount: 10 }];
-  const bonusBands = emptyBands();
-  bonusBands[2] = [{ itemId: MORA_ID, maxCount: 1, minCount: 1 }];
-  bonusBands[3] = [{ itemId: PRIMOGEM_ID, maxCount: 20, minCount: 20 }];
   const commissionOf = (id: number): Commission => ({
     centerPosition: `Event_${id}`,
     enterDistance: 40,
@@ -44,7 +39,7 @@ describe(claimCommissionReward, () => {
     rewardTier: REWARD_TIER,
   });
   const slice: CommissionSlice = {
-    bonuses: bonusBands,
+    bonuses: emptyBands(),
     rewardTiers: [{ bands: rewardBands, tier: REWARD_TIER }],
     tasks: [1, 2, 3, 4].map((id) => commissionOf(id)),
   };
@@ -56,8 +51,9 @@ describe(claimCommissionReward, () => {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
+    expect(claimCommissionReward(day, 0, 1, slice, minimumRoll)).toBeUndefined();
   });
 
   test("should claim an unfinished commission's reward for one point, which it spends", () => {
@@ -66,10 +62,15 @@ describe(claimCommissionReward, () => {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)).toStrictEqual({
-      bonus: [],
-      day: { claimedCommissionIds: [1], dealtAt: DEALT_AT, dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] },
+    expect(claimCommissionReward(day, 2, 1, slice, minimumRoll)).toStrictEqual({
+      day: {
+        claimedCommissionIds: [1],
+        dealtAt: DEALT_AT,
+        dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+        isBonusClaimed: false,
+      },
       encounterPoints: 1,
       rewards: [{ count: 10, id: MORA_ID }],
     });
@@ -81,8 +82,9 @@ describe(claimCommissionReward, () => {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)?.encounterPoints).toBe(2);
+    expect(claimCommissionReward(day, 2, 1, slice, minimumRoll)?.encounterPoints).toBe(2);
   });
 
   test("should refuse a commission that is not dealt today", () => {
@@ -91,36 +93,44 @@ describe(claimCommissionReward, () => {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 0, 2, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
+    expect(claimCommissionReward(day, 0, 2, slice, minimumRoll)).toBeUndefined();
   });
 
-  test("should pay the reward of the rank it was dealt at, and no bonus before the day's fourth claim", () => {
+  test("should pay the reward of the rank it was dealt at", () => {
     expect.hasAssertions();
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, maximumRoll)).toStrictEqual({
-      bonus: [],
-      day: { claimedCommissionIds: [1], dealtAt: DEALT_AT, dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] },
+    expect(claimCommissionReward(day, 0, 1, slice, maximumRoll)).toStrictEqual({
+      day: {
+        claimedCommissionIds: [1],
+        dealtAt: DEALT_AT,
+        dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+        isBonusClaimed: false,
+      },
       encounterPoints: 0,
       rewards: [{ count: 20, id: MORA_ID }],
     });
   });
 
-  test("should pay Katheryne's bonus of the rank held now on the day's fourth claim", () => {
+  // Katheryne gives the bonus once the four are claimed, so the fourth claim's reward is all a claim pays
+  test("should leave Katheryne's bonus unclaimed on the day's fourth claim", () => {
     expect.hasAssertions();
     const day: CommissionDay = {
       claimedCommissionIds: [2, 3, 4],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS), dealtOf(2, 0), dealtOf(3, 0), dealtOf(4, 0)],
+      isBonusClaimed: false,
     };
-    const claim = claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll);
-    expect(claim?.bonus).toStrictEqual([{ count: 20, id: PRIMOGEM_ID }]);
+    const claim = claimCommissionReward(day, 0, 1, slice, minimumRoll);
     expect(claim?.rewards).toStrictEqual([{ count: 10, id: MORA_ID }]);
     expect(claim?.day.claimedCommissionIds).toStrictEqual([2, 3, 4, 1]);
+    expect(claim?.day.isBonusClaimed).toBe(false);
   });
 
   test("should refuse a commission claimed already", () => {
@@ -129,7 +139,8 @@ describe(claimCommissionReward, () => {
       claimedCommissionIds: [1],
       dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      isBonusClaimed: false,
     };
-    expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
+    expect(claimCommissionReward(day, 0, 1, slice, minimumRoll)).toBeUndefined();
   });
 });

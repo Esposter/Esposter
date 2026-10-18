@@ -39,7 +39,7 @@ const readMirrors = (kitEffectState: KitEffectState): number =>
 const strikeWithChargedAttack = (combatant: Combatant, body: KitBody): number => {
   const context = createKitTestContext(combatant);
   const hit = takeOne(ALHAITHAM_KIT.chargedAttack.hits);
-  hit.onStrike?.(context, { body, combatant, hit });
+  hit.onStrike?.(context, { body, combatant, hit }, enemy);
   return readMirrors(context.kitEffectState);
 };
 
@@ -145,8 +145,8 @@ describe(createAlhaithamKitBehaviour, () => {
     const context = createKitTestContext(combatant, { kitEffectState });
     const hit = getFirstStrikeHit();
     const strike = { body: kitBody, combatant, hit };
-    hit.onStrike?.(context, strike);
-    hit.onStrike?.(context, strike);
+    hit.onStrike?.(context, strike, enemy);
+    hit.onStrike?.(context, strike, enemy);
     const summons = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(summons.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)))).toStrictEqual([
@@ -163,20 +163,20 @@ describe(createAlhaithamKitBehaviour, () => {
     const partyMember = getPartyMember(context.party, ALHAITHAM_CHARACTER_ID);
     partyMember.skillCooldownSeconds = 5;
     const hit = getFirstStrikeHit();
-    hit.onStrike?.(context, { body: kitBody, combatant, hit });
+    hit.onStrike?.(context, { body: kitBody, combatant, hit }, enemy);
     const [projectionHit] = takeOne(
       kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
     ).hits;
-    projectionHit?.onStrike?.(context, {
-      body: kitBody,
-      combatant,
-      hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits),
-    });
-    projectionHit?.onStrike?.(context, {
-      body: kitBody,
-      combatant,
-      hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits),
-    });
+    projectionHit?.onStrike?.(
+      context,
+      { body: kitBody, combatant, hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits) },
+      enemy,
+    );
+    projectionHit?.onStrike?.(
+      context,
+      { body: kitBody, combatant, hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits) },
+      enemy,
+    );
 
     expect(partyMember.skillCooldownSeconds).toBeCloseTo(3.8);
   });
@@ -190,11 +190,11 @@ describe(createAlhaithamKitBehaviour, () => {
     const partyMember = getPartyMember(context.party, ALHAITHAM_CHARACTER_ID);
     partyMember.skillCooldownSeconds = 5;
     const hit = getFirstStrikeHit();
-    hit.onStrike?.(context, { body: kitBody, combatant, hit });
+    hit.onStrike?.(context, { body: kitBody, combatant, hit }, enemy);
     const [projectionHit] = takeOne(
       kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
     ).hits;
-    projectionHit?.onStrike?.(context, { body: kitBody, combatant, hit: getFirstStrikeHit() });
+    projectionHit?.onStrike?.(context, { body: kitBody, combatant, hit: getFirstStrikeHit() }, enemy);
 
     expect(partyMember.skillCooldownSeconds).toBe(5);
   });

@@ -58,7 +58,7 @@ Super Saturated Syringing SHALL cast six waves from Sigewinne, the first at 99 f
 
 ### Requirement: Unbuilt Sigewinne effects
 
-The Mini-Stration Bubble, the bubbles' hold tiers, the bubbles' and final bounce's healing, Surging Blade, her ascension and constellation passives and the droplets her press and burst spawn SHALL NOT take effect.
+The Mini-Stration Bubble, the bubbles' hold tiers, the bubbles' and final bounce's healing, Surging Blade, her Ascension 1 Convalescence, her Ascension 4 healing bonus, her constellation passives and the droplets her press and burst spawn SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

@@ -164,6 +164,8 @@ describe(recordAbyssChamberClear, () => {
       [
         1,
         {
+          bondOfLifeClearedShare: 0,
+          bondOfLifeShare: 0,
           burstCooldownSeconds: 0,
           elementalState: createElementalState(),
           energy: 40,
@@ -174,6 +176,8 @@ describe(recordAbyssChamberClear, () => {
       [
         2,
         {
+          bondOfLifeClearedShare: 0,
+          bondOfLifeShare: 0,
           burstCooldownSeconds: 0,
           elementalState: createElementalState(),
           energy: 0,

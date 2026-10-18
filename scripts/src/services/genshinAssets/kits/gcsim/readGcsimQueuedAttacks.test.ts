@@ -66,7 +66,7 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
-  test("reads a queue call's delay written in terms of a local, its first number", () => {
+  test("reads no delay from a local a branch may change, `windup := 0` then `windup = 14` in the branch", () => {
     expect.hasAssertions();
 
     const sources = [
@@ -88,7 +88,84 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([27]);
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+
+  test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
+    expect.hasAssertions();
+
+    const source = (callerArguments: string[]) => [
+      "package neuvillette",
+      "",
+      "const shortChargeHitmark = 27",
+      "",
+      "func (c *char) ChargeAttack(p map[string]int) {",
+      ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
+      "}",
+      "",
+      "func (c *char) chargeAttackShort(windup int) {",
+      "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+      "}",
+    ];
+    const branchSources = [
+      {
+        path: "charge.go",
+        source: [
+          "package neuvillette",
+          "",
+          "const shortChargeHitmark = 27",
+          "",
+          "func (c *char) ChargeAttack(p map[string]int) {",
+          "\twindup := 0",
+          "\tswitch c.Core.Player.CurrentState() {",
+          "\tcase action.Idle:",
+          "\t\twindup = 14",
+          "\t}",
+          "\tc.chargeAttackShort(windup)",
+          "}",
+          "",
+          "func (c *char) chargeAttackShort(windup int) {",
+          "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const valuesSources = [{ path: "charge.go", source: source(["0", "14"]).join("\n") }];
+
+    expect(
+      readGcsimQueuedAttacks(branchSources, evaluateGoConstants(branchSources)).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
+    expect(
+      readGcsimQueuedAttacks(valuesSources, evaluateGoConstants(valuesSources)).map(({ delay }) => delay),
+    ).toStrictEqual([27, 41]);
+  });
+
+  test("reads no delay from a local of another function, which a call never borrows", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package jean",
+          "",
+          "func (c *char) first() {",
+          "\tdelay := 40",
+          "\t_ = delay",
+          "}",
+          "",
+          "func (c *char) second() {",
+          "\tc.Core.QueueAttack(ai, ap, 0, delay)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
   });
 
   test("repeats a queue call in a loop of constant bounds once per iteration, its delay with the loop's variable", () => {
@@ -122,15 +199,48 @@ describe(readGcsimQueuedAttacks, () => {
     const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
 
     expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
+      [11, 114],
+      [11, 204],
+      [11, 294],
+      [11, 384],
+      [11, 474],
+      [11, 564],
+      [11, 654],
+      [11, 744],
       [15, 5],
+    ]);
+  });
+
+  test("adds a Tasks.Add closure's delay to the queue call in its body, once per iteration, with the call's own delay", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package venti",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := range 3 {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.Core.QueueAttackWithSnap(ai, snap, ap, 0, cb)",
+          "\t\t}, 106+24*i)",
+          "\t}",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 5, 9, cb)",
+          "\t}, 40)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, delayLine, line }) => [line, delayLine, delay])).toStrictEqual([
+      [6, 7, 106],
+      [6, 7, 130],
+      [6, 7, 154],
+      [10, 11, 49],
     ]);
   });
 
@@ -254,5 +364,91 @@ describe(readGcsimQueuedAttacks, () => {
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
       64, 88,
     ]);
+  });
+
+  test("repeats a queue call in a loop ranging over a constant count, `for i := range 3` and `for range 2`, once per count", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package ayaka",
+          "",
+          "const burstHitmark = 104",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := range 3 {",
+          "\t\tc.Core.QueueAttack(ai, ap, burstHitmark, burstHitmark+i*15, cb)",
+          "\t}",
+          "\tfor range 2 {",
+          "\t\tc.Core.QueueAttack(aiC2, ap, burstHitmark, burstHitmark, cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
+      [7, 104],
+      [7, 119],
+      [7, 134],
+      [10, 104],
+      [10, 104],
+    ]);
+  });
+
+  test("adds a QueueCharTask closure's delay to a call in it, as it does a Tasks.Add closure's", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package flins",
+          "",
+          "const burstHitmarkInitial = 93",
+          "",
+          "func (c *char) burst() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalBurst}",
+          "\tc.QueueCharTask(func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}, burstHitmarkInitial)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[8, 93]]);
+  });
+  test("adds a QueueCharTask closure's delay written in a parameter, from its caller's argument", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "charge.go",
+        source: [
+          "package neuvillette",
+          "",
+          "const shortChargeHitmark = 27",
+          "",
+          "func (c *char) ChargeAttack() {",
+          "\tc.chargeAttackShort(0)",
+          "}",
+          "",
+          "func (c *char) chargeAttackShort(windup int) {",
+          "\tc.QueueCharTask(func() {",
+          "\t\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+          "\t}, windup+3)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([30]);
   });
 });

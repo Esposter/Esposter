@@ -80,6 +80,10 @@ describe(mergeGenshinSave, () => {
   const GUEST_TRAVELER_NAME = "b";
   const EARLIER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const LATER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
+  // Two keys in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the day after it
+  const EARLIER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).toString();
+  const LATER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
+  const NEXT_GAME_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 21 }).toString();
   // A character as a save holds it, the fields a test reads set by its own overrides
   const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
     artifacts: [],
@@ -112,6 +116,24 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
 
     expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
+  });
+
+  test("a mail pinned on either copy stays pinned after a merge", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isPinned: false, isRead: false };
+    const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [{ ...mail, isPinned: true }] };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([{ ...mail, isPinned: true }]);
+  });
+
+  test("a mail pinned on neither copy stays unpinned after a merge", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isPinned: false, isRead: false };
+    const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([mail]);
   });
 
   test("unions the Archive's opened entries by section and keeps the larger defeat count of each Living Being", () => {
@@ -344,6 +366,22 @@ describe(mergeGenshinSave, () => {
     expect(merged.companionshipExp).toStrictEqual({ [CHARACTER_ID]: GUEST_EXP });
   });
 
+  test("keeps the larger card game EXP", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, cardGameExp: ACCOUNT_EXP };
+    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameExp: GUEST_EXP };
+
+    expect(mergeGenshinSave(account, guest).cardGameExp).toBe(GUEST_EXP);
+  });
+
+  test("keeps the games each copy has rewarded once, in ascending order", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1105, 1103] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1103, 1021] };
+
+    expect(mergeGenshinSave(account, guest).cardGameRewardedGameIds).toStrictEqual([1021, 1103, 1105]);
+  });
+
   test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
     expect.hasAssertions();
     const account = {
@@ -524,6 +562,22 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(guest.commissionDay);
   });
 
+  test("keeps the account's larger count when both copies counted the same game day", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: LATER_DAY_KEY } };
+
+    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(account.investigationDay);
+  });
+
+  test("keeps the later game day's counter, whatever its count", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: NEXT_GAME_DAY_KEY } };
+
+    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(guest.investigationDay);
+  });
+
   test("keeps the Encounter Points earned on the later daily reset", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 6 } };
@@ -570,6 +624,28 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
       frostbearingTree: { heldCounts: { 1: 9 }, level: ACCOUNT_LEVEL },
     });
+  });
+
+  test("a mail is kept once by its id, and read or claimed on either copy stays so", () => {
+    expect.hasAssertions();
+    const MAIL_ID = 1;
+    const OTHER_MAIL_ID = 2;
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: true }],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [
+        { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: false },
+        { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
+      ],
+    };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: true },
+      { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
+    ]);
   });
 
   test("merged saves keep every found Oculus", () => {
@@ -734,6 +810,7 @@ describe(mergeGenshinSave, () => {
       "mondstadt-camp-1|enemy-3": EARLIER_RESPAWN,
     });
   });
+
   test("keeps each chamber cleared if either save cleared it, its most stars, and the rewards either save claimed", () => {
     expect.hasAssertions();
     const account = {

@@ -29,6 +29,9 @@ const getWeaponData = (id: number) => {
 // A five-star weapon, the weapon the screen opens on
 const WEAPON_ID = 11516;
 export const weaponData = getWeaponData(WEAPON_ID);
+// A three-star weapon whose passive's rank descriptions read their own values, which the screen draws filled from the names
+const RANKED_WEAPON_ID = 11301;
+export const rankedWeaponData = getWeaponData(RANKED_WEAPON_ID);
 // A two-star weapon, which the game gives no refinement costs at all
 const TWO_STAR_WEAPON_ID = 11201;
 // A three-star weapon the bag holds as fodder

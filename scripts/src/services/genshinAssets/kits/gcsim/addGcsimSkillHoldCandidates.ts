@@ -2,7 +2,11 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimHoldSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHoldSource";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
-import { GCSIM_SKILL_HOLD_HITBOX_NAME, GCSIM_SKILL_HOLD_PREFIXES } from "#src/services/genshinAssets/kits/constants";
+import {
+  GCSIM_FRAMES_PER_SECOND,
+  GCSIM_SKILL_HOLD_HITBOX_NAME,
+  GCSIM_SKILL_HOLD_PREFIXES,
+} from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
@@ -18,7 +22,7 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // State gcsim reads it at, so it gives no hits
 export const addGcsimSkillHoldCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap, queuedAttacks, travelMap }: GcsimCharacter,
+  { attacks, config, constantMap, holdCooldowns, queuedAttacks, travelMap }: GcsimCharacter,
 ): void => {
   const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): GcsimHoldSource[] => {
     const hitmarks = findGcsimConstant(constantMap, `${prefix}Hitmarks`, `${prefix}Hitmark`);
@@ -70,4 +74,7 @@ export const addGcsimSkillHoldCandidates = (
       );
     }
   }
+  // A case of the hold's switch sets the cooldown the skill takes, in frames, which the table gives in seconds
+  for (const [holdIndex, { file, frames, line }] of holdCooldowns.entries())
+    add(`skillHolds.${holdIndex}.cooldownSeconds`, frames / GCSIM_FRAMES_PER_SECOND, toFile(file), line);
 };

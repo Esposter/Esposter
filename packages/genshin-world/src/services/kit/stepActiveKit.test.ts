@@ -117,7 +117,7 @@ describe(stepActiveKit, () => {
     expect(kitState).toStrictEqual(createKitState());
   });
 
-  test("sends the team's kits a swap, an effect that runs out and a normal attack that lands", () => {
+  test("sends the team's kits a swap, an effect that runs out and a normal attack that starts and lands", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const offFieldCombatant = createCombatant(FISCHL_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent });
@@ -138,6 +138,7 @@ describe(stepActiveKit, () => {
         previousCharacterId: FISCHL_CHARACTER_ID,
       },
       { effect: status, kind: KitEventKind.EffectExpired },
+      { action: takeOne(TRAVELER_KIT.normalAttacks), isFirstStrike: true, kind: KitEventKind.NormalAttackStarted },
       { action: takeOne(TRAVELER_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded },
     ]);
   });
@@ -238,6 +239,25 @@ describe(stepActiveKit, () => {
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
       },
+    ]);
+  });
+
+  test("sends the team's kits a fall a kit refused just after the change that left its member standing", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 1, undefined, { healthShare: 0.1, refuses: () => true });
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare: -0.9,
+        isFallRefused: true,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.FallRefused },
     ]);
   });
 

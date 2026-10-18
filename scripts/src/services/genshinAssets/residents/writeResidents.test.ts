@@ -25,6 +25,7 @@ describe(writeResidents, () => {
   const AREA_ID = "first-area";
   const REGION = "first-region";
   const REGION_FILE = `regions/${REGION}.json`;
+  const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
   // The file holds a resident no placement supplies, so the residents the writer computes differ from it and a write is due
   const region: RegionDataFile = {
     landmarks: [],
@@ -38,7 +39,7 @@ describe(writeResidents, () => {
       points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
+      transform: IDENTITY_TRANSFORM,
     });
     vi.mocked(readPublishedGameData).mockResolvedValue({ buildings: {}, groups: {} } satisfies SceneGroups);
     vi.mocked(readDialogSpeakers).mockReturnValue([]);
@@ -73,7 +74,7 @@ describe(writeResidents, () => {
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
+      transform: IDENTITY_TRANSFORM,
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
     });
@@ -99,6 +100,83 @@ describe(writeResidents, () => {
         "0 at a crafting bench, 0 with no name, 0 with no talk, 0 repeat placements of a resident already placed, and 0 of 1 placed NPCs in no fitted region",
         "nothing written",
       ].join("\n"),
+    );
+  });
+
+  // A challenger the scene places at a building point, with the talk the dialog names for the NPC
+  const seatChallenger = (buildingId: string, npcId: number, nameTextHash: number, talkId: number): void => {
+    vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
+    vi.mocked(readFittedRegions).mockResolvedValueOnce({
+      origin: [0, 0, 0],
+      points: [],
+      regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
+      regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
+      transform: IDENTITY_TRANSFORM,
+    });
+    vi.mocked(readPublishedGameData).mockResolvedValueOnce({
+      buildings: {
+        [buildingId]: {
+          name: "Building",
+          place: { height: 0, position: { x: 0, z: 0 }, rotationY: 0, source: SceneGroupSource.ScenePoints },
+        },
+      },
+      groups: {},
+    } satisfies SceneGroups);
+    vi.mocked(readExcelTable).mockReturnValueOnce([{ id: npcId, nameTextMapHash: nameTextHash }] satisfies DumpedNpc[]);
+    vi.mocked(readDialogSpeakers).mockReturnValueOnce([{ speakerId: npcId, talkId }]);
+  };
+
+  test("a seated challenger's talk opens the duel", async () => {
+    expect.hasAssertions();
+    // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her week row names
+    const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
+    const ELLIN_NPC_ID = 9704;
+    const ELLIN_NAME_TEXT_HASH = 2404082984;
+    const ELLIN_TALK_ID = 6970401;
+    const ELLIN_DUEL_GAME_ID = 1031;
+    seatChallenger(KNIGHTS_HEADQUARTERS_POINT_ID, ELLIN_NPC_ID, ELLIN_NAME_TEXT_HASH, ELLIN_TALK_ID);
+
+    await writeResidents({ isDryRun: false });
+
+    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      expect.objectContaining({
+        residents: [
+          expect.objectContaining({
+            duelGameId: ELLIN_DUEL_GAME_ID,
+            id: String(ELLIN_NPC_ID),
+            talkId: String(ELLIN_TALK_ID),
+          }),
+        ],
+      }),
+    );
+  });
+
+  test("a seated challenger's week game is written with its game, the level it is offered at, and its reward", async () => {
+    expect.hasAssertions();
+    // Kimiya stands at Sumeru's crafting bench, building 526, and his week row names game 1103 at level 5, while his duel sits at
+    // His seat, game 1104
+    const CRAFTING_BENCH_BUILDING_ID = "526";
+    const KIMIYA_NPC_ID = 9715;
+    const KIMIYA_NAME_TEXT_HASH = 1;
+    const KIMIYA_TALK_ID = 9715001;
+    const KIMIYA_DUEL_GAME_ID = 1104;
+    const KIMIYA_WEEK_GAME = { gameId: 1103, gcgLevel: 5, luckyCoins: 900, playerExp: 200 };
+    seatChallenger(CRAFTING_BENCH_BUILDING_ID, KIMIYA_NPC_ID, KIMIYA_NAME_TEXT_HASH, KIMIYA_TALK_ID);
+
+    await writeResidents({ isDryRun: false });
+
+    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      expect.objectContaining({
+        residents: [
+          expect.objectContaining({
+            duelGameId: KIMIYA_DUEL_GAME_ID,
+            id: String(KIMIYA_NPC_ID),
+            weekGame: KIMIYA_WEEK_GAME,
+          }),
+        ],
+      }),
     );
   });
 

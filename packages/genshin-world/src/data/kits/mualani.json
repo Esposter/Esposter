@@ -1,15 +1,13 @@
 {
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 178 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 10239 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 113 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 84 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
+  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
+  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
+  "chargedAttack.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.5 }
+  },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 84 }
 }

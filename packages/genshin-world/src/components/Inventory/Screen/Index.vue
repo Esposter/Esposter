@@ -109,7 +109,7 @@ const cells = computed((): InventoryCell[] => {
   const itemCells = computeInventoryTab(inventory.items, category.value, {
     isDescending: isDescending.value,
     sort: sort.value,
-  }).map((item) => {
+  }).map((item): InventoryCell => {
     const {
       definition: { name, rarity },
       id,

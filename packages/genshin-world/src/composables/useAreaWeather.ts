@@ -6,6 +6,7 @@ import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { checkIsInCity } from "#src/services/world/checkIsInCity";
 import { computeShownAreaWeather } from "#src/services/world/computeShownAreaWeather";
+import { getAreaWeathers } from "#src/services/world/getAreaWeathers";
 import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
 import { createSeededRandom, WeatherKind } from "genshin-engine";
@@ -24,8 +25,12 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   let checkedX = Infinity;
   let checkedZ = Infinity;
   let checkedArea: CatalogueArea | undefined;
+  let checkedWeathers: WeatherKind[] = [];
   let secondsInWeather = 0;
   const random = createSeededRandom(WORLD_RANDOM_SEED);
+  const areaRegionIds = new Map(
+    catalogue.regions.flatMap(({ areas, id }) => areas.map((area) => [area.id, id] as const)),
+  );
 
   onBeforeRender(({ delta }) => {
     const activeCamera = camera.value;
@@ -39,17 +44,18 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
       isInCity.value = area !== undefined && checkIsInCity(area, x, z);
       if (area !== checkedArea) {
         checkedArea = area;
+        // The storm stays lifted until the hour and weather control restores it
+        checkedWeathers = area ? getAreaWeathers(area.weathers, areaRegionIds.get(area.id) ?? "", false) : [];
         secondsInWeather = 0;
-        areaWeather.value = area?.weathers[0] ?? WeatherKind.Clear;
+        areaWeather.value = checkedWeathers[0] ?? WeatherKind.Clear;
       }
     }
 
-    const weathers = checkedArea?.weathers ?? [];
-    if (weathers.length < 2) return;
+    if (checkedWeathers.length < 2) return;
     secondsInWeather += delta;
     if (secondsInWeather < AREA_WEATHER_CHANGE_SECONDS) return;
     secondsInWeather = 0;
-    areaWeather.value = getNextAreaWeather(areaWeather.value, weathers, random);
+    areaWeather.value = getNextAreaWeather(areaWeather.value, checkedWeathers, random);
   });
 
   return computed(() => computeShownAreaWeather(areaWeather.value, isInCity.value));

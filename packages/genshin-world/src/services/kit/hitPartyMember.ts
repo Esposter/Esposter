@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
+import { createKitFallRefusal } from "#src/services/kit/createKitFallRefusal";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
@@ -16,5 +17,11 @@ export const hitPartyMember = (
 ): void => {
   const { maxHealth } = combatant.attributes;
   const overflow = absorbKitShield(kitEffectState.effects, combatant, damage);
-  damagePartyMember(party, combatant.characterId, overflow / maxHealth);
+  damagePartyMember(
+    party,
+    combatant.characterId,
+    overflow / maxHealth,
+    undefined,
+    createKitFallRefusal(combatant, kitEffectState),
+  );
 };

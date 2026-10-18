@@ -39,6 +39,7 @@ import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineComm
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
+import { measureCommand } from "#src/services/genshinAssets/commands/measureCommand";
 import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
@@ -92,6 +93,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     camera: cameraCommand,
     timings: timingsCommand,
     avatar: avatarCommand,
+    measure: measureCommand,
     witness: witnessCommand,
     "city-areas": cityAreasCommand,
     "asset-index": assetIndexCommand,

@@ -14,6 +14,7 @@ import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { computeNationExplorationPercentage } from "#src/services/exploration/computeNationExplorationPercentage";
 import { placeExplorationDoings } from "#src/services/exploration/placeExplorationDoings";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
@@ -225,6 +226,9 @@ export const useWorldMap = ({
     const isFirstUnlock = !unlockedLandmarkIds.value.has(landmarkId);
     unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
     if (isFirstUnlock) payFirstUnlockReward(landmarkId);
+    const landmark = jumpLandmarks.value.find(({ id }) => id === landmarkId);
+    if (isFirstUnlock && landmark?.kind === LandmarkKind.DomainEntrance)
+      events.emit("domainEntryUnlocked", landmark.entryId);
     settleExplorationThresholds();
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
     const transPointId = computeLandmarkPointId(landmarkId);
