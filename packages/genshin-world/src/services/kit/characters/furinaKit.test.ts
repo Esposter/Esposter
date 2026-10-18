@@ -153,33 +153,65 @@ describe(createFurinaKitBehaviour, () => {
     expect(teammateHydroBonus?.kind === "buff" ? teammateHydroBonus.amount : undefined).toBeCloseTo(20 * 0.0007);
   });
 
-  test("endless waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character on the field is under four seconds old", () => {
-    expect.hasAssertions();
-    const furina = createFurinaCombatant({ ascension: 1 });
-    const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
-    const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
-    getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
-    const context = createKitTestContext(furina, {
-      characterIdCombatantMap: new Map([
-        [FURINA_CHARACTER_ID, furina],
-        [TEAMMATE_CHARACTER_ID, teammate],
-      ]),
-      party,
-    });
-    const overheal: KitHealthChangedEvent = {
-      characterId: FURINA_CHARACTER_ID,
-      healthShare: 0,
-      kind: KitEventKind.HealthChanged,
-      overflowHealthShare: 0.1,
-      sourceCharacterId: TEAMMATE_CHARACTER_ID,
-    };
-    FURINA_KIT.onKitEvent?.(overheal, context, furina);
-    stepFrames(60, context);
-    // A second overheal a second in keeps the regeneration's ticks at two and four seconds, and none at six
-    FURINA_KIT.onKitEvent?.(overheal, context, furina);
-    stepFrames(360, context);
+  describe("the Ascension 1 passive, Endless Waltz", () => {
+    // Endless Waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character on the field is under four seconds old
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const furina = createFurinaCombatant({ ascension: 1 });
+      const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
+      const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
+      getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
+      const context = createKitTestContext(furina, {
+        characterIdCombatantMap: new Map([
+          [FURINA_CHARACTER_ID, furina],
+          [TEAMMATE_CHARACTER_ID, teammate],
+        ]),
+        party,
+      });
+      const overheal: KitHealthChangedEvent = {
+        characterId: FURINA_CHARACTER_ID,
+        healthShare: 0,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0.1,
+        sourceCharacterId: TEAMMATE_CHARACTER_ID,
+      };
+      FURINA_KIT.onKitEvent?.(overheal, context, furina);
+      stepFrames(60, context);
+      // A second overheal a second in keeps the regeneration's ticks at two and four seconds, and none at six
+      FURINA_KIT.onKitEvent?.(overheal, context, furina);
+      stepFrames(360, context);
 
-    expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBeCloseTo(0.54);
+      expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBeCloseTo(0.54);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const furina = createFurinaCombatant({ ascension: 0 });
+      const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
+      const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
+      getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
+      const context = createKitTestContext(furina, {
+        characterIdCombatantMap: new Map([
+          [FURINA_CHARACTER_ID, furina],
+          [TEAMMATE_CHARACTER_ID, teammate],
+        ]),
+        party,
+      });
+      FURINA_KIT.onKitEvent?.(
+        {
+          characterId: FURINA_CHARACTER_ID,
+          healthShare: 0,
+          kind: KitEventKind.HealthChanged,
+          overflowHealthShare: 0.1,
+          sourceCharacterId: TEAMMATE_CHARACTER_ID,
+        },
+        context,
+        furina,
+      );
+      stepFrames(360, context);
+
+      expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBe(0.5);
+    });
   });
 
   test("a strike that lands opens the Arkhe's hit as a normal attack, once within each Arkhe's cooldown", () => {
@@ -201,5 +233,55 @@ describe(createFurinaKitBehaviour, () => {
 
     expect([inOusia, countArkheHits()]).toStrictEqual([1, 1]);
     expect(findKitStatus(kitEffectState.effects, FURINA_CHARACTER_ID, "furina-surging-blade-cooldown")).toBeDefined();
+  });
+
+  // The first attack of the Salon, 90 frames after the skill, at the ascension stood, with a teammate and an enemy in reach
+  const getSalonAttackDamageBonus = (ascension: number): number => {
+    const furina = createFurinaCombatant({ ascension });
+    const context = createKitTestContext(furina, {
+      characterIdCombatantMap: new Map([
+        [FURINA_CHARACTER_ID, furina],
+        [TEAMMATE_CHARACTER_ID, createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID })],
+      ]),
+      enemyMap: new Map([["", createEnemyAt(3)]]),
+      party: createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    FURINA_KIT.elementalSkill.onStart?.(context);
+    stepFrames(90, context);
+    const attack = context.kitEffectState.effects.find(
+      (effect) => effect.kind === "summon" && effect.id === "furina-salon-attack",
+    );
+    if (attack?.kind !== "summon") throw new Error("the Salon's attack is not cast");
+    return attack.hits[0]?.damageBonus ?? 0;
+  };
+
+  // The Singer's tick interval, read off its field once the charged attack turns her to Pneuma
+  const getSingerInterval = (ascension: number): number => {
+    const context = createKitTestContext(createFurinaCombatant({ ascension }));
+    FURINA_KIT.elementalSkill.onStart?.(context);
+    stepFrames(60, context);
+    FURINA_KIT.chargedAttack.onStart?.(context);
+    stepFrames(40, context);
+    const singer = context.kitEffectState.effects.find(
+      (effect) => effect.kind === "field" && effect.id === "furina-singer",
+    );
+    if (singer?.kind !== "field") throw new Error("the Singer's field is not set going");
+    return singer.tickIntervalSeconds;
+  };
+
+  describe("the Ascension 4 passive, Unheard Confession", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getSalonAttackDamageBonus(4)).toBeCloseTo(0.14, 5);
+      expect(getSingerInterval(4)).toBeLessThan(getSingerInterval(3));
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getSalonAttackDamageBonus(3)).toBe(0);
+      expect(getSingerInterval(3)).toBe(getSingerInterval(0));
+    });
   });
 });
