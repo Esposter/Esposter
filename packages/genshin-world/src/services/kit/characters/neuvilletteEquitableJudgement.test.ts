@@ -74,14 +74,13 @@ describe(createEquitableJudgementLength, () => {
 
     // A wielder with a Max HP to heal by, as the bare fixture above has none
     const context = createKitTestContext({ ...wielder, attributes: { ...wielder.attributes, maxHealth: 10_000 } });
-    const getHealthShare = () => {
+    const getWielderMember = () => {
       const member = context.party.characterIdMemberMap.get(NEUVILLETTE_CHARACTER_ID);
       if (!member) throw new Error("the wielder is not in the party");
-      return member.healthShare;
+      return member;
     };
-    const member = context.party.characterIdMemberMap.get(NEUVILLETTE_CHARACTER_ID);
-    if (!member) throw new Error("the wielder is not in the party");
-    member.healthShare = 0.5;
+    const getHealthShare = () => getWielderMember().healthShare;
+    getWielderMember().healthShare = 0.5;
     castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: -1 });
     createEquitableJudgementLength(() => []).decide(context);
     stepKitSeconds(context, 4 * FIXED_STEP_SECONDS);
