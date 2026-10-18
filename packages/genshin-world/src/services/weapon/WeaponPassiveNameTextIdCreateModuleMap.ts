@@ -42,6 +42,7 @@ import { createSharpPassiveModule } from "#src/services/weapon/passives/createSh
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
+import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
@@ -204,4 +205,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3197835587": createItinerantHeroPassiveModule,
   // Focus (Royal Longsword)
   "2129974699": createFocusPassiveModule,
+  // Undying Admiration (Festering Desire)
+  "1399609651": createUndyingAdmirationPassiveModule,
 };
