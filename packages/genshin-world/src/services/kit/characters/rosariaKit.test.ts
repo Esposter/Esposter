@@ -11,6 +11,7 @@ import { createRosariaKitBehaviour, ROSARIA_CHARACTER_ID } from "#src/services/k
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ROSARIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ROSARIA_CHARACTER_ID);
@@ -37,6 +38,16 @@ const getFieldSeconds = (constellationCount: number): number => {
   const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
   if (!field) throw new Error("Rites of Termination placed no field");
   return field.secondsRemaining;
+};
+
+// The buffs on the team once Ravaging Confession's first hit, cast by Rosaria at the ascension, strikes an enemy
+const strikeFirstSkillHit = (ascension: number) => {
+  const combatant = createRosariaCombatant(0, ascension);
+  const context = createKitTestContext(combatant);
+  ROSARIA_KIT.elementalSkill.onStart?.(context);
+  const hit = takeOne(ROSARIA_KIT.elementalSkill.hits);
+  hit.onStrike?.(context, { body: context.body, combatant, hit });
+  return context.kitEffectState.effects.filter((effect) => effect.kind === "buff");
 };
 
 describe(createRosariaKitBehaviour, () => {
@@ -84,5 +95,28 @@ describe(createRosariaKitBehaviour, () => {
     ROSARIA_KIT.elementalBurst.onStart?.(context);
 
     expect(context.kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
+  });
+});
+
+describe("regina Probationum", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(strikeFirstSkillHit(1)).toStrictEqual([
+      {
+        amount: 0.12,
+        attribute: Attribute.CriticalRate,
+        characterId: ROSARIA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 5,
+        source: "rosaria-regina-probationum",
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(strikeFirstSkillHit(0)).toStrictEqual([]);
   });
 });
