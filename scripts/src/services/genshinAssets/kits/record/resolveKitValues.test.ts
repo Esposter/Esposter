@@ -77,7 +77,7 @@ describe(resolveKitValues, () => {
 
     const { valueMap } = resolveKitValues(
       sourceCandidateMap,
-      { "burst.hits.length": { cause: "Unclassified", value: 2 } },
+      { "burst.hits.length": { cause: KitProvisionalCause.Unclassified, value: 2 } },
       new Map(),
       new Map(),
       tables,
