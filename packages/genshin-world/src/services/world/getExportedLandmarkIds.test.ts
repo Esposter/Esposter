@@ -1,7 +1,7 @@
 import type { SceneExport } from "#src/models/scene/SceneExport";
 
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
-import { createStatue } from "#src/services/shared/createStatue";
+import { createStatue } from "#src/services/shared/createStatue.test";
 import { getExportedLandmarkIds } from "#src/services/world/getExportedLandmarkIds";
 import { noop } from "@esposter/shared";
 import { Box3, Group, Vector3 } from "three";
