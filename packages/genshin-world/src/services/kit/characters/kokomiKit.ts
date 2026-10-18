@@ -1,9 +1,11 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -17,23 +19,61 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 const SKILL_DURATION_SECONDS = 12.5;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
+const ASCENSION_1 = 1;
 // Measured: gcsim (MIT) kokomi/burst.go, Ceremonial Garment lasts ten seconds
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/burst.go
 const GARMENT_SECONDS = 10;
+// Measured: gcsim (MIT) kokomi/asc.go, Song of Pearls adds 15% of her Healing Bonus, of her Max HP, to each garment
+// Normal and Charged Attack, from Ascension 4
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/asc.go
+const ASCENSION_4 = 4;
+const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
+// Flawless Strategy, Kokomi's passive she holds from the start, as its text gives it: 25% Healing Bonus, and a CRIT Rate
+// Decreased by 100%
+const FLAWLESS_STRATEGY_HEALING_BONUS = 0.25;
+const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
 
-// A garment attack's hit adds its share of her Max HP to its damage, and its heal is rolled every time, whether or not
-// She holds a shield, as gcsim's heal on each normal and charged attack is
-const createGarmentAttackHit = (maxHealthShare: number): KitHitBehaviour => ({
-  additiveBaseDamageBonus: createMaxHealthScaledBonus(maxHealthShare),
-  healPartyChance: () => 1,
-});
+// A garment attack's hit adds its share of her Max HP to its damage, and from Ascension 4 Song of Pearls' share of her
+// Healing Bonus of her Max HP as well. Its heal is rolled every time, whether or not she holds a shield, as gcsim's heal
+// On each normal and charged attack is
+const createGarmentAttackHit = (maxHealthShare: number): KitHitBehaviour => {
+  const addMaxHealthShare = createMaxHealthScaledBonus(maxHealthShare);
+  return {
+    additiveBaseDamageBonus: (striker) =>
+      addMaxHealthShare(striker) +
+      (striker.ascension < ASCENSION_4
+        ? 0
+        : SONG_OF_PEARLS_HEALING_BONUS_SHARE *
+          striker.attributes.attributeTotalMap[Attribute.HealingBonus] *
+          striker.attributes.maxHealth),
+    healPartyChance: () => 1,
+  };
+};
+
+// Flawless Strategy's Healing Bonus and CRIT Rate, which she holds from the start
+const getPassiveBonuses = (): { amount: number; attribute: Attribute }[] => [
+  { amount: FLAWLESS_STRATEGY_HEALING_BONUS, attribute: Attribute.HealingBonus },
+  { amount: FLAWLESS_STRATEGY_CRITICAL_RATE, attribute: Attribute.CriticalRate },
+];
+
+// Tamakushi Casket, Kokomi's Ascension 1 passive, as its text gives it: Nereid's Ascension refreshes Bake-Kurage on the field to
+// Its full duration. gcsim's kokomi/asc.go sets it to 12 seconds and a frame instead, which this does not copy
+const refreshBakeKurage = (effects: KitEffect[], characterId: number): void => {
+  for (const effect of effects)
+    if (
+      (effect.kind === "field" || effect.kind === "summon") &&
+      (effect.kind === "summon" ? effect.combatant.characterId : effect.characterId) === characterId
+    )
+      effect.secondsRemaining = SKILL_DURATION_SECONDS;
+};
 
 export const KOKOMI_CHARACTER_ID = 10_000_054;
 
 // Kokomi's behaviour: Bake-Kurage casts its ripples and its heal where she stands. Nereid's Ascension robes her in the
 // Ceremonial Garment, a stance of her own that replaces her normal attacks, charged attack and Bake-Kurage while it
 // Lasts, each of whose attacks adds a share of her Max HP to its damage, and whose normal and charged attacks heal the
-// Party
+// Party. Her passives are built: Flawless Strategy, Tamakushi Casket and Song of Pearls, which adds to the garment's
+// Attacks from Ascension 4
 export const createKokomiKitBehaviour = ({
   kit,
   readHits,
@@ -81,10 +121,13 @@ export const createKokomiKitBehaviour = ({
     skill: createBakeKurage(garmentBakeKurageRipples),
   });
   return {
-    // Nereid's Ascension robes Kokomi in the garment as it is cast
+    getPassiveBonuses,
+    // Nereid's Ascension robes Kokomi in the garment as it is cast, and from Ascension 1 refreshes her Bake-Kurage
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, ceremonialGarment, GARMENT_SECONDS, { isEndedOnSwap: true }),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        if (combatant.ascension >= ASCENSION_1) refreshBakeKurage(kitEffectState.effects, combatant.characterId);
+        enterKitStance(kitEffectState, combatant, ceremonialGarment, GARMENT_SECONDS, { isEndedOnSwap: true });
+      },
     },
     skill: createBakeKurage(bakeKurageRipples),
   };
