@@ -35,7 +35,8 @@ export const startNextKitAction = (
 ): KitAction | undefined => {
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
-  if (isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
+  const canStartAttack = kit.checkCanStartAttack?.(context) !== false;
+  if (canStartAttack && isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
     const chargedAttackStamina = kit.chargedAttackStamina * (kit.getChargedAttackStaminaMultiplier?.(context) ?? 1);
     if (stamina.checkCanSpend(chargedAttackStamina)) {
       // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
@@ -90,7 +91,7 @@ export const startNextKitAction = (
     return startKitAction(kitState, holdAction ?? kit.elementalSkill, landedHits);
   }
 
-  if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot) {
+  if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot && canStartAttack) {
     const { comboIndex } = kitState;
     kitState.comboIndex = (comboIndex + 1) % kit.normalAttacks.length;
     return startKitAction(kitState, takeOne(kit.normalAttacks, comboIndex), landedHits);

@@ -62,6 +62,8 @@ export const stepKit = (
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;
 
+  // A state the kit holds can restrict a plunge as an attack, so its collisions and its landing strike nothing then
+  const canStartAttack = kit.checkCanStartAttack?.(context) !== false;
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
       endKitAction(kitState, kit, false);
@@ -71,12 +73,12 @@ export const stepKit = (
     kitState.actionSeconds += stepSeconds;
     while (kitState.actionSeconds >= PLUNGE_COLLISION_SECONDS) {
       kitState.actionSeconds -= PLUNGE_COLLISION_SECONDS;
-      landedHits.push(kit.plungeCollision);
+      if (canStartAttack) landedHits.push(kit.plungeCollision);
     }
     return undefined;
   }
 
-  if (wasPlunging && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
+  if (wasPlunging && canStartAttack && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
     const drop = kitState.plungeStartHeight - height;
     return startKitAction(kitState, drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge, landedHits);
   }
