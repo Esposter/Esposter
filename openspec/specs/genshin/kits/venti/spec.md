@@ -72,13 +72,13 @@ From Constellation 1, a fully charged shot SHALL cast two more arrows from where
 
 ### Requirement: Breeze of Reminiscence and Storm of Defiance
 
-From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES of each enemy it strikes by 12% for 10 seconds, and from Constellation 6, each Stormeye tick SHALL cut it by a further 20% for 10 seconds, the two adding up.
+From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physical RES of each enemy it strikes by 12% for 10 seconds, and from Constellation 6, each Stormeye tick SHALL cut it by a further 20% for 10 seconds, the two adding up.
 
 #### Scenario: Skyward Sonnet cuts Anemo RES
 
 - **GIVEN** Venti has Constellation 2
 - **WHEN** a Skyward Sonnet hit strikes an enemy
-- **THEN** that enemy's Anemo RES drops by 12% for 10 seconds
+- **THEN** that enemy's Anemo RES and Physical RES drop by 12% for 10 seconds
 
 #### Scenario: Two cuts add up
 
@@ -88,7 +88,7 @@ From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES of each en
 
 ### Requirement: Unbuilt Venti effects
 
-Elemental Absorption, the Stormeye's pull, Breeze of Reminiscence's Physical RES, Hurricane of Freedom, Venti's other constellations and his Hexerei kit SHALL NOT take effect.
+Elemental Absorption, the Stormeye's pull, Constellation 2's airborne cut, Hurricane of Freedom, Venti's other constellations and his Hexerei kit SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

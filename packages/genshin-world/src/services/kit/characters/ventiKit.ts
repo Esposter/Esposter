@@ -16,13 +16,14 @@ const STORMEYE_OFFSET = 5;
 // Gives it. gcsim v2.47.2 (MIT) venti/cons.go lands them with the shot
 // https://genshin-impact.fandom.com/wiki/Splitting_Gales
 const SPLITTING_GALES_CONSTELLATION = 1;
-// Breeze of Reminiscence, from two constellations, takes 12% off the Anemo RES of each enemy Skyward Sonnet strikes for 10
-// Seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT) venti/cons.go give it
+// Breeze of Reminiscence, from two constellations, takes 12% off the Anemo and Physical RES of each enemy Skyward Sonnet
+// Strikes for 10 seconds, as the wiki's constellation page and gcsim v2.47.2 (MIT) venti/cons.go give it
 // https://genshin-impact.fandom.com/wiki/Breeze_of_Reminiscence
 const BREEZE_OF_REMINISCENCE_CONSTELLATION = 2;
 const BREEZE_OF_REMINISCENCE_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
   id: "venti-breeze-of-reminiscence",
+  physicalResistanceReduction: 0.12,
   resistanceReduction: { [Element.Anemo]: 0.12 },
   secondsRemaining: 10,
 };
@@ -48,8 +49,7 @@ export const VENTI_CHARACTER_ID = 10_000_022;
 // Press and hold take Breeze of Reminiscence's Anemo RES. Wind's Grand Ode casts the Stormeye ahead of him, its ticks
 // Taking Storm of Defiance's Anemo RES from six constellations, and from Ascension 4 a task as its seconds end gives him
 // Its energy
-// Constellation 2 needs a Physical RES cut, which EnemyStatus keys as physicalResistanceReduction and the kit does not set yet, and
-// A launched state, not built
+// Constellation 2's airborne extra needs a launched state, which is not built
 // Constellation 6's RES cut on an absorbed element, which the kit does not build
 // Constellation 4 needs the Elemental Orb or Particle pickup and the team's buff after his skill and burst, not built
 export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
