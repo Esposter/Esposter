@@ -36,6 +36,12 @@ Grass, scatter and trees out of the view or past the draw distance SHALL NOT be 
 - **WHEN** the frame is drawn
 - **THEN** the grass out of view is not drawn
 
+#### Scenario: Grass whose bent tip enters view is drawn
+
+- **GIVEN** a blade whose unbent root and top both lie just outside the view
+- **WHEN** the character walks toward it, the trail and the wind bend its tip sideways into the view
+- **THEN** the blade is drawn, its bent tip visible at the edge of the frame
+
 ### Requirement: Grass bends away from the character as it passes
 
 Grass SHALL bend away from the character as the character walks through it.

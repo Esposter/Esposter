@@ -4,6 +4,7 @@
 - [ ] 1.2 Cull plants out of view or past distance on the graphics card. Verify: a test named after the scenario 'Grass out of view is not drawn'.
 - [ ] 1.3 Bend grass away from the character as it passes. Verify: a test named after the scenario 'Grass bends where the character walks'.
 - [ ] 1.4 Write the trail texture around the viewer from the character controller, and bend only the grass it records. Verify: tests named after the scenarios 'Grass beyond the trail stands upright' and 'The trail follows the character', seen failing first. The trail's size, resolution and fade stay provisional, as the design records.
+- [ ] 1.5 Cull grass on its bent tip as well as its unbent root and top, so a tip the trail or wind bends into view is drawn. Verify: a test named after the scenario 'Grass whose bent tip enters view is drawn'.
 
 ## 2. Species
 
