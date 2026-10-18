@@ -18,6 +18,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -1160.3, "z": -851.02 },
       "rotation": -1.8186,
+      "arrival": { "heightOffset": 13.31, "position": { "x": -1160.3, "z": -851.02 }, "rotation": -1.8186 },
       "areaId": "sea-of-clouds",
       "heightOffset": 13.31
     },
@@ -28,6 +29,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -2178.28, "z": -303.74 },
       "rotation": 2.0455,
+      "arrival": { "heightOffset": -16.57, "position": { "x": -2178.28, "z": -303.74 }, "rotation": 2.0455 },
       "areaId": "sea-of-clouds",
       "heightOffset": -16.57
     },
@@ -38,6 +40,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -200.74, "z": -1652.99 },
       "rotation": -1.6108,
+      "arrival": { "heightOffset": 57.05, "position": { "x": -200.74, "z": -1652.99 }, "rotation": -1.6108 },
       "areaId": "sea-of-clouds",
       "heightOffset": 57.05
     },
@@ -48,6 +51,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -599.46, "z": -2703.47 },
       "rotation": -2.9426,
+      "arrival": { "heightOffset": 55.31, "position": { "x": -599.46, "z": -2703.47 }, "rotation": -2.9426 },
       "areaId": "sea-of-clouds",
       "heightOffset": 55.31
     },
@@ -58,6 +62,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -1226.95, "z": -2434.83 },
       "rotation": -0.7411,
+      "arrival": { "heightOffset": -74.1, "position": { "x": -1226.95, "z": -2434.83 }, "rotation": -0.7411 },
       "areaId": "sea-of-clouds",
       "heightOffset": -74.1
     },
@@ -68,6 +73,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -2368.27, "z": -3169.39 },
       "rotation": -2.68,
+      "arrival": { "heightOffset": -33.99, "position": { "x": -2368.27, "z": -3169.39 }, "rotation": -2.68 },
       "areaId": "sea-of-clouds",
       "heightOffset": -33.99
     }

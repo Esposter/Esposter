@@ -67,6 +67,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 608.43, "z": 291.4 },
       "rotation": 1.7059,
+      "arrival": { "heightOffset": 10.19, "position": { "x": 608.43, "z": 291.4 }, "rotation": 1.7059 },
       "areaId": "galesong-hill",
       "heightOffset": 10.19
     },
@@ -77,6 +78,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 367.24, "z": -1015.55 },
       "rotation": 0.0229,
+      "arrival": { "heightOffset": 8.68, "position": { "x": 367.24, "z": -1015.55 }, "rotation": 0.0229 },
       "areaId": "starfell-valley",
       "heightOffset": 8.68
     },
@@ -87,6 +89,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -179.74, "z": -603.45 },
       "rotation": 1.4565,
+      "arrival": { "heightOffset": 11.22, "position": { "x": -179.74, "z": -603.45 }, "rotation": 1.4565 },
       "areaId": "starfell-valley",
       "heightOffset": 11.22
     },
@@ -97,6 +100,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -210.21, "z": -379.66 },
       "rotation": 3.0777,
+      "arrival": { "heightOffset": -2.59, "position": { "x": -210.21, "z": -379.66 }, "rotation": 3.0777 },
       "areaId": "galesong-hill",
       "heightOffset": -2.59
     },
@@ -107,6 +111,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -851.38, "z": -442.59 },
       "rotation": 0.0053,
+      "arrival": { "heightOffset": -0.83, "position": { "x": -851.38, "z": -442.59 }, "rotation": 0.0053 },
       "areaId": "galesong-hill",
       "heightOffset": -0.83
     },
@@ -117,6 +122,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -416.07, "z": -945.62 },
       "rotation": 1.5708,
+      "arrival": { "heightOffset": 5.03, "position": { "x": -416.07, "z": -945.62 }, "rotation": 1.5708 },
       "areaId": "starfell-valley",
       "heightOffset": 5.03
     },
@@ -127,6 +133,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 1368.31, "z": -1314.65 },
       "rotation": -1.6392,
+      "arrival": { "heightOffset": 61.77, "position": { "x": 1368.31, "z": -1314.65 }, "rotation": -1.6392 },
       "areaId": "starfell-valley",
       "heightOffset": 61.77
     },

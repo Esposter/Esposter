@@ -18,6 +18,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 1101.6, "z": -5454.77 },
       "rotation": 1.5973,
+      "arrival": { "heightOffset": -14.3, "position": { "x": 1101.6, "z": -5454.77 }, "rotation": 1.5973 },
       "areaId": "court-of-fontaine-region",
       "heightOffset": -14.3
     },
@@ -28,6 +29,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 2069.39, "z": -5968.53 },
       "rotation": 1.2741,
+      "arrival": { "heightOffset": 47.05, "position": { "x": 2069.39, "z": -5968.53 }, "rotation": 1.2741 },
       "areaId": "court-of-fontaine-region",
       "heightOffset": 47.05
     },
@@ -38,6 +40,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -34.8, "z": -5989.29 },
       "rotation": 0.6161,
+      "arrival": { "heightOffset": 213.1, "position": { "x": -34.8, "z": -5989.29 }, "rotation": 0.6161 },
       "areaId": "court-of-fontaine-region",
       "heightOffset": 213.1
     },
@@ -48,6 +51,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 580.87, "z": -5207.56 },
       "rotation": 0.2218,
+      "arrival": { "heightOffset": 273.14, "position": { "x": 580.87, "z": -5207.56 }, "rotation": 0.2218 },
       "areaId": "court-of-fontaine-region",
       "heightOffset": 273.14
     },
@@ -58,6 +62,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -605.67, "z": -5467.51 },
       "rotation": -0.9095,
+      "arrival": { "heightOffset": 59.54, "position": { "x": -605.67, "z": -5467.51 }, "rotation": -0.9095 },
       "areaId": "court-of-fontaine-region",
       "heightOffset": 59.54
     }

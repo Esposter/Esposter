@@ -60,7 +60,13 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
     const { height, ...landmark } = place;
     const areaId = findNearestLandmarkAreaId(region, otherLandmarksMap.get(region) ?? [], place.position);
     const heightOffset = toHeightOffset(height, originY, place.position, getWorldHeight);
-    getOrCreate(placedMap, region, () => []).push({ ...landmark, areaId, heightOffset });
+    // The arrival is provisionally the entrance's own place, until the domain's scene export gives its transfer point
+    getOrCreate(placedMap, region, () => []).push({
+      ...landmark,
+      areaId,
+      arrival: { heightOffset, position: landmark.position, rotation: landmark.rotation },
+      heightOffset,
+    });
   }
   const reports = await Promise.all(
     regionFiles.map(async ({ data, file, region }) => {

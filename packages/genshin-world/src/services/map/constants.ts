@@ -1,7 +1,9 @@
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 
-// The landmarks a jump lands at, as the game teleports to its waypoints and statues and nowhere else
+// The landmarks a jump lands at, as the game teleports to its waypoints, statues and unlocked domain entrances and
+// Nowhere else
 export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
+  LandmarkKind.DomainEntrance,
   LandmarkKind.StatueOfTheSeven,
   LandmarkKind.TeleportWaypoint,
 ];

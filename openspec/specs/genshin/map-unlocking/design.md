@@ -1,6 +1,6 @@
 # Map unlocking
 
-In the game the map is blank until a statue fills in its area, and a place is a jump only once it is unlocked. Here a Statue of The Seven or a Teleport Waypoint is unlocked by resonating with it on F, and until then its area is blank on the map and the minimap and the place is not offered as a jump. This page is what is built of [map unlocking](../../../changes/genshin-map-unlocking/design.md): Mondstadt's Teleport Waypoints, which [exploring](../exploring/design.md) places, and the domain entrances the region data places are landmarks of the world too, and resonating with one unlocks it the same way. A domain entrance is not yet a jump, since its region data gives it no arrival pose.
+In the game the map is blank until a statue fills in its area, and a place is a jump only once it is unlocked. Here a Statue of The Seven or a Teleport Waypoint is unlocked by resonating with it on F, and until then its area is blank on the map and the minimap and the place is not offered as a jump. This page is what is built of [map unlocking](../../../changes/genshin-map-unlocking/design.md): Mondstadt's Teleport Waypoints, which [exploring](../exploring/design.md) places, and the domain entrances the region data places are landmarks of the world too, and resonating with one unlocks it the same way. An unlocked domain entrance is a jump target, landing at its own place until the domain's scene export gives its transfer point.
 
 ## How it works
 
@@ -44,7 +44,7 @@ flowchart TD
 
 - **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a published clip ([roadmap](../../../changes/genshin-roadmap/tasks.md), References sought), so the unlock is instant here.
 - **Waypoints pay nothing on their first unlock.** A Teleport Waypoint is unlocked on F as a statue is, and the pointer marks it while it is locked. The first unlock's reward is looked up by the point id `LandmarkIdStatuePointIdMap` names, which holds Windrise's statue alone, so a waypoint pays nothing until its point is named there. The slice already holds every open-world point's reward, so a waypoint needs only that id.
-- **A waypoint the game hides stays out until its step is reached.** A listed transport point that a quest step names is kept out of the map and the prompt list until that step is reached, from the `transPoints/unlock` record; a point no step names is shown. **One waypoint rule is not built:** no quest step unlocks a waypoint outright, since the one unlock step names point 7, a statue's point. A domain entrance is not yet a jump: the fit must give each one an arrival pose first, as the change's design decides.
+- **A waypoint the game hides stays out until its step is reached.** A listed transport point that a quest step names is kept out of the map and the prompt list until that step is reached, from the `transPoints/unlock` record; a point no step names is shown. **One waypoint rule is not built:** no quest step unlocks a waypoint outright, since the one unlock step names point 7, a statue's point. A domain entrance's arrival is its own place until the domain's scene export gives its transfer point, as the [domains change](../../../changes/genshin-domains/design.md) decides.
 
 ## Sources
 

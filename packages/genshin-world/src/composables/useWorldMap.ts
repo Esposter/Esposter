@@ -15,6 +15,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeNationExplorationPercentage } from "#src/services/exploration/computeNationExplorationPercentage";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
+import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
 import { getFinishedReputationRewards } from "#src/services/reputation/getFinishedReputationRewards";
@@ -57,11 +58,7 @@ export const useWorldMap = ({
 }) => {
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
-  const {
-    domainEntranceLandmarks,
-    isLoaded: isJumpLandmarksLoaded,
-    jumpLandmarks,
-  } = useJumpLandmarks(regionDataBaseUrl, catalogue);
+  const { isLoaded: isJumpLandmarksLoaded, jumpLandmarks } = useJumpLandmarks(regionDataBaseUrl, catalogue);
   // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
   const explorationAreas = useExplorationAreas(gameDataBaseUrl);
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
@@ -95,19 +92,18 @@ export const useWorldMap = ({
     ),
   );
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
-  const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
+  const unlockedLandmarks = computed(() =>
+    computeUnlockedJumpLandmarks(jumpLandmarks.value, unlockedLandmarkIds.value),
+  );
   // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to.
-  // A waypoint the game hides until its step is left out of them
+  // A domain entrance is one of them, as a statue or a waypoint is. A waypoint the game hides until its step is left out
+  // Of them
   const lockedJumpLandmarks = computed(() =>
     jumpLandmarks.value.filter(({ id }) => {
       if (unlockedLandmarkIds.value.has(id)) return false;
       const pointId = computeLandmarkPointId(id);
       return pointId === undefined || !hiddenTransPointIds.value.has(pointId);
     }),
-  );
-  // The domain entrances the player has yet to unlock, which the prompt list offers to resonate with, as it does a waypoint
-  const lockedDomainEntranceLandmarks = computed(() =>
-    domainEntranceLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
   );
 
   // The Primogems and Adventure EXP a statue or a waypoint pays on its first unlock, from the open world's transport points
@@ -214,7 +210,6 @@ export const useWorldMap = ({
     jumpLandmarks,
     jumpPose,
     jumpTo,
-    lockedDomainEntranceLandmarks,
     lockedJumpLandmarks,
     unlockedLandmarkIds,
     unlockedLandmarks,

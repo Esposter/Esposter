@@ -568,7 +568,6 @@ const {
   explorationAreas,
   jumpPose,
   jumpTo,
-  lockedDomainEntranceLandmarks,
   lockedJumpLandmarks,
   unlockedLandmarkIds,
   unlockedLandmarks,
@@ -633,8 +632,8 @@ const crafting = computed(() =>
   ),
 );
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
-// Whose talk the world holds, named by its text, each locked jump landmark and domain entrance, which it resonates with,
-// And the Crafting bench, named by its title. Each stands on the ground beneath its point
+// Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
+// Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
@@ -657,9 +656,6 @@ const interactables = computed<Interactable[]>(() => {
     ...frostbearingTrees,
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
-    ),
-    ...lockedDomainEntranceLandmarks.value.map((landmark) =>
-      toLandmarkInteractable(landmark, GameTextKey.DomainEntrance),
     ),
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
     ...computeCookingStoveInteractables(cookingStovePlace.value, gameText[GameTextKey.CookingTitle], getGroundHeight),

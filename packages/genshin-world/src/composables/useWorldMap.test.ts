@@ -100,6 +100,7 @@ describe(useWorldMap, () => {
     rotation: 0,
   };
   const domainEntrance: DomainEntranceLandmark = {
+    arrival: { heightOffset: 0, position: { x: 600, z: 0 }, rotation: 0 },
     areaId: AREA_ID,
     domainKind: DomainKind.Blessing,
     entryId: 1,
@@ -284,7 +285,7 @@ describe(useWorldMap, () => {
     await waitForReads();
 
     // The statue is loaded and in reach of the origin, so the pointer would take it were it still locked
-    expect(jumpLandmarks.value).toStrictEqual([statue, waypoint]);
+    expect(jumpLandmarks.value).toStrictEqual([statue, waypoint, domainEntrance]);
     expect(findPointedLandmark(lockedJumpLandmarks.value, { x: 0, z: 0 }, undefined)).toBeUndefined();
   });
 
@@ -338,14 +339,14 @@ describe(useWorldMap, () => {
   test("interacting with a locked domain entrance unlocks it", async () => {
     expect.hasAssertions();
 
-    const { activateLandmark, lockedDomainEntranceLandmarks, unlockedLandmarkIds } = createWorldMap();
+    const { activateLandmark, lockedJumpLandmarks, unlockedLandmarkIds } = createWorldMap();
     await waitForReads();
-    expect(lockedDomainEntranceLandmarks.value).toStrictEqual([domainEntrance]);
+    expect(lockedJumpLandmarks.value).toContainEqual(domainEntrance);
 
     activateLandmark(domainEntrance.id);
 
     expect(unlockedLandmarkIds.value).toStrictEqual(new Set([domainEntrance.id]));
-    expect(lockedDomainEntranceLandmarks.value).toStrictEqual([]);
+    expect(lockedJumpLandmarks.value).not.toContainEqual(domainEntrance);
   });
 
   test("an unlocked waypoint is offered as a jump", async () => {
