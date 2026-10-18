@@ -1,8 +1,8 @@
 import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
-import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { collectProcessing } from "#src/services/cooking/collectProcessing";
+import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -30,7 +30,6 @@ describe(collectProcessing, () => {
     rankLevel: 1,
     result: { count: 1, id: RESULT_ID },
   };
-  const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };
 
   test("should take in the units done by now and leave the rest queued from where they stopped", () => {
     expect.hasAssertions();
@@ -39,7 +38,7 @@ describe(collectProcessing, () => {
       recipe,
       { count: 3, startedAt: EPOCH },
       {
-        inventory: emptyInventory,
+        inventory: EMPTY_INVENTORY,
         now: EPOCH.add({ seconds: 2 * UNIT_SECONDS + UNIT_SECONDS / 2 }),
         resultDefinition: createDefinition(RESULT_ID),
       },
@@ -55,12 +54,12 @@ describe(collectProcessing, () => {
 
     const job = { count: 3, startedAt: EPOCH };
     const result = collectProcessing(recipe, job, {
-      inventory: emptyInventory,
+      inventory: EMPTY_INVENTORY,
       now: EPOCH.add({ seconds: UNIT_SECONDS - 1 }),
       resultDefinition: createDefinition(RESULT_ID),
     });
 
-    expect(result).toStrictEqual({ inventory: emptyInventory, job });
+    expect(result).toStrictEqual({ inventory: EMPTY_INVENTORY, job });
   });
 
   test("should drop the queue once every unit is collected", () => {
@@ -70,7 +69,7 @@ describe(collectProcessing, () => {
       recipe,
       { count: 1, startedAt: EPOCH },
       {
-        inventory: emptyInventory,
+        inventory: EMPTY_INVENTORY,
         now: EPOCH.add({ seconds: UNIT_SECONDS }),
         resultDefinition: createDefinition(RESULT_ID),
       },
