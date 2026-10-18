@@ -1,39 +1,28 @@
 import type { Element } from "#src/models/Element";
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
-import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { takeOne } from "@esposter/shared";
+import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 
 // A once-per-round reduction of one die of an element, spent by the first talent card played or skill used in a round that
-// Costs such a die, or, given a skill kind, by the first skill of that kind alone. Its card is marked as used in the round once
-// The cost is paid
+// Costs such a die, or, given a skill kind, by the first skill of that kind alone
 export const createGcgElementCostReduction = (
   cardId: number,
   element: Element,
   skillKind?: GcgSkillKind,
-): Pick<GcgCardModule, "onCostPaid" | "reduceCost"> => ({
-  onCostPaid: (context: GcgEffectContext) => {
-    takeOne(context.duel.sides, context.sideIndex).usedCardIds.push(cardId);
-  },
-  reduceCost: (context: GcgEffectContext, subject: GcgCostSubject) => {
-    if (!checkIsGcgReductionDue(context, subject, cardId, element, skillKind)) return undefined;
-    return { count: 1, element };
-  },
-});
+): Pick<GcgCardModule, "onCostPaid" | "reduceCost"> =>
+  createGcgOncePerRoundCostReduction(cardId, (_context, subject) =>
+    checkIsGcgReductionDue(subject, element, skillKind) ? { count: 1, element } : undefined,
+  );
 
 const checkIsGcgReductionDue = (
-  context: GcgEffectContext,
   subject: GcgCostSubject,
-  cardId: number,
   element: Element,
   skillKind: GcgSkillKind | undefined,
 ): boolean => {
-  const side = takeOne(context.duel.sides, context.sideIndex);
-  if (side.usedCardIds.includes(cardId)) return false;
   const isSkillOrTalent =
     skillKind === undefined
       ? subject.skill !== undefined || subject.card?.kind === GcgCardKind.Talent
