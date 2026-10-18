@@ -3,28 +3,20 @@ import type { CommissionClaim } from "#src/models/commission/CommissionClaim";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionProgress } from "#src/models/commission/CommissionProgress";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
-import type { RewardItem } from "#src/models/reward/RewardItem";
 
 import { computeCommissionBand } from "#src/services/commission/computeCommissionBand";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { takeBandItems } from "#src/services/commission/takeBandItems";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The items of one band of a reward table, an error where the table has no such band
-const takeBandItems = (bands: RewardItem[][], bandIndex: number, owner: string): RewardItem[] => {
-  const items = bands[bandIndex];
-  if (!items) throw new InvalidOperationError(Operation.Read, owner, `has no items for band ${bandIndex}`);
-  return items;
-};
-
-// The state after a dealt commission is claimed: its reward drawn for the rank it was dealt at, and on the day's fourth
-// Claim Katheryne's bonus drawn for the rank the player holds now. Undefined where the day's four are claimed already
+// The state after a dealt commission is claimed: its reward drawn for the rank it was dealt at. Undefined where the day's
+// Four are claimed already
 export const takeCommissionClaim = (
   day: CommissionDay,
   encounterPoints: number,
   { commission, progress }: { commission: Commission; progress: CommissionProgress },
   slice: CommissionSlice,
-  rank: number,
   random: () => number,
 ): CommissionClaim | undefined => {
   if (day.claimedCommissionIds.length >= COMMISSIONS_PER_DAY) return undefined;
@@ -35,13 +27,8 @@ export const takeCommissionClaim = (
       String(commission.id),
       `names reward tier ${commission.rewardTier}, which the slice does not hold`,
     );
-  const claimedCommissionIds = [...day.claimedCommissionIds, commission.id];
-  const isDaysFourth = claimedCommissionIds.length === COMMISSIONS_PER_DAY;
   return {
-    bonus: isDaysFourth
-      ? drawRewardItems(takeBandItems(slice.bonuses, computeCommissionBand(rank), "the daily bonus"), random)
-      : [],
-    day: { ...day, claimedCommissionIds },
+    day: { ...day, claimedCommissionIds: [...day.claimedCommissionIds, commission.id] },
     encounterPoints,
     rewards: drawRewardItems(
       takeBandItems(rewardTier.bands, computeCommissionBand(progress.dealtRank), String(commission.id)),

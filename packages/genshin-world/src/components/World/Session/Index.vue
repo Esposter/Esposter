@@ -739,29 +739,30 @@ const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap,
 const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
 // The claims a commission makes with the points held, from the handbook's Commissions tab
-const { canConvertLongTermPoint, claimCommission, convertLongTermPoint } = useWorldCommissionClaims({
-  adventureExp,
-  adventureRankTables,
-  characters,
-  commissionDay,
-  commissionSlice,
-  completedMainQuestIds,
-  encounterPoints,
-  friendshipLevels,
-  getWorldNow,
-  inventory,
-  longTermEncounterPoints,
-  materialDataMap,
-  names: nameText,
-  party,
-  rank,
-  setCharacters: (nextCharacters) => {
-    characters.value = nextCharacters;
-  },
-  setInventory,
-  setWallet,
-  wallet,
-});
+const { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLongTermPoint } =
+  useWorldCommissionClaims({
+    adventureExp,
+    adventureRankTables,
+    characters,
+    commissionDay,
+    commissionSlice,
+    completedMainQuestIds,
+    encounterPoints,
+    friendshipLevels,
+    getWorldNow,
+    inventory,
+    longTermEncounterPoints,
+    materialDataMap,
+    names: nameText,
+    party,
+    rank,
+    setCharacters: (nextCharacters) => {
+      characters.value = nextCharacters;
+    },
+    setInventory,
+    setWallet,
+    wallet,
+  });
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
 const profileNamecards = computed(() =>
   computeProfileNamecardItemIds({
@@ -1626,6 +1627,7 @@ defineExpose({ jumpTo, readCameraPosition });
               // Katheryne's talk opens the expedition screen in place of the talk, once she stands in the world
               if (checkIsExpeditionTalk(interactable.id, getResidents())) {
                 grantRewards(claimKatheryneRewards());
+                claimKatheryneBonus();
                 screenKind = ScreenKind.Expedition;
               }
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;

@@ -1,6 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
+import type { CommissionRouting } from "#src/models/commission/CommissionRouting";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
@@ -15,6 +16,8 @@ import { claimCommissionWithPoints } from "#src/services/commission/claimCommiss
 import { computeEncounterPointStorage } from "#src/services/commission/computeEncounterPointStorage";
 import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { convertLongTermEncounterPoint } from "#src/services/commission/convertLongTermEncounterPoint";
+import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
+import { takeKatheryneBonus } from "#src/services/commission/takeKatheryneBonus";
 import { computed } from "vue";
 
 // The claims a screen makes with the points the save holds: a dealt commission claimed for its reward, free when it is
@@ -61,6 +64,13 @@ export const useWorldCommissionClaims = ({
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
+  // Where a routing's items land: the Adventure EXP, the characters, the bag and the wallet
+  const writeRouting = (routing: CommissionRouting) => {
+    adventureExp.value = routing.adventureExp;
+    setCharacters(routing.characters);
+    setInventory(routing.inventory);
+    setWallet(routing.wallet);
+  };
   // A dealt commission claimed: nothing changes where the claim is refused, and the rewards are routed where they are kept
   const claimCommission = (commissionId: number) => {
     const slice = commissionSlice.value;
@@ -79,7 +89,6 @@ export const useWorldCommissionClaims = ({
       names,
       now: getWorldNow(),
       party,
-      rank: rank.value,
       random: Math.random,
       slice,
       wallet: wallet.value,
@@ -87,10 +96,31 @@ export const useWorldCommissionClaims = ({
     if (!outcome) return;
     commissionDay.value = outcome.commissionDay;
     encounterPoints.value = outcome.encounterPoints;
-    adventureExp.value = outcome.routing.adventureExp;
-    setCharacters(outcome.routing.characters);
-    setInventory(outcome.routing.inventory);
-    setWallet(outcome.routing.wallet);
+    writeRouting(outcome.routing);
+  };
+  // Katheryne's bonus, given once the day's four commissions are claimed: its items are routed as a claim's are, and the day
+  // Records it, so a second talk gives nothing
+  const claimKatheryneBonus = () => {
+    const slice = commissionSlice.value;
+    if (!slice) return;
+    const bonusClaim = takeKatheryneBonus(commissionDay.value, slice, rank.value, Math.random);
+    if (!bonusClaim) return;
+    const routing = routeCommissionClaim(
+      adventureRankTables,
+      adventureExp.value,
+      characters.value,
+      bonusClaim.bonus,
+      completedMainQuestIds.value,
+      friendshipLevels.value,
+      inventory.value,
+      materialDataMap,
+      names,
+      party,
+      wallet.value,
+    );
+    if (!routing) return;
+    commissionDay.value = bonusClaim.day;
+    writeRouting(routing);
   };
   // The conversion of a Long-Term Encounter Point, made for the Original Resin it costs where the daily points fall short
   const computeConversion = () =>
@@ -110,5 +140,5 @@ export const useWorldCommissionClaims = ({
     longTermEncounterPoints.value = conversion.longTermEncounterPoints;
     setWallet(conversion.wallet);
   };
-  return { canConvertLongTermPoint, claimCommission, convertLongTermPoint };
+  return { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLongTermPoint };
 };

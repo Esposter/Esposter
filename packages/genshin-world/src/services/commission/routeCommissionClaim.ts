@@ -1,9 +1,9 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Character } from "#src/models/character/Character";
-import type { CommissionClaim } from "#src/models/commission/CommissionClaim";
 import type { CommissionRouting } from "#src/models/commission/CommissionRouting";
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Party } from "#src/models/party/Party";
@@ -18,7 +18,7 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
-// The state after a commission claim's rewards are routed as a blossom's claim routes its draws: the Mora and the Mora
+// The state after a commission claim's items are routed as a blossom's claim routes its draws: the Mora and the Mora
 // Its Adventure EXP pays past rank 60 into the wallet, the Adventure EXP into the rank, the Companionship EXP into the
 // Deployed team's friendship, and every other item into the bag. Undefined where the bag cannot take an item whole, which
 // Refuses the claim, so nothing is routed and the claim is not recorded
@@ -26,7 +26,7 @@ export const routeCommissionClaim = (
   adventureRankTables: AdventureRankTables,
   adventureExp: number,
   characters: readonly Character[],
-  claim: CommissionClaim,
+  items: readonly ItemCount[],
   completedMainQuestIds: ReadonlySet<string>,
   friendshipLevels: readonly FriendshipLevel[],
   inventory: Inventory,
@@ -39,7 +39,7 @@ export const routeCommissionClaim = (
   let moraCount = 0;
   let adventureExpCount = 0;
   let companionshipExpCount = 0;
-  for (const { count, id } of [...claim.rewards, ...claim.bonus])
+  for (const { count, id } of items)
     if (id === MORA_ITEM_ID) moraCount += count;
     else if (id === ADVENTURE_EXP_ITEM_ID) adventureExpCount += count;
     else if (id === COMPANIONSHIP_EXP_ITEM_ID) companionshipExpCount += count;
