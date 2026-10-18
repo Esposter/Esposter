@@ -3,7 +3,6 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
 import { INITIAL_WISH_PITY } from "#src/services/wish/constants";
@@ -198,15 +197,15 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).clearedCamps).toStrictEqual([CLEARED_CAMP, OTHER_CLEARED_CAMP]);
   });
 
-  test("keeps a domain cleared on either save cleared after the merge", () => {
+  test("keeps the domains the account cleared, and not a domain only the guest cleared", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, clearedDomains: ["1"] };
     const guest = { ...EMPTY_GENSHIN_SAVE, clearedDomains: ["2"] };
 
-    expect(mergeGenshinSave(account, guest).clearedDomains).toStrictEqual(["1", "2"]);
+    expect(mergeGenshinSave(account, guest).clearedDomains).toStrictEqual(["1"]);
   });
 
-  test("unions the character trial stages claimed by both copies, each once", () => {
+  test("keeps the character trial stages the account claimed, and not a stage only the guest claimed", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -218,7 +217,7 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).characterTrials).toStrictEqual({
-      claimedStageIds: [TRIAL_STAGE_ID, OTHER_TRIAL_STAGE_ID, GUEST_TRIAL_STAGE_ID],
+      claimedStageIds: [TRIAL_STAGE_ID, OTHER_TRIAL_STAGE_ID],
     });
   });
 
@@ -375,12 +374,12 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).cardGameExp).toBe(GUEST_EXP);
   });
 
-  test("keeps the games each copy has rewarded once, in ascending order", () => {
+  test("keeps the games the account rewarded, and not a game only the guest rewarded", () => {
     expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1105, 1103] };
-    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1103, 1021] };
+    const account = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1103, 1105] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1021, 1103] };
 
-    expect(mergeGenshinSave(account, guest).cardGameRewardedGameIds).toStrictEqual([1021, 1103, 1105]);
+    expect(mergeGenshinSave(account, guest).cardGameRewardedGameIds).toStrictEqual([1103, 1105]);
   });
 
   test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
@@ -434,33 +433,31 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).reputationBountyHunt).toStrictEqual(guestHunt);
   });
 
-  test("unions the bounty claims of both copies, keeping the latest of the week's limit", () => {
+  test("keeps the account's bounty claims, and not a claim only the guest made", () => {
     expect.hasAssertions();
-    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+    const claimedAts = Array.from({ length: 3 }, (_value, index) =>
       Temporal.Instant.fromEpochMilliseconds(0)
         .add({ hours: index + 1 })
         .toString(),
     );
-    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(0, 2) };
-    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(2) };
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(0, 1) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(1) };
 
-    expect(mergeGenshinSave(account, guest).reputationBountyClaimedAts).toStrictEqual(
-      claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT),
-    );
+    expect(mergeGenshinSave(account, guest).reputationBountyClaimedAts).toStrictEqual(claimedAts.slice(0, 1));
   });
 
-  test("unions the request claims of both copies, kept apart from the bounty claims", () => {
+  test("keeps the account's request claims, apart from the bounty claims", () => {
     expect.hasAssertions();
-    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+    const claimedAts = Array.from({ length: 3 }, (_value, index) =>
       Temporal.Instant.fromEpochMilliseconds(0)
         .add({ hours: index + 1 })
         .toString(),
     );
-    const account = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(0, 2) };
-    const guest = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(2) };
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(0, 1) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(1) };
     const merged = mergeGenshinSave(account, guest);
 
-    expect(merged.reputationRequestClaimedAts).toStrictEqual(claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT));
+    expect(merged.reputationRequestClaimedAts).toStrictEqual(claimedAts.slice(0, 1));
     expect(merged.reputationBountyClaimedAts).toStrictEqual([]);
   });
 
@@ -645,7 +642,7 @@ describe(mergeGenshinSave, () => {
     ]);
   });
 
-  test("a mail is kept once per delivery, and read or claimed on either copy stays so", () => {
+  test("a mail is kept once per delivery, and read on either copy stays so, while a claim only the guest made is not kept", () => {
     expect.hasAssertions();
     const MAIL_ID = 1;
     const OTHER_MAIL_ID = 2;
@@ -662,8 +659,22 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
-      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: true },
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: true },
       { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
+    ]);
+  });
+
+  test("a mail only the guest holds merges unclaimed, its reward paid into the guest's bag", () => {
+    expect.hasAssertions();
+    const MAIL_ID = 1;
+    const account = { ...EMPTY_GENSHIN_SAVE, mails: [] };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: false }],
+    };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
     ]);
   });
 
@@ -819,7 +830,7 @@ describe(mergeGenshinSave, () => {
     ]);
   });
 
-  test("a processing queue keeps the copy started later", () => {
+  test("keeps the account's processing queues over the guest's, whichever copy started later", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -841,11 +852,11 @@ describe(mergeGenshinSave, () => {
 
     expect(mergeGenshinSave(account, guest).cooking.processingJobs).toStrictEqual({
       [OTHER_PROCESSING_ID]: { count: 2, startedAt: EARLIER_START },
-      [PROCESSING_ID]: { count: 3, startedAt: LATER_START },
+      [PROCESSING_ID]: { count: 1, startedAt: EARLIER_START },
     });
   });
 
-  test("keeps the later purchase of a good both copies bought, and a good only one copy bought", () => {
+  test("keeps the account's shop purchases, and not a good only the guest bought", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -860,8 +871,7 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).shopPurchases).toStrictEqual([
-      { count: 2, goodsId: SHOP_GOODS_ID, lastPurchasedAt: LATER_PURCHASE },
-      { count: 1, goodsId: OTHER_SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
+      { count: 1, goodsId: SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
     ]);
   });
 
@@ -889,7 +899,7 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("keeps each chamber cleared if either save cleared it, its most stars, and the rewards either save claimed", () => {
+  test("keeps each chamber cleared if either save cleared it, its most stars, and the rewards the account claimed", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -908,7 +918,7 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).spiralAbyss).toStrictEqual({
       corridor: {
         chambers: { "1": { isCleared: true, stars: 3 }, "2": { isCleared: true, stars: 2 } },
-        claimedRewardIds: [101, 102],
+        claimedRewardIds: [101],
       },
     });
   });

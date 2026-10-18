@@ -22,7 +22,7 @@ The [domains page](../../specs/genshin/domains/design.md) holds the opening rule
 - **The reward is the resin claim.** The Petrified Tree is claimed with resin as any blossom is ([Original Resin](../../specs/genshin/original-resin/design.md)), its artifacts rolled by the [artifact enhancement](../../specs/genshin/artifact-enhancement/design.md) page's rules.
 - **One-time domains reward their first clear.** Their Adventure EXP, Primogems and any recipe are given once, by their reward table row, and they stay open with nothing more to give.
 - **The stand-in numbers are PROVISIONAL until the scene export.** The challenge's waves, enemies and time limits are the wiki's (above), the stand-in arena and its fade wait on the scene export, and the Sunday counterpart is the first weekday pair's. Each is marked where it is used and replaced when the export or the owner's data lands.
-- **A first clear is kept in the save.** The cleared one-time domains are a unique list of entry ids in the save (`clearedDomains`, read as `clearedDomainIds`). A merge of a guest save into an account keeps the domains cleared on either, so a clear made as a guest is not claimed again on the account.
+- **A first clear is kept in the save.** The cleared one-time domains are a unique list of entry ids in the save (`clearedDomains`, read as `clearedDomainIds`). A merge of a guest save into an account keeps the account's cleared domains, as a first clear's reward is paid into the bag the merge keeps, so a clear made only as a guest is claimed again on the account.
 
 ## How it works
 

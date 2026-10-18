@@ -5,7 +5,6 @@ import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { EncounterPointsSave } from "#src/models/commission/EncounterPointsSave";
 import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTermEncounterPointsSave";
-import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { InvestigationDaySave } from "#src/models/investigation/InvestigationDaySave";
@@ -13,14 +12,12 @@ import type { OfferingProgressSave } from "#src/models/offering/OfferingProgress
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
-import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
-import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
@@ -67,9 +64,8 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
   checkIsFurtherByLevel(progress, than, ({ heldCounts }) => countHeldItems(heldCounts));
 // The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
-// Tree's is. A region's claimed level is the account's, as its rewards were paid into the account's bag, which the merge
-// keeps: a level the guest claimed was paid into the guest's bag, so the account claims it again and is paid once, and a
-// region the account does not hold claims none
+// Tree's is. A region's claimed level is the account's copy, by the settlement rule of mergeGenshinSave, and a region the
+// Account does not hold claims none
 const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => {
   const regions = { ...account.regions };
   for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
@@ -115,39 +111,6 @@ const mergeArchive = (account: ArchiveSave, guest: ArchiveSave): ArchiveSave => 
       ]),
     ),
   };
-};
-// Whether a purchase was bought later than another
-const checkIsLaterPurchase = (purchase: ShopPurchaseSave, than: ShopPurchaseSave): boolean =>
-  Temporal.Instant.compare(
-    Temporal.Instant.from(purchase.lastPurchasedAt),
-    Temporal.Instant.from(than.lastPurchasedAt),
-  ) > 0;
-// A good both copies hold a purchase of keeps the copy bought later, as the copy further on, and a good only one copy holds
-// Is kept. Each good is listed once, as the save holds it
-const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave[]): ShopPurchaseSave[] => {
-  const purchaseMap = new Map(account.map((purchase) => [purchase.goodsId, purchase]));
-  for (const guestPurchase of guest) {
-    const accountPurchase = purchaseMap.get(guestPurchase.goodsId);
-    if (!accountPurchase || checkIsLaterPurchase(guestPurchase, accountPurchase))
-      purchaseMap.set(guestPurchase.goodsId, guestPurchase);
-  }
-  return [...purchaseMap.values()];
-};
-// Whether a processing's queue was started later than another
-const checkIsLaterJob = (job: ProcessingJobSave, than: ProcessingJobSave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(job.startedAt), Temporal.Instant.from(than.startedAt)) > 0;
-// A processing both copies hold a queue of keeps the copy started later, as a queue is one copy's whole, and a processing
-// Only one copy holds is kept. Each processing is listed once, by its id
-const mergeProcessingJobs = (
-  account: Record<string, ProcessingJobSave>,
-  guest: Record<string, ProcessingJobSave>,
-): Record<string, ProcessingJobSave> => {
-  const jobs = { ...account };
-  for (const [recipeId, guestJob] of Object.entries(guest)) {
-    const accountJob = jobs[recipeId];
-    if (!accountJob || checkIsLaterJob(guestJob, accountJob)) jobs[recipeId] = guestJob;
-  }
-  return jobs;
 };
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
@@ -212,41 +175,28 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
   }
   return enemyRespawns;
 };
-// A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
-// Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
-// And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
-// The further of the two steps, since a step is never undone, and on the same step each objective's count takes the
-// Larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows. Each kind
-// Of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never
-// Mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet, the party, the opened
-// Chests and the realm's placements are the account's copy, and so are the Adventure Rank rewards claimed, paid into the
-// bag and the wallet, except that a Primogem refill count from the same game day
-// Takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy changed
-// Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
-// Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
-// Has chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is
-// Kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing Tree's is.
-// The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
-// Bought in both copies keeps the purchase made later. Each dish keeps the higher proficiency of its two copies, the
-// Learned dishes union, and each processing's queue keeps the copy started later
-// The claims of one kind, bounties or requests, from both copies: each moment once, the latest of the week's limit kept, the
-// Older claims no longer counted
-const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): string[] =>
-  [...new Set([...account, ...guest])]
-    .toSorted((claimedAt, than) =>
-      Temporal.Instant.compare(Temporal.Instant.from(claimedAt), Temporal.Instant.from(than)),
-    )
-    .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
-
+// A guest's save merged into the account's one when both exist. A record of a settlement that paid into or out of the
+// Bag or the wallet is the account's copy, since the merge keeps the account's bag and wallet, and a guest's copy of
+// One would claim a payment the account never received, or charge one it never made. That covers each mail's claimed
+// State (a mail only the guest holds merges unclaimed), the character trial stages claimed, the games rewarded, the
+// Domains cleared, the Adventure Rank rewards claimed, the statues' claimed levels, the Reputation bounty and request
+// Claims, the Spiral Abyss's rewards claimed, the shop purchases and each processing's queue. The bag, the party, the
+// Opened chests and the realm's placements are the account's copy too, and so is the wallet, but for a Primogem refill
+// Count from the same game day, which takes the larger, as a count of refills within a day only grows. Every other
+// Record merges by its own rule. The landmarks, the cleared camps, the learned recipes and the achievements union, and
+// An achievement keeps the larger count and the earlier moment it was finished. The Archive's opened entries union by
+// Section, and each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest
+// Keeps the further of the two steps, since a step is never undone, and on the same step each objective's count takes
+// The larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows. Each
+// Kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and
+// Never mixed. The Reputation and the Frostbearing Tree each keep the further. The World Level adjustment is the copy
+// Changed later, since the one change of it the player made last is the one they still stand by. The day's commissions
+// Are the copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the
+// Account has chosen none. The characters both copies hold are the copy further on, and a character only the guest
+// Holds is kept. The statues' found Oculi union, and each statue region is the copy further on. The settled Seelies and
+// The solved puzzles of both copies union, as neither is undone once it has happened. Each dish keeps the higher
+// Proficiency of its two copies, and the learned dishes union.
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
-  const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
-    account.reputationBountyClaimedAts,
-    guest.reputationBountyClaimedAts,
-  );
-  const reputationRequestClaimedAts = mergeWeeklyReputationClaimedAts(
-    account.reputationRequestClaimedAts,
-    guest.reputationRequestClaimedAts,
-  );
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -273,20 +223,22 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once per delivery, and a read, claimed or pinned mail stays so whichever save it was read, claimed
-  // Or pinned in
+  // A mail is kept once per delivery, and a read or pinned mail stays so whichever save it was read or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find((mail) => isSameHeldMail(mail, accountMail));
     return guestMail
       ? {
           ...accountMail,
-          isClaimed: accountMail.isClaimed || guestMail.isClaimed,
           isPinned: accountMail.isPinned || guestMail.isPinned,
           isRead: accountMail.isRead || guestMail.isRead,
         }
       : accountMail;
   });
-  mails.push(...guest.mails.filter((guestMail) => !account.mails.some((mail) => isSameHeldMail(mail, guestMail))));
+  mails.push(
+    ...guest.mails
+      .filter((guestMail) => !account.mails.some((mail) => isSameHeldMail(mail, guestMail)))
+      .map((guestMail) => ({ ...guestMail, isClaimed: false })),
+  );
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;
   return {
     achievements,
@@ -294,17 +246,11 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     adventureRankRewardsClaimed: account.adventureRankRewardsClaimed,
     archive: mergeArchive(account.archive, guest.archive),
     cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
-    cardGameRewardedGameIds: [
-      ...new Set([...account.cardGameRewardedGameIds, ...guest.cardGameRewardedGameIds]),
-    ].toSorted((firstGame, secondGame) => firstGame - secondGame),
+    cardGameRewardedGameIds: account.cardGameRewardedGameIds,
     characters: mergeCharacters(account.characters, guest.characters),
-    characterTrials: {
-      claimedStageIds: [
-        ...new Set([...account.characterTrials.claimedStageIds, ...guest.characterTrials.claimedStageIds]),
-      ],
-    },
+    characterTrials: account.characterTrials,
     clearedCamps: mergeClearedCamps(account.clearedCamps, guest.clearedCamps),
-    clearedDomains: [...new Set([...account.clearedDomains, ...guest.clearedDomains])],
+    clearedDomains: account.clearedDomains,
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
@@ -317,7 +263,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     companionshipExp,
     cooking: {
       learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],
-      processingJobs: mergeProcessingJobs(account.cooking.processingJobs, guest.cooking.processingJobs),
+      processingJobs: account.cooking.processingJobs,
       proficiencies,
     },
     crafting: {
@@ -344,10 +290,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
-    reputationBountyClaimedAts,
-    reputationRequestClaimedAts,
+    reputationBountyClaimedAts: account.reputationBountyClaimedAts,
+    reputationRequestClaimedAts: account.reputationRequestClaimedAts,
     ...(reputationBountyHunt && { reputationBountyHunt }),
-    shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
+    shopPurchases: account.shopPurchases,
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),
     tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
@@ -368,7 +314,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
 };
 
 // The Abyss's progress is the union of both copies' cycles: a chamber is cleared if either copy cleared it, with the most stars
-// Either copy holds, and a reward is claimed if either copy claimed it
+// Either copy holds, and the rewards a cycle claimed are the account's copy
 const mergeSpiralAbyssCycle = (account: SpiralAbyssCycleSave, guest: SpiralAbyssCycleSave): SpiralAbyssCycleSave => {
   const chambers = { ...guest.chambers };
   for (const [chamberId, { isCleared, stars }] of Object.entries(account.chambers)) {
@@ -377,7 +323,7 @@ const mergeSpiralAbyssCycle = (account: SpiralAbyssCycleSave, guest: SpiralAbyss
       ? { isCleared: isCleared || guestChamber.isCleared, stars: Math.max(stars, guestChamber.stars) }
       : { isCleared, stars };
   }
-  return { chambers, claimedRewardIds: [...new Set([...account.claimedRewardIds, ...guest.claimedRewardIds])] };
+  return { chambers, claimedRewardIds: account.claimedRewardIds };
 };
 
 // A cycle only one copy holds is kept as it is
