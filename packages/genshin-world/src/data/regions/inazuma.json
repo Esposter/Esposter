@@ -23,6 +23,46 @@
       "kind": "Building",
       "position": { "x": -4942.86, "z": 3135.69 },
       "rotation": 0
+    },
+    {
+      "domainKind": "Forgery",
+      "entryId": 14,
+      "id": "domain-entrance-14",
+      "kind": "DomainEntrance",
+      "position": { "x": -4284.68, "z": 3141.74 },
+      "rotation": 1.1764,
+      "areaId": "narukami-island",
+      "heightOffset": 35.42
+    },
+    {
+      "domainKind": "Mastery",
+      "entryId": 15,
+      "id": "domain-entrance-15",
+      "kind": "DomainEntrance",
+      "position": { "x": -5092.14, "z": 2664.04 },
+      "rotation": 2.5565,
+      "areaId": "narukami-island",
+      "heightOffset": -1.31
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 16,
+      "id": "domain-entrance-16",
+      "kind": "DomainEntrance",
+      "position": { "x": -5658.85, "z": 1098.8 },
+      "rotation": 1.8794,
+      "areaId": "narukami-island",
+      "heightOffset": 23.02
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 17,
+      "id": "domain-entrance-17",
+      "kind": "DomainEntrance",
+      "position": { "x": -6193.48, "z": 2942.12 },
+      "rotation": -1.9417,
+      "areaId": "narukami-island",
+      "heightOffset": -24.91
     }
   ],
   "residents": [

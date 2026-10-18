@@ -26,6 +26,46 @@
       "kind": "Building",
       "position": { "x": -252.53, "z": -10724.89 },
       "rotation": 0
+    },
+    {
+      "domainKind": "Mastery",
+      "entryId": 33,
+      "id": "domain-entrance-33",
+      "kind": "DomainEntrance",
+      "position": { "x": -57.45, "z": -11233.91 },
+      "rotation": 0.7242,
+      "areaId": "lempo-isle",
+      "heightOffset": -26.8
+    },
+    {
+      "domainKind": "Forgery",
+      "entryId": 34,
+      "id": "domain-entrance-34",
+      "kind": "DomainEntrance",
+      "position": { "x": 46.4, "z": -12095.2 },
+      "rotation": -2.4606,
+      "areaId": "lempo-isle",
+      "heightOffset": -17.67
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 35,
+      "id": "domain-entrance-35",
+      "kind": "DomainEntrance",
+      "position": { "x": 1260.9, "z": -10642.23 },
+      "rotation": -0.3599,
+      "areaId": "lempo-isle",
+      "heightOffset": -22.58
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 36,
+      "id": "domain-entrance-36",
+      "kind": "DomainEntrance",
+      "position": { "x": 4048.71, "z": -11310.25 },
+      "rotation": -1.4603,
+      "areaId": "lempo-isle",
+      "heightOffset": -26.8
     }
   ],
   "residents": []

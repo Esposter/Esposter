@@ -58,6 +58,76 @@
       "kind": "Building",
       "position": { "x": 391.51, "z": -517.41 },
       "rotation": 0
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 1,
+      "id": "domain-entrance-1",
+      "kind": "DomainEntrance",
+      "position": { "x": 608.43, "z": 291.4 },
+      "rotation": 1.7059,
+      "areaId": "galesong-hill",
+      "heightOffset": 10.19
+    },
+    {
+      "domainKind": "Forgery",
+      "entryId": 2,
+      "id": "domain-entrance-2",
+      "kind": "DomainEntrance",
+      "position": { "x": 367.24, "z": -1015.55 },
+      "rotation": 0.0229,
+      "areaId": "starfell-valley",
+      "heightOffset": 8.68
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 6,
+      "id": "domain-entrance-6",
+      "kind": "DomainEntrance",
+      "position": { "x": -179.74, "z": -603.45 },
+      "rotation": 1.4565,
+      "areaId": "starfell-valley",
+      "heightOffset": 11.22
+    },
+    {
+      "domainKind": "Mastery",
+      "entryId": 10,
+      "id": "domain-entrance-10",
+      "kind": "DomainEntrance",
+      "position": { "x": -210.21, "z": -379.66 },
+      "rotation": 3.0777,
+      "areaId": "galesong-hill",
+      "heightOffset": -2.59
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 12,
+      "id": "domain-entrance-12",
+      "kind": "DomainEntrance",
+      "position": { "x": -851.38, "z": -442.59 },
+      "rotation": 0.0053,
+      "areaId": "galesong-hill",
+      "heightOffset": -0.83
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 13,
+      "id": "domain-entrance-13",
+      "kind": "DomainEntrance",
+      "position": { "x": -416.07, "z": -945.62 },
+      "rotation": 1.5708,
+      "areaId": "starfell-valley",
+      "heightOffset": 5.03
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 37,
+      "id": "domain-entrance-37",
+      "kind": "DomainEntrance",
+      "position": { "x": 1368.31, "z": -1314.65 },
+      "rotation": -1.6392,
+      "areaId": "starfell-valley",
+      "heightOffset": 61.77
     }
   ],
   "residents": [

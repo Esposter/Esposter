@@ -10,6 +10,66 @@
       "kind": "Building",
       "position": { "x": -2392.4, "z": -1562.44 },
       "rotation": 0
+    },
+    {
+      "domainKind": "Forgery",
+      "entryId": 3,
+      "id": "domain-entrance-3",
+      "kind": "DomainEntrance",
+      "position": { "x": -1160.3, "z": -851.02 },
+      "rotation": -1.8186,
+      "areaId": "sea-of-clouds",
+      "heightOffset": 13.31
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 7,
+      "id": "domain-entrance-7",
+      "kind": "DomainEntrance",
+      "position": { "x": -2178.28, "z": -303.74 },
+      "rotation": 2.0455,
+      "areaId": "sea-of-clouds",
+      "heightOffset": -16.57
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 8,
+      "id": "domain-entrance-8",
+      "kind": "DomainEntrance",
+      "position": { "x": -200.74, "z": -1652.99 },
+      "rotation": -1.6108,
+      "areaId": "sea-of-clouds",
+      "heightOffset": 57.05
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 9,
+      "id": "domain-entrance-9",
+      "kind": "DomainEntrance",
+      "position": { "x": -599.46, "z": -2703.47 },
+      "rotation": -2.9426,
+      "areaId": "sea-of-clouds",
+      "heightOffset": 55.31
+    },
+    {
+      "domainKind": "Mastery",
+      "entryId": 11,
+      "id": "domain-entrance-11",
+      "kind": "DomainEntrance",
+      "position": { "x": -1226.95, "z": -2434.83 },
+      "rotation": -0.7411,
+      "areaId": "sea-of-clouds",
+      "heightOffset": -74.1
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 18,
+      "id": "domain-entrance-18",
+      "kind": "DomainEntrance",
+      "position": { "x": -2368.27, "z": -3169.39 },
+      "rotation": -2.68,
+      "areaId": "sea-of-clouds",
+      "heightOffset": -33.99
     }
   ],
   "residents": [
