@@ -1,6 +1,6 @@
 ## Purpose
 
-Eula's kit as built: her strikes, charged attack and plunges, Icetide Vortex's press and hold, and Glacial Illumination with the Lightfall Sword and its Grimheart stacks, with Constellation 2's hold cooldown, Ascension 4's reset and Constellation 6's random stack left unbuilt.
+Eula's kit as built: her strikes, charged attack and plunges, Icetide Vortex's press and hold, and Glacial Illumination with the Lightfall Sword and its Grimheart stacks, with both passives built, Ascension 4's stack and its reset of Icetide Vortex's cooldown among them, and Constellation 2's hold cooldown and Constellation 6's random stack left unbuilt.
 
 ## Requirements
 

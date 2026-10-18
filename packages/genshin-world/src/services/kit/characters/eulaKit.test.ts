@@ -10,6 +10,8 @@ import { createEulaKitBehaviour, EULA_CHARACTER_ID } from "#src/services/kit/cha
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const EULA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EULA_CHARACTER_ID);
@@ -50,6 +52,17 @@ const castBurstStacks = (ascension: number, stacks: number): number => {
   const kitEffectState = createGrimheartState(stacks);
   EULA_KIT.elementalBurst.onStart?.(createKitTestContext({ ...createEulaCombatant(), ascension }, { kitEffectState }));
   return countGrimheartStacks(kitEffectState);
+};
+
+// The seconds left on Icetide Vortex's cooldown once Glacial Illumination is cast, as Eula at the ascension stood with a
+// Second of it left
+const castBurstSkillCooldown = (ascension: number): number => {
+  const party = createParty([EULA_CHARACTER_ID]);
+  getPartyMember(party, EULA_CHARACTER_ID).skillCooldownSeconds = 1;
+  EULA_KIT.elementalBurst.onStart?.(
+    createKitTestContext({ ...createEulaCombatant(), ascension }, { kitEffectState: { effects: [] }, party }),
+  );
+  return getPartyMember(party, EULA_CHARACTER_ID).skillCooldownSeconds;
 };
 
 describe(createEulaKitBehaviour, () => {
@@ -122,5 +135,19 @@ describe(createEulaKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(castBurstStacks(3, 1)).toBe(1);
+  });
+});
+
+describe("wellspring of War-Lust's cooldown reset", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castBurstSkillCooldown(4)).toBe(0);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castBurstSkillCooldown(3)).toBe(1);
   });
 });

@@ -19,6 +19,7 @@ import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) eula/eula.go and skill.go, Grimheart's ICD of 18 frames on the press's strikes, which are the only
 // Strikes that gain a stack
@@ -69,9 +70,8 @@ export const EULA_CHARACTER_ID = 10_000_051;
 // Each, shredding the RES of the enemies they strike. Glacial Illumination lights the Lightfall Sword, which gains a stack
 // From each of her strikes and explodes priced by them, early on a swap of characters. Her Ascension 1 Shattered Lightfall
 // Sword, Ascension 4's stack, Constellation 1's Physical DMG Bonus, Constellation 4's Glacial Illumination bonus and
-// Constellation 6's starting stacks are built. Her Constellation 2 hold cooldown, which the kit model cannot set per hold,
-// Is not, nor is Ascension 4's reset of the hold's cooldown, which it has no field to reach. The Constellation 6 roll's
-// Extra stack is left out
+// Constellation 6's starting stacks are built, as is Ascension 4's reset of Icetide Vortex's cooldown. Her Constellation 2
+// Hold cooldown, which the kit model cannot set per hold, is not. The Constellation 6 roll's extra stack is left out
 export const createEulaKitBehaviour = ({
   kit,
   readArea,
@@ -128,8 +128,11 @@ export const createEulaKitBehaviour = ({
   };
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         const { characterId } = combatant;
+        // Ascension 4 resets Icetide Vortex's cooldown, as gcsim v2.47.2 (MIT) eula/asc.go's a4() resets the skill's
+        // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/asc.go
+        if (combatant.ascension >= 4) getPartyMember(party, characterId).skillCooldownSeconds = 0;
         // A fresh cast takes the Sword's stacks from zero, as the cast resets them, Constellation 6 starting it with five
         spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
         removeKitEffects(kitEffectState, (effect) => effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID);
