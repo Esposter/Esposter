@@ -16,13 +16,19 @@ const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntr
 });
 
 describe(toDomainEntrance, () => {
-  test("a domain entrance takes its kind from its entry type and its place from its transport point, carried round the origin", () => {
+  test("a domain entrance takes its kind from its entry type, its place from its transport point carried round the origin, and its game area from its point", () => {
     expect.hasAssertions();
 
-    const point: DumpedScenePoint = { $type: "Point", tranPos: { x: 150, y: 30, z: 300 }, tranRot: { y: 90 } };
+    const point: DumpedScenePoint = {
+      $type: "Point",
+      areaId: 5,
+      tranPos: { x: 150, y: 30, z: 300 },
+      tranRot: { y: 90 },
+    };
     expect(toDomainEntrance(createEntry({}), point, ORIGIN)).toStrictEqual({
       domainKind: DomainKind.Blessing,
       entryId: 1,
+      gameAreaId: 5,
       height: 30,
       id: "domain-entrance-1",
       kind: LandmarkKind.DomainEntrance,
@@ -31,13 +37,14 @@ describe(toDomainEntrance, () => {
     });
   });
 
-  test("a zero component left out of the transport position reads as zero", () => {
+  test("a zero component left out of the transport position reads as zero, and a point with no area names none", () => {
     expect.hasAssertions();
 
     const point: DumpedScenePoint = { $type: "Point", tranPos: { y: 30, z: 300 }, tranRot: { y: 60 } };
     expect(toDomainEntrance(createEntry({ type: "DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE" }), point, ORIGIN)).toStrictEqual({
       domainKind: DomainKind.Forgery,
       entryId: 1,
+      gameAreaId: 0,
       height: 30,
       id: "domain-entrance-1",
       kind: LandmarkKind.DomainEntrance,
