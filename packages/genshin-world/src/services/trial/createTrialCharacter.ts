@@ -85,6 +85,7 @@ const toTrialArtifact = (
   return {
     experience: levelExperiences.slice(0, reliquary.level).reduce((total, cost) => total + cost, 0),
     isLocked: false,
+    itemId: reliquary.id,
     level: reliquary.level,
     mainAffix: reliquary.mainAffix,
     minorAffixes: reliquary.minorAffixes,
