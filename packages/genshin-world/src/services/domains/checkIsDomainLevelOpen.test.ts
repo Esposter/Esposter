@@ -2,14 +2,14 @@ import type { DomainLevel } from "#src/models/domains/DomainSchedule";
 
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";
-import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/time/constants";
+import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsDomainLevelOpen, () => {
   // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday and five a Tuesday
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
-  const DAILY_RESET = EPOCH.subtract({ hours: GAME_DAY_START_HOUR });
-  const RESET_ZONED = DAILY_RESET.toZonedDateTimeISO(GAME_TIME_ZONE);
+  const RESET_ZONED = computeLastDailyReset(EPOCH).toZonedDateTimeISO(GAME_TIME_ZONE);
   const MONDAY = RESET_ZONED.add({ days: 4 }).toInstant();
   const TUESDAY = RESET_ZONED.add({ days: 5 }).toInstant();
   const LEVEL: DomainLevel = { dungeonId: 1001, enemyLevel: 37, recommendedRank: 30, scheduledDaysOfWeek: [1, 4] };

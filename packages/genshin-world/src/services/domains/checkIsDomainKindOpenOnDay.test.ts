@@ -1,14 +1,14 @@
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { checkIsDomainKindOpenOnDay } from "#src/services/domains/checkIsDomainKindOpenOnDay";
-import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/time/constants";
+import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsDomainKindOpenOnDay, () => {
   // The epoch fell on a Thursday in the server's zone.
   // The resets three, four and five days after it open a Sunday, a Monday and a Tuesday.
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
-  const DAILY_RESET = EPOCH.subtract({ hours: GAME_DAY_START_HOUR });
-  const RESET_ZONED = DAILY_RESET.toZonedDateTimeISO(GAME_TIME_ZONE);
+  const RESET_ZONED = computeLastDailyReset(EPOCH).toZonedDateTimeISO(GAME_TIME_ZONE);
   const SUNDAY = RESET_ZONED.add({ days: 3 }).toInstant();
   const MONDAY = RESET_ZONED.add({ days: 4 }).toInstant();
   const TUESDAY = RESET_ZONED.add({ days: 5 }).toInstant();
