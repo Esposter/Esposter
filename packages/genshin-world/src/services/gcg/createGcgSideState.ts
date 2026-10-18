@@ -2,6 +2,7 @@ import type { GcgDeck } from "#src/models/gcg/GcgDeck";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GCG_STARTING_HAND_COUNT } from "#src/services/gcg/constants";
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
@@ -17,7 +18,7 @@ export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSide
     characters: deck.characters.map((character) => {
       const statuses = listGcgStartingStatuses(character);
       return {
-        aura: findGcgPermanentAura(statuses) ?? GcgAura.None,
+        aura: findGcgPermanentAura(statuses, GcgCardIdModuleMap) ?? GcgAura.None,
         character,
         energy: 0,
         equipments: [],

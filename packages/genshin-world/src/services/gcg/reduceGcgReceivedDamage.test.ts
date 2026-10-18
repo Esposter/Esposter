@@ -14,6 +14,9 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { LOTUS_FLOWER_CRISP_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -57,6 +60,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

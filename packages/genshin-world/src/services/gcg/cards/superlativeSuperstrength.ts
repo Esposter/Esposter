@@ -2,11 +2,12 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgChargedAttack } from "#src/services/gcg/effects/checkIsGcgChargedAttack";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
 
-export const SUPERLATIVE_SUPERSTRENGTH_ID = 116_054;
 const SUPERLATIVE_SUPERSTRENGTH_BONUS = 1;
 const SUPERLATIVE_SUPERSTRENGTH_MAX_USAGES = 3;
 // The usages a Superlative Superstrength needs left for its character's Charged Attacks to cost one Unaligned die less
@@ -25,8 +26,9 @@ export const superlativeSuperstrength: GcgCardModule = {
   onSkillUsed: ({ duel, sideIndex }, skill, zoneCard) => {
     if (checkIsGcgChargedAttack(takeOne(duel.sides, sideIndex), skill)) zoneCard.usages -= 1;
   },
-  reduceCost: ({ duel, sideIndex }, subject, zoneCard) =>
-    checkIsGcgChargedAttack(takeOne(duel.sides, sideIndex), subject.skill) &&
+  reduceCost: (context, subject, zoneCard) =>
+    checkIsGcgActiveHolder(context) &&
+    checkIsGcgChargedAttack(takeOne(context.duel.sides, context.sideIndex), subject.skill) &&
     zoneCard.usages >= SUPERLATIVE_SUPERSTRENGTH_REDUCTION_USAGES
       ? { count: 1, kind: GcgCostKind.Unaligned }
       : undefined,

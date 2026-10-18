@@ -955,6 +955,7 @@ const payCardGameReward = (gameId: number | undefined, won: boolean) => {
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
   useWorldTalks({
     gameDataBaseUrl,
+    getAdventureRank: () => rank.value,
     getGroundHeight,
     getResidents,
     getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),

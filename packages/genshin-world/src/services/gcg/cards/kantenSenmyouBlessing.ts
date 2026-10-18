@@ -2,11 +2,11 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
-import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
+import { KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/constants";
 
-export const KANTEN_SENMYOU_BLESSING_ID = 211_051;
 const KANTEN_SENMYOU_BLESSING_DAMAGE_BONUS = 1;
 
 // Kanten Senmyou Blessing, Kamisato Ayaka's equipment: while she holds Cryo Elemental Infusion, she deals +1 Cryo DMG, and

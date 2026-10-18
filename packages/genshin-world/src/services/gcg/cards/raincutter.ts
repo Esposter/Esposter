@@ -6,9 +6,9 @@ import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplicati
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { RAINBOW_BLADEWORK_ID } from "#src/services/gcg/cards/constants";
 
 const RAINCUTTER_DAMAGE = 2;
-const RAINBOW_BLADEWORK_ID = 112_022;
 
 // Raincutter, Xingqiu's elemental burst: 2 Hydro DMG, Hydro Application on the active character, and a Rainbow Bladework
 // Onstage (the wiki's Raincutter (Character Card Skill))

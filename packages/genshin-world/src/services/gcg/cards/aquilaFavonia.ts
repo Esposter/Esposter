@@ -4,8 +4,8 @@ import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
+import { AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/constants";
 
-export const AQUILA_FAVONIA_ID = 311_503;
 const AQUILA_FAVONIA_HEAL = 1;
 const AQUILA_FAVONIA_HEALS_PER_ROUND = 2;
 

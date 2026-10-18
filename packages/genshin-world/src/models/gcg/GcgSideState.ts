@@ -2,6 +2,7 @@ import type { Element } from "#src/models/Element";
 import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
+import type { GcgPreparedSkill } from "#src/models/gcg/GcgPreparedSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 // One side of a duel: its characters and which is active, its dice this round, its draw pile and hand by card id, the
@@ -27,8 +28,12 @@ export interface GcgSideState {
   hasRolled: boolean;
   isReplacementPending: boolean;
   onstages: GcgZoneCard[];
+  // The skills prepared for this side's next turn, each run by the character that prepared it
+  preparedSkills?: GcgPreparedSkill[];
   summons: GcgZoneCard[];
   supports: GcgZoneCard[];
   usedCardIds: number[];
+  // The ids of the effects that run once a Match rather than once a Round, each recorded once it has run
+  usedMatchIds?: number[];
   usedSkillIds: number[];
 }

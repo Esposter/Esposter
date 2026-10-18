@@ -5,8 +5,6 @@ import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
-export const KID_KUJIRAI_ID = 322_014;
-
 // Kid Kujirai, a support: when the Action Phase begins it creates one Omni die, then, if the opposing Support Zone is not full,
 // It moves to that zone. Its text, "Create 1 Omni... transfer this card to your opponent's Support Zone", reads "you" as the side
 // Whose zone it sits in, so the die goes to the side it is on when the phase begins, and the move hands that to the other side

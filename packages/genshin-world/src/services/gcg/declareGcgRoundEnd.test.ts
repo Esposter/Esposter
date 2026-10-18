@@ -13,6 +13,8 @@ import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -59,6 +61,8 @@ describe(declareGcgRoundEnd, () => {
     usedSkillIds: [],
   });
   const createDuel = (round = 1): GcgDuel => ({
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,

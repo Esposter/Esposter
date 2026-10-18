@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
+import { LIU_SU_ID } from "#src/services/gcg/cards/constants";
 
-const LIU_SU_ID = 322_012;
 const LIU_SU_USES = 2;
 
 // Liu Su, a companion: after a switch, the character switched to gains 1 Energy if she has none, once per Round and twice per

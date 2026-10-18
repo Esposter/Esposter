@@ -2,8 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { createGcgElementCostReduction } from "#src/services/gcg/effects/createGcgElementCostReduction";
-
-const THUNDER_SUMMONERS_CROWN_ID = 312_401;
+import { THUNDER_SUMMONERS_CROWN_ID } from "#src/services/gcg/cards/constants";
 
 // Thunder Summoner's Crown: once per round a talent card played or a skill used spends one Electro die less
 export const thunderSummonersCrown: GcgCardModule = createGcgElementCostReduction(
