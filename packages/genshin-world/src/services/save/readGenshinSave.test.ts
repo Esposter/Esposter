@@ -32,6 +32,7 @@ describe(readGenshinSave, () => {
   const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const ADVENTURE_EXP = 1200;
   const CARD_GAME_EXP = 1250;
+  const REWARDED_GAME_IDS = [1021, 1103];
   const CHARACTER_ID = 6;
   const CHARACTER_COPY_COUNT = 2;
   const CHARACTER_LEVEL = 5;
@@ -180,6 +181,7 @@ describe(readGenshinSave, () => {
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
     cardGameExp: CARD_GAME_EXP,
+    cardGameRewardedGameIds: REWARDED_GAME_IDS,
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     cooking: COOKING_SAVE,

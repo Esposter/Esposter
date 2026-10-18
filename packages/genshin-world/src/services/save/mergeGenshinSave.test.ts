@@ -351,6 +351,14 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).cardGameExp).toBe(GUEST_EXP);
   });
 
+  test("keeps the games each copy has rewarded once, in ascending order", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1105, 1103] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameRewardedGameIds: [1103, 1021] };
+
+    expect(mergeGenshinSave(account, guest).cardGameRewardedGameIds).toStrictEqual([1021, 1103, 1105]);
+  });
+
   test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
     expect.hasAssertions();
     const account = {

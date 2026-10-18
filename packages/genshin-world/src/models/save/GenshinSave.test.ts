@@ -14,6 +14,7 @@ import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
@@ -87,6 +88,7 @@ describe("genshinSaveSchema", () => {
       ),
       adventureExp: maxNumber,
       cardGameExp: maxNumber,
+      cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT }, (_value, index) => maxNumber - index),
       characterTrials: {
         claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
       },
@@ -458,6 +460,17 @@ describe("genshinSaveSchema", () => {
     expect.hasAssertions();
 
     expect(genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, cardGameExp: undefined }).success).toBe(false);
+  });
+
+  test("refuses a list of rewarded games past its cap", () => {
+    expect.hasAssertions();
+
+    expect(
+      genshinSaveSchema.safeParse({
+        ...EMPTY_GENSHIN_SAVE,
+        cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT + 1 }, (_value, index) => index + 1),
+      }).success,
+    ).toBe(false);
   });
 
   test("refuses a save with no Mora", () => {

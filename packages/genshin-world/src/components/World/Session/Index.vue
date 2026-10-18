@@ -958,6 +958,8 @@ useWorldSaveSync({
     adventureRankRewardsClaimed: adventureRankRewardsClaimed.value,
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
+    cardGameExp: savedState.cardGameExp,
+    cardGameRewardedGameIds: savedState.cardGameRewardedGameIds,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
     characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
