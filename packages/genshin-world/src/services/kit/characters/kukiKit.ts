@@ -38,7 +38,7 @@ const getElementalMastery = ({ attributes }: Combatant): number =>
 // Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
 // Hit's share of Elemental Mastery, and Gyoei Narukami Kariyama Rite's hits. Constellations 1 and 2 are built. Her
 // Ascension 1 healing bonus, and Constellations 4 and 6, are not, as each reads her HP
-// Constellation 4 needs Thundergrass Marks from normal, charged and plunging hits by the Grass Ring's character
+// Constellation 4 needs charged and plunging hits as events, which only normal attacks emit
 // Constellation 6 needs a lethal hit held at 1 HP once a minute, which damage taken does not allow
 export const createKukiKitBehaviour = ({
   readHit,
