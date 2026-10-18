@@ -11,6 +11,7 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
+import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
   EMPTY_GENSHIN_SAVE,
@@ -283,8 +284,8 @@ describe("genshinSaveSchema", () => {
     expect(partySaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE.party, activeIndex: 1 }).success).toBe(false);
   });
 
-  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
-  // Would only hide a save nobody brought to it
+  // A slice a save predates is refused rather than defaulted, a stored save being backfilled to the shape, except the shop
+  // Purchases, which start empty, and the Sigils, which the reader counts at zero
   test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {
@@ -294,5 +295,27 @@ describe("genshinSaveSchema", () => {
     };
 
     expect(genshinSaveSchema.safeParse(predatingSave).success).toBe(false);
+  });
+
+  test("accepts a save written before the Sigils were added", () => {
+    expect.hasAssertions();
+    const currencies = Object.fromEntries(
+      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.some((sigil) => sigil === currency)),
+    );
+
+    expect(
+      genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } })
+        .success,
+    ).toBe(true);
+  });
+
+  test("refuses a save with no Mora", () => {
+    expect.hasAssertions();
+    const { [Currency.Mora]: _mora, ...currencies } = EMPTY_GENSHIN_SAVE.wallet.currencies;
+
+    expect(
+      genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } })
+        .success,
+    ).toBe(false);
   });
 });

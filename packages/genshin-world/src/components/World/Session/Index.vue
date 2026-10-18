@@ -589,7 +589,7 @@ const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 // Mondstadt's levels and their rewards, which the keeper's Reputation screen draws, and the level it is picked at
 const reputationCity = shallowRef<ReputationCity>();
 const shopId = shallowRef(0);
-const shopPurchases = shallowRef<ShopPurchase[]>([]);
+const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -652,6 +652,7 @@ useWorldSaveSync({
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
     settledSeelieIds: settledSeelieIds.value,
+    shopPurchases: shopPurchases.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,

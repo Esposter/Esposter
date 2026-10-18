@@ -7,6 +7,7 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { checkIsShopGoodSoldOut } from "#src/services/shop/checkIsShopGoodSoldOut";
+import { recordShopPurchase } from "#src/services/shop/recordShopPurchase";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
 // The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, its price
@@ -32,7 +33,7 @@ export const buyShopGood = (
     wallet[priceCurrency] < good.priceCount
   )
     return undefined;
-  const boughtPurchases = [...purchases, { goodsId: good.goodsId, purchasedAt: now }];
+  const boughtPurchases = recordShopPurchase(purchases, good, now);
   const paidWallet = { ...wallet, [priceCurrency]: wallet[priceCurrency] - good.priceCount };
   if (itemCurrency !== undefined)
     return {

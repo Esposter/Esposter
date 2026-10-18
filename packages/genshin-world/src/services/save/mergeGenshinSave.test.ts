@@ -24,6 +24,11 @@ describe(mergeGenshinSave, () => {
   const SEELIE_ID = "seelie-1";
   const OTHER_SEELIE_ID = "seelie-2";
   const PUZZLE_ID = "puzzle-1";
+  // Two goods a shop sells, one of them bought in both copies, the other by one only
+  const SHOP_GOODS_ID = 7;
+  const OTHER_SHOP_GOODS_ID = 8;
+  const EARLIER_PURCHASE = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
+  const LATER_PURCHASE = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
   const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
   const OTHER_PLACEMENT = {
     areaId: 2,
@@ -454,5 +459,25 @@ describe(mergeGenshinSave, () => {
       fatePoints: FATE_POINTS,
       wishCount: GUEST_COUNT,
     });
+  });
+
+  test("keeps the later purchase of a good both copies bought, and a good only one copy bought", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      shopPurchases: [{ count: 1, goodsId: SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE }],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      shopPurchases: [
+        { count: 2, goodsId: SHOP_GOODS_ID, lastPurchasedAt: LATER_PURCHASE },
+        { count: 1, goodsId: OTHER_SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
+      ],
+    };
+
+    expect(mergeGenshinSave(account, guest).shopPurchases).toStrictEqual([
+      { count: 2, goodsId: SHOP_GOODS_ID, lastPurchasedAt: LATER_PURCHASE },
+      { count: 1, goodsId: OTHER_SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
+    ]);
   });
 });

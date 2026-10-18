@@ -46,6 +46,17 @@ export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.PyroSigil]: 0,
   [Currency.RealmCurrency]: 0,
 };
+// The eight region Sigils, which a save written before they were added does not hold, so its reader counts them at zero
+export const SIGIL_CURRENCIES: readonly Currency[] = [
+  Currency.AnemoSigil,
+  Currency.CryoSigil,
+  Currency.DendroSigil,
+  Currency.ElectroSigil,
+  Currency.GeoSigil,
+  Currency.HydroSigil,
+  Currency.LunaSigil,
+  Currency.PyroSigil,
+];
 export const EMPTY_WALLET: Readonly<Wallet> = {
   ...EMPTY_CURRENCIES,
   originalResinChangedAt: Temporal.Instant.fromEpochMilliseconds(0),

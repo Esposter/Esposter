@@ -49,6 +49,9 @@ export const MAX_SETTLED_SEELIE_COUNT = 547;
 // The puzzles a player solves once each, so the bound is the map's 632 Time Trial Challenge marks and 200 Elemental
 // Monument marks on the ground in the mapped regions, counted from the same point list on the same day
 export const MAX_SOLVED_PUZZLE_COUNT = 832;
+// The goods a player holds a purchase of, one entry each, bounded by the shop goods that hold a buy limit: 5134 of the game's
+// Shop goods table on 2026-10-18, a good with no limit keeping no entry
+export const MAX_SHOP_PURCHASE_COUNT = 5134;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
@@ -146,6 +149,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
+  shopPurchases: [],
   statues: { foundOculusIds: [], regions: {} },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
@@ -185,6 +189,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   COMMISSIONS_PER_DAY *
     getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
+  MAX_SHOP_PURCHASE_COUNT *
+    getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
@@ -247,6 +253,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
+  shopPurchases: [],
   statues: { foundOculusIds: [], regions: {} },
   travelerName: "",
   unlockedLandmarks: [],

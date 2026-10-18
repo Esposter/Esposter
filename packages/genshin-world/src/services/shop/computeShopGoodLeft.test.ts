@@ -29,18 +29,22 @@ describe(computeShopGoodLeft, () => {
   test("only the purchases made since the refresh count against the limit", () => {
     expect.hasAssertions();
     const refreshTime = computeShopRefreshTime(ShopRefresh.Daily, NOW);
-    const purchases = [
-      { goodsId: 7, purchasedAt: refreshTime.subtract({ seconds: 1 }) },
-      { goodsId: 7, purchasedAt: refreshTime },
-      { goodsId: 8, purchasedAt: refreshTime },
-    ];
-    expect(computeShopGoodLeft(GOOD, purchases, NOW)).toBe(2);
+    expect(computeShopGoodLeft(GOOD, [{ count: 2, goodsId: 7, lastPurchasedAt: refreshTime }], NOW)).toBe(1);
+    expect(
+      computeShopGoodLeft(GOOD, [{ count: 2, goodsId: 7, lastPurchasedAt: refreshTime.subtract({ seconds: 1 }) }], NOW),
+    ).toBe(3);
+  });
+
+  test("the purchases of another good do not count against the limit", () => {
+    expect.hasAssertions();
+    const refreshTime = computeShopRefreshTime(ShopRefresh.Daily, NOW);
+    expect(computeShopGoodLeft(GOOD, [{ count: 2, goodsId: 8, lastPurchasedAt: refreshTime }], NOW)).toBe(3);
   });
 
   test("a good bought up to its limit has none left", () => {
     expect.hasAssertions();
     const refreshTime = computeShopRefreshTime(ShopRefresh.Daily, NOW);
-    const purchases = [0, 1, 2].map((index) => ({ goodsId: 7, purchasedAt: refreshTime.add({ seconds: index }) }));
+    const purchases = [{ count: GOOD.buyLimit, goodsId: 7, lastPurchasedAt: refreshTime.add({ seconds: 1 }) }];
     expect(computeShopGoodLeft(GOOD, purchases, NOW)).toBe(0);
   });
 });

@@ -7,6 +7,7 @@ import type { OfferingProgressSave } from "#src/models/offering/OfferingProgress
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
+import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
@@ -101,6 +102,23 @@ const mergeArchive = (account: ArchiveSave, guest: ArchiveSave): ArchiveSave => 
     ),
   };
 };
+// Whether a purchase was bought later than another
+const checkIsLaterPurchase = (purchase: ShopPurchaseSave, than: ShopPurchaseSave): boolean =>
+  Temporal.Instant.compare(
+    Temporal.Instant.from(purchase.lastPurchasedAt),
+    Temporal.Instant.from(than.lastPurchasedAt),
+  ) > 0;
+// A good both copies hold a purchase of keeps the copy bought later, as the copy further on, and a good only one copy holds
+// Is kept. Each good is listed once, as the save holds it
+const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave[]): ShopPurchaseSave[] => {
+  const purchaseMap = new Map(account.map((purchase) => [purchase.goodsId, purchase]));
+  for (const guestPurchase of guest) {
+    const accountPurchase = purchaseMap.get(guestPurchase.goodsId);
+    if (!accountPurchase || checkIsLaterPurchase(guestPurchase, accountPurchase))
+      purchaseMap.set(guestPurchase.goodsId, guestPurchase);
+  }
+  return [...purchaseMap.values()];
+};
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
   adjustment: WorldLevelAdjustmentSave,
@@ -129,7 +147,8 @@ const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySa
 // Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
 // Has chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is
 // Kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing Tree's is.
-// The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened
+// The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
+// Bought in both copies keeps the purchase made later
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -182,6 +201,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     },
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
+    shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     statues: mergeStatueProgress(account.statues, guest.statues),
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],

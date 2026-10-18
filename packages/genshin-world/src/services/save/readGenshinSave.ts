@@ -9,6 +9,7 @@ import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
 import { toParty } from "#src/services/save/toParty";
+import { toShopPurchases } from "#src/services/save/toShopPurchases";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
@@ -31,6 +32,7 @@ export const readGenshinSave = (
     puzzles,
     quests,
     reputation,
+    shopPurchases,
     statues,
     travelerName,
     unlockedLandmarks,
@@ -69,6 +71,7 @@ export const readGenshinSave = (
     regionStatueProgressMap: new Map(Object.entries(statues.regions)),
     reputation,
     settledSeelieIds: new Set(puzzles.settledSeelieIds),
+    shopPurchases: toShopPurchases(shopPurchases),
     solvedPuzzleIds: new Set(puzzles.solvedPuzzleIds),
     travelerName,
     unlockedLandmarkIds: new Set(unlockedLandmarks),
