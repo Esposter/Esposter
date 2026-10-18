@@ -104,6 +104,8 @@ export const strikeEnemy = (
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
         defense,
+        // The DEF each status takes off the enemy, which the defence multiplier reads against the attacker's level
+        defenseReduction: enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0),
         isCritical,
         resistance,
         stat: attack,
