@@ -7,6 +7,7 @@ import {
   BLIZZARD_STRAYER_ARTIFACT_SET_ID,
   BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID,
   BRAVE_HEART_ARTIFACT_SET_ID,
+  CRIMSON_WITCH_ARTIFACT_SET_ID,
   DEEPWOOD_MEMORIES_ARTIFACT_SET_ID,
   DEFENDERS_WILL_ARTIFACT_SET_ID,
   DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
@@ -52,6 +53,7 @@ import { createBerserkerSetModule } from "#src/services/artifact/sets/createBers
 import { createBlizzardStrayerSetModule } from "#src/services/artifact/sets/createBlizzardStrayerSetModule";
 import { createBloodstainedChivalrySetModule } from "#src/services/artifact/sets/createBloodstainedChivalrySetModule";
 import { createBraveHeartSetModule } from "#src/services/artifact/sets/createBraveHeartSetModule";
+import { createCrimsonWitchSetModule } from "#src/services/artifact/sets/createCrimsonWitchSetModule";
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
 import { createDefendersWillSetModule } from "#src/services/artifact/sets/createDefendersWillSetModule";
 import { createDesertPavilionChronicleSetModule } from "#src/services/artifact/sets/createDesertPavilionChronicleSetModule";
@@ -102,6 +104,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [BLIZZARD_STRAYER_ARTIFACT_SET_ID]: createBlizzardStrayerSetModule,
   [BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID]: createBloodstainedChivalrySetModule,
   [BRAVE_HEART_ARTIFACT_SET_ID]: createBraveHeartSetModule,
+  [CRIMSON_WITCH_ARTIFACT_SET_ID]: createCrimsonWitchSetModule,
   [DEEPWOOD_MEMORIES_ARTIFACT_SET_ID]: createDeepwoodMemoriesSetModule,
   [DEFENDERS_WILL_ARTIFACT_SET_ID]: createDefendersWillSetModule,
   [DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID]: createDesertPavilionChronicleSetModule,
