@@ -42,22 +42,28 @@ flowchart TD
 
 The record's NPCs are filled from the dump's NPC births, which give one place for most residents, so most have a day spot and no night spot, and stand at their day spot through the night. Most of the game's people stand in one place day and night, so absence is recorded only where the data says so, as `absentAtNight`. A resident the record places more than once in a region is the same NPC at nearly the same spot rather than a day and a night, so only its first place is kept. The wiki gives a resident's daytime and nighttime location as gallery pictures captioned by the hour, not as text naming a place, so no place is matched to a night spot from it. The join takes night spots by NPC id from `RESIDENT_NIGHT_SPOT_MAP`, which is empty until a position is read for each NPC, so no resident gains one yet. A shopkeeper or keeper the births do not hold is placed at the scene's building point of her shop or service: `BUILDING_NPC_ID_MAP` names each point's id and its NPC, and Hertha keeps the point named Reputation through `REPUTATION_KEEPER_NPC_ID_MAP`. Each such place is an estimate of the NPC's standing place, provisional until the scene's group export places them.
 
+A resident's duel and week games come from the dump's card-game tables, not from the NPC births. The world-level table gives a duelist its game and talk: a row's level is the duel's game id and its talk the talk the duel is offered from, so NPC 1435 duels at game 11004 from talk 6143506, where the wiki's Adventure Challenge seat named game 1021 from talk 40172, and that seat is retired. An NPC with two world-level rows names two duels the residents cannot choose between, so it is left unseated: NPCs 1567, 2148, 2456, 2054 and 3029 do so, and none is placed. The week table gives a week-game resident its games, one per level its row names, and the week reward table prices each level in Lucky Coins and Player EXP, the counts of items 107021 and 146 under the field the dump names `NIEOALBMDMB`, which the dump does not label; a level with no Player EXP item pays none, as level 10 does. The residents that offer these seats, 9704, 9706 and 9715 for week games and 1423, 1435, 2304 and 2308 for duels, are listed in `residents/constants.ts`, and the writer and the games builder read the same lists. The seats follow each resident's place and do not move it.
+
 ## Key files
 
-| File                                                                       | Role                                                                              |
-| :------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/Resident.ts`                      | A resident with an optional day spot, night spot and explicit absence at night    |
-| `packages/genshin-world/src/models/world/ResidentSpot.ts`                  | One spot: its ground point and the way it faces                                   |
-| `packages/genshin-world/src/services/resident/computeResidentSpot.ts`      | The spot the clock gives at a minute, or none                                     |
-| `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                |
-| `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera    |
-| `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`        | The hours a city vendor's shop is open, from the wiki's pages                     |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                   |
-| `packages/genshin-world/src/components/World/Session/Index.vue`            | Lists the residents at their shown spot as talk prompts                           |
-| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                   |
-| `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the record's NPCs to names, talks and regions |
-| `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                  |
-| `packages/genshin-world/src/data/regions/<region>.json`                    | Each fitted region's residents, written by the generator beside its landmarks     |
+| File                                                                       | Role                                                                               |
+| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/Resident.ts`                      | A resident with an optional day spot, night spot and explicit absence at night     |
+| `packages/genshin-world/src/models/world/ResidentSpot.ts`                  | One spot: its ground point and the way it faces                                    |
+| `packages/genshin-world/src/services/resident/computeResidentSpot.ts`      | The spot the clock gives at a minute, or none                                      |
+| `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                 |
+| `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera     |
+| `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`        | The hours a city vendor's shop is open, from the wiki's pages                      |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                    |
+| `packages/genshin-world/src/components/World/Session/Index.vue`            | Lists the residents at their shown spot as talk prompts                            |
+| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                    |
+| `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the record's NPCs to names, talks and regions  |
+| `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                   |
+| `scripts/src/services/genshinAssets/residents/toWorldLevelDuels.ts`        | The duel each listed NPC's world-level row seats it at, and the NPCs with two rows |
+| `scripts/src/services/genshinAssets/residents/toResidentWeekGames.ts`      | The week games each listed NPC's week row offers, priced by its level's reward     |
+| `scripts/src/services/genshinAssets/residents/toResidentSeats.ts`          | A resident's seat: its world-level duel or hand seat, and its week games           |
+| `scripts/src/services/genshinAssets/gcg/buildGcgGames.ts`                  | The games the residents' seats publish, read from the same lists                   |
+| `packages/genshin-world/src/data/regions/<region>.json`                    | Each fitted region's residents, written by the generator beside its landmarks      |
 
 ## Sources
 
