@@ -100,4 +100,4 @@ The likeness beside each line SHALL be compared only with the same character's o
 
 - **GIVEN** the likeness numbers of two characters
 - **WHEN** they are compared
-- **THEN** they are compared only against each character's own earlier run
+- **THEN** they are compared only against each character's own later run
