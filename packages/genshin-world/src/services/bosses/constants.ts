@@ -21,3 +21,7 @@ export const NORMAL_BOSS_UNIQUE_DROPS: { chance: number; count: number }[] = [
 // The Adventure Rank from which a locked weekly boss's Trounce Domain can be quick challenged from the Adventurer
 // Handbook, by the wiki's Weekly Boss page, which says it applies in Single Player Mode
 export const WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK = 40;
+// The eight quests of Prologue Act III, Song of the Dragon and Freedom, which Stormterror's Trounce Domain opens after,
+// Read from the wiki's list of the act and matched to the dump's main quest rows by title. Provisional: the dump leaves
+// The domain's own condition empty, so this gate is the wiki's reading until the game's condition is read
+export const STORMTERROR_INTRO_QUEST_IDS: readonly number[] = [388, 389, 390, 393, 394, 396, 397, 398];
