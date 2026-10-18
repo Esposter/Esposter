@@ -8,7 +8,7 @@ The as-built [commissions](../../specs/genshin/commissions/design.md) page holds
 - **A commission is blocked where a quest stands.** A task whose place a quest in progress holds is never dealt. Dealing takes that set of places, and the set is read from the quests in progress.
 - **Each region's pool joins once its quest is done.** Each other region's pool joins when its daily tasks are read.
 - **The handbook shows the day's four.** The Adventurer Handbook's Commissions tab lists them with the preferred region, as the game shows them, each title and description the game's own words by text id.
-- **Kept with the player's progress**, and every unfinished one replaced at the daily reset, which the world reads from the game's day as the enemies' respawn does.
+- **Kept with the player's progress**, and every unfinished one replaced at the daily reset, which the world reads from the game's day as the enemies' respawn does. The alternative, dealing the four afresh on each visit, is rejected: a reload would reroll the day's commissions, so the player could choose the ones they want.
 - **The kept day is the moment it was dealt.** The save holds the day's four, their counts, the claimed ids and the instant they were dealt, and nothing derived; a day dealt before the latest daily reset (`DAILY_RESET_TIME`, 04:00 in `GAME_TIME_ZONE`) is stale and is dealt again, as the weekly count reads its week from `computeWeeklyResetTime`.
 - **A quest task finishes with its quest.** Its quest's completion reaches the commission once the quests report it.
 - **Encounter Points come from quests, chests and certain items.** Each of those pages gives them and the claim is built, so only the sources wait.

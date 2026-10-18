@@ -3,10 +3,9 @@
 - [ ] 1.1 Open a pot companion's dialogue at Friendship Levels 4 and 7, reading the lines by their game text ids, once the pot's companions are invited. Verify: a test named after the scenario 'a pot companion's dialogue opens at Friendship Level 4', seen failing first.
 - [ ] 1.2 Keep a dialogue that also waits on a quest closed until that quest is done. Verify: a test named after the scenario 'a dialogue that also waits on a quest stays closed until the quest is done', seen failing first.
 
-## 2. Commission claims
+## 2. The Friendship Level 10 cap
 
-- [ ] 2.1 Route a commission claim's Companionship EXP through the friendship grant. Verify: a test named after the scenario 'a commission claim grants its Companionship EXP to the friendship grant', seen failing first.
-- [ ] 2.2 Grant no Companionship EXP to a character already at Friendship Level 10. Verify: a test named after the scenario 'a character at Friendship Level 10 gains no Companionship EXP', seen failing first.
+- [ ] 2.1 Grant no Companionship EXP to a character already at Friendship Level 10. Verify: a test named after the scenario 'a character at Friendship Level 10 gains no Companionship EXP', seen failing first.
 
 ## 3. Claim values
 

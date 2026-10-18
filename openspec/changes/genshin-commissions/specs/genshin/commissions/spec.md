@@ -93,3 +93,10 @@ A commission claim SHALL send its Mora and items to the player's wallet and bag,
 - **GIVEN** a commission whose reward is ready to claim
 - **WHEN** the player claims the commission
 - **THEN** the Mora is added to the wallet, the items go to the bag, and the Companionship EXP is granted through the friendship grant
+
+#### Scenario: a claim past the day's four is refused
+
+- **GIVEN** the day's four commissions are already claimed
+- **WHEN** the player claims a further commission
+- **THEN** no Mora, items or Companionship EXP are granted
+- **AND** the claim is not recorded

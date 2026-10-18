@@ -22,15 +22,9 @@ A companion in the Serenitea Pot SHALL open its dialogue when its Friendship Lev
 - **WHEN** the companion reaches Friendship Level 4
 - **THEN** the dialogue stays closed until that quest is done
 
-### Requirement: Commission Companionship EXP Grant
+### Requirement: Friendship Level 10 Companionship EXP Cap
 
-A commission claim SHALL grant its Companionship EXP to the friendship grant, and a character already at Friendship Level 10 SHALL gain no further Companionship EXP.
-
-#### Scenario: a commission claim grants its Companionship EXP to the friendship grant
-
-- **GIVEN** a commission whose claim gives Companionship EXP
-- **WHEN** the player claims the commission
-- **THEN** the Companionship EXP is granted to the deployed characters through the friendship grant
+A character already at Friendship Level 10 SHALL gain no further Companionship EXP from any grant.
 
 #### Scenario: a character at Friendship Level 10 gains no Companionship EXP
 
