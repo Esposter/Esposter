@@ -5,6 +5,7 @@ import { Element } from "#src/models/Element";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
+import { createBenthicPulsePassiveModule } from "#src/services/weapon/passives/createBenthicPulsePassiveModule";
 import { createBlackWingPassiveModule } from "#src/services/weapon/passives/createBlackWingPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
@@ -252,4 +253,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1419973003": createLawsEquilibriumPassiveModule,
   // White Cruising Wave (Tidal Shadow)
   "4049199251": createTidalShadowPassiveModule,
+  // Benthic Pulse (Song of Stillness)
+  "369700907": createBenthicPulsePassiveModule,
 };
