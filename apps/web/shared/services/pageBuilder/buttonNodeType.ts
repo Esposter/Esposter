@@ -16,7 +16,6 @@ export const buttonNodeType = {
     const { href, label } = buttonPropsSchema.parse(node.props);
     return { attributes: { class: "button", href }, children: [label], tag: "a" };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.Button,
 } satisfies NodeTypeDefinition;

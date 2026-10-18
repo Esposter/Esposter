@@ -27,7 +27,6 @@ export const surveyInviteNodeType = {
       tag: "a",
     };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.SurveyInvite,
 } satisfies NodeTypeDefinition;

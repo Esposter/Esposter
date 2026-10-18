@@ -5,4 +5,4 @@ import { z } from "zod";
 export const webpageUrlSchema = z
   .string()
   .min(1)
-  .refine((url) => checkIsAllowedUrl(url, DEFAULT_ALLOWED_SCHEMES), { message: "uses a scheme that is not allowed" });
+  .refine((url) => checkIsAllowedUrl(url, DEFAULT_ALLOWED_SCHEMES), { error: "uses a scheme that is not allowed" });

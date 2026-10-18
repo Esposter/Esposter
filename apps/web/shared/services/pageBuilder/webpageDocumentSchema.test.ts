@@ -27,7 +27,7 @@ describe("webpageDocumentSchema", () => {
     expect.hasAssertions();
 
     const result = webpageDocumentSchema.safeParse({
-      content: Array.from({ length: MAX_WEBPAGE_NODES + 1 }, (_, index) => createButton(`${index}`)),
+      content: Array.from({ length: MAX_WEBPAGE_NODES + 1 }, (_value, index) => createButton(`${index}`)),
       root: TEST_ROOT,
     });
 

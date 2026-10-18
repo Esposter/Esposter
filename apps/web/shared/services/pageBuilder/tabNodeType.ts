@@ -20,7 +20,6 @@ export const tabNodeType = {
       tag: "div",
     };
   },
-  script: undefined,
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },
   type: WebpageNodeType.Tab,
 } satisfies NodeTypeDefinition;

@@ -1,7 +1,7 @@
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { customHtmlNodeType } from "#shared/services/pageBuilder/customHtmlNodeType";
+import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { describe, expect, test } from "vitest";
 
 // Renders a custom HTML node holding the given markup, then writes the render out as the page would

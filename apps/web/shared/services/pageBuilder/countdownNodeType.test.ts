@@ -17,7 +17,7 @@ const toDateInput = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
 const createCountdown = (endsAt: string, endText = TEST_LABEL) => ({
-  props: { endText, endsAt, id: TEST_ID },
+  props: { endsAt, endText, id: TEST_ID },
   type: WebpageNodeType.Countdown,
 });
 
@@ -44,7 +44,7 @@ describe("countdownNodeType", () => {
     const endsAt = toDateInput(localDayFromEpoch(1));
 
     expect(serializeHtml([countdownNodeType.render(createCountdown(endsAt))]).split(">")[0]).toStrictEqual(
-      `<div class="countdown" role="timer" aria-live="off" aria-atomic="false" data-ends-at="${endsAt}" data-end-text="${TEST_LABEL}"`,
+      `<div aria-atomic="false" aria-live="off" class="countdown" data-end-text="${TEST_LABEL}" data-ends-at="${endsAt}" role="timer"`,
     );
   });
 

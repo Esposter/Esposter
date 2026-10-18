@@ -16,7 +16,7 @@ const hidePanel = (panel: HtmlNode): HtmlNode =>
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
 const tabsScript = () => {
-  for (const tablist of document.querySelectorAll<HTMLElement>('[role="tablist"]')) {
+  for (const tablist of document.querySelectorAll<HTMLElement>('.tabs > [role="tablist"]')) {
     const tabs = [...tablist.querySelectorAll<HTMLElement>('[role="tab"]')];
 
     const selectTab = (selected: HTMLElement) => {

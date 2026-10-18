@@ -53,7 +53,7 @@ export const typedTextNodeType = {
   render: (node) => {
     const { texts } = typedTextPropsSchema.parse(node.props);
     return {
-      attributes: { class: "typed-text", "aria-label": texts.join(", ") },
+      attributes: { "aria-label": texts.join(", "), class: "typed-text" },
       children: [
         {
           attributes: { "aria-hidden": "true", "data-texts": JSON.stringify(texts) },

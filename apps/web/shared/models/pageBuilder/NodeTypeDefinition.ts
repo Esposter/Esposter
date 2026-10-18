@@ -12,5 +12,5 @@ export interface NodeTypeDefinition extends BlockTypeDefinition {
   // Pure: the node and its rendered slots in, one element out, folded by the core's renderBlockNodes
   render: (node: BlockNode, slots: Record<string, HtmlNode[]>, context: RenderContext) => HtmlNode;
   // A self-contained runtime emitted once per published page holding the type
-  script: (() => void) | undefined;
+  script?: () => void;
 }

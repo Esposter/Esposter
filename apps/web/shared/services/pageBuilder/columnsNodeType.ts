@@ -11,7 +11,6 @@ export const columnsNodeType = {
   formSchema: z.strictObject({}),
   propsSchema: columnsPropsSchema,
   render: (_node, slots) => ({ attributes: { class: "columns" }, children: slots.children ?? [], tag: "div" }),
-  script: undefined,
   slots: { children: [WebpageNodeType.Column] },
   type: WebpageNodeType.Columns,
 } satisfies NodeTypeDefinition;

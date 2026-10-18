@@ -7,7 +7,7 @@ import { z } from "zod";
 // A date, or a date and a time, in the form the editor's inputs write
 const ENDS_AT_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2})?$/u;
 
-const countdownFormSchema = z.strictObject({ endText: z.string(), endsAt: z.string().regex(ENDS_AT_REGEX) });
+const countdownFormSchema = z.strictObject({ endsAt: z.string().regex(ENDS_AT_REGEX), endText: z.string() });
 const countdownPropsSchema = z.strictObject({ ...countdownFormSchema.shape, id: z.string() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
@@ -89,15 +89,15 @@ export const countdownNodeType = {
   propsSchema: countdownPropsSchema,
   // The timer's live region stays off, so a screen reader is not told each tick; the script fills in the values
   render: (node) => {
-    const { endText, endsAt } = countdownPropsSchema.parse(node.props);
+    const { endsAt, endText } = countdownPropsSchema.parse(node.props);
     return {
       attributes: {
-        class: "countdown",
-        role: "timer",
-        "aria-live": "off",
         "aria-atomic": "false",
-        "data-ends-at": endsAt,
+        "aria-live": "off",
+        class: "countdown",
         "data-end-text": endText,
+        "data-ends-at": endsAt,
+        role: "timer",
       },
       children: [
         ...["day", "hour", "minute", "second"].map(createCountdownUnit),

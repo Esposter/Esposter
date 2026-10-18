@@ -12,7 +12,6 @@ export const columnNodeType = {
   formSchema: z.strictObject({}),
   propsSchema: columnPropsSchema,
   render: (node, slots) => ({ attributes: { class: "column" }, children: slots.children ?? [], tag: "div" }),
-  script: undefined,
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },
   type: WebpageNodeType.Column,
 } satisfies NodeTypeDefinition;

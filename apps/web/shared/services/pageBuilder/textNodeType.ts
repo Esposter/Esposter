@@ -1,7 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
-import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { generateHTML } from "@tiptap/html";
@@ -23,7 +23,6 @@ export const textNodeType = {
       tag: "div",
     };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.Text,
 } satisfies NodeTypeDefinition;

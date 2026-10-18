@@ -24,7 +24,6 @@ export const tooltipNodeType = {
       tag: "span",
     };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.Tooltip,
 } satisfies NodeTypeDefinition;

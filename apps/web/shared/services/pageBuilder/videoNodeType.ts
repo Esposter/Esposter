@@ -21,7 +21,6 @@ export const videoNodeType = {
       tag: "video",
     };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.Video,
 } satisfies NodeTypeDefinition;

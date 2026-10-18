@@ -16,7 +16,6 @@ export const customHtmlNodeType = {
     const { html } = customHtmlPropsSchema.parse(node.props);
     return { attributes: { class: "custom-html" }, children: [{ html: sanitizeHtml(html) }], tag: "div" };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.CustomHtml,
 } satisfies NodeTypeDefinition;

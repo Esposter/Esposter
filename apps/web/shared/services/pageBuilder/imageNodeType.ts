@@ -29,7 +29,6 @@ export const imageNodeType = {
       tag: "img",
     };
   },
-  script: undefined,
   slots: {},
   type: WebpageNodeType.Image,
 } satisfies NodeTypeDefinition;

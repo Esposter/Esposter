@@ -21,7 +21,6 @@ export const sectionNodeType = {
     children: slots.children ?? [],
     tag: sectionPropsSchema.parse(node.props).tag,
   }),
-  script: undefined,
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },
   type: WebpageNodeType.Section,
 } satisfies NodeTypeDefinition;

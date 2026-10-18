@@ -31,8 +31,8 @@ describe("tabsNodeType", () => {
 
     expect({
       focused: document.activeElement?.id,
-      selected: [first, second].map((tab) => tab?.getAttribute("aria-selected")),
       hidden: [`${TEST_ID}-panel`, `${TEST_OTHER_ID}-panel`].map((id) => document.getElementById(id)?.hidden),
+      selected: [first, second].map((tab) => tab?.getAttribute("aria-selected")),
     }).toStrictEqual({ focused: `${TEST_OTHER_ID}-tab`, hidden: [true, false], selected: ["false", "true"] });
   });
 });
