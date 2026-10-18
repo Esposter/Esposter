@@ -17,6 +17,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -134,6 +135,34 @@ describe(createAlbedoKitBehaviour, () => {
     const hitmarks = blossomSummon?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
 
     expect(hitmarks).toStrictEqual([145, 150, 155, 160, 165, 170, 175]);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 1);
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [createStandingSolarIsotoma()] } });
+    ALBEDO_KIT.onKitEvent?.(createDamageTaken({ x: 0, z: 0 }), context, combatant);
+
+    const defenseBuff = castEffects(ALBEDO_KIT.elementalSkill, [], combatant).find(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.DefensePercent,
+    );
+
+    expect(getPartyMember(context.party, ALBEDO_CHARACTER_ID).energy).toBeCloseTo(1.2);
+    expect([defenseBuff?.amount, defenseBuff?.secondsRemaining]).toStrictEqual([0.5, 20]);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 0);
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [createStandingSolarIsotoma()] } });
+    ALBEDO_KIT.onKitEvent?.(createDamageTaken({ x: 0, z: 0 }), context, combatant);
+
+    expect(getPartyMember(context.party, ALBEDO_CHARACTER_ID).energy).toBe(0);
+    expect(
+      castEffects(ALBEDO_KIT.elementalSkill, [], combatant).filter(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.DefensePercent,
+      ),
+    ).toStrictEqual([]);
   });
 
   describe("ascension 4's team Elemental Mastery", () => {
