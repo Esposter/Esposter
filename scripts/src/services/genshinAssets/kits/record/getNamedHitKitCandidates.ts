@@ -21,8 +21,7 @@ const splitHitPath = (hitPath: string): { group: string; index: number } => {
 };
 
 // The calls each attack site makes of a list's joined keys, merged in the order they land, with the keys making them. A
-// Site whose merged calls do not land in a known, strict order, a delay missing or two calls at one delay, has no order
-// To merge by, so it is left out
+// Delay missing or two calls at one delay leaves no order to merge by, which readListHitCalls checks before taking them
 const readSiteCallsMap = (
   namedHits: ReadonlyMap<string, NamedHitCandidate>,
 ): Map<string, { calls: NamedHitCall[]; keys: Set<string> }> => {
@@ -48,7 +47,8 @@ const readSiteCallsMap = (
 };
 
 // The calls a list's hit takes by its place: its own key's calls where they are as many as the list is long, else the
-// Calls of the one attack site that makes as many calls as the list is long from keys including its own
+// Calls of the one attack site that makes as many calls as the list is long from keys including its own. A second such
+// Site, whether its calls land in an order or not, is a rival the hit cannot tell apart from, so neither is taken
 const readListHitCalls = (
   key: string,
   namedHit: NamedHitCandidate,
@@ -58,9 +58,12 @@ const readListHitCalls = (
 ): Map<string, KitCandidate[]> | undefined => {
   if (namedHit.queuedCalls.length === listLength) return namedHit.queuedCalls[index]?.fieldMap;
   const takingSites = Array.from(siteCallsMap.values()).filter(
-    ({ calls, keys }) => calls.length === listLength && keys.has(key) && checkIsLandingOrdered(calls),
+    ({ calls, keys }) => calls.length === listLength && keys.has(key),
   );
-  return takingSites.length === 1 ? takingSites[0]?.calls[index]?.fieldMap : undefined;
+  const takingSite = takingSites.length === 1 ? takingSites[0] : undefined;
+  return takingSite !== undefined && checkIsLandingOrdered(takingSite.calls)
+    ? takingSite.calls[index]?.fieldMap
+    : undefined;
 };
 
 // The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill hold's
