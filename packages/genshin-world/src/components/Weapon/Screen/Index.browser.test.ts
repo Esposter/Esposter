@@ -18,6 +18,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
+import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -29,16 +30,25 @@ const levelTextOf = (level: number, maxLevel: number) =>
 const levelText = levelTextOf(1, weaponData.ascensionPhases[0]?.maxLevel ?? 1);
 // The copy in the bag sits at the level cap, whose text is the open weapon's text at the cap
 const copyLevelText = levelTextOf(atCapWeapon.level, weaponData.ascensionPhases[0]?.maxLevel ?? atCapWeapon.level);
+// The weapon the screen opens on, as its bag entry holds it, and the EXP it holds towards the level after its own
+const heldWeapon = getBagWeapon(props.inventory.items, OPEN_ENTRY_ID);
+const heldRequiredExp =
+  getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
+const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
 
 describe("weaponScreen", () => {
-  // The weapon's name and its level over the phase's cap, as the game's own level format writes them
+  // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
     expect.hasAssertions();
 
-    render(WeaponScreenContainer, { props });
+    const { container } = await render(WeaponScreenContainer, { props });
 
     await expect.element(page.getByText(weaponName, { exact: true })).toBeVisible();
+    await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
+    await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
+    expect(container.querySelectorAll(".spark.lit")).toHaveLength(heldWeapon.ascension);
+    expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(`${heldWeapon.refinement}`);
   });
 
   // The Enhance tab's name, the first action the weapon screen offers, in the reader's game language
