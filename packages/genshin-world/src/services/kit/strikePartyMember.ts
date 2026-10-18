@@ -14,7 +14,7 @@ import { applyPartyMemberElement } from "#src/services/party/applyPartyMemberEle
 
 // An enemy's strike on a party member: its damage is first taken by the team's shields, and what none of them absorbs is
 // Taken from the member as the share of its Max HP it is, then the kind's attack element, if it has one, is applied to it.
-// Each shield that took any of it is returned for its owner, as the damage it took
+// Each shield that took any of it is returned for its owner, as the damage it took and the member the strike was on
 export const strikePartyMember = (
   enemyTables: EnemyTables,
   party: Party,
@@ -39,6 +39,7 @@ export const strikePartyMember = (
       amount: healths[index] - shield.health,
       characterId: shield.characterId,
       kind: KitEventKind.ShieldAbsorbed,
+      struckCharacterId: combatant.characterId,
     }))
     .filter(({ amount }) => amount > 0);
 };
