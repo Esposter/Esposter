@@ -6,7 +6,6 @@ import type { Vector3 } from "three";
 import type { UniformNode } from "three/webgpu";
 
 import { createCausticsNode } from "#src/nodes/createCausticsNode";
-import { createMaterialDetailNode } from "#src/nodes/createMaterialDetailNode";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
@@ -42,11 +41,10 @@ export const createTerrainMaterial = (
   // The view's eye in the scene's coordinates, written each frame by whatever selects the tiles
   eye: UniformNode<"vec3", Vector3>,
   // No colour of its own: the colour node is the morphed vertex colour, which replaces the material's
-  toonMaterialOptions: Pick<ToonMaterialOptions, "detail" | "lightUniforms" | "rampTexture">,
+  toonMaterialOptions: Pick<ToonMaterialOptions, "lightUniforms" | "rampTexture">,
   waterUniforms?: WaterUniforms,
 ): ToonNodeMaterial => {
-  const { detail, ...toonOptions } = toonMaterialOptions;
-  const terrainMaterial = createToonMaterial({ ...toonOptions, isOutlined: false });
+  const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
   const coarsePosition = attribute("coarsePosition", "vec4");
   const { finestRange, maxHeight, minHeight } = terrainOptions;
   const levelScale = exp2(coarsePosition.w);
@@ -60,12 +58,11 @@ export const createTerrainMaterial = (
     normalLocal.assign(mix(normalLocal, attribute("coarseNormal", "vec3"), morphAmount).normalize());
     return mix(positionGeometry, coarsePosition.xyz, morphAmount);
   })();
-  const { lightUniforms } = toonOptions;
-  const detailNode = detail === undefined ? float(1) : createMaterialDetailNode(detail);
+  const { lightUniforms } = toonMaterialOptions;
   terrainMaterial.colorNode = vec4(
-    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount))
-      .mul(createWetDarkeningNode(lightUniforms))
-      .mul(detailNode),
+    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount)).mul(
+      createWetDarkeningNode(lightUniforms),
+    ),
     1,
   );
   if (waterUniforms) {
