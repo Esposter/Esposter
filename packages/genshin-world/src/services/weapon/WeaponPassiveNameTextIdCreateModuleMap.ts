@@ -5,6 +5,7 @@ import { Element } from "#src/models/Element";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
+import { createBathhousesHawksAndNarukamiPassiveModule } from "#src/services/weapon/passives/createBathhousesHawksAndNarukamiPassiveModule";
 import { createBenthicPulsePassiveModule } from "#src/services/weapon/passives/createBenthicPulsePassiveModule";
 import { createBlackWingPassiveModule } from "#src/services/weapon/passives/createBlackWingPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
@@ -305,4 +306,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1901402467": createProtectorsVirtuePassiveModule,
   // Timeless Dream: Eternal Stove (Engulfing Lightning)
   "2229628147": createTimelessDreamEternalStovePassiveModule,
+  // Bathhouses, Hawks, and Narukami (Sunny Morning Sleep-In)
+  "2260847683": createBathhousesHawksAndNarukamiPassiveModule,
 };

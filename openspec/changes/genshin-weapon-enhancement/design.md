@@ -64,6 +64,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Flower-Feather Song (Chain Breaker, provisional reading).** The wielder's ATK rises by 4.8% for each other party member from Natlan or of another Elemental Type, and with three or more such members its Elemental Mastery rises by 24, through getPassiveBonuses over the deployed team. The rank's 9.6% and 48 are the five-star rank's.
 - **Protector's Virtue (Primordial Jade Cutter, provisional reading).** The wielder's HP rises by 20%, and its ATK rises by 1.2% of its Max HP as its attributes stand before the passive's own HP, through getPassiveBonuses. Rank five raises them to 40% and 2.4%.
 - **Timeless Dream: Eternal Stove (Engulfing Lightning, provisional reading).** The wielder's ATK rises by 28% of its Energy Recharge over the base 100%, up to 80%, with the Energy Recharge its buffs add counted in, through getPassiveBonuses. An Elemental Burst gives it 30% Energy Recharge for 12 s, through the buff helper. Rank five reads 56%, 120% and 50%.
+- **Bathhouses, Hawks, and Narukami (Sunny Morning Sleep-In, provisional reading).** Elemental Mastery rises by 120 for 6 s after its wielder triggers a Swirl or Stellar Swirl, by 96 for 9 s after its Elemental Skill hits an opponent, and by 32 for 30 s after its Elemental Burst hits one, each its own buff, through onKitEvent. Rank five reads 240, 192 and 64.
 
 ## How it works
 
