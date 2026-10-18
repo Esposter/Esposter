@@ -14,7 +14,7 @@ const talentMultiplierMap: TalentMultiplierMap = {
   ],
 };
 
-describe("joinGcsimTalentArray", () => {
+describe(joinGcsimTalentArray, () => {
   test("joins a row to the one parameter whose multiplier at every level is the row's value", () => {
     expect.hasAssertions();
 
