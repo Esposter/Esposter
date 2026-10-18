@@ -73,28 +73,25 @@ const castShotInfusions = (ascension: number): KitInfusion[] => {
 
 describe(createNaviaKitBehaviour, () => {
   // The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
-  const shrapnelAfterShot = (constellationCount: number): number => {
-    const combatant = createNaviaCombatant(constellationCount);
-    const kitEffectState: KitEffectState = { effects: [] };
-    for (let strike = 0; strike < 5; strike++) {
-      strikeHit(getBlastHit(), kitEffectState, combatant);
-      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
-    }
-    startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
-    return readShrapnel(kitEffectState);
-  };
+  const shrapnelAfterShot = (constellationCount: number): number =>
+    readShrapnel(pressAfterShrapnel(constellationCount, 5));
 
   const readShrapnel = (kitEffectState: KitEffectState): number =>
     getStatus(kitEffectState, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
+
+  // Strikes the given number of blasts, each gaining a Crystal Shrapnel with its burst cooldown ended after it
+  const gainShrapnel = (kitEffectState: KitEffectState, combatant: Combatant, shrapnelStacks: number): void => {
+    for (let strike = 0; strike < shrapnelStacks; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+  };
 
   // The state after a press that follows the shrapnel the given cannon hits gain, from a constellation count
   const pressAfterShrapnel = (constellationCount: number, shrapnelStacks: number): KitEffectState => {
     const combatant = createNaviaCombatant(constellationCount);
     const kitEffectState: KitEffectState = { effects: [] };
-    for (let strike = 0; strike < shrapnelStacks; strike++) {
-      strikeHit(getBlastHit(), kitEffectState, combatant);
-      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
-    }
+    gainShrapnel(kitEffectState, combatant, shrapnelStacks);
     startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
     return kitEffectState;
   };
@@ -122,10 +119,7 @@ describe(createNaviaKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const party = createParty([NAVIA_CHARACTER_ID]);
     getPartyMember(party, NAVIA_CHARACTER_ID).burstCooldownSeconds = 10;
-    for (let strike = 0; strike < shrapnelStacks; strike++) {
-      strikeHit(getBlastHit(), kitEffectState, combatant);
-      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
-    }
+    gainShrapnel(kitEffectState, combatant, shrapnelStacks);
     NAVIA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
     const { burstCooldownSeconds, energy } = getPartyMember(party, NAVIA_CHARACTER_ID);
     return { burstCooldownSeconds, energy };
