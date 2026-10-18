@@ -87,6 +87,26 @@ describe(getTalentUpgradeRefusal, () => {
     ).toStrictEqual(TalentUpgradeRefusal.Materials);
   });
 
+  test("a talent whose materials name one item twice needs both counts in the bag", () => {
+    expect.hasAssertions();
+
+    const upgrades: TalentUpgrade[] = [
+      {
+        coinCost: 500,
+        costItems: [
+          { count: 3, id: MATERIAL.id },
+          { count: 3, id: MATERIAL.id },
+        ],
+        level: 2,
+        phase: 2,
+      },
+    ];
+
+    expect(
+      getTalentUpgradeRefusal(CHARACTER, CombatTalent.NormalAttack, upgrades, { inventory: INVENTORY, wallet: WALLET }),
+    ).toStrictEqual(TalentUpgradeRefusal.Materials);
+  });
+
   test("a talent that meets every requirement can be upgraded", () => {
     expect.hasAssertions();
 
