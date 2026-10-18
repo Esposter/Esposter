@@ -32,6 +32,7 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
   },
   TRIGGER_FINISH_QUEST_AND: { countsQuantity: false, kind: AchievementEventKind.QuestFinished, targetSlot: 0 },
   TRIGGER_FINISH_QUEST_OR: { countsQuantity: false, kind: AchievementEventKind.QuestFinished, targetSlot: 0 },
+  TRIGGER_OBTAIN_ITEM_NUM: { countsQuantity: true, kind: AchievementEventKind.ItemObtained, targetSlot: 0 },
   TRIGGER_OBTAIN_MATERIAL_NUM: { countsQuantity: true, kind: AchievementEventKind.MaterialObtained, targetSlot: 0 },
   TRIGGER_OFFERING_LEVEL: {
     countsQuantity: false,

@@ -345,4 +345,23 @@ describe(advanceAchievements, () => {
       ),
     ).toStrictEqual({ primogems: 0, progressMap: new Map() });
   });
+
+  test("a server-fired achievement advances when its own doing happens", () => {
+    expect.hasAssertions();
+
+    const ITEM_ID = "41";
+    const obtained: Achievement = {
+      ...counted,
+      progress: 10,
+      trigger: { parameters: [[ITEM_ID]], type: "TRIGGER_OBTAIN_ITEM_NUM" },
+    };
+    expect(
+      advanceAchievements(
+        [obtained],
+        new Map(),
+        { kind: AchievementEventKind.ItemObtained, quantity: 4, targetId: ITEM_ID },
+        EPOCH,
+      ),
+    ).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 4 }]]) });
+  });
 });
