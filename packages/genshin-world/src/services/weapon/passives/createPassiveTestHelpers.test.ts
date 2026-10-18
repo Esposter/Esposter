@@ -1,10 +1,14 @@
 import type { Attribute } from "#src/models/character/Attribute";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
+import type { ReactionType } from "#src/models/combat/ReactionType";
+import type { Element } from "#src/models/Element";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -21,6 +25,14 @@ export const createWielderCombatant = (attributeLines: readonly AttributeLine[] 
   elementalResonances: [],
   kit: TRAVELER_KIT,
   level: 1,
+});
+
+// The reaction a striker triggers on an enemy, one reaction of the given type and element, as the kit's event carries it
+export const createReaction = (striker: Combatant, enemy: Enemy, reactionType: ReactionType, element: Element) => ({
+  enemy,
+  kind: KitEventKind.ReactionTriggered as const,
+  reactions: [{ element, reactionType }],
+  striker,
 });
 
 // The buff an attribute has among a kit's effects, if it has one

@@ -5,13 +5,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createReaction, createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -21,12 +20,6 @@ const wielder: Combatant = createWielderCombatant();
 // Starfire Upon the Snowplains at its first rank: sixteen per cent ATK for twelve seconds after a reaction, and sixteen per cent
 // Stellar Glimmer reaction DMG for twelve seconds after a Stellar Glimmer reaction
 const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.16, 12, 0.16, 12]);
-const createReaction = (reactionType: ReactionType, element: Element) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element, reactionType }],
-  striker: wielder,
-});
 const getBuffs = (effects: readonly KitEffect[]) => effects.filter(({ kind }) => kind === "buff");
 
 describe(createStarfireUponTheSnowplainsPassiveModule, () => {
@@ -35,7 +28,7 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     starfireUponTheSnowplainsPassiveModule.onKitEvent?.(
-      createReaction(ReactionType.Overloaded, Element.Pyro),
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
       context,
       wielder,
     );
@@ -57,7 +50,7 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     starfireUponTheSnowplainsPassiveModule.onKitEvent?.(
-      createReaction(ReactionType.StellarSwirl, Element.Anemo),
+      createReaction(wielder, enemy, ReactionType.StellarSwirl, Element.Anemo),
       context,
       wielder,
     );

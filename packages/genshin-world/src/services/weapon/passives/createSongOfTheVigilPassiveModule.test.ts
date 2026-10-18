@@ -4,14 +4,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createReaction, createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives/createSongOfTheVigilPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -20,19 +19,17 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
 // Song of the Vigil at its first rank: four Energy for an elemental reaction once every nine seconds, and twenty per cent ATK for twelve seconds after a Stellar Glimmer reaction
 const songOfTheVigilPassiveModule = createSongOfTheVigilPassiveModule([4, 0.2, 9, 12]);
-const createReaction = (reactionType: ReactionType, element: Element) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element, reactionType }],
-  striker: wielder,
-});
 
 describe(createSongOfTheVigilPassiveModule, () => {
   test("an elemental reaction the wielder triggers regenerates the rank's Energy to it", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    songOfTheVigilPassiveModule.onKitEvent?.(createReaction(ReactionType.Overloaded, Element.Pyro), context, wielder);
+    songOfTheVigilPassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
   });
@@ -41,12 +38,24 @@ describe(createSongOfTheVigilPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    songOfTheVigilPassiveModule.onKitEvent?.(createReaction(ReactionType.Overloaded, Element.Pyro), context, wielder);
-    songOfTheVigilPassiveModule.onKitEvent?.(createReaction(ReactionType.Overloaded, Element.Pyro), context, wielder);
+    songOfTheVigilPassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
+    songOfTheVigilPassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
 
     stepKitSeconds(context, 9.5);
-    songOfTheVigilPassiveModule.onKitEvent?.(createReaction(ReactionType.Overloaded, Element.Pyro), context, wielder);
+    songOfTheVigilPassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
   });
@@ -56,7 +65,7 @@ describe(createSongOfTheVigilPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     songOfTheVigilPassiveModule.onKitEvent?.(
-      createReaction(ReactionType.StellarSwirl, Element.Anemo),
+      createReaction(wielder, enemy, ReactionType.StellarSwirl, Element.Anemo),
       context,
       wielder,
     );
@@ -77,7 +86,11 @@ describe(createSongOfTheVigilPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    songOfTheVigilPassiveModule.onKitEvent?.(createReaction(ReactionType.Overloaded, Element.Pyro), context, wielder);
+    songOfTheVigilPassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
 
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
