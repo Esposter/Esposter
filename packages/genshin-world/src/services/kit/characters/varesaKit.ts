@@ -38,6 +38,12 @@ const fillNightsoulPoints = (context: KitContext): void => {
   enterNightsoulAtMaximum(context.kitEffectState, context.activeCombatant.characterId);
 };
 
+// Gains a plunge's points up to their maximum and enters the Blessing, as her high and low plunges both do
+const gainNightsoulPlungePoints = (context: KitContext): void => {
+  generateKitNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS, NIGHTSOUL_MAXIMUM);
+  enterNightsoulAtMaximum(context.kitEffectState, context.activeCombatant.characterId);
+};
+
 // Varesa's behaviour outside her Blessing: her Nightsoul points, the Blessing a full set enters for 15 seconds, from her
 // Skill's press, her high and low plunges and her burst, as gcsim's do. Her burst inside the Blessing is the Fiery Passion
 // Flying Kick, which gcsim checks the Blessing for at the cast (burst.go:68). Not built: the Fiery Passion Rush, which
@@ -55,21 +61,6 @@ export const createVaresaKitBehaviour = (): KitBehaviour => ({
       hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
     onStart: fillNightsoulPoints,
   },
-  plunges: {
-    high: {
-      onStart: (context) => {
-        const { activeCombatant, kitEffectState } = context;
-        generateKitNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS, NIGHTSOUL_MAXIMUM);
-        enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
-      },
-    },
-    low: {
-      onStart: (context) => {
-        const { activeCombatant, kitEffectState } = context;
-        generateKitNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS, NIGHTSOUL_MAXIMUM);
-        enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
-      },
-    },
-  },
+  plunges: { high: { onStart: gainNightsoulPlungePoints }, low: { onStart: gainNightsoulPlungePoints } },
   skill: { onStart: (context) => generateKitNightsoulPoints(context, NIGHTSOUL_SKILL_POINTS, NIGHTSOUL_MAXIMUM) },
 });
