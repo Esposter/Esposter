@@ -115,6 +115,13 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names the second tag
 
+#### Scenario: An attribute on the title is refused by name
+
+- **GIVEN** MJML source whose `mj-title` carries an attribute
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the title
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.

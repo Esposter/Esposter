@@ -243,6 +243,17 @@ describe(parseMjmlDocument, () => {
     );
     expect(head.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-head"']);
   });
+  test("an attribute on the title is refused by name", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-title foo="a">a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-title"']);
+  });
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();
 
