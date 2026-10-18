@@ -1,18 +1,20 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
+import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
-// The interactables the unclaimed Trounce Blossoms are, each standing where its blossom lies on the ground
+// The interactables the claimable Trounce Blossoms are at the time given, each standing where its blossom lies on the ground
 export const computeTrounceBlossomInteractables = (
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>,
   gameText: Readonly<Record<string, string>>,
   getGroundHeight: (x: number, z: number) => number,
+  now: Temporal.Instant,
 ): Interactable[] =>
-  [...trounceBlossoms].flatMap(([spawnKey, { claimedAt, place }]): Interactable[] => {
-    if (claimedAt) return [];
-    const { x, z } = place;
+  [...trounceBlossoms].flatMap(([spawnKey, trounceBlossom]): Interactable[] => {
+    if (!checkIsTrounceBlossomClaimable(trounceBlossom, now)) return [];
+    const { x, z } = trounceBlossom.place;
     return [
       {
         id: spawnKey,
