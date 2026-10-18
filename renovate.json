@@ -78,7 +78,7 @@
     },
     {
       "automerge": false,
-      "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So every pnpm bump opens a PR a person merges after reading each release it crosses with `gh release view`, and the settings worth taking land in `pnpm-workspace.yaml` in the same PR. Its own group keeps that read-before-merge bump out of the automerging non-major branch.",
+      "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So the bot never merges a pnpm bump: each one is taken by the hand pass, which reads each release it crosses with `gh release view` and lands the settings worth taking in `pnpm-workspace.yaml` in the same commit, and the bot's PR for it is closed as superseded. Its own group keeps that read-before-merge bump out of the automerging non-major branch.",
       "groupName": "pnpm",
       "matchPackageNames": ["pnpm"]
     },
