@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 06:00 in the game's time zone, read as pure, tested functions. Their places, their draw and the reputation search that marks them are the proposal's still.
+Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 04:00 in the game's time zone, read as pure, tested functions. Their places, their draw and the reputation search that marks them are the proposal's still.
 
 ## Requirements
 
@@ -18,19 +18,19 @@ Mining outcrops SHALL be drawn for a player at Adventure Rank 30 or above.
 - **WHEN** a player reaches Adventure Rank 30
 - **THEN** mining outcrops are drawn
 
-### Requirement: Mined outcrop returns at the next 06:00
+### Requirement: Mined outcrop returns at the next 04:00
 
-A mined outcrop SHALL come back at the first 06:00 in UTC+8 strictly after the mining.
+A mined outcrop SHALL come back at the first 04:00 in UTC+8 strictly after the mining.
 
 #### Scenario: Mined before the day's draw
 
-- **WHEN** an outcrop is mined at 05:59 in UTC+8
-- **THEN** it comes back at 06:00 the same day
+- **WHEN** an outcrop is mined at 03:59 in UTC+8
+- **THEN** it comes back at 04:00 the same day
 
 #### Scenario: Mined at the day's draw
 
-- **WHEN** an outcrop is mined at 06:00 in UTC+8
-- **THEN** it comes back at 06:00 the next day
+- **WHEN** an outcrop is mined at 04:00 in UTC+8
+- **THEN** it comes back at 04:00 the next day
 
 ### Requirement: Standing until its respawn
 
