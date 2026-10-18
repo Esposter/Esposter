@@ -16,6 +16,7 @@ Archive entries open and count from the doings the world does.
 ## Capabilities
 
 - **genshin/archive** (modified)
+- **genshin/save-data** (modified)
 
 ## Waiting on
 

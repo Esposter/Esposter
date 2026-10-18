@@ -25,7 +25,8 @@ It does not hold:
 - the expeditions, each character sent and the moment it left ([expeditions](../expeditions/design.md));
 - the forge's queues and each game day's forge points ([forging](../forging/design.md));
 - each defeated enemy's respawn instant, so a reload brings every enemy back ([enemies](../enemies/design.md));
-- the exploration's chests, camps, Oculi and puzzles, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md)).
+- the exploration's chests, camps, Oculi and puzzles, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md));
+- the Archive's opened entries and each Living Being's defeat count, which a reload starts over ([archive](../archive/design.md)). The [archive change](../../../changes/genshin-archive/design.md) adds them as a slice.
 
 Some values are derived on load and never saved: a character's Friendship Level is read from its Companionship EXP, and a namecard is held by its character's level, so no save keeps it. The save holds what the player did and nothing derived.
 
