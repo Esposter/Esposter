@@ -19,14 +19,14 @@ export const buildKitRecord = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
   isGcsimModelled: boolean,
 ): BuiltKit => {
   const { provenanceMap, valueMap } = resolveKitValues(
     sourceCandidateMap,
     overlay,
     namedHitCandidateMap,
-    talentGroupIdMap,
+    tables,
     isGcsimModelled,
   );
   const record = kitRecordSchema.parse(unflattenKitValues(valueMap));

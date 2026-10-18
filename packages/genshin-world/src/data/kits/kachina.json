@@ -2,7 +2,6 @@
   "burst.animationFrames": { "cause": "NoGcsimUnit", "value": 50 },
   "burst.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "burst.hits.0.area": { "cause": "NoGcsimUnit", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "burst.hits.0.element": { "cause": "NoGcsimUnit", "value": "Rock" },
   "burst.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 18 },
   "burst.hits.0.multiplier": { "cause": "NoGcsimUnit", "value": 3.805672 },
   "burst.hits.0.scalingAttribute": { "cause": "NoGcsimUnit", "value": "FIGHT_PROP_DEFENSE" },

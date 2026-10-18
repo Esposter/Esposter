@@ -32,7 +32,7 @@ export const buildKitPublication = (
       sourceCandidateMap,
       readKitOverlay(overlayName),
       namedHitCandidateMap,
-      tables.talentGroupIdMap,
+      tables,
       gcsimFolder !== undefined,
     );
     kits[String(characterId)] = record;
