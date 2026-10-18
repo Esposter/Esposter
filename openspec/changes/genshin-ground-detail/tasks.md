@@ -2,6 +2,7 @@
 
 - [ ] 1.1 Measure each surface's detail at its own texture's metres per texel and remove the shared constant. Verify: a test named after the scenario "A base-map surface's detail reads at its texture's texel size", written first and seen failing.
 - [x] 1.2 Read the Ground's structure with its layers drawn in the surface pass, and record its reading in the pass's snapshot. Verify: the surface pass's snapshot records the Ground's structure with its layers drawn, missing its gate by a wide margin.
+- [ ] 1.3 Open: confirm the Ground's structure reading, then decide scope item 3 of the [design](design.md) on the confirmed reading. Dump the five reference and five shot statistics of the Ground's family mask from one run, beside that run's even/odd gate pair, since the gate moves between runs. A share far above 1 is most plausibly one reference statistic near zero against a shot statistic far larger, so a share above 1 does not by itself prove the measure broken; the dump tells the two apart. A share of exactly 1 is what the measure returns when every shot statistic is zero, so the dump checks that too. The Ground's rows sit in `login.snapshot.md` today, but the pass writes Windrise's references, which carry the Windrise component, to `windrise.snapshot.md`, so the next Windrise run moves them there. Verify: the dump and the decision on scope item 3 are written under this task before task 2.1 starts.
 
 ## 2. Windrise's layers
 
