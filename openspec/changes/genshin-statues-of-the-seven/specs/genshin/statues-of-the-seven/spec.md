@@ -28,16 +28,23 @@ An Oculus within a short distance of the player SHALL show on the minimap and so
 - **THEN** the Oculus shows on the minimap
 - **AND** a sound signals it
 
-### Requirement: A found Oculus is offered to its region at once
+### Requirement: A found Oculus is held until the Worship Statue offers it
 
-A found Oculus SHALL be offered to its region at once, and any level it completes SHALL be reached and paid then.
+A found Oculus SHALL be held in its region's count, and the Worship Statue's offer SHALL reach each level the region's held Oculi complete.
 
-#### Scenario: An offered Oculus completes a level at once
+#### Scenario: A found Oculus waits for the Worship Statue's offer
 
-- **GIVEN** a region started at a level whose next level its offered Oculi complete
+- **GIVEN** a region started at a level
 - **WHEN** the player finds an Oculus in the region
-- **THEN** the region's statues reach the next level
-- **AND** that level's rewards are paid
+- **THEN** the Oculus is held in the region's count
+- **AND** no level is reached
+
+#### Scenario: An offer reaches the levels the held Oculi complete
+
+- **GIVEN** a region started at a level, holding the Oculi its next level takes
+- **WHEN** the player offers the Oculi at the Worship Statue
+- **THEN** the region reaches that level
+- **AND** the level's rewards wait to be claimed
 
 #### Scenario: An Oculus found in an unstarted region is held until the region starts
 
@@ -46,37 +53,55 @@ A found Oculus SHALL be offered to its region at once, and any level it complete
 - **THEN** the Oculus is held in the region's count
 - **AND** no level is reached
 
-### Requirement: A region starts at level one on its first resonance
+### Requirement: A first resonance starts a region at level one, reached and not yet paid
 
-A region SHALL start at level one on the first resonance with one of its statues and pay level one's rewards once.
+A first resonance with one of a region's statues SHALL start the region at level one, which SHALL be reached, its rewards left to be claimed.
 
 #### Scenario: The first resonance starts the region at level one
 
 - **GIVEN** a region no statue has been resonated in
 - **WHEN** the player resonates with one of its statues
 - **THEN** the region starts at level one
-- **AND** level one's rewards are paid
+- **AND** level one's rewards wait to be claimed
+- **AND** the Oculi the region holds stay held
 
-#### Scenario: A second resonance pays no reward again
+#### Scenario: A second resonance changes nothing
 
 - **GIVEN** a region already started
 - **WHEN** the player resonates with another of its statues
-- **THEN** no reward is paid
+- **THEN** no level is reached or paid
 
-### Requirement: Each level pays the rewards its region gives
+### Requirement: The Worship Statue claims one reached level per action
 
-Each level of a region SHALL pay Adventure EXP, Primogems and Sigils everywhere, and the rewards its own region gives.
+Each claim at the Worship Statue SHALL take the next level the region has reached and not yet claimed, paying that level's rewards once, so one claim takes one level.
+
+#### Scenario: A claim pays the next reached level
+
+- **GIVEN** a region that has reached two levels and claimed none
+- **WHEN** the player claims at the Worship Statue
+- **THEN** the first level's rewards are paid
+- **AND** the second level remains to be claimed
+
+#### Scenario: A claim with every reached level claimed pays nothing
+
+- **GIVEN** a region whose reached levels are all claimed
+- **WHEN** the player claims at the Worship Statue
+- **THEN** nothing is paid
+
+### Requirement: Each claimed level pays the rewards its region gives
+
+Each level of a region, when claimed, SHALL pay Adventure EXP, Primogems and Sigils everywhere, and the rewards its own region gives.
 
 #### Scenario: Every region's level pays Adventure EXP, Primogems and Sigils
 
-- **GIVEN** a region reaching a level
-- **WHEN** the level is reached
+- **GIVEN** a region with a reached level not yet claimed
+- **WHEN** the player claims that level
 - **THEN** the player gains the level's Adventure EXP, Primogems and Sigils
 
 #### Scenario: Liyue's level also pays its Stones of Remembrance
 
-- **GIVEN** a Liyue statue reaching a level
-- **WHEN** the level is reached
+- **GIVEN** a Liyue statue with a reached level not yet claimed
+- **WHEN** the player claims that level
 - **THEN** the player gains that level's Stones of Remembrance
 
 ### Requirement: The Traveler takes the element of the statue's region on resonance
@@ -89,16 +114,29 @@ Resonating with a statue SHALL change the Traveler's element to the element of t
 - **WHEN** the player resonates with the statue
 - **THEN** the Traveler's element is Geo
 
-### Requirement: F on a resonated statue opens the Statue's Blessing
+### Requirement: F on a resonated statue opens the Worship Statue
 
-Pressing F at a resonated statue SHALL open the Statue's Blessing, which shows the healing pool and the party's portraits, and a click on a portrait SHALL heal that member from the pool.
+Pressing F at a resonated statue SHALL open the Worship Statue, which shows each level of the region and what each pays, and the Statue's Blessing SHALL be one switch away from it. The Statue's Blessing SHALL show the healing pool and the party's portraits, and a click on a portrait SHALL heal that member from the pool.
 
-#### Scenario: F on a resonated statue opens the Blessing screen
+#### Scenario: F on a resonated statue opens the Worship Statue
 
-- **GIVEN** a resonated statue and a party
+- **GIVEN** a resonated statue
 - **WHEN** the player presses F at the statue
+- **THEN** the Worship Statue opens
+- **AND** it shows each level of the region and what each pays
+
+#### Scenario: The Statue's Blessing opens from the Worship Statue
+
+- **GIVEN** the Worship Statue open
+- **WHEN** the player switches to the Statue's Blessing
 - **THEN** the Statue's Blessing opens
 - **AND** it shows the healing pool and the party's portraits
+
+#### Scenario: A click on a portrait heals that member from the pool
+
+- **GIVEN** the Statue's Blessing open with a party member hurt
+- **WHEN** the player clicks the member's portrait
+- **THEN** the member is healed from the pool
 
 ### Requirement: Auto-recover revives and heals the party near a statue
 
@@ -125,7 +163,7 @@ With auto-recover on and a threshold set, standing by a statue for two seconds S
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level and then its held count.
+The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level, then its held count, and each region's level claimed the larger of the two copies', so a claim is kept once made.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -147,9 +185,15 @@ The statues' levels, held counts and found Oculi SHALL be kept with the world, a
 
 #### Scenario: A region both saves hold is the save further on
 
-- **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by its held count
+- **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by the Oculi it holds
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the region of the save further on, its level and held count as they are
+- **THEN** the merged save holds the region of the save further on, its level and held count as they are, with the larger level claimed of the two copies
+
+#### Scenario: A level claimed in the copy behind is kept
+
+- **GIVEN** a region the save further on has claimed no level of, and the other save has claimed one
+- **WHEN** the two saves are merged
+- **THEN** the merged save keeps the level claimed, so its rewards are not paid again
 
 ## REMOVED Requirements
 
