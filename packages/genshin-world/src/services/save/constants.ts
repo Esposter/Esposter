@@ -67,6 +67,9 @@ export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
 export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
 // The Living Beings the Archive counts defeats of, one entry each, bounded by the codex's rows with room to spare
 export const MAX_ARCHIVE_KILL_COUNT = 4096;
+// The enemies a player defeats in the camps with no boss among them, one entry each, bounded by the 7421 enemy members
+// The mapped regions' data holds, counted on 2026-10-18, with room to spare
+export const MAX_ENEMY_RESPAWN_COUNT = 8192;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
@@ -171,6 +174,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  enemyRespawns: {},
   homePlacements: [],
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
@@ -221,6 +225,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
   MAX_SHOP_PURCHASE_COUNT *
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
+  MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
@@ -275,6 +280,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  enemyRespawns: {},
   homePlacements: [],
   inventory: EMPTY_INVENTORY_SAVE,
   offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },

@@ -28,7 +28,8 @@ import type { BannerKind } from "genshin-interface/save";
 // Realm, each Region's Statues of The Seven progress by the Region's id, the ids of the Oculi found, the ids of the
 // Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party and
 // The purchases of each limited good that still count against its limit.
-// The save's slices convert to and from these
+// Each defeated enemy's moment of coming back by its spawn key, in the camps with no boss among them, the save's slices
+// Convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -42,6 +43,7 @@ export interface GenshinSaveState {
   companionshipExpMap: ReadonlyMap<number, number>;
   craftedCountMap: ReadonlyMap<number, number>;
   craftingProgress: CraftingProgress;
+  enemyRespawnMap: ReadonlyMap<string, string>;
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];

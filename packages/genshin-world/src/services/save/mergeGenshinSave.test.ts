@@ -510,4 +510,28 @@ describe(mergeGenshinSave, () => {
       { count: 1, goodsId: OTHER_SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
     ]);
   });
+
+  test("keeps each enemy's respawn instant as the later of the two copies', and one only a copy holds", () => {
+    expect.hasAssertions();
+    const EARLIER_RESPAWN = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 4 }).toString();
+    const LATER_RESPAWN = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 28 }).toString();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      enemyRespawns: { "mondstadt-camp-1|enemy-1": LATER_RESPAWN, "mondstadt-camp-1|enemy-2": EARLIER_RESPAWN },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      enemyRespawns: {
+        "mondstadt-camp-1|enemy-1": EARLIER_RESPAWN,
+        "mondstadt-camp-1|enemy-2": LATER_RESPAWN,
+        "mondstadt-camp-1|enemy-3": EARLIER_RESPAWN,
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).enemyRespawns).toStrictEqual({
+      "mondstadt-camp-1|enemy-1": LATER_RESPAWN,
+      "mondstadt-camp-1|enemy-2": LATER_RESPAWN,
+      "mondstadt-camp-1|enemy-3": EARLIER_RESPAWN,
+    });
+  });
 });

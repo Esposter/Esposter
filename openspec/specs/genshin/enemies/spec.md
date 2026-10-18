@@ -213,15 +213,22 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 - **WHEN** the threshold is passed again
 - **THEN** no energy drops
 
-### Requirement: A page reload restores every defeated enemy
+### Requirement: A page reload restores each defeated enemy by its saved respawn time
 
-A reload of the page SHALL bring back every enemy, until a saved game keeps when each was defeated.
+A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp, whose respawn the save does not hold.
 
-#### Scenario: A defeated enemy returns after a reload
+#### Scenario: A defeated enemy stays away after a reload until its respawn time
 
-- **GIVEN** an enemy defeated in this page's session
+- **GIVEN** a common enemy defeated, with its saved respawn time still ahead
 - **WHEN** the page is reloaded
-- **THEN** the enemy is back in the world
+- **THEN** the enemy is not in the world
+- **AND** it is back in the world once its respawn time passes
+
+#### Scenario: A boss returns after a reload
+
+- **GIVEN** a boss defeated in this page's session
+- **WHEN** the page is reloaded
+- **THEN** the boss is back in the world
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 

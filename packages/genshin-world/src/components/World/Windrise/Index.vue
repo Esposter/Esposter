@@ -137,6 +137,10 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
+  // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
+  enemyRespawnMap: ReadonlyMap<string, string>;
+  // The world's clock, which each defeat and each camp's load is read against
+  getWorldNow: () => Temporal.Instant;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
   // The Frostbearing Trees the official map marks, each stood in at its place
@@ -200,7 +204,9 @@ const {
   createTerrainWorker,
   elementalSight,
   enemyMap,
+  enemyRespawnMap,
   enemyTables,
+  getWorldNow,
   frostbearingTreePlaces,
   gameDataBaseUrl,
   getGroundHeight,
@@ -234,6 +240,7 @@ const emit = defineEmits<{
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   respawn: [spawnKey: string];
+  saveRespawn: [spawnKey: string, respawnAt: string];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -551,8 +558,10 @@ onUnmounted(() => {
       v-if="!witness"
       :kit-effect-state
       :enemy-map
+      :enemy-respawn-map
       :enemy-tables
       :get-ground-height
+      :get-world-now
       :is-held
       :jump-pose
       :last-teleport-at="lastTeleportAt"
@@ -569,6 +578,7 @@ onUnmounted(() => {
       @camp-locks="(locks) => emit('campLocks', locks)"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
+      @save-respawn="(spawnKey, respawnAt) => emit('saveRespawn', spawnKey, respawnAt)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
     />
     <!-- The animals run from the character where the references show none, so a witness render draws none of them -->

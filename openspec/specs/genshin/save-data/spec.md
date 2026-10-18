@@ -272,10 +272,32 @@ The merge SHALL keep a character both saves hold as the copy further on by level
 
 ### Requirement: Systems not yet saved start fresh after a reload
 
-The save SHALL NOT hold expeditions, forge queues, enemy respawn times or the camps cleared, and those SHALL start fresh after a reload.
+The save SHALL NOT hold expeditions, forge queues or the camps cleared, and those SHALL start fresh after a reload.
 
-#### Scenario: A defeated enemy returns after a reload
+#### Scenario: An expedition starts fresh after a reload
 
-- **GIVEN** the player has defeated an enemy
+- **GIVEN** the player has a character on an expedition
 - **WHEN** the page is reloaded
-- **THEN** the enemy is back in its place
+- **THEN** the expedition is not kept
+
+### Requirement: The save holds each defeated enemy's respawn time in a camp with no boss
+
+The save SHALL hold the instant each defeated enemy in a camp with no boss comes back, by its spawn key, as an ISO string on the server's clock, and SHALL NOT hold one for an enemy in a camp with a boss. A merge SHALL keep the later of the two copies' instants for each enemy.
+
+#### Scenario: A defeat in a camp with no boss is saved with its respawn time
+
+- **GIVEN** a common enemy defeated
+- **WHEN** the save is written
+- **THEN** it holds the enemy's spawn key with the instant twelve hours after its defeat
+
+#### Scenario: A defeat in a camp with a boss is not saved
+
+- **GIVEN** a camp with a boss and a member defeated
+- **WHEN** the save is written
+- **THEN** it holds no instant for the member
+
+#### Scenario: The later respawn time is kept when two saves merge
+
+- **GIVEN** a guest save and an account save each holding a respawn time for the same enemy, the guest's the later
+- **WHEN** the two saves are merged
+- **THEN** the merged save holds the guest's respawn time for the enemy
