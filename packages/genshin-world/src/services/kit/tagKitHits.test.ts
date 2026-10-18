@@ -26,6 +26,21 @@ describe(tagKitHits, () => {
     expect(hit.attackTag).toBe(attackTag);
   });
 
+  test("tags a charged attack variant's hits as charged attacks", () => {
+    expect.hasAssertions();
+    const variantHit: KitHit = { ...takeOne(TRAVELER_KIT.chargedAttack.hits) };
+    delete variantHit.attackTag;
+    const kit = tagKitHits({
+      ...TRAVELER_KIT,
+      chargedAttackVariant: {
+        action: { ...TRAVELER_KIT.chargedAttack, hits: [variantHit] },
+        checkIsActive: () => true,
+      },
+    });
+
+    expect(takeOne(kit.chargedAttackVariant?.action.hits ?? []).attackTag).toBe(AttackTag.ChargedAttack);
+  });
+
   test("tags a skill hold's hit as the skill's", () => {
     expect.hasAssertions();
 

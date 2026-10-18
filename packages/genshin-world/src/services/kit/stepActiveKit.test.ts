@@ -250,7 +250,9 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.9,
         isFallRefused: true,

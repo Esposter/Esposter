@@ -49,6 +49,7 @@ export const getRuleKitCandidates = (
     ...stanceNormalAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
     ...stanceSkillPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Skill]),
     ["chargedAttack", KitTargeting.Strike],
+    ["chargedAttackVariant", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],
     ["skill", KitTargeting.Skill],
