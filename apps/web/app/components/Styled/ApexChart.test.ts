@@ -1,22 +1,43 @@
 // @vitest-environment nuxt
 import StyledApexChart from "@/components/Styled/ApexChart.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { assert, describe, expect, test } from "vitest";
-import VueApexCharts from "vue3-apexcharts";
+import { flushPromises } from "@vue/test-utils";
+import ApexCharts from "apexcharts";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
-describe("styledApexChart", () => {
-  // ApexCharts writes a legend entry with innerHTML, and a single-series chart's entries are data a survey respondent
-  // Wrote, so a caller's own legend formatter runs but must not be able to hand the entry raw text
-  test("escapes a legend entry after the caller's formatter", async () => {
+// The engine measures its SVG as it draws, which happy-dom cannot lay out, so its drawing is stubbed and what is under
+// Test is when the component builds, updates and tears the engine down
+describe(StyledApexChart, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("#45 emits load once the chart has rendered, and hands out its instance from then on", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(StyledApexChart, {
-      props: { options: { legend: { formatter: (legendName: string) => `${legendName}%` } }, series: [], type: "pie" },
-      shallow: true,
-    });
-    const formatter = component.findComponent(VueApexCharts).props("options")?.legend?.formatter;
-    assert.exists(formatter);
+    vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue();
+    const component = await mountSuspended(StyledApexChart, { props: { series: [] } });
+    await flushPromises();
 
-    expect(formatter("<b>", { seriesIndex: 0, w: { config: {}, globals: {} } })).toBe("&lt;b&gt;%");
+    expect(component.emitted("load")).toStrictEqual([[]]);
+    expect(component.vm.getChart()).toBeInstanceOf(ApexCharts);
+  });
+
+  test("#129 rebuilds the chart when its options change the chart type", async () => {
+    expect.hasAssertions();
+
+    const render = vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue();
+    const destroy = vi.spyOn(ApexCharts.prototype, "destroy").mockReturnValue();
+    const updateOptions = vi.spyOn(ApexCharts.prototype, "updateOptions").mockResolvedValue();
+    const component = await mountSuspended(StyledApexChart, {
+      props: { options: { chart: { type: "bar" } }, series: [] },
+    });
+    await flushPromises();
+    await component.setProps({ options: { chart: { type: "line" } } });
+    await flushPromises();
+
+    expect(destroy).toHaveBeenCalledOnce();
+    expect(render).toHaveBeenCalledTimes(2);
+    expect(updateOptions).not.toHaveBeenCalled();
   });
 });

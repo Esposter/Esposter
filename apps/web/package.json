@@ -175,7 +175,6 @@
     "vue-pdf-embed": "catalog:",
     "vue-phaserjs": "workspace:*",
     "vue-router": "catalog:",
-    "vue3-apexcharts": "catalog:",
     "web-push": "catalog:",
     "write-excel-file": "catalog:",
     "zod": "catalog:"

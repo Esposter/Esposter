@@ -82,6 +82,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Semver ranges](semver-ranges/design.md)                                         | The outdated report's range matching, our own over node-semver's fixtures                                                                                                          |
 | [Drag reorder](drag-reorder/design.md)                                           | `useDragReorder`, the pointer half of every reorderable list, table and sidebar, replacing `vue-draggable-plus`                                                                    |
 | [SQL highlighting](sql-highlight/design.md)                                      | `highlightSql`, the dev query log's colours, replacing `sql-highlight`                                                                                                             |
+| [Charts](charts/design.md)                                                       | `StyledApexChart`, the app's one chart, mounting ApexCharts itself in place of `vue3-apexcharts`                                                                                   |
 
 Cross-cutting standards we decided against are recorded in [rejected](../../rejected/architecture/) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](../../deferred/architecture/).
 

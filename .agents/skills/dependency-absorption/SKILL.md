@@ -26,7 +26,7 @@ How an absorption is run. Whether a package should be absorbed at all — the th
 - **Every verdict carries its evidence**: a reproduction for a defect, a test for a feature, the named owner for out of scope, the answering link for a false positive (`references/upstream-audit.md`).
 - **An in-scope defect's regression test fails against the upstream package first**, and names the issue in its title (`references/upstream-audit.md`).
 - **An issue split across the adapter and a neighbour gets both verdicts** — the adapter's part fixed, the neighbour's part out of scope with our constraint written on the page owning our side.
-- **An absorbed adapter is a workspace package** built to the `file-organization` skill's `references/new-package.md`, with its own docs section carrying the Upstream table (`references/package-shape.md`).
+- **An absorbed adapter is a workspace package** built to the `file-organization` skill's `references/new-package.md`, with its own spec area carrying the Upstream table — **except a component wrapper, which becomes a component of the app** with a capability page carrying it (`references/package-shape.md`).
 - **The residue sweep lands in the commit that deletes the catalog entry** (`references/residue-sweep.md`).
 
 ## Reference pages

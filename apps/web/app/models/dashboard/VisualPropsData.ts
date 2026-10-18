@@ -1,6 +1,6 @@
-import type { VueApexChartsComponentProps } from "vue3-apexcharts";
+import type { ApexOptions } from "apexcharts";
 
 export interface VisualPropsData {
-  options?: VueApexChartsComponentProps["options"];
-  series: VueApexChartsComponentProps["series"];
+  options?: ApexOptions;
+  series: NonNullable<ApexOptions["series"]>;
 }

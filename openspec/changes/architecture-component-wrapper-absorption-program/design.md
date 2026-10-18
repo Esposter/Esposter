@@ -1,0 +1,56 @@
+# Component Wrapper Absorption
+
+A component wrapper mounts an engine's view as a Vue component and does nothing else, so its whole cost is the seam: the wrapper is pinned behind the engine, offers its own second copy of the engine's events and methods, and decides how the engine meets SSR. This program replaces every one the app still installs with a component of the app's own over the same engine, and keeps the engines.
+
+## Decision
+
+**A component wrapper is absorbed as a component of the app, not as a workspace package.** The [dependency admission](../../specs/architecture/dependency-admission/design.md) standard absorbs an adapter as a publishable package at parity with the upstream surface, and that is right for the adapters it was written for: a test mock or a framework module is generic over two engines and has consumers beyond this app. A component wrapper has no such generality left once it is ours. What it adds over the engine is the app's styling, the theme handoff and where the engine mounts in the component's lifecycle, none of which another consumer would want. A package would carry a generic styling contract nobody asked for, and a release cycle for a component the app alone mounts.
+
+Parity is still the bar, measured against the engine rather than the wrapper's copy of it. Each component hands the engine its own options object unchanged and exposes the engine's instance, so every method and event the wrapper proxied is reachable through the engine itself. What a wrapper re-emitted as component events (ApexCharts' callbacks, CodeMirror's update listener) stays where the engine defines it, since a second way to reach the same callback is one of the three costs the admission page names. What each component owns beyond that is its own capability page, holding the upstream audit with a verdict per issue.
+
+**Each engine mounts in `onMounted` and renders nothing on the server.** The component's container is server-rendered at the size its parent gives it, so the layout holds, and the engine draws into it on the client. An engine that ships a server build under the `node` export condition (ApexCharts does) is imported statically, since the import is then safe on the server; one that touches the DOM at import time is imported dynamically inside the hook. Either way no Nuxt `build.transpile` entry, Vite pre-bundling exclusion or client-only wrapper component is needed.
+
+**The PDF viewer consolidation, once rejected, is taken up.** Its rejection argued that the full viewer's product — virtual scrolling, in-document search, forms, the accessibility tree — is engine-shaped and accessibility-shaped, so absorbing it meant writing a document viewer. The renderer we keep already ships that half as components: `pdfjs-dist/web/pdf_viewer.mjs` exports `PDFViewer`, which renders only the pages in view, `PDFFindController`, `PDFLinkService`, the text, annotation and XFA layers, `StructTreeLayerBuilder` for the tree a screen reader reads, and `PDFScriptingManager` for forms. They are the same components Firefox's own viewer is built from. What the closed-source viewer adds over them is chrome — a toolbar, an outline list, a search field and printing — and that is the UI library's to draw, whose controls already carry the keyboard and ARIA semantics the stop list protects. The rejection also read the version pin as the cheap half of the cost; the audit and the bundle report say otherwise (the table below), and keeping a closed-source viewer that forbids reading its own source leaves every defect in it unfixable.
+
+## What each wrapper costs
+
+| Wrapper                                                                                     | Engine kept                               | What it costs                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vue3-apexcharts`                                                                           | `apexcharts`                              | a component event for every engine callback, a `window.ApexCharts` global set on every mount, a deep watch over every series                                                                                                                                                                                                                                         |
+| `vue-codemirror`                                                                            | `codemirror`                              | a prop and an event for what the engine's extensions already express, and a global-config plugin                                                                                                                                                                                                                                                                     |
+| `vue-pdf-embed`                                                                             | `pdfjs-dist`                              | its default entry inlines the renderer's worker, which makes it one of the largest packages in the client bundle, beside the worker the app already loads by URL                                                                                                                                                                                                     |
+| `@vue-pdf-viewer/viewer`                                                                    | `pdfjs-dist`                              | closed source under a proprietary licence, running unlicensed in evaluation mode; pins the renderer a major behind, held by an `overrides` entry; brings `reka-ui`, `node-forge`, a second `@vueuse/core` major and a Vite plugin as runtime dependencies; a server transpile entry, a pre-bundling exclusion, a `data:` script source and the fullscreen permission |
+| `grid-layout-plus`                                                                          | none — the placement is a small algorithm | `interactjs` and two `@vexip-ui` utility packages for a drag and a resize that Pointer Events do directly, as the app's own drag reorder does, and CSS injected at runtime                                                                                                                                                                                           |
+| `@vue-flow/background`, `@vue-flow/controls`, `@vue-flow/minimap`, `@vue-flow/node-resizer` | `@vue-flow/core`                          | four packages, each a component over the core's store with its own stylesheet the app then restyles                                                                                                                                                                                                                                                                  |
+| `@jsonforms/vue`                                                                            | `@jsonforms/core`                         | the composables mapping the form engine's state to a renderer's props, reached through a context the form's root provides and every renderer injects                                                                                                                                                                                                                 |
+
+Bytes are measured with `pnpm ai:dependencies:score --analyze --sort bundle`, which attributes the client build to the package each module sits under.
+
+## Parts
+
+Each part is one engine and ships on its own: built behind the call site it replaces, swapped, its residue swept and its capability page written in the same commit. The page is where its upstream audit lands, and the part is done when the program's task for it is.
+
+1. **Charts** — the app's one chart over ApexCharts ([charts](../../specs/architecture/charts/design.md)).
+2. **Code view** — the message's code attachment over CodeMirror's own view.
+3. **PDF** — the message row's thumbnail and the dialog's viewer over `pdfjs-dist` and its viewer components, in place of both PDF packages and every config entry they forced.
+4. **Dashboard grid** — the dashboard's layout over the app's own placement and Pointer Events.
+5. **Flowchart plugins** — the background, controls, minimap and node resizer over `@vue-flow/core`.
+6. **Schema form bindings** — the composables the schema form's renderers call, over `@jsonforms/core`.
+
+## What is deliberately not in it
+
+- **`@tiptap/vue-3`.** It is Tiptap's own binding, released with the engine in one version line, and its node-view renderer is what a headless block editor would replace; it moves with the [page builder](../resource-page-builder-program/design.md), not here.
+- **`survey-creator-vue` and `survey-vue3-ui`.** They are the survey engine's own UI rather than a wrapper of its view, so removing them is a rewrite of the survey builder, which the page builder's core is meant to serve later.
+- **`@tresjs/cientos`, `@vueuse/core` and `@vueuse/router`.** Libraries of many components and composables, not one engine's view.
+- **`fake-indexeddb`.** Test tooling implementing the IndexedDB standard, not a wrapper ([IndexedDB mock](../../rejected/architecture/indexed-db-mock/design.md)).
+
+## Key files
+
+| File                                                         | Role after the change                                                               |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `openspec/specs/architecture/dependency-admission/design.md` | the standard, with the component wrapper rule and each part's precedent             |
+| `.agents/ledgers/dependencies.md`                            | each wrapper's row removed with its catalog entry                                   |
+| `pnpm-workspace.yaml`                                        | the catalog, without the wrappers, and the `overrides` without the renderer's entry |
+| `apps/web/configuration/build.ts`                            | no transpile entry for a PDF package                                                |
+| `apps/web/configuration/vite.ts`                             | no pre-bundling exclusion for a PDF package                                         |
+| `apps/web/configuration/security.ts`                         | no `data:` script source or fullscreen permission for the PDF viewer                |

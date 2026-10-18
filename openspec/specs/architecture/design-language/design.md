@@ -232,7 +232,8 @@ The theme-mode store holds the reader's mode — system, light or dark — as a 
 | `apps/web/app/assets/css/layers.css`                    | Declares the chrome's layer first                                                         |
 | `apps/web/configuration/fonts.ts`                       | Every style's faces as global font families                                               |
 | `apps/web/app/templates.test.ts`                        | Refuses a style branch, a hand-drawn edge or voxel's face outside the library             |
-| `apps/web/app/components/Styled/ApexChart.vue`          | The chart's tokens ApexCharts declares on its own elements, and a marker shape per series |
+| `apps/web/app/components/Styled/ApexChart.vue`          | The chart's tokens ApexCharts declares on its own elements                                |
+| `apps/web/app/services/styled/getStyledApexOptions.ts`  | The chart's theme mode, and a marker shape per series                                     |
 | `apps/web/app/services/styled/ApexChartMarkerShapes.ts` | The series' marker shapes, in the order the series take their colours                     |
 | `apps/web/configuration/pwa.ts`                         | The manifest's colours, from the default style's light palette                            |
 | `apps/web/app/components/Nuxt/SEO.vue`                  | The theme colour meta tag, per style and mode                                             |

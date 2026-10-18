@@ -1,52 +1,60 @@
 <script setup lang="ts">
-import type ApexCharts from "apexcharts";
-import type { ApexLegendFormatterOpts } from "apexcharts";
-import type { VueApexChartsComponentProps } from "vue3-apexcharts";
+import type { ApexChart, ApexOptions } from "apexcharts";
 
-import { escapeHtml } from "#shared/util/text/escapeHtml";
-import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
+import { getStyledApexOptions } from "@/services/styled/getStyledApexOptions";
 import { useThemeModeStore } from "@/store/ui/themeMode";
-import { defu } from "defu";
-import VueApexCharts from "vue3-apexcharts";
+import { clonePlainDeep } from "@esposter/shared";
+import ApexCharts from "apexcharts";
 
-interface Props extends Pick<VueApexChartsComponentProps, "options" | "series" | "type"> {}
+interface Props {
+  options?: ApexOptions;
+  series: NonNullable<ApexOptions["series"]>;
+  type?: ApexChart["type"];
+}
 
 const { options = {}, series, type } = defineProps<Props>();
+const emit = defineEmits<{ load: [] }>();
 const themeModeStore = useThemeModeStore();
 const { isDark } = storeToRefs(themeModeStore);
-const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
-// The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
-// Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.css). Each series takes its own
-// Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
-// Size there for the shapes to be seen; every other type keeps its own. A legend entry is written with innerHTML, and
-// A single-series chart's entries are its category values — on a dashboard, a survey respondent's own answers, read by
-// Anyone once it is published — so every entry is escaped here, after the caller's own formatter, where no caller's
-// Options can hand it raw text
-const themedOptions = computed(() =>
-  defu(
-    {
-      legend: {
-        formatter: (legendName: string, formatterOptions?: ApexLegendFormatterOpts) =>
-          escapeHtml(options.legend?.formatter?.(legendName, formatterOptions) ?? legendName),
-      },
-      theme: { mode: isDark.value ? "dark" : "light" },
-    } as const,
-    options,
-    {
-      markers: {
-        shape: ApexChartMarkerShapes,
-        ...(type === "area" || type === "line" || type === "rangeArea" ? { size: 4 } : {}),
-      },
-    },
-  ),
-);
-// The chart instance, for the view state a caller captures and restores off it. Handed out as a getter rather
-// Than the ref, because it exists only between the component's mounted and unmounted events
-defineExpose({ getChart: () => chart.value?.chart });
+const container = useTemplateRef("container");
+const styledOptions = computed(() => getStyledApexOptions({ isDark: isDark.value, options, series, type }));
+// The engine owns everything inside the instance, so it is held shallowly and exists only between mount and unmount
+const chart = shallowRef<ApexCharts>();
+// The engine writes into the config it is handed (a legend hide empties the hidden row in place), so it is handed a
+// Copy rather than the caller's data or the proxies over it
+const render = async () => {
+  if (!container.value) return;
+  chart.value = new ApexCharts(container.value, clonePlainDeep(styledOptions.value));
+  await chart.value.render();
+  emit("load");
+};
+// The instance, for the view state a caller captures and restores off it. Handed out as a getter rather than the ref,
+// Because it exists only between the component's mount and unmount
+defineExpose({ getChart: () => chart.value });
+
+// A new type rebuilds the chart, since the engine draws a different set of axes and layers for it; anything else is an
+// Update the engine animates in place
+watch(styledOptions, async (newStyledOptions, oldStyledOptions) => {
+  if (!chart.value) return;
+  else if (newStyledOptions.chart?.type === oldStyledOptions.chart?.type)
+    await chart.value.updateOptions(clonePlainDeep(newStyledOptions));
+  else {
+    chart.value.destroy();
+    await render();
+  }
+});
+
+onMounted(async () => {
+  await render();
+});
+
+onUnmounted(() => {
+  chart.value?.destroy();
+});
 </script>
 
 <template>
-  <VueApexCharts ref="chart" class="chart" :options="themedOptions" :series :type />
+  <div ref="container" class="chart" />
 </template>
 
 <style scoped>
