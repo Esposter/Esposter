@@ -119,6 +119,8 @@ export enum GameTextKey {
   Dendrobium = "354894236",
   // Party Setup's button that deploys the team shown
   Deploy = "UI_BUTTON_ENABLE_TEAM",
+  // A domain's entrance, as its map pin and its entry screen title it
+  DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
@@ -495,6 +497,8 @@ export enum GameTextKey {
   TalentPhaseShort = "SKILL_UPGRADE_AVATAR_BREAK_NEED",
   // The map's way to a place, as its button says
   Teleport = "UI_BUTTON_GOTO",
+  // A Teleport Waypoint, as the map titles its mark
+  TeleportWaypoint = "UI_MAPMARK_MarkTransPoint_TITLE",
   Tidalga = "225224916",
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
