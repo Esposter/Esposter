@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GameButton from "#src/components/GameButton/Index.vue";
+import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 // One artifact the picker lists: its name in the reader's language, its caption, its rarity in stars and its entry's id
@@ -24,8 +25,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 </script>
 
 <template>
-  <div class="artifact-picker" role="dialog" aria-modal="true" :aria-label="title">
-    <p class="title">{{ title }}</p>
+  <PickerShell class="artifact-picker" :title="title">
     <ul class="options">
       <li v-for="option of options" :key="option.id">
         <button class="option" :data-rarity="option.rarity" type="button" @click="emit('choose', option.id)">
@@ -35,29 +35,13 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
       </li>
     </ul>
     <GameButton class="close" :kind="GameButtonKind.Pill" @click="emit('close')">{{ closeLabel }}</GameButton>
-  </div>
+  </PickerShell>
 </template>
 
 <style scoped>
 .artifact-picker {
-  position: absolute;
-  top: calc(var(--unit) * 120);
-  left: calc(var(--unit) * 120);
-  width: calc(var(--unit) * 640);
   max-height: calc(var(--unit) * 800);
-  display: flex;
-  flex-direction: column;
   gap: calc(var(--unit) * 16);
-  padding: calc(var(--unit) * 24);
-  border-radius: calc(var(--unit) * 12);
-  background: rgb(20 24 36 / 0.92);
-  color: #ece3d8;
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
 }
 
 .options {
@@ -86,10 +70,6 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 .option:hover,
 .option:focus-visible {
   background: rgb(255 255 255 / 0.2);
-}
-
-.caption {
-  opacity: 0.8;
 }
 
 .close {

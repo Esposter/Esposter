@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GameButton from "#src/components/GameButton/Index.vue";
+import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 // One artifact the picker offers as fodder: its name, its caption, its rarity in stars and whether it is chosen
@@ -67,8 +68,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="enhance-picker" role="dialog" aria-modal="true" :aria-label="title">
-    <p class="title">{{ title }}</p>
+  <PickerShell class="enhance-picker" :title="title">
     <p class="summary">
       <span class="level">{{ levelLabel }}</span>
       <span class="mora">{{ moraLabel }} {{ moraCost }}</span>
@@ -115,29 +115,13 @@ const emit = defineEmits<{
         {{ confirmLabel }}
       </GameButton>
     </div>
-  </div>
+  </PickerShell>
 </template>
 
 <style scoped>
 .enhance-picker {
-  position: absolute;
-  top: calc(var(--unit) * 120);
-  left: calc(var(--unit) * 120);
-  width: calc(var(--unit) * 640);
   max-height: calc(var(--unit) * 900);
-  display: flex;
-  flex-direction: column;
   gap: calc(var(--unit) * 12);
-  padding: calc(var(--unit) * 24);
-  border-radius: calc(var(--unit) * 12);
-  background: rgb(20 24 36 / 0.92);
-  color: #ece3d8;
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
 }
 
 .summary,
@@ -183,10 +167,6 @@ const emit = defineEmits<{
 
 .material .name {
   flex: 1;
-}
-
-.caption {
-  opacity: 0.8;
 }
 
 .actions {
