@@ -174,4 +174,6 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Jahoda. Her Meowball DMG label gives each Meowball's multiplier, read from the proud skill group its skill's table holds
+  [10_000_124, { values: { "parameters.meowballTalentMultiplier": { combatTalent: SKILL, label: "Meowball DMG" } } }],
 ]);
