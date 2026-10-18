@@ -21,6 +21,9 @@ interface Props {
   element?: Element;
   energy: number;
   energyCost: number;
+  // The seconds left of the equipped gadget's cooldown, and its whole cooldown, none while no gadget is equipped
+  gadgetCooldown: number;
+  gadgetCooldownSeconds?: number;
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
@@ -40,6 +43,8 @@ const {
   element,
   energy,
   energyCost,
+  gadgetCooldown,
+  gadgetCooldownSeconds,
   gameText,
   input,
   isTouch,
@@ -49,6 +54,7 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
+const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets
@@ -105,6 +111,14 @@ onUnmounted(() => {
     <template v-if="!isTouch">
       <HudKeyCap class="key skill-key" :code="skillCode" />
       <HudKeyCap class="key burst-key" :code="burstCode" />
+      <!-- The equipped gadget's disc above the burst, its cooldown counted on it and its quick-use key under it. Bare, as a
+           Character's buttons are until its icon is read, since no gadget's icon is read yet -->
+      <template v-if="gadgetCooldownSeconds !== undefined">
+        <div class="gadget" :style="{ '--cooldown': getCooldownShare(gadgetCooldown, gadgetCooldownSeconds) }">
+          <span v-if="gadgetCooldown > 0" class="cooldown">{{ gadgetCooldown.toFixed(1) }}</span>
+        </div>
+        <HudKeyCap class="key gadget-key" :code="gadgetCode" />
+      </template>
     </template>
   </div>
 </template>
@@ -191,6 +205,30 @@ onUnmounted(() => {
 
 .burst-key {
   right: calc(var(--unit) * 86.5);
+}
+
+/* The gadget's disc and its key cap stand above the burst's, measured from the same edge as the burst's cap, in the
+   Keys' recording: the disc about 72 across centred 250 up, its cap 30 by 25 at 190 up */
+.gadget-key {
+  bottom: calc(var(--unit) * 190);
+  right: calc(var(--unit) * 86.5);
+}
+
+.gadget {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  pointer-events: none;
+}
+
+.keys .gadget {
+  width: calc(var(--unit) * 72);
+  height: calc(var(--unit) * 72);
+  right: calc(var(--unit) * 65.5);
+  bottom: calc(var(--unit) * 214);
+  background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), rgb(0 0 0 / 0.26) 0);
 }
 
 /* The touch layout's skill and burst as `hud-world-pickup` shows them, each a disc as the action buttons' are, measured
