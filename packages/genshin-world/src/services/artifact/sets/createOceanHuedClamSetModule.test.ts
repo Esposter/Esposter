@@ -209,4 +209,27 @@ describe(createOceanHuedClamSetModule, () => {
     stepKitSeconds(context, 3);
     expect(1e9 - enemy.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
   });
+  test("a foam bursts about the active character where it pops, not where the foam was cast, as gcsim draws the burst about the player", () => {
+    expect.hasAssertions();
+
+    const wearer = createWearer();
+    const atCast = createSturdyEnemy("atCast", { x: 3, z: 0 });
+    const atPop = createSturdyEnemy("atPop", { x: 22, z: 0 });
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      enemyMap: new Map([
+        [atCast.id, atCast],
+        [atPop.id, atPop],
+      ]),
+      enemyTables,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID]),
+    });
+
+    emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
+    context.body.position = { x: 20, z: 0 };
+    stepKitSeconds(context, 3);
+    expect(atCast.health).toBe(1e9);
+    expect(atPop.health).toBeLessThan(1e9);
+  });
 });
