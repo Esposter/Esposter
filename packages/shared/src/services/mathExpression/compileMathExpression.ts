@@ -4,8 +4,8 @@ import { MathExpressionLogicalOperator } from "#src/models/mathExpression/MathEx
 import { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
 import { checkIsTruthy } from "#src/services/mathExpression/checkIsTruthy";
 import { getMathExpressionChildren } from "#src/services/mathExpression/getMathExpressionChildren";
+import { getMathExpressionFunction } from "#src/services/mathExpression/getMathExpressionFunction";
 import { MathExpressionConstantMap } from "#src/services/mathExpression/MathExpressionConstantMap";
-import { MathExpressionFunctionMap } from "#src/services/mathExpression/MathExpressionFunctionMap";
 import { toNumber } from "#src/services/mathExpression/toNumber";
 import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
 
@@ -26,9 +26,7 @@ type Result = null | number;
 const NO_VALUES: readonly number[] = [];
 const NO_LOCALS: Result[] = [];
 
-const getCompute = (name: string): Compute =>
-  (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.compute : undefined) ??
-  (() => null);
+const getCompute = (name: string): Compute => getMathExpressionFunction(name)?.compute ?? (() => null);
 
 // A percentage expression is a percentage, or a sum or difference of percentage expressions
 const checkIsPercentageExpression = (node: MathExpressionNode): boolean => {

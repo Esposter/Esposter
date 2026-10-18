@@ -11,8 +11,8 @@ import { MathExpressionTokenType } from "#src/models/mathExpression/MathExpressi
 import { computeNumberLiteral } from "#src/services/mathExpression/computeNumberLiteral";
 import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/mathExpression/constants";
 import { failMathExpression } from "#src/services/mathExpression/failMathExpression";
+import { getMathExpressionFunction } from "#src/services/mathExpression/getMathExpressionFunction";
 import { getMathExpressionToken } from "#src/services/mathExpression/getMathExpressionToken";
-import { MathExpressionFunctionMap } from "#src/services/mathExpression/MathExpressionFunctionMap";
 import { err, ok } from "neverthrow";
 
 // The operators of each level, from the loosest binding to the tightest, as the function each one computes. Each
@@ -113,7 +113,7 @@ const getArityMessage = (name: string, definition: MathExpressionFunction): stri
 };
 
 const parseCall = (state: MathExpressionParserState, name: string): MathExpressionNode => {
-  const definition = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  const definition = getMathExpressionFunction(name);
   if (definition === undefined) {
     if (state.error === null) state.error = new MathExpressionError(`Unknown function "${name}"`);
     return PLACEHOLDER;
@@ -157,7 +157,7 @@ const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
 
   const isName =
     state.tokenType === MathExpressionTokenType.Symbol ||
-    (state.tokenType === MathExpressionTokenType.Delimiter && Object.hasOwn(MathExpressionFunctionMap, state.token));
+    (state.tokenType === MathExpressionTokenType.Delimiter && getMathExpressionFunction(state.token) !== undefined);
   if (isName) {
     const name = state.token;
     const isSymbol = state.tokenType === MathExpressionTokenType.Symbol;
