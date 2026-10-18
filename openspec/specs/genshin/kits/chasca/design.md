@@ -16,7 +16,7 @@ Chasca's kit is its record and one behaviour module, `createChascaKitBehaviour`,
 
 - **The Blessing's press exit strikes, and its cooldown, are not built.** gcsim's press in the Blessing leaves it with no strike and a 6.5-second cooldown from the exit. The kit plays one action per press, so Resonance still strikes on that press, and the cooldown the exit sets is not held.
 - **The Blessing's flight and its Shadowhunt Shells are not built.** While in the Blessing she flies and fires Shadowhunt Shells at her aim. The framework's locomotion has Jump and Fall but no flight state, so the flight and the shells wait on a flight hook.
-- **The five shells after Galesplitting are not built.** Each of the burst's Soulseeker and Radiant Shells is Anemo or the party's element, the Radiant ones taking the team's elements in turn. A kit step cannot read the party's elements yet, so only the first hit is built.
+- **The five shells after Galesplitting are not built.** Each of the burst's Soulseeker and Radiant Shells is Anemo or the party's element, the Radiant ones taking the team's elements in turn, and each strikes one enemy round-robin. The kit can read the party's elements, but two gaps hold the shells back: the builder does not read gcsim's `burstSecondaryHitmark` array, so the shells' hitmarks are not in the record, and a kit hit strikes every enemy in its area, not one enemy in turn.
 - **Ascension passives and constellations are not built.** They are the passives of the [character kits proposal](../../../../changes/genshin-character-kits/design.md) and the [constellations](../../../../changes/genshin-constellations/design.md) page's.
 
 ## Key files
