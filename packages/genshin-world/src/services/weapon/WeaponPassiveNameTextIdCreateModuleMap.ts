@@ -1,5 +1,6 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { createAeonWavePassiveModule } from "#src/services/weapon/passives/createAeonWavePassiveModule";
@@ -54,6 +55,7 @@ import { createInfusionBladePassiveModule } from "#src/services/weapon/passives/
 import { createInfusionNeedlePassiveModule } from "#src/services/weapon/passives/createInfusionNeedlePassiveModule";
 import { createInfusionScrollPassiveModule } from "#src/services/weapon/passives/createInfusionScrollPassiveModule";
 import { createInfusionStingerPassiveModule } from "#src/services/weapon/passives/createInfusionStingerPassiveModule";
+import { createIronbonePassiveModule } from "#src/services/weapon/passives/createIronbonePassiveModule";
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
@@ -78,6 +80,7 @@ import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
+import { createSkillBuffPassiveModule } from "#src/services/weapon/passives/createSkillBuffPassiveModule";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
@@ -396,4 +399,24 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "788659619": createCrownOfTheFinalScionPassiveModule,
   // Diffusing Boundary (Calamity of Eshu)
   "2988769779": createDiffusingBoundaryPassiveModule,
+  // People of the Faltering Light (Oathsworn Eye)
+  "2254346691": (params) =>
+    createSkillBuffPassiveModule(params, {
+      attributes: [Attribute.EnergyRecharge],
+      source: "peopleOfTheFalteringLight",
+    }),
+  // Windblume Wish (Windblume Ode)
+  "2243731691": (params) =>
+    createSkillBuffPassiveModule(params, { attributes: [Attribute.AttackPercent], source: "windblumeWish" }),
+  // Last Singer (Etherlight Spindlelute)
+  "2931799059": (params) =>
+    createSkillBuffPassiveModule(params, { attributes: [Attribute.ElementalMastery], source: "lastSinger" }),
+  // Busybody's Running Light (Tamayuratei no Ohanashi)
+  "1169232075": (params) =>
+    createSkillBuffPassiveModule(params, {
+      attributes: [Attribute.AttackPercent, Attribute.MovementSpeed],
+      source: "busybodysRunningLight",
+    }),
+  // Ironbone (Fleuve Cendre Ferryman)
+  "3150572971": createIronbonePassiveModule,
 };

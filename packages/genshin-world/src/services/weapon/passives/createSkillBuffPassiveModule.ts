@@ -5,18 +5,25 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { takeOne } from "@esposter/shared";
 
-// A passive that, as its wielder uses its Elemental Skill, raises one of its attributes by the rank's amount for the rank's
-// Seconds. Each skill restarts the buff, as a buff of the same attribute from the same source does
+// A passive that, as its wielder uses its Elemental Skill, raises each of its attributes by the rank's amount for it,
+// The rank's params in the attributes' order, for the seconds the param after them gives. Each skill restarts the
+// Buffs, as a buff of the same attribute from the same source does
 export const createSkillBuffPassiveModule = (
   params: number[],
-  { attribute, source }: { attribute: Attribute; source: string },
+  { attributes, source }: { attributes: Attribute[]; source: string },
 ): PassiveModule => {
-  const amount = takeOne(params, 0);
-  const seconds = takeOne(params, 1);
+  const amounts = attributes.map((_attribute, index) => takeOne(params, index));
+  const seconds = takeOne(params, attributes.length);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.SkillUsed || event.characterId !== combatant.characterId) return;
-      buffKitMember(kitEffectState, combatant.characterId, { amount, attribute, secondsRemaining: seconds, source });
+      for (const [index, attribute] of attributes.entries())
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: takeOne(amounts, index),
+          attribute,
+          secondsRemaining: seconds,
+          source,
+        });
     },
   };
 };
