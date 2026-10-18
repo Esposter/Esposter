@@ -18,6 +18,7 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
+import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned";
 import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
 import { computeCampLockSources } from "#src/services/enemy/computeCampLockSources";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
@@ -151,15 +152,11 @@ watchImmediate(
         const savedRespawnAt = enemyRespawnMap.get(spawnKey);
         if (savedRespawnAt === undefined) {
           const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
-          if (defeatedAt) {
-            const respawnAt = computeEnemyRespawnTime(
-              campEnemyTypes,
-              defeatedAt,
-              trounceBlossoms.get(spawnKey),
-              lastTeleportAt,
-            );
-            if (!respawnAt || Temporal.Instant.compare(respawnAt, now) > 0) continue;
-          }
+          if (
+            defeatedAt &&
+            !checkIsEnemyRespawned(campEnemyTypes, defeatedAt, now, trounceBlossoms.get(spawnKey), lastTeleportAt)
+          )
+            continue;
         } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now) > 0) continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
         if (trounceBlossoms.has(spawnKey)) emit("respawn", spawnKey);
