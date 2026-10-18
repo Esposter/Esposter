@@ -1,6 +1,6 @@
 ## Purpose
 
-Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his Ascension 1 passive left unbuilt, his Ascension 4 passive built, and Constellations 1 and 4 built, with Constellation 4's reaction raise left out.
+Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his Ascension 1 passive left unbuilt, his Ascension 4 passive built, and Constellations 1 and 4 built, with Constellation 4's team Elemental Mastery raised by a burst reaction included.
 
 ## Requirements
 
