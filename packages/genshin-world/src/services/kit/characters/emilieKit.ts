@@ -41,6 +41,9 @@ export const EMILIE_CHARACTER_ID = 10_000_099;
 // The Lumidouce Case's ticks, its levels and Cleardew, so the skill deals its summon hit and Thorn only; and the burst,
 // The Lumidouce Case at level 3 striking a random enemy in its area every 0.3 seconds and moving on Cleardew, so until
 // The Cleardew hook lands the burst deals nothing and only spends its energy
+// Constellation 1 needs Fragrance Extraction's DMG and Cleardew Cologne's Lingering Fragrance, which are not built
+// Constellation 4 needs Aromatic Explication's duration and target interval, which the Lumidouce Case does not build
+// Constellation 6 needs Abiding Fragrance and Aromatic Explication's bursts, which are not built
 export const createEmilieKitBehaviour = (): KitBehaviour => ({
   getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
   skill: { hits: [{ enemyStatus: getConstellationStatus }, { enemyStatus: getConstellationStatus }] },
