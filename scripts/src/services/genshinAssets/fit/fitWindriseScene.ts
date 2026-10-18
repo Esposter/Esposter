@@ -5,7 +5,7 @@ import { fitAreaOutlines } from "#src/services/genshinAssets/fit/fitAreaOutlines
 import { fitGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { fitGroundLayerField } from "#src/services/genshinAssets/fit/fitGroundLayerField";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
-import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
+import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";
@@ -22,7 +22,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
-import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windriseSurfacesSchema } from "genshin-world";
+import { GameDataset, WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windriseSurfacesSchema } from "genshin-world";
 
 // Windrise's parts fitted as our own generators' parameters, each a record under `windrise/`: its ground as hills, its
 // Oak's canopy as clusters and its trunk's taper read off the export, its statue as stacks fitted piece by piece to its
@@ -35,7 +35,17 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
     {
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed
       catalogue: fitAreaOutlines,
-      ground: () => fitRegionGround(DerivedAssetComponent.Windrise, { x: 0, z: 0 }),
+      ground: () =>
+        fitGroundPieces(
+          DerivedAssetComponent.Windrise,
+          {
+            centre: { x: 0, z: 0 },
+            half: GROUND_RADIUS,
+            isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
+            key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
+          },
+          false,
+        ),
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
       landmarks: async () => {
         const landmarksPath = await fitRegionLandmarks(DerivedAssetComponent.Windrise, WINDRISE_REGION_FILE);

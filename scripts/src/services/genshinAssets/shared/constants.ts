@@ -99,6 +99,8 @@ export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
 // How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
 export const GROUND_RADIUS = 1000;
+// The fewest samples a piece's gate is read on, provisionally: a piece under them is refused rather than fitted or split
+export const GROUND_GATE_SAMPLES = 1024;
 // The side of a ground layer field's cell in metres, where its shares hold the colour Windrise's reference camera sees
 // Within the colour gate at a few tens of kilobytes: read off the base maps at that camera, half the side gains a third
 // Of a ΔE for four times the bytes, and twice it misses the gate
