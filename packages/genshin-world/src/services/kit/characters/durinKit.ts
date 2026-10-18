@@ -58,6 +58,10 @@ const endWindow = ({ activeCombatant: combatant, kitEffectState }: KitContext): 
 // It, and each burst casts its Dragon on its target. Not built yet: his passives and constellations, which read the burst's
 // State and the Burning and Pyro reactions the framework does not price for a passive yet, and the Pyro particles of his
 // Recasts, which need a particle a hit drops with its own delay and internal cooldown, which no hook gives a kit yet
+// Constellation 1 needs the burst's Principle of Purity and As the Stars Smolder states to change what the burst does
+// Constellation 2 needs the Vaporize, Melt, Burning and Pyro reactions of nearby members, which the kit does not price
+// Constellation 4 needs the Cycle of Enlightenment's consuming effects and the burst's 40% DMG, neither built
+// Constellation 6 needs the burst's 30% DEF ignore and its two states' effects, neither built
 export const createDurinKitBehaviour = ({
   kit,
   readHits,

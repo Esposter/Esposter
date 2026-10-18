@@ -28,6 +28,10 @@ export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
 // Parfait ticks and, outside the Aligned interval, its Surging Blade, and Scoring Cuts sets going its heal and, from
 // Ascension 1, Rehab Diet. Her Cryo RES shred from Ascension 4, and her Constellations, wait on the hooks the page names
+// Constellation 1 needs the party's elements, which the kit does not read, to set the Cryo CRIT DMG of nearby members
+// Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill does not build yet
+// Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which the kit does not roll
+// Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not built
 export const createEscoffierKitBehaviour = ({
   kit,
   readHit,
