@@ -16,7 +16,7 @@ export const getDeployedStrikeBonuses = (
   const bonuses = { additiveBaseDamageBonus: 0, criticalRateBonus: 0, damageBonus: 0 };
   for (const member of deployedCombatants) {
     if (member.characterId === strike.combatant.characterId) continue;
-    const bonus = member.kit.getPartyStrikeBonus?.(member, strike, enemy, party, effects);
+    const bonus = member.kit.getPartyStrikeBonus?.(member, strike, enemy, party, deployedCombatants, effects);
     bonuses.additiveBaseDamageBonus += bonus?.additiveBaseDamageBonus ?? 0;
     bonuses.criticalRateBonus += bonus?.criticalRateBonus ?? 0;
     bonuses.damageBonus += bonus?.damageBonus ?? 0;

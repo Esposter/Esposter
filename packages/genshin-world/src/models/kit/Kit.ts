@@ -89,6 +89,7 @@ export interface Kit {
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
+    deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number };
   highPlunge: KitAction;
