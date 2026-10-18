@@ -110,8 +110,7 @@ describe(renderMjmlDocument, () => {
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
-    expect(html).toContain('href="https://example.com/?a=1&amp;b=&quot;2&quot;"');
-    expect(html).not.toContain("&amp;amp;");
+    await expect(html).toMatchFileSnapshot("escapedQuote.snapshot.html");
   });
   test("a valid email compiles under strict validation", async () => {
     expect.hasAssertions();
@@ -251,7 +250,7 @@ describe(renderMjmlDocument, () => {
       validationLevel: "strict",
     });
     expect(errors).toStrictEqual([]);
-    expect(html.match(/<body/gu)).toHaveLength(1);
+    await expect(html).toMatchFileSnapshot("sectionInWrapper.snapshot.html");
   });
   test("#35 #4 #118 #124 #207 #208 #248 #249 #284 #351 #370 #371 a head's font, preview and style reach the compiled email", async () => {
     expect.hasAssertions();
@@ -274,9 +273,7 @@ describe(renderMjmlDocument, () => {
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
-    expect(html).toContain("https://fonts.example.com/a.css");
-    expect(html).toContain(".a{color:red}");
-    expect(html).toContain("Preview");
+    await expect(html).toMatchFileSnapshot("headEmail.snapshot.html");
   });
   test("#388 #269 #358 #367 #368 mj-attributes applies, and MJML's defaults fill what a node sets none", async () => {
     expect.hasAssertions();
@@ -288,8 +285,7 @@ describe(renderMjmlDocument, () => {
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
-    expect(html).toContain("font-family:Arial");
-    expect(html).toContain("line-height:1;");
+    await expect(html).toMatchFileSnapshot("attributesCascade.snapshot.html");
   });
   test("#202 a body width caps the email at the width it sets", async () => {
     expect.hasAssertions();
@@ -301,7 +297,7 @@ describe(renderMjmlDocument, () => {
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
-    expect(html).toContain("max-width:800px");
+    await expect(html).toMatchFileSnapshot("bodyWidth.snapshot.html");
   });
   test("#406 the email compiles on the MJML 5 the package pins", () => {
     expect.hasAssertions();
