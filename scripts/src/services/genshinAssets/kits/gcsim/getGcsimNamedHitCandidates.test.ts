@@ -128,4 +128,72 @@ describe(getGcsimNamedHitCandidates, () => {
       "stances.windfavored.normalAttacks.0.hits.0.element",
     ]);
   });
+
+  test("gives a call after an if else's branches to the attack of each branch, so each branch's list takes it", () => {
+    expect.hasAssertions();
+
+    const SKILL_PROUD_SKILL_GROUP_ID = 15032;
+    const attackCommon = {
+      attackTag: "attacks.AttackTagElementalArt",
+      element: "attributes.Cryo",
+      fieldLineMap: {},
+      file: "skill.go",
+      internalCooldownTag: "attacks.ICDTagNone",
+      siteLine: 12,
+      variableName: "ai",
+    };
+    const branchGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: [
+        { ...attackCommon, line: 12 },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+      ],
+      config: {
+        abilityHitboxesMap: new Map(),
+        names: [],
+        talentVariables: [
+          {
+            leaves: [
+              { path: [0], reference: { label: "Plume Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 1,
+            name: "plume",
+          },
+          {
+            leaves: [
+              { path: [0], reference: { label: "Wing Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 2,
+            name: "wing",
+          },
+        ],
+      },
+      queuedAttacks: [{ attackName: "ai", delay: 0, delayLine: 34, file: "skill.go", line: 34 }],
+      talentParameterMap: new Map([
+        ["skill|Plume Dance Move DMG", { indexes: [4], line: 3 }],
+        ["skill|Wing Dance Move DMG", { indexes: [7], line: 4 }],
+      ]),
+    };
+    const skillTables: KitTables = {
+      ...tables,
+      talentGroupIdMap: { ...tables.talentGroupIdMap, [CombatTalent.ElementalSkill]: SKILL_PROUD_SKILL_GROUP_ID },
+    };
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(branchGcsim, skillTables);
+    const joined = getNamedHitKitCandidates(
+      new Map<string, unknown>([
+        ["hits.plume.0.multiplier", { index: 4, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+        ["hits.wing.0.multiplier", { index: 7, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+      ]),
+      namedHitCandidateMap,
+    );
+
+    expect(
+      [4, 7].map((index) => namedHitCandidateMap.get(`${SKILL_PROUD_SKILL_GROUP_ID}|${index}`)?.queuedCalls.length),
+    ).toStrictEqual([1, 1]);
+    expect(
+      ["hits.plume.0.element", "hits.wing.0.element"].map((path) => joined.get(path)?.map(({ value }) => value)),
+    ).toStrictEqual([[Element.Cryo], [Element.Cryo]]);
+  });
 });
