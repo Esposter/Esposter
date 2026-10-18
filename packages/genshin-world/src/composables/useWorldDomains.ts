@@ -9,7 +9,6 @@ import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevelRows";
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -34,13 +33,7 @@ export const useWorldDomains = ({
   const domainEntrance = shallowRef<DomainEntranceLandmark>();
   const domainSchedule = shallowRef<DomainSchedule>();
   const domainLevelRows = computed<DomainLevelRow[]>(() =>
-    domainSchedule.value
-      ? computeDomainLevelRows(
-          domainSchedule.value,
-          rank.value,
-          getWorldNow().toZonedDateTimeISO(GAME_TIME_ZONE).toPlainDate(),
-        )
-      : [],
+    domainSchedule.value ? computeDomainLevelRows(domainSchedule.value, rank.value, getWorldNow()) : [],
   );
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
