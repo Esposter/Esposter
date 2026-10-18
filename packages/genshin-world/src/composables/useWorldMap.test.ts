@@ -15,6 +15,7 @@ import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
+import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -22,6 +23,7 @@ import { computed, ref, shallowRef } from "vue";
 
 vi.mock(import("#src/services/exploration/readMondstadtExplorationAreas"));
 vi.mock(import("#src/services/reputation/readMondstadtReputation"));
+vi.mock(import("#src/services/transPoint/readOpenWorldTransPointRewards"));
 vi.mock(import("#src/services/world/readRegionData"));
 
 // The reads the composable makes are in the background, so they settle on the next turn of the event loop
@@ -39,6 +41,7 @@ describe(useWorldMap, () => {
     vi.mocked(readRegionData).mockResolvedValue(region);
     vi.mocked(readMondstadtExplorationAreas).mockResolvedValue(explorationAreas);
     vi.mocked(readMondstadtReputation).mockResolvedValue(reputationCity);
+    vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([]);
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -53,6 +56,8 @@ describe(useWorldMap, () => {
   const REWARD_MORA = 300;
   const NEXT_LEVEL_EXP = 1000;
   const TRANS_POINT_ID = 9;
+  const TRANS_POINT_ADVENTURE_EXP = 20;
+  const TRANS_POINT_PRIMOGEMS = 3;
   // A statue standing within the pointer's reach of the origin, where the character is
   const statue: StatueLandmark = {
     areaId: AREA_ID,
@@ -253,5 +258,37 @@ describe(useWorldMap, () => {
     await waitForReads();
 
     expect(findNearestLandmark(unlockedLandmarks.value, waypoint.position)).toStrictEqual(statue);
+  });
+
+  test("the first unlock pays the waypoint's reward", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([
+      { adventureExp: TRANS_POINT_ADVENTURE_EXP, pointId: TRANS_POINT_ID, primogems: TRANS_POINT_PRIMOGEMS },
+    ]);
+    const { activateLandmark, gainWorldAdventureExp, wallet } = createWorldMap();
+    await waitForReads();
+
+    activateLandmark(waypoint.id);
+    await waitForReads();
+
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Primogem]: TRANS_POINT_PRIMOGEMS });
+    expect(gainWorldAdventureExp).toHaveBeenCalledExactlyOnceWith(TRANS_POINT_ADVENTURE_EXP);
+  });
+
+  test("a later unlock pays nothing again", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([
+      { adventureExp: TRANS_POINT_ADVENTURE_EXP, pointId: TRANS_POINT_ID, primogems: TRANS_POINT_PRIMOGEMS },
+    ]);
+    const { activateLandmark, gainWorldAdventureExp, wallet } = createWorldMap(new Set([waypoint.id]));
+    await waitForReads();
+
+    activateLandmark(waypoint.id);
+    await waitForReads();
+
+    expect(wallet.value).toStrictEqual(EMPTY_WALLET);
+    expect(gainWorldAdventureExp).not.toHaveBeenCalled();
   });
 });
