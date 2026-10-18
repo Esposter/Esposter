@@ -130,7 +130,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       criticalRateBonus:
         CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL * Math.min(consumedShrapnel, CONSTELLATION_2_MAXIMUM_SHRAPNEL),
       onStrike: (context, strike, enemy) => {
-        if (isCannonShotFired || enemy === undefined) return;
+        if (isCannonShotFired) return;
         isCannonShotFired = true;
         // The point is drawn over the disk about the enemy, its bearing first and then its distance, from the world's source
         const bearing = context.random() * 2 * Math.PI;
