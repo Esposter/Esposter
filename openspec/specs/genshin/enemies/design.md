@@ -99,7 +99,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 
 - **The published tables hold a partial dump.** The `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels; `genshin:assets enemies` publishes every kind and curve from the dump when it is run over it.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
-- **Character EXP is computed, not yet given.** The party has no levels to take it, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
+- **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
 - **Defeats last the page's life.** A reload of the page brings every enemy back, until a saved game keeps when each was defeated.
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read.
 
