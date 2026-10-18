@@ -1,11 +1,10 @@
-const checkIsJsonObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
+import { checkIsPlainObject } from "@esposter/shared";
 
 const getDefaultValue = (sample: unknown): 0 | [] | false | Record<string, never> | undefined => {
   if (typeof sample === "number") return 0;
   else if (typeof sample === "boolean") return false;
   else if (Array.isArray(sample)) return [];
-  else if (checkIsJsonObject(sample)) return {};
+  else if (checkIsPlainObject(sample)) return {};
   return undefined;
 };
 
@@ -21,7 +20,7 @@ const getKind = (value: unknown): string => (Array.isArray(value) ? "array" : va
 // Reader of a string field names its own default where the table leaves it out. A field no sibling holds is unknown here,
 // And a numeric key is an entry of a map keyed by id, such as a stock's weight per fish, which no other row's keys fill
 export const fillDumpDefaults = (siblings: unknown[]): void => {
-  const objects = siblings.filter((sibling) => checkIsJsonObject(sibling));
+  const objects = siblings.filter((sibling) => checkIsPlainObject(sibling));
   if (objects.length === 0) return;
 
   for (const key of new Set(

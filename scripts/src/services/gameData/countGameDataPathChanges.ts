@@ -1,14 +1,12 @@
 import { GameDataChangeKind } from "#src/models/gameData/GameDataChangeKind";
-
-const checkIsJsonObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
+import { checkIsPlainObject } from "@esposter/shared";
 
 // The rows of an array keyed by their own id, or undefined when a row has none or two rows share one, so a table read
 // In another order compares row to row rather than place to place
 const toIdRowMap = (rows: unknown[]): Map<unknown, unknown> | undefined => {
   const idRowMap = new Map<unknown, unknown>();
   for (const row of rows) {
-    if (!checkIsJsonObject(row) || (typeof row.id !== "number" && typeof row.id !== "string") || idRowMap.has(row.id))
+    if (!checkIsPlainObject(row) || (typeof row.id !== "number" && typeof row.id !== "string") || idRowMap.has(row.id))
       return undefined;
     idRowMap.set(row.id, row);
   }
@@ -40,7 +38,7 @@ export const countGameDataPathChanges = (
     return;
   }
 
-  if (checkIsJsonObject(before) && checkIsJsonObject(after)) {
+  if (checkIsPlainObject(before) && checkIsPlainObject(after)) {
     for (const key of new Set([...Object.keys(before), ...Object.keys(after)])) {
       // A record keyed by id, such as a text map or a scene's groups, reads as one path for all its ids
       const segment = /^\d+$/u.test(key) ? "#" : key;
