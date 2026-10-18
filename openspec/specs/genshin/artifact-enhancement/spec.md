@@ -1,6 +1,6 @@
 ## Purpose
 
-An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's, The Exile's, Traveling Doctor's, Berserker's and Lucky Dog's four-pieces built.
+An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's, The Exile's, Traveling Doctor's, Berserker's and Lucky Dog's and Adventurer's four-pieces built.
 
 ## Requirements
 
@@ -195,3 +195,41 @@ While the wearer of Berserker's four-piece has HP below seventy percent of its M
 - **GIVEN** the wearer's HP is seventy percent of its Max HP or more
 - **WHEN** its hits are priced
 - **THEN** no CRIT Rate is added by the bonus
+
+### Requirement: Adventurer's four-piece restoration
+
+The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened.
+
+#### Scenario: a chest opened by a four-piece wearer restores HP for five seconds
+
+- **GIVEN** a character wearing four Adventurer's pieces with HP below its maximum
+- **WHEN** a chest is opened in the world
+- **THEN** the character's HP is restored by 6% of its maximum each second
+
+#### Scenario: the restoration stops after five seconds
+
+- **GIVEN** a character whose HP is being restored by Adventurer's four-piece bonus
+- **WHEN** five seconds pass after the chest was opened
+- **THEN** the restoration stops
+
+#### Scenario: a chest opened in the world reaches the combat
+
+- **GIVEN** a character wearing four Adventurer's pieces is in combat
+- **WHEN** a chest is opened in the world
+- **THEN** the restoration reaches that character's combat
+
+#### Scenario: a wearer of fewer than four pieces is not restored
+
+- **GIVEN** a character wearing two Adventurer's pieces
+- **WHEN** a chest is opened in the world
+- **THEN** the character's HP is not restored by the set's bonus
+
+### Requirement: Restoration applies only to the wearer
+
+The Adventurer's four-piece restoration SHALL apply only to the character wearing the set.
+
+#### Scenario: another party member without the set is not restored
+
+- **GIVEN** a party in which one character wears four Adventurer's pieces and another wears none
+- **WHEN** a chest is opened in the world
+- **THEN** only the character wearing the set has its HP restored
