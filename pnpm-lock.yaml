@@ -2118,6 +2118,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      onnxruntime-common:
+        specifier: 'catalog:'
+        version: 1.30.0
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'
@@ -2131,9 +2134,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
-      onnxruntime-common:
-        specifier: 'catalog:'
-        version: 1.30.0
       onnxruntime-node:
         specifier: 'catalog:'
         version: 1.30.0
@@ -2422,6 +2422,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      pdfjs-dist:
+        specifier: 'catalog:'
+        version: 6.4.299
       vue:
         specifier: 'catalog:'
         version: 3.5.44
@@ -2438,9 +2441,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 21.0.1
-      pdfjs-dist:
-        specifier: 'catalog:'
-        version: 6.4.299
       publint:
         specifier: 'catalog:'
         version: 0.3.25

@@ -119,7 +119,6 @@
     "@nuxt/nitro-server": "catalog:",
     "@types/node": "catalog:",
     "h3": "catalog:",
-    "nitro": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"

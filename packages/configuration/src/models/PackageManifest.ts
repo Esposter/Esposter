@@ -8,6 +8,6 @@ export interface PackageManifest {
   optionalDependencies?: Record<string, string>;
   packageManager?: string;
   peerDependencies?: Record<string, string>;
-  peerDependenciesMeta?: Record<string, unknown>;
+  peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   private?: boolean;
 }

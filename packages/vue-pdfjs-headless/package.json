@@ -62,7 +62,6 @@
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "pdfjs-dist": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"

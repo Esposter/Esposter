@@ -72,7 +72,6 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
-    "onnxruntime-common": "catalog:",
     "onnxruntime-node": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
