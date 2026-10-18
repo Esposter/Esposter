@@ -19,6 +19,7 @@ import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationP
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
+import { characterTrialSaveSchema } from "#src/models/trial/CharacterTrialSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import {
@@ -41,6 +42,8 @@ export const genshinSaveSchema = z
     archive: archiveSaveSchema,
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
+    // The character trials' stages whose first clear has paid its reward, each by its id
+    characterTrials: characterTrialSaveSchema,
     // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,

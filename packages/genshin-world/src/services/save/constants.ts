@@ -59,6 +59,8 @@ export const MAX_ABYSS_CYCLE_COUNT = 256;
 export const MAX_ABYSS_CHAMBER_COUNT = 24;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
+// The character trials' stages: the dump holds 120 of them, and the cap leaves headroom over that
+export const MAX_CHARACTER_TRIAL_STAGE_COUNT = 256;
 export const MAX_STATUE_REGION_COUNT = 32;
 // The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to spare
 export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
@@ -155,6 +157,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
   characters: [],
+  characterTrials: { claimedStageIds: [] },
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
@@ -203,6 +206,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ACHIEVEMENT_COUNT * getRecordEntryLength({ count: MAX_SAVE_NUMBER, finishedAt: MAX_SAVE_INSTANT }) +
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  MAX_CHARACTER_TRIAL_STAGE_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY *
     getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
@@ -262,6 +266,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   adventureExp: 0,
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
+  characterTrials: { claimedStageIds: [] },
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },

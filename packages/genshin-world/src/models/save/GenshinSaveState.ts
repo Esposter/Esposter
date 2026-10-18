@@ -36,6 +36,7 @@ export interface GenshinSaveState {
   archiveProgressMap: ArchiveProgress;
   characterCopyCountMap: ReadonlyMap<number, number>;
   characters: Character[];
+  characterTrialClaimedStageIds: ReadonlySet<number>;
   commissionDay: CommissionDay;
   companionshipExpMap: ReadonlyMap<number, number>;
   craftedCountMap: ReadonlyMap<number, number>;

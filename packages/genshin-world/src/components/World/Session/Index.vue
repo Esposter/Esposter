@@ -705,6 +705,7 @@ useWorldSaveSync({
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
+    characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
     commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,

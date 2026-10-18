@@ -4,6 +4,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
 import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
+import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
@@ -20,6 +21,7 @@ export const toGenshinSave = ({
   archiveProgressMap,
   characterCopyCountMap,
   characters,
+  characterTrialClaimedStageIds,
   commissionDay,
   companionshipExpMap,
   craftedCountMap,
@@ -48,6 +50,7 @@ export const toGenshinSave = ({
   adventureExp,
   archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
+  characterTrials: toCharacterTrialSave(characterTrialClaimedStageIds),
   commissionDay: toCommissionDaySave(commissionDay),
   companionshipExp: Object.fromEntries([
     ...companionshipExpMap,

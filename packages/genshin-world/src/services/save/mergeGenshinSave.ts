@@ -180,6 +180,11 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
     archive: mergeArchive(account.archive, guest.archive),
     characters: mergeCharacters(account.characters, guest.characters),
+    characterTrials: {
+      claimedStageIds: [
+        ...new Set([...account.characterTrials.claimedStageIds, ...guest.characterTrials.claimedStageIds]),
+      ],
+    },
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
