@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
-x-waiting: "Katheryne among Mondstadt's residents from resident-schedules, for her reward and the save of claimed rewards; the commission, Petrified Tree, Trounce Blossom and Forge claims, which no screen in the world calls yet"
+x-waiting: "Katheryne among Mondstadt's residents from resident-schedules, for her reward (2.1) and the save of claimed rewards (2.2)"
 x-touches:
   [
     "packages/genshin-world/src/composables/useWorldAdventureRank.ts",
