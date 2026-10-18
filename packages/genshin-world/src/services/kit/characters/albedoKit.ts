@@ -1,10 +1,12 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with a
@@ -12,14 +14,21 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/skill.go
 const SOLAR_ISOTOMA_ID = "albedo-solar-isotoma";
 const TRANSIENT_BLOSSOM_COOLDOWN_STATUS_ID = "albedo-transient-blossom-cooldown";
+// Measured: gcsim v2.47.2 (MIT) albedo/asc.go, A4: Rite of Progeniture: Tectonic Tide raises the Elemental Mastery of the
+// Party for 10 seconds by 125, as its A4 gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go
+const TECTONIC_TIDE_ASCENSION = 4;
+const TECTONIC_TIDE_ELEMENTAL_MASTERY = 125;
+const TECTONIC_TIDE_ELEMENTAL_MASTERY_SECONDS = 10;
+const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
 
 export const ALBEDO_CHARACTER_ID = 10_000_038;
 
 // Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon that
 // Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a Transient
 // Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
-// Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma. His passives and constellations are not built, as
-// Their conditions and party buffs are not on the kit's effects
+// Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the Elemental Mastery of
+// The deployed team. A1's damage to enemies at half HP or less and his constellations are not built
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -36,9 +45,16 @@ export const createAlbedoKitBehaviour = ({
   return {
     // Each Fatal Blossom is cast with the Solar Isotoma as a summon, as its own clock runs past the animation
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
         if (solarIsotoma) castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, fatalBlossoms);
+        if (combatant.ascension < TECTONIC_TIDE_ASCENSION) return;
+        buffKitTeam(kitEffectState, party, {
+          amount: TECTONIC_TIDE_ELEMENTAL_MASTERY,
+          attribute: Attribute.ElementalMastery,
+          secondsRemaining: TECTONIC_TIDE_ELEMENTAL_MASTERY_SECONDS,
+          source: TECTONIC_TIDE_SOURCE,
+        });
       },
     },
     // A hit that lands on an enemy inside the standing Solar Isotoma's field sets off a Transient Blossom at that enemy, once
