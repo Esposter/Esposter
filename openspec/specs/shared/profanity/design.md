@@ -1,6 +1,6 @@
 # Profanity Check
 
-`checkContainsProfanity` in `packages/shared` (`@esposter/shared`) answers one question for the app: does this text contain an English profane word. The app's two callers, the form rule `isNotProfanity` and the tRPC middleware that rejects a room's name, both ask it that and nothing more. It replaced `@2toad/profanity`, an npm package whose word list and matcher are small enough to own outright, so the list is data in our tree and the matcher is ours.
+`checkContainsProfanity` in `packages/shared` (`@esposter/shared`) answers one question for the app: does this text contain an English profane word. The app's callers, such as the form rule `isNotProfanity` and the tRPC middleware that rejects a room's name, ask it that and nothing more. It replaced `@2toad/profanity`, an npm package whose word list and matcher are small enough to own outright, so the list is data in our tree and the matcher is ours.
 
 ## What a check does
 

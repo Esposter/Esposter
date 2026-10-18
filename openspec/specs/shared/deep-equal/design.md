@@ -163,7 +163,7 @@ A pull request carries the verdict of the issue it fixes, or its own verdict whe
 
 ## Notes
 
-- The replacement compares a Map or Set's contents, where the upstream's default entry compared its own keys. A caller that relied on two different Sets being equal would now see them unequal. None of the thirteen callers does.
+- The replacement compares a Map or Set's contents, where the upstream's default entry compared its own keys. A caller that relied on two different Sets being equal would now see them unequal. None of the callers does.
 - Cyclic structures are not detected. A comparison of data with a cycle overflows the stack, as the upstream's does, and no caller compares cyclic data.
 
 ## Key files

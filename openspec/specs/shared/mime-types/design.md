@@ -1,6 +1,6 @@
 # mime-types
 
-`packages/shared` (`@esposter/shared`) answers the three questions the app asks of a file: which media type an extension names (`lookup`), which extension a media type is saved under (`extension`), and the full `Content-Type` header for either, with the media type's charset attached (`contentType`). It replaces `mime-types`, which the app used in four places, and is the absorption the [dependency admission](../../architecture/dependency-admission/design.md) page's standard is written against.
+`packages/shared` (`@esposter/shared`) answers the three questions the app asks of a file: which media type an extension names (`lookup`), which extension a media type is saved under (`extension`), and the full `Content-Type` header for either, with the media type's charset attached (`contentType`). It replaces `mime-types`, which the app used in a handful of places, and is the absorption the [dependency admission](../../architecture/dependency-admission/design.md) page's standard is written against.
 
 The data stays a dependency. `mime-db` is the IANA-derived dataset `mime-types` itself read, and it changes without us, so it is kept as a catalog entry; what we take back is the layer that decided which type an extension means. The rules that layer enforces are the ones `mime-types` settled, ported with their tests.
 
