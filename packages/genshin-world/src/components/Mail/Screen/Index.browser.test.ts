@@ -57,7 +57,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onClaim = vi.fn<(mailId: number) => void>();
-    render(MailScreen, { ...props, mails: [mail(false)], onClaim });
+    render(MailScreen, { attrs: { onClaim }, props: { ...props, mails: [mail(false)] } });
 
     await page.getByRole("tab", { name: "Best Wishes on Your Birthday" }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaim] }).click();
@@ -69,7 +69,7 @@ describe("mailScreen", () => {
   test("should disable claim all once every mail is claimed", async () => {
     expect.hasAssertions();
 
-    render(MailScreen, { ...props, mails: [mail(true)] });
+    render(MailScreen, { props: { ...props, mails: [mail(true)] } });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaimAll] }))
@@ -81,7 +81,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
-    render(MailScreen, { ...props, mails: [{ ...mail(true), isRead: true }], onDeleteRead });
+    render(MailScreen, { attrs: { onDeleteRead }, props: { ...props, mails: [{ ...mail(true), isRead: true }] } });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
@@ -94,7 +94,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
-    render(MailScreen, { ...props, mails: [{ ...mail(true), isRead: true }], onDeleteRead });
+    render(MailScreen, { attrs: { onDeleteRead }, props: { ...props, mails: [{ ...mail(true), isRead: true }] } });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
@@ -106,7 +106,7 @@ describe("mailScreen", () => {
   test("should disable delete read while no read mail can go", async () => {
     expect.hasAssertions();
 
-    render(MailScreen, { ...props, mails: [mail(false)] });
+    render(MailScreen, { props: { ...props, mails: [mail(false)] } });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }))
@@ -117,7 +117,7 @@ describe("mailScreen", () => {
   test("should list a claimed birthday mail under the gift mail box tab", async () => {
     expect.hasAssertions();
 
-    render(MailScreen, { ...props, mails: [mail(true)] });
+    render(MailScreen, { props: { ...props, mails: [mail(true)] } });
 
     await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).not.toBeInTheDocument();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
@@ -133,7 +133,7 @@ describe("mailScreen", () => {
       props: { datetime: { required: true, type: String } },
       setup: (componentProps) => () => h("time", { datetime: componentProps.datetime }),
     });
-    render(MailScreen, { ...props, global: { stubs: { NuxtTime: NuxtTimeStub } }, mails: [mail(false)] });
+    render(MailScreen, { global: { stubs: { NuxtTime: NuxtTimeStub } }, props: { ...props, mails: [mail(false)] } });
 
     expect(document.querySelector("time")?.getAttribute("datetime")).toBe(DELIVERED_AT);
   });
@@ -143,7 +143,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onPin = vi.fn<(mailId: number) => void>();
-    render(MailScreen, { ...props, mails: [mail(false)], onPin });
+    render(MailScreen, { attrs: { onPin }, props: { ...props, mails: [mail(false)] } });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailStar] }).click();
 
@@ -155,7 +155,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onDeleteGift = vi.fn<(mailId: number) => void>();
-    render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
+    render(MailScreen, { attrs: { onDeleteGift }, props: { ...props, mails: [mail(true)] } });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
@@ -169,7 +169,7 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onDeleteGift = vi.fn<(mailId: number) => void>();
-    render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
+    render(MailScreen, { attrs: { onDeleteGift }, props: { ...props, mails: [mail(true)] } });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
@@ -182,7 +182,7 @@ describe("mailScreen", () => {
   test("should offer to delete the pin of a pinned mail", async () => {
     expect.hasAssertions();
 
-    render(MailScreen, { ...props, mails: [{ ...mail(false), isPinned: true }] });
+    render(MailScreen, { props: { ...props, mails: [{ ...mail(false), isPinned: true }] } });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailCancelStar] }))
