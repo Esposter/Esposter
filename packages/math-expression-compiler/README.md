@@ -24,14 +24,12 @@ pnpm i math-expression-compiler
 ```ts
 import { compileMathExpression, parseMathExpression } from "math-expression-compiler";
 
-const { value } = parseMathExpression("col0 * (1 - col1)").match(
-  (node) => ({ value: compileMathExpression(node, ["col0", "col1"]) }),
-  (error) => {
-    throw error;
-  },
+const evaluate = parseMathExpression("col0 * (1 - col1)").match(
+  (node) => compileMathExpression(node, ["col0", "col1"]),
+  () => () => Number.NaN,
 );
 
-value([10, 0.25]); // 7.5
+evaluate([10, 0.25]); // 7.5
 ```
 
 | Export                      | What it does                                                                                                                   |
@@ -39,7 +37,7 @@ value([10, 0.25]); // 7.5
 | `parseMathExpression`       | A formula to its tree, or a `Result` holding the first error with its position                                                 |
 | `compileMathExpression`     | A tree and its variable names to a function of the variables' values, which yields `NaN` where a formula has no numeric answer |
 | `getMathExpressionNames`    | The names a tree reads that it does not assign itself and that are not constants                                               |
-| `MathExpressionFunctionMap` | Each function of the language by its mathjs name, with its arities and its computation                                         |
+| `MathExpressionFunctionMap` | Each function of the language by its mathjs name, as the signatures it takes: argument kinds, arities and computation          |
 | `MathExpressionConstantMap` | The named constants of the language                                                                                            |
 | `MathExpressionError`       | The error a parse returns                                                                                                      |
 
