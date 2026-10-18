@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -120,7 +121,7 @@ export const createXianglingKitBehaviour = ({
           { facing, height, position },
           combatant,
           isSlowbake ? slowbakePyronadoTicks : pyronadoTicks,
-          { isFollowing: true, secondsRemaining: pyronadoStartSeconds + seconds },
+          { attackTag: AttackTag.ElementalBurst, isFollowing: true, secondsRemaining: pyronadoStartSeconds + seconds },
         );
         if (combatant.constellationCount < CONDENSED_PYRONADO_CONSTELLATION) return;
         scheduleKitTask(
@@ -162,7 +163,7 @@ export const createXianglingKitBehaviour = ({
           { facing, height, position: guobaPosition },
           combatant,
           combatant.ascension >= CROSSFIRE_ASCENSION ? crossfireGuobaBreaths : guobaBreaths,
-          { secondsRemaining: guobaSeconds },
+          { attackTag: AttackTag.ElementalSkill, secondsRemaining: guobaSeconds },
         );
         if (combatant.ascension < BEWARE_ITS_SUPER_HOT_ASCENSION) return;
         castChiliPepper(kitEffectState, combatant, { x: guobaPosition.x, z: guobaPosition.z }, guobaSeconds);

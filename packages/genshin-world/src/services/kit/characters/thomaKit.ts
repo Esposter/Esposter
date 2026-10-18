@@ -131,7 +131,7 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
       )
     )
       return;
-    castKitSummon(kitEffectState, body, combatant, [createFieryCollapseHit()]);
+    castKitSummon(kitEffectState, body, combatant, [createFieryCollapseHit()], { attackTag: AttackTag.ElementalBurst });
   };
   return {
     // The burst stands the Ooyoroi for its seconds, which the normal attacks of the character on the field set off

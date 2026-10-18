@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -73,7 +74,9 @@ export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }
           x: position.x - Math.sin(facing) * STORMEYE_OFFSET,
           z: position.z - Math.cos(facing) * STORMEYE_OFFSET,
         };
-        castKitSummon(kitEffectState, { facing, height, position: stormeyePosition }, combatant, stormeyeHits);
+        castKitSummon(kitEffectState, { facing, height, position: stormeyePosition }, combatant, stormeyeHits, {
+          attackTag: AttackTag.ElementalBurst,
+        });
         if (combatant.ascension < STORMEYE_PASSIVE_ASCENSION) return;
         const passiveSeconds = stormeyeStartSeconds + stormeyeSeconds;
         scheduleKitTask(kitEffectState, combatant.characterId, passiveSeconds, ({ party }) =>
@@ -85,7 +88,7 @@ export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount < SPLITTING_GALES_CONSTELLATION) return;
-        castKitSummon(kitEffectState, body, combatant, splittingGalesHits);
+        castKitSummon(kitEffectState, body, combatant, splittingGalesHits, { attackTag: AttackTag.ChargedAttack });
       },
     },
     skill: { hits: [windDomainHitBehaviour] },

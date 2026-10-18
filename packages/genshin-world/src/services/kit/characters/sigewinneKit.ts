@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
@@ -34,7 +35,9 @@ export const createSigewinneKitBehaviour = ({ readHits }: KitRecordReader): KitB
   return {
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        castKitSummon(kitEffectState, body, combatant, bolsteringBubblebalmHits);
+        castKitSummon(kitEffectState, body, combatant, bolsteringBubblebalmHits, {
+          attackTag: AttackTag.ElementalSkill,
+        });
         if (combatant.ascension < ASCENSION_1) return;
         buffKitMember(kitEffectState, combatant.characterId, {
           amount: SEMI_STRICT_BEDREST_HYDRO_DAMAGE_BONUS,
