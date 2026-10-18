@@ -63,6 +63,22 @@ describe(computeNationExplorationPercentage, () => {
     expect(computeNationExplorationPercentage(ratioAreas, [statue, secondStatue])).toBe(42);
   });
 
+  test("a whole share reads whole when its ratio is a float that multiplies just under it", () => {
+    expect.hasAssertions();
+
+    // Zero point five seven times a hundred is 56.99999999999999 in doubles, so the one area's share is 57, not 56
+    const floatAreas: ExplorationArea[] = [
+      {
+        areaId: FIRST_AREA_ID,
+        doings: [{ id: "40", kind: ExplorationKind.Waypoint, weight: 100 }],
+        reputationRatio: 0.57,
+        total: 100,
+      },
+    ];
+
+    expect(computeNationExplorationPercentage(floatAreas, [statue])).toBe(57);
+  });
+
   test("should read zero while no statue is unlocked", () => {
     expect.hasAssertions();
 

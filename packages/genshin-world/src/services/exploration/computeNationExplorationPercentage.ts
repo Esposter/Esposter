@@ -21,5 +21,6 @@ export const computeNationExplorationPercentage = (
     const doneWeight = computeDoneWeight(area.doings, computeExploredDoingIds(area, unlockedLandmarks));
     return sum + (area.reputationRatio * doneWeight * 100) / area.total;
   }, 0);
-  return Math.min(Math.floor(percentage), 100);
+  // A ratio is a float, so a share that is whole in exact arithmetic can sum a little under it, and rounding first keeps it whole
+  return Math.min(Math.floor(Math.round(percentage * 1e9) / 1e9), 100);
 };
