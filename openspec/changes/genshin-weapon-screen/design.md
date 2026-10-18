@@ -5,7 +5,8 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 ## Decisions
 
 - **The screen asks the service that owns the rule.** Enhance, Ascend and Refine each call `enhanceWeapon`, `ascendWeapon` or `refineWeapon` and apply the weapon the service returns. A refusal is the service's answer, so the screen holds no second copy of a gate, and a refused action leaves the weapon and the bag as they were.
-- **The bag gives what the actions spend.** The ores, fodder weapons, copies and materials are picked from the bag's stacks, and the items an action spends are taken out through the inventory's own take, which refuses a stack that holds too few.
+- **The open weapon is its bag entry.** The screen opens on a bag entry by its id and reads the weapon from it, and each accepted action writes the weapon's new state back into that entry alone.
+- **The bag gives what the actions spend.** The ores and the refinement material are picked from the bag's stacks and taken out through `takeInventoryItems`, which refuses a stack that holds too few. Fodder weapons and copies are bag entries, each picked by its entry id and taken out through `takeInventoryEntry`.
 - **Ascend is offered at the cap.** The screen offers Ascend only while the weapon is at its phase's level cap. The Adventure Rank gate stays with `ascendWeapon`, so the screen and the rule cannot disagree about it.
 - **Refine is not offered where it cannot apply.** One- and two-star weapons and a weapon at rank five show no Refine; the service keeps the same limits as its own refusal.
 - **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen shows them once they land. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
@@ -13,7 +14,7 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 - **Measured look.** The frames are measured from the reference clip under Reference, at the three frames it names. The sizes are read by eye off the frame, so the placement is provisional until the parity compare runs.
 - **The EXP rules are the wiki's.** Ore EXP (400, 2,000 and 10,000), 10 EXP per Mora and the 80% returned from a fodder are read from the wiki's Weapon EXP page (`api.php?action=parse&page=Weapon_EXP&prop=wikitext`). Its fodder base EXP by star (600, 1,200, 1,800, 50,000 and 300,000) differs from the published `baseExp` the model reads; the model keeps the table's value, and the difference is open.
 - **Provisional: an ore the bag cannot take is dropped.** An Enhance returns the EXP past the cap as ores, and `addInventoryItem` reports what does not fit; the screen does not yet show that overflow.
-- **Provisional: Refine spends the refinement material.** A copy raising the rank waits on the bag's weapon entries holding a refinement, so until then Refine is offered only for the material.
+- **A copy adds its own rank.** Refine with a copy picked adds the copy's refinement rank and takes the copy out of the bag. With none picked it adds one rank for the refinement material. A copy is a bag weapon of the same id, never a wielded one.
 - **Provisional: refusals are logged, with no Mora preview.** A refused action goes to `console.error` and changes nothing. The Mora an Enhance would cost is not previewed yet, an open follow-up.
 
 ## How it works
@@ -22,13 +23,15 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 flowchart TD
   PRESS["Enhance, Ascend or Refine pressed"] --> SERVICE["enhanceWeapon, ascendWeapon or refineWeapon"]
   SERVICE -->|"refused"| KEEP["Weapon and bag unchanged"]
-  SERVICE -->|"accepted"| APPLY["Weapon replaced, items taken from the bag"]
+  SERVICE -->|"accepted"| APPLY["Weapon's bag entry replaced, items taken from the bag"]
   APPLY --> SHOW["Level, phase and rank redrawn"]
 ```
 
 ## Scope
 
-**Today:** the three services are built and tested, a weapon's level, ascension and refinement are kept, and no screen calls them.
+**Today:** the three services are built and tested, and the bag's weapon entries hold each weapon's level, EXP, ascension and refinement. The screen calls the services on a bag weapon by its entry.
+
+**Out of scope:** a wielded weapon, which sits on a character outside the bag. Its Enhance, Ascend and Refine wait on the Weapons tab of the [character screen](../genshin-character-screen/design.md).
 
 **This adds, in order:**
 
@@ -44,15 +47,18 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 
 ## Key files
 
-| File                                                                  | Role                                                               |
-| :-------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-world/src/models/weapon/Weapon.ts`                  | The weapon the screen shows and the state its three actions change |
-| `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`         | The levelling the screen's Enhance calls                           |
-| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`          | The ascension the screen's Ascend calls, and its phase gate        |
-| `packages/genshin-world/src/services/weapon/refineWeapon.ts`          | The refinement the screen's Refine calls                           |
-| `packages/genshin-world/src/services/weapon/getWeaponActions.ts`      | Which of Ascend and Refine the screen offers for a weapon          |
-| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts` | The items the actions spend, taken out of the bag's stacks         |
-| `packages/genshin-text/src/models/GameTextKey.ts`                     | Gains the three action labels                                      |
+| File                                                                  | Role                                                                |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/weapon/Weapon.ts`                  | The weapon the screen shows and the state its three actions change  |
+| `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`         | The levelling the screen's Enhance calls                            |
+| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`          | The ascension the screen's Ascend calls, and its phase gate         |
+| `packages/genshin-world/src/services/weapon/refineWeapon.ts`          | The refinement the screen's Refine calls                            |
+| `packages/genshin-world/src/services/weapon/getWeaponActions.ts`      | Which of Ascend and Refine the screen offers for a weapon           |
+| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts` | The ores and the material the actions spend, taken out of stacks    |
+| `packages/genshin-world/src/services/inventory/takeInventoryEntry.ts` | The fodder weapon or copy picked, taken out of the bag by its entry |
+| `packages/genshin-world/src/services/weapon/getBagWeapon.ts`          | The weapon a bag entry holds, read with its state                   |
+| `packages/genshin-world/src/services/weapon/setBagWeapon.ts`          | The weapon's new state written into its own bag entry               |
+| `packages/genshin-text/src/models/GameTextKey.ts`                     | Gains the three action labels                                       |
 
 ## Reference
 
