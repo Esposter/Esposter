@@ -2,7 +2,9 @@ import type { SubCommandsDef } from "citty";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { ViewerMoments } from "#src/models/ViewerMoment";
+import { checkIsModelId } from "#src/services/checkIsModelId";
 import { checkIsViewerAddress } from "#src/services/checkIsViewerAddress";
+import { checkIsViewerMoment } from "#src/services/checkIsViewerMoment";
 import { readGenshinContext } from "#src/services/cli/readGenshinContext";
 import { connectViewer } from "#src/services/connectViewer";
 import { VIEWER_DEFAULT_MODEL_ID } from "#src/services/constants";
@@ -28,8 +30,7 @@ export const viewerCommand: SubCommandsDef[string] = defineCommand({
 
     if (first === "motions") {
       const [momentName = "", motion = ""] = rest;
-      const moment = ViewerMoments.find((candidate) => candidate === momentName);
-      if (!moment) {
+      if (!checkIsViewerMoment(momentName)) {
         console.error(strings.viewerMomentInvalid(ViewerMoments.join(", ")));
         process.exitCode = 1;
         return;
@@ -43,9 +44,9 @@ export const viewerCommand: SubCommandsDef[string] = defineCommand({
 
       writeViewerConfiguration({
         ...configuration,
-        motions: { ...configuration.motions, [moment]: motion || undefined },
+        motions: { ...configuration.motions, [momentName]: motion || undefined },
       });
-      console.log(motion ? strings.viewerMotionSet(moment, motion) : strings.viewerMotionCleared(moment));
+      console.log(motion ? strings.viewerMotionSet(momentName, motion) : strings.viewerMotionCleared(momentName));
       return;
     }
 
@@ -56,7 +57,7 @@ export const viewerCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
 
-    if (!Number.isInteger(modelId) || modelId < 0) {
+    if (!checkIsModelId(modelId)) {
       console.error(strings.viewerModelInvalid);
       process.exitCode = 1;
       return;

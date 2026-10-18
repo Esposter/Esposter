@@ -1,7 +1,7 @@
 import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
-import type { ViewerMoment } from "#src/models/ViewerMoment";
 
 import { ViewerMoments } from "#src/models/ViewerMoment";
+import { checkIsModelId } from "#src/services/checkIsModelId";
 import { checkIsViewerAddress } from "#src/services/checkIsViewerAddress";
 import { VIEWER_PATH } from "#src/services/constants";
 import { parseJsonObject } from "#src/services/parseJsonObject";
@@ -16,14 +16,14 @@ export const readViewerConfiguration = (): ViewerConfiguration | undefined => {
 
   const { address, modelId, motions } = parseJsonObject(content);
   if (typeof address !== "string" || !checkIsViewerAddress(address)) return undefined;
-  if (typeof modelId !== "number" || !Number.isInteger(modelId) || modelId < 0) return undefined;
+  if (typeof modelId !== "number" || !checkIsModelId(modelId)) return undefined;
   return { address, modelId, motions: readMotions(motions) };
 };
 
 const readMotions = (motions: unknown): ViewerConfiguration["motions"] => {
   if (typeof motions !== "object" || motions === null) return {};
 
-  const result: Partial<Record<ViewerMoment, string>> = {};
+  const result: ViewerConfiguration["motions"] = {};
   for (const moment of ViewerMoments) {
     const motion: unknown = Reflect.get(motions, moment);
     if (typeof motion === "string" && motion) result[moment] = motion;
