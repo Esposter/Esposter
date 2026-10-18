@@ -180,4 +180,43 @@ describe(buildKit, () => {
       `[InvalidOperationError: Invalid operation: Read, name: hitFields.explosion, is not a hit short of exactly what its behaviour gives]`,
     );
   });
+
+  test("builds a stance's own dash and jump from its record, and plays the kit's skill where it names none", () => {
+    expect.hasAssertions();
+    const record: KitRecord = {
+      ...RECORD,
+      stances: {
+        ...RECORD.stances,
+        glide: { dash: createActionRecord(), jump: { ...createActionRecord([]), animationFrames: 60 } },
+      },
+    };
+    let stanceSeconds: { dash?: number; jump?: number } = {};
+    let stanceSkill: unknown;
+
+    const kit = buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readStance }) => {
+      const { dash, elementalSkill, jump } = readStance("glide", { dash: {}, jump: {} });
+      stanceSeconds = { dash: dash?.seconds, jump: jump?.seconds };
+      stanceSkill = elementalSkill;
+      return {};
+    });
+
+    expect({ ...stanceSeconds, isSkillKitsOwn: stanceSkill === kit.elementalSkill }).toStrictEqual({
+      dash: 0.5,
+      isSkillKitsOwn: true,
+      jump: 1,
+    });
+  });
+
+  test("fails where a behaviour gives a stance's dash its record does not hold", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readStance }) => {
+        readStance("dance", { dash: {} });
+        return {};
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: stances.dance, its behaviour names an action it plays as its kit does]`,
+    );
+  });
 });

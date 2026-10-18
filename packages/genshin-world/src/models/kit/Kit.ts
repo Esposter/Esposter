@@ -27,6 +27,8 @@ export interface Kit {
   chargedAttack: KitAction;
   chargedAttackStamina: number;
   chargedAttackVariant?: KitVariant;
+  // The action the body plays as it enters a dash, if the kit has one, which a stance may give in place of its own
+  dash?: KitAction;
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
@@ -134,6 +136,8 @@ export interface Kit {
     defenseIgnored?: number;
   };
   highPlunge: KitAction;
+  // The action the body plays as it enters a jump, if the kit has one, which a stance may give in place of its own
+  jump?: KitAction;
   // Whether a skill with holds releases at its top level whatever seconds it was held, as a counter window on its
   // Character does, given the context the release starts in
   jumpsSkillHoldToTop?: (context: KitContext) => boolean;

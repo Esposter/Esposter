@@ -10,6 +10,8 @@ export interface KitStanceRecord {
   burst?: KitActionRecord;
   chargedAttack?: KitActionRecord;
   chargedAttackStamina?: KitParameter;
+  dash?: KitActionRecord;
+  jump?: KitActionRecord;
   normalAttacks?: KitActionRecord[];
   skill?: KitActionRecord;
 }
@@ -18,6 +20,8 @@ export const kitStanceRecordSchema = z.strictObject({
   burst: kitActionRecordSchema.optional(),
   chargedAttack: kitActionRecordSchema.optional(),
   chargedAttackStamina: kitParameterSchema.optional(),
+  dash: kitActionRecordSchema.optional(),
+  jump: kitActionRecordSchema.optional(),
   normalAttacks: z.array(kitActionRecordSchema).optional(),
   skill: kitActionRecordSchema.optional(),
 }) satisfies z.ZodType<KitStanceRecord>;

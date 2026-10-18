@@ -12,7 +12,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
-import { CHARGED_ATTACK_HOLD_SECONDS } from "#src/services/kit/constants";
+import { CHARGED_ATTACK_HOLD_SECONDS, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -770,5 +770,31 @@ describe(stepKit, () => {
     const action = releaseBennettHold(2, { completeBefore: true });
     expect(action).toBeDefined();
     expect(action).not.toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("starts the kit's dash as the body enters the Dash state, and its jump as it enters Jump", () => {
+    expect.hasAssertions();
+
+    const dash: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const dashFixture = createFixture({ ...TRAVELER_KIT, dash, jump });
+    const jumpFixture = createFixture({ ...TRAVELER_KIT, dash, jump });
+
+    expect([
+      dashFixture.step(),
+      dashFixture.step({ locomotionState: LocomotionState.Dash }),
+      jumpFixture.step({ locomotionState: LocomotionState.Jump }),
+    ]).toStrictEqual([undefined, dash, jump]);
+  });
+
+  test("starts no dash or jump where the kit holds none", () => {
+    expect.hasAssertions();
+
+    const { step } = createFixture();
+
+    expect([
+      step({ locomotionState: LocomotionState.Dash }),
+      step({ locomotionState: LocomotionState.Jump }),
+    ]).toStrictEqual([undefined, undefined]);
   });
 });

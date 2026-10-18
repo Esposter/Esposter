@@ -49,6 +49,8 @@ export const createKitRecordReader = (
       (behaviour.burst && !stance.burst) ||
       (behaviour.chargedAttack && !stance.chargedAttack) ||
       (behaviour.skill && !stance.skill) ||
+      (behaviour.dash && !stance.dash) ||
+      (behaviour.jump && !stance.jump) ||
       normalAttackBehaviours.length > (stance.normalAttacks?.length ?? 0)
     )
       throw new InvalidOperationError(Operation.Read, path, "its behaviour names an action it plays as its kit does");
@@ -58,8 +60,10 @@ export const createKitRecordReader = (
         : kit.chargedAttack,
       chargedAttackStamina:
         stance.chargedAttackStamina === undefined ? kit.chargedAttackStamina : toParameter(stance.chargedAttackStamina),
+      dash: stance.dash ? buildAction(stance.dash, behaviour.dash, `${path}.dash`) : kit.dash,
       elementalBurst: stance.burst ? buildAction(stance.burst, behaviour.burst, `${path}.burst`) : kit.elementalBurst,
       elementalSkill: stance.skill ? buildAction(stance.skill, behaviour.skill, `${path}.skill`) : kit.elementalSkill,
+      jump: stance.jump ? buildAction(stance.jump, behaviour.jump, `${path}.jump`) : kit.jump,
       normalAttacks:
         stance.normalAttacks?.map((actionRecord, index) =>
           buildAction(actionRecord, normalAttackBehaviours[index], `${path}.normalAttacks.${index}`),
