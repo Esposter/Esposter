@@ -10,7 +10,7 @@ import type {
   TreeOptions,
 } from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
-import type { Node, Renderer, UniformNode } from "three/webgpu";
+import type { Node, Renderer, StorageBufferAttribute, UniformNode } from "three/webgpu";
 
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 import {
@@ -54,6 +54,7 @@ interface Props {
 
 // Each kind of plant is one culling pass and one draw of all its places, the pass keeping the places in view
 interface PlantBatch {
+  attribute: StorageBufferAttribute;
   clipFromModel: UniformNode<"mat4", Matrix4>;
   culling: InstanceCulling;
   material: ToonNodeMaterial;
@@ -104,7 +105,7 @@ const addPlantBatch = (
   const mesh = new Mesh(instancedGeometry, material);
   mesh.frustumCulled = false;
   plantsGroup.add(mesh);
-  batches.push({ clipFromModel, culling, material, mesh });
+  batches.push({ attribute, clipFromModel, culling, material, mesh });
 };
 
 const domeMatrices = placeMatrices(
@@ -169,7 +170,11 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const { material } of batches) material.dispose();
+  for (const { attribute, material, mesh } of batches) {
+    mesh.geometry.dispose();
+    attribute.dispose();
+    material.dispose();
+  }
   domeGeometry.dispose();
   treeGeometry?.dispose();
   oakImpostor?.albedoTarget.dispose();
