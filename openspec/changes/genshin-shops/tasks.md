@@ -11,7 +11,7 @@
 ## 3. Paimon's Bargains
 
 - [x] 3.1 Offer the monthly characters and bi-monthly weapons, refusing a character with full constellations. Verify: tests named after 'Two characters are offered each month' and 'A character with full constellations cannot be bought'. The screen waits on the bag holding the items' definitions.
-- [ ] 3.2 Build the Shop screen from a public clip: its goods grid by tab, a good's detail with its price, limit and refresh, the count picker and the Buy button, emitting buy with the good and count. Verify: a test named after 'buying a good from the screen spends its price and gives the good'.
+- [x] 3.2 Build the Shop screen from a public clip: its goods grid by tab, a good's detail with its price, limit and refresh, the count picker and the Buy button, emitting buy with the good and count. Verify: a test named after 'buying a good from the screen spends its price and gives the good'.
 
 ## 4. Souvenir Shops, city shops and vendors
 

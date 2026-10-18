@@ -45,7 +45,10 @@ const buy = () => {
 <template>
   <!-- The Shop screen, its pieces placed in the game's own pixels at 1080 high (`--unit` a pixel of that frame): the title
        and the balances across the head, the way out at the head's right, the tabs under them and the goods grid below. A
-       picked good opens its detail over the grid, with its price, limit and refresh, the count picker and the Buy button -->
+       picked good opens its detail over the grid, with its price, limit and refresh, the count picker and the Buy button.
+       The pixels are measured from the public Paimon's Bargains purchase clip aJq1MnTPtZ4 at 12 seconds (the frame is kept
+       outside the repo): the panel at 505 by 250, the grid's four columns of 310 with gaps of 32, the Buy button at 1135 to
+       1345 by 728 to 790 -->
   <div class="shop-screen">
     <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="balances">
