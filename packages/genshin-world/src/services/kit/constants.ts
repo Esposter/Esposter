@@ -80,3 +80,5 @@ export const POLESTAR_FIELD_ID = "polestar";
 export const POLESTAR_PHYSICAL_RES_REDUCTION = 0.4;
 // The id a Polestar Field's reduction is held under on each enemy it is over, so each step refreshes it rather than adds
 export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";
+// The source the Starlight Prism's Cryo and Electro DMG Bonus buffs are held under, so each step restarts them
+export const POLESTAR_BUFF_SOURCE = "polestar";

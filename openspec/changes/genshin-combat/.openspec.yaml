@@ -2,5 +2,5 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "the Starlight Prism's recorded hits and buffs, and the vortex's detonation (task 2.5): the kit field has no element hook and the Stellar damage path is not built; the enablers of the kits still without a module (Sandrone, Vesna, Danica and Mitya) and the Cryo Traveler's Cryo variant"
+x-waiting: "the Starlight Prism's Stellar-Conduct coefficient buff, and the vortex's stacks and detonation (task 2.5): the Stellar damage path is not built; the enablers of the kits still without a module (Sandrone, Vesna, Danica and Mitya) and the Cryo Traveler's Cryo variant"
 x-touches: ["packages/genshin-world/src/models/combat/**", "packages/genshin-world/src/services/combat/**"]

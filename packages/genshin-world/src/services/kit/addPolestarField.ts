@@ -11,17 +11,15 @@ import {
   POLESTAR_FIELD_SECONDS,
   POLESTAR_FIELD_TICK_SECONDS,
 } from "#src/services/kit/constants";
+import { createPolestarFieldHooks } from "#src/services/kit/createPolestarFieldHooks";
 import { castKitField } from "#src/services/kit/effects/castKitField";
-import { shredPolestarEnemies } from "#src/services/kit/shredPolestarEnemies";
 
 const checkIsPolestarField = (effect: KitEffect): effect is KitField =>
   effect.kind === "field" && effect.id === POLESTAR_FIELD_ID;
 
 // The Polestar Field a Stellar-Conduct leaves, written in place: a standing one is refreshed to its full seconds, and
 // Otherwise one is placed round the point given, cast by the character that triggered the reaction. The reaction exists
-// Only where a party member's enabler allows it, so any enabler's Stellar-Conduct does this with no kit of its own. The
-// Field deals no hit of its own: its effect is the Physical RES it takes each step, so its tick has nothing to do.
-// Its gcsim counterpart is pkg/reactable/stellarconduct_gadget.go at v2.47.2
+// Only where a party member's enabler allows it, so any enabler's Stellar-Conduct does this with no kit of its own
 export const addPolestarField = (
   kitEffectState: KitEffectState,
   characterId: number,
@@ -37,8 +35,8 @@ export const addPolestarField = (
   castKitField(kitEffectState, characterId, position, {
     id: POLESTAR_FIELD_ID,
     nextTickSeconds: POLESTAR_FIELD_TICK_SECONDS,
-    onStep: shredPolestarEnemies,
-    onTick: () => undefined,
+    // Its hooks carry the Prism's own count and the Physical RES it takes, so its tick has nothing to do
+    ...createPolestarFieldHooks(),
     radius: POLESTAR_FIELD_RADIUS,
     secondsRemaining: POLESTAR_FIELD_SECONDS,
     tickIntervalSeconds: POLESTAR_FIELD_TICK_SECONDS,

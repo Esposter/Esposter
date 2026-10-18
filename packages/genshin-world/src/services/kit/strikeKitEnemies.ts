@@ -75,7 +75,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
       const criticalRateBonus = combatant.kit.getStrikeCriticalRateBonus?.(strike, enemy) ?? 0;
-      const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
+      const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,
         pricedHit,
@@ -85,6 +85,11 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         criticalRateBonus,
         stellarReactionTypes,
       );
+      if (appliedElement !== undefined)
+        emitKitEvent(
+          { element: appliedElement, enemy, kind: KitEventKind.ElementApplied, striker: combatant },
+          context,
+        );
       collectKitEnergyDrops(
         [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],
         combatant.element,
