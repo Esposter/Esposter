@@ -48,6 +48,9 @@ export const useWorldStatues = ({
   const setRegionProgress = (regionId: string, progress: OfferingProgressSave) => {
     regionStatueProgressMap.value = new Map([...regionStatueProgressMap.value, [regionId, progress]]);
   };
+  // A region's progress as the save holds it, which a region no save holds yet starts from at none
+  const getRegionProgress = (regionId: string): OfferingProgressSave =>
+    regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
   const payLevels = (gainedLevels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const paid = payOfferingLevels(gainedLevels, inventory.value, wallet.value, nameText, materialDataMap);
     setInventory(paid.inventory);
@@ -69,7 +72,7 @@ export const useWorldStatues = ({
     getResultAsync(() => readRegionStatueLevels(regionId)).match(
       (levels) => {
         collectingOculusIds.delete(source.id);
-        const progress = regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
+        const progress = getRegionProgress(regionId);
         const found = findOculus(foundOculusIds.value, source.id, { ...progress, levels });
         foundOculusIds.value = found.foundOculusIds;
         gainWorldAdventureExp(found.adventureExp + payLevels(found.gainedLevels, source));
@@ -87,7 +90,7 @@ export const useWorldStatues = ({
     if (regionId === undefined) return;
     getResultAsync(() => readRegionStatueLevels(regionId)).match(
       (levels) => {
-        const progress = regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
+        const progress = getRegionProgress(regionId);
         const resonated = resonateRegion({ ...progress, levels });
         gainWorldAdventureExp(payLevels(resonated.gainedLevels, source));
         setRegionProgress(regionId, { heldCount: resonated.progress.heldCount, level: resonated.progress.level });
