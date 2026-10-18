@@ -17,8 +17,8 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const IANSAN_CHARACTER_ID = 10_000_110;
 // The status a Nightsoul burst by a nearby party member gives Iansan at Ascension 4, which her restore's heal reads

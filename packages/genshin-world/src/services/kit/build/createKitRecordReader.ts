@@ -13,7 +13,7 @@ import { checkIsKitHitShortOf } from "#src/services/kit/build/checkIsKitHitShort
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { endKitStance } from "#src/services/kit/effects/endKitStance";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const readEntry = <T>(bag: string, bagValueMap: Record<string, T> | undefined, name: string): T => {

@@ -23,8 +23,8 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
 // The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach, which

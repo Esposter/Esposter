@@ -2,8 +2,8 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // The Balemoon Alone May Know, her utility passive, gives 40% Pyro DMG Bonus in combat, from no ascension, as gcsim v2.47.2
 // (MIT) arlecchino/asc.go's passive() gives it

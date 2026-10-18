@@ -13,7 +13,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const XIANYUN_CHARACTER_ID = 10_000_093;

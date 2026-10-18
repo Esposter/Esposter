@@ -31,10 +31,10 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const FURINA_CHARACTER_ID = 10_000_089;

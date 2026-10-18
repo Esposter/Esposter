@@ -28,8 +28,8 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const NICOLE_CHARACTER_ID = 10_000_131;
 

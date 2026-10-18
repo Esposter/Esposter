@@ -28,13 +28,13 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { countDew } from "#src/services/party/countDew";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { spendDew } from "#src/services/party/spendDew";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const COLUMBINA_CHARACTER_ID = 10_000_125;

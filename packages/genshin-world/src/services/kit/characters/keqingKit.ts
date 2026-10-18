@@ -11,7 +11,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Thundering Penance, as the dump's Keqing_PermanentSkill_1 row (promote 1, param 5.0) and gcsim v2.47.2 (MIT)
 // Keqing/asc.go give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for 5 seconds.

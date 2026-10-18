@@ -17,8 +17,8 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { assert, describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

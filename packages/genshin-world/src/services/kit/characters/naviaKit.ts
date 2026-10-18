@@ -15,9 +15,9 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go, Surging Blade's circle centred ahead of the body

@@ -19,7 +19,7 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // The Arataki Kesagiri drains no stamina, as gcsim v2.47.2 (MIT) itto/charge.go's ActionStam gives none while Itto holds
