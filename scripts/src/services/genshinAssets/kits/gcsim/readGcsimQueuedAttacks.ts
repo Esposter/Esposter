@@ -213,10 +213,10 @@ const readCallSiteDelays = (
       // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay for
       const argumentDelay =
         argumentDelayExpression === undefined ? undefined : evaluateGoNumber(argumentDelayExpression, resolveIteration);
-      if (argumentDelay !== undefined)
+      if (argumentDelayStart !== undefined && argumentDelay !== undefined)
         return {
           delay: closureDelay === undefined ? undefined : closureDelay + argumentDelay,
-          line: tokens[argumentDelayStart ?? site]?.line,
+          line: tokens[argumentDelayStart]?.line,
         };
       return {
         delay: isReturned ? undefined : closureDelay,
