@@ -3,7 +3,6 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
@@ -12,8 +11,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const FULL_HP = 10;
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 
 // Plays a resonance card on a side whose characters have the given elements, and reports whether it may be played and the
 // Dice the side holds afterwards
@@ -33,25 +31,9 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
       {
         activeIndex: 0,
         cards: [],
-        characters: elements.map((element, index) => ({
-          aura: GcgAura.None,
-          character: {
-            descriptionTextId: 2,
-            element,
-            hp: FULL_HP,
-            id: index + 1,
-            maxEnergy: 3,
-            nameTextId: 1,
-            skills: [],
-            weapon: "",
-          },
-          energy: 0,
-          equipments: [],
-          hp: FULL_HP,
-          isFrozen: false,
-          shield: 0,
-          statuses: [],
-        })),
+        characters: elements.map((element, index) =>
+          createGcgCharacterState({ character: { element, id: index + 1 } }),
+        ),
         dice: [],
         deckCardIds: [],
         drawPile: [],

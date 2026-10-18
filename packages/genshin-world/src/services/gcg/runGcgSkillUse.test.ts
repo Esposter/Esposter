@@ -1,19 +1,20 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
 import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { endGcgRound } from "#src/services/gcg/endGcgRound";
@@ -73,30 +74,10 @@ describe("a skill's on-use hooks", () => {
   });
 });
 
-const createSide = (): GcgSideState => ({
-  activeIndex: 0,
+const createSide = (characters: GcgCharacterState[] = [createGcgCharacterState()], activeIndex = 0): GcgSideState => ({
+  activeIndex,
   cards: [],
-  characters: [
-    {
-      aura: GcgAura.None,
-      character: {
-        descriptionTextId: 2,
-        element: Element.Hydro,
-        hp: 10,
-        id: 1,
-        maxEnergy: 3,
-        nameTextId: 1,
-        skills: [],
-        weapon: "",
-      },
-      energy: 0,
-      equipments: [],
-      hp: 10,
-      isFrozen: false,
-      shield: 0,
-      statuses: [],
-    },
-  ],
+  characters,
   deckCardIds: [],
   dice: [],
   drawPile: [],
@@ -112,7 +93,10 @@ const createSide = (): GcgSideState => ({
   usedSkillIds: [],
 });
 
-const createDuel = (): GcgDuel => ({
+const createDuel = (
+  sides: [GcgSideState, GcgSideState] = [createSide(), createSide()],
+  rule: GcgRule = { drawCount: 2, handCardLimit: 10, reactions: [] },
+): GcgDuel => ({
   cardModules: GcgCardIdModuleMap,
   skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
@@ -121,8 +105,8 @@ const createDuel = (): GcgDuel => ({
   phase: GcgPhase.Action,
   random: () => 0,
   round: 1,
-  rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
-  sides: [createSide(), createSide()],
+  rule,
+  sides,
 });
 
 describe("a skill's any-side hooks", () => {
@@ -182,7 +166,6 @@ describe("a skill's any-side hooks", () => {
 const PLUNGE_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 describe("a Plunging Attack", () => {
-  const XIAO_ID = 1_504;
   const CHONGYUN_ID = 1_104;
   const KABUKI: GcgSkill = {
     costs: [],
@@ -199,71 +182,25 @@ describe("a Plunging Attack", () => {
     kind: GcgSkillKind.ElementalSkill,
   };
 
-  const createPlungeCharacter = (id: number): GcgCharacterState => ({
-    aura: GcgAura.None,
-    character: {
-      descriptionTextId: 2,
-      element: Element.Cryo,
-      hp: 10,
-      id,
-      maxEnergy: 3,
-      nameTextId: 1,
-      skills: [],
-      weapon: "",
-    },
-    energy: 0,
-    equipments: [],
-    hp: 10,
-    isFrozen: false,
-    shield: 0,
-    statuses: [],
-  });
   // Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
-  const createMaskedXiao = (): GcgCharacterState => ({
-    ...createPlungeCharacter(XIAO_ID),
-    statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-  });
-  const createPlungeSide = (characters: GcgCharacterState[], activeIndex = 0): GcgSideState => ({
-    activeIndex,
-    cards: [],
-    characters,
-    dice: [],
-    deckCardIds: [],
-    drawPile: [],
-    hand: [],
-    hasDeclaredEnd: false,
-    hasPrepared: true,
-    hasRolled: true,
-    isReplacementPending: false,
-    onstages: [],
-    summons: [],
-    supports: [],
-    usedCardIds: [],
-    usedSkillIds: [],
-  });
-  const createPlungeDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
-    actingSideIndex: 0,
-    firstSideIndex: 0,
-    nextFirstSideIndex: 0,
-    outcome: undefined,
-    phase: GcgPhase.Action,
-    random: () => 0,
-    round: 1,
-    rule: PLUNGE_RULE,
-    sides,
-    winnerSideIndex: undefined,
-  });
   const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
 
   test("a Normal Attack by a character switched in this Round is a Plunging Attack, which the mask adds 2 DMG to", () => {
     expect.hasAssertions();
 
-    const duel = createPlungeDuel([
-      createPlungeSide([createPlungeCharacter(CHONGYUN_ID), createMaskedXiao()]),
-      createPlungeSide([createPlungeCharacter(1_202)]),
-    ]);
+    const duel = createDuel(
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
+      PLUNGE_RULE,
+    );
 
     switchGcgActiveCharacter(duel, 0, 1);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
@@ -273,10 +210,22 @@ describe("a Plunging Attack", () => {
   test("a Normal Attack by a character who was not switched in is no Plunging Attack", () => {
     expect.hasAssertions();
 
-    const duel = createPlungeDuel([
-      createPlungeSide([createPlungeCharacter(CHONGYUN_ID), createMaskedXiao()], 1),
-      createPlungeSide([createPlungeCharacter(1_202)]),
-    ]);
+    const duel = createDuel(
+      [
+        createSide(
+          [
+            createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+            createGcgCharacterState({
+              character: { id: XIAO_ID },
+              statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+            }),
+          ],
+          1,
+        ),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
+      PLUNGE_RULE,
+    );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
     expect(readHp(duel)).toStrictEqual([7]);
@@ -285,10 +234,19 @@ describe("a Plunging Attack", () => {
   test("the first skill after a switch spends the switch, so a Normal Attack after an Elemental Skill is no Plunging Attack", () => {
     expect.hasAssertions();
 
-    const duel = createPlungeDuel([
-      createPlungeSide([createPlungeCharacter(CHONGYUN_ID), createMaskedXiao()]),
-      createPlungeSide([createPlungeCharacter(1_202)]),
-    ]);
+    const duel = createDuel(
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
+      PLUNGE_RULE,
+    );
 
     switchGcgActiveCharacter(duel, 0, 1);
     runGcgSkillUse({ duel, sideIndex: 0 }, ELEMENTAL_SKILL);
@@ -299,10 +257,19 @@ describe("a Plunging Attack", () => {
   test("a switch's arming ends with the Round, so the next Round's first Normal Attack is no Plunging Attack", () => {
     expect.hasAssertions();
 
-    const duel = createPlungeDuel([
-      createPlungeSide([createPlungeCharacter(CHONGYUN_ID), createMaskedXiao()]),
-      createPlungeSide([createPlungeCharacter(1_202)]),
-    ]);
+    const duel = createDuel(
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
+      PLUNGE_RULE,
+    );
 
     switchGcgActiveCharacter(duel, 0, 1);
     duel.round = GCG_ROUND_LIMIT;

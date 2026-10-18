@@ -33,7 +33,7 @@ export const payGcgSubjectCost = (
   for (const zoneCard of listGcgCostCards(side, characterIndex)) {
     const module = GcgCardIdModuleMap.get(zoneCard.cardId);
     const reduction = module?.reduceCost?.(
-      listGcgCardContext(context, side, zoneCard),
+      getGcgCardContext(context, side, zoneCard),
       { ...subject, costs: reducedCosts, element: character.character.element },
       zoneCard,
     );
@@ -59,7 +59,7 @@ export const payGcgSubjectCost = (
   for (const zoneCard of appliedReductions) {
     const module = GcgCardIdModuleMap.get(zoneCard.cardId);
     module?.onCostPaid?.(
-      listGcgCardContext(context, side, zoneCard),
+      getGcgCardContext(context, side, zoneCard),
       { ...subject, costs: reducedCosts, element: character.character.element },
       zoneCard,
     );
@@ -84,8 +84,7 @@ const listGcgCostCards = (side: GcgSideState, characterIndex: number): GcgZoneCa
 ];
 
 // The context a card's reduction is read in, naming the character the card is attached to when it is one's
-const listGcgCardContext = (
-  context: GcgEffectContext,
-  side: GcgSideState,
-  zoneCard: GcgZoneCard,
-): GcgEffectContext => ({ ...context, characterIndex: findGcgZoneCardOwner(side.characters, zoneCard) });
+const getGcgCardContext = (context: GcgEffectContext, side: GcgSideState, zoneCard: GcgZoneCard): GcgEffectContext => ({
+  ...context,
+  characterIndex: findGcgZoneCardOwner(side.characters, zoneCard),
+});

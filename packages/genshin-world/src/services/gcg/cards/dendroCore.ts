@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
+import { GCG_DENDRO_CORE_MAX_USAGES } from "#src/services/gcg/constants";
 
 const DENDRO_CORE_BONUS = 2;
 
@@ -8,6 +9,7 @@ const DENDRO_CORE_BONUS = 2;
 // The core spends its usage, for one usage
 export const dendroCore: GcgCardModule = {
   initialUsages: 1,
+  maxUsages: GCG_DENDRO_CORE_MAX_USAGES,
   modifyDamageDealt: (_context, damage, zoneCard) => {
     if (damage.damageType !== Element.Pyro && damage.damageType !== Element.Electro) return damage;
     zoneCard.usages -= 1;

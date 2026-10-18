@@ -3,7 +3,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { FULL_PLATE_ID } from "#src/services/gcg/cards/constants";
@@ -18,7 +17,7 @@ export const breastplate: GcgSkillModule = {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
     if (user) addGcgShield(user, FULL_PLATE_SHIELD);
-    side.onstages.push(createGcgZoneCard(FULL_PLATE_ID, fullPlate));
+    placeGcgZoneCard(side.onstages, FULL_PLATE_ID, fullPlate);
   },
   getDamage: () => ({ damageType: Element.Geo, value: BREASTPLATE_DAMAGE }),
 };

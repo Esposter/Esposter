@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
+import { GCG_BURNING_FLAME_MAX_USAGES } from "#src/services/gcg/constants";
 
 const BURNING_FLAME_DAMAGE = 1;
 
@@ -8,6 +9,7 @@ const BURNING_FLAME_DAMAGE = 1;
 // Each further Burning reaction adds a usage, up to two
 export const burningFlame: GcgCardModule = {
   initialUsages: 1,
+  maxUsages: GCG_BURNING_FLAME_MAX_USAGES,
   onEndPhase: (_context, zoneCard) => {
     zoneCard.usages -= 1;
     return { damageType: Element.Pyro, value: BURNING_FLAME_DAMAGE };

@@ -6,7 +6,6 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
@@ -17,6 +16,7 @@ import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { liben } from "#src/services/gcg/cards/liben";
 import { GCG_DIE_FACES } from "#src/services/gcg/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
@@ -62,26 +62,6 @@ const FLORAL_BRUSH_SKILL: GcgSkill = {
   kind: GcgSkillKind.ElementalSkill,
 };
 
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Dendro,
-    hp: FULL_HP,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: FULL_HP,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
-
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -121,8 +101,11 @@ describe("cuilein-Anbar", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CUILEIN_ANBAR_ID, cuileinAnbar);
     const duel = createDuel([
-      createSideState([createCharacterState(COLLEI_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID), createCharacterState(COLLEI_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+        createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } }),
+      ]),
     ]);
     duel.sides[0] = { ...takeOne(duel.sides, 0), summons: [zoneCard] };
     runGcgEndPhase(duel);
@@ -135,8 +118,8 @@ describe("floral Brush", () => {
   test("the skill deals 3 Dendro", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(COLLEI_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
@@ -144,16 +127,19 @@ describe("floral Brush", () => {
 });
 
 describe("gambler's Earrings", () => {
-  const createEquippedCollei = (): GcgCharacterState => ({
-    ...createCharacterState(COLLEI_ID),
-    equipments: [createGcgZoneCard(312_004, gamblersEarrings)],
-  });
-
   test("after an opposing character is defeated while the equipped character is active, two Omni dice are created", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createEquippedCollei()]),
-      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 3 }, createCharacterState(KEQING_ID)]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_004, gamblersEarrings)],
+        }),
+      ]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }), hp: 3 },
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Dendro } }),
+      ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni]);
@@ -162,8 +148,17 @@ describe("gambler's Earrings", () => {
   test("a defeat while the equipped character is not active creates no die", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(OTHER_CHARACTER_ID), createEquippedCollei()]),
-      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 3 }, createCharacterState(KEQING_ID)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Dendro } }),
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_004, gamblersEarrings)],
+        }),
+      ]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }), hp: 3 },
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Dendro } }),
+      ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
@@ -172,8 +167,18 @@ describe("gambler's Earrings", () => {
   test("it creates dice at most three times in a match", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createEquippedCollei()]),
-      createSideState(Array.from({ length: 5 }, () => ({ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 1 }))),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_004, gamblersEarrings)],
+        }),
+      ]),
+      createSideState(
+        Array.from({ length: 5 }, () => ({
+          ...createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+          hp: 1,
+        })),
+      ),
     ]);
     for (let defeated = 0; defeated < 4; defeated++) {
       takeOne(duel.sides, 1).activeIndex = defeated;
@@ -184,16 +189,21 @@ describe("gambler's Earrings", () => {
 });
 
 describe("instructor's Cap", () => {
-  const createEquippedCollei = (): GcgCharacterState => ({
-    ...createCharacterState(COLLEI_ID),
-    equipments: [createGcgZoneCard(312_005, instructorsCap)],
-  });
-
   test("after the equipped character's skill triggers a reaction, an Elemental Die of its element is created", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createEquippedCollei()]),
-      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), aura: Element.Pyro }]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_005, instructorsCap)],
+        }),
+      ]),
+      createSideState([
+        {
+          ...createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+          aura: Element.Pyro,
+        },
+      ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Dendro]);
@@ -202,8 +212,13 @@ describe("instructor's Cap", () => {
   test("a skill that triggers no reaction creates no die", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createEquippedCollei()]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_005, instructorsCap)],
+        }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
@@ -212,8 +227,18 @@ describe("instructor's Cap", () => {
   test("creates at most three Elemental Dice a round", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createEquippedCollei()]),
-      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: FULL_HP * 10 }]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Dendro, id: COLLEI_ID },
+          equipments: [createGcgZoneCard(312_005, instructorsCap)],
+        }),
+      ]),
+      createSideState([
+        {
+          ...createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+          hp: FULL_HP * 10,
+        },
+      ]),
     ]);
     for (let use = 0; use < 4; use++) {
       takeOne(takeOne(duel.sides, 1).characters).aura = Element.Pyro;
@@ -227,8 +252,11 @@ describe("starward Sword", () => {
   test("the burst deals 4 Electro to the opposing active character and 3 Piercing to each one on standby", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(KEQING_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID), createCharacterState(COLLEI_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Dendro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+        createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } }),
+      ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, STARWARD_SWORD_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 4, FULL_HP - 3]);
@@ -239,8 +267,8 @@ describe("trump-Card Kitty", () => {
   test("the burst deals 2 Dendro, and summons a Cuilein-Anbar on its side", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(COLLEI_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, TRUMP_CARD_KITTY_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 2]);
@@ -254,11 +282,11 @@ describe("liben", () => {
     const zoneCard = createGcgZoneCard(LIBEN_ID, liben);
     const duel = createDuel([
       {
-        ...createSideState([createCharacterState(COLLEI_ID)]),
+        ...createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
         dice: [Element.Pyro, Element.Pyro, Element.Hydro, GcgDieFace.Omni],
         supports: [zoneCard],
       },
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgEndPhase(duel);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Pyro, GcgDieFace.Omni]);
@@ -271,8 +299,12 @@ describe("liben", () => {
     const zoneCard = createGcgZoneCard(LIBEN_ID, liben);
     zoneCard.elements = [Element.Pyro, Element.Hydro, Element.Cryo];
     const duel = createDuel([
-      { ...createSideState([createCharacterState(COLLEI_ID)]), drawPile: [1, 2, 3], supports: [zoneCard] },
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      {
+        ...createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+        drawPile: [1, 2, 3],
+        supports: [zoneCard],
+      },
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgActionPhase(duel);
     const side = takeOne(duel.sides, 0);
@@ -286,8 +318,12 @@ describe("liben", () => {
     const zoneCard = createGcgZoneCard(LIBEN_ID, liben);
     zoneCard.elements = [Element.Pyro, Element.Hydro];
     const duel = createDuel([
-      { ...createSideState([createCharacterState(COLLEI_ID)]), drawPile: [1, 2, 3], supports: [zoneCard] },
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      {
+        ...createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+        drawPile: [1, 2, 3],
+        supports: [zoneCard],
+      },
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     runGcgActionPhase(duel);
     const side = takeOne(duel.sides, 0);
@@ -304,8 +340,11 @@ describe("knights of Favonius Library", () => {
   test("when played, the chosen dice are rerolled once", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      { ...createSideState([createCharacterState(COLLEI_ID)]), dice: [Element.Hydro, Element.Pyro] },
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      {
+        ...createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+        dice: [Element.Hydro, Element.Pyro],
+      },
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     duel.random = cryoRandom;
     knightsOfFavoniusLibrary.play?.({ duel, sideIndex: 0 }, undefined, { rerollDiceIndices: [[0]] });
@@ -316,12 +355,17 @@ describe("knights of Favonius Library", () => {
     expect.hasAssertions();
     const duel = createDuel([
       {
-        ...createSideState([createCharacterState(COLLEI_ID)]),
+        ...createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
         dice: [Element.Hydro, Element.Pyro],
         hasRolled: false,
         supports: [createGcgZoneCard(KNIGHTS_OF_FAVONIUS_LIBRARY_ID, knightsOfFavoniusLibrary)],
       },
-      { ...createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]), hasRolled: true },
+      {
+        ...createSideState([
+          createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } }),
+        ]),
+        hasRolled: true,
+      },
     ]);
     duel.phase = GcgPhase.Roll;
     duel.random = cryoRandom;
@@ -336,8 +380,8 @@ describe("knights of Favonius Library", () => {
   test("without the card, naming dice in the roll phase is the side's one reroll, and ends its roll", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(COLLEI_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: COLLEI_ID, element: Element.Dendro } })]),
+      createSideState([createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Dendro } })]),
     ]);
     duel.phase = GcgPhase.Roll;
     duel.random = cryoRandom;

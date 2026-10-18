@@ -1,9 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
-import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 import { WHEN_THE_CRANE_RETURNED_ID } from "#src/services/gcg/cards/constants";
 
@@ -13,11 +12,11 @@ export const whenTheCraneReturned: GcgCardModule = {
   onSkillUsed: ({ duel, sideIndex }, _skill, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);
     const nextIndex = findGcgAdjacentCharacterIndex(side, side.activeIndex, 1);
-    if (nextIndex !== undefined) switchGcgSideActive(side, nextIndex);
+    if (nextIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, nextIndex);
     zoneCard.usages = 0;
   },
   play: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
-    side.onstages.push(createGcgZoneCard(WHEN_THE_CRANE_RETURNED_ID, whenTheCraneReturned));
+    placeGcgZoneCard(side.onstages, WHEN_THE_CRANE_RETURNED_ID, whenTheCraneReturned);
   },
 };

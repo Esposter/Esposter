@@ -2,7 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
-import { checkCanPlayGcgElementalResonance } from "#src/services/gcg/effects/createGcgElementalResonance";
+import { checkCanPlayGcgElementalResonance } from "#src/services/gcg/effects/checkCanPlayGcgElementalResonance";
 import { takeOne } from "@esposter/shared";
 
 const ENDURING_ROCK_SHIELD = 3;

@@ -2,10 +2,9 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { mushroomPizza } from "#src/services/gcg/cards/mushroomPizza";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
@@ -19,25 +18,9 @@ const LOTUS_FLOWER_CRISP_STATUS_ID = 333_003;
 const createSide = (): GcgSideState => ({
   activeIndex: 0,
   cards: [],
-  characters: [0, 1].map((id) => ({
-    aura: GcgAura.None,
-    character: {
-      descriptionTextId: 2,
-      element: Element.Hydro,
-      hp: MAX_HP,
-      id,
-      maxEnergy: 3,
-      nameTextId: 1,
-      skills: [],
-      weapon: "",
-    },
-    energy: 0,
-    equipments: [],
-    hp: id === TARGET_INDEX ? WOUNDED_HP : MAX_HP,
-    isFrozen: false,
-    shield: 0,
-    statuses: [],
-  })),
+  characters: [0, 1].map((id) =>
+    createGcgCharacterState({ character: { id }, hp: id === TARGET_INDEX ? WOUNDED_HP : MAX_HP }),
+  ),
   deckCardIds: [],
   dice: [],
   drawPile: [],

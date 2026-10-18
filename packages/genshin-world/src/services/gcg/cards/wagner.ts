@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
-import type { GcgCost } from "#src/models/gcg/GcgCost";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 import { checkIsGcgPlayCost } from "#src/services/gcg/effects/checkIsGcgPlayCost";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { takeOne } from "@esposter/shared";
@@ -10,9 +10,6 @@ import { WAGNER_ID } from "#src/services/gcg/cards/constants";
 
 const WAGNER_INITIAL_BILLETS = 2;
 const WAGNER_WEAPON_KINDS_FOR_DRAW = 3;
-
-// The Forging Billets a Weapon card's total cost takes
-const getWeaponCost = (costs: GcgCost[]): number => costs.reduce((total, { count }) => total + count, 0);
 
 // The number of different weapon kinds the side's deck originally includes, read from its cards' weapon kinds
 const countDeckWeaponKinds = (side: GcgSideState): number =>
@@ -30,7 +27,7 @@ export const wagner: GcgCardModule = {
   initialCounter: WAGNER_INITIAL_BILLETS,
   onCostPaid: ({ duel, sideIndex }, subject, zoneCard) => {
     if (!checkIsGcgPlayCost(subject)) return;
-    zoneCard.counter -= getWeaponCost(subject.card.costs);
+    zoneCard.counter -= countGcgDiceCost(subject.card.costs);
     takeOne(duel.sides, sideIndex).usedCardIds.push(WAGNER_ID);
   },
   onEndPhase: (_context, zoneCard) => {
@@ -44,7 +41,7 @@ export const wagner: GcgCardModule = {
   },
   reduceCost: ({ duel, sideIndex }, subject, zoneCard) => {
     if (!checkIsGcgPlayCost(subject) || subject.card.kind !== GcgCardKind.Weapon) return undefined;
-    const cost = getWeaponCost(subject.card.costs);
+    const cost = countGcgDiceCost(subject.card.costs);
     return zoneCard.counter >= cost && !takeOne(duel.sides, sideIndex).usedCardIds.includes(WAGNER_ID)
       ? { count: cost, element: undefined }
       : undefined;

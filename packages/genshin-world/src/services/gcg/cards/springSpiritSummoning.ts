@@ -3,7 +3,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { ICY_QUILL_ID } from "#src/services/gcg/cards/constants";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
@@ -13,7 +12,7 @@ const SPRING_SPIRIT_SUMMONING_DAMAGE = 2;
 // wiki's Spring Spirit Summoning (Character Card Skill))
 export const springSpiritSummoning: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(ICY_QUILL_ID, icyQuill));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, ICY_QUILL_ID, icyQuill);
   },
   getDamage: () => ({ damageType: Element.Cryo, value: SPRING_SPIRIT_SUMMONING_DAMAGE }),
 };

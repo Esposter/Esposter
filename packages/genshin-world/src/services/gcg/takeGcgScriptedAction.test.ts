@@ -6,10 +6,10 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeGcgScriptedAction } from "#src/services/gcg/takeGcgScriptedAction";
@@ -22,20 +22,6 @@ const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const EREMITE_ID = 2_303;
 const HYDRO_ID = 2_101;
 
-const createCharacter = (
-  id: number,
-  element: Element,
-  options: { equipments?: GcgCharacterState["equipments"]; hp?: number } = {},
-): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: { descriptionTextId: 2, element, hp: 10, id, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
-  energy: 0,
-  equipments: options.equipments ?? [],
-  hp: options.hp ?? 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 const createSideState = (characters: GcgCharacterState[], dice: Element[] = []): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -69,15 +55,18 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
   winnerSideIndex: undefined,
 });
 
-describe("takeGcgScriptedAction", () => {
+describe(takeGcgScriptedAction, () => {
   test("should use its active character's Technique when no card is in hand and no skill is listed", () => {
     expect.hasAssertions();
 
-    const eremite = createCharacter(EREMITE_ID, Element.Pyro, {
+    const eremite = createGcgCharacterState({
+      character: { id: EREMITE_ID, element: Element.Pyro },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
     const attacker = createSideState([eremite], [Element.Pyro, Element.Pyro]);
-    const defender = createSideState([createCharacter(HYDRO_ID, Element.Hydro)]);
+    const defender = createSideState([
+      createGcgCharacterState({ character: { id: HYDRO_ID, element: Element.Hydro } }),
+    ]);
     const duel = createDuel(attacker, defender);
 
     const result = takeGcgScriptedAction(duel, 0);

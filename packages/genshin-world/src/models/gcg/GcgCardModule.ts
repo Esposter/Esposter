@@ -28,6 +28,9 @@ export interface GcgCardModule {
   initialUsages?: number;
   // Whether playing the card is a combat action, which passes the turn once it resolves, rather than a fast action, which does not
   isCombatAction?: boolean;
+  // The most rounds a card that can stack holds: placed again, it adds its starting rounds up to this many, rather than
+  // Refreshing to them
+  maxRounds?: number;
   // The most usages a card that can stack holds: placed again, it adds its starting usages up to this many, rather than
   // Refreshing to them
   maxUsages?: number;

@@ -6,12 +6,12 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { sacrificialBow } from "#src/services/gcg/cards/sacrificialBow";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
 import { sacrificialSword } from "#src/services/gcg/cards/sacrificialSword";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const FULL_HP = 10;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const ELEMENTAL_SKILL: GcgSkill = {
   costs: [],
@@ -34,27 +33,7 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
   const side: GcgSideState = {
     activeIndex: 0,
     cards: [],
-    characters: [
-      {
-        aura: GcgAura.None,
-        character: {
-          descriptionTextId: 2,
-          element,
-          hp: FULL_HP,
-          id: 1,
-          maxEnergy: 3,
-          nameTextId: 1,
-          skills: [],
-          weapon: "",
-        },
-        energy: 0,
-        equipments: [],
-        hp: FULL_HP,
-        isFrozen: false,
-        shield: 0,
-        statuses: [],
-      },
-    ],
+    characters: [createGcgCharacterState({ character: { element } })],
     dice: [],
     deckCardIds: [],
     drawPile: [],

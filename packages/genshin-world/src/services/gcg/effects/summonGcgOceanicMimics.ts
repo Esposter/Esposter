@@ -2,11 +2,13 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { oceanicMimicFrog } from "#src/services/gcg/cards/oceanicMimicFrog";
-import { OCEANIC_MIMIC_FROG_ID } from "#src/services/gcg/cards/constants";
 import { oceanicMimicRaptor } from "#src/services/gcg/cards/oceanicMimicRaptor";
-import { OCEANIC_MIMIC_RAPTOR_ID } from "#src/services/gcg/cards/constants";
 import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirrel";
-import { OCEANIC_MIMIC_SQUIRREL_ID } from "#src/services/gcg/cards/constants";
+import {
+  OCEANIC_MIMIC_FROG_ID,
+  OCEANIC_MIMIC_RAPTOR_ID,
+  OCEANIC_MIMIC_SQUIRREL_ID,
+} from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 
 // The three kinds of Oceanic Mimic by the card each is in the game's table, in the order a tie between them is broken

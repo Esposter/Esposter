@@ -2,14 +2,13 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
-import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { luckyDogsSilverCirclet } from "#src/services/gcg/cards/luckyDogsSilverCirclet";
 import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 
 const CIRCLET_ID = 312_002;
 const MAX_HP = 10;
@@ -19,27 +18,7 @@ const NORMAL_ATTACK: GcgSkill = { ...ELEMENTAL_SKILL, id: 2, kind: GcgSkillKind.
 const createSide = (hp: number): GcgSideState => ({
   activeIndex: 0,
   cards: [],
-  characters: [
-    {
-      aura: GcgAura.None,
-      character: {
-        descriptionTextId: 2,
-        element: Element.Hydro,
-        hp: MAX_HP,
-        id: 1,
-        maxEnergy: 3,
-        nameTextId: 1,
-        skills: [],
-        weapon: "",
-      },
-      energy: 0,
-      equipments: [],
-      hp,
-      isFrozen: false,
-      shield: 0,
-      statuses: [],
-    },
-  ],
+  characters: [createGcgCharacterState({ hp })],
   deckCardIds: [],
   dice: [],
   drawPile: [],

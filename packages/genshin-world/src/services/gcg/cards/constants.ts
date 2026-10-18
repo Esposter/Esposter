@@ -142,6 +142,7 @@ export const THUNDER_SUMMONERS_CROWN_ID = 312_401;
 export const TIDE_AND_TORRENT_ID = 22_014;
 export const TIMAEUS_ID = 322_003;
 export const TIMMIE_ID = 322_007;
+export const TRANSCENDENT_AUTOMATON_ID = 225_011;
 export const TUBBY_ID = 322_006;
 export const USHI_ID = 116_051;
 export const VERMILLION_HEREAFTER_ID = 312_012;

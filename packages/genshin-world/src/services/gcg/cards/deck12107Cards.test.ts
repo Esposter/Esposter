@@ -17,16 +17,14 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { breastplate } from "#src/services/gcg/cards/breastplate";
-import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
-import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
-import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -45,26 +43,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Hydro,
-    hp: 10,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -105,7 +83,7 @@ describe("rain Sword", () => {
     expect.hasAssertions();
     const RAIN_SWORD_ID = 112_021;
     const context: GcgEffectContext = {
-      duel: createDuel([createSideState([createCharacterState(1202)]), createSideState([])]),
+      duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAIN_SWORD_ID, rainSword);
@@ -138,7 +116,7 @@ describe("rainbow Bladework", () => {
     expect.hasAssertions();
     const RAINBOW_BLADEWORK_ID = 112_022;
     const context: GcgEffectContext = {
-      duel: createDuel([createSideState([createCharacterState(1202)]), createSideState([])]),
+      duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
@@ -157,7 +135,7 @@ describe("rainbow Bladework", () => {
     expect.hasAssertions();
     const RAINBOW_BLADEWORK_ID = 112_022;
     const context: GcgEffectContext = {
-      duel: createDuel([createSideState([createCharacterState(1202)]), createSideState([])]),
+      duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
@@ -179,8 +157,8 @@ describe("fatal Rainscreen", () => {
     expect.hasAssertions();
     const RAIN_SWORD_ID = 112_021;
     const duel = createDuel([
-      createSideState([createCharacterState(1202)]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202 } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
@@ -199,8 +177,11 @@ describe("fatal Rainscreen", () => {
     (aura, expectedAura, isFrozen) => {
       expect.hasAssertions();
       const duel = createDuel([
-        createSideState([{ ...createCharacterState(1202), aura }]),
-        createSideState([createCharacterState(1203), createCharacterState(1204)]),
+        createSideState([{ ...createGcgCharacterState({ character: { id: 1202 } }), aura }]),
+        createSideState([
+          createGcgCharacterState({ character: { id: 1203 } }),
+          createGcgCharacterState({ character: { id: 1204 } }),
+        ]),
       ]);
       runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
       const user = takeOne(duel.sides, 0).characters.at(0);
@@ -224,8 +205,8 @@ describe("raincutter", () => {
     };
     const RAINBOW_BLADEWORK_ID = 112_022;
     const duel = createDuel([
-      createSideState([createCharacterState(1202)]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202 } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, RAINCUTTER_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
@@ -237,7 +218,10 @@ describe("raincutter", () => {
 describe("full Plate", () => {
   const FULL_PLATE_ID = 116_021;
   const createShieldedDuel = (shield: number): GcgDuel =>
-    createDuel([createSideState([{ ...createCharacterState(1602), shield }]), createSideState([])]);
+    createDuel([
+      createSideState([{ ...createGcgCharacterState({ character: { id: 1602 } }), shield }]),
+      createSideState([]),
+    ]);
 
   test("while its active character holds a shield, the Physical DMG it takes is halved, rounded up", () => {
     expect.hasAssertions();
@@ -257,8 +241,8 @@ describe("full Plate", () => {
   test("it stays on the field while its shield holds, and a hit that consumes the shield takes it off", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([{ ...createCharacterState(1602), shield: 2 }]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([{ ...createGcgCharacterState({ character: { id: 1602 } }), shield: 2 }]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     takeOne(duel.sides, 0).onstages.push(createGcgZoneCard(FULL_PLATE_ID, fullPlate));
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
@@ -280,8 +264,8 @@ describe("breastplate", () => {
     };
     const FULL_PLATE_ID = 116_021;
     const duel = createDuel([
-      createSideState([createCharacterState(1602)]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, BREASTPLATE_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
@@ -293,7 +277,7 @@ describe("breastplate", () => {
 describe("stonehide", () => {
   const STONEHIDE_ID = 126_011;
   const createStonehideDuel = (): GcgDuel =>
-    createDuel([createSideState([createCharacterState(2601)]), createSideState([])]);
+    createDuel([createSideState([createGcgCharacterState({ character: { id: 2601 } })]), createSideState([])]);
 
   test("the character takes one less DMG, for three usages", () => {
     expect.hasAssertions();
@@ -325,8 +309,8 @@ describe("stone Force", () => {
   const STONEHIDE_ID = 126_011;
   const createStoneForceDuel = (statuses: GcgZoneCard[]): GcgDuel =>
     createDuel([
-      createSideState([{ ...createCharacterState(2601), statuses }]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([{ ...createGcgCharacterState({ character: { id: 2601 } }), statuses }]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
 
   test("the character's Physical DMG is converted to Geo, and its first DMG of the round is one more", () => {
@@ -365,7 +349,10 @@ describe("infused Stonehide", () => {
       id: 26_014,
       kind: GcgSkillKind.Passive,
     };
-    const character: GcgCharacter = { ...createCharacterState(2601).character, skills: [INFUSED_STONEHIDE_PASSIVE] };
+    const character: GcgCharacter = {
+      ...createGcgCharacterState({ character: { id: 2601 } }).character,
+      skills: [INFUSED_STONEHIDE_PASSIVE],
+    };
     expect(listGcgStartingStatuses(character).map(({ cardId }) => cardId)).toStrictEqual([126_011, 126_012]);
   });
 });
@@ -388,7 +375,7 @@ describe("sweeping Time", () => {
   };
   const createSweepingTimeContext = (): GcgEffectContext => ({
     characterIndex: 0,
-    duel: createDuel([createSideState([createCharacterState(1602)]), createSideState([])]),
+    duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1602 } })]), createSideState([])]),
     sideIndex: 0,
   });
 
@@ -453,8 +440,8 @@ describe("sweeping Time skill", () => {
     expect.hasAssertions();
     const SWEEPING_TIME_ID = 116_022;
     const duel = createDuel([
-      createSideState([createCharacterState(1602)]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
@@ -469,8 +456,8 @@ describe("sweeping Time skill", () => {
     expect.hasAssertions();
     const SWEEPING_TIME_ID = 116_022;
     const duel = createDuel([
-      createSideState([createCharacterState(1602)]),
-      createSideState([createCharacterState(1203)]),
+      createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
     takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).rounds = 1;

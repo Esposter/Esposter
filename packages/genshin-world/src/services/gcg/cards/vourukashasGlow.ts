@@ -6,13 +6,13 @@ import { takeOne } from "@esposter/shared";
 import { VOURUKASHAS_GLOW_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 
 const VOURUKASHAS_GLOW_HEAL = 1;
-// Its once-per-Round effect, keyed by the id of the skill that gives it
 
 // Vourukasha's Glow, an Artifact: after its character takes DMG and survives it, if she is active a card is drawn, and at this
 // End Phase she heals 1 HP, once per Round. The heal waits in the counter
 export const vourukashasGlow: GcgCardModule = {
   onDamageTaken: ({ characterIndex, duel, sideIndex }, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);
+    // Its once-per-Round effect, keyed by the id of the skill that gives it
     if (side.usedCardIds.includes(VOURUKASHAS_GLOW_TRIGGER_ID)) return;
     side.usedCardIds.push(VOURUKASHAS_GLOW_TRIGGER_ID);
     if (characterIndex === side.activeIndex) drawGcgCards(side, 1, duel.rule.handCardLimit);

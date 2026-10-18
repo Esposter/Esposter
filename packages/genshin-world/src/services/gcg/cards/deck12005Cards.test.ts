@@ -8,7 +8,6 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
@@ -19,6 +18,7 @@ import { icicle } from "#src/services/gcg/cards/icicle";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
 import { stellarRestoration } from "#src/services/gcg/cards/stellarRestoration";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -26,7 +26,7 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { KEQING_ID } from "#src/services/gcg/cards/constants";
+import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
@@ -43,26 +43,6 @@ const TALENT_SKILL: GcgSkill = {
 };
 
 const NORMAL_SKILL: GcgSkill = { ...TALENT_SKILL, effect: "Char_Skill_14032" };
-
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Electro,
-    hp: FULL_HP,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: FULL_HP,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -103,8 +83,11 @@ describe("sacred Cryo Pearl", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(111_011, sacredCryoPearl);
     const duel = createDuel([
-      createSideState([createCharacterState(OTHER_CHARACTER_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID), createCharacterState(KEQING_ID)]),
+      createSideState([createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+      ]),
     ]);
     duel.sides[0] = { ...takeOne(duel.sides, 0), summons: [zoneCard] };
     runGcgEndPhase(duel);
@@ -156,8 +139,13 @@ describe("stellar Restoration", () => {
   test("the skill deals 3 Electro and creates a Lightning Stiletto in hand", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).activeIndex = 1;
     expect(stellarRestoration.getDamage?.({ duel, sideIndex: 0 })).toStrictEqual({
@@ -172,8 +160,13 @@ describe("stellar Restoration", () => {
   test("a Lightning Stiletto in hand is discarded, with every copy, and Keqing gains Electro Infusion in its place", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+      ]),
     ]);
     const side = takeOne(duel.sides, 0);
     side.activeIndex = 1;
@@ -184,14 +177,42 @@ describe("stellar Restoration", () => {
       keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
     }).toStrictEqual({ hand: [], keqingStatuses: [114_032] });
   });
+
+  test("a second grant while Electro Infusion still stands refreshes it, rather than stacking a second copy", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([
+        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+      ]),
+    ]);
+    const side = takeOne(duel.sides, 0);
+    side.activeIndex = 1;
+    side.hand.push(LIGHTNING_STILETTO_ID);
+    runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+    takeOne(takeOne(side.characters, 1).statuses, 0).rounds = 1;
+    side.hand.push(LIGHTNING_STILETTO_ID);
+    runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+    expect(takeOne(side.characters, 1).statuses).toStrictEqual([
+      { cardId: ELECTRO_INFUSION_ID, counter: 0, rounds: 2, usages: 0 },
+    ]);
+  });
 });
 
 describe("lightning Stiletto", () => {
   test("a played card switches Keqing in for free, so the field's switch hook fires, and her skill grants Electro Infusion", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
-      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+      ]),
     ]);
     const side = takeOne(duel.sides, 0);
     const icicleZoneCard = createGcgZoneCard(111_031, icicle);

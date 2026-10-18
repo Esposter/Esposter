@@ -5,9 +5,9 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
@@ -51,26 +51,6 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
   usedSkillIds: [],
 });
 
-const createCharacterState = (): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 1002,
-    element: Element.Electro,
-    hp: 10,
-    id: 1,
-    maxEnergy: 3,
-    nameTextId: 1001,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
-
 // A prepared Elemental Skill that deals 3 Electro DMG, as the Rock-Paper-Scissors Combo's Paper does
 const PREPARED_SKILL: GcgSkill = {
   costs: [],
@@ -84,9 +64,15 @@ describe(passGcgTurn, () => {
   test("should keep a side's prepared skill for its next turn while the opponent has declared its end", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState(createCharacterState(), []);
+    const attacker = createSideState(
+      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
+      [],
+    );
     attacker.preparedSkills = [{ characterIndex: 0, skill: PREPARED_SKILL }];
-    const defender = createSideState(createCharacterState(), []);
+    const defender = createSideState(
+      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
+      [],
+    );
     defender.hasDeclaredEnd = true;
     const duel = createDuel(attacker, defender);
 
@@ -102,9 +88,15 @@ describe(passGcgTurn, () => {
   test("should run a side's prepared skill as the turn passes to it", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState(createCharacterState(), []);
+    const attacker = createSideState(
+      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
+      [],
+    );
     attacker.preparedSkills = [{ characterIndex: 0, skill: PREPARED_SKILL }];
-    const defender = createSideState(createCharacterState(), []);
+    const defender = createSideState(
+      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
+      [],
+    );
     const duel = createDuel(attacker, defender);
     duel.actingSideIndex = 1;
 

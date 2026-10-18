@@ -8,9 +8,10 @@ import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/apply
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { takeOne } from "@esposter/shared";
 
-// A skill's effect as it lands: its damage dealt with the field's bonuses, its standby piercing, then its after-effect, which
-// Reads the hits, and the skill recorded as used this round. Returns the hits the skill landed, its damage and its standby
-// Piercing alike. A prepared skill is recorded as used too, provisionally, since the wiki does not say whether it counts
+// A skill's effect as it lands: its damage dealt with the field's bonuses, its standby piercing, then its after-effect,
+// Which reads the context, and the skill recorded as used this round. Returns the hits the skill landed, its damage,
+// Its standby piercing alike, which the on-use hooks read. A prepared skill is recorded as used too, provisionally,
+// Since the wiki does not say whether it counts
 export const runGcgSkillEffect = (
   context: GcgEffectContext,
   skill: GcgSkill,
