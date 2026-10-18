@@ -2,6 +2,7 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitRecord } from "#src/models/kit/record/KitRecord";
@@ -15,17 +16,24 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { KitTargeting } from "#src/models/kit/record/KitTargeting";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { STELLAR_VORTEX_LEVEL_TWO_STACKS } from "#src/services/combat/damage/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { buildKit } from "#src/services/kit/buildKit";
 import { createOdetteKitBehaviour, ODETTE_CHARACTER_ID } from "#src/services/kit/characters/odetteKit";
+import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+// The vortex's id and its stacks, shaped as the effects read for a test to compare
+const shapeEffects = (context: KitContext) =>
+  context.kitEffectState.effects.map((effect) =>
+    effect.kind === "summon" ? { id: effect.id, stacks: effect.stacks } : effect.kind,
+  );
 
 describe(createOdetteKitBehaviour, () => {
   const PROUD_SKILL_GROUP_ID = 1;
@@ -92,6 +100,42 @@ describe(createOdetteKitBehaviour, () => {
         effect.kind === "summon" ? { id: effect.id, secondsRemaining: effect.secondsRemaining } : effect.kind,
       ),
     ).toStrictEqual([{ id: "stellarVortex", secondsRemaining: 181 / 60 }]);
+  });
+
+  // Triggers a Stellar Swirl on the field into a context kept across calls, so a vortex's stacks carry from one to the next
+  const triggerStellarSwirl = (context: KitContext) =>
+    kit.onKitEvent?.(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Cryo, reactionType: ReactionType.StellarSwirl }],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+
+  test("a standing vortex takes each further Stellar Swirl as a stack, and the third levels it up", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x: 3, z: 4 } } });
+
+    for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
+
+    expect(shapeEffects(context)).toStrictEqual([{ id: "stellarVortex", stacks: STELLAR_VORTEX_LEVEL_TWO_STACKS }]);
+  });
+
+  test("three more Stellar Swirls explode a vortex at once", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x: 3, z: 4 } } });
+
+    for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
+    for (let swirl = 0; swirl < 2; swirl++) triggerStellarSwirl(context);
+
+    expect(shapeEffects(context)).toStrictEqual([{ id: "stellarVortex", stacks: STELLAR_VORTEX_MAX_STACKS - 1 }]);
+
+    triggerStellarSwirl(context);
+
+    expect(shapeEffects(context)).toStrictEqual([]);
   });
 
   test("a Stellar Jubilee passive enables both reactions for its party", () => {

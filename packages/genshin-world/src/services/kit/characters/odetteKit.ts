@@ -5,7 +5,9 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 export const ODETTE_CHARACTER_ID = 10_000_150;
 
@@ -23,12 +25,21 @@ export const createOdetteKitBehaviour = ({ readSeconds }: KitRecordReader): KitB
   return {
     onKitEvent: (event, { body, kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
-      for (const { reactionType } of event.reactions)
-        if (reactionType === ReactionType.StellarSwirl && !kitEffectState.effects.some(checkIsStellarVortex))
+      for (const { reactionType } of event.reactions) {
+        if (reactionType !== ReactionType.StellarSwirl) continue;
+        const vortex = kitEffectState.effects.find(checkIsStellarVortex);
+        if (!vortex) {
           castKitSummon(kitEffectState, body, combatant, [], {
             id: STELLAR_VORTEX_ID,
             secondsRemaining: stellarVortexSeconds,
+            stacks: 1,
           });
+          continue;
+        }
+        // A further Stellar Swirl adds a stack without renewing the vortex's lifetime, and the sixth explodes it at once
+        vortex.stacks = (vortex.stacks ?? 0) + 1;
+        if (vortex.stacks >= STELLAR_VORTEX_MAX_STACKS) removeKitEffects(kitEffectState, (effect) => effect === vortex);
+      }
     },
   };
 };

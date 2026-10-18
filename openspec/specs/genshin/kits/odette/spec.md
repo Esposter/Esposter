@@ -67,7 +67,7 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 
 ### Requirement: A Stellar Vortex on a Stellar Swirl
 
-While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled.
+While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled. A further Stellar Swirl while it stands SHALL add a stack without renewing its 181 frames, and the sixth stack SHALL explode it at once.
 
 #### Scenario: Stellar Swirl places a Stellar Vortex
 
@@ -78,6 +78,16 @@ While Odette is deployed, a Stellar Swirl triggered by any party member SHALL le
 
 - **WHEN** a Melt, or a Swirl of another element, is triggered while Odette is deployed
 - **THEN** no Polestar Field and no Stellar Vortex is placed
+
+#### Scenario: the third Stellar Swirl levels a vortex up
+
+- **WHEN** a Stellar Swirl is triggered on a standing vortex with two stacks
+- **THEN** the vortex has three stacks
+
+#### Scenario: three more Stellar Swirls explode a vortex at once
+
+- **WHEN** three Stellar Swirls are triggered after the vortex has three stacks
+- **THEN** the vortex explodes at once, and no vortex stands
 
 ### Requirement: A Stellar Jubilee enables both Stellar reactions
 
