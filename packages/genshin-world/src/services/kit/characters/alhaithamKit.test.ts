@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -12,19 +13,43 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ALHAITHAM_CHARACTER_ID, createAlhaithamKitBehaviour } from "#src/services/kit/characters/alhaithamKit";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ALHAITHAM_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALHAITHAM_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+const party = createParty([ALHAITHAM_CHARACTER_ID]);
 
 // The Mirrors a character holds, as the status the kit keeps them in
 const readMirrors = (kitEffectState: KitEffectState): number =>
   kitEffectState.effects.find(
     (effect): effect is KitStatus => effect.kind === "status" && effect.id === "alhaitham-mirrors",
   )?.stacks ?? 0;
+
+// The Mirrors a charged attack's first hit makes, as the striker stands on the body
+const strikeWithChargedAttack = (combatant: Combatant, body: KitBody): number => {
+  const context = createKitTestContext(combatant);
+  const hit = takeOne(ALHAITHAM_KIT.chargedAttack.hits);
+  hit.onStrike?.(context, { body, combatant, hit });
+  return readMirrors(context.kitEffectState);
+};
+
+// The first hit of the summon the burst casts, which its strikes are dealt by, as the combatant stands
+const getBurstHit = (combatant: Combatant): KitHit => {
+  const context = createKitTestContext(combatant);
+  ALHAITHAM_KIT.elementalBurst.onStart?.(context);
+  return takeOne(
+    context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon")?.hits ?? [],
+  );
+};
 
 // The hit of a normal attack's first strike, which a Projection Attack triggers from
 const getFirstStrikeHit = (): KitHit => takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits);
@@ -166,5 +191,39 @@ describe(createAlhaithamKitBehaviour, () => {
       infusionSeconds: kitEffectState.effects.find((effect) => effect.kind === "infusion")?.secondsRemaining,
       mirrors: readMirrors(kitEffectState),
     }).toStrictEqual({ infusionSeconds: 0, mirrors: 0 });
+  });
+
+  describe("the Ascension 1 passive, Four-Causal Correction", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(strikeWithChargedAttack(createAlhaithamCombatant(1), kitBody)).toBe(1);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(strikeWithChargedAttack(createAlhaithamCombatant(0), kitBody)).toBe(0);
+    });
+  });
+
+  describe("the Ascension 4 passive, Mysteries Laid Bare", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createAlhaithamCombatant(4);
+
+      expect(
+        ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+      ).toBeGreaterThan(0);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createAlhaithamCombatant(3);
+
+      expect(
+        ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+      ).toBe(0);
+    });
   });
 });
