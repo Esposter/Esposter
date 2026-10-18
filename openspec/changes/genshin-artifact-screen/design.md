@@ -27,6 +27,13 @@ flowchart TD
 - **Enhancing is gated on the Mora before anything changes.** The Mora is the materials' EXP plus each fodder's base EXP,
   from `getEnhancementMoraCost`, and a wallet short of it refuses the enhancement the way `enhanceWeapon` refuses one.
   The bonus, the levels and the affix levels are then `enhanceArtifact`'s, unchanged.
+- **The fodder picker offers the bag's artifacts and the enhancement ores, and Auto Add is provisional.** The picker lists
+  the bag's unlocked artifacts, the lowest star first and then the lowest level, and the bag's ores that give EXP: Sanctifying
+  Unction at 2,500 and Sanctifying Essence at 10,000, from the dump's `ITEM_USE_ADD_RELIQUARY_EXP` and the wiki's
+  Artifact Enhancement Material page (`ItemIdExperienceMap`). Auto Add takes unlocked artifacts up to four stars, the
+  game's default, lowest star first, while the EXP still falls short of the top level. Its order and its stop are
+  provisional, not measured from the game. The preview shows the level reached at the base EXP bonus, since the game draws
+  the bonus on confirm, so the level shown is the lowest it can be.
 - **The set reader is one function.** `getActiveArtifactSetBonuses` reaches each set's bonuses by its piece count, and
   `getArtifactSetAttributeLines` sums what it returns. The Artifacts tab's set-bonus block reads the same list.
 
@@ -97,6 +104,9 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 | `packages/genshin-world/src/models/character/StatTables.ts`                    | Carries the rarity and EXP maps the enhancement reads                                                                            |
 | `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                               |
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                                |
+| `packages/genshin-world/src/services/artifact/getAutoAddFodders.ts`            | The fodder Auto Add takes: unlocked artifacts up to the star cap, lowest star first, while the EXP falls short                   |
+| `packages/genshin-world/src/services/artifact/getMaterialExperience.ts`        | The EXP the chosen enhancement ores give, each ore's EXP times its count                                                         |
+| `packages/genshin-world/src/services/artifact/ItemIdExperienceMap.ts`          | The EXP each enhancement ore gives by item id, from the dump and the wiki                                                        |
 | `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                                 |
 | `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the stats, the set bonus block and the actions, in the shared button row |
 | `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's eleven artifact members: the five slot names, the set block's heading, line and empty words, and the actions         |

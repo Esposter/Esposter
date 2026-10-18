@@ -43,6 +43,8 @@ export enum GameTextKey {
   ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
   // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
   // Is active
+  ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
+  ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
