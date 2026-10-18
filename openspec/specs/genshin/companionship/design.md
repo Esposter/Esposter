@@ -24,7 +24,7 @@ flowchart LR
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short.
 - **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
 - **A namecard is held by its level.** A namecard is in the held list once its character's total EXP reaches level 10, read from the same levels, so no save keeps it, and the profile's held list adds each finished category's namecard beside it. Its art is the game's texture and is never served, so the profile sets its name on a plate of its own, and its description is the [proposal](../../../changes/genshin-companionship/design.md)'s.
-- **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](../../../changes/genshin-companionship/design.md) keeps; the stories and voice-overs are on the [character profile](../character-profile/design.md). The ley line claim calls it from the outcrops' composable, and the domain and boss claims have no screen calling theirs yet.
+- **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](../../../changes/genshin-companionship/design.md) keeps; the stories and voice-overs are on the [character profile](../character-profile/design.md). The quest gate a friendship dialogue waits on, `checkIsFriendshipDialogueOpen`, is built and waits for the pot dialogue to call it. The ley line claim calls it from the outcrops' composable, and the domain and boss claims have no screen calling theirs yet.
 
 ## Key files
 
@@ -37,6 +37,8 @@ flowchart LR
 | `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The namecards, fetched by their key from the same record and checked against their shape               |
 | `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                                                     |
 | `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                                                        |
+| `packages/genshin-world/src/models/friendship/FriendshipDialogue.ts`              | A dialogue's level and the quest it waits on, with `""` for none                                       |
+| `packages/genshin-world/src/services/friendship/checkIsFriendshipDialogueOpen.ts` | Whether a dialogue is open at a level under the quests finished                                        |
 | `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema                                      |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the hosted `nameText` record, to the profile panel                    |
 | `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                                                  |
