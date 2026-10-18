@@ -22,6 +22,10 @@ export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+(?:-\d+)?|[A-Za-z][A-Za-z0-9]*))*$/u;
 export const KIT_LENGTH_KEY = "length";
+// A hit's multiplier path, `hits.fatalBlossoms.1.multiplier` or `skillHolds.0.hits.0.multiplier`, with the path of the hit
+// List it sits in as `hitPath`: the one matcher every hit list's multiplier is read by
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
+export const KIT_HIT_MULTIPLIER_REGEX: RegExp = /^(?<hitPath>(?:.+\.)?hits\.(?:\d+|[^.]+(?:\.\d+)?))\.multiplier$/u;
 // Where gcsim's tag is cloned and the wiki's answers are kept between runs, outside the repository: the tag never
 // Moves, and a wiki page is read again only once its cached answer is deleted
 export const GCSIM_CACHE_DIRECTORY: string = join(CACHE_ROOT, `gcsim-${GCSIM_TAG}`);
