@@ -1,6 +1,6 @@
 # Canvas
 
-Built on the [document model](../resource-page-builder-document-model/design.md), which holds the typed nodes the canvas renders and the patches its commands issue.
+Built on the [document model](../../specs/resource/page-builder/document-model/design.md), which holds the typed nodes the canvas renders and the patches its commands issue.
 
 ## The canvas
 

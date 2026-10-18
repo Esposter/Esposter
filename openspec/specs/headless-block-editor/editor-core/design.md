@@ -1,6 +1,6 @@
 # Headless block editor core
 
-The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a canvas draws over it, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model change](../../../changes/resource-page-builder-document-model/); the package's own tests run in the plain Node environment.
+The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a canvas draws over it, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model](../../resource/page-builder/document-model/design.md); the package's own tests run in the plain Node environment.
 
 ## How an edit runs
 

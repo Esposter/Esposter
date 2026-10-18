@@ -1,6 +1,6 @@
 # Email
 
-The email editor, built over the node types and the renderer contract the [document model](../resource-page-builder-document-model/design.md) defines, inside the frame and shell the [canvas](../resource-page-builder-canvas/design.md) draws, with the field components the [style panel](../resource-page-builder-style-panel/design.md) builds.
+The email editor, built over the node types and the renderer contract the [document model](../../specs/resource/page-builder/document-model/design.md) defines, inside the frame and shell the [canvas](../resource-page-builder-canvas/design.md) draws, with the field components the [style panel](../resource-page-builder-style-panel/design.md) builds.
 
 ## Email
 

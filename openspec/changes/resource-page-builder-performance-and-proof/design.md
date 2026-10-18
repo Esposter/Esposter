@@ -1,6 +1,6 @@
 # Performance and proof
 
-The targets the finished editors hold and the proof of their output. It runs over the [canvas](../resource-page-builder-canvas/design.md) and the [email editor](../resource-page-builder-email/design.md), on the [document model](../resource-page-builder-document-model/design.md)'s nodes and the [undo layer](../resource-page-builder-undo-as-patches/design.md)'s patches, and its script ceiling is measured on the [cutover](../resource-page-builder-cutover/design.md)'s build.
+The targets the finished editors hold and the proof of their output. It runs over the [canvas](../resource-page-builder-canvas/design.md) and the [email editor](../resource-page-builder-email/design.md), on the [document model](../../specs/resource/page-builder/document-model/design.md)'s nodes and the [undo layer](../resource-page-builder-undo-as-patches/design.md)'s patches, and its script ceiling is measured on the [cutover](../resource-page-builder-cutover/design.md)'s build.
 
 ## Performance
 

@@ -25,7 +25,7 @@ The webpage is drawn on a canvas that renders as the published page does, and ev
 
 ## Waiting on
 
-- `openspec/changes/resource-page-builder-document-model/`, which defines the typed nodes the canvas draws and the edits it makes.
+None.
 
 ## Impact
 

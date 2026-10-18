@@ -79,6 +79,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Webpage plugin: custom code](webpage-plugin-custom-code/design.md) — the custom code block, our own plugin in place of `grapesjs-custom-code`
 - [Webpage plugin: forms](webpage-plugin-forms/design.md) — the form components, our own plugin in place of `grapesjs-plugin-forms`
 - [Webpage plugin: basic blocks](webpage-plugin-blocks-basic/design.md) — the webpage editor's layout and content blocks, our own plugin in place of `grapesjs-blocks-basic`
+- [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile
 
 Open work is in the [roadmap](../../changes/resource-roadmap/tasks.md); the Azure-portal-parity designs it references live under [proposals](../../changes/). Ideas we chose not to pursue are under [deferred](../../deferred/resource/) (with revisit triggers) and [rejected](../../rejected/resource/). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](sheet/README.md).
 

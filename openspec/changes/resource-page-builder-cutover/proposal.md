@@ -29,7 +29,6 @@ The new editors ship, every existing webpage and email is deleted, and the old e
 
 The page builder's phases one to four, which this change swaps in:
 
-- `openspec/changes/resource-page-builder-document-model/`, the typed tree, its node types and its rendering.
 - `openspec/changes/resource-page-builder-undo-as-patches/`, the recorded edits.
 - `openspec/changes/resource-page-builder-canvas/`, the webpage editor's canvas.
 - `openspec/changes/resource-page-builder-style-panel/`, the style panel.

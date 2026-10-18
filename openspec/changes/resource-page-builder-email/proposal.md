@@ -23,7 +23,6 @@ An email is edited on a design canvas over the MJML blocks' types and checked in
 
 ## Waiting on
 
-- `openspec/changes/resource-page-builder-document-model/`, which holds the email registry and the renderer contract this editor uses.
 - `openspec/changes/resource-page-builder-canvas/`, whose frame and shell the design canvas draws in.
 - `openspec/changes/resource-page-builder-style-panel/`, whose field components draw an email node's attributes.
 

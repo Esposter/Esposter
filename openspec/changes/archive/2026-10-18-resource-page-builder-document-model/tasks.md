@@ -19,4 +19,4 @@
 
 ## 5. The record
 
-- [ ] 5.1 Describe the two documents, their registries and the renderers as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
+- [x] 5.1 Describe the two documents, their registries and the renderers as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
