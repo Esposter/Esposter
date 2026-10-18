@@ -31,20 +31,16 @@ const castStarwardSword = (ascension: number): KitBuff[] => {
   return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
 };
 
+// The effects the Lightning Stiletto's recast by Keqing at the ascension adds
+const castRecast = (ascension: number): KitEffectState["effects"] => {
+  const recast = KEQING_KIT.elementalSkillChain?.followUps[0];
+  if (!recast) throw new Error("Stellar Restoration has no recast");
+  const kitEffectState: KitEffectState = { effects: [] };
+  recast.onStart?.(createKitTestContext({ ...createKeqingCombatant(), ascension }, { kitEffectState }));
+  return kitEffectState.effects;
+};
+
 describe(createKeqingKitBehaviour, () => {
-  test("the recast infuses Keqing with Electro as it starts, for the infusion's seconds", () => {
-    expect.hasAssertions();
-    const recast = KEQING_KIT.elementalSkillChain?.followUps[0];
-    if (!recast) throw new Error("Stellar Restoration has no recast");
-    const kitEffectState: KitEffectState = { effects: [] };
-
-    recast.onStart?.(createKitTestContext(createKeqingCombatant(), { kitEffectState }));
-
-    expect(kitEffectState.effects).toStrictEqual([
-      { characterId: KEQING_CHARACTER_ID, element: Element.Electro, kind: "infusion", secondsRemaining: 6 },
-    ]);
-  });
-
   // Ascension 4's Starward Sword buffs
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
@@ -61,5 +57,21 @@ describe(createKeqingKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(castStarwardSword(3)).toStrictEqual([]);
+  });
+});
+
+describe("thundering Penance", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castRecast(1)).toStrictEqual([
+      { characterId: KEQING_CHARACTER_ID, element: Element.Electro, kind: "infusion", secondsRemaining: 5 },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castRecast(0)).toStrictEqual([]);
   });
 });
