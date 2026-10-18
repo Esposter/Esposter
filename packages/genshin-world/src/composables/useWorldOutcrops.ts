@@ -1,6 +1,8 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
+import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -9,6 +11,7 @@ import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { Party } from "#src/models/party/Party";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -17,6 +20,8 @@ import { OutcropEvent } from "#src/models/leyLine/OutcropEvent";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
+import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
+import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { advanceOutcropFight } from "#src/services/leyLine/advanceOutcropFight";
 import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
@@ -27,8 +32,10 @@ import { OUTCROP_REGION_ID, OUTCROP_TOUCH_RADIUS } from "#src/services/leyLine/c
 import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
 import { readOutcropRegion } from "#src/services/leyLine/readOutcropRegion";
 import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
+import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -37,11 +44,13 @@ import { computed, shallowRef } from "vue";
 // Character who stands within reach of a waiting outcrop touches it, which starts its fight and spawns its camp there,
 // And the camp's last enemy falling reveals the blossom. Pressing F at a revealed blossom offers the claims the held
 // Resin affords, and choosing one spends its resin, grants the kind's rewards for the World Level into the bag and the
-// Wallet, and moves the outcrop on. A claim the holdings or the bag cannot pay whole is refused, and the blossom stays
+// Wallet, gives the deployed team the claim's Companionship EXP, and moves the outcrop on. A claim the holdings or the bag
+// Cannot pay whole is refused, and the blossom stays
 export const useWorldOutcrops = ({
   adventureExp,
   adventureRankTables,
   areaId,
+  characters,
   completedMainQuestIds,
   enemyMap,
   events,
@@ -51,6 +60,7 @@ export const useWorldOutcrops = ({
   inventory,
   materialDataMap,
   nameText,
+  party,
   placements,
   rank,
   regionStatueProgressMap,
@@ -61,6 +71,7 @@ export const useWorldOutcrops = ({
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
+  characters: Ref<Character[]>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
@@ -70,6 +81,7 @@ export const useWorldOutcrops = ({
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
+  party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   rank: Readonly<Ref<number>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, OfferingProgressSave>>>;
@@ -85,6 +97,18 @@ export const useWorldOutcrops = ({
     getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
       ({ kinds }) => {
         kindRules.value = kinds;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits until
+  // They are loaded, since the EXP has no top to stop at without them
+  const friendshipLevels = shallowRef<FriendshipLevel[]>([]);
+  if (checkIsGameDataKey("friendship/friendship"))
+    getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
+      (levels) => {
+        friendshipLevels.value = levels;
       },
       (error) => {
         console.error(error);
@@ -171,7 +195,7 @@ export const useWorldOutcrops = ({
     const prompt = claimPrompt.value;
     const outcrop = prompt && findClearedOutcrop(prompt.placeId);
     const kindRule = kindRules.value.find(({ kind }) => kind === outcrop?.kind);
-    if (!prompt || !kindRule) return;
+    if (!prompt || !kindRule || friendshipLevels.value.length === 0) return;
     claimPrompt.value = undefined;
     const rewards = Array.from({ length: offer.claimCount }, () =>
       drawRewardItems(computeOutcropClaimRewards(kindRule, worldLevel), random),
@@ -192,6 +216,13 @@ export const useWorldOutcrops = ({
     setWallet(claim.wallet);
     setInventory(claim.inventory);
     adventureExp.value = claim.adventureExp;
+    // A claim gives its Companionship EXP once for each claim it holds, to the deployed team
+    characters.value = gainCompanionshipExp(
+      characters.value,
+      getDeployedCharacterIds(party),
+      BlossomCompanionshipExpMap[BlossomKind.LeyLine] * offer.claimCount,
+      friendshipLevels.value,
+    );
     fightCamps.value = new Map([...fightCamps.value].filter(([id]) => id !== prompt.placeId));
     applyEvent(prompt.placeId, OutcropEvent.Claimed);
   };
@@ -200,6 +231,7 @@ export const useWorldOutcrops = ({
     claimPrompt,
     closeOutcropClaim,
     drawDayOutcrops,
+    friendshipLevels,
     kindRules,
     openOutcropClaim,
     outcropCamps,
