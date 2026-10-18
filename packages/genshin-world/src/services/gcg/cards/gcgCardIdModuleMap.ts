@@ -12,6 +12,7 @@ import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
 import { crossfire } from "#src/services/gcg/cards/crossfire";
+import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
@@ -116,6 +117,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
   [116_011, jadeScreen],
+  [117_011, cuileinAnbar],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
