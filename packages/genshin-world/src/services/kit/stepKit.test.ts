@@ -165,13 +165,8 @@ describe(stepKit, () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
-    const kitState = createKitState();
-    const partyMember = createPartyMember();
-    const stamina = createStamina(STAMINA_MAX);
+    const { stamina, step } = createFixture(kit);
     stamina.value = 0;
-    const context = createKitTestContext(TRAVELER_COMBATANT);
-    const step = (input: Partial<KitInput>) =>
-      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
@@ -183,13 +178,8 @@ describe(stepKit, () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
-    const kitState = createKitState();
-    const partyMember = createPartyMember();
-    const stamina = createStamina(STAMINA_MAX);
+    const { stamina, step } = createFixture(kit);
     stamina.value = 1;
-    const context = createKitTestContext(TRAVELER_COMBATANT);
-    const step = (input: Partial<KitInput>) =>
-      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
