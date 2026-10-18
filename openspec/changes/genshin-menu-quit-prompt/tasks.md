@@ -1,6 +1,6 @@
 ## 1. Reference
 
-- [ ] 1.1 Clip the English PC client's logout recording and name its exit prompt's first whole still as the exit prompt reference, with its capture and second. Verify: `pnpm -C scripts recreation clip --directory ~/Esposter/genshin-parity/captures https://www.youtube.com/watch?v=asw7VW5QM1g --from 0 --to 46 --name logout` writes the clip, and the `exit-prompt` row of the parity reference map names a capture and a second.
+- [x] 1.1 Clip the English PC client's logout recording and name its exit prompt's first whole still as the exit prompt reference, with its capture and second. Verify: `pnpm -C scripts recreation clip --directory ~/Esposter/genshin-parity/captures https://www.youtube.com/watch?v=asw7VW5QM1g --from 0 --to 46 --name logout` writes the clip, and the `exit-prompt` row of the parity reference map names a capture and a second.
 
 ## 2. Scale
 

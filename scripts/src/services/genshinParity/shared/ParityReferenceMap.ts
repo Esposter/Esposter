@@ -232,20 +232,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Everfrozen Earth.png",
   },
-  // The English PC client's quit prompt, the wiki's 799 by 475 crop of its three buttons over the world, placed at its
-  // 1080 high frame's pixels with the prompt's stack centred on the frame, as the screen centres it. Scored over the
-  // Panel's box and its three buttons alone, since the world between them is the game's own; the crop's place and the
-  // Frame's scale are a call until the whole-frame recording (the Recordings owed list) settles them
+  // The English PC client's quit prompt on the current build at 1080 high, from a 2026 recording (`yt-jHr2bERjkYc`, 30
+  // Seconds in), the dialog over the dimmed menu: "Are you sure you want to quit?" with Cancel and Confirm. Scored over
+  // The dialog's box above its buttons, clear of the tutorial's arrow. The page still draws the 2024 build's three
+  // Choices, which the prompt's own change re-specifies, so this row scores it apart until then
   "exit-prompt": {
-    mask: [
-      { height: 84, width: 767, x: 576, y: 338 },
-      { height: 84, width: 767, x: 576, y: 498 },
-      { height: 84, width: 767, x: 576, y: 658 },
-    ],
-    placement: { frameHeight: 1080, frameWidth: 1920, x: 559, y: 298 },
-    region: { height: 404, width: 767, x: 576, y: 338 },
+    capture: "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
+    region: { height: 415, width: 960, x: 480, y: 235 },
     screen: "MenuExit",
-    wikiTitle: "File:Paimon Menu Exit Prompt.png",
+    seconds: 30,
   },
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
@@ -706,14 +701,14 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
   },
-  // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
-  // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
-  // Translucent feet, where the world shows through
+  // The English PC client's Paimon menu on the current build at 1080 high, from a 2026 recording (`yt-jHr2bERjkYc`, 25
+  // Seconds in) with no screen open, its account at Adventure Rank 2. Scored over the side bar and the panel above their
+  // Translucent feet, where the world shows through; the recording's pillarbox, logo and UID lie outside the region
   "paimon-menu": {
-    isOtherBuild: true,
-    region: { height: 1030, width: 1024, x: 0, y: 0 },
+    capture: "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
+    region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
-    wikiTitle: "File:Paimon Menu Version 1.3.png",
+    seconds: 25,
   },
   // The People of the Springs from the wiki's location image at 2560 wide, a daytime view of the Natlan capital's hall,
   // Spire and walkway, whose build is not stated (a 2024 upload). Its landmarks are rigid architecture read by eye off
