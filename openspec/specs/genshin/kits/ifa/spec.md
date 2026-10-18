@@ -1,6 +1,6 @@
 ## Purpose
 
-Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, and her low and collision plunges. Her skill's press enters and leaves the blessing with its points. Tonic Shot, her healing, the sedation marks and her passives and constellations wait on the Nightsoul hook and the sedation-mark hook.
+Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, and her low and collision plunges. Her skill's press enters and leaves the blessing with its points. Tonic Shot, her healing, the sedation marks, and her passives and constellations are not built.
 
 ## Requirements
 

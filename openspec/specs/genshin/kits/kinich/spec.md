@@ -86,7 +86,7 @@ Kinich's burst SHALL summon the Ajaw, which fires six Dendro lasers at the prima
 
 ### Requirement: Nightsoul effects not yet built
 
-Kinich's Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
+Kinich's Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until they are built.
 
 #### Scenario: Nightsoul-dependent effects do nothing
 
