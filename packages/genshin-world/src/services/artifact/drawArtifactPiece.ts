@@ -26,8 +26,8 @@ export const drawArtifactPiece = (
   if (piece === undefined)
     throw new InvalidOperationError(
       Operation.Read,
-      String(set.id),
-      `holds no ${slot} piece of ${rarity} stars with ${minorAffixCount} minor affixes`,
+      drawArtifactPiece.name,
+      `set ${set.id} holds no ${slot} piece of ${rarity} stars with ${minorAffixCount} minor affixes`,
     );
   return piece;
 };
