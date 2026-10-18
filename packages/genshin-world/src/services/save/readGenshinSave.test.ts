@@ -415,7 +415,7 @@ describe(readGenshinSave, () => {
   test("a save written before the Sigils were added reads each Sigil as zero", () => {
     expect.hasAssertions();
     const currencies = Object.fromEntries(
-      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.some((sigil) => sigil === currency)),
+      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.includes(currency)),
     );
     const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
 

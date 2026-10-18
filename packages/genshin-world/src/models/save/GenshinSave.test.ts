@@ -355,7 +355,7 @@ describe("genshinSaveSchema", () => {
   test("accepts a save written before the Sigils were added", () => {
     expect.hasAssertions();
     const currencies = Object.fromEntries(
-      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.some((sigil) => sigil === currency)),
+      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.includes(currency)),
     );
 
     expect(
