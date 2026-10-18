@@ -492,4 +492,38 @@ describe(mergeGenshinSave, () => {
       { count: 1, goodsId: OTHER_SHOP_GOODS_ID, lastPurchasedAt: EARLIER_PURCHASE },
     ]);
   });
+
+  test("keeps each chamber cleared if either save cleared it, its most stars, and the rewards either save claimed", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      spiralAbyss: { corridor: { chambers: { "1": { isCleared: true, stars: 1 } }, claimedRewardIds: [101] } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      spiralAbyss: {
+        corridor: {
+          chambers: { "1": { isCleared: false, stars: 3 }, "2": { isCleared: true, stars: 2 } },
+          claimedRewardIds: [101, 102],
+        },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).spiralAbyss).toStrictEqual({
+      corridor: {
+        chambers: { "1": { isCleared: true, stars: 3 }, "2": { isCleared: true, stars: 2 } },
+        claimedRewardIds: [101, 102],
+      },
+    });
+  });
+
+  test("keeps a Moon Spire period only one save holds as it is", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      spiralAbyss: { "124": { chambers: { "9": { isCleared: true, stars: 3 } }, claimedRewardIds: [201] } },
+    };
+
+    expect(mergeGenshinSave(account, EMPTY_GENSHIN_SAVE).spiralAbyss).toStrictEqual(account.spiralAbyss);
+  });
 });

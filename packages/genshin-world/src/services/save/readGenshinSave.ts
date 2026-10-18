@@ -10,6 +10,7 @@ import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
 import { toParty } from "#src/services/save/toParty";
 import { toShopPurchases } from "#src/services/save/toShopPurchases";
+import { toSpiralAbyssProgressMap } from "#src/services/save/toSpiralAbyssProgressMap";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
@@ -33,6 +34,7 @@ export const readGenshinSave = (
     quests,
     reputation,
     shopPurchases,
+    spiralAbyss,
     statues,
     travelerName,
     unlockedLandmarks,
@@ -72,6 +74,7 @@ export const readGenshinSave = (
     reputation,
     settledSeelieIds: new Set(puzzles.settledSeelieIds),
     shopPurchases: toShopPurchases(shopPurchases),
+    spiralAbyssProgressMap: toSpiralAbyssProgressMap(spiralAbyss),
     solvedPuzzleIds: new Set(puzzles.solvedPuzzleIds),
     travelerName,
     unlockedLandmarkIds: new Set(unlockedLandmarks),

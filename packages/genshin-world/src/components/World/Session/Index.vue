@@ -637,6 +637,7 @@ const {
   abyssCamps,
   abyssChoices,
   abyssFloorsOffered,
+  abyssProgressMap,
   chooseAbyssBenediction,
   enterAbyssChamber,
   openAbyssEntrance,
@@ -647,7 +648,14 @@ const {
   events,
   gameDataBaseUrl,
   getWorldNow,
+  inventory,
+  materialDataMap,
+  nameText,
   party,
+  savedProgressMap: savedState.spiralAbyssProgressMap,
+  setInventory,
+  setWallet,
+  wallet,
 });
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -712,6 +720,7 @@ useWorldSaveSync({
     reputation: reputation.value,
     settledSeelieIds: settledSeelieIds.value,
     shopPurchases: shopPurchases.value,
+    spiralAbyssProgressMap: abyssProgressMap.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,

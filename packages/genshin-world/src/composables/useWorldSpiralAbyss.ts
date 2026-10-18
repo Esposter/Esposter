@@ -1,6 +1,11 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { AbyssArena } from "#src/models/spiralAbyss/AbyssArena";
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
+import type { AbyssBlessingState } from "#src/models/spiralAbyss/AbyssBlessingState";
+import type { AbyssCarryMember } from "#src/models/spiralAbyss/AbyssCarryMember";
 import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
 import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
@@ -10,6 +15,8 @@ import type { Party } from "#src/models/party/Party";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
+import { applyAbyssBlessingReaction } from "#src/services/spiralAbyss/applyAbyssBlessingReaction";
+import { applyAbyssCarry } from "#src/services/spiralAbyss/applyAbyssCarry";
 import { checkIsAbyssChallengeCleared } from "#src/services/spiralAbyss/checkIsAbyssChallengeCleared";
 import { checkIsAbyssChallengeFailed } from "#src/services/spiralAbyss/checkIsAbyssChallengeFailed";
 import { createAbyssArena } from "#src/services/spiralAbyss/createAbyssArena";
@@ -17,14 +24,16 @@ import { defeatAbyssArenaEnemy } from "#src/services/spiralAbyss/defeatAbyssAren
 import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
 import { getAbyssBenedictionAttributeLines } from "#src/services/spiralAbyss/getAbyssBenedictionAttributeLines";
 import { getAbyssChamberBlessing } from "#src/services/spiralAbyss/getAbyssChamberBlessing";
+import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChamberSeconds";
+import { getAbyssCycleKey } from "#src/services/spiralAbyss/getAbyssCycleKey";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
-import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import { ABYSS_CORRIDOR_LAST_FLOOR_INDEX, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { readAbyssBenedictionChoices } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
 import { readAbyssEnemyKinds } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
 import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
 import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
 import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
-import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
+import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
 import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -36,6 +45,9 @@ interface AbyssPendingChoice {
   floor: AbyssFloor;
 }
 
+// The blessing state a chamber starts with, before any reaction in it has been answered
+const INITIAL_ABYSS_BLESSING_STATE: AbyssBlessingState = { shockwavePositions: [], stardreadReadySeconds: 0 };
+
 // Reads one piece of the Spiral Abyss's game data once, and names a failed read in the console
 const readAbyssData = <T>(read: () => Promise<T>, onRead: (value: T) => void) => {
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -46,21 +58,36 @@ const readAbyssData = <T>(read: () => Promise<T>, onRead: (value: T) => void) =>
 
 // The Spiral Abyss on the world: its periods, floors, enemy kinds, Benedictions and rewards read once, a chamber entered in
 // The arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's camp is fought on
-// The domain's mechanism, and a chamber's stars are recorded as progress when it clears
+// The domain's mechanism. A clear is settled into the progress of its cycle, its rewards paid and its health and energy carried
+// Into the next chamber, and a reaction in a Moon Spire chamber is answered by the period's blessing
 export const useWorldSpiralAbyss = ({
   areaId,
   bonusLines,
   events,
   gameDataBaseUrl,
   getWorldNow,
+  inventory,
+  materialDataMap,
+  nameText,
   party,
+  savedProgressMap,
+  setInventory,
+  setWallet,
+  wallet,
 }: {
   areaId: string;
   bonusLines: Ref<AttributeLine[]>;
   events: WorldEvents;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
+  inventory: Ref<Inventory>;
+  materialDataMap: ReadonlyMap<number, MaterialData>;
+  nameText: Readonly<Record<string, string>>;
   party: Party;
+  savedProgressMap: ReadonlyMap<string, AbyssProgress>;
+  setInventory: (inventory: Inventory) => void;
+  setWallet: (wallet: Wallet) => void;
+  wallet: Ref<Wallet>;
 }) => {
   const abyssPeriods = shallowRef<AbyssPeriod[]>([]);
   const abyssFloors = shallowRef<AbyssFloor[]>([]);
@@ -71,7 +98,13 @@ export const useWorldSpiralAbyss = ({
   const abyssEntrancePeriod = shallowRef<AbyssPeriod>();
   const abyssPendingChoice = shallowRef<AbyssPendingChoice>();
   const abyssArena = shallowRef<AbyssArena>();
-  const abyssProgress = shallowRef<AbyssProgress>({ chamberIdProgressMap: new Map(), claimedRewardIds: new Set() });
+  // The progress of each cycle, keyed as the save keys it, replaced whole on each clear so the save sync sees the change
+  const abyssProgressMap = shallowRef<ReadonlyMap<string, AbyssProgress>>(new Map(savedProgressMap));
+  // The Moon Spire period the running chamber is fought in, none for a Corridor chamber, and what the blessing has done in its arena
+  const abyssChamberPeriod = shallowRef<AbyssPeriod>();
+  const abyssBlessingState = shallowRef<AbyssBlessingState>(INITIAL_ABYSS_BLESSING_STATE);
+  // The health and energy the last clear leaves the party with, which the next chamber starts from
+  const abyssCarry = shallowRef<AbyssCarryMember[]>([]);
 
   readAbyssData(
     () => readAbyssPeriods(gameDataBaseUrl),
@@ -105,6 +138,7 @@ export const useWorldSpiralAbyss = ({
   );
 
   const abyssBlessing = computed(() => abyssEntrancePeriod.value?.blessing);
+  const abyssArenaBlessing = computed(() => abyssChamberPeriod.value?.blessing);
   const abyssFloorsOffered = computed(() => getAbyssFloorsOffered(abyssFloors.value, abyssEntrancePeriod.value));
   const abyssChoices = computed(() => abyssPendingChoice.value?.choices);
   // The camp of the half in play, which the enemies spawn while the chamber runs
@@ -117,7 +151,8 @@ export const useWorldSpiralAbyss = ({
   const openAbyssEntrance = () => {
     abyssEntrancePeriod.value = findAbyssPeriodAt(abyssPeriods.value, getWorldNow());
   };
-  // A chamber's arena starts on the party set, and a Benediction's lines hold for the chamber alone, so a refused arena keeps none
+  // A chamber's arena starts on the party set, and a Benediction's lines hold for the chamber alone, so a refused arena keeps none.
+  // The carry of the last clear lands on the members still in the party as the chamber starts, and is spent with it
   const startAbyssChamber = (floor: AbyssFloor, chamber: AbyssChamber, towerBuffId?: number) => {
     const teams = party.teams.filter(({ characterIds }) => characterIds.length > 0).slice(0, floor.teamCount);
     const arena = createAbyssArena(
@@ -131,6 +166,11 @@ export const useWorldSpiralAbyss = ({
     );
     if (arena === undefined) return;
     abyssArena.value = arena;
+    abyssChamberPeriod.value = floor.index > ABYSS_CORRIDOR_LAST_FLOOR_INDEX ? abyssEntrancePeriod.value : undefined;
+    abyssBlessingState.value = INITIAL_ABYSS_BLESSING_STATE;
+    const carried = abyssCarry.value.filter(({ characterId }) => party.characterIdMemberMap.has(characterId));
+    if (carried.length > 0) party.characterIdMemberMap = applyAbyssCarry(party.characterIdMemberMap, carried);
+    abyssCarry.value = [];
     bonusLines.value = towerBuffId === undefined ? [] : getAbyssBenedictionAttributeLines(towerBuffId);
   };
   // A chamber picked at the entry: a Corridor chamber offers its Benedictions first, a Moon Spire chamber starts at once, and a
@@ -160,25 +200,50 @@ export const useWorldSpiralAbyss = ({
     startAbyssChamber(pending.floor, pending.chamber, towerBuffId);
   };
 
-  // A chamber over, cleared or failed: a clear records its stars and rewards as progress, and either way the arena and the
-  // Benediction's lines end. A chamber whose rewards have not read is cleared without its stars, which the console names
+  // A chamber over, cleared or failed. A clear is settled into its cycle's progress with its first-time rewards paid, and carries
+  // The party into the next chamber. A clear whose rewards the bag cannot take, or whose rewards have not read, is not recorded,
+  // And the console names it. Either way the arena and the Benediction's lines end
   const endAbyssChamber = (arena: AbyssArena) => {
+    const period = abyssChamberPeriod.value;
     abyssArena.value = undefined;
+    abyssChamberPeriod.value = undefined;
     bonusLines.value = [];
     if (!checkIsAbyssChallengeCleared(arena.challenge)) return;
-    const reward = abyssRewards.value?.floorRewards.find(({ floorIndex }) => floorIndex === arena.floor.index);
-    if (reward === undefined) {
+    const rewards = abyssRewards.value;
+    const reward = rewards?.floorRewards.find(({ floorIndex }) => floorIndex === arena.floor.index);
+    if (rewards === undefined || reward === undefined) {
       console.error(`no rewards read for floor ${arena.floor.index}, so its stars are not recorded`);
       return;
     }
-    abyssProgress.value = recordAbyssChamberClear(
-      abyssProgress.value,
-      arena.floor,
-      arena.chamber,
-      arena.challenge,
+    const cycleKey = getAbyssCycleKey(arena.floor, period);
+    if (cycleKey === undefined) {
+      console.error(`no Moon Spire period for floor ${arena.floor.index}, so its stars are not recorded`);
+      return;
+    }
+    const settlement = settleAbyssClear({
+      challenge: arena.challenge,
+      chamber: arena.chamber,
+      characterIdMemberMap: party.characterIdMemberMap,
+      floor: arena.floor,
+      inventory: inventory.value,
+      materialDataMap,
+      names: nameText,
+      progress: abyssProgressMap.value.get(cycleKey) ?? {
+        chamberIdProgressMap: new Map(),
+        claimedRewardIds: new Set(),
+      },
       reward,
-      party.characterIdMemberMap,
-    ).progress;
+      rewardItems: rewards.rewardItems,
+      wallet: wallet.value,
+    });
+    if (settlement === undefined) {
+      console.error(`the bag has no room for floor ${arena.floor.index}'s rewards, so its clear is not recorded`);
+      return;
+    }
+    setInventory(settlement.inventory);
+    setWallet(settlement.wallet);
+    abyssProgressMap.value = new Map(abyssProgressMap.value).set(cycleKey, settlement.progress);
+    abyssCarry.value = settlement.carry;
   };
   const settleAbyssArena = (arena: AbyssArena) => {
     if (checkIsAbyssChallengeCleared(arena.challenge) || checkIsAbyssChallengeFailed(arena.challenge))
@@ -191,6 +256,19 @@ export const useWorldSpiralAbyss = ({
     const arena = abyssArena.value;
     if (!arena?.camp || enemy.campId !== arena.camp.id) return;
     settleAbyssArena(defeatAbyssArenaEnemy(arena, enemy.campId));
+  });
+  // A reaction on an enemy of the camp in play is answered by the chamber's period blessing, on the chamber's clock
+  events.on("reactionTriggered", (enemy, reactions) => {
+    const arena = abyssArena.value;
+    if (!arena?.camp || enemy.campId !== arena.camp.id) return;
+    const seconds = getAbyssChamberSeconds(arena.floor.index) - arena.challenge.secondsLeft;
+    abyssBlessingState.value = applyAbyssBlessingReaction(
+      abyssArenaBlessing.value,
+      abyssBlessingState.value,
+      enemy.position,
+      reactions,
+      seconds,
+    );
   });
 
   // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open, and a
@@ -219,6 +297,7 @@ export const useWorldSpiralAbyss = ({
     abyssCamps,
     abyssChoices,
     abyssFloorsOffered,
+    abyssProgressMap,
     chooseAbyssBenediction,
     enterAbyssChamber,
     openAbyssEntrance,

@@ -8,6 +8,7 @@ import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
+import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
@@ -203,6 +204,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
+    spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
@@ -218,4 +220,27 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ? guest.worldLevelAdjustment
       : account.worldLevelAdjustment,
   };
+};
+
+// The Abyss's progress is the union of both copies' cycles: a chamber is cleared if either copy cleared it, with the most stars
+// Either copy holds, and a reward is claimed if either copy claimed it
+const mergeSpiralAbyssCycle = (account: SpiralAbyssCycleSave, guest: SpiralAbyssCycleSave): SpiralAbyssCycleSave => {
+  const chambers = { ...guest.chambers };
+  for (const [chamberId, { isCleared, stars }] of Object.entries(account.chambers)) {
+    const guestChamber: SpiralAbyssCycleSave["chambers"][string] | undefined = chambers[chamberId];
+    chambers[chamberId] = guestChamber
+      ? { isCleared: isCleared || guestChamber.isCleared, stars: Math.max(stars, guestChamber.stars) }
+      : { isCleared, stars };
+  }
+  return { chambers, claimedRewardIds: [...new Set([...account.claimedRewardIds, ...guest.claimedRewardIds])] };
+};
+
+// A cycle only one copy holds is kept as it is
+const mergeSpiralAbyss = (account: SpiralAbyssSave, guest: SpiralAbyssSave): SpiralAbyssSave => {
+  const merged = { ...guest };
+  for (const [cycleKey, accountCycle] of Object.entries(account)) {
+    const guestCycle: SpiralAbyssCycleSave | undefined = guest[cycleKey];
+    merged[cycleKey] = guestCycle ? mergeSpiralAbyssCycle(accountCycle, guestCycle) : accountCycle;
+  }
+  return merged;
 };

@@ -52,6 +52,11 @@ export const MAX_SOLVED_PUZZLE_COUNT = 832;
 // The goods a player holds a purchase of, one entry each, bounded by the shop goods that hold a buy limit: 5134 of the game's
 // Shop goods table on 2026-10-18, a good with no limit keeping no entry
 export const MAX_SHOP_PURCHASE_COUNT = 5134;
+
+// The Moon Spire periods a save keeps progress for, one cycle each beside the Corridor's, and the chambers of the longest cycle:
+// The Corridor's eight floors of three
+export const MAX_ABYSS_CYCLE_COUNT = 256;
+export const MAX_ABYSS_CHAMBER_COUNT = 24;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
@@ -134,6 +139,16 @@ const LONGEST_HOME_PLACEMENT = {
   rotation: -Number.MAX_VALUE,
   sceneId: MAX_SAVE_NUMBER,
 };
+// The Abyss cycle at its longest: every chamber of the Corridor cleared at three stars, and each reward claimed at the largest number
+const LONGEST_ABYSS_CYCLE_SAVE = {
+  chambers: Object.fromEntries(
+    Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, (_value, index) => [
+      String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+      { isCleared: true, stars: 3 },
+    ]),
+  ),
+  claimedRewardIds: Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, () => MAX_SAVE_NUMBER),
+};
 // The save at its longest outside its collections: every number at its largest, every instant at its longest and every
 // Collection empty, so the ceiling below adds only the entries of each collection
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
@@ -152,6 +167,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   shopPurchases: [],
+  spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
@@ -194,6 +210,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_SHOP_PURCHASE_COUNT *
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
+  MAX_ABYSS_CYCLE_COUNT * getRecordEntryLength(LONGEST_ABYSS_CYCLE_SAVE) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
       objectiveCounts: Array.from({ length: MAX_OBJECTIVE_COUNT }, () => MAX_SAVE_NUMBER),
@@ -257,6 +274,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
   shopPurchases: [],
+  spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
   travelerName: "",
   unlockedLandmarks: [],

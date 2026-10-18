@@ -15,6 +15,8 @@ import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/cons
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
   EMPTY_GENSHIN_SAVE,
+  MAX_ABYSS_CHAMBER_COUNT,
+  MAX_ABYSS_CYCLE_COUNT,
   MAX_ACHIEVEMENT_COUNT,
   MAX_ARCHIVE_ENTRY_COUNT,
   MAX_ARCHIVE_KILL_COUNT,
@@ -188,6 +190,20 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      spiralAbyss: Object.fromEntries(
+        Array.from({ length: MAX_ABYSS_CYCLE_COUNT }, (_value, index) => [
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+          {
+            chambers: Object.fromEntries(
+              Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, (_chamber, chamberIndex) => [
+                String(chamberIndex).padStart(MAX_SAVE_ID_LENGTH, "0"),
+                { isCleared: true, stars: 3 },
+              ]),
+            ),
+            claimedRewardIds: Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, () => maxNumber),
+          },
+        ]),
+      ),
       statues: {
         foundOculusIds: Array.from({ length: MAX_FOUND_OCULUS_COUNT }, (_value, index) =>
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

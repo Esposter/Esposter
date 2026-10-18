@@ -17,6 +17,7 @@ import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave"
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
+import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
@@ -57,6 +58,8 @@ export const genshinSaveSchema = z
     reputation: reputationProgressSaveSchema,
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
     shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT).default([]),
+    // The Spiral Abyss's progress by cycle: the Corridor's one cycle, and each Moon Spire period by its id
+    spiralAbyss: spiralAbyssSaveSchema,
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
