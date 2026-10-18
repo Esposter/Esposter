@@ -1026,6 +1026,8 @@ useWorldSaveSync({
     adventureRankRewardsClaimed: adventureRankRewardsClaimed.value,
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
+    cardGameExp: savedState.cardGameExp,
+    cardGameRewardedGameIds: savedState.cardGameRewardedGameIds,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: playerRoster.value?.characters ?? characters.value,
     characterTrialClaimedStageIds: trialClaimedStageIds.value,

@@ -33,6 +33,7 @@ import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import { travelerBirthdaySaveSchema } from "#src/models/save/TravelerBirthdaySave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import {
   MAX_CHARACTER_COUNT,
@@ -57,6 +58,7 @@ export const genshinSaveSchema = z
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
     cardGameExp: cardGameExpSaveSchema,
+    cardGameRewardedGameIds: createUniqueArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The character trials' stages whose first clear has paid its reward, each by its id

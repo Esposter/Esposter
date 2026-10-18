@@ -15,6 +15,7 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
@@ -196,6 +197,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
   cardGameExp: MAX_SAVE_NUMBER,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
@@ -259,6 +261,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_CHARACTER_TRIAL_STAGE_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  GCG_REWARDABLE_GAME_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ADVENTURE_RANK * getListEntryLength(MAX_ADVENTURE_RANK) +
   COMMISSIONS_PER_DAY *
@@ -323,6 +326,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
   cardGameExp: 0,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
