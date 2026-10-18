@@ -25,7 +25,7 @@ export const strikePartyMember = (
   kitEffectState: KitEffectState,
 ): KitShieldAbsorbedEvent[] => {
   const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
-  const healths = shields.map((shield) => shield.health);
+  const healthsBefore = shields.map((shield) => ({ before: shield.health, shield }));
   const overflow = absorbKitShield(
     kitEffectState.effects,
     combatant,
@@ -41,9 +41,9 @@ export const strikePartyMember = (
       ENEMY_STRIKE_GAUGE,
       combatant.elementalResonances,
     );
-  return shields
-    .map((shield, index): KitShieldAbsorbedEvent => ({
-      amount: healths[index] - shield.health,
+  return healthsBefore
+    .map(({ before, shield }): KitShieldAbsorbedEvent => ({
+      amount: before - shield.health,
       characterId: shield.characterId,
       kind: KitEventKind.ShieldAbsorbed,
     }))

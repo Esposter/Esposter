@@ -32,6 +32,7 @@ export const useWorldTrounceBlossoms = ({
   events,
   gameText,
   getGroundHeight,
+  getWorldNow,
   inventory,
   materialDataMap,
   nameText,
@@ -46,6 +47,7 @@ export const useWorldTrounceBlossoms = ({
   events: WorldEvents;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
+  getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
@@ -55,7 +57,7 @@ export const useWorldTrounceBlossoms = ({
 }) => {
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(new Map());
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  const lastTeleportAt = shallowRef<Temporal.ZonedDateTime>();
+  const lastTeleportAt = shallowRef<Temporal.Instant>();
   const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; spawnKey: string }>();
   const trounceBlossomInteractables = computed(() =>
     computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight),
@@ -73,7 +75,7 @@ export const useWorldTrounceBlossoms = ({
     if (trounceBlossom) writeTrounceBlossom(getSpawnKey(enemy.campId, enemy.id), trounceBlossom);
   });
   events.on("teleport", () => {
-    lastTeleportAt.value = Temporal.Now.zonedDateTimeISO();
+    lastTeleportAt.value = getWorldNow();
   });
   // The blossom of a respawned boss is gone, since it was either claimed or left behind by a teleport
   const forgetTrounceBlossom = (spawnKey: string) => {
@@ -113,7 +115,7 @@ export const useWorldTrounceBlossoms = ({
     setWallet(claim.wallet);
     setInventory(claim.inventory);
     adventureExp.value = claim.adventureExp;
-    writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAt: Temporal.Now.zonedDateTimeISO() });
+    writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAt: now });
   };
   return {
     chooseTrounceBlossomClaim,

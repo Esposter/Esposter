@@ -9,10 +9,10 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
-import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { Party } from "#src/models/party/Party";
+import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -86,7 +86,7 @@ export const useWorldOutcrops = ({
   party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   rank: Readonly<Ref<number>>;
-  regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, OfferingProgressSave>>>;
+  regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;

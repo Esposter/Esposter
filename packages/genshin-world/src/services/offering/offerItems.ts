@@ -7,7 +7,7 @@ const setHeldCount = (
   itemId: number,
   count: number,
 ): Record<string, number> => {
-  const nextHeldCounts = { ...heldCounts, [itemId]: count };
+  const nextHeldCounts: Record<string, number> = { ...heldCounts, [itemId]: count };
   if (count <= 0) delete nextHeldCounts[itemId];
   return nextHeldCounts;
 };
