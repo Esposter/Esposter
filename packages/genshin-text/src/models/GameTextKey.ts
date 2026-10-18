@@ -387,6 +387,14 @@ export enum GameTextKey {
   MoveRight = "CONTROL_MOVE_RIGHT",
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
+  // The Mystic Offering at the Crafting Bench: its title, the Create button, the tip naming how many five-star artifacts make
+  // A strongbox, the tip that it needs five-star artifacts, the tip that the choice falls short, and the confirm dialog
+  MysticOffering = "UI_MELTING_TITLE_A",
+  MysticOfferingConfirm = "UI_MELTING_TIPS_F",
+  MysticOfferingCreate = "UI_MELTING_BUTTON_A",
+  MysticOfferingNotEnough = "UI_MELTING_TIPS_C",
+  MysticOfferingRequirement = "UI_MELTING_TIPS_B",
+  MysticOfferingRequiresFiveStar = "UI_MELTING_DETAILS_TIPS_B",
   NakuWeed = "3623663804",
   Natlan = "Natlan",
   NilotpalaLotus = "774700468",
@@ -672,7 +680,7 @@ export enum GameTextKey {
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
-  // the restoring's tips and label
+  // The restoring's tips and label
   WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
