@@ -6,6 +6,7 @@ import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { REWARD_PREVIEW_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { buildLeyLineRegions } from "#src/services/genshinAssets/leyLine/buildLeyLineRegions";
 import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineRegions";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -30,7 +31,7 @@ export const leyLineCommand: SubCommandsDef[string] = defineCommand({
               readExcelTable<ExcelBlossomRefreshRow>("BlossomRefreshExcelConfigData"),
               readExcelTable<ExcelBlossomGroupRow>("BlossomGroupsExcelConfigData"),
               readExcelTable<ExcelBlossomSectionOrderRow>("BlossomSectionOrderExcelConfigData"),
-              readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData"),
+              readExcelTable<ExcelRewardPreviewRow>(REWARD_PREVIEW_TABLE_NAME),
             ),
           ),
         },
