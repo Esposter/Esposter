@@ -18,7 +18,7 @@ const OTHER_SHOP_GOOD_ID = 3;
 const TREASURE_SUB_TAB_ID = 1;
 const FURNISHING_SUB_TAB_ID = 2;
 const OTHER_SHOP_TYPE = 1001;
-const goodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
+const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
   beginTime: EPOCH_TIME,
   buyLimit: 0,
   costHcoin: 0,
@@ -35,7 +35,7 @@ const goodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShop
   subTabId,
 });
 // The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
-const publishedGood = (goodsId: number, tabId: number) => ({
+const createPublishedGood = (goodsId: number, tabId: number) => ({
   beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
   buyLimit: 0,
   endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
@@ -57,14 +57,14 @@ describe(buildRealmDepotGoods, () => {
     expect.hasAssertions();
 
     vi.mocked(readExcelTable).mockReturnValueOnce([
-      goodRow(TREASURE_GOOD_ID, REALM_DEPOT_SHOP_TYPE, TREASURE_SUB_TAB_ID),
-      goodRow(FURNISHING_GOOD_ID, REALM_DEPOT_SHOP_TYPE, FURNISHING_SUB_TAB_ID),
-      goodRow(OTHER_SHOP_GOOD_ID, OTHER_SHOP_TYPE, FURNISHING_SUB_TAB_ID),
+      createGoodRow(TREASURE_GOOD_ID, REALM_DEPOT_SHOP_TYPE, TREASURE_SUB_TAB_ID),
+      createGoodRow(FURNISHING_GOOD_ID, REALM_DEPOT_SHOP_TYPE, FURNISHING_SUB_TAB_ID),
+      createGoodRow(OTHER_SHOP_GOOD_ID, OTHER_SHOP_TYPE, FURNISHING_SUB_TAB_ID),
     ]);
 
     expect(buildRealmDepotGoods()).toStrictEqual({
-      [`${GameDataset.Shops}/realmDepotTreasures`]: [publishedGood(TREASURE_GOOD_ID, TREASURE_SUB_TAB_ID)],
-      [`${GameDataset.Shops}/realmDepotFurnishings`]: [publishedGood(FURNISHING_GOOD_ID, FURNISHING_SUB_TAB_ID)],
+      [`${GameDataset.Shops}/realmDepotTreasures`]: [createPublishedGood(TREASURE_GOOD_ID, TREASURE_SUB_TAB_ID)],
+      [`${GameDataset.Shops}/realmDepotFurnishings`]: [createPublishedGood(FURNISHING_GOOD_ID, FURNISHING_SUB_TAB_ID)],
       [`${GameDataset.Shops}/realmDepotBlueprints`]: [],
       [`${GameDataset.Shops}/realmDepotRiches`]: [],
       [`${GameDataset.Shops}/realmDepotCreatures`]: [],
