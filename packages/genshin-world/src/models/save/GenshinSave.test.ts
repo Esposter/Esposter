@@ -13,11 +13,13 @@ import {
   MAX_ACHIEVEMENT_COUNT,
   MAX_CHARACTER_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
+  MAX_FOUND_OCULUS_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_OPENED_CHEST_COUNT,
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
+  MAX_STATUE_REGION_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
 } from "#src/services/save/constants";
@@ -126,6 +128,17 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      statues: {
+        foundOculusIds: Array.from({ length: MAX_FOUND_OCULUS_COUNT }, (_value, index) =>
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+        ),
+        regions: Object.fromEntries(
+          Array.from({ length: MAX_STATUE_REGION_COUNT }, (_value, index) => [
+            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+            { heldCount: maxNumber, level: maxNumber },
+          ]),
+        ),
+      },
       travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

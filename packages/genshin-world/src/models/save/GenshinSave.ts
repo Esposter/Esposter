@@ -12,6 +12,7 @@ import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
+import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import { MAX_CHARACTER_COUNT, MAX_GENSHIN_SAVE_LENGTH, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
@@ -34,6 +35,8 @@ export const genshinSaveSchema = z
     openedChests: openedChestSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
+    // The statues' progress in each region, and the Oculi found
+    statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,

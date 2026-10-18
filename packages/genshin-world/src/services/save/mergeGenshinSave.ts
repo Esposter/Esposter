@@ -136,6 +136,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     openedChests: account.openedChests,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
+    statues: account.statues,
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {

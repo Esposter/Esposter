@@ -27,6 +27,12 @@ export const MAX_TRAVELER_NAME_LENGTH = 32;
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
 // The chests a player opens once each, so the bound is every chest the world's regions hold at once with room to spare
 export const MAX_OPENED_CHEST_COUNT = 4096;
+// The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
+// Spare
+export const MAX_FOUND_OCULUS_COUNT = 4096;
+// The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
+// To spare
+export const MAX_STATUE_REGION_COUNT = 32;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
@@ -101,6 +107,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   openedChests: [],
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
+  statues: { foundOculusIds: [], regions: {} },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
   wallet: {
@@ -145,6 +152,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
   MAX_INVENTORY_ITEM_COUNT *
     getListEntryLength({
       id: MAX_SAVE_NUMBER,
@@ -170,6 +179,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   openedChests: [],
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
+  statues: { foundOculusIds: [], regions: {} },
   travelerName: "",
   unlockedLandmarks: [],
   wallet: {

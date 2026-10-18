@@ -15,8 +15,9 @@ import type { BannerKind } from "genshin-interface/save";
 // Progress by its id, the ids of the landmarks resonated with, each achievement's progress by its id, the Adventure EXP, Mondstadt's Reputation, each
 // Character's Companionship EXP by its id, the characters held with each one's copy count by its id, the day's
 // Commissions with the moment they were dealt, each kind of wish's Counters, the bench's learned recipes and each recipe's
-// Crafted count by its id, the Frostbearing Tree's offering Progress, the World Level adjustment and the name chosen for
-// The Traveler. The save's slices convert to and from these
+// Crafted count by its id, the Frostbearing Tree's offering Progress, each region's Statues of The Seven progress by the
+// Region's id, the ids of the Oculi found, the World Level adjustment and the name chosen for The Traveler. The save's
+// Slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -26,10 +27,12 @@ export interface GenshinSaveState {
   companionshipExpMap: ReadonlyMap<number, number>;
   craftedCountMap: ReadonlyMap<number, number>;
   craftingProgress: CraftingProgress;
+  foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
   inventory: Inventory;
   openedChestIds: ReadonlySet<string>;
   quests: ReadonlyMap<string, QuestProgress>;
+  regionStatueProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   reputation: ReputationProgress;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
