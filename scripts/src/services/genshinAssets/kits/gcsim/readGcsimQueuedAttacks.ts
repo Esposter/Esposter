@@ -119,26 +119,24 @@ const readIterations = (loops: readonly ConstantLoop[], position: number): Map<s
       [new Map()],
     );
 
-// The values a method's parameters take at one call of it, each a number its call's argument gives at the call's position
+// The sets of values a method's parameters take at one call of it: each argument gives a number at the call's position,
+// Or two where it is a local the clamp of the action's hold bounds to 0 and 1, so the call is one set per value
 const readCallParameters = (
   tokens: readonly GoToken[],
   scope: GoScope,
   site: number,
   parameters: readonly string[],
-): Map<string, number> => {
+): Map<string, number>[] => {
   const call = parseGoExpression(tokens, site).expression;
-  if (call.kind !== GoExpressionKind.Call) return new Map();
-  return new Map(
-    parameters.flatMap((name, index) => {
+  if (call.kind !== GoExpressionKind.Call) return [new Map()];
+  return parameters.reduce<Map<string, number>[]>(
+    (iterations, name, index) => {
       const argumentStart = call.parameterStarts[index];
-      const value =
-        argumentStart === undefined
-          ? undefined
-          : evaluateGoNumber(parseGoExpression(tokens, argumentStart).expression, (inner) =>
-              scope.resolveName(inner, site),
-            );
-      return value === undefined ? [] : [[name, value] as const];
-    }),
+      const values = argumentStart === undefined ? undefined : scope.readArgumentValues(site, argumentStart);
+      if (values === undefined) return iterations;
+      return iterations.flatMap((iteration) => values.map((value) => new Map(iteration).set(name, value)));
+    },
+    [new Map()],
   );
 };
 
@@ -210,9 +208,10 @@ const readCallVariants = (
 ): CallVariant[] => {
   const variants = new Map<string, CallVariant>();
   for (const site of sites) {
-    const callParameters = readCallParameters(tokens, scope, site, parameters);
+    const callParameterSets = readCallParameters(tokens, scope, site, parameters);
     for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site))
-      variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
+      for (const callParameters of callParameterSets)
+        variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
   }
   return [...variants.values()];
 };
