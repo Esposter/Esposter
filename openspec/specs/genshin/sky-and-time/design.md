@@ -50,15 +50,15 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 ## Key files
 
-| File                                                            | Role                                                                      |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-engine/src/clock/advanceGameClock.ts`         | The clock moved on by a frame at its rate, wrapping at midnight           |
-| `packages/genshin-engine/src/atmosphere/computeSunDirection.ts` | The sun's direction at a minute of the day                                |
-| `packages/genshin-engine/src/atmosphere/sampleSkyState.ts`      | The keyframes blended at a minute, and whether the sun or the moon lights |
-| `packages/genshin-engine/src/atmosphere/applySkyState.ts`       | The sky state written into the light, the hemisphere and every uniform    |
-| `packages/genshin-engine/src/nodes/createSkyNode.ts`            | The painted sky: gradient, sun, moon, stars and stepped clouds            |
-| `packages/genshin-world/src/composables/useSky.ts`              | The sky as the background, and the clock run every frame unless held      |
-| `packages/genshin-world/src/services/windrise/constants.ts`     | Windrise's day as keyframes, its start hour, tilt and clouds              |
+| File                                                            | Role                                                                           |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/clock/advanceGameClock.ts`         | The clock moved on by a frame at its rate, wrapping and counting each midnight |
+| `packages/genshin-engine/src/atmosphere/computeSunDirection.ts` | The sun's direction at a minute of the day                                     |
+| `packages/genshin-engine/src/atmosphere/sampleSkyState.ts`      | The keyframes blended at a minute, and whether the sun or the moon lights      |
+| `packages/genshin-engine/src/atmosphere/applySkyState.ts`       | The sky state written into the light, the hemisphere and every uniform         |
+| `packages/genshin-engine/src/nodes/createSkyNode.ts`            | The painted sky: gradient, sun, moon, stars and stepped clouds                 |
+| `packages/genshin-world/src/composables/useSky.ts`              | The sky as the background, and the clock run every frame unless held           |
+| `packages/genshin-world/src/services/windrise/constants.ts`     | Windrise's day as keyframes, its start hour, tilt and clouds                   |
 
 ## Notes
 
