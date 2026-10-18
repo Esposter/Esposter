@@ -5,7 +5,7 @@
 
 ## 2. Cooking screen
 
-- [ ] 2.1 Place each city's stove at the cooking point of its scene group record. Verify: a test named after the scenario 'A city stove cooks where a campfire would be out' written first and seen failing.
+- [x] 2.1 Place each city's stove at the cooking point of its scene group record. Verify: a test named after the scenario 'A city stove cooks where a campfire would be out' written first and seen failing.
 - [ ] 2.2 Build the cooking screen from the public clip with its fixture, laying out each indicator's zones from its recipe's parameters. Verify: a test named after the scenario 'Two recipes with different zone parameters lay out different zones' written first and seen failing; the comparison goes to the user's eyes.
 
 ## 3. Eating and passives
