@@ -1,81 +1,96 @@
 {
-  "burst.animationFrames": { "cause": "Unclassified", "value": 62 },
-  "burst.hits.length": { "cause": "Unclassified", "value": 2 },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "burst.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12739 } },
-  "burst.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "burst.hits.1.element": { "cause": "Unclassified", "value": "Rock" },
-  "burst.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 33 },
-  "burst.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 12739 } },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 106 },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "burst.animationFrames": { "cause": "Unsourced", "value": 62 },
+  "burst.hits.length": { "cause": "Unsourced", "value": 2 },
+  "burst.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000023, "path": "burst.hits.0.area" }
+  },
+  "burst.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "burst.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000023, "path": "burst.hits.0.hitmarkFrames" }
+  },
+  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12739 } },
+  "burst.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000023, "path": "burst.hits.1.area" }
+  },
+  "burst.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "burst.hits.1.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000023, "path": "burst.hits.1.hitmarkFrames" }
+  },
+  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12739 } },
+  "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 106 },
+  "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 3.490658503988659, "height": 2, "radius": 3 }
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "chargedAttack.hits.0.area" }
   },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 16 },
-  "normalAttacks.length": { "cause": "Unclassified", "value": 4 },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 190 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "chargedAttack.hits.0.hitmarkFrames" }
+  },
+  "normalAttacks.length": { "cause": "Unsourced", "value": 4 },
+  "normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 190 },
+  "normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 2.6179938779914944, "height": 2, "radius": 1.7 }
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.0.hits.0.area" }
   },
-  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 184 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
+  "normalAttacks.0.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.0.hits.0.hitmarkFrames" }
+  },
+  "normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 184 },
+  "normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.1.hits.0.area" }
   },
-  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 15 },
-  "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 248 },
-  "normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 2 },
+  "normalAttacks.1.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.1.hits.0.hitmarkFrames" }
+  },
+  "normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 248 },
+  "normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 2 },
   "normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.7 }
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.2.hits.0.area" }
   },
-  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 15 },
+  "normalAttacks.2.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.2.hits.0.hitmarkFrames" }
+  },
   "normalAttacks.2.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.7 }
   },
-  "normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 15 },
-  "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 352 },
-  "normalAttacks.3.hits.length": { "cause": "Unclassified", "value": 1 },
+  "normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 15 },
+  "normalAttacks.3.animationFrames": { "cause": "Unsourced", "value": 352 },
+  "normalAttacks.3.hits.length": { "cause": "Unsourced", "value": 1 },
   "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.505538513813742 }
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.3.hits.0.area" }
   },
-  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 14 },
-  "plungeCollision.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  "normalAttacks.3.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000026, "path": "normalAttacks.3.hits.0.hitmarkFrames" }
   },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 107 },
-  "plunges.high.hits.length": { "cause": "Unclassified", "value": 1 },
-  "plunges.high.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  "skill.animationFrames": { "cause": "Unsourced", "value": 32 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 2 },
+  "skill.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000042, "path": "skill.hits.0.area" }
   },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 19 },
-  "plunges.low.hits.length": { "cause": "Unclassified", "value": 1 },
-  "plunges.low.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
+  "skill.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "skill.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000042, "path": "skill.hits.0.hitmarkFrames" }
   },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 32 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 2 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12732 } },
-  "skill.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "skill.hits.1.element": { "cause": "Unclassified", "value": "Rock" },
-  "skill.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
-  "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 12732 } }
+  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12732 } },
+  "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "skill.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 25 },
+  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12732 } }
 }
