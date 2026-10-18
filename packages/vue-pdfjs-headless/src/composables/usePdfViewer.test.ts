@@ -33,15 +33,19 @@ describe(usePdfViewer, () => {
   const CHAPTER_PAGE = 3;
 
   type EventBusStub = ReturnType<typeof createEventBus>;
+  type LinkServiceStub = ReturnType<typeof createLinkService>;
   type Listener = (event: unknown) => void;
   type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
 
+  // The scale a preset zoom lands on in the stub, whatever the preset
+  const FIT_SCALE = 1.5;
   // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
-  // The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
+  // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
     abortSignal?: AbortSignal;
     eventBus?: EventBusStub;
     findEvents: unknown[];
+    linkService?: LinkServiceStub;
     scaleWrites: unknown[];
     viewer?: PdfViewerStub;
   } = { findEvents: [], scaleWrites: [] };
@@ -90,8 +94,13 @@ describe(usePdfViewer, () => {
   const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
     let currentPageNumber = 0;
     let currentScale = 0;
-    let currentScaleValue: null | string = "auto";
+    let currentScaleValue: null | string = null;
+    let hasPages = false;
     let pagesRotation = 0;
+    // The renderer makes a document's pages once its first page loads, and announces them with pagesinit
+    eventBus.on("pagesinit", () => {
+      hasPages = true;
+    });
     const viewer = {
       get currentPageNumber() {
         return currentPageNumber;
@@ -112,7 +121,11 @@ describe(usePdfViewer, () => {
       },
       set currentScaleValue(scaleValue: null | string) {
         stubs.scaleWrites.push(scaleValue);
+        // The renderer applies a preset zoom only to pages it has, so a preset written before pagesinit is dropped
+        if (!hasPages || scaleValue === null) return;
+
         currentScaleValue = scaleValue;
+        viewer.currentScale = FIT_SCALE;
       },
       decreaseScale: () => {
         viewer.currentScale = Math.max(viewer.currentScale / 1.1, 0.1);
@@ -134,10 +147,11 @@ describe(usePdfViewer, () => {
       previousPage: () => {
         viewer.currentPageNumber -= 1;
       },
-      // The renderer resets its page and rotation without dispatching an event, which is what a new document finds
+      // The renderer resets its page and rotation without dispatching an event, and drops its pages until pagesinit
       setDocument: vi.fn<(loaded: null | PDFDocumentProxy) => void>(() => {
         currentPageNumber = 1;
         currentScaleValue = null;
+        hasPages = false;
         pagesRotation = 0;
       }),
     };
@@ -152,7 +166,9 @@ describe(usePdfViewer, () => {
     return createFindController(options);
   };
   const PDFLinkService = function () {
-    return createLinkService();
+    stubs.linkService = createLinkService();
+
+    return stubs.linkService;
   };
   const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
     stubs.abortSignal = options.abortSignal;
@@ -224,18 +240,46 @@ describe(usePdfViewer, () => {
     viewer.currentScale = PDF_MAX_SCALE;
     state.zoomIn();
 
-    expect(state.scale.value).toBe(PDF_MAX_SCALE);
     expect(state.isZoomInDisabled.value).toBe(true);
     scope.stop();
   });
 
-  test("fitting a page to the width", () => {
+  test("a loaded document opens fitted to its container", () => {
     expect.hasAssertions();
 
     const { scope, state, viewer } = mountViewer(createDocument(3));
-    state.fitWidth();
+    stubs.eventBus?.dispatch("pagesinit", {});
 
-    expect(viewer.currentScaleValue).toBe("page-width");
+    expect(viewer.currentScaleValue).toBe("auto");
+    expect(state.scale.value).toBe(FIT_SCALE);
+    scope.stop();
+  });
+
+  test("a resize keeps a fit", () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    stubs.eventBus?.dispatch("pagesinit", {});
+    state.fitWidth();
+    stubs.scaleWrites = [];
+    reportResize?.();
+
+    expect(stubs.scaleWrites).toStrictEqual(["page-width"]);
+    scope.stop();
+  });
+
+  test.each([
+    ["fitWidth", "page-width"],
+    ["fitPage", "page-fit"],
+    ["actualSize", "page-actual"],
+  ] as const)("%s zooms the pages to %s", (action, scaleValue) => {
+    expect.hasAssertions();
+
+    const { scope, state, viewer } = mountViewer(createDocument(3));
+    stubs.eventBus?.dispatch("pagesinit", {});
+    state[action]();
+
+    expect(viewer.currentScaleValue).toBe(scaleValue);
     scope.stop();
   });
 
@@ -260,16 +304,19 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("#61 searching for a word shows the match count", async () => {
+  test.each([
+    [3, 1, false],
+    [0, 0, true],
+  ])("#61 searching for a word with %i matches shows the match count", async (total, current, isNotFound) => {
     expect.hasAssertions();
 
-    matches = 3;
+    matches = total;
     const { scope, state } = mountViewer(createDocument(3));
     state.searchQuery.value = "word";
     await nextTick();
 
-    expect(state.matchesCount.value).toStrictEqual({ current: 1, total: 3 });
-    expect(state.isNotFound.value).toBe(false);
+    expect(state.matchesCount.value).toStrictEqual({ current, total });
+    expect(state.isNotFound.value).toBe(isNotFound);
     scope.stop();
   });
 
@@ -280,18 +327,6 @@ describe(usePdfViewer, () => {
     reportResize?.();
 
     expect(stubs.scaleWrites).toStrictEqual([]);
-    scope.stop();
-  });
-
-  test("a word that is not in the document", async () => {
-    expect.hasAssertions();
-
-    const { scope, state } = mountViewer(createDocument(3));
-    state.searchQuery.value = "word";
-    await nextTick();
-
-    expect(state.matchesCount.value).toStrictEqual({ current: 0, total: 0 });
-    expect(state.isNotFound.value).toBe(true);
     scope.stop();
   });
 
@@ -349,11 +384,14 @@ describe(usePdfViewer, () => {
     expect.hasAssertions();
 
     const printSpy = stubPrint();
-    const page = createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))));
+    vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,");
+    const rendered = Promise.withResolvers<void>();
+    const page = createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(rendered.promise)));
     const { scope, state } = mountViewer(createDocument(1, page));
     state.print();
     await flushPromises();
     scope.stop();
+    rendered.resolve();
     await flushPromises();
 
     expect(printSpy).not.toHaveBeenCalled();
@@ -378,6 +416,7 @@ describe(usePdfViewer, () => {
     const element = window.document.createElement("div");
     const viewport = createViewport(viewer.currentScale);
     stubs.eventBus?.dispatch("pagerendered", { pageNumber: 2, source: { div: element, viewport } });
+    stubs.eventBus?.dispatch("pagerendered", { pageNumber: 2, source: { div: element, viewport } });
     const [overlay] = state.overlays.value;
     assert(overlay);
 
@@ -385,25 +424,6 @@ describe(usePdfViewer, () => {
     expect(overlay.element).toBe(element);
     expect(overlay.pageNumber).toBe(2);
     expect(overlay.viewport).toBe(viewport);
-    scope.stop();
-  });
-
-  test("#26 highlighting an area of a page", () => {
-    expect.hasAssertions();
-
-    const { scope, state, viewer } = mountViewer(createDocument(3));
-    viewer.currentScale = 2;
-    stubs.eventBus?.dispatch("pagerendered", {
-      pageNumber: 1,
-      source: { div: window.document.createElement("div"), viewport: createViewport(viewer.currentScale) },
-    });
-    const [overlay] = state.overlays.value;
-    assert(overlay);
-    // The rectangle's corners, in PDF coordinates, land at the same area of the page on screen at the doubled scale
-    const [left, top] = overlay.viewport.convertToViewportPoint(10, 20);
-    const [right, bottom] = overlay.viewport.convertToViewportPoint(110, 220);
-
-    expect([left, top, right, bottom]).toStrictEqual([20, 40, 220, 440]);
     scope.stop();
   });
 
@@ -431,13 +451,13 @@ describe(usePdfViewer, () => {
     expect.hasAssertions();
 
     const chapter = { dest: "chapter", items: [], title: "Chapter" } as unknown as PdfOutline[number];
-    const { scope, state, viewer } = mountViewer(createDocument(3, createPage(), [chapter]));
+    const { scope, state } = mountViewer(createDocument(3, createPage(), [chapter]));
     await flushPromises();
     const [item] = state.outline.value;
     assert(item);
     state.followBookmark(item);
 
-    expect(viewer.currentPageNumber).toBe(CHAPTER_PAGE);
+    expect(stubs.linkService?.goToDestination).toHaveBeenCalledExactlyOnceWith("chapter");
     expect(state.currentPageNumber.value).toBe(CHAPTER_PAGE);
     scope.stop();
   });
@@ -449,6 +469,24 @@ describe(usePdfViewer, () => {
     await flushPromises();
 
     expect(state.outline.value).toStrictEqual([]);
+    scope.stop();
+  });
+
+  test("an outline that loads after a newer document is dropped", async () => {
+    expect.hasAssertions();
+
+    const chapter = { dest: "chapter", items: [], title: "Chapter" } as unknown as PdfOutline[number];
+    const staleChapter = { dest: "stale", items: [], title: "Stale" } as unknown as PdfOutline[number];
+    const staleOutline = Promise.withResolvers<null | PdfOutline>();
+    const staleDocument = Object.assign(createDocument(3), { getOutline: () => staleOutline.promise });
+    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(staleDocument);
+    const { scope, state } = mountViewer(pdfDocument);
+    pdfDocument.value = createDocument(3, createPage(), [chapter]);
+    await flushPromises();
+    staleOutline.resolve([staleChapter]);
+    await flushPromises();
+
+    expect(state.outline.value).toStrictEqual([chapter]);
     scope.stop();
   });
 

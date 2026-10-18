@@ -66,6 +66,12 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 - **WHEN** the reader fits it to the width
 - **THEN** a page fills the container's width
 
+#### Scenario: Opening a document fitted to the container
+
+- **GIVEN** a viewer on a narrow container
+- **WHEN** a document loads
+- **THEN** its pages are fitted to the container
+
 #### Scenario: Pinching to zoom
 
 - **GIVEN** two pointers on the viewer's container

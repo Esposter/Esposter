@@ -6,7 +6,6 @@ import type { PdfViewerState } from "#src/models/PdfViewerState";
 import type { PageViewport, PDFDocumentProxy } from "pdfjs-dist";
 import type {
   EventBus as PdfJsEventBus,
-  PDFFindController as PdfJsFindController,
   PDFLinkService as PdfJsLinkService,
   PDFViewer as PdfJsViewer,
 } from "pdfjs-dist/web/pdf_viewer.mjs";
@@ -23,6 +22,12 @@ import {
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
 import { downloadFile, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { computed, onScopeDispose, ref, shallowRef, toValue, watch } from "vue";
+
+interface FindTextOptions {
+  isPrevious?: boolean;
+  query: string | string[];
+  type?: string;
+}
 
 interface UsePdfViewerOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
@@ -59,7 +64,6 @@ export const usePdfViewer = ({
   let abortController: AbortController | undefined;
   let containerElement: HTMLDivElement | undefined;
   let eventBus: PdfJsEventBus | undefined;
-  let findController: PdfJsFindController | undefined;
   let linkService: PdfJsLinkService | undefined;
   let pdfViewer: PdfJsViewer | undefined;
   let resizeObserver: ResizeObserver | undefined;
@@ -97,9 +101,12 @@ export const usePdfViewer = ({
     abortController = viewerAbortController;
     containerElement = containerValue;
     eventBus = bus;
-    findController = controller;
     linkService = links;
     pdfViewer = instance;
+    // The renderer takes a preset scale only once its pages exist, which pagesinit announces
+    bus.on("pagesinit", () => {
+      instance.currentScaleValue = "auto";
+    });
     bus.on("pagechanging", (event: { pageNumber: number }) => {
       currentPageNumber.value = event.pageNumber;
     });
@@ -133,8 +140,20 @@ export const usePdfViewer = ({
       if (currentScaleValue) pdfViewer.currentScaleValue = currentScaleValue;
     });
     resizeObserver.observe(containerValue);
-    window.document.addEventListener("fullscreenchange", onFullscreenChange, { signal });
-    window.addEventListener("afterprint", removePrint, { signal });
+    window.document.addEventListener(
+      "fullscreenchange",
+      () => {
+        onFullscreenChange();
+      },
+      { signal },
+    );
+    window.addEventListener(
+      "afterprint",
+      () => {
+        removePrint();
+      },
+      { signal },
+    );
     applyDocument(toValue(pdfDocument));
   };
   const loadOutline = getSynchronizedFunction(async (loaded: PDFDocumentProxy) => {
@@ -145,7 +164,7 @@ export const usePdfViewer = ({
     }).match(noop, console.error);
   });
   const applyDocument = (loaded: PDFDocumentProxy | undefined) => {
-    if (!pdfViewer || !linkService || !findController) return;
+    if (!pdfViewer || !linkService) return;
 
     pagesCount.value = loaded?.numPages ?? 0;
     overlays.value = [];
@@ -158,21 +177,18 @@ export const usePdfViewer = ({
     pagesRotation.value = 0;
     matchesCount.value = { current: 0, total: 0 };
     isNotFound.value = false;
-    // The find controller takes no empty document, so a cleared viewer keeps the last one it searched until it is loaded again
-    if (loaded) findController.setDocument(loaded);
-    if (loaded) pdfViewer.currentScaleValue = "auto";
     if (!loaded) return;
 
     loadOutline(loaded);
     const terms = toValue(highlightTerms);
-    if (terms.length > 0) findText(terms, "", false);
+    if (terms.length > 0) findText({ query: terms });
   };
   // A new query is searched from its first match, and a step to the next or previous one again from where the search is
-  const findText = (query: string | string[], type: string, findPrevious: boolean) => {
+  const findText = ({ isPrevious = false, query, type = "" }: FindTextOptions) => {
     eventBus?.dispatch("find", {
       caseSensitive: isMatchCase.value,
       entireWord: isWholeWord.value,
-      findPrevious,
+      findPrevious: isPrevious,
       highlightAll: true,
       matchDiacritics: false,
       query,
@@ -217,10 +233,10 @@ export const usePdfViewer = ({
     if (pdfViewer) pdfViewer.pagesRotation = (pdfViewer.pagesRotation + PDF_ROTATION_STEP) % PDF_FULL_TURN;
   };
   const findNext = () => {
-    findText(searchQuery.value, "again", false);
+    findText({ query: searchQuery.value, type: "again" });
   };
   const findPrevious = () => {
-    findText(searchQuery.value, "again", true);
+    findText({ isPrevious: true, query: searchQuery.value, type: "again" });
   };
   const toggleFullscreen = getSynchronizedFunction(async () => {
     const element = containerElement;
@@ -273,7 +289,7 @@ export const usePdfViewer = ({
     },
   );
   watch([searchQuery, isMatchCase, isWholeWord], () => {
-    findText(searchQuery.value, "", false);
+    findText({ query: searchQuery.value });
   });
   onScopeDispose(() => {
     removePrint();
