@@ -14,6 +14,7 @@ import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readQuestMaps } from "#src/services/genshinText/readQuestMaps";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
   CHARACTER_EXP_ITEM_ID,
@@ -82,7 +83,8 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   ];
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const cookingRecipes = readCookingRecipes();
-  const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
+  const { mainQuestMap, subQuestMap } = readQuestMaps();
+  const questRewardItemIds = [...readCarriedQuestRewards(mainQuestMap, subQuestMap).values()].flatMap((rewards) =>
     rewards.map(({ itemId }) => itemId),
   );
   const itemIds = [

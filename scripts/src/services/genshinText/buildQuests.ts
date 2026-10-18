@@ -1,7 +1,5 @@
 import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
 import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
-import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
-import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest } from "genshin-world";
 
 import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
@@ -12,12 +10,12 @@ import {
   MAIN_QUEST_DEFAULT_TYPE,
   MAIN_QUEST_TABLE_NAME,
   QUEST_BINARY_DIRECTORY,
-  SUB_QUEST_TABLE_NAME,
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readQuestMaps } from "#src/services/genshinText/readQuestMaps";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
 import { readTalk } from "#src/services/genshinText/readTalk";
@@ -46,17 +44,12 @@ import { join } from "node:path";
 export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
-  const mainQuestMap = new Map(
-    readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME).map((mainQuest) => [mainQuest.id, mainQuest]),
-  );
-  const subQuestMap = new Map(
-    readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME).map((subQuest) => [subQuest.subId, subQuest]),
-  );
+  const { mainQuestMap, subQuestMap } = readQuestMaps();
   const givingMap = new Map(readExcelTable<DumpedGiving>(GIVING_TABLE_NAME).map((giving) => [giving.id, giving]));
   const givingGroupMap = new Map(
     readExcelTable<DumpedGivingGroup>(GIVING_GROUP_TABLE_NAME).map((givingGroup) => [givingGroup.id, givingGroup]),
   );
-  const rewardsByQuest = readCarriedQuestRewards();
+  const rewardsByQuest = readCarriedQuestRewards(mainQuestMap, subQuestMap);
   const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
     const rewards = rewardsByQuest.get(questId) ?? [];
