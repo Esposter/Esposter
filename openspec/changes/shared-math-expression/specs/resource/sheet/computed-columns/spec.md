@@ -30,6 +30,23 @@ A math computed column SHALL evaluate its expression over the values of the sour
 - **WHEN** the price is 80
 - **THEN** the cell shows 1
 
+### Requirement: A cycle of computed columns shows empty cells
+
+A computed column that depends on itself, directly or through other computed columns, SHALL show empty cells rather than an error.
+
+#### Scenario: Two columns depend on each other
+
+- **GIVEN** two computed columns each use the other as a source
+- **WHEN** the sheet is shown
+- **THEN** both columns show empty cells
+- **AND** no error is shown
+
+#### Scenario: Two math columns depend on each other
+
+- **GIVEN** two math columns each add one to the other
+- **WHEN** the sheet is shown
+- **THEN** both columns show empty cells
+
 ## ADDED Requirements
 
 ### Requirement: A stored math expression never stops a sheet opening
