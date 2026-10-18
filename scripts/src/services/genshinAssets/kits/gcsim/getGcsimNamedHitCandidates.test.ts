@@ -51,6 +51,7 @@ describe(getGcsimNamedHitCandidates, () => {
     constantMap: new Map(),
     filePaths: [],
     folder: "amber",
+    goSources: [],
     queuedAttacks: [],
     talentArrayMap: new Map(),
     talentFile: "amber.go",
@@ -97,6 +98,29 @@ describe(getGcsimNamedHitCandidates, () => {
       { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
+  });
+
+  test("keys a named hit's variant at a constellation given beside its base, and its multiplier names that constellation", () => {
+    expect.hasAssertions();
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(gcsim, tables, [4]);
+    const constellationMultiplierMap = new Map<string, unknown>([
+      [
+        "hits.fieryRainArrows.0.multiplier",
+        { constellation: 4, index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+      ],
+    ]);
+
+    expect(
+      getNamedHitKitCandidates(constellationMultiplierMap, namedHitCandidateMap)
+        .get("hits.fieryRainArrows.0.multiplier")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ constellation: 4, index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }]);
+    expect(
+      getNamedHitKitCandidates(multiplierMap(BURST_PROUD_SKILL_GROUP_ID), namedHitCandidateMap)
+        .get("hits.fieryRainArrows.0.multiplier")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }]);
   });
 
   test("joins a named hit's fields to its variable's one literal where gcsim reassigns that literal's multiplier, and to none for two literals", () => {
@@ -170,6 +194,7 @@ describe(getGcsimNamedHitCandidates, () => {
     const namedHitCandidateMap = getGcsimNamedHitCandidates(
       {
         ...gcsim,
+        goSources: [],
         queuedAttacks: [
           { attackLine: 10, delay: 120, delayLine: 20, file: "burst.go", line: 19 },
           { attackLine: 10, delay: 96, delayLine: 30, file: "burst.go", line: 29 },
@@ -198,6 +223,7 @@ describe(getGcsimNamedHitCandidates, () => {
     const namedHitCandidateMap = getGcsimNamedHitCandidates(
       {
         ...gcsim,
+        goSources: [],
         queuedAttacks: [
           {
             attackLine: 10,
@@ -306,6 +332,7 @@ describe(getGcsimNamedHitCandidates, () => {
           },
         ],
       },
+      goSources: [],
       queuedAttacks: [{ attackName: "ai", delay: 0, delayLine: 34, file: "skill.go", line: 34 }],
       talentParameterMap: new Map([
         ["skill|Plume Dance Move DMG", { indexes: [4], line: 3 }],

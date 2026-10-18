@@ -12,7 +12,10 @@
   "frames.guoba": { "cause": "Unclassified", "value": 451 },
   "frames.pyronadoStart": { "cause": "Unclassified", "value": 56 },
   "hits.slowbakePyronadoTicks.length": { "cause": "Unclassified", "value": 12 },
-  "hits.slowbakePyronadoTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2339 } },
+  "hits.slowbakePyronadoTicks.0.multiplier": {
+    "source": "Gcsim",
+    "value": { "constellation": 4, "index": 3, "proudSkillGroupId": 2339 }
+  },
   "hits.slowbakePyronadoTicks.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.slowbakePyronadoTicks.1.area": {
     "cause": "Unclassified",

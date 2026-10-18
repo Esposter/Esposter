@@ -8,6 +8,8 @@ import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/Gcsim
 export interface GcsimHitSource {
   areaHitbox?: GcsimHitbox;
   attack?: GcsimAttack;
+  // The constellation a named hit's variant is read at, which its multiplier names
+  constellation?: number;
   hitmark?: { file: string; line: number; value: number };
   // The multiplier key the talent leaf writes, `multiplierFactor` for a stance's skill table multiplied into its normal attack
   multiplierKey?: GcsimMultiplierKey;

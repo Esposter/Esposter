@@ -67,7 +67,15 @@ export const createGcsimKitCandidateWriter = (
     // The talent file's labels, and the rest from its `AttackInfo` fields, its poise else from the poise variable's
     addHit: (
       path,
-      { areaHitbox, attack, hitmark, multiplierKey = GcsimMultiplierKey.Multiplier, poiseDamage, talentLeaf },
+      {
+        areaHitbox,
+        attack,
+        constellation,
+        hitmark,
+        multiplierKey = GcsimMultiplierKey.Multiplier,
+        poiseDamage,
+        talentLeaf,
+      },
       targetingArea,
     ) => {
       if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
@@ -85,7 +93,11 @@ export const createGcsimKitCandidateWriter = (
           isLabelled = true;
           add(
             `${path}.${multiplierKey}`,
-            { index, proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]] },
+            {
+              index,
+              proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]],
+              ...(constellation !== undefined && { constellation }),
+            },
             toFile(talentFile),
             parameter.line,
           );
@@ -100,7 +112,12 @@ export const createGcsimKitCandidateWriter = (
             talentMultiplierMap,
           });
       if (talentArrayJoin !== undefined)
-        add(`${path}.multiplier`, talentArrayJoin.multiplier, toFile(talentFile), talentArrayJoin.line);
+        add(
+          `${path}.multiplier`,
+          { ...talentArrayJoin.multiplier, ...(constellation !== undefined && { constellation }) },
+          toFile(talentFile),
+          talentArrayJoin.line,
+        );
       if (attack === undefined) return;
       const fieldFile = toFile(attack.file);
       const fieldLine = (key: string) => attack.fieldLineMap[key] ?? attack.line;

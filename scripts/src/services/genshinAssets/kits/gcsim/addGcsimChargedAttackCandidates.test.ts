@@ -68,6 +68,7 @@ const gcsim: GcsimCharacter = {
   filePaths: [],
   folder: "iansan",
   holdCooldowns: [],
+  goSources: [],
   queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
   talentArrayMap: new Map(),
   talentFile: "iansan.go",
@@ -117,6 +118,7 @@ describe(addGcsimChargedAttackCandidates, () => {
     const fallbackGcsim: GcsimCharacter = {
       ...gcsim,
       constantMap: new Map([...gcsim.constantMap].filter(([name]) => name !== "chargeHitmarks")),
+      goSources: [],
       queuedAttacks: [
         { attackName: "ai", delayLine: 69, file: "charge.go", line: 60 },
         { attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 },

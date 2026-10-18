@@ -87,9 +87,9 @@ const readOtherClosures = (tokens: readonly GoToken[], scope: GoNamedFunction, p
 const checkIsInBlocks = (blocks: readonly GoBlock[], index: number): boolean =>
   blocks.some(({ end, start }) => start < index && index < end);
 
-// Whether the block opening at a position is a constellation branch, `if c.Base.Cons >= N {`, which runs only from that
-// Constellation on, so the base kit never takes it
-const checkIsConstellationBranch = (tokens: readonly GoToken[], start: number): boolean =>
+// The constellation a block opening at a position is a branch of, `if c.Base.Cons >= N {`, which runs only from that
+// Constellation on, else Undefined
+const readConstellationBranch = (tokens: readonly GoToken[], start: number): number | undefined =>
   tokens[start - 1]?.kind === GoTokenKind.Number &&
   checkIsGoPunctuation(tokens[start - 2], ">=") &&
   tokens[start - 3]?.text === "Cons" &&
@@ -97,7 +97,9 @@ const checkIsConstellationBranch = (tokens: readonly GoToken[], start: number): 
   tokens[start - 5]?.text === "Base" &&
   checkIsGoPunctuation(tokens[start - 6], ".") &&
   tokens[start - 7]?.text === "c" &&
-  tokens[start - 8]?.text === "if";
+  tokens[start - 8]?.text === "if"
+    ? Number(tokens[start - 1]?.text)
+    : undefined;
 
 // The default of a local declared with its ok flag, `travel, ok := p["travel"]`: the first constant its own assignments
 // Give, `travel = 5` in the branch that defaults it, since the player's parameter is absent in the default run
@@ -149,19 +151,20 @@ const readAssignmentKind = (tokens: readonly GoToken[], position: number): "upda
 
 // The latest assignment to a name in a function before a position, and whether a block of its own always reaches the
 // Position, so no branch between the two can skip it. An update reads the value it changes, which no constant gives.
-// In the base kit a constellation branch's `=` is left out, though its update is not
+// At a constellation, a constellation branch's `=` the constellation does not reach is left out, though its update is
+// Not, and one it reaches always runs, so it reaches a position past its block in the block around it
 const findAssignment = (
   tokens: readonly GoToken[],
   scope: GoNamedFunction,
   name: string,
   position: number,
   constantMap: ReadonlyMap<string, GoConstant>,
-  isBase: boolean,
+  constellation: number | undefined,
 ): GoAssignment => {
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
   const otherClosures = readOtherClosures(tokens, scope, position);
-  let latest: { kind: "update" | "value"; position: number } | undefined;
+  let latest: { isTaken: boolean; kind: "update" | "value"; position: number } | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
     const kind =
       tokens[previous]?.kind === GoTokenKind.Identifier &&
@@ -172,15 +175,20 @@ const findAssignment = (
         : undefined;
     if (kind === undefined) continue;
     const block = findBlock(tokens, previous);
-    // A position inside such a branch reads its reassignment, which has no base value
-    const isLeftOut = isBase && kind === "value" && checkIsConstellationBranch(tokens, block.start);
-    if (!isLeftOut) latest = { kind, position: previous };
+    const threshold =
+      constellation === undefined || kind !== "value" ? undefined : readConstellationBranch(tokens, block.start);
+    // A position inside such a branch reads its reassignment, which the constellation does not give
+    const isLeftOut = threshold !== undefined && constellation !== undefined && threshold > constellation;
+    if (!isLeftOut) latest = { isTaken: threshold !== undefined, kind, position: previous };
     else if (block.start < position && position < block.end) return { kind: "conditional" };
   }
   if (latest === undefined) return { kind: "none" };
   if (latest.kind === "update") return { kind: "conditional" };
   const block = findBlock(tokens, latest.position);
-  return block.start < position && position < block.end
+  if (block.start < position && position < block.end) return { kind: "dominating", valueStart: latest.position + 2 };
+  // A taken branch's block is one the block around it always runs past, so a position after it in that block is reached
+  const outer = findBlock(tokens, block.start);
+  return latest.isTaken && block.end < position && outer.start < position && position < outer.end
     ? { kind: "dominating", valueStart: latest.position + 2 }
     : { kind: "conditional" };
 };
@@ -229,7 +237,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   const readClampedArgument = (argument: GoExpression, callPosition: number): number[] | undefined => {
     const scope = findScope(callPosition);
     if (argument.kind !== GoExpressionKind.Identifier || scope === undefined) return undefined;
-    const assignment = findAssignment(tokens, scope, argument.name, callPosition, constantMap, false);
+    const assignment = findAssignment(tokens, scope, argument.name, callPosition, constantMap, undefined);
     return assignment.kind === "dominating"
       ? readClampValues(parseGoExpression(tokens, assignment.valueStart).expression)
       : undefined;
@@ -253,14 +261,19 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
         for (const clampValue of clampValues) values.add(clampValue);
         continue;
       }
-      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, depth + 1, false));
+      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, depth + 1, undefined));
       if (value === undefined) return undefined;
       values.add(value);
     }
     return [...values];
   };
 
-  const resolveAt = (name: string, position: number, depth: number, isBase: boolean): GoValue | undefined => {
+  const resolveAt = (
+    name: string,
+    position: number,
+    depth: number,
+    constellation: number | undefined,
+  ): GoValue | undefined => {
     if (depth > MAX_DEPTH) return undefined;
     const scope = findScope(position);
     const parameterIndex = scope?.parameters.indexOf(name) ?? -1;
@@ -269,11 +282,13 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       return values?.length === 1 ? values[0] : undefined;
     }
     const assignment: GoAssignment =
-      scope === undefined ? { kind: "none" } : findAssignment(tokens, scope, name, position, constantMap, isBase);
+      scope === undefined
+        ? { kind: "none" }
+        : findAssignment(tokens, scope, name, position, constantMap, constellation);
     if (assignment.kind === "conditional") return undefined;
     if (assignment.kind === "dominating")
       return evaluateGoExpression(parseGoExpression(tokens, assignment.valueStart).expression, (inner) =>
-        resolveAt(inner, assignment.valueStart, depth + 1, isBase),
+        resolveAt(inner, assignment.valueStart, depth + 1, constellation),
       );
     return constantMap.get(name)?.value;
   };
@@ -285,7 +300,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       const argument = parseGoExpression(tokens, argumentStart).expression;
       const clampValues = readClampedArgument(argument, callPosition);
       if (clampValues !== undefined) return clampValues;
-      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, 0, false));
+      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, 0, undefined));
       return value === undefined ? undefined : [value];
     },
     // Every combination of the numbers a position's function's parameters take at their call sites, a parameter no
@@ -303,16 +318,18 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
         [new Map()],
       );
     },
-    resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, false),
-    // The value a name takes in the base kit at a position, where each constellation branch's `=` is left out, so a loop
-    // Bounded by a local one raises at a constellation reads the value the base kit gives it
-    resolveBaseName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, true),
+    resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, undefined),
+    // The value a name takes at a constellation at a position, where each constellation branch the constellation does
+    // Not reach has its `=` left out and each it reaches takes its own, so a loop bounded by a local one raises reads the
+    // Value that constellation gives it
+    resolveConstellationName: (name: string, position: number, constellation: number): GoValue | undefined =>
+      resolveAt(name, position, 0, constellation),
     // The first token of a local's value at a position, where one assignment dominates it, as a call passing `ap` reads
     // The constructor `ap := combat.NewCircleHitOnTarget(...)` gave it
     resolveAssignment: (name: string, position: number): number | undefined => {
       const scope = findScope(position);
       if (scope === undefined || scope.parameters.includes(name)) return undefined;
-      const assignment = findAssignment(tokens, scope, name, position, constantMap, false);
+      const assignment = findAssignment(tokens, scope, name, position, constantMap, undefined);
       return assignment.kind === "dominating" ? assignment.valueStart : undefined;
     },
   };

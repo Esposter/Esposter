@@ -18,6 +18,7 @@ import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim
 import { readGcsimTagCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
+import { readOverlayConstellations } from "#src/services/genshinAssets/kits/readOverlayConstellations";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
 import { readKitTablesWithDonors } from "#src/services/genshinAssets/kits/tables/readKitTablesWithDonors";
@@ -89,7 +90,8 @@ export const readKitInputs = async ({
         : getGcsimKitCandidates(gcsim, tables, plungeFallback, getKitBagPaths(publishedRecord ?? {}, overlay)),
       gcsimFolder === undefined ? new Map() : readGcsimCitedCandidates(overlay, gcsimDirectory, gcsimFolder),
     );
-    const namedHitCandidateMap = gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables);
+    const namedHitCandidateMap =
+      gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables, readOverlayConstellations(overlay));
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))
         if (!checkIsGcsimValueGiven(gcsimCandidateMap.get(path))) notes.push(`gcsim gives no ${constant}`);

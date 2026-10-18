@@ -10,6 +10,7 @@ import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/add
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { compareQueuedDelays } from "#src/services/genshinAssets/kits/compareQueuedDelays";
 import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";
+import { readNamedHitKey } from "#src/services/genshinAssets/kits/readNamedHitKey";
 import { kitParameterSchema } from "genshin-world";
 
 const INDEXED_HIT_REGEX = /^(?<group>.+)\.(?<index>\d+)$/u;
@@ -90,35 +91,39 @@ export const getNamedHitKitCandidates = (
     if (hitPath === undefined || typeof parameter !== "object") continue;
     const { group, index } = splitHitPath(hitPath);
     listLengthMap.set(group, (listLengthMap.get(group) ?? 0) + 1);
-    const key = `${parameter.proudSkillGroupId}|${parameter.index}`;
+    const key = readNamedHitKey(parameter);
     const namedHit = namedHitCandidateMap.get(key);
     if (namedHit !== undefined)
       groupHitsMap.set(group, [...(groupHitsMap.get(group) ?? []), { hitPath, index, key, namedHit }]);
   }
   for (const [group, hits] of groupHitsMap) {
     const listLength = listLengthMap.get(group) ?? 0;
+    const [firstHit] = hits;
+    // A named list of indexed hits whose hits all join one key is as long as the calls that key makes, as a loop of one
+    // Call makes them, though the source may name only some of its hits' multipliers. A hit with no index is a hit of its
+    // Own, not a list
+    const isOneKeyList =
+      group.startsWith("hits.") &&
+      firstHit !== undefined &&
+      hits.length === listLength &&
+      hits.every(({ hitPath, key }) => hitPath !== group && key === firstHit.key);
+    const lengthCalls = firstHit === undefined || !isOneKeyList ? undefined : firstHit.namedHit.queuedCalls;
+    // Calls whose delays land in order give each hit its own call, so they give the list its length, else the list's own
+    const callsLength =
+      lengthCalls !== undefined && checkIsLandingOrdered(lengthCalls) ? lengthCalls.length : listLength;
     const siteCallsMap = readSiteCallsMap(new Map(hits.map(({ key, namedHit }) => [key, namedHit])));
     for (const { hitPath, index, key, namedHit } of hits) {
       for (const [field, candidates] of namedHit.fieldMap) candidateMap.set(`${hitPath}.${field}`, candidates);
       const hitmark = valueMap.get(`${hitPath}.hitmarkFrames`);
-      for (const [field, candidates] of readListHitCalls(key, namedHit, index, listLength, siteCallsMap, hitmark) ?? [])
+      for (const [field, candidates] of readListHitCalls(key, namedHit, index, callsLength, siteCallsMap, hitmark) ??
+        [])
         candidateMap.set(`${hitPath}.${field}`, candidates);
     }
-    // A named list of indexed hits whose hits all join one key takes its length from the calls that key makes, where they
-    // Are as many as its hits, as a loop of one call makes them. A hit with no index is a hit of its own, not a list
-    const [firstHit] = hits;
-    const lengthCall = firstHit?.namedHit.queuedCalls[0];
-    if (
-      group.startsWith("hits.") &&
-      firstHit !== undefined &&
-      lengthCall !== undefined &&
-      hits.length === listLength &&
-      hits.every(({ hitPath, key }) => hitPath !== group && key === firstHit.key) &&
-      firstHit.namedHit.queuedCalls.length === listLength
-    )
+    const lengthCall = lengthCalls?.[0];
+    if (lengthCall !== undefined && lengthCalls?.length === callsLength)
       addKitCandidate(candidateMap, `${group}.length`, {
         provenance: { file: lengthCall.file, line: lengthCall.line, source: KitSource.Gcsim },
-        value: listLength,
+        value: callsLength,
       });
   }
   return candidateMap;

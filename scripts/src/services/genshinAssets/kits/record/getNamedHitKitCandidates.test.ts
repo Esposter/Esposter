@@ -68,6 +68,29 @@ describe(getNamedHitKitCandidates, () => {
     ).toStrictEqual([{ provenance: { file: "skill.go", line: 113, source: KitSource.Gcsim }, value: 3 }]);
   });
 
+  test("takes a list's length and its first hit's call from the calls its one named key makes, where the source names one hit", () => {
+    expect.hasAssertions();
+
+    // A loop of three calls, of which the source names only the first hit's multiplier, as the overlay names the others
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "1|0",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [call("burst.go:4", 56), call("burst.go:4", 129), call("burst.go:4", 202)],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([["hits.burst.0.multiplier", { index: 0, proudSkillGroupId: 1 }]]);
+
+    const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+
+    expect(candidateMap.get("hits.burst.length")).toStrictEqual([
+      { provenance: { file: "burst.go", line: 5, source: KitSource.Gcsim }, value: 3 },
+    ]);
+    expect(hitmarks(candidateMap, "hits.burst.0.hitmarkFrames")).toStrictEqual([56]);
+  });
+
   test("gives no length to a hit with no index, `hits.sword`, which is a hit of its own rather than a list", () => {
     expect.hasAssertions();
 
