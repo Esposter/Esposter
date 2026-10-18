@@ -1,19 +1,10 @@
-import type { ElementalMonument } from "#src/models/puzzle/ElementalMonument";
 import type { MonumentPuzzle } from "#src/models/puzzle/MonumentPuzzle";
 
 import { Element } from "#src/models/Element";
-import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { createMonument } from "#src/services/puzzle/createMonument.test";
 import { stepMonumentPuzzle } from "#src/services/puzzle/stepMonumentPuzzle";
 import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMonument";
 import { describe, expect, test } from "vitest";
-
-const createMonument = (isLit: boolean): ElementalMonument => ({
-  element: Element.Pyro,
-  elementalState: createElementalState(),
-  isLit,
-  isTimed: false,
-  litSeconds: 0,
-});
 
 describe(stepMonumentPuzzle, () => {
   test("lighting every monument together solves the puzzle", () => {
