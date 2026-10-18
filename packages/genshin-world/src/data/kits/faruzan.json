@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 96 },
   "frames.firstWhirlwindPulse": { "cause": "Unsourced", "value": 180 },
   "frames.dazzlingPolyhedron": { "cause": "Unsourced", "value": 788 },
@@ -11,10 +10,6 @@
   "hits.whirlwindPulse.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.whirlwindPulse.multiplier": { "cause": "Unsourced", "value": 0 },
   "hits.whirlwindPulse.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "parameters.perfidiousWindRuinResistanceReduction": {
     "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 7639 }
