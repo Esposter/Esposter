@@ -65,7 +65,7 @@ Greps, per unit:
 
 9. `^[ \t]*//.{100,}\n[ \t]*// ?\S+( \S+)?\n[ \t]*//.{90,}` multiline (`rg -U`) over `*.ts`, `*.vue` — a one- or two-word comment line between two full ones. A wrap that broke one line at the width without reflowing the paragraph leaves the remainder standing alone, and the sentence reads past it. The fix is reflowing the whole paragraph, which is the rewrap grep 8 then re-reads; a paragraph's last line before a new paragraph starts is not this, which is why the shape needs the full line after it. An indented list item's own continuation is the one hit that stays.
 
-10. `^[ \t]*//[^\n]*\n[ \t]*export\b` multiline (`rg -U`) over `*.ts` — a `//` line directly above an export, the shape `formatting`'s doc-block rule says the swept tree holds there. A `*/` line directly above an export is the shape a pass must not leave, and that count is zero.
+10. `^[ \t]*//[^\n]*\n[ \t]*export\b` multiline (`rg -U`) over `*.ts` — a `//` line directly above an export, the shape `formatting`'s doc-block rule says the swept tree holds there. A `*/` line directly above an export is not this count: the hits of `\*/[ \t]*\n[ \t]*export\b` are the `/** */` doc blocks grep 6 keeps on an exported surface and the one-line `/* */` directives grep 8 excludes. Set those aside and no other `/* */` block sits above an export, so that count is zero.
 
 Never swept anywhere: 3-line `//` blocks with every line short.
 
