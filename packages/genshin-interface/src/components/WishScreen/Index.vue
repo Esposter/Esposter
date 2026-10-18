@@ -161,7 +161,7 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
     <div v-if="results.length > 0" class="results" @click="emit('dismiss')">
       <ul class="result-list">
         <li
-          v-for="({ isCapturingRadiance, name, rarity, wishReturn }, index) of results"
+          v-for="({ isCapturingRadiance, name, rarity, stellaFortuna, wishReturn }, index) of results"
           :key="index"
           class="result"
           :data-capturing-radiance="isCapturingRadiance"
@@ -169,6 +169,7 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
         >
           <span class="result-name">{{ name }}</span>
           <span class="stars">{{ "★".repeat(rarity) }}</span>
+          <span v-if="stellaFortuna" class="result-stella-fortuna">{{ stellaFortuna }}</span>
           <span class="result-return">{{ wishReturn }}</span>
         </li>
       </ul>
@@ -386,6 +387,10 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
 
 .result[data-rarity="5"] {
   background: #c18b4c;
+}
+
+.result-stella-fortuna {
+  font-size: calc(var(--unit) * 14);
 }
 
 .result-return {

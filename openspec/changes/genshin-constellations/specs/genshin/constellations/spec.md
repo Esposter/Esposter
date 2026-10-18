@@ -73,3 +73,9 @@ The wish screen SHALL show on each result card the Stella Fortuna that the draw 
 - **GIVEN** a wish whose draw is a duplicate of a held character
 - **WHEN** the result card for that draw is shown
 - **THEN** the card shows the Stella Fortuna the draw brings
+
+#### Scenario: a five-star past six copies' result card shows its Masterless Stella Fortuna
+
+- **GIVEN** a wish whose draw is a five-star held past its sixth copy
+- **WHEN** the result card for that draw is shown
+- **THEN** the card shows the Masterless Stella Fortuna the draw brings

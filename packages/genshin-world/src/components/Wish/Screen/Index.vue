@@ -5,6 +5,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
+import type { WishResult } from "#src/models/wish/WishResult";
 import type { WishResultCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
@@ -38,6 +39,8 @@ interface Props {
   gameText: GameText;
   // The names the stat tables cite by text id, in the reader's language
   nameText: Readonly<Record<string, string>>;
+  // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
+  stellaFortunaNameTextIdMap: ReadonlyMap<number, string>;
   // The game's stat tables, which the banners' pools are read from
   statTables: StatTables;
 }
@@ -50,7 +53,7 @@ const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, nameText, statTables } = defineProps<Props>();
+const { gameText, nameText, stellaFortunaNameTextIdMap, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The banners the world offers, their pools read from the stat tables and named in the reader's language
 const banners = computed(() => createBanners(statTables, nameText));
@@ -68,6 +71,19 @@ const bannerLabels = computed(() =>
 );
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
+// The Stella Fortuna a result brought, as its count text: the drawn character's own, named in the reader's language, or the
+// Masterless one a five-star past six copies brought, "" for none
+const toStellaFortunaText = ({ item, masterlessStellaFortunaCount, stellaFortunaCount }: WishResult): string => {
+  if (stellaFortunaCount) {
+    const nameTextId = stellaFortunaNameTextIdMap.get(item.id);
+    // A name the names do not hold yet shows no count, rather than a bare one
+    const name = nameTextId === undefined ? "" : nameText[nameTextId];
+    return name ? fillGameTextValues(gameText[GameTextKey.ItemCount], name, stellaFortunaCount) : "";
+  }
+  return masterlessStellaFortunaCount
+    ? toCountText(Currency.MasterlessStellaFortuna, masterlessStellaFortunaCount)
+    : "";
+};
 // The open banner's ×1 and ×10, each offered while the wallet holds its Fates and the beginners' wish has room for it
 const sets = computed(() => {
   const kind = bannerKind.value;
@@ -179,14 +195,20 @@ const wish = (count: number) => {
   inventory.value = nextInventory;
   pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
   wallet.value = wishes.wallet;
-  results.value = sortWishResults(wishes.results).map(
-    ({ isCapturingRadiance, item: { name, rarity }, wishReturn }) => ({
+  results.value = sortWishResults(wishes.results).map((wishResult) => {
+    const {
+      isCapturingRadiance,
+      item: { name, rarity },
+      wishReturn,
+    } = wishResult;
+    return {
       isCapturingRadiance,
       name,
       rarity,
+      stellaFortuna: toStellaFortunaText(wishResult),
       wishReturn: wishReturn ? toCountText(wishReturn.currency, wishReturn.quantity) : "",
-    }),
-  );
+    };
+  });
 };
 </script>
 

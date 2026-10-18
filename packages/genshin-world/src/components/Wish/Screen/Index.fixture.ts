@@ -29,5 +29,6 @@ export const props = {
   nameText: englishNameText,
   pityMap,
   statTables,
+  stellaFortunaNameTextIdMap: new Map<number, string>(),
   wallet,
 };

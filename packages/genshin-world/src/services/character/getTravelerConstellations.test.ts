@@ -9,11 +9,16 @@ describe(getTravelerConstellations, () => {
   const ELECTRO_DEPOT_ID = 1;
   const PYRO_DEPOT_ID = 2;
   const CONSTELLATION = { descriptionTextId: "1", nameTextId: "1", paramList: [] };
+  const STELLA_FORTUNA = { itemId: 1, nameTextId: "1" };
   const CONSTELLATION_KIT: CharacterConstellationKit = {
     characterId: 1,
     depots: [
-      { constellations: [CONSTELLATION], depotId: ELECTRO_DEPOT_ID },
-      { constellations: [{ ...CONSTELLATION, nameTextId: "2" }], depotId: PYRO_DEPOT_ID },
+      { constellations: [CONSTELLATION], depotId: ELECTRO_DEPOT_ID, stellaFortuna: STELLA_FORTUNA },
+      {
+        constellations: [{ ...CONSTELLATION, nameTextId: "2" }],
+        depotId: PYRO_DEPOT_ID,
+        stellaFortuna: { ...STELLA_FORTUNA, itemId: 2 },
+      },
     ],
   };
   const SKILL_KIT: CharacterSkillKit = {

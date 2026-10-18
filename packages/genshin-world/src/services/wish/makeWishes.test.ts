@@ -54,6 +54,7 @@ describe(makeWishes, () => {
         {
           isCapturingRadiance: false,
           item: character,
+          stellaFortunaCount: 1,
           wishReturn: { currency: Currency.MasterlessStarglitter, quantity: FIVE_STAR_DUPLICATE_STARGLITTER },
         },
       ],
@@ -83,6 +84,7 @@ describe(makeWishes, () => {
         {
           isCapturingRadiance: false,
           item: character,
+          masterlessStellaFortunaCount: 1,
           wishReturn: { currency: Currency.MasterlessStarglitter, quantity: FIVE_STAR_COMPLETE_STARGLITTER },
         },
       ],
@@ -92,6 +94,36 @@ describe(makeWishes, () => {
         [Currency.MasterlessStarglitter]: FIVE_STAR_COMPLETE_STARGLITTER,
         [Currency.MasterlessStellaFortuna]: 1,
       },
+    });
+  });
+
+  test("a duplicate's result card shows its Stella Fortuna", () => {
+    expect.hasAssertions();
+
+    expect(
+      makeWishes(
+        {
+          banner,
+          count: 1,
+          heldCountMap: new Map([[character.id, 1]]),
+          pity,
+          wallet: { ...wallet, [Currency.AcquaintFate]: 1 },
+        },
+        random,
+      ),
+    ).toStrictEqual({
+      heldCountMap: new Map([[character.id, 2]]),
+      pity: { ...pity, fourStarCount: 1, wishCount: 1 },
+      results: [
+        {
+          isCapturingRadiance: false,
+          item: character,
+          stellaFortunaCount: 1,
+          wishReturn: { currency: Currency.MasterlessStarglitter, quantity: FIVE_STAR_DUPLICATE_STARGLITTER },
+        },
+      ],
+      stellaFortunaCountMap: new Map([[character.id, 1]]),
+      wallet: { ...wallet, [Currency.MasterlessStarglitter]: FIVE_STAR_DUPLICATE_STARGLITTER },
     });
   });
 
