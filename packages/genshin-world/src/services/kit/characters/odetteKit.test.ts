@@ -16,7 +16,12 @@ import { STELLAR_VORTEX_LEVEL_TWO_STACKS } from "#src/services/combat/damage/con
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createOdetteKitBehaviour, ODETTE_CHARACTER_ID } from "#src/services/kit/characters/odetteKit";
+import {
+  createOdetteKitBehaviour,
+  DANCE_DOUBLE_ID,
+  ODETTE_CHARACTER_ID,
+  STELLAR_VORTEX_ID,
+} from "#src/services/kit/characters/odetteKit";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -33,7 +38,6 @@ const shapeEffects = (context: KitContext) =>
     effect.kind === "summon" ? { id: effect.id, stacks: effect.stacks } : effect.kind,
   );
 
-const DANCE_DOUBLE_ID = "danceDouble";
 // The Dance Double a summon leaves on the effects, and the frames each of its hits falls at from its summon
 const checkIsDanceDouble = (effect: KitEffect): effect is KitSummon =>
   effect.kind === "summon" && effect.id === DANCE_DOUBLE_ID;
@@ -75,7 +79,7 @@ describe(createOdetteKitBehaviour, () => {
       effects.map((effect) =>
         effect.kind === "summon" ? { id: effect.id, secondsRemaining: effect.secondsRemaining } : effect.kind,
       ),
-    ).toStrictEqual([{ id: "stellarVortex", secondsRemaining: 181 / 60 }]);
+    ).toStrictEqual([{ id: STELLAR_VORTEX_ID, secondsRemaining: 181 / 60 }]);
   });
 
   // Triggers a Stellar Swirl on the field into a context kept across calls, so a vortex's stacks carry from one to the next
@@ -97,7 +101,7 @@ describe(createOdetteKitBehaviour, () => {
 
     for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
 
-    expect(shapeEffects(context)).toStrictEqual([{ id: "stellarVortex", stacks: STELLAR_VORTEX_LEVEL_TWO_STACKS }]);
+    expect(shapeEffects(context)).toStrictEqual([{ id: STELLAR_VORTEX_ID, stacks: STELLAR_VORTEX_LEVEL_TWO_STACKS }]);
   });
 
   test("three more Stellar Swirls explode a vortex at once", () => {
@@ -112,7 +116,7 @@ describe(createOdetteKitBehaviour, () => {
     for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
     for (let swirl = 0; swirl < 2; swirl++) triggerStellarSwirl(context);
 
-    expect(shapeEffects(context)).toStrictEqual([{ id: "stellarVortex", stacks: STELLAR_VORTEX_MAX_STACKS - 1 }]);
+    expect(shapeEffects(context)).toStrictEqual([{ id: STELLAR_VORTEX_ID, stacks: STELLAR_VORTEX_MAX_STACKS - 1 }]);
 
     triggerStellarSwirl(context);
 
@@ -128,7 +132,7 @@ describe(createOdetteKitBehaviour, () => {
       enemyMap: new Map([[struckEnemy.id, struckEnemy]]),
       enemyTables,
     });
-    const vortex = createKitSummon(context.body, combatant, [], { id: "stellarVortex", stacks: 1 });
+    const vortex = createKitSummon(context.body, combatant, [], { id: STELLAR_VORTEX_ID, stacks: 1 });
 
     kit.onKitEvent?.({ effect: vortex, kind: KitEventKind.EffectExpired }, context, combatant);
 

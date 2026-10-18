@@ -17,8 +17,8 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 export const ODETTE_CHARACTER_ID = 10_000_150;
 
-const DANCE_DOUBLE_ID = "danceDouble";
-const STELLAR_VORTEX_ID = "stellarVortex";
+export const DANCE_DOUBLE_ID = "danceDouble";
+export const STELLAR_VORTEX_ID = "stellarVortex";
 // The Dance Double's two attacks by their index in the order they alternate in: Plume, then Wing, then Plume again
 const PLUME = 0;
 const WING = 1;
