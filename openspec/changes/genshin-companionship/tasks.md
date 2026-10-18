@@ -5,7 +5,7 @@
 
 ## 2. The Friendship Level 10 cap
 
-- [ ] 2.1 Grant no Companionship EXP to a character already at Friendship Level 10. Verify: a test named after the scenario 'a character at Friendship Level 10 gains no Companionship EXP', seen failing first.
+- [x] 2.1 Grant no Companionship EXP to a character already at Friendship Level 10. Verify: a test named after the scenario 'a character at Friendship Level 10 gains no Companionship EXP', seen failing first.
 
 ## 3. Claim values
 

@@ -3,7 +3,7 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
-x-waiting: "the Serenitea Pot's companions invited (the serenitea-pot unit's first step), which the dialogue at 4 and 7 is said of; the commissions' routing step (the commissions unit); random events have no page"
+x-waiting: "the Serenitea Pot's companions invited (the serenitea-pot unit's first step), which the dialogue at 4 and 7 is said of; the game exports the dialogue's lines are read from (1.1 and 1.2); the claim values wait on the recordings (3.1); the commission claim screen (the commissions unit) calls the built route; random events have no page"
 x-touches:
   [
     "scripts/src/services/genshinAssets/friendship/**",
