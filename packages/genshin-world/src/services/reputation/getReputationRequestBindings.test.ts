@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getReputationRequestBindings, () => {
   const FIRST_REWARD = { exp: 80, items: [{ count: 20_000, id: 202 }] };
-  const SECOND_REWARD = { exp: 80, items: [{ count: 20_000, id: 202 }] };
+  const SECOND_REWARD = { exp: 120, items: [{ count: 30_000, id: 202 }] };
 
   test("a request quest named by more than one group is bound once, to its first row", () => {
     expect.hasAssertions();

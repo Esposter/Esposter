@@ -26,29 +26,23 @@ const createBurningEnemy = () => {
   return enemy;
 };
 
-// Emilie with her total ATK at ATTACK, at the given ascension
-const createEmilieWithAttack = (ascension: number): Combatant => ({
-  ascension,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
-  characterId: EMILIE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: EMILIE_KIT,
-  level: 90,
-});
-
 // The DMG Bonus a normal attack of hers takes on a Burning enemy at the ascension
 const getBurningStrikeBonus = (ascension: number): number | undefined => {
-  const combatant = createEmilieWithAttack(ascension);
+  const combatant = createEmilieCombatant(ascension, [{ attribute: Attribute.Attack, value: ATTACK }]);
   return EMILIE_KIT.getStrikeDamageBonus?.(
     { body: KIT_BODY, combatant, hit: takeOne(takeOne(EMILIE_KIT.normalAttacks).hits) },
     createBurningEnemy(),
     createParty([EMILIE_CHARACTER_ID]),
   );
 };
-const createEmilieCombatant = (ascension: number, constellationCount: number): Combatant => ({
+// Emilie at the ascension and constellations given, with her total attributes summed from the attribute values given
+const createEmilieCombatant = (
+  ascension: number,
+  attributeValues: Parameters<typeof computeCharacterAttributes>[0],
+  constellationCount = 0,
+): Combatant => ({
   ascension,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  attributes: computeCharacterAttributes(attributeValues),
   characterId: EMILIE_CHARACTER_ID,
   constellationCount,
   elementalResonances: [],
@@ -93,7 +87,11 @@ describe(createEmilieKitBehaviour, () => {
     "at %i constellations, a skill hit cuts an enemy's Dendro RES as Constellation 2 does: %j",
     (constellationCount, enemyStatus) => {
       expect.hasAssertions();
-      const combatant = createEmilieCombatant(0, constellationCount);
+      const combatant = createEmilieCombatant(
+        0,
+        [{ attribute: Attribute.BaseHealth, value: 10_000 }],
+        constellationCount,
+      );
 
       expect(EMILIE_KIT.elementalSkill.hits.map((hit) => hit.enemyStatus?.(combatant))).toStrictEqual([
         enemyStatus,
