@@ -5,6 +5,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -176,6 +177,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           new Set([combatant.characterId]),
           combatant,
           context,
+          StellarReactionType.StellarSwirl,
         );
       if (reactions.length > 0) {
         context.reactionTriggers.push({ enemy, reactions });

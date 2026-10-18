@@ -1,0 +1,8 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
+import type { Combatant } from "#src/models/kit/Combatant";
+
+// A reaction a deployed member's party bonus is read against: the combatant that makes it and the reaction it is
+export interface KitReaction {
+  combatant: Combatant;
+  reactionType: ReactionType;
+}
