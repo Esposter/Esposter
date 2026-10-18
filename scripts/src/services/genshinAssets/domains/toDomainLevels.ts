@@ -8,19 +8,17 @@ import type { DomainLevel, DomainSchedule, RewardItem, TreeArtifact } from "gens
 
 import {
   ALL_DAYS_OF_WEEK,
+  BLESSING_TREE_ARTIFACT_ROWS,
   DOMAIN_DAY_PAIRS,
   DOMAIN_LEVEL_TYPE,
+  DOMAIN_TREE_COUNT_ROWS,
   DUNGEON_LEVEL_ENTITY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
   DungeonEntryTypeDomainKindMap,
   REWARD_PREVIEW_TABLE_NAME,
   SUNDAY_DAYS_OF_WEEK,
 } from "#src/services/genshinAssets/domains/constants";
-import {
-  BLESSING_TREE_ARTIFACT_ROWS,
-  DOMAIN_TREE_COUNT_ROWS,
-  findTreeRow,
-} from "#src/services/genshinAssets/domains/treeRewardCounts";
+import { findTreeRow } from "#src/services/genshinAssets/domains/findTreeRow";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { REWARD_COUNT_DEFAULT } from "#src/services/genshinAssets/rewards/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";

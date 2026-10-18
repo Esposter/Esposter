@@ -1,7 +1,7 @@
 import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/archive/ExcelEquipAffixRow";
 import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/ExcelReliquarySetRow";
 
-import { BLESSING_ARTIFACT_SET_NAMES } from "#src/services/genshinAssets/domains/treeRewardCounts";
+import { BLESSING_ARTIFACT_SET_NAMES } from "#src/services/genshinAssets/domains/constants";
 import { resolveBlessingArtifactSetIds } from "#src/services/genshinAssets/domains/resolveBlessingArtifactSetIds";
 import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
