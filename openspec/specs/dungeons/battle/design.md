@@ -42,7 +42,7 @@ stateDiagram-v2
 The math, all in small pure services under `services/dungeons/monster/` and `services/dungeons/item/`:
 
 - **Damage** — `ceil(random(0.85, 1.01) × attacker.statistics.attack × power / (power + defense))`. Each attack carries a `power` (Slash 40, Ice Shard 55) and every monster a `defense` stat, so move choice and bulk both matter. The saturating `power / (power + defense)` factor means defense meaningfully reduces damage without ever granting immunity, and tuning stays two-knob.
-- **Experience** — on a kill, `round(baseExperience × enemyLevel / 7)`; `useExperience` applies it and loops `levelUp` while the threshold (`getLevelExperience`) is crossed. Level-ups add randomized `maxHealth` (+5–8), `attack` (+1–2), and `defense` (+1–2).
+- **Experience** — on a kill, `round(baseExperience × enemyLevel / 7)`; `GainExperience` applies it and loops `levelUp` while the threshold (`getLevelExperience`) is crossed. `useExperience` only derives the bar and the experience still to go. Level-ups add randomized `maxHealth` (+5–8), `attack` (+1–2), and `defense` (+1–2).
 - **Capture** — ball items roll `0.5 + (1 − health/maxHealth) × 0.2` against a uniform random: success joins the party, a near miss (within 0.1) gets its own dialog, otherwise failure — so weakening the enemy first genuinely helps.
 - **Flee** — a random escape attempt; failure forfeits the turn.
 

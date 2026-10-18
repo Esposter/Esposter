@@ -36,7 +36,7 @@ A machine's profile is `~/.esposter/machine.json`, written by `pnpm ai:fleet:pro
 
 - `id`, the name the machine's claims and heartbeat carry. A new profile takes the hostname.
 - `areas`, the areas the user lent the machine for. A new profile is lent every area. An area a machine was not lent is never worked, however idle it is.
-- `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present, `game-exports` when the parity exports exist, and `media-engine` where FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it, and a capability the user set is kept.
+- `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present, `game-exports` when the parity exports exist, and `media-engine` on macOS, which always has one, or on Windows where FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it, and a capability the user set is kept.
 
 The profile's `id` and `areas` are never overwritten once the user has set them.
 

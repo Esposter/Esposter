@@ -21,7 +21,7 @@ flowchart TD
   UNDO -->|"no"| DONE["gone"]
 ```
 
-Feature code never hand-rolls a dialog + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
+A delete confirmation that needs something the shared component lacks adds the capability to the shared component, so every caller can opt in; no caller builds its own, as the [dialog shell](../dialog-shell/design.md) rules for every dialog.
 
 ## The type-the-name guard
 
@@ -67,6 +67,6 @@ A confirmation that names one message, post or comment shows it, so the reader s
 - A sheet's deletes leave no toast, because its undo reverses the latest command, which by the time a toast is clicked need not be the delete. The resource Restore toast is single-use for the same reason, spent once the restore lands.
 - The edit-form delete always passes `confirmName`, deriving its title and its prose from the entity being edited, so an editor cannot ship a container-level delete without the guard — which tier a delete takes is decided once by the table above, never by a caller's choice.
 - No destructive button deletes on click. A button keeps its own look by opening the dialog itself: the dashboard-visual delete is a `UiIconButton` whose click sets the dialog's model, and the edit-form delete is a `UiIconButton` beside its dialog in the same way.
-- Deletes the app could undo once acted on click, on the reading that a confirmation before a reversible act trains readers to dismiss the real ones. That is [rejected](../../../rejected/architecture/no-confirm-for-undoable-deletes/design.md): one rule is what a lint rule can hold, and a reader who has to learn which deletes ask learns it by losing something.
+- Deletes the app could undo ask first too. The alternative, deleting on click, is [rejected](../../../rejected/architecture/no-confirm-for-undoable-deletes/design.md).
 - List-item deletes mount the dialog once per list and target it through a dialog store — see [Singleton dialogs](../singleton-dialogs/design.md).
 - `StyledEditFormDialogConfirmCloseDialogButton` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it composes the [dialog shell](../dialog-shell/design.md) directly, carrying discard in `prepend-confirm`, and stays outside this component on purpose.
