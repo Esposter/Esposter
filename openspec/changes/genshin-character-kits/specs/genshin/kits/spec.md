@@ -122,6 +122,22 @@ Hu Tao's Constellation 4 SHALL give each other deployed member 12% CRIT Rate for
 - **WHEN** a drain leaves her at 25% of her HP or under
 - **THEN** Hu Tao gains no CRIT Rate
 
+### Requirement: Raincutter's Waves on Landings
+
+Raincutter SHALL cast a wave of swords where the character on the field stands as a normal attack of that character lands, at most one wave a second, and not as the attack starts.
+
+#### Scenario: Raincutter's wave is cast as a normal attack lands, not as it starts
+
+- **GIVEN** Raincutter stands with Xingqiu on the team
+- **WHEN** a normal attack of the character on the field starts, and then lands
+- **THEN** no wave is cast at the start, and one wave of two swords is cast at the landing
+
+#### Scenario: Raincutter's waves follow the field's normal attacks once a second
+
+- **GIVEN** Raincutter stands
+- **WHEN** normal attacks of the character on the field land, with one landing within the second of the last wave
+- **THEN** each landing outside the second casts a wave, and the landing within it casts none
+
 ### Requirement: Swap Ends Field Effect
 
 A field effect of Klee, Xiao, Ningguang or Razor SHALL end when its character is swapped off the field.
