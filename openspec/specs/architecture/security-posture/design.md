@@ -32,7 +32,7 @@ flowchart TD
 
 The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](../../nuxt-security-module/defaults-review/design.md) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `server/plugins/nuxtAssets.ts` adds the production policy to built JavaScript requests under `/_nuxt/` through Nitro's request hook before Nitro handles the static asset.
 
-Doing it in that hook rather than as a route-rule pattern keeps the asset policy clear of Nuxt AI Ready's `/**.md` cache rule.
+A route-rule pattern would overlap Nuxt AI Ready's `/**.md` cache rule, which is why the policy is set in the hook instead.
 
 A header change to those scripts never reaches a copy already cached. They are served `immutable` for a year, and the host's edge keeps its own copy for each `Accept-Encoding`, so a script cached before the change goes on being served without the new header until the edge's cache is purged, and a browser that fetched it meanwhile keeps its copy until its own cache is cleared. A file the change also renames is the exception, since no cache holds its new name.
 

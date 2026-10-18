@@ -6,12 +6,14 @@ A limiter is defined by two configured numbers — how many points a key may spe
 
 ## The four limiters
 
-| Limiter               | Budget             | Key prefix        | Keyed on                        | Guards                                   |
-| --------------------- | ------------------ | ----------------- | ------------------------------- | ---------------------------------------- |
-| `standardRateLimiter` | 1000 points / 60s  | `Standard`        | user id, else path + IP address | ordinary tRPC procedures                 |
-| `slowRateLimiter`     | 100 points / 60s   | `Slow`            | user id, else path + IP address | expensive or abuse-prone tRPC procedures |
-| `webhookRateLimiter`  | 30 points / 60s    | `Webhook`         | the webhook's id                | the inbound webhook push route           |
-| `assetRateLimiter`    | 10000 points / 60s | `resource-assets` | user id, else IP address        | the resource-asset redirect route        |
+| Limiter               | Budget (points, in its file)         | Key prefix        | Keyed on                        | Guards                                   |
+| --------------------- | ------------------------------------ | ----------------- | ------------------------------- | ---------------------------------------- |
+| `standardRateLimiter` | `points` in `standardRateLimiter.ts` | `Standard`        | user id, else path + IP address | ordinary tRPC procedures                 |
+| `slowRateLimiter`     | `points` in `slowRateLimiter.ts`     | `Slow`            | user id, else path + IP address | expensive or abuse-prone tRPC procedures |
+| `webhookRateLimiter`  | `points` in `webhookRateLimiter.ts`  | `Webhook`         | the webhook's id                | the inbound webhook push route           |
+| `assetRateLimiter`    | `points` in `assetRateLimiter.ts`    | `resource-assets` | user id, else IP address        | the resource-asset redirect route        |
+
+Every limiter shares one window, `RATE_LIMITER_DURATION_SECONDS` in `constants.ts`, so a budget is always read as points per that window.
 
 The first two are procedure budgets and are the only two in the central registry, `RateLimiterMap.ts`, which is declared `as const satisfies Record<RateLimiterType, RateLimiterDrizzleNonAtomic>` over the two-value `RateLimiterType` enum (`Slow`, `Standard`) so adding an enum member fails to compile until a limiter exists for it.
 
