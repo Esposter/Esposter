@@ -77,16 +77,22 @@ const unload = () => {
   if (loadingTask) destroyLoadingTask(loadingTask);
   loadingTask = undefined;
 };
-const reload = async () => {
-  unload();
-  await loadFirstPage();
-};
 
 onMounted(getSynchronizedFunction(loadFirstPage));
-watch(() => url, getSynchronizedFunction(reload));
+watch(
+  () => url,
+  getSynchronizedFunction(async () => {
+    unload();
+    await loadFirstPage();
+  }),
+);
 onUnmounted(unload);
 useResizeObserver(container, (entries) => {
-  cssWidth = entries[0]?.contentRect.width ?? 0;
+  // A report that keeps the width is the canvas resizing its own height, which must not draw the page again
+  const width = entries[0]?.contentRect.width ?? 0;
+  if (width === cssWidth) return;
+
+  cssWidth = width;
   drawPage();
 });
 </script>

@@ -7,9 +7,11 @@ import type {
   PDFViewer as PdfJsViewer,
 } from "pdfjs-dist/web/pdf_viewer.mjs";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { downloadFile } from "@/services/app/downloadFile";
 import {
   PDF_FULL_TURN,
   PDF_MAX_CANVAS_AREA,
@@ -36,7 +38,7 @@ const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
 const pageInput = ref("");
 const pagesCount = ref(0);
-const isZoomInDisabled = ref(false);
+const scale = ref(0);
 const searchQuery = ref("");
 const isMatchCase = ref(false);
 const isWholeWord = ref(false);
@@ -60,8 +62,13 @@ const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: numbe
   const page = await pdfDocument.getPage(pageNumber);
   const { height, width } = page.getViewport({ scale: 1 });
   // A page past the largest canvas a device draws is printed at the scale that fits it, since a larger one comes out blank
-  const scale = getCanvasScale({ cssWidth: width, pageHeight: height, pageWidth: width, pixelRatio: PDF_PRINT_SCALE });
-  const viewport = page.getViewport({ scale });
+  const printScale = getCanvasScale({
+    cssWidth: width,
+    pageHeight: height,
+    pageWidth: width,
+    pixelRatio: PDF_PRINT_SCALE,
+  });
+  const viewport = page.getViewport({ scale: printScale });
   const canvas = document.createElement("canvas");
   canvas.width = viewport.width;
   canvas.height = viewport.height;
@@ -73,73 +80,6 @@ const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: numbe
   return image;
 };
 
-const mountViewer = async () => {
-  const containerElement = container.value;
-  const viewerElement = viewer.value;
-  if (!url || !containerElement || !viewerElement) return;
-
-  await getResultAsync(async () => {
-    const { EventBus, FindState, LinkTarget, PDFFindController, PDFLinkService, PDFViewer } = await loadPdfViewer();
-    const { PasswordResponses } = await import("pdfjs-dist");
-    const bus = new EventBus();
-    const linkService: PDFLinkService = new PDFLinkService({ eventBus: bus, externalLinkTarget: LinkTarget.BLANK });
-    const controller: PDFFindController = new PDFFindController({ eventBus: bus, linkService });
-    const instance: PdfJsViewer = new PDFViewer({
-      container: containerElement,
-      eventBus: bus,
-      findController: controller,
-      linkService,
-      maxCanvasPixels: PDF_MAX_CANVAS_AREA,
-      viewer: viewerElement,
-    });
-    linkService.setViewer(instance);
-    eventBus = bus;
-    pdfViewer = instance;
-    bus.on("pagechanging", (event: { pageNumber: number }) => {
-      pageInput.value = String(event.pageNumber);
-    });
-    bus.on("scalechanging", (event: { scale: number }) => {
-      isZoomInDisabled.value = event.scale >= PDF_MAX_SCALE;
-    });
-    bus.on("updatefindcontrolstate", (event: { matchesCount: { current: number; total: number }; state: number }) => {
-      isNotFound.value = event.state === FindState.NOT_FOUND;
-      matchesCount.value = event.matchesCount;
-    });
-    bus.on("updatefindmatchescount", (event: { matchesCount: { current: number; total: number } }) => {
-      matchesCount.value = event.matchesCount;
-    });
-
-    const task = await loadPdfDocument(url);
-    if (isUnmounted) {
-      destroyLoadingTask(task);
-      return;
-    }
-    loadingTask = task;
-    // pdf.js asks again with the reason when a password is wrong, so the prompt says so rather than starting over
-    task.onPassword = (updatePassword: (password: string) => void, reason: number) => {
-      submitPasswordCallback = updatePassword;
-      isPasswordWrong.value = reason === PasswordResponses.INCORRECT_PASSWORD;
-      isPasswordRequested.value = true;
-    };
-    const document = await task.promise;
-    loadedDocument = document;
-    instance.setDocument(document);
-    linkService.setDocument(document);
-    controller.setDocument(document);
-    pagesCount.value = document.numPages;
-    instance.currentScaleValue = "auto";
-  }).match(noop, (error) => {
-    // Closing the viewer destroys a load still in flight, and its rejection is no failure of the document
-    if (isUnmounted) return;
-
-    isFailed.value = true;
-    console.error(error);
-  });
-};
-const reapplyScale = () => {
-  // A fit stays a fit when the container changes width, which pdf.js does not do on its own (#66, #70)
-  if (pdfViewer) pdfViewer.currentScaleValue = pdfViewer.currentScaleValue;
-};
 const previousPage = () => {
   pdfViewer?.previousPage();
 };
@@ -192,12 +132,7 @@ const downloadDocument = getSynchronizedFunction(async () => {
   await getResultAsync(async () => {
     // The original bytes, under the attachment's name: a blob URL from another origin would ignore the name
     const data = await downloaded.getData();
-    const objectUrl = URL.createObjectURL(new Blob([data], { type: "application/pdf" }));
-    const link = document.createElement("a");
-    link.download = filename;
-    link.href = objectUrl;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl));
+    downloadFile(filename, data, MimeType.Pdf);
   }).match(noop, console.error);
 });
 const printDocument = getSynchronizedFunction(async () => {
@@ -231,26 +166,93 @@ const destroyPrintContainer = () => {
   printContainer?.remove();
   printContainer = undefined;
 };
-
-watch(
-  () => [searchQuery.value, isMatchCase.value, isWholeWord.value],
-  () => findText("", false),
-);
-onMounted(getSynchronizedFunction(mountViewer));
-onUnmounted(() => {
-  isUnmounted = true;
-  if (loadingTask) destroyLoadingTask(loadingTask);
-  loadingTask = undefined;
-  destroyPrintContainer();
-});
-useResizeObserver(container, reapplyScale);
-useEventListener("afterprint", destroyPrintContainer);
 const matchesText = computed(() => {
   if (!searchQuery.value) return "";
   if (isNotFound.value) return "No matches";
 
   return `${matchesCount.value.current} of ${matchesCount.value.total}`;
 });
+
+watch(
+  () => [searchQuery.value, isMatchCase.value, isWholeWord.value],
+  () => findText("", false),
+);
+onMounted(
+  getSynchronizedFunction(async () => {
+    const containerElement = container.value;
+    const viewerElement = viewer.value;
+    if (!url || !containerElement || !viewerElement) return;
+
+    await getResultAsync(async () => {
+      const [{ EventBus, FindState, LinkTarget, PDFFindController, PDFLinkService, PDFViewer }, { PasswordResponses }] =
+        await Promise.all([loadPdfViewer(), import("pdfjs-dist")]);
+      const bus = new EventBus();
+      const linkService: PDFLinkService = new PDFLinkService({ eventBus: bus, externalLinkTarget: LinkTarget.BLANK });
+      const controller: PDFFindController = new PDFFindController({ eventBus: bus, linkService });
+      const instance: PdfJsViewer = new PDFViewer({
+        container: containerElement,
+        eventBus: bus,
+        findController: controller,
+        linkService,
+        maxCanvasPixels: PDF_MAX_CANVAS_AREA,
+        viewer: viewerElement,
+      });
+      linkService.setViewer(instance);
+      eventBus = bus;
+      pdfViewer = instance;
+      bus.on("pagechanging", (event: { pageNumber: number }) => {
+        pageInput.value = String(event.pageNumber);
+      });
+      bus.on("scalechanging", (event: { scale: number }) => {
+        scale.value = event.scale;
+      });
+      bus.on("updatefindcontrolstate", (event: { matchesCount: { current: number; total: number }; state: number }) => {
+        isNotFound.value = event.state === FindState.NOT_FOUND;
+        matchesCount.value = event.matchesCount;
+      });
+      bus.on("updatefindmatchescount", (event: { matchesCount: { current: number; total: number } }) => {
+        matchesCount.value = event.matchesCount;
+      });
+
+      const task = await loadPdfDocument(url);
+      if (isUnmounted) {
+        destroyLoadingTask(task);
+        return;
+      }
+      loadingTask = task;
+      // pdf.js asks again with the reason when a password is wrong, so the prompt says so rather than starting over
+      task.onPassword = (updatePassword: (password: string) => void, reason: number) => {
+        submitPasswordCallback = updatePassword;
+        isPasswordWrong.value = reason === PasswordResponses.INCORRECT_PASSWORD;
+        isPasswordRequested.value = true;
+      };
+      const document = await task.promise;
+      loadedDocument = document;
+      instance.setDocument(document);
+      linkService.setDocument(document);
+      controller.setDocument(document);
+      pagesCount.value = document.numPages;
+      instance.currentScaleValue = "auto";
+    }).match(noop, (error) => {
+      // Closing the viewer destroys a load still in flight, and its rejection is no failure of the document
+      if (isUnmounted) return;
+
+      isFailed.value = true;
+      console.error(error);
+    });
+  }),
+);
+onUnmounted(() => {
+  isUnmounted = true;
+  if (loadingTask) destroyLoadingTask(loadingTask);
+  loadingTask = undefined;
+  destroyPrintContainer();
+});
+// A fit stays a fit when the container changes width, which pdf.js does not do on its own (#66, #70)
+useResizeObserver(container, () => {
+  if (pdfViewer) pdfViewer.currentScaleValue = pdfViewer.currentScaleValue;
+});
+useEventListener("afterprint", destroyPrintContainer);
 </script>
 
 <template>
@@ -272,7 +274,7 @@ const matchesText = computed(() => {
         @click="() => nextPage()"
       />
       <UiButton aria-label="Zoom out" @click="() => zoomOut()">−</UiButton>
-      <UiButton aria-label="Zoom in" :disabled="isZoomInDisabled" @click="() => zoomIn()">+</UiButton>
+      <UiButton aria-label="Zoom in" :disabled="scale >= PDF_MAX_SCALE" @click="() => zoomIn()">+</UiButton>
       <UiButton @click="() => fitWidth()">Fit width</UiButton>
       <UiButton @click="() => fitPage()">Fit page</UiButton>
       <UiButton @click="() => actualSize()">Actual size</UiButton>
