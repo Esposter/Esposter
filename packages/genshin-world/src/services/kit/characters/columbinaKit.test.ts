@@ -85,6 +85,7 @@ const readPartyCriticalDamage = (
     c6Enemy,
     context.party,
     context.kitEffectState.effects,
+    context.characterIdCombatantMap,
   )?.criticalDamageBonus ?? 0;
 // The CRIT DMG a hit of the given element adds to Columbina's own strike, as her own hook gives it
 const readOwnCriticalDamage = (context: KitContext, columbina: Combatant, element: Element): number =>
