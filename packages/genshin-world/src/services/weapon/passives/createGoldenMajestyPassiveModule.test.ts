@@ -20,9 +20,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createGoldenMajestyPassiveModule, () => {
-  // Golden Majesty at its first rank: 20% Shield Strength, 4% ATK for each stack of up to five for eight seconds, which a
+  // Golden Majesty with synthetic params: 15% Shield Strength, and 3% ATK a stack for six seconds, up to five, which a
   // Hit every 0.3 seconds adds, doubled while the wielder on the field is protected by a shield
-  const goldenMajestyPassiveModule = createGoldenMajestyPassiveModule([0.2, 0.04, 8]);
+  const goldenMajestyPassiveModule = createGoldenMajestyPassiveModule([0.15, 0.03, 6]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   const deployedOnField = [{ ...wielder, isOnField: true }];
@@ -40,12 +40,12 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect.hasAssertions();
 
     expect(goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
       { amount: 0, attribute: Attribute.AttackPercent },
     ]);
   });
 
-  test("a hit the wielder scores gains a stack of ATK for eight seconds", () => {
+  test("a hit the wielder scores gains a stack of ATK for six seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -54,16 +54,16 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
-      { amount: 0.04, attribute: Attribute.AttackPercent },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
+      { amount: 0.03, attribute: Attribute.AttackPercent },
     ]);
 
-    stepKitSeconds(context, 8.1);
+    stepKitSeconds(context, 6.1);
 
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
       { amount: 0, attribute: Attribute.AttackPercent },
     ]);
   });
@@ -78,8 +78,8 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
-      { amount: 0.04, attribute: Attribute.AttackPercent },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
+      { amount: 0.03, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -102,8 +102,8 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
-      { amount: 0.04 * 5, attribute: Attribute.AttackPercent },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
+      { amount: 0.03 * 5, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -117,8 +117,8 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
-      { amount: 0.04 * 2, attribute: Attribute.AttackPercent },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
+      { amount: 0.03 * 2, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -137,8 +137,8 @@ describe(createGoldenMajestyPassiveModule, () => {
         context.kitEffectState.effects,
       ),
     ).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.ShieldStrength },
-      { amount: 0.04, attribute: Attribute.AttackPercent },
+      { amount: 0.15, attribute: Attribute.ShieldStrength },
+      { amount: 0.03, attribute: Attribute.AttackPercent },
     ]);
   });
 });

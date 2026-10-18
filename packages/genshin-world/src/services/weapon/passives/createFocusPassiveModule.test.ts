@@ -24,8 +24,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Focus at its first rank: eight per cent CRIT Rate a stack
-const focusPassiveModule = createFocusPassiveModule([0.08]);
+// Focus with synthetic params: 10% CRIT Rate a stack
+const focusPassiveModule = createFocusPassiveModule([0.1]);
 const createDamageTaken = (isCritical: boolean) => ({
   enemy,
   hit: TRAVELER_KIT.plungeCollision,
@@ -47,7 +47,7 @@ describe(createFocusPassiveModule, () => {
     focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
     expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.08 * 2, attribute: Attribute.CriticalRate },
+      { amount: 0.1 * 2, attribute: Attribute.CriticalRate },
     ]);
   });
 
@@ -58,7 +58,7 @@ describe(createFocusPassiveModule, () => {
     for (let hit = 0; hit < 6; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
     expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.08 * 5, attribute: Attribute.CriticalRate },
+      { amount: 0.1 * 5, attribute: Attribute.CriticalRate },
     ]);
   });
 
@@ -98,7 +98,7 @@ describe(createFocusPassiveModule, () => {
         party: createParty([focusWielder.characterId]),
         random: () => roll,
       });
-      // Two non-critical hits add two stacks, lifting the CRIT Rate from none to 16%
+      // Two non-critical hits add two stacks, lifting the CRIT Rate from none to 20%
       focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, focusWielder);
       focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, focusWielder);
       const lunarReactionTypes = [LunarReactionType.LunarCharged];
@@ -114,7 +114,7 @@ describe(createFocusPassiveModule, () => {
       return STURDY_HEALTH - sturdyEnemy.health;
     };
 
-    // A roll of 10% lands under the stacked 16% CRIT Rate, so the reaction is critical; a roll of 99% lands over it
+    // A roll of 10% lands under the stacked 20% CRIT Rate, so the reaction is critical; a roll of 99% lands over it
     expect(getStackedDamage(0.1)).toBeCloseTo(2 * getStackedDamage(0.99));
   });
 });
