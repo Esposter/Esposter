@@ -1,6 +1,6 @@
 import type { MathExpressionSignature } from "#src/models/function/MathExpressionSignature";
 
-import { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
+import type { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 
 export const createSignature = (
   parameters: MathExpressionParameterType[],

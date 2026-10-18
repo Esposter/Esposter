@@ -1,4 +1,7 @@
-import { MATH_EXPRESSION_ABSOLUTE_TOLERANCE, MATH_EXPRESSION_RELATIVE_TOLERANCE } from "#src/services/function/constants";
+import {
+  MATH_EXPRESSION_ABSOLUTE_TOLERANCE,
+  MATH_EXPRESSION_RELATIVE_TOLERANCE,
+} from "#src/services/function/constants";
 
 // Two numbers are equal when they differ by no more than the larger of a relative and an absolute tolerance, so that
 // `0.1 + 0.2` equals `0.3`, as mathjs's comparisons read them. A NaN equals nothing, and an infinity only itself
