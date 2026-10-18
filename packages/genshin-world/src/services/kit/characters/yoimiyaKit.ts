@@ -1,13 +1,19 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 // Ryuukin Saxifrage's first enemy struck carries Aurous Blaze, as gcsim v2.47.2 (MIT) yoimiya/burst.go marks it, while
@@ -19,9 +25,38 @@ const AUROUS_BLAZE_COOLDOWN_STATUS_ID = "yoimiya-aurous-blaze-cooldown";
 
 export const YOIMIYA_CHARACTER_ID = 10_000_049;
 
+// Measured: gcsim v2.47.2 (MIT) yoimiya/asc.go, Ascension 1: each Blazing Arrow that strikes an enemy while Niwabi Fire-Dance
+// Stands and Yoimiya is on the field raises a count to 10, giving 2% Pyro DMG Bonus per count for 3 seconds, the count starting
+// Again once that lapses. gcsim's Ascension 4 ATK share is defined there but never called, so it is not built
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yoimiya/asc.go
+const ASCENSION_1 = 1;
+const ASCENSION_1_STATUS_ID = "yoimiya-a1";
+const ASCENSION_1_STACK_CAP = 10;
+const ASCENSION_1_PYRO_DAMAGE_BONUS_PER_STACK = 0.02;
+const ASCENSION_1_SECONDS = 3;
+
+// Adds a Blazing Arrow to Ascension 1's count, which restarts with its status, and sets the Pyro DMG Bonus it gives
+const addAscension1PyroDamageBonus = (kitEffectState: KitEffectState, characterId: number): void => {
+  const stacks = Math.min(
+    ASCENSION_1_STACK_CAP,
+    (findKitStatus(kitEffectState.effects, characterId, ASCENSION_1_STATUS_ID)?.stacks ?? 0) + 1,
+  );
+  addKitStatus(kitEffectState, characterId, {
+    id: ASCENSION_1_STATUS_ID,
+    secondsRemaining: ASCENSION_1_SECONDS,
+    stacks,
+  });
+  buffKitMember(kitEffectState, characterId, {
+    amount: stacks * ASCENSION_1_PYRO_DAMAGE_BONUS_PER_STACK,
+    attribute: Attribute.PyroDamageBonus,
+    secondsRemaining: ASCENSION_1_SECONDS,
+    source: ASCENSION_1_STATUS_ID,
+  });
+};
+
 // Yoimiya's behaviour: Niwabi Fire-Dance's stance of Blazing Arrows for the table's seconds, ending as she leaves the
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
-// Member's hits set off. Her passives and constellations are not built yet
+// Member's hits set off. Ascension 1's Pyro DMG Bonus count is built, and her constellations are not built yet
 export const createYoimiyaKitBehaviour = ({
   kit,
   readHit,
@@ -46,11 +81,18 @@ export const createYoimiyaKitBehaviour = ({
     },
     // The burst's hit marks the first enemy it strikes with Aurous Blaze, and a hit another member deals a marked enemy
     // As a kind of attack off its cooldown sets off the explosion on it
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, striker } = event;
       if (striker.characterId === characterId) {
+        if (
+          combatant.ascension >= ASCENSION_1 &&
+          attackTag === AttackTag.NormalAttack &&
+          activeCombatant.characterId === characterId &&
+          findKitStance(kitEffectState.effects, characterId) !== undefined
+        )
+          addAscension1PyroDamageBonus(kitEffectState, characterId);
         if (hit !== burstHit || !checkHasKitStatus(kitEffectState.effects, characterId, AUROUS_BLAZE_PENDING_STATUS_ID))
           return;
         removeKitEffects(
