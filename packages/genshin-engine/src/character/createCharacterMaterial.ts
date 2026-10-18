@@ -1,11 +1,11 @@
 import type { CharacterMaterialOptions } from "#src/models/character/CharacterMaterialOptions";
 
+import { checkIsPmxSphereDrawn } from "#src/character/checkIsPmxSphereDrawn";
 import { createCharacterShadingInputs } from "#src/character/createCharacterShadingInputs";
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { createCharacterShadingNode } from "#src/character/shading/createCharacterShadingNode";
 import { createOutlineColorNode } from "#src/character/shading/createOutlineColorNode";
 import { getToneColour } from "#src/character/shading/getToneColour";
-import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { RampLayout } from "#src/models/character/RampLayout";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { DoubleSide, FrontSide, Vector3 } from "three";
@@ -47,9 +47,7 @@ export const createCharacterMaterial = ({
     color,
     mainTexture: diffuseTexture,
     sphere:
-      sphereTexture && (sphereMode === PmxSphereMode.Multiply || sphereMode === PmxSphereMode.Add)
-        ? { mode: sphereMode, texture: sphereTexture }
-        : undefined,
+      sphereTexture && checkIsPmxSphereDrawn(sphereMode) ? { mode: sphereMode, texture: sphereTexture } : undefined,
     // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
     rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
     rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
@@ -90,6 +88,6 @@ export const createCharacterMaterial = ({
   // The shading is the game's own, so the material takes no three lighting, and its output is the shaded colour
   characterMaterial.lights = false;
   characterMaterial.outputNode = vec4(createCharacterShadingNode(shadingInputs, lightUniforms), alpha);
-  if (sphereTexture && sphereMode !== PmxSphereMode.Disabled) characterMaterial.sphereMap = sphereTexture;
+  if (sphereTexture && checkIsPmxSphereDrawn(sphereMode)) characterMaterial.sphereMap = sphereTexture;
   return characterMaterial;
 };
