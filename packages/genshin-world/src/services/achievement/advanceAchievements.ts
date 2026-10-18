@@ -24,6 +24,9 @@ export const advanceAchievements = (
     const namedTargetIds = achievement.trigger.parameters[watch.targetSlot] ?? [];
     const isAnyTarget = namedTargetIds.length === 0;
     if (!isAnyTarget && !namedTargetIds.includes(event.targetId)) continue;
+    // A scope slot that names no id is any scope, as a target slot that names none is any target
+    const namedScopeIds = watch.scopeSlot === undefined ? [] : (achievement.trigger.parameters[watch.scopeSlot] ?? []);
+    if (namedScopeIds.length > 0 && !namedScopeIds.includes(event.scopeId ?? "")) continue;
     const isTierDone =
       achievement.preStageAchievementId === 0 ||
       checkIsAchievementFinished(achievement.preStageAchievementId, nextProgressMap);

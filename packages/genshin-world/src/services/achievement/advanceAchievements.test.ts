@@ -244,6 +244,31 @@ describe(advanceAchievements, () => {
     });
   });
 
+  test("a two-slot trigger counts only a doing that matches both its target slot and its scope slot", () => {
+    expect.hasAssertions();
+    const REGION_ID = "1";
+    const OTHER_REGION_ID = "2";
+    const chestInRegion: Achievement = {
+      ...counted,
+      progress: 1,
+      trigger: { parameters: [[CHEST_ID], [REGION_ID]], type: "TRIGGER_OPEN_WORLD_CHEST" },
+    };
+    const openChest = (scopeId: string) => ({
+      kind: AchievementEventKind.ChestOpened,
+      quantity: 1,
+      scopeId,
+      targetId: CHEST_ID,
+    });
+    expect(advanceAchievements([chestInRegion], new Map(), openChest(OTHER_REGION_ID), EPOCH)).toStrictEqual({
+      primogems: 0,
+      progressMap: new Map(),
+    });
+    expect(advanceAchievements([chestInRegion], new Map(), openChest(REGION_ID), EPOCH)).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]),
+    });
+  });
+
   test("a material trigger counts the quantity the event gains", () => {
     expect.hasAssertions();
     const material: Achievement = {
