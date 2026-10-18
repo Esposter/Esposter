@@ -26,6 +26,9 @@ export const SHENHE_CHARACTER_ID = 10_000_063;
 // The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her Quill is not built:
 // The kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to the hits of whoever carries it, which no
 // Kit step reads. Her other passives and constellations are not built
+// Constellation 2 needs the field's extra 6 seconds and a Cryo CRIT DMG bonus, which no strike hook carries
+// Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill, which the kit does not build
+// Constellation 6 needs the Icy Quill's trigger quota, which the kit does not build
 export const createShenheKitBehaviour = ({
   readHitFields,
   readParameter,

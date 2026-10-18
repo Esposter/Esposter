@@ -22,6 +22,9 @@ export const SAYU_CHARACTER_ID = 10_000_053;
 // Ticks strike as a summon and heal as a field. Her passives and constellations are not built, as no kit event reaches a
 // Value the fetched sources give. The roll's Elemental kick, which takes the element a roll absorbs, is not built, as the
 // Kit has no absorption check to read it
+// Constellation 1 needs the Muji-Muji Daruma's attacks on nearby opponents and its heals, which the kit does not build
+// Constellation 2 needs the roll's time spent rolling, which the kit does not read, for the kick's DMG
+// Constellation 6 needs an Elemental Mastery bonus on the Muji-Muji Daruma's attacks and heals, not built
 export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // Mujina Flurry's heal and Muji-Muji Daruma's heal are each a flat amount and a share of Sayu's ATK, read at the cast
   const burstInitialHealFlat = readParameter("mujinaFlurryFlatHealing");
