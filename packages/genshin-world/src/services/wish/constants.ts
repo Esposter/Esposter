@@ -93,17 +93,3 @@ export const BEGINNERS_WISH_CHARACTER_IDS: readonly number[] = [
   10_000_031, 10_000_027, 10_000_020, 10_000_043, 10_000_023, 10_000_025,
 ];
 export const BEGINNERS_WISH_FEATURED_CHARACTER_ID = 10_000_034;
-// The Character Event wish Born of Ocean Swell of 2021-05-18 to 2021-06-08, the one event banner the world builds. Its
-// Pool is the wiki's, read from the game's ids: Eula as the promoted five-star, Xinyan, Xingqiu and Beidou as the
-// Promoted four-stars, the standard five-stars and four-stars the rest, and the weapons of the standard wish's pool at four
-// And three stars. The wiki publishes no five-star weapon for the banner, and the rotation's other events are not built
-// Yet (the wish proposal)
-export const CHARACTER_EVENT_FEATURED_FIVE_STAR_IDS: readonly number[] = [10_000_051];
-export const CHARACTER_EVENT_FEATURED_FOUR_STAR_IDS: readonly number[] = [10_000_044, 10_000_025, 10_000_024];
-export const CHARACTER_EVENT_FIVE_STAR_IDS: readonly number[] = [
-  10_000_016, 10_000_003, 10_000_042, 10_000_041, 10_000_035,
-];
-export const CHARACTER_EVENT_FOUR_STAR_IDS: readonly number[] = [
-  10_000_014, 10_000_032, 10_000_036, 10_000_039, 10_000_031, 10_000_027, 10_000_034, 10_000_020, 10_000_045,
-  10_000_043, 10_000_023,
-];

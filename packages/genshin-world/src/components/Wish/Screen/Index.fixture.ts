@@ -7,10 +7,12 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { BEGINNERS_WISH_LIMIT, INITIAL_WISH_PITY } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
+import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { BannerKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const wishSchedule = await readWishSchedule(GAME_DATA_LOCAL_BASE_URL);
 
 // The Character Event banner open on Born of Ocean Swell, the English PC client's wish screen at 78 seconds of the public
 // 1080p recording: 539 Primogems and 32 Intertwined Fates held, with no wish yet made on it
@@ -28,7 +30,12 @@ export const props = {
   inventory: EMPTY_INVENTORY,
   nameText: englishNameText,
   pityMap,
+  // The clock held at 2021-05-20 (the epoch's day 18,767), inside the window of Born of Ocean Swell the recording shows
+  serverClockOffsetMs:
+    Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 450_408 }).epochMilliseconds -
+    Temporal.Now.instant().epochMilliseconds,
   statTables,
   stellaFortunaNameTextIdMap: new Map<number, string>(),
   wallet,
+  wishSchedule,
 };

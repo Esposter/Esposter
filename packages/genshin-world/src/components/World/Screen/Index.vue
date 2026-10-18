@@ -22,6 +22,7 @@ import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuz
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
 
@@ -57,6 +58,7 @@ getResultAsync(() =>
       measureLoadStep("crafting-recipes", readCraftingRecipes(props.gameDataBaseUrl)),
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -76,6 +78,7 @@ getResultAsync(() =>
     craftingRecipes,
     craftingBenchPlace,
     puzzlePlaces,
+    wishSchedule,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -97,6 +100,7 @@ getResultAsync(() =>
       talentUpgradeMap: talentTables.talentUpgradeMap,
       wildlifePlaces,
       windriseData,
+      wishSchedule,
     };
   },
   (error) => {
