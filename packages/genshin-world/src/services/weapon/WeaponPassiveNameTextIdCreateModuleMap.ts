@@ -74,6 +74,7 @@ import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/
 import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/createStaffOfHomaPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
+import { createThePartingRefrainPassiveModule } from "#src/services/weapon/passives/createThePartingRefrainPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
@@ -326,4 +327,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3276718187": createTurquoiseHuntPassiveModule,
   // Daylight's Augury (Polar Star)
   "303626691": createDaylightsAuguryPassiveModule,
+  // The Parting Refrain (Elegy for the End)
+  "3170252851": createThePartingRefrainPassiveModule,
 };
