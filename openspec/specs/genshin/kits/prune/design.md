@@ -4,7 +4,7 @@ Prune's kit is its record and one behaviour module, `createPruneKitBehaviour`, a
 
 Her skill and burst are read from proud skill groups 13232 and 13239 as their talent multipliers. Her cooldowns and energy cost are read from the table: 15 seconds for the skill, 18 seconds for the burst and 70 energy.
 
-gcsim sources: `prune/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Prune data file.
+gcsim sources: Prune's attack, charge, skill and burst files, with the table data in gcsim's Prune data file.
 
 ## Decisions
 

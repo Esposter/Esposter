@@ -4,11 +4,11 @@ Nicole's kit is its record and one behaviour module, `createNicoleKitBehaviour`,
 
 Her cooldowns are 16 and 15 seconds, her energy cost 60 and her charged stamina 50, all read from the table, and her skill and burst take their talent multipliers from proud skill groups.
 
-gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Nicole data file.
+gcsim sources: Nicole's attack, charge, skill and burst files, with the table data in gcsim's Nicole data file.
 
 ## Decisions
 
-- **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as `TargetCentred`.
+- **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as gcsim's target-centred area.
 - **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list, and Nicole's overlay is empty, so it names no cause for it.
 
 ## Not built

@@ -4,7 +4,7 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 
 ## Decisions
 
-- **Fortune-Preserving Talisman's damage is group 3539's third parameter**, 284.8%, its heal's ATK share and flat HP its first two and its seconds its fourth, as gcsim's "burstDmg", "burstHealPer" and "burstHealFlat" and the wiki give them.
+- **Fortune-Preserving Talisman's damage is group 3539's third parameter**, 284.8%, its heal's ATK share and flat HP its first two and its seconds its fourth, as gcsim's burst damage, burst heal share and burst flat heal and the wiki give them.
 - **The Talisman goes on with the burst's damage.** gcsim applies it 40 frames in by a hit of no damage; here the burst's own hit gives it before its damage, so that hit heals, as the wiki notes. The heal answers the character on the field's own hits alone, at most once a second for each enemy, as the wiki's notes give it, and reads Qiqi's ATK as she stands, unbuffed.
 - **A Glimpse into Arcanum keeps a longer Talisman.** A Talisman with 6 seconds or more left is not replaced and spends no cooldown, as gcsim's check does.
 - **Frozen to the Bone reads Cryo or a Freeze on the enemy**, as gcsim's aura check does.
