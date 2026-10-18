@@ -3,7 +3,7 @@ import { computeTravelerElement } from "#src/services/statue/computeTravelerElem
 import { describe, expect, test } from "vitest";
 
 describe(computeTravelerElement, () => {
-  test("resonating with a Liyue statue makes the Traveler Geo", () => {
+  test("the traveler takes the element of the statue it resonates with", () => {
     expect.hasAssertions();
 
     expect(computeTravelerElement(["liyue"])).toBe(Element.Geo);
