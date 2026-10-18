@@ -183,3 +183,25 @@ From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL 
 - **GIVEN** three Moonridge Dew were gained in the current eighteen seconds
 - **WHEN** a Lunar-Bloom occurs in the window
 - **THEN** the party gains none
+
+### Requirement: Moondew Cleanse replaces her charged attack while Dew is there to spend
+
+While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF.
+
+#### Scenario: A charged attack with Dew plays Moondew Cleanse and spends one Dew
+
+- **GIVEN** the party holds a Moonridge or Verdant Dew
+- **WHEN** the player presses a charged attack
+- **THEN** Moondew Cleanse plays, and one Dew is spent, the verdant first
+
+#### Scenario: A charged attack with no Dew is her normal charged attack
+
+- **GIVEN** the party holds no Dew
+- **WHEN** the player presses a charged attack
+- **THEN** her normal charged attack plays and no Dew is spent
+
+#### Scenario: Moondew Cleanse's Lunar-Bloom hits ignore all of each enemy's DEF
+
+- **GIVEN** Moondew Cleanse is playing
+- **WHEN** each of its three hits strikes an enemy
+- **THEN** each hit ignores all of that enemy's DEF, and her normal charged attack ignores none
