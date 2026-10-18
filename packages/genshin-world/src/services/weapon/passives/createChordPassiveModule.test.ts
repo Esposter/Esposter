@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// The Flute's Chord at its first rank: a 100% ATK burst, from one harmonic a hit
-const chordPassiveModule = createChordPassiveModule([1, 1]);
+// The Flute's Chord with synthetic params: a 200% ATK burst, from one harmonic a hit
+const chordPassiveModule = createChordPassiveModule([0, 2]);
 const createDamageTaken = (attackTag: AttackTag) => ({
   attackTag,
   enemy,
@@ -42,7 +42,7 @@ describe(createChordPassiveModule, () => {
     }
     chordPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1]);
+    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([2]);
     expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, CHORD_HARMONIC_ID)?.stacks).toBe(0);
   });
 

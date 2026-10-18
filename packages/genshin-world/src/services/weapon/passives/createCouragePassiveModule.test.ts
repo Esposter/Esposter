@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Courage at its first rank, which reads its ATK percentage per stack from the affix row's first number
-const couragePassiveModule = createCouragePassiveModule([0.06]);
+// Courage with a synthetic ATK percentage per stack, which is its only param
+const couragePassiveModule = createCouragePassiveModule([0.05]);
 const createNormalAttackHit = () => ({
   attackTag: AttackTag.NormalAttack,
   enemy,
@@ -38,7 +38,7 @@ describe(createCouragePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     couragePassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
   });
 
   test("a hit inside the rank's half-second cooldown adds no stack, and one after it stacks to two", () => {
@@ -49,11 +49,11 @@ describe(createCouragePassiveModule, () => {
     couragePassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
     couragePassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
 
     stepKitSeconds(context, 0.55);
     couragePassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.1);
   });
 });

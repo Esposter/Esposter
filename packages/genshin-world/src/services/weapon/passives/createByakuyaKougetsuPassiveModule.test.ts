@@ -24,10 +24,10 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createByakuyaKougetsuPassiveModule, () => {
-  // Byakuya Kougetsu at its first rank: its Healing Bonus is the table's. Normal Attack DMG rises by 1% of the wielder's
-  // Max HP as base damage, and for 12 seconds after an Elemental Burst, each Normal Attack that hits restores 0.6 Energy,
-  // Once every 0.1 seconds
-  const byakuyaKougetsuPassiveModule = createByakuyaKougetsuPassiveModule([0.1, 0.01, 12, 0.6, 0.1]);
+  // Byakuya Kougetsu with synthetic params: its Healing Bonus is the table's, so its first param is not read here.
+  // Normal Attack DMG rises by 5% of the wielder's Max HP as base damage, and for 3 seconds after an Elemental Burst,
+  // Each Normal Attack that hits restores 0.5 Energy, once every 0.5 seconds
+  const byakuyaKougetsuPassiveModule = createByakuyaKougetsuPassiveModule([0, 0.05, 3, 0.5, 0.5]);
   const wielder: Combatant = createWielderCombatant();
   const burstUsed = { characterId: TRAVELER_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed as const };
   const normalAttackHit = {
@@ -46,7 +46,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     hit: TRAVELER_KIT.plungeCollision,
   });
 
-  test("a Normal Attack gains 1% of the wielder's Max HP as base damage, and a Charged Attack gains none", () => {
+  test("a Normal Attack gains 5% of the wielder's Max HP as base damage, and a Charged Attack gains none", () => {
     expect.hasAssertions();
 
     const combatant: Combatant = {
@@ -64,7 +64,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
           context.characterIdCombatantMap,
         ),
       ),
-    ).toStrictEqual([0.01 * 10_000, 0]);
+    ).toStrictEqual([0.05 * 10_000, 0]);
   });
 
   test("a Health buff on the wielder raises the Normal Attack's base damage through her buffed Max HP", () => {
@@ -95,17 +95,17 @@ describe(createByakuyaKougetsuPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toStrictEqual(0.01 * 12_000);
+    ).toStrictEqual(0.05 * 12_000);
   });
 
-  test("a Normal Attack after an Elemental Burst restores 0.6 Energy", () => {
+  test("a Normal Attack after an Elemental Burst restores 0.5 Energy", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     byakuyaKougetsuPassiveModule.onKitEvent?.(burstUsed, context, wielder);
     byakuyaKougetsuPassiveModule.onKitEvent?.(normalAttackHit, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(0.6);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(0.5);
   });
 
   test("a Normal Attack without an Elemental Burst before it restores no Energy", () => {
@@ -117,18 +117,18 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(0);
   });
 
-  test("the Energy restore ends twelve seconds after the Elemental Burst", () => {
+  test("the Energy restore ends three seconds after the Elemental Burst", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     byakuyaKougetsuPassiveModule.onKitEvent?.(burstUsed, context, wielder);
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 3.1);
     byakuyaKougetsuPassiveModule.onKitEvent?.(normalAttackHit, context, wielder);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(0);
   });
 
-  test("the Energy restore comes once every 0.1 seconds", () => {
+  test("the Energy restore comes once every 0.5 seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -136,11 +136,9 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     byakuyaKougetsuPassiveModule.onKitEvent?.(normalAttackHit, context, wielder);
     byakuyaKougetsuPassiveModule.onKitEvent?.(normalAttackHit, context, wielder);
     const energyInsideCooldown = getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
-    stepKitSeconds(context, 0.3);
+    stepKitSeconds(context, 0.6);
     byakuyaKougetsuPassiveModule.onKitEvent?.(normalAttackHit, context, wielder);
 
-    expect([energyInsideCooldown, getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy]).toStrictEqual([
-      0.6, 1.2,
-    ]);
+    expect([energyInsideCooldown, getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy]).toStrictEqual([0.5, 1]);
   });
 });
