@@ -4,4 +4,5 @@ Copyright Jimmy Chen
 This package is derived from basic-pitch-ts (https://github.com/spotify/basic-pitch-ts),
 Copyright 2022 Spotify AB, licensed under the Apache License, Version 2.0. Its note
 creation, audio preparation and model call are rewritten from that source, and the
-trained model under `model/` is Spotify's Basic Pitch model, distributed unmodified.
+trained model under `model/` is Spotify's Basic Pitch model, its ONNX export `nmp.onnx` from
+`basic_pitch/saved_models/icassp_2022` in basic-pitch's repository, distributed unmodified.

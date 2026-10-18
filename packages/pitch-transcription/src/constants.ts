@@ -19,13 +19,13 @@ export const MIDI_OFFSET = 21;
 export const ANNOTATIONS_SEMITONES = 88;
 export const CONTOUR_BINS_PER_SEMITONE = 3;
 export const CONTOUR_BINS: number = ANNOTATIONS_SEMITONES * CONTOUR_BINS_PER_SEMITONE;
-// The model's output tensors by what each reads
-export const FRAMES_TENSOR = "Identity_1";
-export const ONSETS_TENSOR = "Identity_2";
-export const CONTOURS_TENSOR = "Identity";
+// The ONNX export's input and output tensors by name, as Basic Pitch's model repository publishes them
+export const INPUT_TENSOR = "serving_default_input_2:0";
+export const FRAMES_TENSOR = "StatefulPartitionedCall:1";
+export const ONSETS_TENSOR = "StatefulPartitionedCall:2";
+export const CONTOURS_TENSOR = "StatefulPartitionedCall:0";
 // The trained model this package ships, from wherever the package is served or installed
-export const MODEL_URL: URL = new URL("../model/model.json", import.meta.url);
-export const MODEL_WEIGHTS_URL: URL = new URL("group1-shard1of1.bin", MODEL_URL);
+export const MODEL_URL: URL = new URL("../model/nmp.onnx", import.meta.url);
 // Note creation's defaults, Basic Pitch's own, with the shortest note its website uses
 export const ONSET_THRESHOLD = 0.5;
 export const FRAME_THRESHOLD = 0.3;

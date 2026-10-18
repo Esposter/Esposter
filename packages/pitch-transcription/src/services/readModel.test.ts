@@ -1,18 +1,13 @@
 import type { ModelReadings } from "#src/models/ModelReadings";
-import type { GraphModel, io } from "@tensorflow/tfjs";
 
-import { AUDIO_SAMPLE_RATE, MODEL_URL, MODEL_WEIGHTS_URL } from "#src/constants";
+import { AUDIO_SAMPLE_RATE, MODEL_URL } from "#src/constants";
 import { createNotes } from "#src/services/createNotes";
 import { readModel } from "#src/services/readModel";
-import { loadGraphModelSync, memory } from "@tensorflow/tfjs";
-import { readFile } from "node:fs/promises";
+import { InferenceSession, Tensor } from "onnxruntime-node";
+import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
-const readShippedModel = async (): Promise<GraphModel<io.IOHandlerSync>> => {
-  const [modelJson, weights] = await Promise.all([readFile(MODEL_URL, "utf8"), readFile(MODEL_WEIGHTS_URL)]);
-  // oxlint-disable-next-line no-restricted-properties -- the model's topology and weight manifest, which hold no dates
-  return loadGraphModelSync([JSON.parse(modelJson), new Uint8Array(weights).buffer]);
-};
+const readShippedSession = (): Promise<InferenceSession> => InferenceSession.create(fileURLToPath(MODEL_URL));
 
 describe(readModel, () => {
   // A tone at A4 whose frames the model's first window covers, though its samples run into a second window
@@ -27,19 +22,20 @@ describe(readModel, () => {
   );
   // One read of the shipped model, which every test below observes a part of: a read takes a few seconds alone and
   // Several times that under coverage, so a read per test cannot fit the default test timeout
+  let disposals = 0;
   let executions = 0;
   let readings: ModelReadings;
-  let tensorCounts: { after: number; before: number };
   let twoTonesReadings: ModelReadings;
 
   beforeAll(async () => {
-    const model = await readShippedModel();
-    const execute = vi.spyOn(model, "execute");
-    const before = memory().numTensors;
-    readings = await readModel(model, tone);
-    tensorCounts = { after: memory().numTensors, before };
-    executions = execute.mock.calls.length;
-    twoTonesReadings = await readModel(model, twoTones);
+    const session = await readShippedSession();
+    const run = vi.spyOn(session, "run");
+    const dispose = vi.spyOn(Tensor.prototype, "dispose");
+    readings = await readModel(session, tone);
+    disposals = dispose.mock.calls.length;
+    executions = run.mock.calls.length;
+    twoTonesReadings = await readModel(session, twoTones);
+    vi.restoreAllMocks();
   });
 
   test("hears a tone's pitch", () => {
@@ -48,10 +44,10 @@ describe(readModel, () => {
     expect(new Set(createNotes(readings).map(({ pitchMidi }) => pitchMidi))).toStrictEqual(new Set([69]));
   });
 
-  test("frees every tensor it makes", () => {
+  test("disposes every output it reads", () => {
     expect.hasAssertions();
 
-    expect(tensorCounts.after).toBe(tensorCounts.before);
+    expect({ disposals, outputs: executions * 3 }).toStrictEqual({ disposals: 3, outputs: 3 });
   });
 
   test("runs no window past the recording's last frame", () => {

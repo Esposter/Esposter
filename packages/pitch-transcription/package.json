@@ -72,11 +72,14 @@
     "@esposter/shared-node": "workspace:*",
     "@tensorflow/tfjs": "catalog:",
     "@types/node": "catalog:",
+    "onnxruntime-common": "catalog:",
+    "onnxruntime-node": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@tensorflow/tfjs": "catalog:"
+    "@tensorflow/tfjs": "catalog:",
+    "onnxruntime-common": "catalog:"
   }
 }

@@ -645,6 +645,12 @@ catalogs:
     ohash:
       specifier: ^2.0.12
       version: 2.0.12
+    onnxruntime-common:
+      specifier: ^1.30.0
+      version: 1.30.0
+    onnxruntime-node:
+      specifier: ^1.30.0
+      version: 1.30.0
     oxfmt:
       specifier: ^0.73.0
       version: 0.73.0
@@ -2097,6 +2103,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
+      onnxruntime-common:
+        specifier: 'catalog:'
+        version: 1.30.0
+      onnxruntime-node:
+        specifier: 'catalog:'
+        version: 1.30.0
       publint:
         specifier: 'catalog:'
         version: 0.3.25
@@ -2507,6 +2519,9 @@ importers:
       keyframe-store:
         specifier: workspace:*
         version: link:../packages/keyframe-store
+      onnxruntime-node:
+        specifier: 'catalog:'
+        version: 1.30.0
       pitch-transcription:
         specifier: workspace:*
         version: link:../packages/pitch-transcription

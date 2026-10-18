@@ -1,12 +1,24 @@
-import type { Tensor3D } from "@tensorflow/tfjs";
-
 import { AUDIO_WINDOW_SAMPLES, OVERLAP_SAMPLES, WINDOW_HOP_SAMPLES } from "#src/constants";
-import { concat1d, expandDims, signal, tensor1d, tidy, zeros } from "@tensorflow/tfjs";
+import { Tensor } from "onnxruntime-common";
 
-// One channel cut into the windows the model reads, a window to a row: half an overlap of silence first so the first
-// Frames are read whole, then windows a hop apart, the last padded with silence
-export const prepareAudioWindows = (samples: Float32Array): Tensor3D =>
-  tidy(() => {
-    const padded = concat1d([zeros([OVERLAP_SAMPLES / 2]), tensor1d(samples)]);
-    return expandDims(signal.frame(padded, AUDIO_WINDOW_SAMPLES, WINDOW_HOP_SAMPLES, true, 0), -1);
-  });
+export interface AudioWindows {
+  count: number;
+  getWindow: (index: number) => Tensor;
+}
+
+// One channel cut into the windows the model reads: half an overlap of silence first so the first frames are read
+// Whole, then windows a hop apart, the last run out into silence. Every window is a view over one padded buffer, so
+// Holding them all costs no more than the recording
+export const prepareAudioWindows = (samples: Float32Array): AudioWindows => {
+  const paddedLength = OVERLAP_SAMPLES / 2 + samples.length;
+  const count = Math.ceil(paddedLength / WINDOW_HOP_SAMPLES);
+  const padded = new Float32Array((count - 1) * WINDOW_HOP_SAMPLES + AUDIO_WINDOW_SAMPLES);
+  padded.set(samples, OVERLAP_SAMPLES / 2);
+  return {
+    count,
+    getWindow: (index) => {
+      const start = index * WINDOW_HOP_SAMPLES;
+      return new Tensor("float32", padded.subarray(start, start + AUDIO_WINDOW_SAMPLES), [1, AUDIO_WINDOW_SAMPLES, 1]);
+    },
+  };
+};

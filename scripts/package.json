@@ -111,6 +111,7 @@
     "imagetracerjs": "catalog:",
     "jscpd": "catalog:",
     "keyframe-store": "workspace:*",
+    "onnxruntime-node": "catalog:",
     "pitch-transcription": "workspace:*",
     "playwright": "catalog:",
     "sharp": "catalog:",
