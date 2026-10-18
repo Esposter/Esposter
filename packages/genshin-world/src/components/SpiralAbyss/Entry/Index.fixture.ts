@@ -1,29 +1,12 @@
-import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
-
 import { englishNameText } from "#parity/englishNameText";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
+import { takeOne } from "@esposter/shared";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-const chamber = (id: number, index: number) => ({
-  conditions: [],
-  halfMonsterDescribeIds: [],
-  id,
-  index,
-  monsterLevel: 1,
-});
-// The Moon Spire's period from the 16th of October 2026, whose blessing is Stardread, over the English words and names,
-// Offering the period's first floor with its three chambers
-const floors: AbyssFloor[] = [
-  {
-    chambers: [chamber(401, 1), chamber(402, 2), chamber(403, 3)],
-    id: 1134,
-    index: 9,
-    teamCount: 2,
-    unlockStarCount: 0,
-  },
-];
-export const props = {
-  blessing: { descriptionTextHash: 2415435448, icon: "UI_TowerBlessing_107", nameTextHash: 1867767671 },
-  floors,
-  gameText: ENGLISH_GAME_TEXT,
-  nameText: englishNameText,
-};
+const periods = await readAbyssPeriods(GAME_DATA_LOCAL_BASE_URL);
+// The Moon Spire's latest period the mirror holds, read with the floors it runs, over the English words and names
+const period = takeOne(periods, periods.length - 1);
+const floors = (await readAbyssFloors(GAME_DATA_LOCAL_BASE_URL)).filter(({ id }) => period.floorIds.includes(id));
+export const props = { blessing: period.blessing, floors, gameText: ENGLISH_GAME_TEXT, nameText: englishNameText };

@@ -1,36 +1,28 @@
-import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
-import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
-
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { ABYSS_CORRIDOR_LAST_FLOOR_INDEX } from "#src/services/spiralAbyss/constants";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
+import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const floor = (id: number, index: number): AbyssFloor => ({
-  chambers: [],
-  id,
-  index,
-  teamCount: 2,
-  unlockStarCount: 0,
-});
-const floors = [floor(1001, 1), floor(1008, 8), floor(1134, 9), floor(1135, 10), floor(1140, 11)];
-const period: AbyssPeriod = {
-  blessing: { descriptionTextHash: 2415435448, icon: "UI_TowerBlessing_107", nameTextHash: 1867767671 },
-  closesAt: new Date(0).toISOString(),
-  floorIds: [1134, 1135, 1140, 1141],
-  id: 124,
-  rewardGroup: 1,
-  startsAt: new Date(0).toISOString(),
-};
+const floors = await readAbyssFloors(GAME_DATA_LOCAL_BASE_URL);
+const periods = await readAbyssPeriods(GAME_DATA_LOCAL_BASE_URL);
+// The latest period the record holds, whose floors the Moon Spire offers now
+const period = takeOne(periods, periods.length - 1);
 
 describe(getAbyssFloorsOffered, () => {
   test("a period offers its own floors", () => {
     expect.hasAssertions();
 
-    expect(getAbyssFloorsOffered(floors, period).map(({ id }) => id)).toStrictEqual([1134, 1135, 1140]);
+    expect(getAbyssFloorsOffered(floors, period).map(({ id }) => id)).toStrictEqual(period.floorIds);
   });
 
   test("with no period, the Corridor's floors are offered", () => {
     expect.hasAssertions();
 
-    expect(getAbyssFloorsOffered(floors, undefined).map(({ id }) => id)).toStrictEqual([1001, 1008]);
+    expect(getAbyssFloorsOffered(floors, undefined).map(({ id }) => id)).toStrictEqual(
+      floors.filter(({ index }) => index <= ABYSS_CORRIDOR_LAST_FLOOR_INDEX).map(({ id }) => id),
+    );
   });
 });
