@@ -67,7 +67,7 @@ The realm SHALL keep each furnishing placement with the player's progress, so th
 
 ### Requirement: A companion is invited within the Trust Rank's count
 
-The realm SHALL take as its companions characters other than the Traveler that the player owns, no more than the count the player's Trust Rank allows.
+The realm SHALL take as its companions characters other than the Traveler that the player owns, no more than the count the player's Trust Rank allows, and a companion the player dismisses SHALL leave the realm.
 
 #### Scenario: A companion is invited within the Trust Rank's count
 
@@ -92,6 +92,18 @@ The realm SHALL take as its companions characters other than the Traveler that t
 - **GIVEN** a realm in which a character already lives
 - **WHEN** the player invites the same character again
 - **THEN** the invitation is refused
+
+#### Scenario: A character the player does not own cannot be invited
+
+- **GIVEN** a realm with room for a companion
+- **WHEN** the player invites a character they do not own
+- **THEN** the invitation is refused
+
+#### Scenario: A dismissed companion leaves the realm
+
+- **GIVEN** a realm with a companion living in it
+- **WHEN** the player dismisses the companion
+- **THEN** the character no longer lives in the realm
 
 ### Requirement: A companion invited to a favoured gift set gives its reward once
 
