@@ -21,7 +21,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 
 - [ ] **Is the quest screen laid out as the wiki's still shows it?** — [Quests](../../specs/genshin/quests/design.md): every piece of `QuestScreen` is placed off `File:Quest Screen.png`, its list opening at its top where the still is scrolled down.
 - [ ] **Does the quest screen's title read In Progress, and a list's own tab the list's name?** — [Quests](../../specs/genshin/quests/design.md): the text map holds no line for it, so the plainest, `UI_TEXT_DOING`, stands in.
-- [ ] **Is a quest's distance on the quest screen written as the minigame's `{0}m`?** — [Quests](../../specs/genshin/quests/design.md): no line is named for it, so `UI_ACTIVITY_LOLIGOLF_DISTANCE` stands in.
+- [ ] **Is a quest's distance on the quest screen written as the minigame's `{0}m`?** — [Quests](../../specs/genshin/quests/design.md): no line is named for it, so `UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER` stands in.
 - [ ] **Is the selected quest's row ringed in cream?** — [Quests](../../specs/genshin/quests/design.md): the still shows no row selected, so the ring is the game's cream.
 - [ ] **Are a list's seriesless quests listed above its series?** — [Quests](../../specs/genshin/quests/design.md): a best estimate, since the still shows none.
 
