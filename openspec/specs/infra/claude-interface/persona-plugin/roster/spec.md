@@ -42,13 +42,13 @@ The roster SHALL be read from the game data at most once for each installed vers
 - **WHEN** the interface language is changed
 - **THEN** the roster is read again in the new language
 
-### Requirement: Missing game data falls back to the fallback card
+### Requirement: Missing game data starts the session with no character
 
-A missing install of the game-data dependency SHALL fall back to the fallback card rather than failing the session.
+A missing install of the game-data dependency SHALL start the session with no character rather than failing it.
 
 #### Scenario: Dependency not installed
 
 - **GIVEN** the game-data dependency is not installed
 - **WHEN** a session starts
-- **THEN** the session shows the fallback card
+- **THEN** the session starts with no character and prints nothing from the pick
 - **AND** the session is not blocked
