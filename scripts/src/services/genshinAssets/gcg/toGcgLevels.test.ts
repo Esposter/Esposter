@@ -12,8 +12,8 @@ describe(toGcgLevels, () => {
     { exp: 950, level: 3, rewardId: 3 },
   ];
   const LEVEL_LOCK_ROWS: ExcelGcgLevelLockRow[] = [
-    { levelId: 20_002, unlockLevel: 4, unlockMainQuestId: 70_667 },
-    { levelId: 20_001, unlockLevel: 2, unlockMainQuestId: 70_666 },
+    { levelId: 2, unlockLevel: 2, unlockMainQuestId: 2 },
+    { levelId: 1, unlockLevel: 1, unlockMainQuestId: 1 },
   ];
   const WEEK_LEVEL_ROWS: ExcelGcgWeekLevelRow[] = [
     {
@@ -42,8 +42,8 @@ describe(toGcgLevels, () => {
         { exp: 1050, level: 3 },
       ],
       playerLevelLocks: [
-        { unlockLevel: 2, unlockMainQuestId: "70666" },
-        { unlockLevel: 4, unlockMainQuestId: "70667" },
+        { unlockLevel: 1, unlockMainQuestId: "1" },
+        { unlockLevel: 2, unlockMainQuestId: "2" },
       ],
     });
   });

@@ -9,9 +9,9 @@ import { describe, expect, test } from "vitest";
 
 describe(toGcgDeck, () => {
   const DECK_ID = 1;
-  const CARD_ID = 213_011;
-  const CHARACTER_ID = 1301;
-  const SKILL_ID = 13_011;
+  const CARD_ID = 2;
+  const CHARACTER_ID = 3;
+  const SKILL_ID = 4;
   const CHARACTER_NAME_TEXT_ID = 1001;
   const CHARACTER_DESCRIPTION_TEXT_ID = 1002;
   const CARD_NAME_TEXT_ID = 2001;
@@ -28,13 +28,13 @@ describe(toGcgDeck, () => {
       maxEnergy: 3,
       nameTextMapHash: CHARACTER_NAME_TEXT_ID,
       skillList: [SKILL_ID],
-      tagList: ["GCG_TAG_ELEMENT_PYRO", "GCG_TAG_WEAPON_SWORD"],
+      tagList: ["GCG_TAG_ELEMENT_PYRO", "GCG_TAG_WEAPON_ALPHA"],
     };
     const skillRow: ExcelGcgSkillRow = {
       costList: [],
       energyRecharge: 1,
       id: SKILL_ID,
-      skillJson: "Effect_Damage_Fire_1",
+      skillJson: "Effect_Alpha",
       skillTagList: ["GCG_SKILL_TAG_A"],
     };
     const cardRow: ExcelGcgCardRow = {
@@ -69,10 +69,8 @@ describe(toGcgDeck, () => {
           id: CHARACTER_ID,
           maxEnergy: 3,
           nameTextId: CHARACTER_NAME_TEXT_ID,
-          skills: [
-            { costs: [], effect: "Effect_Damage_Fire_1", energyGain: 1, id: SKILL_ID, kind: GcgSkillKind.NormalAttack },
-          ],
-          weapon: "SWORD",
+          skills: [{ costs: [], effect: "Effect_Alpha", energyGain: 1, id: SKILL_ID, kind: GcgSkillKind.NormalAttack }],
+          weapon: "ALPHA",
         },
       ],
     });
@@ -81,7 +79,7 @@ describe(toGcgDeck, () => {
   test("should name a weapon card's weapon kind from its tag, as a character's weapon is named", () => {
     expect.hasAssertions();
 
-    const WEAPON_CARD_ID = 311_503;
+    const WEAPON_CARD_ID = 1;
     const deckRow: ExcelGcgDeckRow = { cardList: [WEAPON_CARD_ID], characterList: [], id: DECK_ID };
     const weaponRow: ExcelGcgCardRow = {
       cardType: "GCG_CARD_MODIFY",
@@ -90,7 +88,7 @@ describe(toGcgDeck, () => {
       id: WEAPON_CARD_ID,
       nameTextMapHash: CARD_NAME_TEXT_ID,
       skillList: [],
-      tagList: ["GCG_TAG_WEAPON", "GCG_TAG_WEAPON_SWORD"],
+      tagList: ["GCG_TAG_WEAPON", "GCG_TAG_WEAPON_ALPHA"],
     };
 
     expect(toGcgDeck(deckRow, [], [], [weaponRow], [], []).cards).toStrictEqual([
@@ -102,7 +100,7 @@ describe(toGcgDeck, () => {
         isLocation: false,
         kind: GcgCardKind.Weapon,
         nameTextId: CARD_NAME_TEXT_ID,
-        weapon: "SWORD",
+        weapon: "ALPHA",
       },
     ]);
   });
@@ -110,16 +108,16 @@ describe(toGcgDeck, () => {
   test("should name a character's nation from its tag", () => {
     expect.hasAssertions();
 
-    const LIYUE_CHARACTER_ID = 1_107;
-    const deckRow: ExcelGcgDeckRow = { cardList: [], characterList: [LIYUE_CHARACTER_ID], id: DECK_ID };
+    const NATION_CHARACTER_ID = 1;
+    const deckRow: ExcelGcgDeckRow = { cardList: [], characterList: [NATION_CHARACTER_ID], id: DECK_ID };
     const characterRow: ExcelGcgCharRow = {
       descTextMapHash: CHARACTER_DESCRIPTION_TEXT_ID,
       hp: 10,
-      id: LIYUE_CHARACTER_ID,
+      id: NATION_CHARACTER_ID,
       maxEnergy: 3,
       nameTextMapHash: CHARACTER_NAME_TEXT_ID,
       skillList: [],
-      tagList: ["GCG_TAG_ELEMENT_CRYO", "GCG_TAG_WEAPON_POLE", "GCG_TAG_NATION_LIYUE"],
+      tagList: ["GCG_TAG_ELEMENT_CRYO", "GCG_TAG_WEAPON_BETA", "GCG_TAG_NATION_GAMMA"],
     };
 
     expect(toGcgDeck(deckRow, [characterRow], [], [], [], []).characters).toStrictEqual([
@@ -127,12 +125,12 @@ describe(toGcgDeck, () => {
         descriptionTextId: CHARACTER_DESCRIPTION_TEXT_ID,
         element: Element.Cryo,
         hp: 10,
-        id: LIYUE_CHARACTER_ID,
+        id: NATION_CHARACTER_ID,
         maxEnergy: 3,
         nameTextId: CHARACTER_NAME_TEXT_ID,
-        nation: "LIYUE",
+        nation: "GAMMA",
         skills: [],
-        weapon: "POLE",
+        weapon: "BETA",
       },
     ]);
   });
@@ -140,7 +138,7 @@ describe(toGcgDeck, () => {
   test("should mark a companion support card from its ally tag", () => {
     expect.hasAssertions();
 
-    const COMPANION_CARD_ID = 322_012;
+    const COMPANION_CARD_ID = 1;
     const deckRow: ExcelGcgDeckRow = { cardList: [COMPANION_CARD_ID], characterList: [], id: DECK_ID };
     const companionRow: ExcelGcgCardRow = {
       cardType: "GCG_CARD_ASSIST",
@@ -183,7 +181,7 @@ describe(toGcgDeck, () => {
       costList: [{ count: 0 }],
       energyRecharge: 1,
       id: SKILL_ID,
-      skillJson: "Effect_Damage_Fire_1",
+      skillJson: "Effect_Alpha",
       skillTagList: ["GCG_SKILL_TAG_A"],
     };
 
@@ -199,9 +197,7 @@ describe(toGcgDeck, () => {
           id: CHARACTER_ID,
           maxEnergy: 3,
           nameTextId: CHARACTER_NAME_TEXT_ID,
-          skills: [
-            { costs: [], effect: "Effect_Damage_Fire_1", energyGain: 1, id: SKILL_ID, kind: GcgSkillKind.NormalAttack },
-          ],
+          skills: [{ costs: [], effect: "Effect_Alpha", energyGain: 1, id: SKILL_ID, kind: GcgSkillKind.NormalAttack }],
           weapon: "",
         },
       ],

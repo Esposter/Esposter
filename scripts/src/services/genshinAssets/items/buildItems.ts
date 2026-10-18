@@ -76,10 +76,9 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   const groceryGoods = z
     .array(z.object({ itemId: z.int() }))
     .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
+  const shopGoodsRows = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME);
   // The fish a Fishing Association's goods are bought with, and the items they give, as the goods table names them
-  const fishingGoods = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME).filter((row) =>
-    checkIsFishingAssociationGood(row),
-  );
+  const fishingGoods = shopGoodsRows.filter((row) => checkIsFishingAssociationGood(row));
   const fishingGoodItemIds = [
     ...fishingGoods.map(({ itemId }) => itemId),
     ...fishingGoods.flatMap(({ costItems }) =>
@@ -87,12 +86,10 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     ),
   ];
   // The food, cooking ingredients and recipes the Good Hunter sells, the goods of its shop as the goods table names them
-  const goodHunterGoods = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME).filter(
-    (row) => row.shopType === GOOD_HUNTER_SHOP_TYPE,
-  );
+  const goodHunterGoods = shopGoodsRows.filter((row) => row.shopType === GOOD_HUNTER_SHOP_TYPE);
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const materialRowMap = new Map(materialRows.map((materialRow) => [materialRow.id, materialRow] as const));
-  const itemTableMap = readItemTableMap();
+  const itemTableMap = readItemTableMap(materialRows);
   const cookingRecipes = readCookingRecipes();
   const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
     rewards.map(({ itemId }) => itemId),

@@ -32,6 +32,7 @@ describe(toCraftingStrongboxes, () => {
   const createReliquaryRow = (id: number, setId: number): ExcelReliquaryRow => ({
     addPropLevels: [],
     appendPropDepotId: 0,
+    appendPropNum: 0,
     baseConvExp: 0,
     equipType: "EQUIP_BRACER",
     id,

@@ -18,7 +18,7 @@ const toPiece = ({ appendPropNum, equipType, id, nameTextMapHash, rank, rankLeve
   rank,
   rarity: rankLevel,
   slot: equipType,
-  startingMinorCount: appendPropNum ?? 0,
+  startingMinorCount: appendPropNum,
 });
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the counts its

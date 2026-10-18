@@ -18,6 +18,8 @@ const FIRST_REWARD_ID = 100;
 const SECOND_REWARD_ID = 200;
 const FIRST_TALK_ID = 1000;
 const SECOND_TALK_ID = 2000;
+// The talk a reward row holds where the dump leaves its talk out, which the dump's defaults write back as zero
+const NO_TALK_ID = 0;
 const rewardRow = (avatarID: number, furnitureSuitID: number, rewardID: number, talkID: number) => ({
   avatarID,
   eventType: HOME_AVATAR_REWARD_EVENT_TYPE,
@@ -64,6 +66,20 @@ describe(buildHomeEvents, () => {
             talkId: SECOND_TALK_ID,
           },
         ],
+      },
+    });
+  });
+
+  test("a favour the dump gives no talk is published without a talk id, the dump's zero default meaning none", () => {
+    expect.hasAssertions();
+
+    vi.mocked(readExcelTable).mockReturnValueOnce([
+      rewardRow(FIRST_COMPANION_ID, FIRST_SUITE_ID, FIRST_REWARD_ID, NO_TALK_ID),
+    ]);
+
+    expect(buildHomeEvents()).toStrictEqual({
+      [`${GameDataset.Home}/events`]: {
+        favours: [{ avatarId: FIRST_COMPANION_ID, furnitureSuitId: FIRST_SUITE_ID, rewardId: FIRST_REWARD_ID }],
       },
     });
   });

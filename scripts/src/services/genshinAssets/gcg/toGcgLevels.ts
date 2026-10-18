@@ -29,7 +29,7 @@ export const toGcgLevels = (
       .toSorted((firstRow, secondRow) => firstRow.unlockLevel - secondRow.unlockLevel)
       .map(({ unlockLevel, unlockMainQuestId }) => ({ unlockLevel, unlockMainQuestId: String(unlockMainQuestId) })),
     playerLevels: sortedLevelRows.map(({ level }, index) => ({
-      exp: sortedLevelRows.slice(0, index).reduce((total, { exp }) => total + (exp ?? 0), 0),
+      exp: sortedLevelRows.slice(0, index).reduce((total, { exp }) => total + exp, 0),
       level,
     })),
   };

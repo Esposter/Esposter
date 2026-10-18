@@ -4,8 +4,8 @@ import { Element } from "genshin-world";
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
 // Has no round to run out; its reactions and hand limit are the matchmaking rule's
 export const GCG_STANDARD_RULE_ID = 2;
-// The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
-// Published beside the standard rule
+// The duels the world's residents play, by their game id in the game table: the games their seats name, and the
+// Normal challengers' duels below. Their decks are published beside the standard rule
 // The normal challengers' duels whose enemy decks are built: games 1011 and 1012 play deck 11105, and game 1083 plays deck
 // 12005. Games 1104 and 1105 (Kimiya) and game 13105 (Furuya Noboru) play deck 13105, with their regions from the wiki.
 // NPC pages: https://genshin-impact.fandom.com/wiki/Kimiya (Sumeru) and
@@ -14,7 +14,11 @@ export const GCG_STANDARD_RULE_ID = 2;
 // Duels in Inazuma sections name them.
 // The other challengers' games wait for their decks, since a game whose enemy deck has no slice is refused
 export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
-export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS];
+// The residents' seats' duels and the challengers' duels, each game once, since game 1104 is both a seat's and a
+// Challenger's duel
+export const GCG_DUEL_GAME_IDS: number[] = [
+  ...new Set([...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS]),
+];
 // The week games the residents offer in their weekly guest challenge, read from the seats. They publish beside the duels' games
 export const GCG_CHALLENGER_WEEK_GAME_IDS: number[] = [...RESIDENT_WEEK_GAME_MAP.values()].map(({ gameId }) => gameId);
 // The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
