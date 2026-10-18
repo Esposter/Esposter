@@ -16,12 +16,9 @@
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.birgittaDischargeMultiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 3, "proudSkillGroupId": 11632 }
-  },
-  "parameters.shieldAttackShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11632 } },
-  "parameters.shieldFlatHealth": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 11632 } },
-  "parameters.shieldSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 11632 } },
+  "parameters.birgittaDischargeMultiplier": { "source": "Tables" },
+  "parameters.shieldAttackShare": { "source": "Tables" },
+  "parameters.shieldFlatHealth": { "source": "Tables" },
+  "parameters.shieldSeconds": { "source": "Tables" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11632 } }
 }

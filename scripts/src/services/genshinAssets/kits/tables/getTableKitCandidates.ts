@@ -56,6 +56,11 @@ const BURST_PARAMETER_NAMES: ReadonlyMap<string, readonly string[]> = new Map([
 // A character's own elemental skill rows, each read onto the parameters its module reads by name. A row's parameters are
 // Taken in order, one name to each, so Impale the Night Healing's low and full heals are its first and second parameters
 const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  Ineffa: {
+    "Birgitta Discharge DMG": ["birgittaDischargeMultiplier"],
+    "Shield DMG Absorption": ["shieldAttackShare", "shieldFlatHealth"],
+    "Shield Duration": ["shieldSeconds"],
+  },
   Clorinde: {
     "Bond of Life Conversion": ["bondOfLifeConversionHealing"],
     "Impale the Night Healing": ["impaleTheNightLowBondOfLifeHealing", "impaleTheNightFullBondOfLifeHealing"],

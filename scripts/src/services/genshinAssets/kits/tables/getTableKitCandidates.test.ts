@@ -553,4 +553,48 @@ describe(getTableKitCandidates, () => {
     expect(values["skillHolds.0.action.hits.length"]).toBe(2);
     expect(values["skillHolds.length"]).toBe(1);
   });
+
+  test("reads Ineffa's shield and Birgitta's parameters from her elemental skill's labels, each at its label's index", () => {
+    expect.hasAssertions();
+
+    const INEFFA_CHARACTER_ID = 10_000_116;
+    const INEFFA_NAME = "Ineffa";
+    const INEFFA_SKILL_GROUP_ID = 11_632;
+    const candidateMap = getTableKitCandidates({
+      characterId: INEFFA_CHARACTER_ID,
+      labelMap: new Map([
+        [
+          INEFFA_SKILL_GROUP_ID,
+          [
+            { indexes: [0], label: "Skill DMG" },
+            { indexes: [1, 2], label: "Shield DMG Absorption" },
+            { indexes: [5], label: "Shield Duration" },
+            { indexes: [3], label: "Birgitta Discharge DMG" },
+          ],
+        ],
+      ]),
+      name: INEFFA_NAME,
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 11_639,
+        [CombatTalent.ElementalSkill]: INEFFA_SKILL_GROUP_ID,
+        [CombatTalent.NormalAttack]: 11_631,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Polearm,
+    });
+
+    expect(
+      [
+        "parameters.shieldAttackShare",
+        "parameters.shieldFlatHealth",
+        "parameters.shieldSeconds",
+        "parameters.birgittaDischargeMultiplier",
+      ].map((path) => candidateMap.get(path)?.map(({ value }) => value)),
+    ).toStrictEqual([
+      [{ index: 1, proudSkillGroupId: INEFFA_SKILL_GROUP_ID }],
+      [{ index: 2, proudSkillGroupId: INEFFA_SKILL_GROUP_ID }],
+      [{ index: 5, proudSkillGroupId: INEFFA_SKILL_GROUP_ID }],
+      [{ index: 3, proudSkillGroupId: INEFFA_SKILL_GROUP_ID }],
+    ]);
+  });
 });
