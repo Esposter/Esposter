@@ -28,6 +28,8 @@ openspec/
 
 A cross-area refactor plan is a change named `refactors-<slug>`: it is no area, so it has no roadmap, no deferred or rejected folder and no product-review pass. A mechanical sweep is not one: it designs no behaviour and lives in `.agents/ledgers/` (`sweeps` skill).
 
+**A workspace package is an area only when it holds a capability of its own** — a library or an adapter another project could install, such as `parse-tmx` or `trpc-msw`, whose area holds its requirements and the Upstream table of what it replaced. A package that serves the repo — the shared utilities, the configuration, the database layer, the test doubles — gets no area: the capability pages of what it holds describe it, and an area over contents that change with routine work would be an index restating the source. A component absorbed into the app is the app's capability, never a package's. A published package keeps the README npm shows, which is its install page, not its spec.
+
 ## Design template
 
 ```markdown
