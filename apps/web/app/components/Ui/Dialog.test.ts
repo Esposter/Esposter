@@ -44,7 +44,7 @@ describe("uiDialog", () => {
 
       const component = mount(UiDialog, {
         attachTo: document.body,
-        props: { isExpandable: true, modelValue: true, placement: UiDialogPlacement.Sheet, title },
+        props: { isExpandable: true, modelValue: true, placement: UiDialogPlacement.Middle, title },
       });
       await flushPromises();
       await component.get('[aria-label="Full screen"]').trigger("click");
@@ -53,8 +53,23 @@ describe("uiDialog", () => {
 
       await component.setProps({ isExpanded: true });
 
-      expect(component.get("dialog").classes("md:w-1/2")).toBe(false);
+      expect(component.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.FullScreen);
       expect(component.get('[aria-label="Full screen"]').attributes("aria-pressed")).toBe("true");
+    });
+
+    // An editor's close is the title bar's, so the dialog holds open while its caller asks about unsaved changes
+    test("stays open when a caller refuses the close its close button asks for", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, "onUpdate:modelValue": noop, title },
+      });
+      await flushPromises();
+      await component.get('[aria-label="Close"]').trigger("click");
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
+      expect(component.get<HTMLDialogElement>("dialog").element.open).toBe(true);
     });
 
     // An editor with unsaved changes answers a close by asking first, so the dialog holds open until its model moves

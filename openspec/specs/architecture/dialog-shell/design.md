@@ -4,7 +4,7 @@
 
 The body mounts with each open and goes once the close has played, held for the dialog's leave (`DIALOG_CLOSE_DURATION_MS`) so the dialog rises out with what it showed rather than as an empty frame. The library's dialog is the browser's own, which stays mounted while shut, so this is what keeps a closed dialog's viewer, query or form state from existing, and what makes every open start from what its model says.
 
-Two shells build on it. `StyledFormDialog` wraps the base around a `UiForm` with a generated form id, so its confirm button is the form's submit: it stands disabled while the form has a failing field, pending while an awaited submit is out, and disabled on whatever else the consumer passes as `isConfirmDisabled`. `StyledEditFormDialog` is the editor-shaped sibling rather than a third layer: it is the library's dialog high on the page, or over the whole page when the reader asks, with a header of its own — the item's kind over its name — the kind a label the consumer passes as `itemType`, so an item needs no type field to be edited, and the name following the name field as the reader types — then the validity mark, Save as the one labelled accent button, pending while the awaited save is out, and delete, full-screen and close as quiet icon buttons, because an editor's actions live at the top where the form below can scroll past them. A delete is a [destructive confirmation](../destructive-confirmation/design.md), never this shell.
+Two shells build on it. `StyledFormDialog` wraps the base around a `UiForm` with a generated form id, so its confirm button is the form's submit: it stands disabled while the form has a failing field, pending while an awaited submit is out, and disabled on whatever else the consumer passes as `isConfirmDisabled`. `StyledEditFormDialog` is the editor-shaped sibling rather than a third layer: it is the library's dialog high on the page, expandable over the whole page, in the library's own title bar. The bar holds the item's kind over its name — the kind a label the consumer passes as `itemType`, so an item needs no type field to be edited, and the name following the name field as the reader types — then, in the bar's `actions` slot, the validity mark, Save as the one labelled accent button, pending while the awaited save is out, and delete as a quiet icon button, before the dialog's own full screen and close, because an editor's actions live at the top where the form below can scroll past them. The close is the title bar's, which asks the dialog's model, so a close with unsaved changes opens the save, discard or cancel question instead of closing. A delete is a [destructive confirmation](../destructive-confirmation/design.md), never this shell.
 
 ## How one dialog renders
 
@@ -51,10 +51,10 @@ Nothing else in the app wants that region, and a slot earning its existence from
 
 ## Key files
 
-| File                                                                | Role                                                                                   |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `app/components/Styled/Dialog.vue`                                  | The shell — the library dialog, the body mounted while open, the actions row           |
-| `app/components/Styled/FormDialog.vue`                              | Adds the `UiForm`, submit wiring, validity and pending state to the shell              |
-| `app/components/Styled/EditFormDialog/Index.vue`                    | Editor-shaped dialog — its own header, full-screen placement, dirty-close confirmation |
-| `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm` |
-| `app/components/Ui/Dialog.vue`                                      | The library dialog underneath, whose Escape asks the model rather than closing itself  |
+| File                                                          | Role                                                                                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `app/components/Styled/Dialog.vue`                            | The shell — the library dialog, the body mounted while open, the actions row                         |
+| `app/components/Styled/FormDialog.vue`                        | Adds the `UiForm`, submit wiring, validity and pending state to the shell                            |
+| `app/components/Styled/EditFormDialog/Index.vue`              | Editor-shaped dialog — the item's kind and commands in the library's title bar, dirty-close question |
+| `app/components/Styled/EditFormDialog/ConfirmCloseDialog.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm`               |
+| `app/components/Ui/Dialog.vue`                                | The library dialog underneath, whose Escape and close button ask the model rather than closing it    |

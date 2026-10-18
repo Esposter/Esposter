@@ -41,10 +41,12 @@ onMounted(async () => {
       }
     "
   />
-  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]">
+  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]" is-expandable>
+    <!-- Its height in the middle of the screen, and all the dialog's height once the reader takes it over the page -->
     <PdfViewer
       :key="url"
       h="[64dvh]"
+      grow
       :filename="file.filename"
       :is-failed="isAnyFailed"
       :is-password-requested

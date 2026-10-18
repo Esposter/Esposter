@@ -19,7 +19,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       return items.value.find((item) => checkIsOriginalItem(item));
     } else return undefined;
   });
-  const isFullScreenDialog = ref(false);
   // Written by the edit dialog's form, which counts every field's rules as the reader types
   const isEditFormValid = ref(true);
   const isSavable = computed(
@@ -61,15 +60,5 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     await editItem(Object.fromEntries(queryIdEntries) as { [P in keyof TItem & TIdKeys[number]]: TItem[P] });
   });
 
-  return {
-    editedItem,
-    editItem,
-    isDirty,
-    isEditFormDialogOpen,
-    isEditFormValid,
-    isFullScreenDialog,
-    isSavable,
-    originalItem,
-    resetItem,
-  };
+  return { editedItem, editItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, originalItem, resetItem };
 };

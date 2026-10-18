@@ -4,7 +4,7 @@ import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
 const { resetItem, saveItem } = todoListStore;
-const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
+const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, originalItem } =
   storeToRefs(todoListStore);
 </script>
 
@@ -12,7 +12,6 @@ const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreen
   <StyledEditFormDialog
     v-if="editedItem"
     v-model="isEditFormDialogOpen"
-    v-model:is-full-screen-dialog="isFullScreenDialog"
     v-model:is-edit-form-valid="isEditFormValid"
     :name="originalItem?.name ?? ''"
     :edited-item

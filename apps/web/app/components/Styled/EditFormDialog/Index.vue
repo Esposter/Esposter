@@ -2,14 +2,14 @@
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { prettify } from "@/util/text/prettify";
 
 interface Props<T> {
   editedItem: T;
   isDirty: boolean;
   isSavable: boolean;
-  // What the item is, as its header and its confirmations name it: a todo, a chart
+  // What the item is, as its title bar and its confirmations name it: a todo, a chart
   itemType: string;
   name: string;
   originalItem?: T;
@@ -18,12 +18,12 @@ interface Props<T> {
   // Awaited with Save pending, so a failed save keeps the dialog and its draft to try again (useDialogAnswer)
   save: () => Promisable<unknown>;
   schema: z.ZodType;
+  // What the item is called as it is being edited, so the title follows the name field as the reader types
   title: string;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ required: true });
-const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
 const { editedItem, isDirty, isSavable, itemType, name, originalItem, remove, save, schema, title } =
   defineProps<Props<T>>();
@@ -31,6 +31,7 @@ const emit = defineEmits<{ close: [] }>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
+const errorIcon = useTemplateRef("errorIcon");
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
 // Component's effect scope, so its timer outlives unmount and emits into a destroyed component
 const { start: startClose } = useTimeoutFn(
@@ -51,14 +52,14 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <template>
-  <!-- The item's kind and name head the dialog in its own header, so the dialog's title is its accessible name alone.
-    A close asked for while there are unsaved changes asks first -->
+  <!-- The library's dialog high on the page, the item's kind over its name in the title bar, its own commands before
+    The dialog's full screen and close. A close asked for while there are unsaved changes asks first -->
   <UiDialog
     :model-value="isOpen"
-    is-title-hidden
-    :placement="isFullScreenDialog ? UiDialogPlacement.FullScreen : UiDialogPlacement.High"
+    is-expandable
+    :overline="prettify(itemType)"
     :title
-    :class="{ 'w-[min(50rem,90vw)]': !isFullScreenDialog }"
+    w="[min(50rem,90vw)]"
     @update:model-value="
       (value) => {
         if (value) isOpen = true;
@@ -67,37 +68,42 @@ watch(isOpen, (newIsOpen) => {
       }
     "
   >
+    <template #actions>
+      <!-- Held through the dialog's leave with the form, so the bar rises out whole -->
+      <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
+        <div v-if="isOpen" contents>
+          <StyledEditFormDialogErrorIcon
+            ref="errorIcon"
+            :is-form-valid="isEditFormValid"
+            :schema
+            :edited-value="editedItem"
+          />
+          <slot name="prepend-actions" />
+          <StyledEditFormDialogSaveButton
+            :form-id
+            :is-pending
+            :is-savable="isSavable && (errorIcon?.isValid ?? true)"
+          />
+          <StyledEditFormDialogConfirmDeleteDialogButton :item-type :name :original-item :remove />
+        </div>
+      </Transition>
+    </template>
     <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
     <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
       <div v-if="isOpen" contents>
-        <StyledEditFormDialogHeader
-          v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
-          v-model:is-full-screen-dialog="isFullScreenDialog"
-          :name
-          :edited-item
-          :original-item
-          :remove
-          :form-id
-          :is-dirty
-          :is-edit-form-valid
-          :schema
-          :is-pending
-          :is-savable
-          :item-type
-          :title
-          @update:is-edit-form-dialog-open="isOpen = $event"
-          @save="answer(save)"
-        >
-          <template v-if="$slots['prepend-actions']" #prepend-actions>
-            <slot name="prepend-actions" />
-          </template>
-        </StyledEditFormDialogHeader>
         <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
           <slot name="prepend-form" />
           <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="answer(save)">
             <slot />
           </UiForm>
         </div>
+        <StyledEditFormDialogConfirmCloseDialog
+          v-model="isConfirmCloseDialogOpen"
+          :is-savable
+          :item-type
+          @discard="isOpen = false"
+          @save="answer(save)"
+        />
       </div>
     </Transition>
   </UiDialog>

@@ -16,6 +16,10 @@ const viewableFiles = computed(() => getViewableFiles(viewingRoomId.value));
 const { isOpen, item: file } = useSingletonDialog(viewingFileId, () =>
   viewableFiles.value.find(({ id }) => id === viewingFileId.value),
 );
+const isExpanded = ref(false);
+// Over the whole page the picture takes the room the page gives it, past the title bar and the footer, as it does in
+// The middle of the screen
+const mediaHeightClass = computed(() => (isExpanded.value ? "max-h-[88dvh]" : "max-h-[64dvh]"));
 const image = useTemplateRef("image");
 // Cursor is inherited from the frame rather than set here, so the zoom-in/grab affordance stays a binding on an
 // Element panzoom does not also write styles to
@@ -79,7 +83,15 @@ useCommands(() =>
 <template>
   <!-- A picture looked at on its own, in the middle of the screen, with the way through the rest of the message's set
     Under it. Its buttons sit by the picture, so they take the raised default rather than the quiet look -->
-  <UiDialog v-if="file" v-model="isOpen" :placement="UiDialogPlacement.Middle" :title="file.filename" max-w="[90vw]">
+  <UiDialog
+    v-if="file"
+    v-model="isOpen"
+    v-model:is-expanded="isExpanded"
+    max-w="[90vw]"
+    :placement="UiDialogPlacement.Middle"
+    :title="file.filename"
+    is-expandable
+  >
     <div
       :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"
       p-3
@@ -93,7 +105,7 @@ useCommands(() =>
     >
       <video
         v-if="getMimeCategory(file.mimetype) === MimeCategory.Video"
-        max-h="[64dvh]"
+        :class="mediaHeightClass"
         controls
         autoplay
         max-w-full
@@ -101,7 +113,7 @@ useCommands(() =>
         :src="url"
       />
       <div v-else ref="image">
-        <NuxtImg max-h="[64dvh]" max-w-full :src="url" :alt="file.filename" />
+        <NuxtImg :class="mediaHeightClass" max-w-full :src="url" :alt="file.filename" />
       </div>
     </div>
     <footer p-3 flex gap-2 items-center>

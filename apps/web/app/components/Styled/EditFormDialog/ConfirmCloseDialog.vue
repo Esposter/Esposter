@@ -1,31 +1,18 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { prettify } from "@/util/text/prettify";
 
 interface Props {
-  isDirty: boolean;
   isSavable: boolean;
   itemType: string;
 }
 
 const isOpen = defineModel<boolean>({ required: true });
-const { isDirty, isSavable, itemType } = defineProps<Props>();
-const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
+const { isSavable, itemType } = defineProps<Props>();
+const emit = defineEmits<{ discard: []; save: [] }>();
 </script>
 
 <template>
-  <UiIconButton
-    label="Close"
-    :meaning="UiIconMeaning.Close"
-    :variant="UiButtonVariant.Quiet"
-    @click="
-      () => {
-        if (isDirty) isOpen = true;
-        else emit('update:is-edit-form-dialog-open', false);
-      }
-    "
-  />
+  <!-- The close the title bar asks for while there are unsaved changes, answered with a save, a discard or a cancel -->
   <StyledDialog
     v-model="isOpen"
     confirm-label="Save changes"
@@ -41,7 +28,7 @@ const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: 
         @click="
           () => {
             isOpen = false;
-            emit('update:is-edit-form-dialog-open', false);
+            emit('discard');
           }
         "
       >
