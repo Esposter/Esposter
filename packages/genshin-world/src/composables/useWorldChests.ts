@@ -23,9 +23,10 @@ import { computed, shallowRef } from "vue";
 // Mondstadt's chests, fetched by their key as the world opens, and each one offered on the ground beneath its point: an
 // Unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the session only, and a
 // Dug chest is offered to open, paying nothing until its tier is measured. Opening a chest rolls its Primogems, Mora and
-// Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or sends them to
-// The bag where a drop would fall away there, and the chest is kept as opened. A load that fails is logged and left off,
-// So no chest is offered rather than a wrong one
+// Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or
+// Sends them to the bag where a drop would fall away there, and the chest is kept as opened. The chests the puzzles
+// Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
+// Than a wrong one
 export const useWorldChests = ({
   events,
   gainWorldAdventureExp,
@@ -37,6 +38,7 @@ export const useWorldChests = ({
   nameText,
   openedChestIds,
   placeWorldDrops,
+  puzzleChestPlaces,
   setInventory,
   setWallet,
   waterLevel,
@@ -52,6 +54,7 @@ export const useWorldChests = ({
   nameText: Readonly<Record<string, string>>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
+  puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   waterLevel: number;
@@ -69,8 +72,15 @@ export const useWorldChests = ({
   );
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
+  const worldChestPlaces = computed(() => [...chestPlaces.value, ...puzzleChestPlaces.value]);
   const chestInteractables = computed<Interactable[]>(() =>
-    computeChestInteractables(chestPlaces.value, openedChestIds.value, dugChestIds.value, gameText, getGroundHeight),
+    computeChestInteractables(
+      worldChestPlaces.value,
+      openedChestIds.value,
+      dugChestIds.value,
+      gameText,
+      getGroundHeight,
+    ),
   );
   const digChestById = (chestId: string) => {
     dugChestIds.value = new Set([...dugChestIds.value, chestId]);
@@ -78,7 +88,7 @@ export const useWorldChests = ({
   // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept as opened.
   // Drops that fall away go straight into the bag, and what the bag has no room for is poured out where the chest stands
   const openChestById = (chestId: string, random: () => number) => {
-    const chestPlace = chestPlaces.value.find(({ id }) => id === chestId);
+    const chestPlace = worldChestPlaces.value.find(({ id }) => id === chestId);
     if (!chestPlace) return;
     const previousOpenedChestIds = openedChestIds.value;
     const { x, z } = chestPlace.position;

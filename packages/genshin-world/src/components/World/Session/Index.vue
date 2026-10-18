@@ -348,6 +348,14 @@ const {
   setWallet,
   wallet,
 });
+// The Seelies of Mondstadt and the Time Trial Challenges, each led or started by the player and settled or solved where the save
+// Names it, with the chests they spawn
+const { puzzleChestPlaces, puzzleSeelies, settledSeelieIds, solvedPuzzleIds, stepWorldPuzzles } = useWorldPuzzles({
+  savedSettledSeelieIds: savedState.settledSeelieIds,
+  savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
+  seelies,
+  timeTrialPlaces,
+});
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, digChestById, openChestById } = useWorldChests({
   events,
@@ -360,6 +368,7 @@ const { chestInteractables, digChestById, openChestById } = useWorldChests({
   nameText,
   openedChestIds,
   placeWorldDrops,
+  puzzleChestPlaces,
   setInventory,
   setWallet,
   waterLevel: windriseData.water.level,
@@ -370,12 +379,6 @@ const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedG
   gameDataBaseUrl,
   inventory,
 });
-// The Seelies of Mondstadt, each led to its court by the player following it, and settled where the save names it settled
-const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(
-  seelies,
-  savedState.settledSeelieIds,
-  timeTrialPlaces,
-);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
@@ -544,7 +547,7 @@ useWorldSaveSync({
     regionStatueProgressMap: savedState.regionStatueProgressMap,
     reputation: reputation.value,
     settledSeelieIds: settledSeelieIds.value,
-    solvedPuzzleIds: savedState.solvedPuzzleIds,
+    solvedPuzzleIds: solvedPuzzleIds.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
