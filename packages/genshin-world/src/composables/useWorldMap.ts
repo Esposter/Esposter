@@ -37,6 +37,7 @@ import { computed, shallowRef, watch } from "vue";
 // The exploration the map shows and the thresholds pay on, against the placed doings each area holds
 export const useWorldMap = ({
   catalogue,
+  completedMainQuestIds,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
