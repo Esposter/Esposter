@@ -15,31 +15,11 @@
   "frames.danceDoubleBurstSpawn": { "file": "burst.go", "line": 21, "source": "Gcsim", "value": 1 },
   "frames.danceDoubleDuration": { "file": "skill.go", "line": 177, "source": "Gcsim", "value": 1262 },
   "frames.danceDoubleFirstTick": { "file": "skill.go", "line": 22, "source": "Gcsim", "value": 134 },
+  "frames.danceDoubleRecastFirstTick": { "cause": "Unsourced", "value": 114 },
   "frames.danceDoubleSkillSpawn": { "file": "skill.go", "line": 95, "source": "Gcsim", "value": 23 },
   "frames.plumeTickInterval": { "file": "skill.go", "line": 29, "source": "Gcsim", "value": 109 },
   "frames.stellarVortex": { "cause": "Unsourced", "value": 181 },
   "frames.wingTickInterval": { "file": "skill.go", "line": 29, "source": "Gcsim", "value": 125 },
-  "hits.coda.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 } },
-  "hits.coda.0.element": { "cause": "Unsourced", "value": "Ice" },
-  "hits.coda.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
-  "hits.coda.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 15032 } },
-  "hits.coda.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.coda.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 } },
-  "hits.coda.1.element": { "cause": "Unsourced", "value": "Ice" },
-  "hits.coda.1.hitmarkFrames": { "cause": "Unsourced", "value": 20 },
-  "hits.coda.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 15032 } },
-  "hits.coda.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.coda.2.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 } },
-  "hits.coda.2.element": { "cause": "Unsourced", "value": "Ice" },
-  "hits.coda.2.hitmarkFrames": { "cause": "Unsourced", "value": 28 },
-  "hits.coda.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 15032 } },
-  "hits.coda.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.coda.3.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.6 } },
-  "hits.coda.3.element": { "cause": "Unsourced", "value": "Ice" },
-  "hits.coda.3.hitmarkFrames": { "cause": "Unsourced", "value": 62 },
-  "hits.coda.3.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 15032 } },
-  "hits.coda.3.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.coda.length": { "cause": "Unsourced", "value": 4 },
   "hits.plume.area": { "cause": "TargetCentred", "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 } },
   "hits.plume.element": { "cause": "Unsourced", "value": "Ice" },
   "hits.plume.hitmarkFrames": { "file": "skill.go", "line": 22, "source": "Gcsim", "value": 134 },
@@ -52,6 +32,54 @@
   "hits.wing.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 15032 } },
+  "skillChain.followUps.0.animationFrames": { "cause": "Unsourced", "value": 76 },
+  "skillChain.followUps.0.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 }
+  },
+  "skillChain.followUps.0.hits.0.element": { "cause": "Unsourced", "value": "Ice" },
+  "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
+  "skillChain.followUps.0.hits.0.multiplier": {
+    "cause": "Unsourced",
+    "value": { "index": 1, "proudSkillGroupId": 15032 }
+  },
+  "skillChain.followUps.0.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "skillChain.followUps.0.hits.1.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 }
+  },
+  "skillChain.followUps.0.hits.1.element": { "cause": "Unsourced", "value": "Ice" },
+  "skillChain.followUps.0.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 20 },
+  "skillChain.followUps.0.hits.1.multiplier": {
+    "cause": "Unsourced",
+    "value": { "index": 1, "proudSkillGroupId": 15032 }
+  },
+  "skillChain.followUps.0.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "skillChain.followUps.0.hits.2.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.2 }
+  },
+  "skillChain.followUps.0.hits.2.element": { "cause": "Unsourced", "value": "Ice" },
+  "skillChain.followUps.0.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 28 },
+  "skillChain.followUps.0.hits.2.multiplier": {
+    "cause": "Unsourced",
+    "value": { "index": 1, "proudSkillGroupId": 15032 }
+  },
+  "skillChain.followUps.0.hits.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "skillChain.followUps.0.hits.3.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.6 }
+  },
+  "skillChain.followUps.0.hits.3.element": { "cause": "Unsourced", "value": "Ice" },
+  "skillChain.followUps.0.hits.3.hitmarkFrames": { "cause": "Unsourced", "value": 62 },
+  "skillChain.followUps.0.hits.3.multiplier": {
+    "cause": "Unsourced",
+    "value": { "index": 2, "proudSkillGroupId": 15032 }
+  },
+  "skillChain.followUps.0.hits.3.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 4 },
+  "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.566666666666666 },
   "stellarJubilee.stellarReactionTypes.0": { "cause": "Unsourced", "value": "StellarConduct" },
   "stellarJubilee.stellarReactionTypes.1": { "cause": "Unsourced", "value": "StellarSwirl" },
   "stellarJubilee.stellarReactionTypes.length": { "cause": "Unsourced", "value": 2 }
