@@ -14,13 +14,14 @@ export const compileMathTransformation: ColumnTransformationCompiler<MathTransfo
       );
       return ({ readSource }) => {
         const readValues = transformation.variables.map(({ sourceColumnId }) => readSource(sourceColumnId));
+        // One array serves every row, since the compiled function reads its values synchronously and keeps none of them
+        const values = readValues.map(() => 0);
         return (row, rowIndex) => {
-          const result = evaluate(
-            readValues.map((readValue) => {
-              const value = readValue(row, rowIndex);
-              return value === null ? 0 : Number(value);
-            }),
-          );
+          for (const [index, readValue] of readValues.entries()) {
+            const value = readValue(row, rowIndex);
+            values[index] = value === null ? 0 : Number(value);
+          }
+          const result = evaluate(values);
           return Number.isFinite(result) ? result : null;
         };
       };

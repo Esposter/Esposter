@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T10:33:15.307Z
-- Commit: 2dce06be30
+- Date: 2026-10-18T10:40:38.225Z
+- Commit: 10421b3666
 - Node: v26.12.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,26 +20,26 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------- | -------- | ------- |
-| stored cells | 1.00×   | 0.7916    | ±5.40%  | 0.8897   | 10      |
-| every cell   | 0.11×   | 6.8963    | ±25.65% | 11.7405  | 10      |
+| stored cells | 1.00×   | 0.6349    | ±13.36% | 0.8775   | 10      |
+| every cell   | 0.24×   | 2.6162    | ±32.32% | 5.5566   | 10      |
 
 ## compileSheetColumns > a pass over 10000 rows
 
 | task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------ | -------- | ------- |
-| stored cells | 1.00×   | 7.4231    | ±8.15% | 8.9971   | 10      |
-| every cell   | 0.16×   | 45.3888   | ±4.74% | 47.9700  | 10      |
+| stored cells | 1.00×   | 6.2958    | ±9.16% | 7.7706   | 10      |
+| every cell   | 0.31×   | 20.6021   | ±4.87% | 23.0448  | 10      |
 
 ## compileSheetColumns > the grid sorts 100 rows by the rank
 
 | task    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------- | ------- | --------- | ------- | -------- | ------- |
-| by rank | 1.00×   | 0.0635    | ±17.73% | 0.0670   | 3       |
-| by a    | 0.88×   | 0.0719    | ±49.68% | 0.0879   | 3       |
+| by rank | 1.00×   | 0.0415    | ±6.29%  | 0.0425   | 3       |
+| by a    | 0.73×   | 0.0570    | ±52.10% | 0.0690   | 3       |
 
 ## compileSheetColumns > the grid sorts 1000 rows by the rank
 
 | task    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------- | ------- | --------- | ------- | -------- | ------- |
-| by a    | 1.00×   | 0.7212    | ±24.53% | 0.7995   | 3       |
-| by rank | 0.99×   | 0.7287    | ±28.07% | 0.8196   | 3       |
+| by rank | 1.00×   | 0.4776    | ±19.12% | 0.5177   | 3       |
+| by a    | 0.96×   | 0.4965    | ±26.20% | 0.5544   | 3       |
