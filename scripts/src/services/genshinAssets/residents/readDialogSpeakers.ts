@@ -13,7 +13,7 @@ export const readDialogSpeakers = (): DumpedDialogSpeaker[] => {
   if (!idKey) throw new InvalidOperationError(Operation.Read, DIALOG_TABLE_NAME, "has no scrambled id field");
   return dialogRows.flatMap((dialog) => {
     const { talkRole } = dialog;
-    if (talkRole?.type !== "TALK_ROLE_NPC") return [];
+    if (talkRole.type !== "TALK_ROLE_NPC") return [];
     return [{ speakerId: Number(talkRole.id), talkId: Math.floor(Number(dialog[idKey]) / 100) }];
   });
 };

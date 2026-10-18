@@ -30,7 +30,7 @@ export const readTalk = (
         .filter((nextId) => dialogIds.has(nextId))
         .map(String);
       const textId = String(talkContentTextMapHash);
-      return talkRole?.type === PLAYER_TALK_ROLE
+      return talkRole.type === PLAYER_TALK_ROLE
         ? {
             icon: choiceTalkLineSchema.shape.icon.enum.Talk,
             id: String(id),
@@ -42,8 +42,8 @@ export const readTalk = (
             id: String(id),
             kind: TalkLineKind.Spoken,
             nextLineIds,
-            speakerRoleTextId: npcTitleTextIdMap.get(talkRole?.id ?? "") ?? "",
-            speakerTextId: npcNameTextIdMap.get(talkRole?.id ?? "") ?? "",
+            speakerRoleTextId: npcTitleTextIdMap.get(talkRole.id ?? "") ?? "",
+            speakerTextId: npcNameTextIdMap.get(talkRole.id ?? "") ?? "",
             textId,
             voiceId: talkAudioName,
           };

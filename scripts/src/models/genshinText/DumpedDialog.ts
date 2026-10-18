@@ -5,5 +5,5 @@ export interface DumpedDialog {
   nextDialogs: number[];
   talkAudioName?: string;
   talkContentTextMapHash: number;
-  talkRole?: { id?: string; type?: string };
+  talkRole: { id?: string; type?: string };
 }

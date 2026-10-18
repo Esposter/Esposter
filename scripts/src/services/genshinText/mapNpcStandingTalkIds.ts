@@ -8,12 +8,12 @@ const TALK_BEGIN_MANUAL = "TALK_BEGIN_MANUAL";
 // Given the lowest-numbered, which is the root its others follow on from
 export const mapNpcStandingTalkIds = (talkConfigs: Iterable<DumpedTalkConfig>): Map<number, number> => {
   const npcStandingTalkIdMap = new Map<number, number>();
-  for (const { beginCond, beginWay, id, initDialog, loadType, npcId = [], questId } of talkConfigs) {
+  for (const { beginCond, beginWay, id, initDialog, loadType, npcId, questId } of talkConfigs) {
     if (
       beginWay !== TALK_BEGIN_MANUAL ||
-      questId !== undefined ||
+      questId !== 0 ||
       loadType !== undefined ||
-      initDialog === undefined ||
+      initDialog === 0 ||
       beginCond.some(({ type }) => type !== undefined)
     )
       continue;
