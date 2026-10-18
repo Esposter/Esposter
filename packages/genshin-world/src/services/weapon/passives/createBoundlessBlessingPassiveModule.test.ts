@@ -9,7 +9,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
-import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
@@ -17,7 +17,6 @@ const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
 // Lost Prayer to the Sacred Winds at its first rank: ten per cent Movement SPD and eight per cent Elemental DMG Bonus a stack
 const boundlessBlessingPassiveModule = createBoundlessBlessingPassiveModule([0.1, 0.08, 0, 0]);
-const BOUNDLESS_BLESSING_ID = "boundlessBlessing";
 const swapOnto = (characterId: number, previousCharacterId: number): KitEvent => ({
   characterId,
   kind: KitEventKind.CharacterSwapped,

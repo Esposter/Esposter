@@ -6,10 +6,9 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
-import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
+import { CHORD_HARMONIC_ID, SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
-const CHORD_HARMONIC_ID = "harmonic";
 const CHORD_HARMONIC_MAXIMUM = 5;
 const CHORD_HARMONIC_SECONDS = 30;
 const CHORD_HARMONIC_COOLDOWN_SECONDS = 0.5;

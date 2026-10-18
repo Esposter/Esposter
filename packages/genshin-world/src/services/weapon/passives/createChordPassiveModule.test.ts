@@ -10,6 +10,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { CHORD_HARMONIC_ID } from "#src/services/weapon/passives/constants";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
@@ -42,7 +43,7 @@ describe(createChordPassiveModule, () => {
     chordPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
     expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1]);
-    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, "harmonic")?.stacks).toBe(0);
+    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, CHORD_HARMONIC_ID)?.stacks).toBe(0);
   });
 
   test("a hit within half a second of the last harmonic gains none", () => {
@@ -52,7 +53,7 @@ describe(createChordPassiveModule, () => {
     chordPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
     chordPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, "harmonic")?.stacks).toBe(1);
+    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, CHORD_HARMONIC_ID)?.stacks).toBe(1);
   });
 
   test("an elemental skill's hit gains no harmonic", () => {
@@ -61,6 +62,6 @@ describe(createChordPassiveModule, () => {
     const context = createKitTestContext(wielder);
     chordPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
-    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, "harmonic")).toBeUndefined();
+    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, CHORD_HARMONIC_ID)).toBeUndefined();
   });
 });
