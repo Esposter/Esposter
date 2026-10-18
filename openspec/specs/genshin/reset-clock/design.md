@@ -26,7 +26,7 @@ flowchart TD
 - **The game day turns at the daily reset.** `computeGameDay` takes four hours off the moment in UTC+8 and reads the date, so 03:59 still belongs to the day before. Rejected: the calendar midnight, which the Forging cap and the Primogem refills do not use.
 - **A moment at the reset belongs to the period it opens.** The last reset at or before a moment is the one at that instant, and the next is the one after it, so a claim made at exactly 04:00 counts toward the new week. Rejected: a reset that closes the period it ends, which would count a claim at 04:00 on Monday toward the old week.
 - **The old copies are deleted, with no alias.** The daily and weekly reset modules, the weekly constants module and the mining outcrop respawn module are removed, and the zone and hour constants leave the Original Resin, shop and enemy modules. Rejected: re-exporting the old names, since every caller is in the package and reads the new functions.
-- **The save keeps its shapes.** The save still stores game-day dates and the instant of a deal as ISO strings. The claim of a Trounce Blossom, a defeated enemy's instant and a teleport are held in memory and not saved, so the move to `Temporal.Instant` needs no migration.
+- **The save keeps its shapes.** The save still stores game-day dates and the instant of a deal as ISO strings. A defeated enemy's instant is saved by its spawn key as an ISO string (`EnemyRespawnSave`), and the claim of a Trounce Blossom and a teleport are held in memory and not saved. The move to `Temporal.Instant` reads and writes those ISO strings at the save's edge, so it needs no migration.
 
 ## Key files
 
