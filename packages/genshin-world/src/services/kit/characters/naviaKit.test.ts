@@ -239,6 +239,23 @@ describe(createNaviaKitBehaviour, () => {
     });
   });
 
+  test("constellation 2's cannon shot lands at most 1.2 metres from the enemy it struck, at the bearing and distance its random source draws", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    // The bearing is drawn first, then the distance: a bearing of 0 and a distance of the full 1.2 metres
+    const draws = [0, 1];
+    const combatant = createNaviaCombatant(2);
+    const kitEffectState = pressAfterShrapnel(2, 0);
+    const blade = takeOne(takeOne(readSummons(kitEffectState)).hits);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => draws.shift() ?? 0 });
+    blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+
+    expect(takeOne(readSummons(kitEffectState).slice(1)).body.position).toStrictEqual({
+      x: enemy.position.x,
+      z: enemy.position.z + 1.2,
+    });
+  });
+
   test("constellation 4 cuts geo RES by 20% for eight seconds on what a burst hits, and nothing before it", () => {
     expect.hasAssertions();
     expect({ base: shredAt(0), constellation4: shredAt(4) }).toStrictEqual({
