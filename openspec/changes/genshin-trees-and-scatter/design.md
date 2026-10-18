@@ -8,7 +8,7 @@ This page builds on the [vegetation](../../specs/genshin/vegetation/design.md), 
 - **A species is fitted once, in an object pass.** Each species' parameters are fitted against its own export as any object is: its outline, depth and normal in the shape pass, its unlit colour in the surface pass. The next species is the one `rank` prices largest.
 - **Instancing per species and detail.** Once a species stands many times, its mesh and its impostor are each one instanced draw for all its copies, the cross-over decided per instance.
 - **Instances are culled on the GPU.** A compute pass tests every instance of grass, scatter and trees against the frustum and distance and writes the survivors into an indirect draw, so a field of blades never passes through JavaScript. This is the engine's per-instance culling, added here as its first consumer ([engine architecture](../../specs/genshin/engine-architecture/design.md)); occlusion against a depth pyramid follows when a city's bench shows the instances it would hide.
-- **Plants yield to what passes through.** Grass bends away from the character through a small trail texture around the viewer, written by the character controller.
+- **Plants yield to what passes through.** Grass bends away from the character through a trail texture around the viewer, written by the character controller and sampled by the grass, so grass beyond the trail's extent stands upright. The texture is provisional: its size, its resolution and how it fades are not measured. Its basis is the ground capture the [vegetation](../../specs/genshin/vegetation/design.md) page already draws centred on the eye, which the trail follows in being a camera-centred texture the grass samples. No recording of the game's grass parting measures those values yet, so they stay provisional until one does.
 
 ## How it works
 
@@ -28,13 +28,13 @@ flowchart TD
 **This adds:**
 
 1. **Instancing and GPU culling**, over the placed stand-ins: each prefab's stand-in is one instanced draw until its species lands, so the culling pass has its consumers before any species is fitted.
-2. **The trail**
+2. **The trail**, the texture the grass parts around, as the decisions above give it.
 3. **Every placed plant's species**, from the layout pass, each fitted to its export. The oak's species comes last: its outline is still short of its floor, and the roadmap's `windrise-oak-shape` row holds it open, so this step waits on that row alone.
 
 ## Deferred compute
 
-- **Where a tree turns impostor.** The distance at which one of the game's own trees changes its detail, measured on a recording that backs away from it.
-- **The flowers' look.** Their spacing, sizes and colours matched to the references by their statistics.
+- **Where a tree turns impostor** is [deferred](../../deferred/genshin/tree-impostor-distance/design.md) until a recording backs away from one of the game's trees.
+- **The flowers' look** is [deferred](../../deferred/genshin/flower-look/design.md) until a recording of the game's flowers is in hand to measure against.
 
 ## Key files
 

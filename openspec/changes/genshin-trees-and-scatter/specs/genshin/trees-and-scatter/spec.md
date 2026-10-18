@@ -46,6 +46,22 @@ Grass SHALL bend away from the character as the character walks through it.
 - **WHEN** the character passes through the grass
 - **THEN** the blades bend away from the character
 
+### Requirement: A trail around the viewer records the character's passage
+
+Grass SHALL bend only where a trail around the character records its passage, and the trail SHALL follow the character as it moves.
+
+#### Scenario: Grass beyond the trail stands upright
+
+- **GIVEN** a field of grass beyond the extent of the trail around the character
+- **WHEN** the frame is drawn
+- **THEN** the blades there stand upright
+
+#### Scenario: The trail follows the character
+
+- **GIVEN** the character walking across a field of grass
+- **WHEN** the frame is drawn
+- **THEN** the trail is centred on the character and the grass it bends moves with it
+
 ### Requirement: Each species matches its game export
 
 Each species drawn in the scene SHALL match its game export in its outline and colour.
