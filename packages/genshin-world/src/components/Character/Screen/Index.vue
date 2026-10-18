@@ -292,8 +292,8 @@ const activate = () => {
         :character
         :game-text
         :is-level-upable="levelUpResult !== undefined"
-        :is-liftable="isLiftable"
-        :traveler-bonus-lines="travelerBonusLines"
+        :is-liftable
+        :traveler-bonus-lines
         :max-stamina
         :name="characterName"
         :stat-tables

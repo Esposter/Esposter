@@ -19,8 +19,6 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
 import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
-import { findAreaAt } from "#src/services/map/findAreaAt";
-import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import {
   MAP_DRAG_THRESHOLD_PIXELS,
   MAP_GROUND,
@@ -33,6 +31,8 @@ import {
   MAP_ZOOM_TRACK_HEIGHT,
   MAP_ZOOM_TRACK_TOP,
 } from "#src/services/map/constants";
+import { findAreaAt } from "#src/services/map/findAreaAt";
+import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";

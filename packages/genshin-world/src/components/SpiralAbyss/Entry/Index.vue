@@ -30,7 +30,7 @@ const emit = defineEmits<{ close: [] }>();
     :aria-label="blessing ? gameText[GameTextKey.AbyssMoonSpire] : gameText[GameTextKey.AbyssCorridor]"
   >
     <ScreenHeader
-      :game-text="gameText"
+      :game-text
       :title="blessing ? gameText[GameTextKey.AbyssMoonSpire] : gameText[GameTextKey.AbyssCorridor]"
       @close="emit('close')"
     />

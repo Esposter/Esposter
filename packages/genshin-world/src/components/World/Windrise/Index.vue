@@ -545,9 +545,9 @@ onUnmounted(() => {
       :enemy-tables
       :get-ground-height
       :is-held
-      :jump-pose="jumpPose"
+      :jump-pose
       :light-uniforms
-      :outcrop-camps="outcropCamps"
+      :outcrop-camps
       :ramp-texture
       :region-data-map
       :sight-scene

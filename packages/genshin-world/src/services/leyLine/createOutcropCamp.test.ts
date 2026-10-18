@@ -2,8 +2,8 @@ import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
-import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
 import { OUTCROP_CAMP_SIZE, OUTCROP_FIGHT_RADIUS } from "#src/services/leyLine/constants";
+import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
 import { describe, expect, test } from "vitest";
 
 describe(createOutcropCamp, () => {

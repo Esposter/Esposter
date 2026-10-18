@@ -30,7 +30,7 @@ const getExpMaterialPlan = (expNeeded: number, items: InventoryItem[]) => {
 export const levelUpCharacter = (
   character: Character,
   { inventory, maxLevel, wallet }: { inventory: Inventory; maxLevel: number; wallet: Wallet },
-): { character: Character; inventory: Inventory; wallet: Wallet } | undefined => {
+): undefined | { character: Character; inventory: Inventory; wallet: Wallet } => {
   const expNeeded = CHARACTER_EXP_TO_NEXT_LEVEL[character.level - 1];
   if (character.level >= maxLevel || expNeeded === undefined) return undefined;
   const plan = getExpMaterialPlan(expNeeded, inventory.items);

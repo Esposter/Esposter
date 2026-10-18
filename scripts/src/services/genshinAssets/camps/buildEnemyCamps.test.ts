@@ -1,9 +1,8 @@
 import type { EnemyKindId } from "genshin-world";
 
-import { describe, expect, test } from "vitest";
-
-import { CAMP_LEVEL } from "#src/services/genshinAssets/camps/constants";
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";
+import { CAMP_LEVEL } from "#src/services/genshinAssets/camps/constants";
+import { describe, expect, test } from "vitest";
 
 const firstKind = 21010101 as EnemyKindId;
 const secondKind = 21010401 as EnemyKindId;

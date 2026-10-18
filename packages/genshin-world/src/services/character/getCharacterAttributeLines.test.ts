@@ -1,6 +1,7 @@
+import type { Character } from "#src/models/character/Character";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import type { Character } from "#src/models/character/Character";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";

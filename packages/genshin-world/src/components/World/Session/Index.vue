@@ -28,12 +28,12 @@ import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
 import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
-import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
+import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
-import GameOverScreen from "#src/components/GameOver/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
+import GameOverScreen from "#src/components/GameOver/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
@@ -45,10 +45,10 @@ import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
+import PaimonsBargainsScreen from "#src/components/PaimonsBargains/Screen/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
-import PaimonsBargainsScreen from "#src/components/PaimonsBargains/Screen/Index.vue";
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -80,8 +80,8 @@ import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
+import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { openCookingStove } from "#src/services/cooking/openCookingStove";
@@ -92,18 +92,18 @@ import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId"
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
+import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
-import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
+import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
+import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
-import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
-import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -172,6 +172,7 @@ const {
   materialDataMap,
   monumentPlaces,
   nameText,
+  paimonsBargainsRotation,
   qualityTier,
   regionDataBaseUrl,
   removeAccountCharacterPack,
@@ -179,7 +180,6 @@ const {
   sceneExportBaseUrl,
   seelies,
   serverClockOffsetMs = 0,
-  paimonsBargainsRotation,
   shopIdShopGoodMap,
   startingCharacterIdKitMap,
   statTables,
@@ -1054,7 +1054,7 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
-        :jump-pose="jumpPose"
+        :jump-pose
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
@@ -1072,7 +1072,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
-        :outcrop-camps="outcropCamps"
+        :outcrop-camps
         :is-paused
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
@@ -1153,8 +1153,8 @@ defineExpose({ jumpTo, readCameraPosition });
     </HudScreen>
     <MenuScreen
       v-model:screen-kind="screenKind"
-      :account-avatar-url="accountAvatarUrl"
-      :account-name="accountName"
+      :account-avatar-url
+      :account-name
       :adventure-exp-progress
       :adventure-rank="rank"
       :game-text
@@ -1257,8 +1257,8 @@ defineExpose({ jumpTo, readCameraPosition });
           :name-text
           :stat-tables
           :talent-upgrade-map
-          :traveler-bonus-lines="travelerBonusLines"
-          :traveler-element="travelerElement"
+          :traveler-bonus-lines
+          :traveler-element
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >

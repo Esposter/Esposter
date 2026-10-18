@@ -11,6 +11,7 @@ const monthInstant = (month: number): Temporal.Instant =>
 describe(getPaimonsBargainsOffer, () => {
   const rotation: PaimonsBargainsRotation = {
     blackcliffWeaponIds: [11_408, 12_408, 13_404, 14_408, 15_408],
+    characterGoodIds: [41, 42],
     characterPairs: [
       [10_000_020, 10_000_021],
       [10_000_032, 10_000_006],
@@ -19,7 +20,6 @@ describe(getPaimonsBargainsOffer, () => {
       [10_000_024, 10_000_034],
       [10_000_027, 10_000_025],
     ],
-    characterGoodIds: [41, 42],
     characterPrice: { buyLimit: 2, priceCount: 5, priceItemId: 221, refresh: ShopRefresh.Monthly },
     royalWeaponIds: [11_404, 12_404, 13_408, 14_404, 15_404],
     weaponGoodIds: [51, 52, 53, 54, 55],

@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
+import { describe, expect, test } from "vitest";
 
 describe("collectEnemyKindIds", () => {
   test("every kind a camp places is published to the enemies dataset", () => {

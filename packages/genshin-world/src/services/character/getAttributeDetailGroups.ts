@@ -9,14 +9,14 @@ import {
 } from "#src/services/character/constants";
 import { GameTextKey } from "genshin-text";
 
-export interface AttributeDetailRow {
-  label: string;
-  value: string;
-}
-
 export interface AttributeDetailGroup {
   rows: AttributeDetailRow[];
   title: string;
+}
+
+export interface AttributeDetailRow {
+  label: string;
+  value: string;
 }
 
 // The Details list's three groups, each under the game's title for it, with every attribute's total under the game's

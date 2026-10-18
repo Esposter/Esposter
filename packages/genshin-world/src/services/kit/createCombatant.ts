@@ -1,8 +1,8 @@
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";

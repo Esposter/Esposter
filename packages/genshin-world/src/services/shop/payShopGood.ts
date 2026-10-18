@@ -11,7 +11,7 @@ import { recordShopPurchase } from "#src/services/shop/recordShopPurchase";
 export const payShopGood = (
   wallet: Wallet,
   purchases: ShopPurchase[],
-  good: ShopGoodLimit & Pick<ShopGood, "priceCount">,
+  good: Pick<ShopGood, "priceCount"> & ShopGoodLimit,
   priceCurrency: Currency,
   now: Temporal.Instant,
 ): undefined | { purchases: ShopPurchase[]; wallet: Wallet } => {

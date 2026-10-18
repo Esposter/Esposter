@@ -1,7 +1,7 @@
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { Element } from "#src/models/Element";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 import type { Party } from "#src/models/party/Party";
-import type { Reaction } from "#src/models/combat/Reaction";
 
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { AfflictionResonanceElementMap } from "#src/services/party/AfflictionResonanceElementMap";

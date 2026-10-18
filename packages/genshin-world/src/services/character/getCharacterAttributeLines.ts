@@ -3,8 +3,8 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 
 import { getArtifactSetAttributeLines } from "#src/services/artifact/getArtifactSetAttributeLines";
-import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every attribute line a character carries: its own at its level and phase and those every level of it starts with,

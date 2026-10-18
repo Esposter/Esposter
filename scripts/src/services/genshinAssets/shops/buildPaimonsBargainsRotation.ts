@@ -1,7 +1,7 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 import type { ExcelShopRotateRow } from "#src/models/genshinAssets/shops/ExcelShopRotateRow";
-import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 import type { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
+import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 
 import {
   GAIN_AVATAR_ITEM_USE,

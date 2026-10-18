@@ -16,10 +16,10 @@ const SettingsHost = defineComponent({
     return () =>
       h(MenuSettings, {
         ...props,
-        settings: settings.value,
         "onUpdate:settings": (value: GenshinSettings) => {
           settings.value = value;
         },
+        settings: settings.value,
       });
   },
 });

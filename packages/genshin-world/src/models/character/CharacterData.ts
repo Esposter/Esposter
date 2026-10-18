@@ -3,8 +3,8 @@ import type { CharacterAscensionPhase } from "#src/models/character/CharacterAsc
 import type { GrowAttribute } from "#src/models/character/GrowAttribute";
 
 import { attributeLineSchema } from "#src/models/character/AttributeLine";
-import { characterAscensionPhaseSchema } from "#src/models/character/CharacterAscensionPhase";
 import { BodyType } from "#src/models/character/BodyType";
+import { characterAscensionPhaseSchema } from "#src/models/character/CharacterAscensionPhase";
 import { growAttributeSchema } from "#src/models/character/GrowAttribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";

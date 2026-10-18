@@ -106,9 +106,9 @@ const isListRow = (row: SettingsRow): boolean =>
 const toggleList = (kind: SettingsRowKind): void => {
   openedList.value = openedList.value === kind ? undefined : kind;
 };
+type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
 // A track row's value: the setting the world backs it with, or the value an unbacked slider is drawn at
 type TrackRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Slider | SettingsRowKind.Volume }>;
-type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
 const getTrackValue = (row: TrackRow): number =>
   row.kind === SettingsRowKind.Slider ? row.value : settings.value[row.setting];
 // The share of its track a row's value stands at, which places the knob

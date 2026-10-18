@@ -64,10 +64,10 @@ describe("menuPaimon", () => {
     render(MenuPaimon, { props });
 
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Community], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Community] }))
       .toBeDisabled();
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Feedback], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Feedback] }))
       .toBeDisabled();
   });
 
@@ -77,10 +77,10 @@ describe("menuPaimon", () => {
     render(MenuPaimon, { props });
 
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.VersionHighlights], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.VersionHighlights] }))
       .toBeDisabled();
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Survey], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Survey] }))
       .toBeDisabled();
   });
 
@@ -90,7 +90,7 @@ describe("menuPaimon", () => {
     render(MenuPaimon, { props });
 
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.TrainingGuide], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.TrainingGuide] }))
       .not.toBeInTheDocument();
   });
 
@@ -99,7 +99,7 @@ describe("menuPaimon", () => {
 
     const onOpen = vi.fn<(screenKind: ScreenKind) => void>();
     render(MenuPaimon, { attrs: { onOpen }, props });
-    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Time], exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Time] }).click();
 
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Time);
   });
@@ -108,16 +108,16 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     render(MenuPaimon, { props });
-    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.QuitGame], exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.QuitGame] }).click();
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.QuitConfirmQuestion], { exact: true }))
       .toBeInTheDocument();
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Cancel], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }))
       .toBeInTheDocument();
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Confirm], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }))
       .toBeInTheDocument();
   });
 });

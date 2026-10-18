@@ -15,8 +15,8 @@ describe("menuExit", () => {
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.QuitConfirmQuestion], { exact: true }))
       .toBeInTheDocument();
     // The 2026 frame's proportions as fractions of the panel, so the check holds at any screen size
-    const cancel = page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Cancel], exact: true }).element();
-    const confirm = page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Confirm], exact: true }).element();
+    const cancel = page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).element();
+    const confirm = page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).element();
     const dialog = cancel.closest(".dialog");
     if (!dialog) throw new Error("the cancel choice is not inside the dialog");
     const panel = dialog.getBoundingClientRect();
@@ -34,7 +34,7 @@ describe("menuExit", () => {
     const onClose = vi.fn<() => void>();
     const onQuit = vi.fn<() => void>();
     render(MenuExit, { attrs: { onClose, onQuit }, props });
-    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Cancel], exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
 
     expect(onClose).toHaveBeenCalledExactlyOnceWith();
     expect(onQuit).not.toHaveBeenCalled();
@@ -46,7 +46,7 @@ describe("menuExit", () => {
     const onClose = vi.fn<() => void>();
     const onQuit = vi.fn<() => void>();
     render(MenuExit, { attrs: { onClose, onQuit }, props });
-    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Confirm], exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
 
     expect(onQuit).toHaveBeenCalledExactlyOnceWith();
     expect(onClose).not.toHaveBeenCalled();

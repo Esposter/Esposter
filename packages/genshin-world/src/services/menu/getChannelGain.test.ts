@@ -1,6 +1,6 @@
 import { VolumeSetting } from "#src/models/menu/VolumeSetting";
-import { getChannelGain } from "#src/services/menu/getChannelGain";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
+import { getChannelGain } from "#src/services/menu/getChannelGain";
 import { describe, expect, test } from "vitest";
 
 describe(getChannelGain, () => {

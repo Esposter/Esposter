@@ -1,6 +1,6 @@
 import { Element } from "#src/models/Element";
-import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { describe, expect, test } from "vitest";
 
 describe(getCharacterElement, () => {
