@@ -1,5 +1,5 @@
 {
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.judicationFirst": { "cause": "Unsourced", "value": 328 },
   "frames.endseer": { "cause": "Unsourced", "value": 84 },
   "frames.burstDurationCast": { "cause": "Unsourced", "value": 112 },
@@ -41,12 +41,12 @@
   "hits.duststalkerBolt.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.duststalkerBolt.multiplier": { "cause": "Unsourced", "value": 1 },
   "hits.duststalkerBolt.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 45.8208 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 44.5776 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 27.2616 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 27.2616 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 70.596 },
   "parameters.extensionSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 7132 } },
   "parameters.burstSeconds": { "cause": "Unsourced", "value": { "index": 12, "proudSkillGroupId": 7139 } },
   "parameters.pactswornPathclearerElementalMastery": {
@@ -57,7 +57,7 @@
     "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 7132 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7132 } },
   "stances.pactswornPathclearer.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 65 },
   "stances.pactswornPathclearer.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
@@ -175,5 +175,10 @@
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.pactswornPathclearer.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.pactswornPathclearer.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.pactswornPathclearer.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.pactswornPathclearer.normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.pactswornPathclearer.normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }
