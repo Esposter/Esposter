@@ -5,6 +5,7 @@ import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
+import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { checkIsShopGoodSoldOut } from "#src/services/shop/checkIsShopGoodSoldOut";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
@@ -24,13 +25,9 @@ export const buyShopGood = (
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
   const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
   const itemCurrency = ShopItemCurrencyMap[good.itemId];
-  const isInSalePeriod =
-    Temporal.Instant.compare(Temporal.Instant.from(good.beginTime), now) <= 0 &&
-    Temporal.Instant.compare(now, Temporal.Instant.from(good.endTime)) < 0;
   if (
     priceCurrency === undefined ||
-    adventureRank < good.minPlayerLevel ||
-    !isInSalePeriod ||
+    !checkIsShopGoodOffered(good, adventureRank, now) ||
     checkIsShopGoodSoldOut(good, purchases, now) ||
     wallet[priceCurrency] < good.priceCount
   )

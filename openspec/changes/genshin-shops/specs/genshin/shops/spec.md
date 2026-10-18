@@ -120,6 +120,16 @@ A city's vendor SHALL open their shop when the player talks to them.
 - **WHEN** the player talks to the vendor
 - **THEN** the vendor's shop opens
 
+### Requirement: The Shop screen buys a good at its price
+
+The Shop screen SHALL let the player pick a good and a count, and buying SHALL spend the price and give the good through the same purchase rule every shop uses.
+
+#### Scenario: buying a good from the screen spends its price and gives the good
+
+- **GIVEN** a good the player can afford, shown on the Shop screen
+- **WHEN** the player picks a count and presses Buy
+- **THEN** the price is spent and the good is given
+
 ### Requirement: Goods paid in Genesis Crystals are never offered
 
 A good paid in Genesis Crystals SHALL NOT be offered by any shop.

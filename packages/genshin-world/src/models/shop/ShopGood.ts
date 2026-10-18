@@ -1,4 +1,5 @@
-import type { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { z } from "zod";
 
 // One good of a shop as the generated slice holds it: the item it gives and how many, the item it is bought with and how
 // Many, its buy limit where zero is no limit, when that limit comes back, the Adventure Rank it shows from, and the
@@ -17,3 +18,17 @@ export interface ShopGood {
   refresh: ShopRefresh;
   reputationDiscountLevel?: number;
 }
+
+export const shopGoodSchema = z.object({
+  beginTime: z.string(),
+  buyLimit: z.int().nonnegative(),
+  endTime: z.string(),
+  goodsId: z.int().positive(),
+  itemCount: z.int().positive(),
+  itemId: z.int().positive(),
+  minPlayerLevel: z.int().nonnegative(),
+  priceCount: z.int().nonnegative(),
+  priceItemId: z.int().positive(),
+  refresh: z.enum(ShopRefresh),
+  reputationDiscountLevel: z.int().positive().optional(),
+}) satisfies z.ZodType<ShopGood>;
