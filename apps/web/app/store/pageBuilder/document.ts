@@ -2,7 +2,7 @@ import type { BlockDocument } from "headless-block-editor";
 
 // The open documents of the page builder, each held under its resource, so two webpages open at once keep their own.
 // A document is loaded and saved through the functions its caller passes, and nothing here reads or writes the
-// GrapesJS editors' documents, which keep their own store until the cutover
+// GrapesJS editors' documents, which keep their own store
 export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", () => {
   const documentMap = ref(new Map<string, BlockDocument>());
   const getDocument = (resourceId: string) => documentMap.value.get(resourceId);
@@ -17,8 +17,5 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     const document = getDocument(resourceId);
     if (document) await writeDocument(document);
   };
-  const unloadDocument = (resourceId: string) => {
-    documentMap.value.delete(resourceId);
-  };
-  return { documentMap, getDocument, loadDocument, saveDocument, setDocument, unloadDocument };
+  return { documentMap, getDocument, loadDocument, saveDocument, setDocument };
 });
