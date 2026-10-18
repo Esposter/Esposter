@@ -28,6 +28,9 @@ export interface GcgCardModule {
   // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
   isSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
+  // The most rounds a card that can stack holds: placed again, it adds its starting rounds up to this many, rather than
+  // Refreshing to them
+  maxRounds?: number;
   // The most usages a card that can stack holds: placed again, it adds its starting usages up to this many, rather than
   // Refreshing to them
   maxUsages?: number;

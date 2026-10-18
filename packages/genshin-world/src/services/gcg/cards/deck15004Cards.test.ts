@@ -193,6 +193,25 @@ describe("juuga Forward Unto Victory", () => {
 
     expect(takeOne(attacker.onstages, 0).rounds).toBe(3);
   });
+
+  test("should keep one banner at 3 rounds when it is played a fourth time", () => {
+    expect.hasAssertions();
+
+    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })]);
+    const duel = createDuel(
+      attacker,
+      createSideState([createGcgCharacterState({ character: { id: 2_101, element: Element.Hydro }, hp: 20 })]),
+    );
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
+    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
+    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
+    runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
+
+    expect(attacker.onstages).toStrictEqual([
+      { ...createGcgZoneCard(GENERALS_WAR_BANNER_ID, generalsWarBanner), rounds: 3 },
+    ]);
+  });
 });
 
 describe("general's Glory", () => {
