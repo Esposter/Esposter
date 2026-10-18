@@ -9,6 +9,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -73,5 +74,30 @@ describe(strikeLunarChargedCloud, () => {
     expect(context.party.lunarChargedCloud.secondsRemaining).toBeCloseTo(
       LUNAR_CHARGED_CLOUD_SECONDS - 3 * STEP_SECONDS,
     );
+  });
+
+  test("its first tick lands on the ninth frame of a sixtieth of a second, not a frame later", () => {
+    expect.hasAssertions();
+
+    const near = createChargedEnemy(8.4, true);
+    const context = createContext([near]);
+    startPartyLunarReactions(context.party, [{ reactionType: ReactionType.LunarCharged }]);
+    for (let frame = 0; frame < 8; frame++) strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+    expect(near.health).toBe(STURDY_HEALTH);
+
+    strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+    expect(near.health).toBeLessThan(STURDY_HEALTH);
+  });
+
+  test("ends its 5.5 seconds on the 330th frame of a sixtieth of a second, not a frame later", () => {
+    expect.hasAssertions();
+
+    const context = createContext([]);
+    startPartyLunarReactions(context.party, [{ reactionType: ReactionType.LunarCharged }]);
+    for (let frame = 0; frame < 329; frame++) strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+    expect(context.party.lunarChargedCloud.secondsRemaining).toBeGreaterThan(0);
+
+    strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+    expect(context.party.lunarChargedCloud.secondsRemaining).toBe(0);
   });
 });
