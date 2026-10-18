@@ -1,6 +1,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { Mock } from "vitest";
 
@@ -38,8 +40,8 @@ const createNicoleCombatant = (attack: number): Combatant => ({
 
 // A team of Nicole and the Traveler on one enemy at the body's origin, with the Traveler's kit hearing what the team's events
 // Report, so each projection's damage shows in its count
-const createProjectionScene = (onKitEvent: Kit["onKitEvent"]) => {
-  const nicole = createNicoleCombatant(1000);
+const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Partial<Combatant> = {}) => {
+  const nicole = { ...createNicoleCombatant(1000), ...nicoleFields };
   const traveler: Combatant = {
     ...nicole,
     characterId: TRAVELER_CHARACTER_ID,
@@ -73,6 +75,15 @@ const createEnemyHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
 // The projections a team's kit heard land, each reported as the damage its enemy takes
 const countDamageTaken = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number =>
   onKitEvent.mock.calls.filter(([event]) => event.kind === KitEventKind.DamageTaken).length;
+
+// The buffs a character holds among the kit's effects, in the order they were given
+const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
+  context.kitEffectState.effects.filter(
+    (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === characterId,
+  );
+
+const emitSwap = (context: KitContext, characterId: number, previousCharacterId: number): void =>
+  emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context);
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -240,5 +251,112 @@ describe(createNicoleKitBehaviour, () => {
 
     stepKitSeconds(context, 1);
     expect(countDamageTaken(onKitEvent)).toBe(0);
+  });
+
+  test("her first ascension gives the character swapped in ATK 300 three seconds on, for as long as her skill's buff stands", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+
+    stepKitSeconds(context, 179 / 60);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
+    stepKitSeconds(context, 1 / 60);
+    const [skill, ascension] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    expect({ amount: ascension.amount, attribute: ascension.attribute, kind: ascension.kind }).toStrictEqual({
+      amount: 300,
+      attribute: Attribute.Attack,
+      kind: "buff",
+    });
+    expect(ascension.secondsRemaining).toBeCloseTo(skill.secondsRemaining);
+  });
+
+  test("her first ascension gives nothing to a team below the first ascension", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>());
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+
+    stepKitSeconds(context, 3);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
+  });
+
+  test("her first ascension gives a Hexerei swapped in its ATK at once", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+
+    stepKitSeconds(context, 1 / 60);
+    expect(getBuffs(context, NICOLE_CHARACTER_ID)).toHaveLength(2);
+  });
+
+  test("a swap made before an earlier swap's upgrade lands cancels that upgrade", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 1);
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+
+    stepKitSeconds(context, 3);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
+  });
+
+  test("a swap away takes the ascension buff off the character it leaves before her sixth constellation", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(2);
+
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
+  });
+
+  test("her skill's cast takes off every ascension buff before its own land", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(2);
+
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(0);
+  });
+
+  test("her fourth ascension gives her an ATK buff of eight seconds on each elemental hit of the active character", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 4 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+
+    expect(
+      getBuffs(context, NICOLE_CHARACTER_ID).map(({ amount, attribute, secondsRemaining }) => ({
+        amount,
+        attribute,
+        secondsRemaining,
+      })),
+    ).toContainEqual({ amount: 300, attribute: Attribute.Attack, secondsRemaining: 8 });
+  });
+
+  test("her fourth ascension gives her nothing on a physical hit", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { ascension: 4 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitKitEvent({ ...createEnemyHit(enemy, nicole), element: undefined }, context);
+
+    expect(getBuffs(context, NICOLE_CHARACTER_ID)).toHaveLength(1);
   });
 });

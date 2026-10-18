@@ -18,17 +18,21 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 - **A projection reaches by its hitbox alone.** Its hit has no area of its own, since its target and its hitbox decide what it reaches.
 - **The projections follow every hit of the active character, physical included.** gcsim's enemy-hit event fires for each hit on an enemy, and the kit raises its `EnemyHit` event for each one, carrying the element the hit was dealt as where it deals one. A physical hit projects too, dealt at the projected character's element.
 - **The Hexerei bonus is priced at the projection's tick.** gcsim's `hexereiOnProjection` adds three times her attack when she and the projected character are Hexerei and two or more Hexerei are deployed. The set is the wiki's Hexerei Characters category (`countKitHexereiMembers.ts`), so the bonus follows it.
+- **The ascension buff is an upgrade bounded by her skill's buff.** gcsim's `a1UpgradeBuff` (`asc.go`) gives the character the upgrade for as long as the skill's buff on it stands at most, and a repeat upgrade replaces the mod with the same key, so `upgradeAscensionBuff` removes the old buff before it adds the new one. Her skill's cast takes every upgrade off, as `a1OnSkillRemoveBuff` does at `skill.go`'s cast.
+- **A swap's upgrade is a pending field, so a later swap cancels it.** gcsim's `a1Src` token makes a queued upgrade return when a newer swap has set it. The kit keeps the pending upgrade as a field with the id `nicole-a1-swap` and removes it before a swap schedules its own. A Hexerei swapped in gets a task with no delay, as gcsim's `delay = 0` for `char.IsHexerei` does.
+- **A swap away takes the upgrade off the character it leaves before the sixth constellation.** gcsim's OnCharacterSwap subscriber deletes `a1Key` on the previous character unless `c6DeleteA1OnSwap` holds.
+- **The fourth ascension reads the element of the active character's hit.** gcsim's `a4Init` (`asc.go`) upgrades her own buff on each elemental hit by the active character. A physical hit carries no element in the kit, so it is excluded.
 
 ## Not built
 
-- **Her passives wait on their hooks.** Each one reads her projections or the party's Elemental Resonance, so none is built.
+- **Her constellations wait.** The first and second are feasible with the kit's hooks. The fourth's flat damage sized by her attack and the sixth's defence ignore need hooks the kit does not have, and the sixth's self buff for the skill's remaining time waits with them.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                            |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module: her skill's shield and team buff and her burst's projections; her passives wait    |
-| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: her skill's shield and buff parameters (talent table group 13132) and her projection multiplier (group 13139) |
+| File                                                              | Role                                                                                                                                                                      |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module: her skill's shield and team buff, her burst's projections, and her first and fourth ascension buffs; her constellations wait |
+| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: her skill's shield and buff parameters (talent table group 13132) and her projection multiplier (group 13139)                                           |
 
 ## Sources
 
