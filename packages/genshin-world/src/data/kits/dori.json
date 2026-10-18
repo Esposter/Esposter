@@ -25,7 +25,7 @@
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 6831 } },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Electric" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
@@ -38,5 +38,6 @@
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6832 } },
   "skill.hits.2.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 } },
   "skill.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 85 },
-  "skill.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6832 } }
+  "skill.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6832 } },
+  "hits.connector.hitmarkFrames": { "cause": "Unclassified", "value": 0 }
 }
