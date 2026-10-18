@@ -10,6 +10,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
@@ -42,16 +43,16 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
   const teamShare = takeOne(params, 4);
   const teamSeconds = takeOne(params, 5);
   return {
+    // The stack reads the Max HP the Wielder's own lines give, not the buffed one: getBuffedCombatant prices the passive's
+    // bonuses, so a buffed Max HP read here would call back into this function without end
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
         amount:
-          countKitHolds(effects, combatant.characterId, GRAND_HYMN_ID) *
-          stackShare *
-          combatant.attributes.attributeTotalMap[Attribute.Health],
+          countKitHolds(effects, combatant.characterId, GRAND_HYMN_ID) * stackShare * combatant.attributes.maxHealth,
         attribute: Attribute.ElementalMastery,
       },
     ],
-    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       if (
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
@@ -68,7 +69,7 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
         });
       else refreshSoonestGrandHymnHold(kitEffectState, characterId, stackSeconds);
       if (countKitHolds(kitEffectState.effects, characterId, GRAND_HYMN_ID) < GRAND_HYMN_MAXIMUM_STACKS) return;
-      const amount = teamShare * combatant.attributes.attributeTotalMap[Attribute.Health];
+      const amount = teamShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       for (const memberId of getDeployedCharacterIds(party))
         if (memberId !== characterId)
           buffKitMember(kitEffectState, memberId, {

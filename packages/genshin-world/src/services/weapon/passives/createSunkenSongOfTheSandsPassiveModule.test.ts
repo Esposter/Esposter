@@ -33,8 +33,8 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
   // Twenty seconds, restarted by a trigger at three stacks
   const sunkenSongOfTheSandsPassiveModule = createSunkenSongOfTheSandsPassiveModule([0.2, 0.0012, 20, 0.3, 0.002, 20]);
   const otherMemberCharacterId = -1;
-  const wielder: Combatant = createWielderCombatant();
-  const maximumHealth = wielder.attributes.attributeTotalMap[Attribute.Health];
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
+  const maximumHealth = wielder.attributes.maxHealth;
   const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
   const elementalSkillHit = {
     attackTag: AttackTag.ElementalSkill,
