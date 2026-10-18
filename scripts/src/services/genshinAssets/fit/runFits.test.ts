@@ -66,6 +66,14 @@ describe(runFits, () => {
     );
   });
 
+  // Names are matched against the fits' own keys, so a prototype's name is no fit and is refused like any unknown name
+  test("refuses a prototype's name, which no fit has", async () => {
+    expect.hasAssertions();
+    await expect(runFits(fits, ["toString"], { isDryRun: false })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: toString, not a fit: one of clouds, sky]`,
+    );
+  });
+
   // A dry run reaches every fit, so a fit that writes a world data file under it writes none
   test("hands the dry run to every fit it runs", async () => {
     expect.hasAssertions();
