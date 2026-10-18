@@ -17,6 +17,8 @@ import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
+import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
+import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
@@ -144,7 +146,9 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_007, timmie],
   [322_010, ellin],
   [322011, ironTongueTian],
+  [331_101, elementalResonanceWovenIce],
   [331_301, elementalResonanceWovenFlames],
+  [331_401, elementalResonanceWovenThunder],
   [332_001, theBestestTravelCompanion],
   [332_002, changingShifts],
   [332004, strategize],
