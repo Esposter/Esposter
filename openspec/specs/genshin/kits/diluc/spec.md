@@ -87,3 +87,19 @@ Dawn SHALL infuse Diluc's attacks for as long as it lasts.
 - **GIVEN** Diluc casts Dawn
 - **WHEN** Diluc attacks while Dawn lasts
 - **THEN** his attacks are infused
+
+### Requirement: First constellation adds 15% DMG to enemies above half HP
+
+From constellation 1, each strike Diluc makes SHALL deal 15% more DMG to an enemy whose HP is above half.
+
+#### Scenario: A strike on an enemy above half HP gains the bonus
+
+- **GIVEN** Diluc is at constellation 1
+- **WHEN** a strike hits an enemy whose HP is above half
+- **THEN** the strike's DMG bonus is raised by 15%
+
+#### Scenario: Below the first constellation a strike gains nothing
+
+- **GIVEN** Diluc is at constellation 0
+- **WHEN** a strike hits an enemy whose HP is above half
+- **THEN** the strike's DMG bonus is unchanged

@@ -28,9 +28,18 @@ const DAWN_EXPLOSION_SECONDS = 1.7;
 
 export const DILUC_CHARACTER_ID = 10_000_016;
 
+// Constellation 1, Conviction: Diluc's strikes deal 15% more DMG to an enemy whose HP is above half, as the wiki's
+// Constellation page gives it
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
+const CONSTELLATION_1_HEALTH_SHARE = 0.5;
+
 // Diluc's behaviour: Dawn infuses his attacks with Pyro, lengthened and joined by a Pyro DMG Bonus from Ascension 4, and
 // Launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its ticks and
 // Explodes at the end of its path
+// Constellation 2 needs a stack status on each hit Diluc takes, and an ATK and ATK SPD bonus that follows its stacks
+// Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart, which the skill does not yet read
+// Constellation 6 needs the next two normal attacks after Searing Onslaught, and their DMG and ATK SPD
 export const createDilucKitBehaviour = ({
   kit,
   readArea,
@@ -93,5 +102,9 @@ export const createDilucKitBehaviour = ({
     // Its +3s duration clause is not built, since the talent text does not name what that duration is
     getChargedAttackStaminaMultiplier: ({ activeCombatant }) =>
       activeCombatant.ascension >= DILUC_RELENTLESS_ASCENSION ? DILUC_RELENTLESS_STAMINA_MULTIPLIER : 1,
+    getStrikeDamageBonus: ({ combatant }, enemy) =>
+      combatant.constellationCount >= CONSTELLATION_1 && enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
+        ? CONSTELLATION_1_DAMAGE_BONUS
+        : 0,
   };
 };
