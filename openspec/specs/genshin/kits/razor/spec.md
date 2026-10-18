@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, other constellations and Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, his constellations other than 2 and 6, and his Hexerei kit left unbuilt.
 
 ## Requirements
 
@@ -85,9 +85,25 @@ From six constellations, a strike SHALL cast Lupus Fulguris's lightning while no
 - **THEN** the lightning is cast a frame after the strike
 - **AND** it stands for 10 seconds past the strike's hit
 
+### Requirement: Constellation 2 CRIT Rate below 30% HP
+
+From Constellation 2, Razor's strikes SHALL have 10% more CRIT Rate against enemies below 30% HP.
+
+#### Scenario: Constellation 2 raises CRIT Rate below 30% HP
+
+- **GIVEN** Razor has Constellation 2
+- **WHEN** one of his strikes hits an enemy below 30% HP
+- **THEN** its CRIT Rate is raised by 10%
+
+#### Scenario: Constellation 1 changes nothing
+
+- **GIVEN** Razor has Constellation 1
+- **WHEN** one of his strikes hits an enemy below 30% HP
+- **THEN** its CRIT Rate is unchanged
+
 ### Requirement: Razor's other passives and Hexerei kit not yet built
 
-Razor's other passives, his other constellations, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
+Razor's other passives, his constellations other than 2 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
