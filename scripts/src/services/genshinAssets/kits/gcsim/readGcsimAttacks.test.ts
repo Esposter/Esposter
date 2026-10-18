@@ -190,8 +190,16 @@ func (c *char) Burst() {
       })),
     ).toStrictEqual([
       { branch: undefined, line: 12, talentVariable: undefined },
-      { branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
-      { branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+      {
+        branch: { armCount: 2, chain: 2, endLine: 30, index: 0, isExhaustive: true },
+        line: 25,
+        talentVariable: "plume",
+      },
+      {
+        branch: { armCount: 2, chain: 2, endLine: 30, index: 1, isExhaustive: true },
+        line: 28,
+        talentVariable: "wing",
+      },
     ]);
   });
 
@@ -232,7 +240,7 @@ func (c *char) Burst() {
       { ...literal, line: 66, siteLine: 66, variableName: "aiCopy" },
       {
         ...literal,
-        branch: { chain: 0, endLine: 70, index: 0 },
+        branch: { armCount: 1, chain: 0, endLine: 70, index: 0, isExhaustive: false },
         fieldLineMap: { ...fieldLineMap, PoiseDMG: 69 },
         iteration: { value: 0, variable: "i" },
         line: 69,

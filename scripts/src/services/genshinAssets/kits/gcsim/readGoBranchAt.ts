@@ -60,10 +60,12 @@ const checkIsSwitchClause = (token: GoToken): boolean =>
 // Reads the if and else bodies and the switch clauses of a Go file as chains. An `if` opens a chain, and an `else` or
 // `else if` whose brace follows the previous body's close continues it. A `switch` opens a chain too, its clauses its
 // Bodies numbered from zero in the order they are written, each running to the next clause or the switch's brace.
-// Returns the branch a position sits in, innermost first, with the line the chain's last body closes on
+// Returns the branch a position sits in, innermost first, with the line the chain's last body closes on, its arm count and
+// Whether one of its arms always runs
 export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) => GcsimAttackBranch | undefined) => {
   const bodies: GoBranchBody[] = [];
   const chainEndLineMap = new Map<number, number>();
+  const exhaustiveChains = new Set<number>();
   const openings: GoBranchOpening[] = [];
   let chainCount = 0;
   let pending: GoBranchPlace | undefined;
@@ -77,6 +79,7 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
     const frame = openings.at(-1)?.switchFrame;
     if (frame === undefined) return;
     closeClause(frame, position);
+    if (tokens[position]?.text === "default") exhaustiveChains.add(frame.chain);
     frame.clause = { chain: frame.chain, index: frame.clauseCount++, openPosition: position };
   };
   const openBrace = (position: number) => {
@@ -95,6 +98,7 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
     let branch: GoBranchPlace | undefined;
     if (isElse) branch = pending === undefined ? undefined : { ...pending, index: pending.index + 1 };
     else if (ifPosition !== undefined) branch = { chain: chainCount++, index: 0 };
+    if (branch !== undefined && isElse && ifPosition === undefined) exhaustiveChains.add(branch.chain);
     openings.push({ branch, openPosition: position, switchFrame: undefined });
     pending = undefined;
   };
@@ -118,6 +122,9 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
     if (checkIsGoPunctuation(token, "{")) openBrace(position);
     else if (checkIsGoPunctuation(token, "}")) closeBrace(position, token.line);
     else if (checkIsSwitchClause(token)) openClause(position);
+  const chainArmCountMap = new Map<number, number>();
+  for (const { chain, index } of bodies)
+    chainArmCountMap.set(chain, Math.max(chainArmCountMap.get(chain) ?? 0, index + 1));
   return (position) => {
     let innermost: GoBranchBody | undefined;
     for (const body of bodies)
@@ -129,6 +136,12 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
         innermost = body;
     return innermost === undefined
       ? undefined
-      : { chain: innermost.chain, endLine: chainEndLineMap.get(innermost.chain) ?? 0, index: innermost.index };
+      : {
+          armCount: chainArmCountMap.get(innermost.chain) ?? 0,
+          chain: innermost.chain,
+          endLine: chainEndLineMap.get(innermost.chain) ?? 0,
+          index: innermost.index,
+          isExhaustive: exhaustiveChains.has(innermost.chain),
+        };
   };
 };

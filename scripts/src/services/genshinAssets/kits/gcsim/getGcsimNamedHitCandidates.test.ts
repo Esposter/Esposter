@@ -273,8 +273,18 @@ describe(getGcsimNamedHitCandidates, () => {
       ...gcsim,
       attacks: [
         { ...attackCommon, line: 12 },
-        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
-        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+        {
+          ...attackCommon,
+          branch: { armCount: 2, chain: 2, endLine: 30, index: 0, isExhaustive: true },
+          line: 25,
+          talentVariable: "plume",
+        },
+        {
+          ...attackCommon,
+          branch: { armCount: 2, chain: 2, endLine: 30, index: 1, isExhaustive: true },
+          line: 28,
+          talentVariable: "wing",
+        },
       ],
       config: {
         abilityHitboxesMap: new Map(),
