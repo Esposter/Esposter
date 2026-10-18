@@ -21,6 +21,7 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { checkIsBluntHit } from "#src/services/kit/checkIsBluntHit";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
@@ -45,7 +46,7 @@ export const strikeEnemy = (
 ): EnemyStrikeResult => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
-  const { gauge, internalCooldownTag, isBlunt } = kitHit;
+  const { gauge, internalCooldownTag } = kitHit;
   const status = kitHit.enemyStatus?.(combatant);
   if (status) addEnemyStatus(enemy, { ...status });
   // A stacked hit's multiplier and poise are read from the enemy's stacks, which the hit then consumes
@@ -54,7 +55,7 @@ export const strikeEnemy = (
   const isShatteringIceTarget =
     combatant.elementalResonances.includes(Element.Cryo) &&
     (elementalState.auras.has(AuraType.Freeze) || elementalState.auras.has(AuraType.Cryo));
-  const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
+  const reactions: Reaction[] = checkIsBluntHit(combatant, kitHit) ? applyBluntHit(elementalState, poiseDamage) : [];
   const element = getKitHitElement(kitHit, combatant);
   if (gauge !== undefined && gauge > 0 && element !== undefined) {
     // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown,
