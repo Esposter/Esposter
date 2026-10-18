@@ -6,15 +6,14 @@ import type { Vector3 } from "three";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
-import { REGION_REACH } from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { checkIsOutlineInReach } from "#src/services/world/checkIsOutlineInReach";
 import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck";
 import { readLoadedRegion } from "#src/services/world/readLoadedRegion";
 import { selectGroundKeysInReach } from "#src/services/world/selectGroundKeysInReach";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
-import { computeOutlineDistance } from "genshin-engine";
 
 // Each region's data and the palettes its buildings are drawn in are fetched when the camera comes within reach of any
 // Of its areas' outlines, and released when it leaves. Each region's ground, its own record or its areas' pieces, is
@@ -72,7 +71,7 @@ export const useRegionData = (
       );
     }
     for (const { areas, id } of catalogue.regions) {
-      const isInReach = areas.some(({ outline }) => computeOutlineDistance(outline, x, z) <= REGION_REACH);
+      const isInReach = areas.some(({ outline }) => checkIsOutlineInReach(outline, x, z));
       if (!isInReach) {
         wantedRegionIds.delete(id);
         regionDataMap.delete(id);
