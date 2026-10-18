@@ -30,6 +30,8 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The dump's birthday letters are the Traveler's, not a character's.** Seven untyped rows name a birthday, all "Best Wishes on Your Birthday" from the Mailing System and addressed to the Traveler; three are dated by `BirthdayMailExcelConfigData`, which keys them by mail id. No mail is dated to a character's birthday, though `FetterInfoExcelConfigData` dates all 120 characters. So delivery on a held character's birthday has no letter to deliver: it waits on a source for that letter, and until then no mail is delivered on a character's birthday.
 - **The save's mail list is backfilled with an empty list, and the Traveler's birthday is optional.** `mails` is required, so a save written before it is refused until the backfill sets it to `[]`; the main session adds that to its one backfill script and runs it on dev, and prod waits on the user. `travelerBirthday` is optional, since the profile sets it once and an unset birthday is a real state, so existing saves need no backfill.
 - **The Traveler's birthday is set once in the profile.** The wiki says the birth date is the player's choice in profile customization and cannot be changed once set, so the save holds it once and nothing after.
+- **The Traveler's birthday mail is delivered provisionally, on the birthday in the game's time zone.** The wiki says the mail arrives on the player's birthday, only that day, in the server's time (UTC+8, past midnight). The mail due is the latest row of `BirthdayMailExcelConfigData` taking effect by that birthday, and it is delivered once a birthday. The table's three rows end in 2022, so later birthdays repeat the last one, which is provisional until the export confirms it. Without a birthday set, nothing is delivered.
+- **A mail expires `expireDays` after its delivery and is deleted then, except a birthday mail already claimed.** The wiki's Gift Mail Box keeps a birthday mail once its rewards are collected, and no other mail. Claim and claim-all refuse a mail the bag cannot take whole, so a claim gives its items once or not at all.
 
 ## Key files
 
@@ -49,6 +51,11 @@ packages/genshin-world/src/models/mail/Mail.ts                ← a mail's text 
 packages/genshin-world/src/models/mail/MailSave.ts            ← a mail as the save holds it: when delivered, claimed, read
 packages/genshin-world/src/models/save/TravelerBirthdaySave.ts ← the Traveler's birthday the profile sets once
 packages/genshin-world/src/services/mail/constants.ts         ← the mailbox's capacity
+packages/genshin-world/src/models/mail/MailboxState.ts        ← the bag, the wallet and the held mails a claim changes together
+packages/genshin-world/src/services/mail/claimMail.ts        ← one held mail's items into the bag and wallet, once
+packages/genshin-world/src/services/mail/claimAllMails.ts    ← every held mail claimed in order, the ones the bag cannot take left unclaimed
+packages/genshin-world/src/services/mail/removeExpiredMails.ts ← the mailbox without the mails past their expiry
+packages/genshin-world/src/services/mail/deliverBirthdayMail.ts ← the Traveler's birthday mail added when due
 ```
 
 - The dump's two unnamed mail keys are not guessed at; the builder skips them, and a mail with a key it cannot name is not delivered.
