@@ -4,7 +4,7 @@ import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { computeOutcropKindOpen } from "#src/services/leyLine/computeOutcropKindOpen";
-import { takeOne } from "@esposter/shared";
+import { drawPlaceIds } from "#src/services/leyLine/drawPlaceIds";
 
 // The outcrops a daily reset starts over: each kind open at this Adventure Rank with its nations unlocked waits at a
 // Fitted place drawn afresh from the places no kind before it holds, and a kind with no place left starts none. The
@@ -17,12 +17,12 @@ export const computeDailyOutcrops = (
   random: () => number,
 ): Outcrop[] => {
   const outcrops: Outcrop[] = [];
-  let freePlacements = placements;
+  let freeIds = placements.map(({ id }) => id);
   for (const kindRule of kindRules) {
-    if (!computeOutcropKindOpen(kindRule, adventureRank, unlockedCityIds) || freePlacements.length === 0) continue;
-    const { id } = takeOne(freePlacements, Math.floor(random() * freePlacements.length));
-    freePlacements = freePlacements.filter((placement) => placement.id !== id);
-    outcrops.push({ kind: kindRule.kind, placeId: id, stage: OutcropStage.Waiting });
+    if (!computeOutcropKindOpen(kindRule, adventureRank, unlockedCityIds) || freeIds.length === 0) continue;
+    const [placeId] = drawPlaceIds(freeIds, 1, random);
+    freeIds = freeIds.filter((id) => id !== placeId);
+    outcrops.push({ kind: kindRule.kind, placeId, stage: OutcropStage.Waiting });
   }
   return outcrops;
 };
