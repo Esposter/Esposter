@@ -10,7 +10,7 @@ flowchart TD
   DECODE["The text maps, decoded from the installed client"] --> READ
   READ --> FILES["quests/QuestId: one record a quest, checked by its schema"]
   READ --> WORDS["questText per language: the quests' words, one record each"]
-  FILES --> START["startQuests: the first unfinished Archon quest,<br/>and one whose offering talk ended"]
+  FILES --> START["startQuests: the first unfinished Archon quest,<br/>one whose offering talk ended, and one whose parents are finished"]
   START --> PROGRESS["Quests in progress, from step 0"]
   DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
   PROGRESS --> ADVANCE
@@ -45,7 +45,7 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### Starting and finishing
 
-`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. Every other quest starts at its first shown step when a talk offering it ends, the talk-to event the world records for it, and only the once. Until then each resident a talk offering it is begun on offers that talk as a reply, as an open talk-to step's is ([dialogue](../dialogue/design.md)). The commissions are not yet dealt at the daily reset, as [commissions](../commissions/design.md) notes. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
+`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. A quest with parent quests starts at its first shown step once every one of them is finished, whether or not a talk offers it, and a parent the world does not carry never finishes. This runs at load, on every quest event and when a Reputation request is accepted, and it reads the progress the call starts from, which on a quest event already holds that event's advance, so the event that finishes a parent starts its child in the same call. The series' order does not gate this start. A quest a talk offers starts at its first shown step when that talk ends, the talk-to event the world records for it, and only the once; in a series it waits until the quest before it is finished. Until then each resident a talk offering it is begun on offers that talk as a reply, as an open talk-to step's is ([dialogue](../dialogue/design.md)). The commissions are not yet dealt at the daily reset, as [commissions](../commissions/design.md) notes. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
 
 `doQuestEvent` hands one doing to every quest in progress. Each step moved past finishes its sub-quest, which `getFinishedQuestEvents` turns into a `QuestFinished` for `advanceAchievements`, and a main quest its last step finishes into a `ParentQuestFinished` under its id, which the world also raises as `parentQuestFinish` with that id. A Reputation request is filed under a main quest its own id differs from, so finishing it finishes no main quest. A finished main quest is added to the set the Archive opens by, and its Travel Log entry opens, the entries read off the Archive's table when first needed. The world records a talk's end as a talk-to, a dropped item or a gathering point picked as a collect, an enemy defeated as a defeat under its kind, and a waypoint or landmark unlocked as an interact.
 
@@ -76,7 +76,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its main quest, kind, words, steps, talks, rewards and schema           |
 | `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, targets and count                        |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                  |
-| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk          |
+| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by a talk or by its parents   |
 | `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events          |
 | `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema          |
 | `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened                        |
