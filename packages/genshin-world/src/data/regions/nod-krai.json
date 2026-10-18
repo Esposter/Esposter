@@ -1303,8 +1303,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -57.45, "z": -11233.91 },
       "rotation": 0.7242,
-      "arrival": { "heightOffset": -26.8, "position": { "x": -57.45, "z": -11233.91 }, "rotation": 0.7242 },
       "areaId": "lempo-isle",
+      "arrival": { "heightOffset": -26.8, "position": { "x": -57.45, "z": -11233.91 }, "rotation": 0.7242 },
       "heightOffset": -26.8
     },
     {
@@ -1314,8 +1314,8 @@
       "kind": "DomainEntrance",
       "position": { "x": 46.4, "z": -12095.2 },
       "rotation": -2.4606,
+      "areaId": "hiisi-island",
       "arrival": { "heightOffset": -17.67, "position": { "x": 46.4, "z": -12095.2 }, "rotation": -2.4606 },
-      "areaId": "lempo-isle",
       "heightOffset": -17.67
     },
     {
@@ -1325,8 +1325,8 @@
       "kind": "DomainEntrance",
       "position": { "x": 1260.9, "z": -10642.23 },
       "rotation": -0.3599,
+      "areaId": "paha-isle",
       "arrival": { "heightOffset": -22.58, "position": { "x": 1260.9, "z": -10642.23 }, "rotation": -0.3599 },
-      "areaId": "lempo-isle",
       "heightOffset": -22.58
     },
     {
@@ -1336,8 +1336,8 @@
       "kind": "DomainEntrance",
       "position": { "x": 4048.71, "z": -11310.25 },
       "rotation": -1.4603,
+      "areaId": "ashveil-peak",
       "arrival": { "heightOffset": -26.8, "position": { "x": 4048.71, "z": -11310.25 }, "rotation": -1.4603 },
-      "areaId": "lempo-isle",
       "heightOffset": -26.8
     }
   ],
