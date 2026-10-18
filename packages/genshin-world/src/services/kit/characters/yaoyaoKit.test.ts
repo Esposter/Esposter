@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -16,6 +17,7 @@ import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -73,6 +75,14 @@ const stepFrames = (context: KitContext, frames: number): void => {
   for (let frame = 0; frame < frames; frame++) stepKitEffects(FIXED_STEP_SECONDS, context);
 };
 
+// The team stepped the given frames, each hit that lands struck as the world's step strikes it
+const stepFramesStriking = (context: KitContext, frames: number): void => {
+  for (let frame = 0; frame < frames; frame++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+  }
+};
+
 // The Yuegui her skill spawns: the field whose throws repeat on an interval
 const findYuegui = (context: KitContext): KitField | undefined =>
   context.kitEffectState.effects.find(
@@ -86,6 +96,12 @@ const findRadish = (context: KitContext): KitSummon | undefined =>
 const findJumpingYuegui = (context: KitContext): KitField[] =>
   context.kitEffectState.effects.filter(
     (effect): effect is KitField => effect.kind === "field" && effect.id === "yaoyao-jumping-yuegui",
+  );
+
+// The buffs on the field for an attribute, in the order they were added
+const findBuffs = (context: KitContext, attribute: Attribute): KitBuff[] =>
+  context.kitEffectState.effects.filter(
+    (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === attribute,
   );
 
 describe(createYaoyaoKitBehaviour, () => {
@@ -303,5 +319,107 @@ describe(createYaoyaoKitBehaviour, () => {
     const healthAfterChain = getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare;
     stepFrames(context, 60);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBe(healthAfterChain);
+  });
+
+  test("constellation 2 gives Yaoyao 3 energy when a burst radish strikes an enemy while the burst lasts", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.8,
+      { enemyTables, enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]) },
+      { constellationCount: 2 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    stepFramesStriking(context, 152);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
+  });
+
+  test("constellation 2 gives no energy from a skill radish that strikes an enemy once the burst has ended", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.8,
+      { enemyTables, enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]) },
+      { constellationCount: 2 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+    YAOYAO_KIT.onKitEvent?.(
+      { characterId: MEMBER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: YAOYAO_CHARACTER_ID },
+      context,
+      context.activeCombatant,
+    );
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFramesStriking(context, 120);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
+  });
+
+  test("constellation 2 gives 3 energy once each 0.8 seconds, however many enemies a radish strikes", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.8,
+      {
+        enemyTables,
+        enemyMap: new Map([
+          ["first", createEnemyAt(0, -4)],
+          ["second", createEnemyAt(0, -4)],
+        ]),
+      },
+      { constellationCount: 2 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    stepFramesStriking(context, 152);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
+    stepFramesStriking(context, 64);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(6);
+  });
+
+  test("constellation 4 gives Yaoyao 0.3% of her Max HP as Elemental Mastery for 8.8 seconds, which each cast restarts", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5, {}, { constellationCount: 4 });
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+    expect(
+      findBuffs(context, Attribute.ElementalMastery).map(({ amount, characterId, secondsRemaining }) => [
+        amount,
+        characterId,
+        secondsRemaining,
+      ]),
+    ).toStrictEqual([[30, YAOYAO_CHARACTER_ID, 8.8]]);
+
+    stepFrames(context, 300);
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+    expect(
+      findBuffs(context, Attribute.ElementalMastery).map(({ amount, secondsRemaining }) => [amount, secondsRemaining]),
+    ).toStrictEqual([[30, 8.8]]);
+  });
+
+  test("constellation 4's Elemental Mastery stops at 120", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.5,
+      {},
+      {
+        attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
+        constellationCount: 4,
+      },
+    );
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    expect(findBuffs(context, Attribute.ElementalMastery).map(({ amount }) => amount)).toStrictEqual([120]);
+  });
+
+  test("constellation 6 adds a Mega Radish's 7.5% heal at the skill Yuegui's third and sixth throws", () => {
+    expect.hasAssertions();
+    const constellation6 = createYaoyaoContext(0.5, {}, { constellationCount: 6 });
+    const constellation5 = createYaoyaoContext(0.5, {}, { constellationCount: 5 });
+    for (const context of [constellation6, constellation5]) {
+      YAOYAO_KIT.elementalSkill.onStart?.(context);
+      stepFrames(context, 430);
+    }
+
+    expect(
+      getPartyMember(constellation6.party, YAOYAO_CHARACTER_ID).healthShare -
+        getPartyMember(constellation5.party, YAOYAO_CHARACTER_ID).healthShare,
+    ).toBeCloseTo(0.15, 4);
   });
 });
