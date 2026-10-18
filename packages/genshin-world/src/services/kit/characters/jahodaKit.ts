@@ -65,8 +65,9 @@ const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, hei
 // From the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and its
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Moonsign's robots and Meowball, Constellations 1, 2 and 4, and Ascension 1 and 4 are not built yet, as their record
-// Holds no burst or skill hits for them, and Jahoda's own Moonsign Benediction is not in her record yet, so she counts
-// Toward no Moonsign level. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
+// Holds no burst or skill hits for them. Her Moonsign Benediction, Rooftop Dash (TextMap 801500603), raises the party's
+// Moonsign a level and names no lunar reaction, so its record carries no lunar reaction types. Constellation 6 is built:
+// a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
   readArea,
   readHitFields,

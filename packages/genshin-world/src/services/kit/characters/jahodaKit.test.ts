@@ -49,7 +49,7 @@ const createConstellation6Context = (constellationCount: number, isPartnerMoonsi
   const partner: Combatant = {
     ...createJahodaCombatant(),
     characterId: MOONSIGN_PARTNER_CHARACTER_ID,
-    kit: isPartnerMoonsign ? { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION } : JAHODA_KIT,
+    kit: { ...JAHODA_KIT, moonsignBenediction: isPartnerMoonsign ? MOONSIGN_BENEDICTION : undefined },
   };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   applyElement(enemy.elementalState, Element.Pyro, 1);

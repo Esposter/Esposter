@@ -40,5 +40,6 @@
   "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 49, "source": "Gcsim", "value": 48 },
   "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 0 },
-  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.066666666666666 }
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.066666666666666 },
+  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 0 }
 }
