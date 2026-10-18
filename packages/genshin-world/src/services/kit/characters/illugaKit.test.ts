@@ -260,7 +260,7 @@ describe(createIllugaKitBehaviour, () => {
     const { context, traveler } = createTeamContext(illuga);
     ILLUGA_KIT.elementalBurst.onStart?.(context);
     context.activeCombatant = traveler;
-    for (let hit = 0; hit < 7; hit++) emitKitEvent(createEnemyGeoHit(context, traveler), context);
+    for (let hit = 0; hit < 7; hit++) emitKitEvent(createEnemyGeoHit(traveler), context);
 
     stepKitEffects(FIXED_STEP_SECONDS, context);
     expect(context.strikes.map(({ attackTag }) => attackTag)).toStrictEqual([AttackTag.ElementalBurst]);
