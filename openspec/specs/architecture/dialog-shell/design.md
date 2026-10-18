@@ -35,11 +35,11 @@ flowchart TD
 
 **The confirm button comes from the shell, not from the caller.** It is the library's button in the accent, the dialog's one action, and says what it does in `confirmLabel`. A destructive answer is not drawn here at all: it is the danger button of a [destructive confirmation](../destructive-confirmation/design.md).
 
-**Confirming is a function the dialog awaits, and the dialog closes itself.** `StyledDialog` takes `confirm`, `StyledFormDialog` takes `submit` and `StyledEditFormDialog` takes `save`, and all three answer through `useDialogAnswer`, as `UiConfirmDialog` does. Awaited, the button is pending until the function settles and a `false` keeps the dialog open with the draft intact, which is what a create form wants. The answer runs through `useMutation`, so a function that rejects keeps the dialog open too, and raises the error alert any other write does. With `isOptimistic`, the dialog goes the moment the function is called, because the write has already shown on screen. A consumer never holds a pending flag or a close callback of its own ([destructive confirmation](../destructive-confirmation/design.md)).
+**Confirming is a function the dialog awaits, and the dialog closes itself.** `StyledDialog` takes `confirm`, `StyledFormDialog` takes `submit` and `StyledEditFormDialog` takes `save`, and all three answer through `useDialogAnswer`, as `UiConfirmDialog` does. The answer runs through `useMutation`, so a function that rejects keeps the dialog open and raises the error alert any other write does. Which answer mode a consumer picks, and when the dialog closes under each, is owned by [destructive confirmation](../destructive-confirmation/design.md).
 
 ## Dialogs with nothing to confirm
 
-A dialog that only shows something, a reference sheet, composes the same shell. Omitting `confirmLabel` drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The title bar's close button is its dismissal.
+A dialog that only shows something, a reference sheet, composes the same shell. Omitting `confirmLabel` and passing no action slot drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The title bar's close button is its dismissal.
 
 The command palette, the keyboard shortcuts dialog and the settings dialogs are not on this shell. They have no actions row to give, so they are the library's own dialog directly ([command palette](../command-palette/design.md)).
 
