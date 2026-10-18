@@ -980,6 +980,8 @@ useWorldSaveSync({
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
+    homePlantings: savedState.homePlantings,
+    homeProgress: savedState.homeProgress,
     inventory: inventory.value,
     mails: mails.value,
     namecardItemId: namecardItemId.value,

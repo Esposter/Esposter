@@ -8,7 +8,7 @@
 ## 2. Companions
 
 - [x] 2.1 Invite and dismiss companions within the Trust Rank's count. Verify: inviteHomeCompanion.test.ts, named after the scenarios 'A companion is invited within the Trust Rank's count' and 'A second companion is refused at Trust Rank one', with the Traveler and a character already living there refused.
-- [ ] 2.2 Give a companion its dialogue and one-time reward for a favoured gift set, once the placement editor places the furnishing sets. Verify: a test named after the scenario 'A favoured gift set gives the companion's reward once'.
+- [ ] 2.2 Give a companion its dialogue and one-time reward for a favoured gift set, once the placement editor places the furnishing sets. Verify: a test named after the scenario 'A favoured gift set gives the companion's reward once'. Built: `giveHomeFavour`. Not yet: calling it from a placed set (placement mode and the realm runtime) and the reward's items (the reward table).
 
 ## 3. Realm Depot
 
@@ -25,9 +25,9 @@
 
 ## 5. Gardens and companions' earnings
 
-- [ ] 5.1 Grow a garden's seeds and hold a pond's fish over real time. Verify: a test named after the scenario 'A garden's seeds grow over real time'.
+- [ ] 5.1 Grow a garden's seeds and hold a pond's fish over real time. Verify: a test named after the scenario 'A garden's seeds grow over real time'. Built: `plantHomeSeed` over the saved plantings, and the growth rule. Not yet: the plots (the layout export), the realm runtime calling it, and the pond's fish (the fish rule export).
 - [x] 5.2 Accrue Companionship EXP to each companion living in the realm. Verify: a test named after the scenario 'A companion living in the realm earns Companionship EXP'.
 
 ## 6. Save
 
-- [ ] 6.1 Backfill each save written before `homePlacements` with an empty list, on dev and then on prod. Verify: none; the backfills run reports nothing to change on each store, and its script is not committed. Blocked: the main session runs it once this schema reaches dev (design Decisions).
+- [ ] 6.1 Backfill each save written before `homePlacements`, `homePlantings` and `homeProgress` with an empty list, an empty list and a fresh progress (design Decisions), on dev and then on prod. Verify: none; the backfills run reports nothing to change on each store, and its script is not committed. Blocked: the main session runs it once this schema reaches dev (design Decisions).

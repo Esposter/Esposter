@@ -21,6 +21,17 @@ export const MAX_HOME_PLACEMENT_COUNT =
   HOME_REALM_COUNT *
   (HOME_EXTERIOR_AREA_COUNT * HOME_EXTERIOR_FURNISHING_LIMIT +
     HOME_INTERIOR_AREA_COUNT * HOME_INTERIOR_FURNISHING_LIMIT);
+// The most of each list a realm's progress holds, each counted from the dump: the companions a realm deploys at the top
+// Trust Rank (`deployNpcCount` of the 10 rows of `HomeworldLevelExcelConfigData`, the largest 8), the queues a Trust Rank
+// Opens (that table's 10 levels), the furnishing blueprints (the 1405 rows of `FurnitureMakeExcelConfigData`), and the
+// Companions' one-time rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of `HomeWorldEventExcelConfigData`)
+export const MAX_HOME_COMPANION_COUNT = 8;
+export const MAX_HOME_ORDER_COUNT = 10;
+export const MAX_HOME_BLUEPRINT_COUNT = 1405;
+export const MAX_HOME_REWARD_CLAIM_COUNT = 233;
+// A planting sits on one plot, and the realm's layout export will count the plots a realm holds. Until it does, the placements
+// Ceiling is the bound: a generous one the layout export may tighten
+export const MAX_HOME_PLANTING_COUNT = MAX_HOME_PLACEMENT_COUNT;
 // The Serenitea Pot's gadget: the material row of the widget type with id 220026, which the dump names with the name hash
 // 200477924, the English "Serenitea Pot". The gadget is the material, and the realm is entered by its use
 export const HOME_POT_GADGET_ID = 220026;
