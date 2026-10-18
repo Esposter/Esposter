@@ -53,6 +53,7 @@ import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passi
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
+import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
@@ -341,4 +342,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2646627715": createWhitemoonBristlePassiveModule,
   // Aeon Wave (Tome of the Eternal Flow)
   "3205793275": createAeonWavePassiveModule,
+  // Oath of Qhapaq Nan (Earth Shaker)
+  "2824611011": createOathOfQhapaqNanPassiveModule,
 };
