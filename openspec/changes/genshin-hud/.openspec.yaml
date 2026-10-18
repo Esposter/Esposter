@@ -4,3 +4,4 @@ affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-install, game-exports]
 x-touches: ["packages/genshin-world/src/components/Hud/**", "scripts/src/services/genshinParity/shared/**"]
+x-waiting: "the composite re-measure (task 1.1) waits on the clip `world-hud-hidden.mkv`, the HUD hidden and shown in a standing shot, which no wiki or YouTube search has found, and the quest tracker's rect (task 2.1) waits on the game's HUD RectTransform tree giving one, read by `readHudInterfaceRects`"

@@ -335,6 +335,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "HudScreen",
     seconds: 20,
   },
+  // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
+  // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
+  // And above it are scored, and the rest of that frame's HUD is left out of the region
+  "hud-paimon-button": {
+    capture: "world-pickup.mkv",
+    isBackdrop: true,
+    mask: [
+      { height: 100, width: 66, x: 0, y: 0 },
+      { height: 32, width: 44, x: 66, y: 0 },
+    ],
+    props: { isTouch: false },
+    region: { height: 100, width: 110, x: 0, y: 0 },
+    screen: "HudScreen",
+    seconds: 20,
+  },
   // The English mobile client's world HUD from the public recording of a session at 70 seconds, played on a phone, its
   // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
   // Recording's own frame, so a piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop`
