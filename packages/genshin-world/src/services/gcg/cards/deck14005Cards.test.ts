@@ -18,6 +18,7 @@ import { describe, expect, test } from "vitest";
 
 const FULL_HP = 10;
 const COLLEI_ID = 1701;
+const KEQING_ID = 1403;
 const OPPOSING_CHARACTER_ID = 1203;
 const CUILEIN_ANBAR_ID = 117_011;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -26,6 +27,14 @@ const TRUMP_CARD_KITTY_SKILL: GcgSkill = {
   effect: "Char_Skill_17013",
   energyGain: 0,
   id: 17_013,
+  kind: GcgSkillKind.ElementalBurst,
+};
+
+const STARWARD_SWORD_SKILL: GcgSkill = {
+  costs: [],
+  effect: "Char_Skill_14033",
+  energyGain: 0,
+  id: 14_033,
   kind: GcgSkillKind.ElementalBurst,
 };
 
@@ -113,6 +122,18 @@ describe("floral Brush", () => {
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
+  });
+});
+
+describe("starward Sword", () => {
+  test("the burst deals 4 Electro to the opposing active character and 3 Piercing to each one on standby", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(KEQING_ID)]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID), createCharacterState(COLLEI_ID)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, STARWARD_SWORD_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 4, FULL_HP - 3]);
   });
 });
 
