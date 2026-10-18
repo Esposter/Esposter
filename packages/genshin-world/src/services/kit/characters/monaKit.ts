@@ -16,6 +16,10 @@ import { takeOne } from "@esposter/shared";
 // Gives it
 // https://genshin-impact.fandom.com/wiki/Stellaris_Phantasm
 const OMEN_STATUS_ID = "mona-omen";
+// The phases her phantom and her Hydro DMG Bonus begin at, as gcsim v2.47.2 (MIT) mona/asc.go gives them
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/asc.go
+const ASCENSION_1 = 1;
+const ASCENSION_4 = 4;
 // Measured: gcsim v2.47.2 (MIT) mona/asc.go, Ascension 1's phantom for every 2 seconds of sprint, lasting 2 seconds and
 // Exploding at its end for half of Mirror Reflection's explosion
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/asc.go
@@ -82,7 +86,7 @@ const stepConstellation6Sprint = ({ activeCombatant: combatant, kitEffectState }
 
 // Ascension 4's Hydro DMG Bonus, which a hit reads as it is priced, from 20% of Mona's Energy Recharge
 const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
-  combatant.ascension < 4
+  combatant.ascension < ASCENSION_4
     ? []
     : [
         {
@@ -147,7 +151,7 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     onSprint: (context, kitState) => {
       const { activeCombatant: combatant, body, kitEffectState } = context;
       if (combatant.constellationCount >= CONSTELLATION_6) stepConstellation6Sprint(context);
-      if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
+      if (combatant.ascension < ASCENSION_1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
       kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
       castKitSummon(kitEffectState, body, combatant, sprintPhantomHits);
     },
