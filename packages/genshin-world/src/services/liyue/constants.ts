@@ -7,6 +7,10 @@ export const LIYUE_GREY_ROCK_COLOR = 0x8f8a80;
 export const LIYUE_JADE_WATER_COLOR = 0x5fae97;
 export const LIYUE_GINKGO_COLOR = 0xe2b43c;
 export const LIYUE_MAPLE_COLOR = 0xb4502e;
+// The red lacquer, roof and stone a building kit keeps where its palette leaves them out
+export const LIYUE_LACQUER_COLOR = 0xa8262a;
+export const LIYUE_ROOF_COLOR = 0xd8a33a;
+export const LIYUE_STONE_COLOR = 0xcfc6b2;
 // The stone terrace a building stands on, in metres past its walls and above the ground
 export const LIYUE_TERRACE_MARGIN = 1.2;
 export const LIYUE_TERRACE_HEIGHT = 0.8;
