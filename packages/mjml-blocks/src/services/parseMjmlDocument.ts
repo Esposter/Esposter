@@ -6,6 +6,7 @@ import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
 
 import { MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
+import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
@@ -13,18 +14,25 @@ import { createBlockDocumentSchema } from "headless-block-editor";
 import { parse } from "node-html-parser";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
+// The mjml element takes two attributes as root props, and any other is refused under its own name
 const readMjmlRoot = <TContent>(
   mjml: HTMLElement,
   registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): { content: BlockNode[]; root: { props: Record<string, unknown> } } => {
-  const props: Record<string, unknown> = { ...mjml.attributes, ...readMjmlStrayText(mjml) };
+  const { dir, lang, ...refusedAttributes } = mjml.attributes;
+  const props: Record<string, unknown> = {
+    ...readMjmlStrayText(mjml),
+    ...(dir === undefined ? {} : { dir }),
+    ...(lang === undefined ? {} : { lang }),
+  };
+  if (Object.keys(refusedAttributes).length > 0) props[getMjmlRefusalKey("mjml")] = refusedAttributes;
   const readTagNames = new Set<string>();
   let content: BlockNode[] = [];
   for (const child of mjml.children) {
-    // A second tag of a name already read is refused under that name, as an unknown tag is, rather than merged into the first
+    // A second tag of a name already read is refused under its name, as a tag the package leaves out is, rather than merged into the first
     if (readTagNames.has(child.rawTagName)) {
-      props[child.rawTagName] = child.attributes;
+      props[getMjmlRefusalKey(child.rawTagName)] = child.attributes;
       continue;
     }
 
@@ -38,19 +46,19 @@ const readMjmlRoot = <TContent>(
         Object.assign(props, readMjmlHead(child));
         break;
       default:
-        props[child.rawTagName] = child.attributes;
+        props[getMjmlRefusalKey(child.rawTagName)] = child.attributes;
     }
   }
 
   return { content, root: { props } };
 };
 
-// The top level beside the one mjml, refused by name: text outside it by the stray text type, a tag before it by its own name,
+// The top level beside the one mjml, refused by name: text outside it by the stray text type, a tag before it under its own name,
 // and a second element by #document. A source of one mjml and nothing else reads no refusal here
 const readMjmlTopLevel = (root: HTMLElement): Record<string, unknown> => {
   const [mjml, ...others] = root.children;
   const props: Record<string, unknown> = readMjmlStrayText(root);
-  if (mjml?.rawTagName !== "mjml") props[mjml?.rawTagName ?? "#document"] = {};
+  if (mjml?.rawTagName !== "mjml") props[mjml === undefined ? "#document" : getMjmlRefusalKey(mjml.rawTagName)] = {};
   else if (others.length > 0) props["#document"] = {};
   return props;
 };

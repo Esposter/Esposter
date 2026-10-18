@@ -120,7 +120,7 @@ describe(parseMjmlDocument, () => {
       TEST_MAX_NODES,
     );
     expect(result.success).toBe(false);
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-include"']);
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-include>"']);
   });
   test("raw html is cleaned before it is stored", () => {
     expect.hasAssertions();
@@ -228,7 +228,7 @@ describe(parseMjmlDocument, () => {
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(body.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-body"']);
+    expect(body.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-body>"']);
 
     const head = parseMjmlDocument(
       "<mjml><mj-head></mj-head><mj-head></mj-head><mj-body></mj-body></mjml>",
@@ -236,7 +236,59 @@ describe(parseMjmlDocument, () => {
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(head.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-head"']);
+    expect(head.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-head>"']);
+  });
+  test("a tag named like a read prop is refused, not read into it", () => {
+    expect.hasAssertions();
+
+    const secondBody = parseMjmlDocument(
+      '<mjml><mj-body width="600px"></mj-body><body width="300px"></body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(secondBody.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<body>"']);
+
+    const bodyWithSection = parseMjmlDocument(
+      "<mjml><body><mj-section></mj-section></body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(bodyWithSection.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<body>"']);
+  });
+  test("an attribute the mjml element does not take is refused by name", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml title="x"><mj-head><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mjml>"']);
+  });
+  test("a second title is refused by name, not kept over the first", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      "<mjml><mj-head><mj-title>a</mj-title><mj-title>b</mj-title></mj-head><mj-body></mj-body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-title>"']);
+  });
+  test("a second default for one tag is refused by name, not kept over the first", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-attributes><mj-text color="red"></mj-text><mj-text color="blue"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-text>"']);
   });
   test("an attribute on the title is refused by name", () => {
     expect.hasAssertions();
@@ -247,7 +299,7 @@ describe(parseMjmlDocument, () => {
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-title"']);
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-title>"']);
   });
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();

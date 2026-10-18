@@ -35,6 +35,8 @@ export const MJML_BODY_ATTRIBUTES: Record<string, string> = {
 };
 export const MJML_BODY_CHILDREN: string[] = ["mj-raw", "mj-section", "mj-wrapper", "mj-hero"];
 export const MJML_BREAKPOINT_ATTRIBUTES: Record<string, string> = { width: "unit(px)" };
+// The head tags read once: a second of one is refused under its name rather than kept over the first
+export const MJML_HEAD_SINGLE_TAGS: string[] = ["mj-breakpoint", "mj-preview", "mj-title"];
 // The containers that take a consumer's leaf type in their children, beside the MJML tags their preset lists
 export const MJML_LEAF_HOST_TYPES: string[] = ["mj-column", "mj-hero"];
 export const MJML_COMPONENT_SPECIFICATIONS: MjmlComponentSpecification[] = [

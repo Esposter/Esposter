@@ -122,6 +122,34 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names the title
 
+#### Scenario: A tag named like a read prop is refused, not read into it
+
+- **GIVEN** MJML source holding a `body` tag beside its `mj-body`, or a `body` tag holding a section
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `body` tag, and no attribute of the `mj-body` is overwritten
+
+#### Scenario: An attribute the mjml element does not take is refused by name
+
+- **GIVEN** MJML source whose `mjml` element carries an attribute other than `lang` or `dir`, such as a `title`
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `mjml` element
+
+#### Scenario: A second title is refused by name, not kept over the first
+
+- **GIVEN** MJML source whose head holds two `mj-title` elements
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the second `mj-title`, and the first title is kept
+
+#### Scenario: A second default for one tag is refused by name, not kept over the first
+
+- **GIVEN** MJML source whose `mj-attributes` holds two defaults for one tag
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the second default's tag, and the first default is kept
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.
