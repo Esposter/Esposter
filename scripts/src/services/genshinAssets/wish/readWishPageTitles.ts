@@ -20,7 +20,7 @@ export const readWishPageTitles = async (): Promise<string[]> => {
     list: "categorymembers",
   });
   const { continue: continuation, query } = categoryMembersSchema.parse(
-    await readWikiJson<unknown>(`${WIKI_API_URL}?${searchParams.toString()}`),
+    await readWikiJson<unknown>(`${WIKI_API_URL}?${searchParams}`),
   );
   if (continuation !== undefined)
     throw new InvalidOperationError(

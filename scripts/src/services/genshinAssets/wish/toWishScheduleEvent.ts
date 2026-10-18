@@ -5,8 +5,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The ids a featured name joins, every item the names hold under it. A name joining none fails the build rather than
 // Dropping the item from its banner
-const joinItemIds = (name: string, idsByName: ReadonlyMap<string, readonly number[]>): number[] => {
-  const ids = idsByName.get(name) ?? [];
+const joinItemIds = (name: string, nameIdsMap: ReadonlyMap<string, readonly number[]>): number[] => {
+  const ids = nameIdsMap.get(name) ?? [];
   if (ids.length === 0) throw new InvalidOperationError(Operation.Read, name, "joins no item in the names");
 
   return [...ids];
@@ -17,11 +17,11 @@ const joinItemIds = (name: string, idsByName: ReadonlyMap<string, readonly numbe
 export const toWishScheduleEvent = (
   title: string,
   { endTime, fiveStarNames, fourStarNames, kind, kindNumber, startTime }: WishEventPage,
-  idsByName: ReadonlyMap<string, readonly number[]>,
+  nameIdsMap: ReadonlyMap<string, readonly number[]>,
 ): WishScheduleEvent => ({
   endTime,
-  fiveStarIds: fiveStarNames.flatMap((name) => joinItemIds(name, idsByName)),
-  fourStarIds: fourStarNames.flatMap((name) => joinItemIds(name, idsByName)),
+  fiveStarIds: fiveStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
+  fourStarIds: fourStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
   id: title,
   kind,
   kindNumber,

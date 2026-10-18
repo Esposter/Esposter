@@ -8,8 +8,8 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
-import { BannerKind } from "genshin-interface/save";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
+import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished

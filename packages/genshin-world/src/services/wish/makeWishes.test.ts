@@ -24,7 +24,9 @@ describe(makeWishes, () => {
     featuredFourStars: [],
     fiveStars: [character],
     fourStars: [],
+    id: "Standard",
     kind: BannerKind.Standard,
+    kindNumber: 1,
     threeStars: [],
   };
   const pity: WishPity = {

@@ -1,10 +1,10 @@
+import type { SceneGroups } from "genshin-world";
+
 import { toCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/buildCraftingBenchPlaces";
 import {
   MONDSTADT_CRAFTING_BENCH_GROUP_ID,
   MONDSTADT_CRAFTING_BENCH_NPC_ID,
 } from "#src/services/genshinAssets/crafting/constants";
-import type { SceneGroups } from "genshin-world";
-
 import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world";
 import { describe, expect, test } from "vitest";
 

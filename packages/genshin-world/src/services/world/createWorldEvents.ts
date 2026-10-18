@@ -8,6 +8,7 @@ export const createWorldEvents = (): WorldEvents => {
     bagChange: [],
     chestOpened: [],
     defeatEnemy: [],
+    finishQuest: [],
     parentQuestFinish: [],
     pickUpMora: [],
     questEvent: [],

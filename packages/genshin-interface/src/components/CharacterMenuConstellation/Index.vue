@@ -2,15 +2,15 @@
 import { CONSTELLATION_NODE_PLACES } from "#src/services/constants";
 
 interface Props {
-  // The button's words, which press the next constellation's activation
-  activateLabel: string;
   // Each of the character's six constellations in the order it takes them, true where it is activated
   activated: boolean[];
+  // The button's words, which press the next constellation's activation
+  activateLabel: string;
   // Whether activation is refused now, every constellation being active or no Stella Fortuna held
   isActivateDisabled: boolean;
 }
 
-const { activateLabel, activated, isActivateDisabled } = defineProps<Props>();
+const { activated, activateLabel, isActivateDisabled } = defineProps<Props>();
 const emit = defineEmits<{ activate: [] }>();
 const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   left: `calc(var(--unit) * ${left})`,

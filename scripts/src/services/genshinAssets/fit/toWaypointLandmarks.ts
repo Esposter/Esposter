@@ -52,7 +52,7 @@ export const toWaypointLandmarks = ({
     ).map(({ toIndex }) => toIndex),
   );
   return transportPoints
-    .filter((_, index) => pairedIndexes.has(index))
+    .filter((_value, index) => pairedIndexes.has(index))
     .map((point) => {
       const arrival = toLandmarkArrival(point, origin, getWorldHeight);
       return {

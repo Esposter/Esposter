@@ -23,7 +23,9 @@ describe(getPaimonsBargainsOffer, () => {
 
   test("two characters are offered each month", () => {
     expect.hasAssertions();
-    const offers = Array.from({ length: 12 }, (_, index) => getPaimonsBargainsOffer(rotation, monthInstant(index + 1)));
+    const offers = Array.from({ length: 12 }, (_value, index) =>
+      getPaimonsBargainsOffer(rotation, monthInstant(index + 1)),
+    );
     for (const { characterIds } of offers) expect(characterIds).toHaveLength(2);
     // January is Fischl and Xiangling, the fourth pair, and the six pairs come round again after six months
     expect(offers.at(0)?.characterIds).toStrictEqual(rotation.characterPairs.at(3));

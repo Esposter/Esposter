@@ -1,5 +1,5 @@
-import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 import type { ExcelShopRotateRow } from "#src/models/genshinAssets/shops/ExcelShopRotateRow";
+import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 
 import {
   GAIN_AVATAR_ITEM_USE,
@@ -18,7 +18,7 @@ import { GameDataset } from "genshin-world";
 // Sets, which the weapon rotations give at the Royal order and the Blackcliff order. A missing order is an error
 export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   const rotationRows = readExcelTable<ExcelShopRotateRow>("ShopRotateExcelConfigData");
-  const avatarIdByCardId = new Map(
+  const cardIdAvatarIdMap = new Map(
     readExcelTable<ExcelMaterialRow>("MaterialExcelConfigData").flatMap(({ id, itemUse }) => {
       const avatarUse = itemUse.find(({ useOp }) => useOp === GAIN_AVATAR_ITEM_USE);
       return avatarUse ? [[id, Number(avatarUse.useParam[0])] as const] : [];
@@ -38,13 +38,13 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   };
   const avatarIdAt = (rotateId: number, rotateOrder: number): number => {
     const cardId = itemIdAt(rotateId, rotateOrder);
-    const avatarId = avatarIdByCardId.get(cardId);
+    const avatarId = cardIdAvatarIdMap.get(cardId);
     if (avatarId === undefined)
       throw new InvalidOperationError(Operation.Read, "Paimon's Bargains rotation", `card ${cardId} gives no avatar`);
     return avatarId;
   };
   const [firstCharacterRotateId, secondCharacterRotateId] = PAIMON_BARGAINS_CHARACTER_ROTATE_IDS;
-  const characterPairs = Array.from({ length: PAIMON_BARGAINS_PAIR_COUNT }, (_, index) => [
+  const characterPairs = Array.from({ length: PAIMON_BARGAINS_PAIR_COUNT }, (_value, index) => [
     avatarIdAt(firstCharacterRotateId, index + 1),
     avatarIdAt(secondCharacterRotateId, index + 1),
   ]);

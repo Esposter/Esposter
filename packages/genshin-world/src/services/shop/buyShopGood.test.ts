@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
@@ -7,6 +8,7 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -18,8 +20,10 @@ describe(buyShopGood, () => {
   // Forty days past the epoch, a morning in February, after the month's refresh on its first and today's at four
   const NOW = EPOCH.add({ hours: 24 * 40 });
   const DAILY_REFRESH = NOW.subtract({ hours: 4 });
-  const NO_NAMES: Record<string, string> = {};
-  const NO_MATERIALS = new Map<number, MaterialData>();
+  // A Fate is a currency, so its purchase never asks for a definition
+  const getNoItemDefinition = (itemId: number): ItemDefinition => {
+    throw new Error(`no definition asked for item ${itemId}`);
+  };
   const fateGood: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
@@ -46,6 +50,8 @@ describe(buyShopGood, () => {
     rarity: 1,
     stackLimit: 99,
   };
+  const getGroceryItemDefinition = (itemId: number) =>
+    getItemDefinition(itemId, { [GROCERY_NAME_TEXT_ID]: GROCERY_NAME }, new Map([[GROCERY_ITEM_ID, groceryMaterial]]));
   const groceryGood: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
@@ -63,7 +69,7 @@ describe(buyShopGood, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
-    const result = buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, [], fateGood, ADVENTURE_RANK, NOW);
+    const result = buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW);
 
     expect(result?.wallet[Currency.MasterlessStarglitter]).toBe(STARGLITTER_PRICE);
     expect(result?.wallet[Currency.IntertwinedFate]).toBe(1);
@@ -77,7 +83,7 @@ describe(buyShopGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE - 1 };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, [], fateGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -87,7 +93,7 @@ describe(buyShopGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, [], fateGood, ADVENTURE_RANK - 1, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], fateGood, ADVENTURE_RANK - 1, NOW),
     ).toBeUndefined();
   });
 
@@ -99,10 +105,10 @@ describe(buyShopGood, () => {
     const boughtLastMonth = [{ goodsId: limitedGood.goodsId, purchasedAt: NOW.subtract({ hours: 24 * 10 }) }];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, boughtThisMonth, limitedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtThisMonth, limitedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, boughtLastMonth, limitedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtLastMonth, limitedGood, ADVENTURE_RANK, NOW),
     ).toBeDefined();
   });
 
@@ -115,10 +121,10 @@ describe(buyShopGood, () => {
     const boughtAfterRefresh = [{ goodsId: dailyGood.goodsId, purchasedAt: DAILY_REFRESH.add({ hours: 1 }) }];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
     ).toBeDefined();
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, boughtAfterRefresh, dailyGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtAfterRefresh, dailyGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 
@@ -130,14 +136,13 @@ describe(buyShopGood, () => {
     const bought = [{ goodsId: unrefreshedGood.goodsId, purchasedAt: NOW.subtract({ hours: 24 * 5 }) }];
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, bought, unrefreshedGood, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, bought, unrefreshedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
     expect(
       buyShopGood(
         wallet,
         EMPTY_INVENTORY,
-        NO_NAMES,
-        NO_MATERIALS,
+        getNoItemDefinition,
         bought,
         unrefreshedGood,
         ADVENTURE_RANK,
@@ -154,27 +159,16 @@ describe(buyShopGood, () => {
     const ended = { ...fateGood, endTime: NOW.subtract({ hours: 1 }).toString() };
 
     expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, [], notYetBegun, ADVENTURE_RANK, NOW),
+      buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], notYetBegun, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
-    expect(
-      buyShopGood(wallet, EMPTY_INVENTORY, NO_NAMES, NO_MATERIALS, [], ended, ADVENTURE_RANK, NOW),
-    ).toBeUndefined();
+    expect(buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, [], ended, ADVENTURE_RANK, NOW)).toBeUndefined();
   });
 
   test("buying a grocery ingredient into an empty bag adds it to the bag", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: MORA_PRICE * 2 };
-    const result = buyShopGood(
-      wallet,
-      EMPTY_INVENTORY,
-      { [GROCERY_NAME_TEXT_ID]: GROCERY_NAME },
-      new Map([[GROCERY_ITEM_ID, groceryMaterial]]),
-      [],
-      groceryGood,
-      ADVENTURE_RANK,
-      NOW,
-    );
+    const result = buyShopGood(wallet, EMPTY_INVENTORY, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW);
 
     expect(result?.wallet[Currency.Mora]).toBe(MORA_PRICE);
     expect(result?.inventory.items).toStrictEqual([
@@ -214,16 +208,7 @@ describe(buyShopGood, () => {
     };
 
     expect(
-      buyShopGood(
-        wallet,
-        fullBag,
-        { [GROCERY_NAME_TEXT_ID]: GROCERY_NAME },
-        new Map([[GROCERY_ITEM_ID, groceryMaterial]]),
-        [],
-        groceryGood,
-        ADVENTURE_RANK,
-        NOW,
-      ),
+      buyShopGood(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
 });

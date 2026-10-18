@@ -63,7 +63,7 @@ export const useWorldOfferings = ({
         frostbearingTreeProgress.value = { heldCount: offer.progress.heldCount, level: offer.progress.level };
         events.emit(
           "achievementEvents",
-          Array.from({ length: offer.progress.level - previousLevel }, (_, index) => ({
+          Array.from({ length: offer.progress.level - previousLevel }, (_value, index) => ({
             kind: AchievementEventKind.OfferingLevelReached,
             quantity: 1,
             targetId: String(previousLevel + index + 1),

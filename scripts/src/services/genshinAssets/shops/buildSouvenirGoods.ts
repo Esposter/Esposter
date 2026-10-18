@@ -1,7 +1,7 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 
-import { SOUVENIR_SIGIL_ITEM_IDS } from "#src/services/genshinAssets/shops/constants";
 import { buildShopGoodSlice } from "#src/services/genshinAssets/shops/buildShopGoodSlice";
+import { SOUVENIR_SIGIL_ITEM_IDS } from "#src/services/genshinAssets/shops/constants";
 import { getShopGoodPrice } from "#src/services/genshinAssets/shops/getShopGoodPrice";
 
 // The Souvenir Shops' goods, one record of the shops dataset for each region, the goods priced in that region's Sigil

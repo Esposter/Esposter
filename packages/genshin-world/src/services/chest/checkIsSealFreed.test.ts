@@ -1,5 +1,5 @@
-import { Element } from "#src/models/Element";
 import { ChestSeal } from "#src/models/chest/ChestSeal";
+import { Element } from "#src/models/Element";
 import { checkIsSealFreed } from "#src/services/chest/checkIsSealFreed";
 import { describe, expect, test } from "vitest";
 

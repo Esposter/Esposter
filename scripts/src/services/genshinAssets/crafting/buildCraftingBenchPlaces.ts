@@ -3,9 +3,9 @@ import type { RegionMapPoint } from "#src/services/genshinAssets/residents/class
 import type { SceneGroups } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/findCraftingBenchMember";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
-import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";

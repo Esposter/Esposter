@@ -46,10 +46,10 @@ import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } f
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The kit each character's combat talents are read from, the proud skill group each of them names
-  characterTalentKits: CharacterTalentKit[];
   // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
   characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
+  // The kit each character's combat talents are read from, the proud skill group each of them names
+  characterTalentKits: CharacterTalentKit[];
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
@@ -80,8 +80,8 @@ defineSlots<{
 }>();
 const {
   activeCharacterId,
-  characterTalentKits,
   characterIdConstellationsMap,
+  characterTalentKits,
   companionshipExpMap = new Map<number, number>(),
   gameDataBaseUrl,
   gameText,
@@ -246,14 +246,14 @@ const activate = () => {
         v-else-if="character && tab === CharacterMenuTab.Constellation"
         :activate-label="gameText[GameTextKey.Activate]"
         :activated="constellationsActivated"
-        :is-activate-disabled="isActivateDisabled"
+        :is-activate-disabled
         @activate="activate()"
       />
       <CharacterMenuTalents
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
         :="talentPanel"
         :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-        @upgrade="upgradeTalentAt"
+        @upgrade="(index) => upgradeTalentAt(index)"
       />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"

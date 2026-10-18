@@ -10,7 +10,7 @@ describe(toFishingBait, () => {
   const OTHER_TAG = 9202;
   // Fish 1 and 3 hold the bait's own tag, and fish 2 holds another bait's
   const fishTags = new Map<number, ReadonlySet<number>>([
-    [1, new Set([BASE_TAG, BAIT_TAG])],
+    [1, new Set([BAIT_TAG, BASE_TAG])],
     [2, new Set([BASE_TAG, OTHER_TAG])],
     [3, new Set([BAIT_TAG])],
   ]);

@@ -32,9 +32,9 @@ const targetTime = computed(() => {
   });
 });
 // The pointer's angle about the dial's centre, which a drag steps the advance by as it turns round the dial
-const getPointerAngle = ({ clientX, clientY }: PointerEvent, element: HTMLElement): number => {
+const getPointerAngle = (event: PointerEvent, element: HTMLElement): number => {
   const { height, left, top, width } = element.getBoundingClientRect();
-  return Math.atan2(clientY - (top + height / 2), clientX - (left + width / 2));
+  return Math.atan2(event.clientY - (top + height / 2), event.clientX - (left + width / 2));
 };
 const onDialPointerDown = (event: PointerEvent) => {
   if (!dial.value) return;
@@ -67,8 +67,8 @@ onMounted(() => {
       class="dial"
       @pointerdown="(event) => onDialPointerDown(event)"
       @pointermove="(event) => onDialPointerMove(event)"
-      @pointerup="onDialPointerUp"
-      @pointercancel="onDialPointerUp"
+      @pointerup="onDialPointerUp()"
+      @pointercancel="onDialPointerUp()"
     >
       <span class="hand" :style="handStyle" />
       <span class="hub" />

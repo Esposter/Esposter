@@ -75,8 +75,8 @@ describe(toWaypointLandmarks, () => {
     expect.hasAssertions();
 
     expect({
-      statueLabel: landmarksAt([createMapPoint({ label_id: INTERACTIVE_MAP_STATUE_LABEL_ID })]),
       beyondBar: landmarksAt([createMapPoint({ x_pos: 175 })]),
+      statueLabel: landmarksAt([createMapPoint({ label_id: INTERACTIVE_MAP_STATUE_LABEL_ID })]),
     }).toStrictEqual({ beyondBar: [], statueLabel: [] });
   });
 });

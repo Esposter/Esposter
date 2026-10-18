@@ -2,6 +2,8 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
+import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
+import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -10,8 +12,6 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
-import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
-import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { Catalogue } from "#src/models/world/Catalogue";
 

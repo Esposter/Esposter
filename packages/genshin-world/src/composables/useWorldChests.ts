@@ -19,9 +19,9 @@ import { computed, shallowRef } from "vue";
 // And left off, so no chest is offered rather than a wrong one
 export const useWorldChests = ({
   events,
+  gainWorldAdventureExp,
   gameDataBaseUrl,
   gameText,
-  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -29,9 +29,9 @@ export const useWorldChests = ({
   wallet,
 }: {
   events: WorldEvents;
+  gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
-  gainWorldAdventureExp: (amount: number) => void;
   getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;

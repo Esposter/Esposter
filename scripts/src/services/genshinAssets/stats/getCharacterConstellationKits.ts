@@ -74,8 +74,8 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
         `depot ${depotRow.id} of one Stella Fortuna per constellation`,
       );
     const [stellaFortunaItemId] = costItemIds;
-    const stellaFortunaItem = materialMap.get(stellaFortunaItemId);
-    if (stellaFortunaItem === undefined)
+    const stellaFortunaItem = stellaFortunaItemId === undefined ? undefined : materialMap.get(stellaFortunaItemId);
+    if (stellaFortunaItemId === undefined || stellaFortunaItem === undefined)
       throw new InvalidOperationError(
         Operation.Read,
         toConstellationDepot.name,

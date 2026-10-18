@@ -1,11 +1,11 @@
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { Currency } from "#src/models/inventory/Currency";
-import { ItemCategory } from "genshin-interface";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { buyHomeDepotGood } from "#src/services/home/buyHomeDepotGood";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
 describe(buyHomeDepotGood, () => {
