@@ -24,6 +24,7 @@ export const readReputationRequestQuest = ({
     id: String(subQuest.subId),
     kind: QuestKind.World,
     offerTalkIds: [],
+    parentQuestIds: [],
     rewards,
     steps: [
       {

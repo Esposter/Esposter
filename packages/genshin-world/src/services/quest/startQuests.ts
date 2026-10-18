@@ -31,6 +31,17 @@ export const startQuests = (
     quests.some(({ id }) => id === acceptedQuestId)
   )
     nextProgressMap.set(acceptedQuestId, { objectiveCounts: [], stepIndex: 0 });
+  // A quest whose parent quests are all finished starts, at load and on any event, since a step's quest event can finish one. A
+  // Parent the world does not carry never finishes, so its child stays unstarted
+  const checkIsParentQuestFinished = (parentQuestId: string) => {
+    const parentQuest = quests.find(({ id }) => id === parentQuestId);
+    return parentQuest !== undefined && checkIsQuestFinished(parentQuest, progressMap.get(parentQuestId));
+  };
+  for (const { id, parentQuestIds } of quests) {
+    if (progressMap.has(id) || parentQuestIds.length === 0) continue;
+    if (parentQuestIds.every((parentQuestId) => checkIsParentQuestFinished(parentQuestId)))
+      nextProgressMap.set(id, { objectiveCounts: [], stepIndex: 0 });
+  }
   if (questEvent?.kind !== QuestObjectiveKind.TalkTo) return nextProgressMap;
   // The quest each of a series' quests after its first is ordered after
   const previousQuestIdMap = new Map(
