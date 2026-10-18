@@ -7,8 +7,8 @@ import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/const
 const NORMAL_ATTACK_HIT_PATH_REGEX = /^normalAttacks\.\d+\.hits\.\d+$/u;
 
 // A stance's normal attack hit takes its multiplier as its normal attack does: every candidate the normal attack's
-// Multiplier has, from gcsim and from the tables, so the stance resolves the value its normal attack resolves, the skill's
-// Factor aside
+// Multiplier has, from gcsim and from the tables, so the stance resolves the value its normal attack resolves, the
+// Skill's factor aside
 export const addStanceMultiplierCandidates = (
   candidateMap: Map<string, KitCandidate[]>,
   { path }: GcsimStanceNormalAttack,
