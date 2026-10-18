@@ -47,7 +47,7 @@ Each kind of attack takes the hits below to break an ore, its kit's poise run th
 
 | Attack                                   | Poise a hit      | Iron, White Iron, Starsilver (29 blunt, 200 melee) | Crystal, Magical Crystal and the rest (286, 2000) | Basis                                                           |
 | :--------------------------------------- | :--------------- | -------------------------------------------------: | ------------------------------------------------: | :-------------------------------------------------------------- |
-| A claymore's combo, Noelle's or Razor's  | 97 to 160, blunt |                                                  1 |                                                 3 | Provisional                                                     |
+| A claymore's combo, Noelle's or Razor's  | 97 to 160, melee |                                                  3 |                                                21 | Provisional                                                     |
 | A sword's combo, the Traveler's          | 40 to 65, melee  |                                                  5 |                                                41 | Provisional                                                     |
 | A polearm's combo, Xiao's                | 25 to 87, melee  |                                                  6 |                                                43 | Provisional                                                     |
 | Overloaded                               | 90, blunt        |                                                  1 |                                                 4 | Provisional                                                     |
