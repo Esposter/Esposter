@@ -83,6 +83,8 @@ export const XINYAN_CHARACTER_ID = 10_000_044;
 // Two pulses besides, and Constellation 4's skill hit cuts Physical RES. Her Ascension 4 is not built, as no kit event
 // Reaches the team's shield, her Constellation 1 is not, as the kit's normal attack speed reads only an infusion's, and
 // Constellation 6 is not, as gcsim has none
+// Constellation 1 needs an ATK SPD bonus on her normal and charged attacks, which no attribute carries
+// Constellation 6 needs the Charged Attacks' stamina cut and ATK bonus, which the kit does not build
 export const createXinyanKitBehaviour = ({
   kit,
   readHitFields,

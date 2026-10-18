@@ -74,6 +74,7 @@ export const YANFEI_CHARACTER_ID = 10_000_048;
 // It is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation 1. Done Deal adds a
 // Seal each second while it stands. Her Ascension 4 shot, her Constellation 2 CRIT Rate and her Constellation 4 shield
 // Are not built, as no kit event reaches the enemy's health or the shield's health
+// Constellation 4 needs the Done Deal shield's Pyro absorption at 250%, which the kit does not build
 export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");
   // The charged attack's hit at each count of seals spent, the count picking its reach and multiplier as she plays
