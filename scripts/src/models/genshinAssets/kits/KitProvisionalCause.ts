@@ -11,6 +11,9 @@ export enum KitProvisionalCause {
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share
   NoActionFile = "NoActionFile",
+  // The unit gcsim does not model: no source gives a value for a character gcsim has no folder for. Only a kit whose
+  // Character has no gcsim folder may name it, and the builder refuses it elsewhere
+  NoGcsimUnit = "NoGcsimUnit",
   // A hit neither gcsim nor the wiki gives poise for deals none
   NoPoiseSource = "NoPoiseSource",
   // The value agrees with gcsim's current branch but not the tag the builder reads, so it was read past the licence

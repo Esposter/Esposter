@@ -48,7 +48,7 @@ describe(buildKitPublication, () => {
     notes: [],
     overlayName: "",
     ...(isPublished && {
-      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), talentGroupIdMap).record,
+      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), talentGroupIdMap, true).record,
     }),
     sourceCandidateMap: SOURCE_CANDIDATE_MAP,
     tables: {

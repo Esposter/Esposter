@@ -97,10 +97,18 @@ export const compareKitRecord = (
     sourceCandidateMap,
   });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap);
+  const resolved = resolveKitValues(
+    sourceCandidateMap,
+    overlay,
+    namedHitCandidateMap,
+    talentGroupIdMap,
+    !isTagPredated,
+  );
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
     if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
-  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap)).match(
+  return getResult(() =>
+    buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap, !isTagPredated),
+  ).match(
     (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );

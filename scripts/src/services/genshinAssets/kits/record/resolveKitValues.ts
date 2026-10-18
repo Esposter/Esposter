@@ -5,6 +5,7 @@ import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSour
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
@@ -23,6 +24,7 @@ export const resolveKitValues = (
   overlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
   talentGroupIdMap: KitTables["talentGroupIdMap"],
+  isGcsimModelled: boolean,
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
   const provenanceMap = new Map<string, KitValueSource>();
@@ -54,6 +56,13 @@ export const resolveKitValues = (
       valueMap.set(path, candidate.value);
       provenanceMap.set(path, candidate.provenance);
     } else {
+      // A cause saying gcsim has no folder for the character is refused where it has one, which can read the value
+      if (entry.cause === KitProvisionalCause.NoGcsimUnit && isGcsimModelled)
+        throw new InvalidOperationError(
+          Operation.Read,
+          path,
+          "names NoGcsimUnit, but gcsim has a folder for the character",
+        );
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     }

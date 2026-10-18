@@ -20,6 +20,7 @@ export const buildKitPublication = (
   const failures: string[] = [];
   for (const {
     characterId,
+    gcsimFolder,
     name,
     namedHitCandidateMap,
     overlayName,
@@ -32,6 +33,7 @@ export const buildKitPublication = (
       readKitOverlay(overlayName),
       namedHitCandidateMap,
       tables.talentGroupIdMap,
+      gcsimFolder !== undefined,
     );
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
