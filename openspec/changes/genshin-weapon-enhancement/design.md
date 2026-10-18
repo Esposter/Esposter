@@ -45,6 +45,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Eagle Spear of Justice (Primordial Jade Winged-Spear, provisional reading).** Each hit its wielder deals adds a stack of the rank's 3.2% ATK, up to seven, at most once every 0.3 s, each stack lasting 6 s from the last. At seven stacks the wielder's DMG dealt is raised by the rank's 12%, read from the stacks as the team's effects stand through getPassiveBonuses. Provisional: every hit counts, a passive's own queued hit too, since the text says only 'on hit'.
 - **Smoke-and-Mirror Mystery (Flute of Ezpitzal, provisional reading).** Using an Elemental Skill raises DEF by the rank's 16% for 15 s, through createSkillBuffPassiveModule, which restarts the buff on each skill. The same helper builds Pact of Flowing Springs and The Law's Equilibrium.
 - **Pact of Flowing Springs (Footprint of the Rainbow, provisional reading).** The same skill buff as Smoke-and-Mirror Mystery: DEF rises by the rank's 16% for 15 s after the wielder's Elemental Skill, through createSkillBuffPassiveModule.
+- **The Law's Equilibrium (Covenant of Frost and Snow, provisional reading).** After the wielder's Elemental Skill, its Elemental Mastery rises by the rank's 120 for 12 s, through the same skill-buff helper as the DEF weapons. The rank's 240 at five stars is the same shape.
 
 ## How it works
 

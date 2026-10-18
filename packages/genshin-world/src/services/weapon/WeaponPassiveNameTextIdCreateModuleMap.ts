@@ -37,6 +37,7 @@ import { createInfusionStingerPassiveModule } from "#src/services/weapon/passive
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
+import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
@@ -246,4 +247,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "641137867": createSmokeAndMirrorMysteryPassiveModule,
   // Pact of Flowing Springs (Footprint of the Rainbow)
   "4067649747": createPactOfFlowingSpringsPassiveModule,
+  // The Law's Equilibrium (Covenant of Frost and Snow)
+  "1419973003": createLawsEquilibriumPassiveModule,
 };
