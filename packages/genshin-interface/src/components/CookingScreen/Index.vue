@@ -7,8 +7,16 @@ import {
 } from "#src/services/constants";
 
 interface Props {
+  // The Auto Cook button's label in the reader's language
+  autoCookLabel: string;
+  // Whether Auto Cook is offered for the dish on the screen, once its proficiency is full
+  canAutoCook: boolean;
+  // The dishes the cook knows, by id and name in the reader's language, listed for the choice
+  dishes: { id: number; name: string }[];
   // The place of the pointer along the bar, as a fraction from its left end
   pointer: number;
+  // The id of the dish on the screen, which the list marks
+  selectedId: number;
   // The Stop button's label in the reader's language
   stopLabel: string;
   // The title the game shows at the top left
@@ -17,8 +25,8 @@ interface Props {
   zones: { delicious: [number, number]; regular: [number, number] };
 }
 
-const { pointer, stopLabel, title, zones } = defineProps<Props>();
-const emit = defineEmits<{ close: []; stop: [] }>();
+const { autoCookLabel, canAutoCook, dishes, pointer, selectedId, stopLabel, title, zones } = defineProps<Props>();
+const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: [] }>();
 
 const toArcPoint = (fraction: number) => {
   const angle = Math.PI * (1 - Math.min(1, Math.max(0, fraction)));
@@ -38,6 +46,18 @@ const toBarPath = ([start, end]: [number, number]) => {
   <div class="cooking-screen">
     <h1 class="title">{{ title }}</h1>
     <button class="close" type="button" @click="emit('close')">×</button>
+    <ul class="dishes">
+      <li v-for="dish in dishes" :key="dish.id">
+        <button
+          :aria-pressed="dish.id === selectedId"
+          :class="{ selected: dish.id === selectedId }"
+          type="button"
+          @click="emit('select', dish.id)"
+        >
+          {{ dish.name }}
+        </button>
+      </li>
+    </ul>
     <svg aria-hidden="true" class="stage" viewBox="0 0 1920 1080">
       <!-- A provisional pot until the game's own is traced from the recording -->
       <ellipse class="pot-rim" cx="960" cy="330" rx="150" ry="36" />
@@ -47,6 +67,9 @@ const toBarPath = ([start, end]: [number, number]) => {
       <path class="delicious" :d="toBarPath(zones.delicious)" />
       <circle class="pointer" :cx="toArcPoint(pointer).x" :cy="toArcPoint(pointer).y" r="16" />
     </svg>
+    <button :disabled="!canAutoCook" class="auto-cook" type="button" @click="emit('autoCook')">
+      {{ autoCookLabel }}
+    </button>
     <button class="stop" type="button" @click="emit('stop')">{{ stopLabel }}</button>
   </div>
 </template>
@@ -121,6 +144,49 @@ const toBarPath = ([start, end]: [number, number]) => {
   background: rgb(255 255 255 / 20%);
   color: #ece3d8;
   font-size: calc(var(--unit) * 28);
+}
+
+.dishes {
+  position: absolute;
+  top: calc(var(--unit) * 120);
+  left: calc(var(--unit) * 96);
+  display: grid;
+  gap: calc(var(--unit) * 12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dishes button {
+  width: calc(var(--unit) * 260);
+  padding: calc(var(--unit) * 10);
+  border: 0;
+  background: rgb(255 255 255 / 12%);
+  color: #ece3d8;
+  font-size: calc(var(--unit) * 20);
+  text-align: left;
+}
+
+.dishes .selected {
+  background: #a154de;
+}
+
+.auto-cook {
+  position: absolute;
+  bottom: calc(var(--unit) * 40);
+  left: calc(50% + var(--unit) * 100);
+  width: calc(var(--unit) * 180);
+  height: calc(var(--unit) * 52);
+  transform: translateX(-50%);
+  border: 0;
+  background: #3a3a44;
+  color: #ece3d8;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+}
+
+.auto-cook:disabled {
+  opacity: 0.4;
 }
 
 .stop {

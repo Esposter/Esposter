@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -29,6 +31,8 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The cook's progress, which decides whether an instruction the bag holds is still to be used
+  cookingProgress: CookingProgress;
   // The dishes' uses by the item id each is eaten from, which decides the entries the bag offers a Use
   dishUseMap: ReadonlyMap<number, DishUse>;
   // The widget config's gadgets, whose equipable ones the gadget tab offers to equip to the quick-use slot
@@ -38,6 +42,8 @@ interface Props {
   // The tab the bag opens on
   initialCategory: ItemCategory;
   inventory: Inventory;
+  // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
+  instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
   // The game's material table by item id, which a destroy's returned materials are defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns
@@ -45,8 +51,18 @@ interface Props {
   wallet: Wallet;
 }
 
-const { dishUseMap, gadgetRows, gameText, initialCategory, inventory, materialDataMap, names, wallet } =
-  defineProps<Props>();
+const {
+  cookingProgress,
+  dishUseMap,
+  gadgetRows,
+  gameText,
+  initialCategory,
+  instructionRecipeMap,
+  inventory,
+  materialDataMap,
+  names,
+  wallet,
+} = defineProps<Props>();
 const emit = defineEmits<{
   close: [];
   destroy: [destruction: InventoryDestruction];
@@ -111,7 +127,7 @@ const cells = computed((): InventoryCell[] => {
       isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
       isEquipable: equipableGadgetIds.value.has(item.definition.id) || undefined,
       isSelected: chosenIds.value.includes(String(id)) || undefined,
-      isUsable: checkIsInventoryItemUsable(item, dishUseMap) || undefined,
+      isUsable: checkIsInventoryItemUsable(item, { cookingProgress, dishUseMap, instructionRecipeMap }) || undefined,
       name,
       rarity,
     };

@@ -33,6 +33,7 @@ describe(buildItems, () => {
   const ADVENTURE_EXP_ID = 102;
 
   const DISH_ITEM_ID = 108_011;
+  const INSTRUCTION_ITEM_ID = 109_101;
 
   const BATCH_CONSUMABLE_ITEM_ID = 7001;
   const QUEST_CONSUMABLE_ITEM_ID = 7002;
@@ -74,6 +75,15 @@ describe(buildItems, () => {
       itemUse: [],
       materialType: "MATERIAL_FOOD",
       nameTextMapHash: 5,
+      rank: 1,
+      rankLevel: 1,
+      stackLimit: 99,
+    },
+    {
+      id: INSTRUCTION_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_CONSUME",
+      nameTextMapHash: 6,
       rank: 1,
       rankLevel: 1,
       stackLimit: 99,
@@ -218,6 +228,34 @@ describe(buildItems, () => {
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
     expect(ids.map(({ id }) => id)).toContain(DISH_ITEM_ID);
+  });
+
+  test("every instruction item a cook recipe unlocks is an item", async () => {
+    expect.hasAssertions();
+    vi.mocked(readCookingRecipes).mockReturnValueOnce([
+      {
+        foodType: CookingFoodType.Heal,
+        id: 1,
+        ingredients: [],
+        isDefaultUnlocked: false,
+        maxProficiency: 1,
+        nameTextId: "1",
+        qteParam: [0, 0],
+        rankLevel: 1,
+        resultItemIds: {
+          [CookingQuality.Delicious]: DISH_ITEM_ID,
+          [CookingQuality.Regular]: DISH_ITEM_ID,
+          [CookingQuality.Suspicious]: DISH_ITEM_ID,
+        },
+        specialties: [],
+        unlockItemIds: [INSTRUCTION_ITEM_ID],
+      },
+    ]);
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).toContain(INSTRUCTION_ITEM_ID);
   });
 
   test("publishes every item a Reputation level pays", async () => {

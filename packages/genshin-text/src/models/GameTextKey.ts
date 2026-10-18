@@ -131,6 +131,8 @@ export enum GameTextKey {
   Confirm = "UI_BEYOND_CONFIRM",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
+  // The button that makes a whole batch of a dish once its proficiency is full
+  CookingAutoCook = "UI_COOKING_QTE_AUTO_MAKE_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",

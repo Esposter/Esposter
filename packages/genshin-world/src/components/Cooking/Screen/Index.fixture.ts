@@ -23,4 +23,4 @@ const recipe: CookingRecipe = {
   unlockItemIds: [],
 };
 
-export const props = { gameText: ENGLISH_GAME_TEXT, pointer: 0.24, recipe };
+export const props = { gameText: ENGLISH_GAME_TEXT, pointer: 0.24, recipe, recipes: [recipe] };

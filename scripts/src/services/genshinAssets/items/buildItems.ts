@@ -38,7 +38,7 @@ const isAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
   BAG_MATERIAL_TYPES.includes(toBagMaterialType(materialType));
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
-// Takes or yields, every dish a cook recipe yields, every gadget of the gadgets slice, every offering the Frostbearing
+// Takes or yields, every dish a cook recipe yields and every instruction that teaches it, every gadget of the gadgets slice, every offering the Frostbearing
 // Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery sells, each Fishing Association's goods and their fish, and every item a
 // Carried quest's finish pays, each read from the game's material table with its name's text id, which `genshin:text names`
 // Writes into the name-text chunks.
@@ -80,13 +80,15 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     ),
   ];
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
+  const cookingRecipes = readCookingRecipes();
   const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
     rewards.map(({ itemId }) => itemId),
   );
   const itemIds = [
     ...new Set([
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
-      ...readCookingRecipes().flatMap(({ resultItemIds }) => Object.values(resultItemIds)),
+      ...cookingRecipes.flatMap(({ resultItemIds }) => Object.values(resultItemIds)),
+      ...cookingRecipes.flatMap(({ unlockItemIds }) => unlockItemIds),
       ...expeditionItemIds,
       ...forgeItemIds,
       ...gadgetRows.map(({ id }) => id),
