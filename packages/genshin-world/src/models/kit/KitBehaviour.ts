@@ -14,6 +14,7 @@ export interface KitBehaviour extends Partial<
   Pick<
     Kit,
     | "getChargedAttackStaminaMultiplier"
+    | "getConversionBonuses"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
     | "getPartyReactionBonus"

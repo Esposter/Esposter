@@ -14,6 +14,10 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
   const passive = createModule(params);
   return {
     ...kit,
+    getConversionBonuses: (combatant, healthShare) => [
+      ...(kit.getConversionBonuses?.(combatant, healthShare) ?? []),
+      ...(passive.getConversionBonuses?.(combatant, healthShare) ?? []),
+    ],
     getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) => [
       ...(kit.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),
       ...(passive.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),

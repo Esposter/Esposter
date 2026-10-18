@@ -197,4 +197,60 @@ describe(getBuffedCombatant, () => {
         .attributes.attributeTotalMap[Attribute.CriticalRate],
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.2);
   });
+
+  test("a stat converted from Max HP reads the Max HP a buff on the combatant raised, not its base", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getConversionBonuses: (buffed) => [{ amount: 0.1 * buffed.attributes.maxHealth, attribute: Attribute.Attack }],
+      },
+      level: 90,
+    };
+
+    const buffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 500, attribute: Attribute.Health, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+
+    expect(buffed.attributes.attack).toBeCloseTo(150);
+  });
+
+  test("a conversion reads the attack from before the conversions, so one conversion's ATK is not in another's amount", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 100 },
+        { attribute: Attribute.BaseHealth, value: 1000 },
+      ]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getConversionBonuses: (buffed) => [
+          { amount: 0.5 * buffed.attributes.maxHealth, attribute: Attribute.Attack },
+          { amount: 0.001 * buffed.attributes.attack, attribute: Attribute.CriticalRate },
+        ],
+      },
+      level: 90,
+    };
+
+    const buffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 50, attribute: Attribute.Attack, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+
+    expect(buffed.attributes.attributeTotalMap[Attribute.CriticalRate]).toBeCloseTo(0.15);
+  });
 });

@@ -43,6 +43,11 @@ export interface Kit {
   elementalSkillMaximumHeldSeconds?: number;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
+  // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
+  // Passive, buff and Enduring Rock bonus leaves it, so its Max HP is the buffed one, and its HP as a share of its
+  // Max HP, which a conversion gated on low HP reads. No conversion reads another's output: the kit's and each weapon's
+  // Hook are handed the same character, before any conversion's output is on it
+  getConversionBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
   // Hit that landed and the normal attack's place in the kit's chain, from 0, so a hook can tell its last hit or its attack
   getNormalAttackExtraHit?: (context: KitContext, hit: KitHit, chainIndex: number) => KitHit | undefined;
