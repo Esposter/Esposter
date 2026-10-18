@@ -102,7 +102,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `shenhe`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `shikanoin-heizou`   | 2026-10-19 · Haiku 5.5 | design is `heizou`                                                       |
 | `sigewinne`          | —                      |                                                                          |
-| `skirk`              | —                      |                                                                          |
+| `skirk`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sucrose`            | —                      |                                                                          |
 | `tartaglia`          | —                      |                                                                          |
 | `thoma`              | 2026-10-14 · Haiku 5.5 |                                                                          |
@@ -112,7 +112,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `varka`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `venti`              | —                      |                                                                          |
 | `vesna`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `vodyanitsa`         | —                      |                                                                          |
+| `vodyanitsa`         | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `wanderer`           | —                      |                                                                          |
 | `wriothesley`        | —                      |                                                                          |
 | `xiangling`          | —                      |                                                                          |
