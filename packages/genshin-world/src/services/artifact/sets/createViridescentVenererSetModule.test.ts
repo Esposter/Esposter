@@ -1,0 +1,116 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { VIRIDESCENT_VENERER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createViridescentVenererSetModule } from "#src/services/artifact/sets/createViridescentVenererSetModule";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { readStatTables } from "#src/services/character/readStatTables";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { getPassiveKit } from "#src/services/kit/getPassiveKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { assert, describe, expect, test } from "vitest";
+
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const OTHER_CHARACTER_ID = 2;
+const bonusOf = (pieceCount: number) => {
+  const bonus = statTables.artifactSetDataMap
+    .get(VIRIDESCENT_VENERER_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === pieceCount);
+  assert.exists(bonus);
+  return bonus;
+};
+const createCombatant = (characterId: number, kit = KIT): Combatant => {
+  const attributes = computeCharacterAttributes([]);
+  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
+};
+// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events the
+// Team sends, and reads the reactions a member makes in the party's hooks
+const createTeam = (characterIds: number[]) => {
+  const wearer = createCombatant(
+    TRAVELER_CHARACTER_ID,
+    getPassiveKit(KIT, [createViridescentVenererSetModule(bonusOf(4))]),
+  );
+  const other = createCombatant(OTHER_CHARACTER_ID);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const party = createParty(characterIds);
+  const characterIdCombatantMap = new Map([
+    [TRAVELER_CHARACTER_ID, wearer],
+    [OTHER_CHARACTER_ID, other],
+  ]);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+  // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
+  const reactionDamageBonus = (combatant: Combatant, reactionType: TransformativeReactionType | StellarReactionType) =>
+    wearer.kit.getPartyReactionBonus?.(wearer, { combatant, reactionType }, context)?.damageBonus ?? 0;
+  // A hit the striker lands on the enemy, which triggers the given reactions on it
+  const trigger = (
+    striker: Combatant,
+    reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
+  ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
+  return { enemy, other, reactionDamageBonus, trigger, wearer };
+};
+
+describe(createViridescentVenererSetModule, () => {
+  test("the wearer's own Swirl reaction DMG is raised by 60%, and another member's Swirl is not", () => {
+    expect.hasAssertions();
+
+    const { other, reactionDamageBonus, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(reactionDamageBonus(wearer, TransformativeReactionType.Swirl)).toBeCloseTo(0.6);
+    expect(reactionDamageBonus(other, TransformativeReactionType.Swirl)).toBe(0);
+  });
+
+  test("a Swirl the active wearer triggers lowers the RES of the element it swirls by 40% for 10 seconds", () => {
+    expect.hasAssertions();
+
+    const { enemy, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
+
+    expect(enemy.statuses).toHaveLength(1);
+    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 });
+  });
+
+  test("a second Swirl of the same element refreshes its RES debuff rather than stacking it", () => {
+    expect.hasAssertions();
+
+    const { enemy, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
+    trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
+
+    expect(enemy.statuses).toHaveLength(1);
+    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 } });
+  });
+
+  test("a Swirl another member triggers, or one the wearer triggers off the field, lowers no RES", () => {
+    expect.hasAssertions();
+
+    const { enemy, other, trigger, wearer } = createTeam([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+    trigger(other, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
+    trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
+
+    expect(enemy.statuses).toHaveLength(0);
+  });
+
+  test("a Stellar Swirl the active wearer triggers lowers Cryo RES by 40%, the same debuff as a Cryo Swirl's", () => {
+    expect.hasAssertions();
+
+    const { enemy, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    trigger(wearer, [{ reactionType: StellarReactionType.StellarSwirl }]);
+
+    expect(enemy.statuses).toHaveLength(1);
+    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 });
+  });
+});

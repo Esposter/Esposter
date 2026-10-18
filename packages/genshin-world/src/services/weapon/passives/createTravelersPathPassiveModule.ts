@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const TRAVELERS_PATH_COOLDOWN_ID = "travelersPathCooldown";
 
 // Traveler's Path at its rank, while the Traveler wields it: a hit it deals raises its ATK by the rank's amount for the rank's
 // Seconds and regenerates the rank's Energy to it, once every cooldown, whether or not it is on the field
-export const createTravelersPathPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createTravelersPathPassiveModule = (params: number[]): PassiveModule => {
   const attackBonus = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   const energy = takeOne(params, 3);

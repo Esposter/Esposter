@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,7 +12,7 @@ const SPOTLESS_HEART_ID = "spotlessHeart";
 // Spotless Heart at its rank: an Elemental Skill its wielder deals has its base damage raised by the rank's share of DEF,
 // The raise stands while the effect does. A use of the skill triggers the effect at most once in the cooldown.
 // It stands until the rank's clear seconds after the skill's last hit. The rank's second value is not described by the text and is not read
-export const createSpotlessHeartPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSpotlessHeartPassiveModule = (params: number[]): PassiveModule => {
   const defenseShare = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 2);
   const clearSeconds = takeOne(params, 3);

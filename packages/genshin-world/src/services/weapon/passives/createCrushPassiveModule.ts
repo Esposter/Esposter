@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -11,7 +11,7 @@ const CRUSH_COOLDOWN_SECONDS = 15;
 
 // Crush at its rank: each normal or charged attack hit has the rank's chance of an extra hit at the rank's multiplier of
 // ATK, on the area, and a proc holds off the next for fifteen seconds
-export const createCrushPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createCrushPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 1);
   return {

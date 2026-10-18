@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
@@ -99,7 +99,7 @@ import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
 // Found by the name its table gives it. A passive with no module here gives its wielder nothing
 export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
-  Partial<Record<string, (params: number[]) => WeaponPassiveModule>>
+  Partial<Record<string, (params: number[]) => PassiveModule>>
 > = {
   // Full HP Critic Up
   "2866125259": createFullHPCriticUpPassiveModule,

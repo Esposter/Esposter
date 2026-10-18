@@ -1,11 +1,11 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { takeOne } from "@esposter/shared";
 
 // Protector's Virtue at its rank: the wielder's HP rises by the rank's percentage, and its ATK rises by the rank's share
 // Of its Max HP, a stat converted from Max HP that is read from the Max HP the buffs and ordinary passives leave it
-export const createProtectorsVirtuePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createProtectorsVirtuePassiveModule = (params: number[]): PassiveModule => {
   const healthPercent = takeOne(params, 0);
   const attackShare = takeOne(params, 1);
   return {

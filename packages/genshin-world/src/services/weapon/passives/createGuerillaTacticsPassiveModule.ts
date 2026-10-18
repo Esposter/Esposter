@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffAttackAndMovementSpeed } from "#src/services/weapon/passives/buffAttackAndMovementSpeed";
@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 
 // Guerilla Tactics at its rank: defeating an opponent raises its wielder's ATK and Movement SPD by the rank's percentage for
 // The rank's seconds
-export const createGuerillaTacticsPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createGuerillaTacticsPassiveModule = (params: number[]): PassiveModule => {
   const percentage = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {
