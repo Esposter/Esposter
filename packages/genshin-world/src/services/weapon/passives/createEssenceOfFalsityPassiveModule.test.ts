@@ -39,15 +39,14 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     striker: wielder,
   });
 
-  test("the wielder's CRIT Rate is raised by the rank's amount with neither effect standing", () => {
+  test("the rank's CRIT Rate is the table's line, so with neither effect standing it is not repeated", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects) ?? [],
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
@@ -62,7 +61,6 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 80, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
@@ -72,7 +70,6 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
@@ -87,7 +84,6 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0.24, attribute: Attribute.CriticalDamage },
     ]);
@@ -97,7 +93,6 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
@@ -113,7 +108,6 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 120, attribute: Attribute.ElementalMastery },
       { amount: 0.24 * 1.5, attribute: Attribute.CriticalDamage },
     ]);
