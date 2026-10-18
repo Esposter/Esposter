@@ -30,7 +30,7 @@ flowchart TD
 ## Data
 
 - **The item's row.** Original Resin is item 106 in the game's material table, with the rarity above. Its name's text id is the one `GameTextKey.OriginalResin` holds.
-- **The other resins' rows.** Fragile Resin is item 107009, whose use adds 60 of item 106, the restore the refill uses. Condensed Resin is item 220007, with a stack limit of five, the held limit its decision states. Neither is read by a page yet.
+- **The other resins' rows.** Fragile Resin is item 107009, whose use adds 60 of item 106, the restore the refill uses. Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built. Neither is read by a page yet.
 
 ## Not built yet
 
