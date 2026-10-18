@@ -76,10 +76,6 @@
   "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 30 },
   "plunges.low.animationFrames": { "cause": "DiffersFromSource", "value": 60 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 30 },
-  "skill.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4232 } },
   "skillChain.followUps.length": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "cause": "Unclassified", "value": 43 },
