@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -58,7 +59,7 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
         castKitField(kitEffectState, combatant.characterId, box.position, {
           nextTickSeconds: bogglecatFirstTickSeconds,
           onTick: ({ kitEffectState: tickKitEffectState }) =>
-            castKitSummon(tickKitEffectState, box, combatant, [bogglecatTick]),
+            castKitSummon(tickKitEffectState, box, combatant, [bogglecatTick], { attackTag: AttackTag.ElementalBurst }),
           secondsRemaining: bogglecatBoxSeconds,
           tickIntervalSeconds: bogglecatTickIntervalSeconds,
         });
