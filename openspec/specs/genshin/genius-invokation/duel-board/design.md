@@ -4,10 +4,10 @@ The duel board is the screen a duel is played on, and the session that runs it. 
 
 ## How a duel is opened
 
-- **A duel is opened by its game id.** A seat names the game of the card game's own table it duels with (`duelGameId`), and the week game its weekly guest challenge offers (`weekGame`: the game, the level it is offered at, and the week's Lucky Coins and Player EXP at that level). `genshin:assets gcg` publishes one small map, `gcg/games`, of the seated games and the week games from the game table: each game's opponent deck, and the player's deck the game names. A game whose opponent deck is not published fails the run, and one whose player deck is not published plays the placeholder deck 3 until it is.
-- **The seated duels.** A seat is placed on a resident of a built region, through the residents builder's own points. The game's NPC is read from the dump's GCG week-level table, whose `npcId` names the challenger and whose `levelCondList` names each game's id. Marjorie's duel (game 1021, deck 11005) sits on her Souvenir shop row, NPC 1435; Ellin (NPC 9704, game 1031, deck 11002) stands at the Knights of Favonius headquarters' point; and Kimiya (NPC 9715, game 1104, deck 13105) stands beside Sumeru's crafting bench. Ellin's and Kimiya's points are provisional. Furuya Noboru, Patton and Kurisu are not seated, since no point the scene holds is theirs. A resident holds one duel game, so Kimiya's game 1105 is not offered. The other built decks belong to player-versus-player games or the tutorial quest's levels, which name no NPC.
+- **A duel is opened by its game id.** A seat names the game of the card game's own table it duels with (`duelGameId`), and the week games its weekly guest challenge offers (`weekGames`: each game, the level it is offered at, and the week's Lucky Coins and Player EXP at that level). `genshin:assets gcg` publishes one small map, `gcg/games`, of the seated games and the week games from the game table: each game's opponent deck, and the player's deck the game names. A game whose opponent deck is not published fails the run, and one whose player deck is not published plays the placeholder deck 3 until it is.
+- **The seated duels.** A world-level duelist's duel is its NPC's row in the dump's `GCGWorldLevel` table: the row's game as `duelGameId` and its talk as `duelTalkId`. Seated this way: 1423 (game 11106), 1435 (game 11004, talk 6143506, which replaces the wiki's game 1021 on her Souvenir shop row), 2304 (game 12303) and 2308 (game 12305). A week challenger's games are the levels of its NPC's `GCGWeekLevel` row, each with the week's reward at its level from `GCGWeekReward`: 9704 (games 1031 to 1035), 9706 (games 1051 to 1055) and 9715 (games 1101 to 1105). 9704's and 9715's standing duels stay on games 1031 and 1104, which have no world row. The residents' places are the scene-group NPC members and the residents builder's building-point and crafting-bench maps. Of the 221 duelists the dump names, 4 world-level and 3 week NPCs are placed, and the rest are not: 104 world-level NPCs, 112 week NPCs and the five scene duelists 1707 to 1711. Their sources were checked: the published `sceneNpcBorn/scene3` births and the scene-group NPC members hold only 2304 and 2308 of the world-level set and none of the others, and no building point names them. Boss, character and festival duels are not built. The nine enemy decks that the seated games name are not built (11001, 11004, 11102, 11106, 12003, 12105, 12303, 13003, 13102), so their games are not published and `gcg/games` fails on them until they are.
 - **A talk offers the duel as a reply on its opening line.** The reply is the game's own "I challenge you to a duel!" (text id `191219274`), offered after the talk's own replies. Choosing it leaves the talk for the board, and the board's leave returns to the world.
-- **A challenger's duel is offered from their standing talk.** Every resident holds their standing talk whatever the quests hold ([dialogue](../../dialogue/design.md)), and `mergeTalks` merges the talk sources in order, so a quest's talk of an id wins over a standing talk of the same id. A seated challenger's talk is that standing talk, and the duel reply is added to its opening line, so no talk is written for a duel.
+- **A duel is offered from its talk, behind the Player Level.** A resident's duel is offered from its `duelTalkId` where it has one, else from the standing talk it begins; `getTalkDuelGameId` finds the resident by that talk. A week challenger's duel is open only when the Player Level opens its game (`checkIsGcgResidentDuelOpen`, through `listGcgOpenGameIds`). The Player Level is zero until the introduction quest is finished, and then the EXP's level, capped by the locks the main quests hold. A world-level duel has no Player Level gate, since its talk's quest condition opens it. Every resident holds their standing talk whatever the quests hold ([dialogue](../../dialogue/design.md)), and `mergeTalks` merges the talk sources in order, so a quest's talk of an id wins over a standing talk of the same id.
 
 ```mermaid
 flowchart LR
@@ -24,6 +24,7 @@ flowchart LR
 
 - **The board holds only what the player is choosing.** `GcgScreen` keeps the dice picked, the card armed, the tuning and the switch and prepare choices, and every other choice leaves as an event. The session host plays each event through the engine and then runs the opponent through `advanceGcgOpponent`. The board clears its choice whether or not the engine takes it.
 - **The scripted policy is the world's service.** The greedy policy (`takeGcgScriptedAction`) and `advanceGcgOpponent` are not the board's own, so the board and the tests drive one opponent. The policy takes the first card, then the first skill, then the round's end.
+- **A won duel is the win its game counts.** `useWorldGcgDuel` holds the game being played, and leaving the board emits the card game's win for that game when the player won; the quests' win objectives count it.
 
 ## The reference
 
@@ -32,21 +33,24 @@ flowchart LR
 
 ## Key files
 
-| File                                                                  | Role                                                                                                     |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/buildGcgGames.ts`             | Builds the games map from the dump's game table                                                          |
-| `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                   |
-| `packages/genshin-world/src/services/gcg/readGcgGame.ts`              | A duel's game from the games record, by its game id in the game table                                    |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`            | Opens a duel between two decks                                                                           |
-| `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`       | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
-| `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`    | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end   |
-| `packages/genshin-world/src/models/world/Resident.ts`                 | A resident's optional duel, by the game it duels with                                                    |
-| `packages/genshin-world/src/services/dialogue/constants.ts`           | The reply a talk offers a duel with                                                                      |
-| `packages/genshin-world/src/services/dialogue/mergeTalks.ts`          | The talk sources merged by id, a shared id held by the earlier source                                    |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.vue`          | The duel board: the events it emits and the props it takes, the duel as the engine holds it              |
-| `packages/genshin-world/src/components/Gcg/Session/Index.vue`         | The duel's host: loads its game's decks and words, plays each player event, then the opponent            |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.fixture.ts`   | The board in the frame's state: its HP, dice and turn, with the tutorial and placeholder decks           |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts` | The public frame the board is judged against, and what was found reading it                              |
+| File                                                                    | Role                                                                                                     |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/buildGcgGames.ts`               | Builds the games map from the dump's game table                                                          |
+| `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                  | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                   |
+| `packages/genshin-world/src/services/gcg/readGcgGame.ts`                | A duel's game from the games record, by its game id in the game table                                    |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`              | Opens a duel between two decks                                                                           |
+| `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`         | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
+| `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`      | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end   |
+| `packages/genshin-world/src/models/world/Resident.ts`                   | A resident's optional duel, its duel talk, and its week games                                            |
+| `packages/genshin-world/src/composables/useWorldGcgDuel.ts`             | The game being played, and the leave that emits its win                                                  |
+| `packages/genshin-world/src/composables/useGcgPlayerLevel.ts`           | The card game's Player Level, and whether a resident's duel is open at it                                |
+| `packages/genshin-world/src/services/gcg/checkIsGcgResidentDuelOpen.ts` | Whether a week challenger's duel is open at the Player Level                                             |
+| `packages/genshin-world/src/services/dialogue/constants.ts`             | The reply a talk offers a duel with                                                                      |
+| `packages/genshin-world/src/services/dialogue/mergeTalks.ts`            | The talk sources merged by id, a shared id held by the earlier source                                    |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.vue`            | The duel board: the events it emits and the props it takes, the duel as the engine holds it              |
+| `packages/genshin-world/src/components/Gcg/Session/Index.vue`           | The duel's host: loads its game's decks and words, plays each player event, then the opponent            |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.fixture.ts`     | The board in the frame's state: its HP, dice and turn, with the tutorial and placeholder decks           |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts`   | The public frame the board is judged against, and what was found reading it                              |
 
 ## Sources
 
