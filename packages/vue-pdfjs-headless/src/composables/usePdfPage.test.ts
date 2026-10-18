@@ -6,8 +6,8 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
-const createRenderTask = (promise: Promise<unknown>) =>
-  ({ cancel: vi.fn<RenderTask["cancel"]>(), promise }) as unknown as RenderTask;
+const createRenderTask = (promise: Promise<unknown>, cancel: RenderTask["cancel"] = vi.fn<RenderTask["cancel"]>()) =>
+  ({ cancel, promise }) as unknown as RenderTask;
 const createDocument = (page: PDFPageProxy): PDFDocumentProxy =>
   ({
     getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
@@ -112,6 +112,95 @@ describe(usePdfPage, () => {
     reportWidth(400);
 
     expect(replacement.width).toBe(400);
+    scope.stop();
+  });
+
+  test("a draw a newer one cancelled logs nothing", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("devicePixelRatio", 1);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const cancelled = Promise.withResolvers<unknown>();
+    const firstTask = createRenderTask(cancelled.promise, () => {
+      cancelled.reject(Object.assign(new Error(" "), { name: "RenderingCancelledException" }));
+    });
+    const render = vi
+      .fn<PDFPageProxy["render"]>()
+      .mockReturnValueOnce(firstTask)
+      .mockReturnValueOnce(createRenderTask(new Promise(() => {})));
+    const { scope } = await mountPage(createPage(render));
+    reportWidth(400);
+    reportWidth(200);
+    await flushPromises();
+
+    expect(console.error).not.toHaveBeenCalled();
+    scope.stop();
+  });
+
+  test("a draw's own error is logged", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("devicePixelRatio", 1);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const error = new Error(" ");
+    const { scope } = await mountPage(
+      createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.reject(error)))),
+    );
+    reportWidth(400);
+    await flushPromises();
+
+    expect(console.error).toHaveBeenCalledExactlyOnceWith(error);
+    scope.stop();
+  });
+
+  test("a page that loads after the page number has moved on is not drawn", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("devicePixelRatio", 1);
+    const render = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})));
+    const latePage = Promise.withResolvers<PDFPageProxy>();
+    const pdfDocument = {
+      getPage: vi
+        .fn<PDFDocumentProxy["getPage"]>()
+        .mockReturnValueOnce(latePage.promise)
+        .mockResolvedValueOnce(createPage(render)),
+    } as unknown as PDFDocumentProxy;
+    const pageNumber = shallowRef(1);
+    const canvas = window.document.createElement("canvas");
+    const scope = effectScope();
+    scope.run(() => usePdfPage({ canvas, pageNumber, pdfDocument }));
+    reportWidth(400);
+    pageNumber.value = 2;
+    await flushPromises();
+    latePage.resolve(createPage(render));
+    await flushPromises();
+
+    expect(render).toHaveBeenCalledTimes(1);
+    scope.stop();
+  });
+
+  test("a canvas removed mid-draw cancels the draw", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("devicePixelRatio", 1);
+    const cancel = vi.fn<RenderTask["cancel"]>();
+    const canvas = shallowRef<HTMLCanvasElement | undefined>(window.document.createElement("canvas"));
+    const scope = effectScope();
+    scope.run(() =>
+      usePdfPage({
+        canvas,
+        pageNumber: 1,
+        pdfDocument: createDocument(
+          createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}), cancel))),
+        ),
+      }),
+    );
+    await flushPromises();
+    reportWidth(400);
+    canvas.value = undefined;
+    await nextTick();
+
+    expect(cancel).toHaveBeenCalledExactlyOnceWith();
     scope.stop();
   });
 });

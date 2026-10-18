@@ -29,12 +29,16 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
       if (task === renderTask) console.error(error);
     });
   });
+  const cancelRender = () => {
+    renderTask?.cancel();
+    renderTask = undefined;
+  };
   const drawPage = () => {
     const currentCanvas = toValue(canvas);
     if (!page || !currentCanvas || cssWidth === 0 || !toValue(isVisible)) return;
 
     // A newer draw replaces the one in flight, since pdf.js drawing two renders onto one canvas leaves it half drawn
-    renderTask?.cancel();
+    cancelRender();
     const { height, width } = page.getViewport({ scale: 1 });
     const viewport = page.getViewport({
       scale: getCanvasScale({ cssWidth, pageHeight: height, pageWidth: width, pixelRatio: window.devicePixelRatio }),
@@ -50,8 +54,7 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
     [() => toValue(pdfDocument), () => toValue(pageNumber)],
     getSynchronizedFunction(async ([currentDocument, currentPageNumber]) => {
       const generation = ++loadGeneration;
-      renderTask?.cancel();
-      renderTask = undefined;
+      cancelRender();
       page = undefined;
       if (!currentDocument) return;
 
@@ -70,7 +73,11 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
   watch(
     () => toValue(canvas),
     (currentCanvas, _previousCanvas, onCleanup) => {
-      if (!currentCanvas) return;
+      // A draw in flight onto a removed canvas is cancelled, so it does not rasterise into a detached element
+      if (!currentCanvas) {
+        cancelRender();
+        return;
+      }
 
       // A new element's first report is its own width, which may equal the last canvas's, so the width is not remembered across elements
       cssWidth = 0;
@@ -97,7 +104,6 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
   );
   onScopeDispose(() => {
     loadGeneration++;
-    renderTask?.cancel();
-    renderTask = undefined;
+    cancelRender();
   });
 };
