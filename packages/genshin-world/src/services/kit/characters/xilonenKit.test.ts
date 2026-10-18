@@ -7,7 +7,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createXilonenKitBehaviour, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, sprintKitSeconds, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
@@ -113,18 +113,18 @@ describe(createXilonenKitBehaviour, () => {
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
   });
 
-  test("a sprint in the Nightsoul Blessing drains five points", () => {
+  test("a sprint in the Nightsoul Blessing drains five points once, however long the sprint runs", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createXilonenCombatant());
     XILONEN_KIT.elementalSkill.onStart?.(context);
-    XILONEN_KIT.onSprint?.(context, createKitState());
+    sprintKitSeconds(context, createKitState(), 1);
     expect(countKitResource(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(40);
   });
 
   test("a sprint outside the Nightsoul Blessing drains nothing", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createXilonenCombatant());
-    XILONEN_KIT.onSprint?.(context, createKitState());
+    sprintKitSeconds(context, createKitState(), 1);
     expect(countKitResource(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 
@@ -167,14 +167,16 @@ describe(createXilonenKitBehaviour, () => {
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });
 
-  test("the points draining to none end the Blessing, and its stance with it as the drain's event reaches her kit", () => {
+  test("the points draining to none end the Blessing and its stance before its nine seconds run out", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createXilonenCombatant());
     XILONEN_KIT.elementalSkill.onStart?.(context);
-    for (let sprint = 0; sprint < 5; sprint++) XILONEN_KIT.onSprint?.(context, createKitState());
-    stepKitSeconds(context, 3);
+    // The sprint's five and the drain's five a second leave no points at eight seconds, a second before
+    // The seconds run out
+    sprintKitSeconds(context, createKitState(), 1);
+    stepKitSeconds(context, 7.5);
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
-    stepKitSeconds(context, 2);
+    stepKitSeconds(context, 1);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });

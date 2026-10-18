@@ -83,7 +83,7 @@ export const stepKit = (
     kitState.skillHeldSeconds = 0;
   }
   kitState.sprintSeconds = locomotionState === LocomotionState.Sprint ? kitState.sprintSeconds + stepSeconds : 0;
-  if (kitState.sprintSeconds > 0) kit.onSprint?.(context, kitState);
+  if (kitState.sprintSeconds > 0) kit.onSprint?.(context, kitState, stepSeconds);
   kitState.skillChainSeconds += stepSeconds;
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;

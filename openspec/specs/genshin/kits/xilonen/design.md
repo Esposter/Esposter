@@ -4,7 +4,7 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 
 ## Decisions
 
-- **Her skill's press enters the Nightsoul Blessing with 45 points.** The points drain five a second, and the Blessing lasts nine seconds and ends when they run out, as gcsim's `enterNightsoul` and `nightsoulPointReduceTask` do (`skill.go`). A sprint in it drains five more (`dash.go`). A press in the Blessing leaves it; the strike that press still lands is recorded under Not built.
+- **Her skill's press enters the Nightsoul Blessing with 45 points.** The points drain five a second, and the Blessing lasts nine seconds and ends when they run out, as gcsim's `enterNightsoul` and `nightsoulPointReduceTask` do (`skill.go`). A sprint in it drains five more once, as the sprint starts (`dash.go`). A press in the Blessing leaves it; the strike that press still lands is recorded under Not built.
 - **Her strikes and charged attack are the kit outside the Nightsoul Blessing.** The first strike is a circle of radius 2.1 one metre ahead, the second a fan of 150 degrees and the third one of 160, each priced as its offset plus its radius. The charged attack is a box 1.8 metres behind her, 2 wide and 4.5 long, priced to its far corner, with Poise 120.
 - **Yohual's Scratch hits at 6 frames of its 20-frame animation.** It is a circle of radius 0.8 one metre ahead, priced as its offset plus its radius, and it deals her Defense share, its Geo gauge at 1.
 - **The skill's cooldown is the table's seven seconds, run from the press.** In gcsim the Blessing's end sets it, and that end's cooldown is not built, so the cooldown starts the moment of the press here.

@@ -63,7 +63,7 @@ Xilonen's burst SHALL be cast without a hit or a heal until Ocelotlicue Point is
 
 ### Requirement: Nightsoul Blessing from the skill's press
 
-Xilonen's skill press SHALL enter the Nightsoul Blessing with 45 points, which drain five a second. The Blessing SHALL last nine seconds, and a sprint in it SHALL drain five points.
+Xilonen's skill press SHALL enter the Nightsoul Blessing with 45 points, which drain five a second. The Blessing SHALL last nine seconds, and a sprint in it SHALL drain five points once, as the sprint starts.
 
 #### Scenario: The press enters the Blessing with 45 points, which drain five a second
 
@@ -87,6 +87,12 @@ Xilonen's skill press SHALL enter the Nightsoul Blessing with 45 points, which d
 
 - **GIVEN** Xilonen has just entered the Blessing with 45 points
 - **WHEN** she sprints
+- **THEN** the Blessing holds 40 points
+
+#### Scenario: A sprint drains its five points once, however long it runs
+
+- **GIVEN** Xilonen has just entered the Blessing with 45 points
+- **WHEN** she sprints for a second
 - **THEN** the Blessing holds 40 points
 
 ### Requirement: Blade Roller strikes and Samplers not built

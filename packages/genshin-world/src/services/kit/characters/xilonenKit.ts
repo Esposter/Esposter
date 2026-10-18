@@ -3,7 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
+import { drainKitSprintNightsoulPoints } from "#src/services/kit/effects/drainKitSprintNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
@@ -56,11 +56,8 @@ export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitB
       )
         removeBladeRollerStance(kitEffectState, characterId);
     },
-    onSprint: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
-      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
-        drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
-    },
+    onSprint: (context, kitState, stepSeconds) =>
+      drainKitSprintNightsoulPoints(context, kitState, stepSeconds, NIGHTSOUL_SPRINT_DRAIN),
     skill: {
       onStart: ({ activeCombatant, kitEffectState }) => {
         const { characterId } = activeCombatant;

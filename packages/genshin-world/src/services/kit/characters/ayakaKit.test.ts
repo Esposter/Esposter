@@ -8,6 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -148,9 +149,9 @@ describe(createAyakaKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(combatant, { kitEffectState });
     const kitState = createKitState();
-    AYAKA_KIT.onSprint?.(context, kitState);
+    AYAKA_KIT.onSprint?.(context, kitState, FIXED_STEP_SECONDS);
     stepKitEffects(1, context);
-    AYAKA_KIT.onSprint?.(context, kitState);
+    AYAKA_KIT.onSprint?.(context, kitState, FIXED_STEP_SECONDS);
 
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: AYAKA_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 5 },
