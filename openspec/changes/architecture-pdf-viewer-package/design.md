@@ -1,6 +1,6 @@
 # PDF viewer as a headless package
 
-The PDF viewer's loading, page drawing and viewer state move into `vue-pdfjs-headless`, a published workspace package with no styling. The app's thumbnail and viewer keep only their look. The package then builds the features the audit set aside, because a viewer package owes them even though the app's dialog draws none of them yet.
+The PDF viewer's loading, page drawing and viewer state move into `vue-pdfjs-headless`, a published workspace package with no styling. The app's thumbnail and viewer keep only their look. The package then builds the features over a document's pages that the audit set aside, because a viewer package owes them even though the app's dialog draws none of them yet. Forms, annotations and comments are the [annotations change](../vue-pdfjs-headless-annotations/design.md).
 
 ## Scope
 
@@ -9,10 +9,9 @@ Today the viewer lives in the app. `apps/web/app/services/pdf/loadPdfDocument.ts
 After the change:
 
 - **`usePdfDocument`** takes a source and the renderer, and returns the document, its loading progress, the password prompt and the failure. It destroys the loading task on a source change or an unmount.
-- **`usePdfPage`** draws one page into a canvas the consumer renders, at the canvas's width times the pixel ratio, capped by area. A width change starts a fresh draw, which supersedes any draw still running.
-- **`usePdfViewer`** builds the renderer's `PDFViewer`, `PDFLinkService` and `PDFFindController` on a container the consumer renders. It returns their state as refs and their actions as functions.
-- **`vue-pdfjs-headless/xfdf`** reads and writes XFDF, the annotation exchange format, and is framework-free.
-- **The app** keeps `apps/web/app/components/Pdf/Thumbnail.vue` and `apps/web/app/components/Pdf/Viewer.vue` as markup and tokens, the toolbar drawn with the UI library, and the folders the server mounts.
+- **`usePdfPage`** draws one page of a loaded document, never a source, into a canvas the consumer renders, at the canvas's width times the pixel ratio, capped by area. A width change starts a fresh draw, which supersedes any draw still running.
+- **`usePdfViewer`** builds the renderer's `PDFViewer`, `PDFLinkService` and `PDFFindController` for a loaded document on a container the consumer renders. It returns their state as refs and their actions as functions.
+- **The app** keeps `apps/web/app/components/Pdf/Thumbnail.vue` and `apps/web/app/components/Pdf/Viewer.vue` as markup and tokens, the toolbar drawn with the UI library, and the folders the server mounts. The attachment loads its document once and passes it to both, where today the thumbnail and the dialog each parse the file.
 
 The package's peers are `vue` and `pdfjs-dist`, the latter for types only. The renderer module itself is passed in.
 
@@ -25,10 +24,10 @@ flowchart TD
   consumer["consumer: the renderer module, its worker and data folders"] --> document["usePdfDocument(source)"]
   document -->|"onPassword"| password["password state: asked, or wrong and asked again"]
   document -->|"the load rejects"| failure["failure state, the load destroyed"]
-  document -->|resolved| page["usePdfPage: one canvas, newest draw wins"]
-  document -->|resolved| viewer["usePdfViewer: PDFViewer, links and find on the consumer's container"]
-  viewer --> state["refs: page, scale, rotation, matches, outline, editor mode"]
-  viewer --> actions["actions: go, zoom, rotate, find, download, print, save"]
+  document -->|"resolved, one document"| page["usePdfPage: one canvas, newest draw wins"]
+  document -->|"resolved, the same document"| viewer["usePdfViewer: PDFViewer, links and find on the consumer's container"]
+  viewer --> state["refs: page, scale, rotation, matches, outline, fullscreen"]
+  viewer --> actions["actions: go, zoom, rotate, find, download, print"]
   viewer -->|"a page is rendered"| overlay["each page's element and viewport, for overlays"]
 ```
 
@@ -38,8 +37,7 @@ flowchart TD
 - **Search and highlight.** Search drives the find controller, with case, whole words and the match count as refs. Highlighting a list of terms on load is a search over that list, with every match highlighted.
 - **Zoom.** Zoom steps between the renderer's scale bounds, and fits to the width, the page or actual size. Pinch zoom reads two pointers on the container, and Ctrl with the wheel zooms the same way. Both scale about the point under the pointer.
 - **Bookmarks and thumbnails.** The outline is the document's own, read once it loads, and following an entry goes through the link service. A thumbnail sidebar is `usePdfPage` over each page at the sidebar's width, drawn when its row comes into view, with the current page marked from the viewer's state.
-- **Forms and annotations.** Forms are filled through the renderer's annotation layer with forms enabled. Editing sets the renderer's annotation editor mode: free text, ink, highlight and stamp. The document's annotation storage reports every change as an event the consumer can listen to. A comment is a PDF text annotation, the sticky note every PDF reader shows. The package lists a document's comments and adds one at a point on a page. XFDF export reads the annotation storage, and import writes it.
-- **Download, print and save.** Download saves the original bytes under the file's name. Once anything has been edited or filled, it saves the bytes `saveDocument` writes instead. A watermark is written as a free-text annotation on every page before that save, so the downloaded file carries it. Print keeps the app's current approach: each page drawn to an image, a batch at a time, in a container only print shows.
+- **Download and print.** Download saves the original bytes under the file's name. Print keeps the app's current approach: each page drawn to an image within the canvas cap, a batch at a time, in a container only print shows, which an unmount removes along with its print style.
 - **Fullscreen** requests it on the container the consumer passed, and the ref follows `fullscreenchange`.
 
 ## Decisions
@@ -48,7 +46,8 @@ flowchart TD
 - **Composables over components.** Shipping styled `PdfThumbnail` and `PdfViewer` components was rejected, since a toolbar in the package's own markup is a look every consumer would have to override.
 - **The renderer passed in over a renderer dependency.** Importing `pdfjs-dist` from the package was rejected. It would choose the build for every consumer and pin the package to the major it was built against, which is the version cost the [PDF viewer](../../specs/architecture/pdf-viewer/design.md) was rebuilt to remove. The renderer's types stay a peer, so a consumer's renderer major is checked against the package's.
 - **The features are built, not deferred.** Twenty rows named the consuming app as their owner, which no dependency is, and the viewer's page set five more aside for now. Parity is measured against the upstream's surface rather than the dialog's, so all of them are built here and tested. The dialog keeps the controls it draws today.
-- **XFDF read and written by the package.** The renderer has no XFDF. Depending on a PDF writing library for it was rejected: the annotation storage is already the model both directions map to, and XFDF is plain XML over it.
+- **One document passed to every view of it.** A cache in the package keyed by source was rejected: it would need its own count of who still reads a document before destroying it, while the attachment already holds the one place both its views read.
+- **Annotations in a change of their own.** Building forms, annotations and comments here was rejected for size: they share one model, the annotation storage, apart from the pages this change draws, so they split cleanly.
 
 ## Key files
 
@@ -65,21 +64,18 @@ The package itself:
 
 ```text
 packages/vue-pdfjs-headless/src/composables/  usePdfDocument, usePdfPage, usePdfViewer, each with its test
-packages/vue-pdfjs-headless/src/services/     the canvas scale, pinch zoom, print, download and save
-packages/vue-pdfjs-headless/src/xfdf/         readXfdf and writeXfdf, framework-free
-packages/vue-pdfjs-headless/src/models/       PdfSource, PdfRenderer, PdfComment, PdfPageOverlay
-openspec/specs/vue-pdfjs-headless/README.md   the package's requirements and both Upstream tables
+packages/vue-pdfjs-headless/src/services/     the canvas scale, pinch zoom, print and download
+packages/vue-pdfjs-headless/src/models/       PdfSource, PdfRenderer, PdfPageOverlay
+openspec/specs/vue-pdfjs-headless/README.md   the area's index and both Upstream tables
 ```
 
 ## Notes
 
-- Annotation editing, forms, comments and the watermark all rest on the renderer's annotation storage and on `saveDocument` writing it out. A kind of annotation the renderer cannot write on save is recorded on the package's page by the task that builds it, before anything is built around it.
 - The app's dialog changes nothing a reader sees. The new features reach the app only when a dialog draws their controls, and that is a product decision for the attachment, not this change.
 
 ## Sources
 
 - [PDF.js API](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib.html): `getDocument`'s parameters, range loading, streaming and auto-fetch among them.
-- [mozilla/pdf.js — `src/display/api.js`](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): the loading task's `onPassword` and `onProgress`, and the document's `saveDocument`, which the API page lists without their members.
-- [mozilla/pdf.js — `web/pdf_viewer.js`](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): the viewer component, its annotation and annotation editor modes, and its events.
-- [ISO 19444-1, XML Forms Data Format](https://www.iso.org/standard/74272.html): the XML format for a PDF's annotations and form data.
+- [mozilla/pdf.js — `src/display/api.js`](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): the loading task's `onPassword` and `onProgress`, which the API page lists without their members.
+- [mozilla/pdf.js — `web/pdf_viewer.js`](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): the viewer component and its events.
 - [hrynko/vue-pdf-embed](https://github.com/hrynko/vue-pdf-embed) and [vue-pdf-viewer/vue-pdf-viewer](https://github.com/vue-pdf-viewer/vue-pdf-viewer): the trackers the Upstream tables judge.
