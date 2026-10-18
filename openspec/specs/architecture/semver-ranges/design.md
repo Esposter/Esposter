@@ -111,3 +111,18 @@ Every issue about the two absorbed functions, the version grammar and the range 
 The fixtures are node-semver 7.8.5's own `range-include`, `range-exclude`, `range-parse`, `valid-versions`, `invalid-versions` and `comparisons` fixtures, ported as literal rows in the co-located tests. Rows that rely on `loose`, or on a version above `Number.MAX_SAFE_INTEGER` that 7.8.5 rejects, are not ported; the first is out of surface and the second is #393's fix.
 
 Each fixed defect has a regression test that names its issue, and the differential check was run against node-semver 7.8.5 over the grid described above. The `outdated:dependencies` report prints the same rows before and after the change.
+
+## Key files
+
+Paths relative to `scripts/src/services/semver/`.
+
+| File                               | Role                                                                     |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `checkIsValidRange.ts`             | whether a specifier is a range rather than a dist-tag                    |
+| `checkIsVersionInRange.ts`         | whether a version falls inside a range, for the `allowedVersions` cap    |
+| `parseRange.ts`                    | the range grammar: splits a range into comparator sets                   |
+| `parseComparatorSet.ts`            | one comparator set, its tokens expanded into bounds                      |
+| `parseVersion.ts`                  | a version string into its parts, rejecting what SemVer rejects           |
+| `compareVersions.ts`               | SemVer 2.0.0 precedence, build metadata ignored                          |
+| `checkIsComparatorSetSatisfied.ts` | whether a version satisfies one comparator set, with the prerelease rule |
+| `constants.ts`                     | the comparator text the parser shares, such as the any-version range     |
