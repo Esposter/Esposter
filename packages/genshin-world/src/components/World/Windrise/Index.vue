@@ -53,10 +53,12 @@ import { useSceneExports } from "#src/composables/useSceneExports";
 import { useSheerCold } from "#src/composables/useSheerCold";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
+import { CharacterDrawing } from "#src/models/character/CharacterDrawing";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
+import { getCharacterDrawing } from "#src/services/character/getCharacterDrawing";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { MINING_OUTCROP_STAND_IN_COLOR, MINING_OUTCROP_STAND_IN_RADIUS } from "#src/services/gathering/constants";
@@ -389,8 +391,19 @@ const questTargetPosition = computed(() =>
 const seelieCourts = computed(() =>
   seelies.filter(({ state }) => state === SeelieState.Resting).map(({ court }) => court),
 );
-// The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
+// The pack whose model failed to load, by its reader's key, which leaves no character drawn
 const failedCharacterPackKey = ref("");
+// The pack whose model has loaded, by its reader's key, which takes the capsule's place while it stands
+const loadedCharacterPackKey = ref("");
+// What the character on the field is drawn as, by the state of its pack's model
+const characterDrawing = computed(() => {
+  const key = characterPackReader?.key;
+  return getCharacterDrawing({
+    hasReader: key !== undefined,
+    isFailed: failedCharacterPackKey.value === key,
+    isLoaded: loadedCharacterPackKey.value === key,
+  });
+});
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
@@ -669,20 +682,23 @@ onUnmounted(() => {
         cast-shadow
         receive-shadow
       />
-      <CharacterModel
-        v-else-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
-        :key="characterPackReader.key"
-        :character-pack-reader
-        :light-uniforms
-        :ramp-texture
-        @error="failedCharacterPackKey = characterPackReader?.key ?? ''"
-      />
-      <WorldCharacterPlaceholder
-        v-else-if="characterLocomotion"
-        :light-uniforms
-        :locomotion="characterLocomotion"
-        :ramp-texture
-      />
+      <template v-else>
+        <CharacterModel
+          v-if="characterPackReader && characterDrawing !== CharacterDrawing.None"
+          :key="characterPackReader.key"
+          :character-pack-reader
+          :light-uniforms
+          :ramp-texture
+          @error="failedCharacterPackKey = characterPackReader?.key ?? ''"
+          @loaded="loadedCharacterPackKey = characterPackReader?.key ?? ''"
+        />
+        <WorldCharacterPlaceholder
+          v-if="characterDrawing === CharacterDrawing.Capsule && characterLocomotion"
+          :light-uniforms
+          :locomotion="characterLocomotion"
+          :ramp-texture
+        />
+      </template>
     </primitive>
   </TresGroup>
 </template>
