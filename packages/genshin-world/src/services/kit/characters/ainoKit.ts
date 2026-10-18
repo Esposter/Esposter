@@ -39,13 +39,16 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Musecatcher's hold is not built, as gcsim does not implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
-  const waterBall = readHit("waterBall", {
+  const burstFirstTickSeconds = readSeconds("burstStart");
+  // gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its own
+  // Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
+  const waterBallHit = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
       combatant.ascension >= ASCENSION_4
         ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * masteryShare
         : 0,
   });
-  const burstFirstTickSeconds = readSeconds("burstStart");
+  const waterBall: KitHit = { ...waterBallHit, hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds };
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
   const burstSeconds = readSeconds("burstDuration");
   const burstRadius = readParameter("burstRadius");
