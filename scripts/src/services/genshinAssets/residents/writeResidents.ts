@@ -27,8 +27,8 @@ import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 // Residents of each region the official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
 // Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk table gives it one, else the
 // Lowest-numbered talk it speaks in. The report counts each region's residents, the ones with a night spot and what was
-// Left out
-export const writeResidents = async (): Promise<string> => {
+// Left out. A dry run reports the same and writes no region data
+export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
   const { origin, regionFiles, regionMapPoints } = await readFittedRegions();
   const sceneGroups = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
   const npcPlaces = [
@@ -76,7 +76,7 @@ export const writeResidents = async (): Promise<string> => {
             }),
           ),
         );
-      if (JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
+      if (!isDryRun && JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
         await writeWorldData(file, { ...data, residents });
       const withNight = residents.filter(({ night }) => night !== undefined).length;
       return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
@@ -85,5 +85,6 @@ export const writeResidents = async (): Promise<string> => {
   return [
     ...reports,
     `${residentJoin.craftingBench} at a crafting bench, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
+    ...(isDryRun ? ["nothing written"] : []),
   ].join("\n");
 };
