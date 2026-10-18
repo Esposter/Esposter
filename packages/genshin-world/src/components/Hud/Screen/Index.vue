@@ -114,12 +114,12 @@ const emit = defineEmits<{ map: []; menu: [] }>();
 
 <template>
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
-       The minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
-       Right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
+       the minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
+       right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
        Stamina meter where it places itself, the Sheer Cold gauge across the top, and on a touch screen the stick at the
        bottom left, the touch layout's Action buttons beside the skill and burst and the look's drag under them all.
-       Everything between the pieces lets The pointer through to the world, and a press on a piece stays the piece's,
-       never reaching the world's input as An attack -->
+       Everything between the pieces lets the pointer through to the world, and a press on a piece stays the piece's,
+       never reaching the world's input as an attack -->
   <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
     <p v-if="trialSecondsRemaining !== undefined" class="trial-countdown">
@@ -208,9 +208,8 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   pointer-events: none;
 }
 
-/* Provisional: the quest tracker has no rect of its own in the HUD's tree, so it stays at its measured place under the
-   Minimap until the tree's rect for it is found */
-/* Provisional: the trial's clock has no rect of its own in the HUD's tree, so it is centred at the top until the tree's rect for it is found */
+/* Provisional: the trial's clock has no rect of its own in the HUD's tree, so it is centred at the top until the
+   tree's rect for it is found */
 .trial-countdown {
   position: absolute;
   top: calc(var(--unit) * 24);
@@ -218,6 +217,8 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   transform: translateX(-50%);
 }
 
+/* Provisional: the quest tracker has no rect of its own in the HUD's tree, so it stays at its measured place under the
+   Minimap until the tree's rect for it is found */
 .quest {
   position: absolute;
   top: calc(var(--unit) * 270);
