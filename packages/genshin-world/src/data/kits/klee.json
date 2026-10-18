@@ -1,5 +1,4 @@
 {
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 99 },
   "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
   "hits.bomb.length": { "cause": "Unclassified", "value": 3 },
   "hits.bomb.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },

@@ -12,7 +12,6 @@
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unsourced", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 2031 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.lightningFangSigilClear": { "cause": "Unsourced", "value": 7 },
   "hits.lupusFulguris.length": { "cause": "Unsourced", "value": 4 },
   "hits.lupusFulguris.0.area": {

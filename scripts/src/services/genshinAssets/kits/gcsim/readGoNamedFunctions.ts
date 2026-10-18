@@ -13,7 +13,7 @@ export interface GoNamedFunction {
 }
 
 // The position of the `)` closing the `(` at a position, else undefined
-const findClosingParenthesis = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
+export const findClosingParenthesis = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
   let depth = 0;
   for (let position = openingPosition; position < tokens.length; position++)
     if (checkIsGoPunctuation(tokens[position], "(")) depth++;
