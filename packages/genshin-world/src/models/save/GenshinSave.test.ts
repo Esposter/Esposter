@@ -11,7 +11,6 @@ import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
@@ -312,8 +311,6 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
-  // Next write
   test("the save keeps the learned dishes, the proficiencies and the processing queues", () => {
     expect.hasAssertions();
     const cooking = {
@@ -325,6 +322,8 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.parse({ ...EMPTY_GENSHIN_SAVE, cooking }).cooking).toStrictEqual(cooking);
   });
 
+  // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
+  // Next write
   test("refuses an id key that is not its number's own decimal", () => {
     expect.hasAssertions();
     const save = {
