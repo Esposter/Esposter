@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's daily commissions as built. Mondstadt's daily tasks are read from the game's tables, four are dealt a day from the areas reached, and a finished one is claimed for the reward of the rank it was dealt at. The day's fourth claim pays Katheryne's bonus from the game's score previews, and an Encounter Point claims one unfinished. The scene swap, the handbook's tab and the kept day are not yet built.
+Genshin's daily commissions as built. Every region's daily tasks are read from the game's tables, one record a region, and four are dealt a day from the areas reached, and a finished one is claimed for the reward of the rank it was dealt at. The day's fourth claim pays Katheryne's bonus from the game's score previews, and an Encounter Point claims one unfinished. The scene swap, the handbook's tab and the kept day are not yet built.
 
 ## Requirements
 

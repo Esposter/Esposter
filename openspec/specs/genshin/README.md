@@ -111,7 +111,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Serenitea Pot](serenitea-pot/design.md)               | the realm's rules: furnishings made from blueprints in one queue per Trust Rank, Trust EXP, Adeptal Energy and stores; nothing placed yet                                        |
 | [Shops](shops/design.md)                               | Paimon's Bargains' Fates and the Mondstadt grocery's goods, from the game's shop table, restocked daily or monthly; nothing yet on a screen                                      |
 | [Expeditions](expeditions/design.md)                   | Mondstadt's expedition places sent for 4 to 20 hours, returned on the moment they left and claimed for items and Mora, nothing yet on a screen                                   |
-| [Commissions](commissions/design.md)                   | Mondstadt's daily tasks dealt four a day from the areas reached, each claimed for its rank's reward; nothing yet on a screen                                                     |
+| [Commissions](commissions/design.md)                   | Every region's daily tasks dealt four a day from the areas reached, each claimed for its rank's reward; nothing yet on a screen                                                  |
 | [Wildlife](wildlife/design.md)                         | the official map's fleeing birds and beasts stood in Windrise's scene and running from the character in reach, nothing struck or dropped yet                                     |
 | [Fishing](fishing/design.md)                           | the official map's fishing points by region, the fish, rods and pools from the game's tables, each stock refilled after seventy-two hours; nothing cast yet                      |
 | [Interface library](interface-library/design.md)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                                                    |
@@ -163,7 +163,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - Paimon's Bargains' Fates and the Mondstadt grocery's goods, bought from the shop table, with buy limits restocked on their refresh.
 - Mondstadt's Reputation: its levels, requests, thresholds and bounties from the game's table, with no keeper or screen yet.
 - Expeditions: Mondstadt's places sent and returned on the moment they left, claimed for their items and Mora, recalled for nothing, and the limit raised by rank, with Katheryne and the screen not yet built.
-- Commissions: Mondstadt's daily tasks dealt from the areas reached and claimed for their rank's reward, the handbook tab and the kept day not yet built.
+- Commissions: every region's daily tasks dealt from the areas reached and claimed for their rank's reward, the handbook tab and the kept day not yet built.
 - The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
 - Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with nothing cast or on a screen yet.
 - Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package no longer bundles their generated JSON.

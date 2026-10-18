@@ -6,7 +6,7 @@ The game's daily commissions as the world holds them: the daily tasks of each re
 
 ```mermaid
 flowchart TD
-  T["The game's daily task tables, for Mondstadt's city"] --> S["The slice: each task, its reward tiers and the bonus, by band"]
+  T["The game's daily task tables, for each region's city"] --> S["The slice: each task, its reward tiers and the bonus, by band"]
   S --> RANK{"Adventure Rank 12 or more?"}
   RANK -->|"no"| NONE["Nothing dealt"]
   RANK -->|"yes"| DEAL["Four drawn at random, none whose place a quest holds"]
