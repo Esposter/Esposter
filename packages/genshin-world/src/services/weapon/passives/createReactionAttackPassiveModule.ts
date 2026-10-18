@@ -3,9 +3,8 @@ import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReactionNamed";
+import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/createReactionBuffPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const REACTION_ATTACK_SECONDS = 12;
@@ -15,22 +14,10 @@ const REACTION_ATTACK_SECONDS = 12;
 export const createReactionAttackPassiveModule = (
   reactions: { element?: Element; reactionType: ReactionType }[],
   params: number[],
-): PassiveModule => {
-  const attackPercentage = takeOne(params, 0);
-  return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsReactionNamed(event.reactions, reactions)
-      )
-        return;
-      buffKitMember(kitEffectState, combatant.characterId, {
-        amount: attackPercentage,
-        attribute: Attribute.AttackPercent,
-        secondsRemaining: REACTION_ATTACK_SECONDS,
-        source: "reactionAttack",
-      });
-    },
-  };
-};
+): PassiveModule =>
+  // The buff takes no Ascendant Gleam amount
+  createReactionBuffPassiveModule([takeOne(params, 0), REACTION_ATTACK_SECONDS, 0], {
+    attribute: Attribute.AttackPercent,
+    checkIsTriggering: (triggered) => checkIsReactionNamed(triggered, reactions),
+    source: "reactionAttack",
+  });
