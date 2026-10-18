@@ -47,5 +47,9 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
       renderer.compute(resetCount);
       renderer.compute(cullInstances);
     },
+    dispose: () => {
+      indirect.dispose();
+      survivorAttribute.dispose();
+    },
   };
 };

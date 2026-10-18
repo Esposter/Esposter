@@ -170,9 +170,10 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const { attribute, material, mesh } of batches) {
+  for (const { attribute, culling, material, mesh } of batches) {
     mesh.geometry.dispose();
     attribute.dispose();
+    culling.dispose();
     material.dispose();
   }
   domeGeometry.dispose();

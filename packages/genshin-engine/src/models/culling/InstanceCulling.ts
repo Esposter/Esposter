@@ -8,4 +8,6 @@ export interface InstanceCulling {
   indirect: IndirectStorageBufferAttribute;
   // The instance a drawn survivor stands for, read at the draw's own instance index
   survivor: Node<"float">;
+  // Releases the indirect draw's arguments and the survivor list from the GPU, once the draw they feed is gone
+  dispose: () => void;
 }

@@ -138,9 +138,10 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const { grassMesh } of grassRings) {
+  for (const { culling, grassMesh } of grassRings) {
     grassMesh.geometry.dispose();
     grassMesh.material.dispose();
+    culling.dispose();
   }
 });
 </script>
