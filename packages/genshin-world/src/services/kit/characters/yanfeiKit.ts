@@ -15,7 +15,9 @@ import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
@@ -30,6 +32,13 @@ const CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION = 0.25;
 // Yanfei/burst.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/burst.go
 const BURST_SECONDS = 15;
+// Supreme Amnesty, from four constellations, has Done Deal create a Pyro shield absorbing up to 45% of Yanfei's Max HP for
+// 15 seconds, which absorbs Pyro DMG 250% more effectively, as the wiki's constellation page gives it. That is the combat
+// Shield's 250% for its own element
+// https://genshin-impact.fandom.com/wiki/Yanfei
+const SUPREME_AMNESTY_CONSTELLATION = 4;
+const SUPREME_AMNESTY_HEALTH_SHARE = 0.45;
+const SUPREME_AMNESTY_SECONDS = 15;
 const BURST_SEAL_INTERVAL_SECONDS = 1;
 const DONE_DEAL_STATUS_ID = "yanfei-done-deal";
 // Scarlet Seals last 10 seconds from the last one gained, and Yanfei holds three of them, four from Constellation 6, as
@@ -97,8 +106,8 @@ const CONSTELLATION_2_HEALTH_SHARE = 0.5;
 // Hit a summon cast at the body, whose multiplier and radius the seals spent pick, with Done Deal's Pyro DMG bonus while
 // It is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation 1. Done Deal adds a
 // Seal each second while it stands. From Ascension 4 the first CRIT hit of each charged attack sets off Blazing Eye round
-// The enemy struck. Her Constellation 2 CRIT Rate reads the enemy's health, and her Constellation 4 shield is not built, as no
-// Kit event reaches the shield's health. Constellation 4 needs the Done Deal shield's Pyro absorption at 250%, which the kit does not build
+// The enemy struck. Her Constellation 2 CRIT Rate reads the enemy's health. From Constellation 4, Done Deal also casts a Pyro
+// Shield, whose Pyro absorption is the combat shield's own 250%
 export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const blazingEyeHit: KitHit = { ...BLAZING_EYE_HIT, hitmarkSeconds: readSeconds("blazingEyeHitmark") };
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");
@@ -119,7 +128,8 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
     // Battlefield holds, as gcsim's tick runs wherever Yanfei is
     burst: {
       hits: [fullSealsHit],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party } = context;
         addKitStatus(kitEffectState, combatant.characterId, {
           id: DONE_DEAL_STATUS_ID,
           secondsRemaining: BURST_SECONDS,
@@ -130,6 +140,14 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
           secondsRemaining: BURST_SECONDS,
           tickIntervalSeconds: BURST_SEAL_INTERVAL_SECONDS,
         });
+        if (combatant.constellationCount >= SUPREME_AMNESTY_CONSTELLATION)
+          castKitShield(context, combatant.characterId, {
+            element: Element.Pyro,
+            health:
+              SUPREME_AMNESTY_HEALTH_SHARE *
+              getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
+            secondsRemaining: SUPREME_AMNESTY_SECONDS,
+          });
       },
     },
     // The charged attack spends the seals as it starts, its hit a summon cast at the body. The seals it spent set its

@@ -6,6 +6,7 @@ Yanfei's kit is its record and one behaviour module, `createYanfeiKitBehaviour`,
 
 - **Yanfei's seals are four statuses, one a slot, and her charged attack reads them as it starts.** A kit status of one id restarts rather than stacks, so each seal has its own slot id and a gain restarts the held slots together. The charged attack's hit is cast as a summon at her body as the seals are spent, as Ganyu's Bloom is, so its circle is priced round the body at the charge's radius plus the targeting area.
 - **Yanfei's charged attack lands at 63 frames from a standing start.** gcsim adds a 16-frame windup to a start from a run, which the kit does not read, so every start lands at 63 frames.
+- **Constellation 4's shield is a Pyro shield cast with Done Deal.** From four constellations, Done Deal's burst casts a shield of Pyro element at 45% of Yanfei's Max HP for 15 seconds. The wiki's Supreme Amnesty text gives its Pyro absorption at 250%, which the combat shield gives its own element, so the shield needs no absorption rule of its own.
 - **Constellation 2's CRIT Rate reads the enemy's health.** The below-half check reads its health as Ayato's Constellation 1 does, and no kit event is needed, the hook taking the enemy as [the kits README](../README.md#shared-effects) states.
 
 ## Key files

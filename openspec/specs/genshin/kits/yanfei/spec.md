@@ -1,6 +1,6 @@
 ## Purpose
 
-Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, her Ascension 4 Blazing Eye, Constellation 2's CRIT Rate, and what is left of her Constellation 4.
+Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, her Ascension 4 Blazing Eye, Constellation 2's CRIT Rate, and Constellation 4's Pyro shield on Done Deal.
 
 ## Requirements
 
@@ -98,11 +98,18 @@ From Ascension 4, the first CRIT hit each charged attack of Yanfei's lands while
 - **THEN** a Pyro hit of 80% of her ATK strikes a circle of 3.5 metres round that enemy
 - **AND** a further CRIT hit of the same charged attack sets off none
 
-### Requirement: Unbuilt effects
+### Requirement: Constellation 4 shields Done Deal
 
-Yanfei's Constellation 4 shield SHALL have no effect in the world yet.
+From Constellation 4, Done Deal SHALL cast a Pyro shield absorbing up to 45% of Yanfei's Max HP for 15 seconds, which absorbs Pyro DMG at 250%.
 
-#### Scenario: Constellation 4 shield absent
+#### Scenario: Constellation 4 shield
 
-- **WHEN** Yanfei holds Constellation 4
-- **THEN** no shield is applied
+- **GIVEN** Yanfei has Constellation 4
+- **WHEN** she casts Done Deal
+- **THEN** a Pyro shield of 45% of her Max HP is cast for 15 seconds
+
+#### Scenario: No shield below Constellation 4
+
+- **GIVEN** Yanfei has Constellation 3 or lower
+- **WHEN** she casts Done Deal
+- **THEN** no shield is cast

@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -191,5 +192,26 @@ describe("blazing Eye", () => {
     stepKitSummon(takeOne(readSummons(context), 1), 2, context.body.position, strikes, context);
 
     expect(getStrikeCriticalRateBonus(takeOne(strikes), 0.4)).toBe(0.2);
+  });
+});
+
+describe("done deal's shield", () => {
+  test("at four constellations, Done Deal casts a Pyro shield of 45% of Yanfei's Max HP for 15 seconds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createYanfeiCombatant(4));
+    YANFEI_KIT.elementalBurst.onStart?.(context);
+    const shields = context.kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield");
+
+    expect(
+      shields.map(({ element, health, secondsRemaining }) => ({ element, health, secondsRemaining })),
+    ).toStrictEqual([{ element: Element.Pyro, health: 4500, secondsRemaining: 15 }]);
+  });
+
+  test("below four constellations, Done Deal casts no shield", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createYanfeiCombatant(3));
+    YANFEI_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects.filter((effect) => effect.kind === "shield")).toStrictEqual([]);
   });
 });
