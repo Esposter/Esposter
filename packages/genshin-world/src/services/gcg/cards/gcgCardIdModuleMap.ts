@@ -57,7 +57,9 @@ import { quickKnit } from "#src/services/gcg/cards/quickKnit";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
 import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
+import { sacrificialBow } from "#src/services/gcg/cards/sacrificialBow";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
+import { sacrificialSword } from "#src/services/gcg/cards/sacrificialSword";
 import { sendOff } from "#src/services/gcg/cards/sendOff";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
@@ -118,9 +120,11 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [311_101, magicGuide],
   [311201, ravenBow],
   [311301, whiteIronGreatsword],
+  [311_202, sacrificialBow],
   [311_302, sacrificialGreatsword],
   [311_401, whiteTassel],
   [311_501, travelersHandySword],
+  [311_502, sacrificialSword],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],
