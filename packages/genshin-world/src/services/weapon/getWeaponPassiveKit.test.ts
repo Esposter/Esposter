@@ -6,6 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -236,5 +237,45 @@ describe(getWeaponPassiveKit, () => {
         [],
       ),
     ).toBe(0.1);
+  });
+
+  test("the Samurai Conduct of Katsuragikiri Nagamasa raises its wielder's Elemental Skill DMG at rank one", () => {
+    expect.hasAssertions();
+
+    // Katsuragikiri Nagamasa, whose name's text id and rank parameters its table gives
+    const samuraiWeaponData: WeaponData = {
+      ...WEAPON_DATA,
+      id: 12414,
+      passiveNameTextId: "1828182147",
+      passiveRankParams: [[0.06, 3, 3, 6, 10]],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 12414, level: 1, refinement: 1 },
+      samuraiWeaponData,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+
+    expect(
+      weaponKit.getStrikeDamageBonus?.(
+        {
+          attackTag: AttackTag.ElementalSkill,
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant,
+          hit: takeOne(takeOne(KIT.normalAttacks).hits),
+        },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        createParty([TRAVELER_CHARACTER_ID]),
+        [],
+      ),
+    ).toBe(0.06);
   });
 });

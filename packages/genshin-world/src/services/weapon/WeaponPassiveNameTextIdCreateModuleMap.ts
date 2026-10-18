@@ -291,4 +291,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2626267635": createEchoOfAVowPassiveModule,
   // Samurai Conduct (Kitain Cross Spear)
   "1395787867": createSamuraiConductPassiveModule,
+  // Samurai Conduct (Katsuragikiri Nagamasa)
+  "1828182147": createSamuraiConductPassiveModule,
 };
