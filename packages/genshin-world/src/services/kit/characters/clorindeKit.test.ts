@@ -1,6 +1,7 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import type { Combatant } from "#src/models/kit/Combatant";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { CLORINDE_CHARACTER_ID, createClorindeKitBehaviour } from "#src/services/kit/characters/clorindeKit";

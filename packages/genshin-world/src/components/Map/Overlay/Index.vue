@@ -207,7 +207,7 @@ onMounted(() => {
       @pointerup="onMapPointerUp()"
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
-      <MapDrawing :catalogue :landmarks :mark-radius @select="chooseLandmark" />
+      <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => chooseLandmark(landmark)" />
       <template v-for="{ id, name, progressSegments, x, z } of areaLabels" :key="id">
         <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y="z">
           {{ name }}
@@ -248,7 +248,7 @@ onMounted(() => {
         {{ name }} <span v-for="({ text }, index) of progressSegments" :key="index">{{ text }}</span>
       </li>
     </ul>
-    <MapJumpList class="jumps" :catalogue :game-text :landmarks @jump="chooseLandmark" />
+    <MapJumpList class="jumps" :catalogue :game-text :landmarks @jump="(landmark) => chooseLandmark(landmark)" />
     <p v-if="regionTag" class="region-tag">
       <span class="region-name">{{ regionTag.name }}</span>
       <span v-if="regionTag.progressSegments.length > 0" class="region-progress">

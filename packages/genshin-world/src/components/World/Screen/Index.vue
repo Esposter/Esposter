@@ -64,6 +64,9 @@ const getStartingTalentLevelMap = (characterConstellationKits: CharacterConstell
   );
 };
 const constellationKitsRequest = readConstellationTables(props.gameDataBaseUrl);
+// The character kits at their starting talent levels, read once the constellation tables are
+const readStartingCharacterKits = async () =>
+  readCharacterKits(props.gameDataBaseUrl, getStartingTalentLevelMap(await constellationKitsRequest));
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() =>
   measureLoadStep(
@@ -77,12 +80,7 @@ getResultAsync(() =>
       measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
       measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
       measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
-      measureLoadStep(
-        "character-kits",
-        constellationKitsRequest.then((characterConstellationKits) =>
-          readCharacterKits(props.gameDataBaseUrl, getStartingTalentLevelMap(characterConstellationKits)),
-        ),
-      ),
+      measureLoadStep("character-kits", readStartingCharacterKits()),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),

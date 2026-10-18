@@ -1,5 +1,5 @@
-import type { Catalogue } from "#src/models/world/Catalogue";
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
+import type { Catalogue } from "#src/models/world/Catalogue";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { WorldLayer } from "#src/models/world/WorldLayer";

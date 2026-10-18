@@ -3,6 +3,8 @@ import { WeatherKind } from "genshin-engine";
 
 // The most dishes one batch of Auto Cook makes at once, and the most units of one processing a queue holds
 export const COOKING_BATCH_LIMIT = 99;
+// The milliseconds between two collects while the processing screen is open, each moving the units done by now into the bag
+export const PROCESSING_COLLECT_INTERVAL_MS = 1000;
 // The percent a chance in a specialty row is out of
 export const PERCENT_TOTAL = 100;
 // The one character the game refuses to cook at all, so no dish is made with her

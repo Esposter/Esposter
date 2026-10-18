@@ -3,10 +3,35 @@ import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { z } from "zod";
 
+export type InventoryItemSave = ArtifactInventoryItemSave | StackInventoryItemSave | WeaponInventoryItemSave;
 // One entry of the bag as the save holds it, by its kind: a stack by its count, an artifact by its level, and a weapon by
 // Its level, the EXP it holds towards the next, its ascension and its refinement. Each is the item's id in the game's
 // Tables, and its name and tab are read back from them in the reader's language, never saved. A stack holds no more than
 // The most any item can be held at
+interface ArtifactInventoryItemSave {
+  id: number;
+  itemId: number;
+  kind: InventoryItemKind.Artifact;
+  level: number;
+  quantity: 1;
+}
+interface StackInventoryItemSave {
+  id: number;
+  itemId: number;
+  kind: InventoryItemKind.Stack;
+  quantity: number;
+}
+interface WeaponInventoryItemSave {
+  ascension: number;
+  experience: number;
+  id: number;
+  itemId: number;
+  kind: InventoryItemKind.Weapon;
+  level: number;
+  quantity: 1;
+  refinement: number;
+}
+
 const inventoryItemSaveBaseSchema = z.object({ id: z.int().nonnegative(), itemId: z.int().positive() });
 export const inventoryItemSaveSchema = z.discriminatedUnion("kind", [
   inventoryItemSaveBaseSchema.extend({
@@ -26,6 +51,4 @@ export const inventoryItemSaveSchema = z.discriminatedUnion("kind", [
     quantity: z.literal(1),
     refinement: z.int().min(1).max(MAX_WEAPON_REFINEMENT),
   }),
-]);
-
-export type InventoryItemSave = z.infer<typeof inventoryItemSaveSchema>;
+]) satisfies z.ZodType<InventoryItemSave>;

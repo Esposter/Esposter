@@ -11,7 +11,8 @@ export const readCharacterKits = async (
 ): Promise<Map<number, Kit>> =>
   new Map(
     await Promise.all(
-      [...characterTalentLevelMap].map(
+      Array.from(
+        characterTalentLevelMap,
         async ([characterId, talentLevels]) =>
           [characterId, await readCharacterKit(gameDataBaseUrl, characterId, talentLevels)] as const,
       ),

@@ -2,14 +2,13 @@
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { ToonNodeMaterial } from "genshin-engine";
 
+import {
+  DOMAIN_ENTRANCE_STAND_IN_COLOR,
+  DOMAIN_ENTRANCE_STAND_IN_HEIGHT,
+  DOMAIN_ENTRANCE_STAND_IN_WIDTH,
+} from "#src/services/domains/constants";
 import { setObjectSurface } from "genshin-engine";
 import { BoxGeometry, Mesh } from "three";
-
-// The stand-in kit a domain entrance draws until its own kit is built: one pillar in one colour, standing where the
-// Entrance's arrival is
-const STAND_IN_COLOR = "#7b8fa6";
-const STAND_IN_HEIGHT = 6;
-const STAND_IN_WIDTH = 2;
 
 interface Props {
   // The world's ground at a point in its own coordinates, which the pillar stands on
@@ -22,12 +21,16 @@ interface Props {
 const { getGroundHeight, landmark, partMaterial } = defineProps<Props>();
 const { arrival } = landmark;
 const groundHeight = getGroundHeight(arrival.position.x, arrival.position.z);
-const geometry = new BoxGeometry(STAND_IN_WIDTH, STAND_IN_HEIGHT, STAND_IN_WIDTH);
+const geometry = new BoxGeometry(
+  DOMAIN_ENTRANCE_STAND_IN_WIDTH,
+  DOMAIN_ENTRANCE_STAND_IN_HEIGHT,
+  DOMAIN_ENTRANCE_STAND_IN_WIDTH,
+);
 const mesh = new Mesh(geometry, partMaterial);
-mesh.position.y = STAND_IN_HEIGHT / 2;
+mesh.position.y = DOMAIN_ENTRANCE_STAND_IN_HEIGHT / 2;
 mesh.castShadow = true;
 mesh.receiveShadow = true;
-setObjectSurface(mesh, STAND_IN_COLOR);
+setObjectSurface(mesh, DOMAIN_ENTRANCE_STAND_IN_COLOR);
 
 onUnmounted(() => {
   geometry.dispose();

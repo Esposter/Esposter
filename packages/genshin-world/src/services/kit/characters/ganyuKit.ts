@@ -108,6 +108,7 @@ export const createGanyuKitBehaviour = ({
         { enemyStatus: getFrostflakeStatus },
       ],
     },
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= 2 ? 1 : 0),
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitTaunt(kitEffectState, body, combatant, {
@@ -116,6 +117,5 @@ export const createGanyuKitBehaviour = ({
           secondsRemaining: iceLotusFlowerHitmarkSeconds + iceLotusSeconds,
         }),
     },
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= 2 ? 1 : 0),
   };
 };

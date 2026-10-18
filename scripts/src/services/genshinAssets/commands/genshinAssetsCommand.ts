@@ -29,7 +29,6 @@ import { gatheringCommand } from "#src/services/genshinAssets/commands/gathering
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
 import { imaginariumCommand } from "#src/services/genshinAssets/commands/imaginariumCommand";
-import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -38,6 +37,7 @@ import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineComm
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
+import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";

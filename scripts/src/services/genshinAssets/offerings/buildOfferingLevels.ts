@@ -79,7 +79,7 @@ export const buildOfferingLevels = (): GameDataBuild => {
   }
   objects[`${GameDataset.Offerings}/${OfferingKind.PrimalFlameResonance}`] = Array.from(
     { length: PRIMAL_FLAME_RESONANCE_LEVEL_COUNT },
-    (_, index) => ({
+    (_value, index) => ({
       items: [{ itemCount: 1, itemId: BLAZING_FLINT_ORE_ITEM_ID }],
       level: index + 1,
       reward: { kind: "fixed", rewards: [] },

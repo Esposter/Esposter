@@ -20,7 +20,7 @@ export const createOutcropCamp = (
 ): EnemyCamp => ({
   areaId,
   id: computeOutcropCampId(id),
-  members: Array.from({ length: OUTCROP_CAMP_SIZE }, (_, index) => {
+  members: Array.from({ length: OUTCROP_CAMP_SIZE }, (_value, index) => {
     const angle = (index / OUTCROP_CAMP_SIZE) * 2 * Math.PI;
     const spreadRadius = OUTCROP_FIGHT_RADIUS / 2;
     return {

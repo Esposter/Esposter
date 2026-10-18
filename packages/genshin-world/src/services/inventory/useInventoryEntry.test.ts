@@ -59,9 +59,9 @@ describe(useInventoryEntry, () => {
   ) => ({
     cookingProgress,
     dishUseMap,
-    instructionRecipeMap,
     eaterId: EATER_ID,
     getMaxHealth: () => MAX_HEALTH,
+    instructionRecipeMap,
     kitEffectState: { effects: [] },
     now: NOW,
     party,

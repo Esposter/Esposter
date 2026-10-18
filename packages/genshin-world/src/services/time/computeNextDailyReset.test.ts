@@ -1,5 +1,5 @@
-import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { computeNextDailyReset } from "#src/services/time/computeNextDailyReset";
+import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeNextDailyReset, () => {

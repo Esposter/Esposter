@@ -1,12 +1,12 @@
-import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
+import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
 import { ChestKind } from "#src/models/chest/ChestKind";
+import { checkIsChestLocked } from "#src/services/chest/checkIsChestLocked";
 import { ChestKindNameKeyMap } from "#src/services/chest/ChestKindNameKeyMap";
 import { ChestKindRewardMap } from "#src/services/chest/ChestKindRewardMap";
 import { CHEST_LOCK_REACH } from "#src/services/chest/constants";
-import { checkIsChestLocked } from "#src/services/chest/checkIsChestLocked";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 

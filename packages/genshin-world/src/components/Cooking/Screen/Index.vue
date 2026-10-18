@@ -40,7 +40,7 @@ const progress = defineModel<CookingProgress>("progress", { required: true });
 const recipe = defineModel<CookingRecipe>("recipe", { required: true });
 const zones = computed(() => readCookingZones(recipe.value.qteParam));
 const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] })));
-const canAutoCook = computed(() => checkCanAutoCook(recipe.value, progress.value, avatarId));
+const isAutoCookable = computed(() => checkCanAutoCook(recipe.value, progress.value, avatarId));
 const selectDish = (id: number) => {
   const selected = recipes.find((dish) => dish.id === id);
   if (selected) recipe.value = selected;
@@ -98,17 +98,17 @@ const autoCook = () => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CookingTitle]">
     <CookingScreen
       :auto-cook-label="gameText[GameTextKey.CookingAutoCook]"
-      :can-auto-cook="canAutoCook"
+      :can-auto-cook="isAutoCookable"
       :dishes
       :pointer
       :selected-id="recipe.id"
       :stop-label="gameText[GameTextKey.CookingStop]"
       :title="gameText[GameTextKey.CookingTitle]"
       :zones
-      @auto-cook="autoCook"
+      @auto-cook="autoCook()"
       @close="emit('close')"
-      @select="selectDish"
-      @stop="stopCooking"
+      @select="(id) => selectDish(id)"
+      @stop="stopCooking()"
     />
   </GameScreen>
 </template>

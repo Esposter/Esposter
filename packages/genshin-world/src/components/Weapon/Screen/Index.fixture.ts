@@ -120,10 +120,10 @@ export const variants = {
     wallet: { ...EMPTY_WALLET, [Currency.Mora]: nextPhase?.coinCost ?? 0 },
   },
   atCap: { inventory: atCapBag },
-  // The Refine tab open, with the copy in the bag to pick
-  refine: { tab: WeaponMenuTab.Refine },
   // A weapon at rank five, which no Refine tab is offered for
   rankFive: { inventory: createBag({ ...openWeapon, refinement: 5 }) },
+  // The Refine tab open, with the copy in the bag to pick
+  refine: { tab: WeaponMenuTab.Refine },
   // The two-star weapon, which no Refine tab is offered for
   twoStar: { inventory: createBag({ ...openWeapon, id: TWO_STAR_WEAPON_ID }) },
 };

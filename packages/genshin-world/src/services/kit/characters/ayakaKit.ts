@@ -55,8 +55,6 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
   const frostflakeHits = readHits("frostflake");
   const smallFrostflakeHits = readHits("smallFrostflake");
   return {
-    chargedAttack: { hits: kit.chargedAttack.hits.map(() => snowsweptSakuraHit) },
-    normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => snowsweptSakuraHit) })),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, frostflakeHits);
@@ -65,6 +63,8 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
         castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
       },
     },
+    chargedAttack: { hits: kit.chargedAttack.hits.map(() => snowsweptSakuraHit) },
+    normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => snowsweptSakuraHit) })),
     onSprint: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,

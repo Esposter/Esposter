@@ -4,9 +4,9 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { TransPointUnlock } from "#src/models/transPoint/TransPointUnlock";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
+import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { Ref } from "vue";
 
 import { useExplorationAreas } from "#src/composables/useExplorationAreas";

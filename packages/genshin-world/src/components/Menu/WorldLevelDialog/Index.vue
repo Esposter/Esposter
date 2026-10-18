@@ -23,10 +23,10 @@ interface Props {
   // It can
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
-  // The World Level the world plays at, which the prompt's change is set against
-  worldLevel: number;
   // The server's clock minus this machine's, which the cooldown is read against
   serverClockOffsetMs?: number;
+  // The World Level the world plays at, which the prompt's change is set against
+  worldLevel: number;
   // When the World Level last changed, which holds the button until its cooldown has run
   worldLevelChangedAt?: Temporal.Instant;
 }

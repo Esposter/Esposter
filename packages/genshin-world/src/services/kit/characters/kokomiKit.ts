@@ -133,12 +133,12 @@ export const createKokomiKitBehaviour = ({
         enterKitStance(kitEffectState, combatant, ceremonialGarment, GARMENT_SECONDS, { isEndedOnSwap: true });
       },
     },
-    getPassiveBonuses,
     // Constellation 4, The Moon Overlooks the Waters: her Normal Attack SPD is raised while she dons the garment
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
       activeCombatant.constellationCount >= 4 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
         ? 0.1
         : 0,
+    getPassiveBonuses,
     skill: createBakeKurage(bakeKurageRipples),
   };
 };

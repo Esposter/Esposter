@@ -19,8 +19,8 @@ import { advanceElementalState } from "#src/services/combat/aura/advanceElementa
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
 import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned";
-import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
 import { computeCampLockSources } from "#src/services/enemy/computeCampLockSources";
+import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
 import {
   ENEMY_CAPACITY,
