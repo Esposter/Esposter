@@ -13,6 +13,12 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
     kind: AchievementEventKind.MonsterDefeated,
     targetSlot: 0,
   },
+  TRIGGER_BATTLE_FOR_MONSTER_DIE_OR: {
+    countsEveryDoing: true,
+    countsQuantity: false,
+    kind: AchievementEventKind.MonsterDefeated,
+    targetSlot: 0,
+  },
   TRIGGER_FINISH_PARENT_QUEST_AND: {
     countsQuantity: false,
     kind: AchievementEventKind.ParentQuestFinished,
