@@ -21,6 +21,7 @@ import { createDecimatePassiveModule } from "#src/services/weapon/passives/creat
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
+import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
@@ -293,4 +294,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1395787867": createSamuraiConductPassiveModule,
   // Samurai Conduct (Katsuragikiri Nagamasa)
   "1828182147": createSamuraiConductPassiveModule,
+  // Echoes of the Plentiful Land (Ring of Yaxche)
+  "3167933899": createEchoesOfThePlentifulLandPassiveModule,
 };
