@@ -1,6 +1,6 @@
 ## Purpose
 
-Noelle's kit as built: four strikes, a charged attack, Breastplate's press with its shield and heal, and Sweeping Time's slashes with its Geo infusion and ATK bonus, with her constellations I Got Your Back and To Be Cleaned built.
+Noelle's kit as built: four strikes, a charged attack, Breastplate's press with its shield and heal, and Sweeping Time's slashes with its Geo infusion and ATK bonus, with her constellations I Got Your Back, Combat Maid and To Be Cleaned built.
 
 ## Requirements
 
@@ -65,6 +65,22 @@ From Constellation 1, Sweeping Time's Geo infusion SHALL make the heal roll cert
 - **GIVEN** Noelle has Constellation 4
 - **WHEN** Breastplate's shield ends
 - **THEN** the shield explodes for 400% of Noelle's ATK as Geo damage on the character on the field
+
+### Requirement: Constellation 2 Charged Attack stamina and DMG
+
+From Constellation 2, Noelle's Charged Attacks SHALL cost 20% less stamina and each of their hits SHALL deal 15% more DMG. Constellation 6's extra seconds for Sweeping Time SHALL NOT take effect.
+
+#### Scenario: Constellation 2 changes her Charged Attacks
+
+- **GIVEN** Noelle has Constellation 2
+- **WHEN** her Charged Attack's stamina is read and its hits deal DMG
+- **THEN** the stamina is cut by 20% and each Charged Attack hit gains 15% DMG
+
+#### Scenario: Constellation 1 changes nothing here
+
+- **GIVEN** Noelle has Constellation 1
+- **WHEN** her Charged Attacks are read
+- **THEN** their stamina and DMG are unchanged
 
 ### Requirement: Sweeping Time's infusion and ATK bonus
 
