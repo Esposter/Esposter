@@ -6,22 +6,16 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinClaim } from "#src/models/originalResin/ResinClaim";
 import type { ResinCost } from "#src/models/originalResin/ResinCost";
 
-import { Currency } from "#src/models/inventory/Currency";
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
-import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
-import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { claimOriginalResin } from "#src/services/originalResin/claimOriginalResin";
-import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
+import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 
 // The one claim every resin reward goes through, whatever challenge pays it: a cost of Original Resin, or of Condensed
 // Resin where its count is above zero, and the reward list the challenge drew. Original Resin pays its Adventure EXP
-// Through `claimOriginalResin`, the Mora in the list goes into the wallet, and the rest goes into the bag. The Adventure
-// And Companionship EXP items in the list are left out. Undefined where the cost is not held, or the bag cannot take
-// Every item whole, which keeps the resin or the Condensed Resin in hand
+// Through `claimOriginalResin`, and the reward list is granted as `grantRewardItems` grants it. Undefined where the cost
+// Is not held, or the bag cannot take every item whole, which keeps the resin or the Condensed Resin in hand
 export const claimResinReward = (
   adventureRankTables: AdventureRankTables,
   wallet: Wallet,
@@ -57,18 +51,7 @@ export const claimResinReward = (
     if (claimedResin) paid = { adventureExp: claimedResin.adventureExp, inventory, wallet: claimedResin.wallet };
   }
   if (!paid) return undefined;
-  let claimedInventory = paid.inventory;
-  let moraCount = 0;
-  for (const { count, id } of rewards)
-    if (id === MORA_ITEM_ID) moraCount += count;
-    else if (id !== ADVENTURE_EXP_ITEM_ID && id !== COMPANIONSHIP_EXP_ITEM_ID) {
-      const addition = addInventoryItem(claimedInventory, getItemDefinition(id, names, materialDataMap), count);
-      if (addition.overflow > 0) return undefined;
-      claimedInventory = addition.inventory;
-    }
-  return {
-    adventureExp: paid.adventureExp,
-    inventory: claimedInventory,
-    wallet: { ...paid.wallet, [Currency.Mora]: paid.wallet[Currency.Mora] + moraCount },
-  };
+  const granted = grantRewardItems(paid.wallet, paid.inventory, rewards, names, materialDataMap);
+  if (!granted) return undefined;
+  return { adventureExp: paid.adventureExp, ...granted };
 };
