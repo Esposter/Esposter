@@ -94,6 +94,8 @@ export enum GameTextKey {
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   CompatibilityMode = "1992637634",
   CondessenceCrystal = "3736537308",
+  // Party Setup's button to add, rename and disband teams
+  ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // The quit prompt's first button, which goes back to the world
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
@@ -114,6 +116,8 @@ export enum GameTextKey {
   DamagedMask = "461826100",
   DandelionSeed = "2071890124",
   Dendrobium = "354894236",
+  // Party Setup's button that deploys the team shown
+  Deploy = "UI_BUTTON_ENABLE_TEAM",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
@@ -259,7 +263,7 @@ export enum GameTextKey {
   ItemCount = "SHOP_ITEM_NAME_AND_COUNT",
   JueyunChili = "22100332",
   // The touch layout's jump button, which a screen reader says in place of its glyph
-  Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
+  Jump = "UI_BEYOND_UIEDITOR_INSPECTOR_JUMP",
   KalpalataLotus = "1479130340",
   LakelightLily = "47843548",
   Lakkaberry = "3318899836",
@@ -323,6 +327,11 @@ export enum GameTextKey {
   Padisarah = "200162340",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
+  // The four teams every player starts with, each named Party 1 to 4 until it is renamed
+  PartyDefaultName1 = "UI_TEAM_DEFAULT_NAME1",
+  PartyDefaultName2 = "UI_TEAM_DEFAULT_NAME2",
+  PartyDefaultName3 = "UI_TEAM_DEFAULT_NAME3",
+  PartyDefaultName4 = "UI_TEAM_DEFAULT_NAME4",
   PartySetup = "UI_TEAM_TITLE",
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
@@ -344,7 +353,7 @@ export enum GameTextKey {
   QuestCategoryWorld = "TASK_TYPE_OTHERS",
   // Provisional: how far a quest in the quest screen's list stands, "{0}m". The text map holds no line of the quest
   // Screen's own for it, so this is the minigame's "{0}m", the same words in English
-  QuestDistance = "UI_ACTIVITY_LOLIGOLF_DISTANCE",
+  QuestDistance = "UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER",
   // The quest tracker's word before the navigated objective's distance, where it stands well below or above the character
   QuestMarkDown = "QUEST_MARK_DOWN",
   QuestMarkUp = "QUEST_MARK_UP",
@@ -356,12 +365,15 @@ export enum GameTextKey {
   // Provisional: the quest screen's title over its first tab, which lists every quest in progress. The text map holds
   // Several lines reading "In Progress" and none of them is named for the quest screen, so this is the plainest one
   QuestsInProgress = "UI_TEXT_DOING",
+  // Party Setup's button that fills the team's empty slots with the next characters
+  QuickSetup = "UI_BUTTON_FAST_TEAM",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",
   RainbowRose = "2386700548",
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
+  RealmCurrency = "1255754076",
   RedBerryshroom = "1096616044",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
   ReputationMondstadtMerchantDiscounts = "1610612133",
@@ -470,10 +482,22 @@ export enum GameTextKey {
   SwitchAimingMode = "CONTROL_TOGGLE_ATTACK_MODE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
+  // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons it
+  // Cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
+  TalentLevelUp = "UI_TALENT_LEVEL_UP",
+  TalentMaterialsShort = "UI_TRAININGPLAN_MATERIAL_LACK",
+  TalentMaxLevel = "SKILL_LEVEL_MAX_TIP",
+  TalentMoraShort = "RetScoinNotEnough",
+  TalentPhaseRequired = "SKILL_UPGRADE_NEED_ROLEBREAK_TIP",
+  TalentPhaseShort = "SKILL_UPGRADE_AVATAR_BREAK_NEED",
   // The map's way to a place, as its button says
   Teleport = "UI_BUTTON_GOTO",
   Tidalga = "225224916",
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
+  // The Time screen's confirm, in the game's own word for Confirm
+  TimeConfirm = "UI_STC_LEVELUP_DIALOG_OK",
+  // The label over the hour the Time screen's dial points at, before the player confirms it
+  TimeWaitUntil = "UI_CLOCK_PAGE_TO_TIME",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
   TitleLicence = "3231160485",
   TrainingGuide = "UI_TRAININGGUIDE_TITLE",

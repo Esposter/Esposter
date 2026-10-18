@@ -262,7 +262,7 @@ export enum GameTextKey {
   ItemCount = "SHOP_ITEM_NAME_AND_COUNT",
   JueyunChili = "22100332",
   // The touch layout's jump button, which a screen reader says in place of its glyph
-  Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
+  Jump = "UI_BEYOND_UIEDITOR_INSPECTOR_JUMP",
   KalpalataLotus = "1479130340",
   LakelightLily = "47843548",
   Lakkaberry = "3318899836",
@@ -352,7 +352,7 @@ export enum GameTextKey {
   QuestCategoryWorld = "TASK_TYPE_OTHERS",
   // Provisional: how far a quest in the quest screen's list stands, "{0}m". The text map holds no line of the quest
   // Screen's own for it, so this is the minigame's "{0}m", the same words in English
-  QuestDistance = "UI_ACTIVITY_LOLIGOLF_DISTANCE",
+  QuestDistance = "UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER",
   // The quest tracker's word before the navigated objective's distance, where it stands well below or above the character
   QuestMarkDown = "QUEST_MARK_DOWN",
   QuestMarkUp = "QUEST_MARK_UP",

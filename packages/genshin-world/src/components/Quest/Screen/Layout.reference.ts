@@ -56,7 +56,7 @@ export const layoutTopic: ReferenceTopic = {
       method: "The screen's own words in the installed client's English text map",
       outcome: InvestigationOutcome.Found,
       result:
-        "Quest Overview is UI_QUESTHUB_BUTTON_NAME, Cancel Navigation TASK_TRACK_CLEAR and each list's heading its TASK_TYPE line. In Progress and a distance's {0}m have no line named for the quest screen, so the plainest In Progress (UI_TEXT_DOING) and the minigame's {0}m (UI_ACTIVITY_LOLIGOLF_DISTANCE) stand in, provisionally. The rewards' caption, Complete the quest series to unlock … and obtain rewards, is in no line the install holds",
+        "Quest Overview is UI_QUESTHUB_BUTTON_NAME, Cancel Navigation TASK_TRACK_CLEAR and each list's heading its TASK_TYPE line. In Progress and a distance's {0}m have no line named for the quest screen, so the plainest In Progress (UI_TEXT_DOING) and the Miliastra editor's metre length {0}m (UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER) stand in, provisionally. The rewards' caption, Complete the quest series to unlock … and obtain rewards, is in no line the install holds",
     },
   ],
   openQuestions: [
