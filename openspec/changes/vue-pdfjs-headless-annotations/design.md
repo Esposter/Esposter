@@ -1,6 +1,6 @@
 # PDF annotations in the headless package
 
-`vue-pdfjs-headless` gains what a document holds besides its pages: forms, annotations and comments. All three are the renderer's annotation storage, so one composable reads and writes that storage, and one save writes it into the bytes a download carries.
+`vue-pdfjs-headless`, once [the package change](../architecture-pdf-viewer-package/design.md) builds it, gains what a document holds besides its pages: forms, annotations and comments. All three are the renderer's annotation storage, so one composable reads and writes that storage, and one save writes it into the bytes a download carries.
 
 ## Scope
 

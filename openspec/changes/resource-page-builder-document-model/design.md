@@ -1,5 +1,7 @@
 # Document model
 
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../resource-page-builder-headless-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. It is built once the core has shipped.
+
 ## The document model
 
 The universal model for block editing is a typed ordered tree: every node a type tag selecting a schema, and its props; a container is a node one of whose props holds a list of nodes. No one standard is shared across builders — what they share is that tree, and the open specifications differ only in where they put the id and the children:

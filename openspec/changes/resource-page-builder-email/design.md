@@ -1,5 +1,7 @@
 # Email
 
+The email editor, built over the node types and the renderer contract the [document model](../resource-page-builder-document-model/design.md) defines.
+
 ## Email
 
 MJML stays the engine, behind an email node-type set and compiled on the server.

@@ -1,6 +1,6 @@
 # PDF viewer as a headless package
 
-The PDF viewer's loading, page drawing and viewer state move into `vue-pdfjs-headless`, a published workspace package with no styling. The app's thumbnail and viewer keep only their look. The package then builds the features over a document's pages that the audit set aside, because a viewer package owes them even though the app's dialog draws none of them yet. Forms, annotations and comments are the [annotations change](../vue-pdfjs-headless-annotations/design.md).
+The PDF viewer's loading, page drawing and viewer state move into `vue-pdfjs-headless`, a published workspace package with no styling. The app's thumbnail and viewer keep only their look. The package then builds the features over a document's pages that the audit set aside, because a viewer package owes them even though the app's dialog draws none of them yet. Forms, annotations and comments come after it, in a change of their own.
 
 ## Scope
 
@@ -47,7 +47,7 @@ flowchart TD
 - **The renderer passed in over a renderer dependency.** Importing `pdfjs-dist` from the package was rejected. It would choose the build for every consumer and pin the package to the major it was built against, which is the version cost the [PDF viewer](../../specs/architecture/pdf-viewer/design.md) was rebuilt to remove. The renderer's types stay a peer, so a consumer's renderer major is checked against the package's.
 - **The features are built, not deferred.** Twenty rows named the consuming app as their owner, which no dependency is, and the viewer's page set five more aside for now. Parity is measured against the upstream's surface rather than the dialog's, so all of them are built here and tested. The dialog keeps the controls it draws today.
 - **One document passed to every view of it.** A cache in the package keyed by source was rejected: it would need its own count of who still reads a document before destroying it, while the attachment already holds the one place both its views read.
-- **Annotations in a change of their own.** Building forms, annotations and comments here was rejected for size: they share one model, the annotation storage, apart from the pages this change draws, so they split cleanly.
+- **Annotations in a change of their own.** Building forms, annotations and comments here was rejected for size, and they are the [annotations change](../vue-pdfjs-headless-annotations/design.md): they share one model, the annotation storage, apart from the pages this change draws, so they split cleanly.
 
 ## Key files
 

@@ -1,5 +1,7 @@
 # Cutover
 
+The page builder's last part, built once the editors it ships exist: the [canvas](../resource-page-builder-canvas/design.md), the [style panel](../resource-page-builder-style-panel/design.md), [undo as patches](../resource-page-builder-undo-as-patches/design.md) and the [email editor](../resource-page-builder-email/design.md).
+
 ## The cutover
 
 One change ships the new editors, deletes the old data and removes GrapesJS with every trace of it, so no code ever reads a GrapesJS document and no document outlives the code that read it.
