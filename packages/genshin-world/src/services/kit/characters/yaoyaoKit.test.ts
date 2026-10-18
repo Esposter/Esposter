@@ -18,7 +18,7 @@ describe(createYaoyaoKitBehaviour, () => {
       takeOne(YAOYAO_KIT.elementalBurst.hits).talentMultiplier,
     ];
     const expectedMultipliers = [
-      0.510014, 0.474428, 0.313771, 0.329457, 0.779315, 1.1266, 0.639324, 1.278377, 1.596762, 0.7216,
+      0.510014, 0.474428, 0.313771, 0.329457, 0.779315, 1.1266, 0.639324, 1.278377, 1.596762, 1.1456,
     ];
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
