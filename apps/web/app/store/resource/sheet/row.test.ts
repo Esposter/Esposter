@@ -86,6 +86,7 @@ describe(useRowStore, () => {
     const sheetStore = useSheetStore();
     const rowStore = useRowStore();
     const lastRow = takeOne(sheetStore.dataSource.rows, 1);
+
     expect(rowStore.getCellText(lastRow, runningSummationColumn)).toBe("3");
 
     takeOne(sheetStore.dataSource.rows).data[""] = 5;

@@ -108,5 +108,5 @@ A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed
 ## Notes
 
 - Nothing is cached across row lists. Each caller binds the rows it reads, so a binding is rebuilt when the caller binds again with new rows, and recomputing is cheap next to the walks a cache would need to invalidate ([computed-value cache](../../../../deferred/resource/sheet/computed-value-cache/design.md)).
-- Cycles are found up front by the Tarjan pass over source ids, not guarded on each read. Every column on a cycle, and every column that reads one, reads empty instead of an error.
+- Cycles are found up front by the Tarjan pass over source ids, not guarded on each read. Every column on a cycle reads empty instead of an error, and a column that reads one reads an empty source, which a math column takes as zero like any other.
 - The rejected direction was a per-read guard: a `visited` set that short-circuited a revisited column to `null` on each read. It let a cycle show a number instead of empty — `a = b + 1` and `b = a + 1` each read as 2 — and an aggregation re-walked every row for each cell it was read from, so a grid pass over `n` rows cost `n` walks. Binding once per row list removes both, and the cycle set is decided before any read.
