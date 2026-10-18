@@ -6,3 +6,5 @@ export enum QuestBanType {
   BanGroupTransportOnly = "BAN_GROUP_TRANSPORT_ONLY",
   BanGroupTransportGotoScene = "BAN_GROUP_TRANSPOR_GOTO_SCENE",
 }
+
+export const QuestBanTypes: readonly QuestBanType[] = Object.values(QuestBanType);
