@@ -43,12 +43,28 @@ Tanglevine Shaft SHALL land six hits from 112 to 175 frames and its secondary si
 - **WHEN** the player casts Tanglevine Shaft
 - **THEN** the burst does not start
 
+### Requirement: Constellation 1 charged CRIT Rate
+
+From Constellation 1, Tighnari's charged attacks SHALL have 15% more CRIT Rate.
+
+#### Scenario: Constellation 1 raises the CRIT Rate of his charged attacks
+
+- **GIVEN** Tighnari has Constellation 1
+- **WHEN** a charged attack's strike is read
+- **THEN** its CRIT Rate is raised by 15%
+
+#### Scenario: Constellation 0 changes nothing
+
+- **GIVEN** Tighnari has no constellation
+- **WHEN** a charged attack's strike is read
+- **THEN** its CRIT Rate is unchanged
+
 ### Requirement: Unbuilt Tighnari effects
 
-Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, and Tighnari's Ascension 1 passive and constellations SHALL NOT take effect.
+Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, and Tighnari's Ascension 1 passive and Constellations 2, 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Tighnari has a suffusion, Ascension 1 passive or constellation unlocked
+- **GIVEN** Tighnari has a suffusion, Ascension 1 passive or Constellation 2, 4 or 6 unlocked
 - **WHEN** the player fights with Tighnari
 - **THEN** that effect has no effect
