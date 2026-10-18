@@ -15,6 +15,7 @@ import {
 import { checkIsKitSkillChargeComplete } from "#src/services/kit/effects/checkIsKitSkillChargeComplete";
 import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getKitFieldCooldownMultiplier } from "#src/services/kit/effects/getKitFieldCooldownMultiplier";
+import { spendKitChargeSkip } from "#src/services/kit/effects/spendKitChargeSkip";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { startKitAction } from "#src/services/kit/startKitAction";
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
@@ -45,7 +46,13 @@ export const startNextKitAction = (
       const chargedAttackAction = kit.chargedAttackVariant?.checkIsActive(context)
         ? kit.chargedAttackVariant.action
         : kit.chargedAttack;
-      return startKitAction(kitState, chargedAttackAction, landedHits);
+      // A charge skip the kit holds starts the shot past its charge, and is spent by it
+      const { chargeSeconds } = chargedAttackAction;
+      const startSeconds =
+        chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
+          ? chargeSeconds
+          : 0;
+      return startKitAction(kitState, chargedAttackAction, landedHits, startSeconds);
     }
   }
 
