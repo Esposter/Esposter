@@ -14,4 +14,4 @@
 
 ## 4. Wish showing
 
-- [ ] 4.1 Show the Stella Fortuna each draw brings on its result card. Verify: a test named after the scenario 'a duplicate's result card shows its Stella Fortuna', seen failing first.
+- [x] 4.1 Show the Stella Fortuna each draw brings on its result card. Verify: a test named after the scenario 'a duplicate's result card shows its Stella Fortuna', seen failing first.

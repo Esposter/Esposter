@@ -34,15 +34,21 @@ export const makeWishes = (
     const { item } = pull.result;
     const heldCount = nextHeldCountMap.get(item.id) ?? 0;
     const wishReturn = getWishReturn(item, heldCount);
+    // The Stella Fortuna the draw brings, read onto its result beside what it returns
+    const stellaFortuna: Pick<WishResult, "masterlessStellaFortunaCount" | "stellaFortunaCount"> = {};
     if (item.kind === WishItemKind.Character) {
       nextHeldCountMap.set(item.id, heldCount + 1);
       // A duplicate among the first six brings its character's own Stella Fortuna; a five-star past them, a Masterless one
-      if (heldCount > 0 && heldCount <= CONSTELLATION_COUNT)
+      if (heldCount > 0 && heldCount <= CONSTELLATION_COUNT) {
         nextStellaFortunaCountMap.set(item.id, (nextStellaFortunaCountMap.get(item.id) ?? 0) + 1);
-      else if (item.rarity === 5 && heldCount > CONSTELLATION_COUNT) nextWallet[Currency.MasterlessStellaFortuna] += 1;
+        stellaFortuna.stellaFortunaCount = 1;
+      } else if (item.rarity === 5 && heldCount > CONSTELLATION_COUNT) {
+        nextWallet[Currency.MasterlessStellaFortuna] += 1;
+        stellaFortuna.masterlessStellaFortunaCount = 1;
+      }
     }
     if (wishReturn) nextWallet[wishReturn.currency] += wishReturn.quantity;
-    results.push(wishReturn ? { ...pull.result, wishReturn } : pull.result);
+    results.push({ ...pull.result, ...stellaFortuna, ...(wishReturn ? { wishReturn } : {}) });
     nextPity = pull.pity;
   }
 
