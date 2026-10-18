@@ -1,8 +1,10 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXianyunKitBehaviour, XIANYUN_CHARACTER_ID } from "#src/services/kit/characters/xianyunKit";
+import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -92,5 +94,47 @@ describe(createXianyunKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(XIANYUN_KIT.getSkillChargeBonus?.(createXianyunCombatant(0))).toBe(0);
+  });
+
+  test("a Constellation 2 White Clouds at Dawn gives Xianyun 20% ATK for 15 seconds", () => {
+    expect.hasAssertions();
+
+    expect(castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(2)).effects).toStrictEqual([
+      {
+        amount: 0.2,
+        attribute: Attribute.AttackPercent,
+        characterId: XIANYUN_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 15,
+        source: "xianyun-constellation-2",
+      },
+    ]);
+  });
+
+  test("a Constellation 1 White Clouds at Dawn gives Xianyun no ATK", () => {
+    expect.hasAssertions();
+
+    expect(castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(1)).effects).toStrictEqual([]);
+  });
+
+  test("a second White Clouds at Dawn restarts the 15 seconds rather than stacking the ATK", () => {
+    expect.hasAssertions();
+    const combatant = createXianyunCombatant(2);
+    const kitEffectState = castKitAction(XIANYUN_KIT.elementalSkill, combatant);
+    stepKitSeconds(createKitTestContext(combatant, { kitEffectState }), 5);
+    const buffs = castKitAction(XIANYUN_KIT.elementalSkill, combatant, kitEffectState).effects.filter(
+      ({ kind }) => kind === "buff",
+    );
+
+    expect(buffs).toStrictEqual([
+      {
+        amount: 0.2,
+        attribute: Attribute.AttackPercent,
+        characterId: XIANYUN_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 15,
+        source: "xianyun-constellation-2",
+      },
+    ]);
   });
 });
