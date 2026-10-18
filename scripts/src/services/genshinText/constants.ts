@@ -23,9 +23,10 @@ export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
 // With no type is an Archon quest
 export const MAIN_QUEST_DEFAULT_TYPE = "AQ";
 // The sub quest table, each sub quest of a world quest by its own id, and the giving table, the items a delivery asks
-// For under the id its Reputation request names
+// For under the id its Reputation request names, with the giving group table of the items a giving by group takes any of
 export const SUB_QUEST_TABLE_NAME = "QuestExcelConfigData";
 export const GIVING_TABLE_NAME = "GivingExcelConfigData";
+export const GIVING_GROUP_TABLE_NAME = "GivingGroupExcelConfigData";
 export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // The chapter table, each series of quests by its id with its title and number by text hash and the city it is in, the
 // City table naming each city by its id, and the material table giving each item its rarity in stars

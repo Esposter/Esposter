@@ -15,6 +15,7 @@ describe(readReputationRequestQuest, () => {
           ],
           id: 900101,
         },
+        groupItemIds: [],
         mainQuest: { chapterId: 0, descTextMapHash: 2, id: 9001, titleTextMapHash: 1 },
         rewards: [],
         subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
@@ -31,5 +32,24 @@ describe(readReputationRequestQuest, () => {
       talks: [],
       titleTextId: "1",
     });
+  });
+  test("a group delivery request is one collect step of any one of the items its group names", () => {
+    expect.hasAssertions();
+
+    expect(
+      readReputationRequestQuest({
+        giving: { exactItems: [{ count: 0, id: 0 }], givingGroupCount: 2, givingGroupIds: [9002], id: 900201 },
+        groupItemIds: [9101, 9102],
+        mainQuest: { chapterId: 0, descTextMapHash: 2, id: 9002, titleTextMapHash: 1 },
+        rewards: [],
+        subQuest: { mainId: 9002, stepDescTextMapHash: 3, subId: 900201 },
+      }).steps,
+    ).toStrictEqual([
+      {
+        id: "900201",
+        objectives: [{ alternativeTargetIds: ["9102"], count: 2, kind: QuestObjectiveKind.Collect, targetId: "9101" }],
+        textId: "3",
+      },
+    ]);
   });
 });

@@ -36,6 +36,29 @@ describe(advanceQuest, () => {
     ).toStrictEqual({ objectiveCounts: [0, 1], stepIndex: 0 });
   });
 
+  test("meets an objective through any of its alternative targets", () => {
+    expect.hasAssertions();
+
+    const groupQuest: Quest = {
+      ...quest,
+      steps: [
+        {
+          id: "0",
+          objectives: [{ alternativeTargetIds: ["1"], count: 2, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          textId: "textId",
+        },
+      ],
+    };
+
+    expect(
+      advanceQuest(
+        groupQuest,
+        { objectiveCounts: [], stepIndex: 0 },
+        { kind: QuestObjectiveKind.Collect, targetId: "1" },
+      ),
+    ).toStrictEqual({ objectiveCounts: [1], stepIndex: 0 });
+  });
+
   test("leaves the quest where it was for an event no objective names", () => {
     expect.hasAssertions();
 
