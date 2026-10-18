@@ -52,7 +52,7 @@ packages/genshin-world/src/
 
 ## Data and measures
 
-- **Read from the game's tables:** `FishSkillExcelConfigData`, `FishBaitExcelConfigData` and `FishProficientExcelConfigData` are not read yet; the fish, pool, stock and rod tables are.
+- **Read from the game's tables:** the fish, pool, stock and rod tables, and now `FishSkillExcelConfigData`, `FishBaitExcelConfigData` and `FishProficientExcelConfigData` and each fish's catch reward row, published as `fishing/skills`, `fishing/baits`, `fishing/proficiency` and `fishing/rewards`.
 - **Provisional until a clip shows them:** the reel's tension rate and its allowance, the zone's travel over its duration, and which pool a point draws from. Each ships as a best estimate, held provisional, and is listed on the [roadmap](../genshin-roadmap/tasks.md)'s References sought list until a published clip sets it.
 
 ## Key files
