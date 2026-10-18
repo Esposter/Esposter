@@ -6,6 +6,7 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 
 - **Layla's plunges take Bennett's timings and poise.** gcsim has no plunge file for her, so her record lands the collision, low and high plunge at Bennett's frames, 36 for the low hit and 38 for the high, with 100 and 150 poise and her own multipliers. Her animation would move them if it showed otherwise.
 - **Constellation 1's Curtain absorbs 20% more, as its shield's health is scaled.** The shield the skill sets is the one it sets for Layla; the team shields the same constellation gives members not under a Curtain need the Cryo effectiveness a shield does not carry, so they wait.
+- **The Shooting Star hit is recorded from gcsim's `shield.go`, and it cannot fire until Night Stars are built.** Its travel is 35, 33, 30 and 28 frames for four, three, two and one Night Stars (`frames.shootingStarTravels`), and its hitmark is the four-star 35. Its circle is 0.8 m, centred on the target (`TargetCentred`), dealt as Ice (gcsim's Cryo) with gauge 25 and multiplier group 7432 index 1 (`starDmg`, 0.1472 at level 1 to 0.26496 at level 10). The script builder does not read `shield.go`'s Shooting Star hit yet, so the hit's values carry the `Unclassified` cause until it does. Shooting Stars fire only after four Night Stars, which the kit does not build, so the hit cannot fire in play; its Ascension 4 and Constellation 2 rules are written against the record once Night Stars are built.
 
 ## Key files
 

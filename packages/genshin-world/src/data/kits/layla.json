@@ -2,9 +2,22 @@
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
+  "frames.shootingStarTravels.0": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 35 },
+  "frames.shootingStarTravels.1": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 33 },
+  "frames.shootingStarTravels.2": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 30 },
+  "frames.shootingStarTravels.3": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 28 },
   "frames.starlightSlugStart": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 36 },
   "frames.starlightSlugDuration": { "cause": "Unsourced", "value": 755 },
   "frames.starlightSlugTickInterval": { "cause": "Unclassified", "value": 90 },
+  "hits.shootingStarStrike.area": {
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+  },
+  "hits.shootingStarStrike.element": { "cause": "Unclassified", "value": "Ice" },
+  "hits.shootingStarStrike.gauge": { "cause": "Unclassified", "value": 25 },
+  "hits.shootingStarStrike.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
+  "hits.shootingStarStrike.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 7432 } },
+  "hits.shootingStarStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.starlightSlugStrike.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.5 }
