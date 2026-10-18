@@ -42,6 +42,7 @@ describe("useWorldChests", () => {
     expect.hasAssertions();
 
     const { puzzleChestPlaces } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set([SEELIE_ID]),
       savedSolvedPuzzleIds: new Set(),
       seelies: [
@@ -65,6 +66,7 @@ describe("useWorldChests", () => {
     expect.hasAssertions();
 
     const { puzzleChestPlaces } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set([SEELIE_ID]),
       savedSolvedPuzzleIds: new Set(),
       seelies: [
