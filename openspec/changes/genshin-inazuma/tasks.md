@@ -6,7 +6,7 @@
 ## 2. The landmarks and the torii
 
 - [ ] 2.1 Generate the torii gates through the capital's Shape pass, placing the game's 32 in Inazuma City's buildings. Verify: a test named after the scenario "The capital shows the game's torii gates", written first and seen failing.
-- [ ] 2.2 Match the Grand Narukami Shrine pose by pose once the landmark closure names its meshes. Verify: the shrine's reference compare against the game's view named after the scenario "The Grand Narukami Shrine matches the game's landmark pose by pose" reads a mean within its gate.
+- [ ] 2.2 Match the Grand Narukami Shrine pose by pose once the landmark closure names its meshes. Verify: the shrine's reference compare against the game's view named after the scenario "The shrine stands as the game's landmark does" reads a mean within its gate.
 
 ## 3. Enkanomiya
 
