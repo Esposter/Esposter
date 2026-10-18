@@ -77,6 +77,23 @@ Each region SHALL be laid out from the game's own terrain tiles and streaming re
 - **WHEN** the player views the region from its reference camera
 - **THEN** its layout matches the game's reference of that view
 
+### Requirement: A pass is accepted only by its score
+
+A recreation pass SHALL be accepted only when its frame scores within its gate against the game's references.
+
+#### Scenario: A pass is accepted when its frame scores within its gate
+
+- **GIVEN** a pass's frame has been scored against its game references
+- **WHEN** the score is within the pass's gate
+- **THEN** the pass is accepted and frozen
+
+#### Scenario: A frame outside its gate is not accepted
+
+- **GIVEN** a pass's frame has been scored against its game references
+- **WHEN** the score misses the pass's gate
+- **THEN** the pass is not accepted
+- **AND** the pass stays open for another round
+
 ### Requirement: The world's frame cost follows what the camera sees
 
 The world's per-frame cost SHALL depend on what the camera can see, and SHALL NOT grow with the size of the whole continent.
