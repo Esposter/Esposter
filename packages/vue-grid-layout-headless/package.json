@@ -57,9 +57,6 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*"
-  },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
