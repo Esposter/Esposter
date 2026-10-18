@@ -17,8 +17,6 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 - **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1, 2 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on the snack hook as well.
 - **The charged attack's windup waits on a hook that times an action by the state it starts from**, the 14 frames gcsim gives it when it is cast out of the air, as above.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                                         |

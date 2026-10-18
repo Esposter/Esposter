@@ -16,8 +16,6 @@ Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`,
 - **The Nightsoul state waits on its hook.** Her skill's press enters a timed state three frames after it, in which her Nightsoul points drain and her charged attack becomes the Electro Swift Stormflight. Her burst adds points and gives the party a flat ATK bonus converted from her ATK, up to her table's maximum, on whichever character is active. The points and the conversion wait on the Nightsoul state hook, and until then the press deals only its activation hit. The conversion of her ATK into a bonus on the active character waits on the party ATK buff hook, since a kit's buff holds a fixed amount.
 - **Ascension 1, Ascension 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul state hook.** Each reads the points the state holds, the state itself or the party ATK bonus.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                                              |

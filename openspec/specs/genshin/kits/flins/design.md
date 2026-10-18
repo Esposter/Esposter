@@ -19,8 +19,6 @@ Flins's kit is its record and one behaviour module, `createFlinsKitBehaviour`, o
 - **Cometh the Night's middle hits wait on the Lunar-Charged hook.** Its two middle hits, four at moonsign level 2, are Lunar-Charged, so the kit builds its initial and final hits alone.
 - **His passives and constellations are not built.** Most of them read the Lunar-Charged reaction, and Constellation 1 shortens Spearstorm's cooldown, which waits with Spearstorm.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                             | Role                                                                                                                                                              |

@@ -20,8 +20,6 @@ Durin's kit is its record and one behaviour module, `createDurinKitBehaviour`, o
 - **The Pyro particles of his recasts are not built.** gcsim drops four Pyro particles on each enemy his recasts strike, once every 0.3 seconds, delayed by the particle delay. A kit's hit has no particle drop with its own delay and internal cooldown, so the energy the recasts give is built, and the particles wait on that hook.
 - **A skill press after Denial of Darkness, within the window's remaining seconds, plays Confirmation of Purity.** gcsim's Denial of Darkness ends the window, so the next press is Tap E, which the skill's cooldown holds. A kit's skill chain is not ended by its stance's normal attack, so the press still reads the chain's follow-up until the window's seconds run out. This differs from gcsim only in that press, and it waits on a hook that lets a stance end a skill chain.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                             | Role                                                                                                                                                                |

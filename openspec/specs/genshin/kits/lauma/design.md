@@ -19,8 +19,6 @@ Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, o
 - **The Spirit Envoy state waits on a stance that drains stamina.** Her charged attack's first press, when the state is ready, enters a deer state that drains 25 stamina a second, blocks dashing and ends on any other action. The kit has no stance that drains stamina or ends on an action, so that first press is not built, and the charged attack is always Spiritcall Prayer.
 - **Her passives and constellations are not built.** Each reads the Pale Hymn, the Spirit Envoy or the Moonsign's level, or the Frostgrove Sanctuary's own timing.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                             | Role                                                                                                                                                                                                                                |

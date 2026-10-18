@@ -18,8 +18,6 @@ Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`,
 - **Constellation 6 waits on the Cleardew hook and on a flat damage infusion.** It adds 3 times Emilie's total ATK as flat damage to her normal and charged attacks for 5 seconds, changes them to Dendro and generates Cleardew, which an infusion that adds flat damage does not yet express.
 - **The skill's and the case's particles are not built.** A hit's particles are not a kit step's yet, as the Traveler's and Zhongli's are not.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                                   |

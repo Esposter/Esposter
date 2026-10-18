@@ -34,6 +34,8 @@ flowchart LR
   R -->|"buildKit: the record resolved and the behaviour joined"| T["the character's kit, built once: the Traveler's for a character with no module"]
 ```
 
+Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../changes/genshin-talents/design.md) and [constellations](../../../changes/genshin-constellations/design.md) pages'.
+
 ## Targeting
 
 An action turns the body to the enemy it targets as it starts. That is the living enemy inside the action's targeting area scoring highest, where an enemy's score is 0.7 times its nearness to the body within the area's radius, plus 0.3 times its nearness to straight ahead, the angle from the body's facing over a half-turn. An enemy more than 2 metres above or below the body scores a fifth of that. Enemies outside the area, and the dead, are not targeted. The view, current-target and priority coefficients are not built.

@@ -14,8 +14,6 @@ Lan Yan's kit is its record and one behaviour module, `createLanYanKitBehaviour`
 - **The Swallow-Wisp Pinion Dance press deals nothing.** It plays its 49-frame animation and spends its 16-second cooldown, but its detect hit, its Feathermoon Rings and its shield are not built. The rings are a stance, which replaces her normal attacks and skill for 66 frames from the detect, and are not built yet. The shield is cast with the element the detected enemy carries, which the framework cannot read yet, and that wait is the shield's element hook.
 - **Ascension 1 (the shield absorbs the element) and Ascension 4 (the rings' flat damage) wait on the press.** Constellation 1 (the rings' extra hits) and Constellation 6 (the skill's second charge) wait on it too, and Constellation 2 (the shield restored by a normal attack) waits on the shield hook, since it restores a shield the press casts.
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                              |
