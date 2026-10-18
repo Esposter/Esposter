@@ -7,8 +7,13 @@ export const GCG_STANDARD_RULE_ID = 2;
 // The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
 // Published beside the standard rule
 // The normal challengers' duels whose enemy decks are built: games 1011 and 1012 play deck 11105, and game 1083 plays deck
-// 12005. A challenger's other games wait for their decks, since a game whose enemy deck has no slice is refused
-export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083];
+// 12005. Games 1104 and 1105 (Kimiya) and game 13105 (Furuya Noboru) play deck 13105, with their regions from the wiki.
+// NPC pages: https://genshin-impact.fandom.com/wiki/Kimiya (Sumeru) and
+// Furuya Noboru: https://genshin-impact.fandom.com/wiki/Furuya_Noboru (Inazuma).
+// Stage list: https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Stage, whose Adventure Challenges in Sumeru and
+// Duels in Inazuma sections name them.
+// The other challengers' games wait for their decks, since a game whose enemy deck has no slice is refused
+export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
 export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS];
 // The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
