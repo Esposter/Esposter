@@ -18,7 +18,10 @@ export const createMagicAffinityPassiveModule = (params: number[]): WeaponPassiv
       addPassiveStack(kitEffectState, combatant.characterId, {
         id: "magicAffinity",
         maximumStacks: MAGIC_AFFINITY_MAXIMUM_STACKS,
-        perStackBonuses: [{ amount: damageBonus, attribute: Attribute.NormalAndChargedAttackDamageBonus }],
+        perStackBonuses: [
+          { amount: damageBonus, attribute: Attribute.NormalAttackDamageBonus },
+          { amount: damageBonus, attribute: Attribute.ChargedAttackDamageBonus },
+        ],
         seconds: MAGIC_AFFINITY_SECONDS,
       });
     },
