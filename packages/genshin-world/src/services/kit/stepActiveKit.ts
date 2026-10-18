@@ -139,6 +139,12 @@ export const stepActiveKit = (
   if (isBurst) emitKitEvent({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed }, context);
   const isSkill = action !== undefined && getKitSkillActions(kit).includes(action);
   if (isSkill) emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
+  // A normal attack is sent to the team's kits as it starts, with whether it is the first strike of its string
+  if (action && kit.normalAttacks.includes(action))
+    emitKitEvent(
+      { action, isFirstStrike: action === takeOne(kit.normalAttacks), kind: KitEventKind.NormalAttackStarted },
+      context,
+    );
   if (isBurst || isSkill) lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body
   // Has moved
@@ -187,6 +193,9 @@ export const stepActiveKit = (
     const healthChange = takeOne(healthChanges, index);
     triggerHealthChange(healthChange);
     emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
+    // A fall a kit refused is heard just after the change that left its member standing
+    if (healthChange.isFallRefused)
+      emitKitEvent({ characterId: healthChange.characterId, kind: KitEventKind.FallRefused }, context);
   }
   healthChanges.copyWithin(0, sentCount);
   healthChanges.length -= sentCount;

@@ -4,6 +4,8 @@
 export interface PartyHealthChange {
   characterId: number;
   healthShare: number;
+  // Whether a kit refused the fall the change would have brought, leaving the member standing at the share it keeps
+  isFallRefused?: boolean;
   overflowHealthShare: number;
   sourceCharacterId?: number;
 }
