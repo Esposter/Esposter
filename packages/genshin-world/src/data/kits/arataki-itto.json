@@ -333,6 +333,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
   "plunges.low.hits.0.convertedPoiseDamage": { "file": "plunge.go", "line": 104, "source": "Gcsim", "value": 150 },
-  "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 14 },
+  "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 116, "source": "Gcsim", "value": 18 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5732 } }
 }
