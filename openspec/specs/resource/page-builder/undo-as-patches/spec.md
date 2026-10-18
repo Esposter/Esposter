@@ -72,12 +72,12 @@ Edits SHALL NOT be saved one at a time, and a save SHALL store the whole documen
 - **WHEN** the document is saved
 - **THEN** reopening the resource shows the document as it was on screen
 
-### Requirement: Reloading a document clears its undo history
+### Requirement: Clearing a document's undo history empties it
 
-Reloading an open resource's document SHALL clear that resource's undo history.
+Clearing an open resource's undo history SHALL leave nothing to undo or redo.
 
-#### Scenario: Reloading a document leaves nothing to undo
+#### Scenario: Clearing leaves nothing to undo
 
 - **GIVEN** an open resource with edits in its undo history
-- **WHEN** its document is reloaded and the owner presses Undo
+- **WHEN** its history is cleared and the owner presses Undo
 - **THEN** nothing is undone

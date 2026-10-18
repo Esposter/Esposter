@@ -6,13 +6,13 @@ The page builder's undo and redo: each open resource's document is held in the p
 
 An edit is a list of operations in JSON Patch's add, remove and replace, each addressed by a JSON Pointer from the document root. `applyPatches`, the one JSON Patch applier, which the [agent content tools](../../../architecture/agent-content-tools/design.md) also apply on the server, lives in `@esposter/shared` and copies the path to each changed node, so the new document shares every untouched subtree with the old one. As it applies each operation it records the inverse, and the inverses come back in the order that undoes the whole patch: undo applies them as returned, and redo applies the forward list again. A move is a remove and an add.
 
-`applyBlockEdit` applies an edit whole, so an edit whose operations cannot all apply changes nothing. The bounded history in `@esposter/shared` clears the future on a new entry and drops the oldest entry past its limit. The page builder's store owns the rest: one history per open resource, the labels the command bar shows, the rule for what one interaction is, and the merge within one interaction.
+`applyBlockEdit` applies an edit whole, so an edit whose operations cannot all apply changes nothing. The bounded history in `@esposter/shared` moves its entries as [its own design](../../../shared/bounded-history/design.md) states. The page builder's store owns the rest: one history per open resource, the labels the command bar shows, the rule for what one interaction is, and the merge within one interaction.
 
 ```mermaid
 flowchart TD
   CMD["a command's operations"] --> STORE["the page builder history store: applyBlockEdit on the resource's document"]
   STORE -->|"refused"| ERR["nothing changes, the error is returned"]
-  STORE --> OPEN{"same interaction as the newest entry, setting the same paths?"}
+  STORE --> OPEN{"same interaction as the newest entry, overwriting the same paths?"}
   OPEN -->|yes| MERGE["the newest entry takes the new operations, keeps its label and first inverses"]
   OPEN -->|no| PUSH["pushHistory: a new entry with its label, inverses and operations"]
   MERGE --> BAR
@@ -25,10 +25,10 @@ flowchart TD
 ```
 
 - **One history per open resource**, in the page builder's store `usePageBuilderHistoryStore`, keyed by the resource's id. Each resource holds its past and its future, bounded by `MAX_PAGE_BUILDER_HISTORY_SIZE`, and the labels the command bar reads. The sheet's history is one unkeyed store, so the keying is this store's own rule.
-- **An interaction** is the edits that share one interaction id, which the surface that opens the interaction passes: a slider, a held key or a text session. An edit joins the newest entry instead of starting one only when the entry and the edit share the id, both only add or replace values, and both set the same set of paths. A prop update is an add in the core, so a value changed in ten steps during one drag is one entry: the merged entry keeps its label and the inverses of its first edit, and takes the newest operations. An edit that sets another path, or that removes or moves a node, starts a new entry even inside the same interaction. An empty operation list records nothing.
+- **An interaction** is the edits that share one interaction id, which the surface that opens the interaction passes: a slider, a held key or a text session. An edit joins the newest entry instead of starting one only when the entry and the edit share the id, both only add or replace values, both set the same set of paths, and the edit overwrites values the document already held, which its inverses being replacements shows. A prop update is an add in the core, so a value changed in ten steps during one drag is one entry: the merged entry keeps its label and the inverses of its first edit, and takes the newest operations. An edit that sets another path, that inserts a node into an array (an add whose inverse removes it, since the nodes after it shift), or that removes or moves a node, starts a new entry even inside the same interaction. An empty operation list records nothing.
 - **Undo and redo move the history with the document.** Each applies its entry's inverses or operations to the document held, and the new document and the moved history are set together. When those operations cannot apply, neither moves and the error is logged.
 - **The command bar** offers Undo and Redo through `usePageBuilderHistoryCommands`, in the page builder's palette group, with the sheet's shortcuts (`cmd+z`, `cmd+shift+z` and `cmd+y` for redo) so the two editors read the same. Each title names the edit it would act on, such as `Undo Move block`, and falls back to the bare verb when there is nothing to act on.
-- **A reload clears the history.** The store's `clearHistory` empties one resource's history. Its entries describe a document the reload replaced, so nothing in it is undoable. The [cutover](../../../../changes/resource-page-builder-cutover/design.md) registers it on the content store's reload hook, and nothing else calls it.
+- **Clearing empties the history.** The store's `clearHistory` empties one resource's history. A reload is what should call it, since its entries describe the document the reload replaces; nothing calls it yet. The [cutover](../../../../changes/resource-page-builder-cutover/design.md) registers it on the content store's reload hook when it ships.
 - **The editor's patches never leave the browser.** A save stores the whole document held by the document store, through the one door that [delta content saves](../../delta-content-saves/design.md) make cheap. [JSON Patch content saves](../../../../rejected/resource/json-patch-content-saves/design.md) stay rejected.
 
 ## Decisions
