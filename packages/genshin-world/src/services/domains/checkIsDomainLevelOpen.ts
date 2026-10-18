@@ -4,14 +4,14 @@ import type { DomainLevel } from "#src/models/domains/DomainSchedule";
 import { checkIsDomainKindOpenAtRank } from "#src/services/domains/checkIsDomainKindOpenAtRank";
 import { checkIsDomainKindOpenOnDay } from "#src/services/domains/checkIsDomainKindOpenOnDay";
 
-// Whether a level of a challenge domain is open to the player: its kind is open at the player's Adventure Rank, the level
-// Is at or below that rank, and the domain is open on the day
+// Whether a level of a challenge domain is open to the player at a moment: its kind is open at the player's Adventure
+// Rank, the level is at or below that rank, and the domain is open on the game day the moment falls in
 export const checkIsDomainLevelOpen = (
   kind: DomainKind,
   level: DomainLevel,
   adventureRank: number,
-  day: Temporal.PlainDate,
+  now: Temporal.Instant,
 ): boolean =>
   checkIsDomainKindOpenAtRank(kind, adventureRank) &&
   level.recommendedRank <= adventureRank &&
-  checkIsDomainKindOpenOnDay(kind, day, level.scheduledDaysOfWeek);
+  checkIsDomainKindOpenOnDay(kind, now, level.scheduledDaysOfWeek);
