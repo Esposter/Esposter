@@ -10,6 +10,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -384,7 +385,7 @@ describe(strikeEnemy, () => {
     });
     const shatterDamage = getTransformativeDamage(ReactionType.Shattered, LEVEL, 0, kind.physicalResistance);
 
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, kitHit, { ...createCombatant(), weaponType: WeaponType.Sword }, NEVER_CRITICAL);
 
     expect(enemy.elementalState.auras.has(AuraType.Freeze)).toBe(false);
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage - shatterDamage);

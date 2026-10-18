@@ -100,6 +100,12 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 - **WHEN** the hit is dealt
 - **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it
 
+#### Scenario: A Geo Traveler's skill strikes blunt, as the element it deals is Geo
+
+- **GIVEN** a Geo Traveler's skill, which takes her wielder's element, lands on an ore
+- **WHEN** the hit is dealt
+- **THEN** the ore takes its poise as a blunt hit
+
 #### Scenario: Converted poise from an infusion does not reach an ore
 
 - **GIVEN** a hit's damage has been converted by an infusion
