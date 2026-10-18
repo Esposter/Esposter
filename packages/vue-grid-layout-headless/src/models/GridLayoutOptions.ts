@@ -1,3 +1,4 @@
+import type { CompactType } from "#src/models/CompactType";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridSpacing } from "#src/models/GridSpacing";
 
@@ -5,6 +6,8 @@ import type { GridSpacing } from "#src/models/GridSpacing";
 // Read the next time the grid lays out
 export interface GridLayoutOptions<T extends GridItem = GridItem> {
   columnNumber: number;
+  // The direction items compact in once placed, and where a dropped item stays
+  compactType: CompactType;
   // How far a press's pointer travels before the press is a drag, so a press that barely moves stays a click
   dragStartDistance: number;
   isEditable: boolean;

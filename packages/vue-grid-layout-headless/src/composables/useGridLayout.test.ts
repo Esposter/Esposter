@@ -2,6 +2,7 @@
 import type { GridItem } from "#src/models/GridItem";
 
 import { useGridLayout } from "#src/composables/useGridLayout";
+import { CompactType } from "#src/models/CompactType";
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -16,10 +17,16 @@ describe(useGridLayout, () => {
   const rowHeight = 40;
   const spacing = { gap: 10, padding: 10 };
   const cellPitch = getColumnPitch(gridWidth, columnNumber, spacing);
+  const rowPitch = rowHeight + spacing.gap;
 
   // Mounts a grid whose tiles carry their geometry as inline styles, and whose handle resizes from the given edge, so a
   // Test reads where each one is drawn
-  const mountGrid = (items: GridItem[], edge = ResizeEdge.SouthEast, gridSpacing = spacing) => {
+  const mountGrid = (
+    items: GridItem[],
+    edge = ResizeEdge.SouthEast,
+    gridSpacing = spacing,
+    compactType = CompactType.Vertical,
+  ) => {
     const onCommit = vi.fn<(changes: GridItem[]) => void>();
     const wrapper = mount(
       defineComponent({
@@ -27,6 +34,7 @@ describe(useGridLayout, () => {
           const root = useTemplateRef<HTMLElement>("root");
           const { placeholder, startGesture, tiles } = useGridLayout(root, () => ({
             columnNumber,
+            compactType,
             dragStartDistance,
             isEditable: true,
             items,
@@ -231,6 +239,40 @@ describe(useGridLayout, () => {
     expect(first?.attributes("style")).toContain(`left: ${gridSpacing.padding}px`);
     expect(first?.attributes("style")).toContain(`top: ${gridSpacing.padding}px`);
     expect(second?.attributes("style")).toContain(`left: ${getCellPosition(1, pitch, gridSpacing.padding)}px`);
+  });
+
+  test("#36 Compacting sideways", async () => {
+    expect.hasAssertions();
+
+    const { wrapper } = mountGrid(
+      [{ h: 1, id: "a", w: 2, x: 3, y: 0 }],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Horizontal,
+    );
+    await flushPromises();
+
+    expect(wrapper.get(".tile").attributes("style")).toContain(
+      `left: ${getCellPosition(0, cellPitch, spacing.padding)}px`,
+    );
+  });
+
+  test("#36 Leaving a dropped item where it lands", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid(
+      [{ h: 1, id: "a", w: 2, x: 0, y: 0 }],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.None,
+    );
+    await flushPromises();
+    const tile = wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { clientX: 0, clientY: rowPitch * 2, pointerId });
+    await tile.trigger("pointerup", { clientX: 0, clientY: rowPitch * 2, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([[[{ h: 1, id: "a", w: 2, x: 0, y: 2 }]]]);
   });
 
   test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {

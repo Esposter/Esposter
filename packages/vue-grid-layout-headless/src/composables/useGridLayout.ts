@@ -35,7 +35,7 @@ export const useGridLayout = <T extends GridItem>(
   const columnPitch = computed(() => getColumnPitch(width.value, getOptions().columnNumber, getOptions().spacing));
   const rowPitch = computed(() => getOptions().rowHeight + getOptions().spacing.gap);
   // Each item at its saved cell, kept within the columns and compacted, so a narrower screen never overlaps
-  const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber));
+  const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber, getOptions().compactType));
   const savedItemMap = computed(() => new Map(getOptions().items.map((item): [string, T] => [item.id, item])));
   const previewItemMap = computed(() => new Map((preview.value ?? []).map((item): [string, T] => [item.id, item])));
   const draggedGesture = computed(() => (gesture.value?.isStarted && !gesture.value.edge ? gesture.value : undefined));
@@ -111,7 +111,7 @@ export const useGridLayout = <T extends GridItem>(
     });
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
     gesture.value = { ...activeGesture, cell, isStarted: true, offset };
-    if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell));
+    if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell), getOptions().compactType);
   };
   // A pointer released after a drag writes every cell the drag changed, once, and a press that never started writes nothing
   const handlePointerUp = (event: PointerEvent) => {
