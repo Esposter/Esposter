@@ -4,7 +4,7 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import { oceanicMimicFrog } from "#src/services/gcg/cards/oceanicMimicFrog";
 import { oceanicMimicRaptor } from "#src/services/gcg/cards/oceanicMimicRaptor";
 import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirrel";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 
 // The three kinds of Oceanic Mimic by the card each is in the game's table, in the order a tie between them is broken
 const OCEANIC_MIMIC_KINDS: [number, GcgCardModule][] = [
@@ -21,6 +21,6 @@ export const summonGcgOceanicMimics = (side: GcgSideState, count: number): void 
     const [cardId, module] = OCEANIC_MIMIC_KINDS.reduce((fewest, kind) =>
       countKind(kind[0]) < countKind(fewest[0]) ? kind : fewest,
     );
-    side.summons.push(createGcgZoneCard(cardId, module));
+    placeGcgZoneCard(side.summons, cardId, module);
   }
 };

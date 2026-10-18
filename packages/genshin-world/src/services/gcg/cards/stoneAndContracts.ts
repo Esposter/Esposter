@@ -3,6 +3,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
@@ -20,6 +21,6 @@ export const stoneAndContracts: GcgCardModule = {
     zoneCard.usages -= 1;
   },
   play: ({ duel, sideIndex }) => {
-    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, STONE_AND_CONTRACTS_ID, stoneAndContracts);
+    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(STONE_AND_CONTRACTS_ID, stoneAndContracts));
   },
 };

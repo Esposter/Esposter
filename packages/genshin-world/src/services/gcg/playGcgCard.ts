@@ -12,6 +12,7 @@ import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";

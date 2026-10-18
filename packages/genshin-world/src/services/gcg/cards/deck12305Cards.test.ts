@@ -184,7 +184,7 @@ describe("spring Spirit Summoning", () => {
     expect(takeOne(duel.sides, 0).onstages).toStrictEqual([createGcgZoneCard(ICY_QUILL_ID, icyQuill)]);
   });
 
-  test("an Icy Quill already on its side is refreshed rather than doubled", () => {
+  test("a second Icy Quill on its side adds its own, and the one already there keeps its usages", () => {
     expect.hasAssertions();
 
     const side = createSideState([createCharacterState(SHENHE_ID)]);
@@ -192,7 +192,10 @@ describe("spring Spirit Summoning", () => {
     const duel = createDuel([side, createSideState([])]);
 
     springSpiritSummoning.afterDamage?.({ duel, sideIndex: 0 });
-    expect(side.onstages).toStrictEqual([createGcgZoneCard(ICY_QUILL_ID, icyQuill)]);
+    expect(side.onstages).toStrictEqual([
+      { ...createGcgZoneCard(ICY_QUILL_ID, icyQuill), usages: 1 },
+      createGcgZoneCard(ICY_QUILL_ID, icyQuill),
+    ]);
   });
 });
 
