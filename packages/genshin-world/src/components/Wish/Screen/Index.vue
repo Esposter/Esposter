@@ -69,18 +69,25 @@ const banners = computed(() =>
     ),
   ),
 );
-// The banners on offer in the game's order, the beginners' wish gone once its wishes are made
-const bannerKinds = computed(() =>
-  BannerKinds.filter(
-    (bannerKind) =>
-      banners.value.some(({ kind }) => kind === bannerKind) &&
-      (bannerKind !== BannerKind.Beginners || pityMap.value[bannerKind].wishCount < BEGINNERS_WISH_LIMIT),
-  ),
+// The banners on offer in the game's order, each kind's in the order the schedule gives them, the beginners' wish gone
+// Once its wishes are made. Each is named in the runs of colour the game words its kind in, and a second banner of a kind
+// Carries its number after the name
+const bannerOffers = computed(() =>
+  BannerKinds.flatMap((kind) =>
+    kind === BannerKind.Beginners && pityMap.value[kind].wishCount >= BEGINNERS_WISH_LIMIT
+      ? []
+      : banners.value.filter((banner) => banner.kind === kind),
+  ).map((banner) => ({
+    id: banner.id,
+    kind: banner.kind,
+    label: [
+      ...splitGameTextColors(gameText[BannerKindGameTextKeyMap[banner.kind]]),
+      ...(banner.kindNumber > 1 ? [{ text: `-${banner.kindNumber}` }] : []),
+    ],
+  })),
 );
-const bannerKind = ref(bannerKinds.value[0]);
-const bannerLabels = computed(() =>
-  Object.fromEntries(BannerKinds.map((kind) => [kind, splitGameTextColors(gameText[BannerKindGameTextKeyMap[kind]])])),
-);
+const bannerId = ref(bannerOffers.value[0]?.id);
+const bannerKind = computed(() => banners.value.find(({ id }) => id === bannerId.value)?.kind);
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
 // The open banner's ×1 and ×10, each offered while the wallet holds its Fates and the beginners' wish has room for it
@@ -137,7 +144,7 @@ const fatePoints = computed(() =>
       )
     : [],
 );
-const banner = computed(() => banners.value.find(({ kind }) => kind === bannerKind.value));
+const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
 // The Character Event banner's card, the banner the world builds its card for
 const bannerCard = computed(() =>
   bannerKind.value === BannerKind.CharacterEvent
@@ -206,11 +213,10 @@ const wish = (count: number) => {
   <!-- The wish, opened by F3 or the Paimon menu, on the first banner on offer -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Wish]">
     <WishScreen
-      v-model:banner-kind="bannerKind"
+      v-model:banner-id="bannerId"
       :back-label="gameText[GameTextKey.Back]"
       :banner-card
-      :banner-kinds
-      :banner-labels
+      :banners="bannerOffers"
       :currencies
       :details-label="gameText[GameTextKey.WishDetails]"
       :fate-points

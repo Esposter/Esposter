@@ -32,6 +32,7 @@ const toBanner = (
   fourStars: items.filter(({ rarity }) => rarity === 4),
   id,
   kind,
+  kindNumber: 1,
   threeStars: items.filter(({ rarity }) => rarity === 3),
 });
 // The banners the world offers, each item's rarity read from the stat tables and its name from the names they cite in
@@ -46,12 +47,15 @@ export const createBanners = (
   nameText: Readonly<Record<string, string>>,
   openEvents: readonly WishScheduleEvent[],
 ): Banner[] => {
-  const toWishItems = (ids: readonly number[], kind: WishItemKind): WishItem[] =>
-    ids.map((id) => {
-      const itemData = kind === WishItemKind.Character ? characterDataMap.get(id) : weaponDataMap.get(id);
-      if (!itemData) throw new InvalidOperationError(Operation.Read, createBanners.name, `${kind} ${id}`);
-      return { id, kind, name: nameText[itemData.nameTextId] ?? "", rarity: itemData.rarity };
-    });
+  const toWishItem = (id: number, kind: WishItemKind): WishItem => {
+    const itemData = kind === WishItemKind.Character ? characterDataMap.get(id) : weaponDataMap.get(id);
+    if (!itemData) throw new InvalidOperationError(Operation.Read, createBanners.name, `${kind} ${id}`);
+    return { id, kind, name: nameText[itemData.nameTextId] ?? "", rarity: itemData.rarity };
+  };
+  const toWishItems = (ids: readonly number[], kind: WishItemKind): WishItem[] => ids.map((id) => toWishItem(id, kind));
+  // A schedule names its featured items by id alone, so each is read from the table that holds it
+  const toFeaturedItems = (ids: readonly number[]): WishItem[] =>
+    ids.map((id) => toWishItem(id, characterDataMap.has(id) ? WishItemKind.Character : WishItemKind.Weapon));
   const standardItems = [
     ...toWishItems(STANDARD_WISH_CHARACTER_IDS, WishItemKind.Character),
     ...toWishItems(STANDARD_WISH_WEAPON_IDS, WishItemKind.Weapon),
@@ -69,16 +73,14 @@ export const createBanners = (
       [],
       toWishItems([BEGINNERS_WISH_FEATURED_CHARACTER_ID], WishItemKind.Character),
     ),
-    ...openEvents.map((event) => {
-      const featuredKind = event.kind === BannerKind.WeaponEvent ? WishItemKind.Weapon : WishItemKind.Character;
-      return {
-        ...standardBanner,
-        featuredFiveStars: toWishItems(event.fiveStarIds, featuredKind),
-        featuredFourStars: toWishItems(event.fourStarIds, featuredKind),
-        id: event.id,
-        kind: event.kind,
-      };
-    }),
+    ...openEvents.map((event) => ({
+      ...standardBanner,
+      featuredFiveStars: toFeaturedItems(event.fiveStarIds),
+      featuredFourStars: toFeaturedItems(event.fourStarIds),
+      id: event.id,
+      kind: event.kind,
+      kindNumber: event.kindNumber,
+    })),
     standardBanner,
   ];
 };
