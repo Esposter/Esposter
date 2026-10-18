@@ -19,7 +19,9 @@ committed.
 | `character-talents-tabs` | `CharacterScreen` | 0.89% | 0.978 | 0.28% | 0.0466 |
 | `character-weapons` | `CharacterScreen` | 2.72% | 0.856 | 1.57% | 0.1118 |
 | `character-weapons-tabs` | `CharacterScreen` | 0.89% | 0.976 | 0.30% | 0.0453 |
+| `cooking-screen` | `CookingScreen` | pending: no recording of the screen yet | | | |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
+| `crafting-strongbox` | `CraftingStrongbox` | pending: no recording of the screen yet | | | |
 | `crafting-table` | `CraftingScreen` | 39.00% | 0.243 | 44.59% | 0.7678 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.36% | 0.766 | 8.59% | 0.4588 |
@@ -33,9 +35,9 @@ committed.
 | `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
+| `hud-paimon-button` | `HudScreen` | 3.41% | 0.938 | 5.95% | 0.1958 |
 | `hud-stamina-climb` | `HudScreen` | 1.94% | 0.728 | 2.15% | 0.1405 |
 | `hud-world-keys` | `HudScreen` | 4.22% | 0.928 | 3.30% | 0.2454 |
-| `hud-paimon-button` | `HudScreen` | 3.41% | 0.938 | 5.95% | 0.1958 |
 | `hud-world-pickup` | `HudScreen` | 9.96% | 0.385 | 9.09% | 0.4268 |
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 7.98% | 0.895 | 3.36% | 0.3158 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 8.93% | 0.848 | 5.11% | 0.3793 |
@@ -56,6 +58,7 @@ committed.
 | `login-night-title` | `LoginScreen` | 9.41% | 0.371 | 7.01% | 0.3913 |
 | `map-overlay-galesong` | `MapOverlay` | 7.76% | 0.778 | 17.30% | 0.4829 |
 | `map-overlay-jueyun` | `MapOverlay` | 56.51% | 0.123 | 38.80% | 0.7746 |
+| `menu-world-level-prompt` | `MenuWorldLevelPrompt` | pending: no recording of the screen yet | | | |
 | `mondstadt-city-location` | `WorldScreen` | 26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location` | `WorldScreen` | 29.69% | 0.238 | 24.60% | 0.7627 |
 | `paimon-menu` | `MenuPaimon` | 5.16% | 0.904 | 3.48% | 0.2170 |
@@ -68,12 +71,16 @@ committed.
 | `settings-audio-rows` | `MenuSettings` | 1.15% | 0.992 | 0.49% | 0.0786 |
 | `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
 | `settings-graphics-rows` | `MenuSettings` | 1.18% | 0.997 | 0.58% | 0.0983 |
+| `spiral-abyss-benediction` | `SpiralAbyssBenediction` | pending: no recording of the screen yet | | | |
+| `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no recording of the screen yet | | | |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
+| `weapon-screen` | `WeaponScreen` | pending: no recording of the screen yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 50.96% | 0.425 | 49.28% | 0.8743 |
 | `world-level-dialog` | `MenuWorldLevelDialog` | 5.86% | 0.862 | 1.99% | 0.1965 |
+| `world-realm-placement-editor` | `WorldRealmPlacementEditor` | pending: no recording of the screen yet | | | |
 
 ## Layers
 

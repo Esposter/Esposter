@@ -158,11 +158,11 @@ export const deriveCapitalWorld = async (
   }));
   // The terrain tiles the capital's 2x2 and every area outline reach, each TerrainData found in the blocks naming a tile
   const capitalTile = { column: Math.floor(place.x / TERRAIN_TILE_SIZE), row: Math.floor(place.z / TERRAIN_TILE_SIZE) };
-  const terrainNames = getTerrainTileNames(
-    capitalTile,
-    await readGroundPieceAreas(component),
-    await readWorldOrigin(component),
-  );
+  const [groundPieceAreas, worldOrigin] = await Promise.all([
+    readGroundPieceAreas(component),
+    readWorldOrigin(component),
+  ]);
+  const terrainNames = getTerrainTileNames(capitalTile, groundPieceAreas, worldOrigin);
   const terrainAssets = await readIndexedAssets(
     ({ name }) => name.startsWith(TERRAIN_NAME_PREFIX),
     GENSHIN_ANIMESTUDIO_OPTIONS,

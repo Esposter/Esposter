@@ -1,5 +1,6 @@
 import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
+import type { AdventureRankLevel } from "genshin-world";
 
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 
@@ -7,8 +8,4 @@ import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems
 export const toAdventureRankLevel = (
   { exp, level, rewardId }: ExcelPlayerLevelRow,
   rewardMap: ReadonlyMap<number, ExcelRewardRow>,
-): { exp: number; level: number; rewardItems: { count: number; itemId: number }[] } => ({
-  exp,
-  level,
-  rewardItems: rewardId ? toQuestRewardItems([rewardId], rewardMap) : [],
-});
+): AdventureRankLevel => ({ exp, level, rewardItems: rewardId ? toQuestRewardItems([rewardId], rewardMap) : [] });

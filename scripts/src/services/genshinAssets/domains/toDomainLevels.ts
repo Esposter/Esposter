@@ -4,111 +4,24 @@ import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDun
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
-import type { DomainLevel, DomainSchedule, RewardItem, TreeArtifact } from "genshin-world";
+import type { DomainLevel, DomainSchedule } from "genshin-world";
 
 import {
   ALL_DAYS_OF_WEEK,
+  BLESSING_TREE_ARTIFACT_ROWS,
   DOMAIN_DAY_PAIRS,
   DOMAIN_LEVEL_TYPE,
-  DUNGEON_LEVEL_ENTITY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
   DungeonEntryTypeDomainKindMap,
-  REWARD_PREVIEW_TABLE_NAME,
   SUNDAY_DAYS_OF_WEEK,
 } from "#src/services/genshinAssets/domains/constants";
-import {
-  BLESSING_TREE_ARTIFACT_ROWS,
-  DOMAIN_TREE_COUNT_ROWS,
-  findTreeRow,
-} from "#src/services/genshinAssets/domains/treeRewardCounts";
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
-import { REWARD_COUNT_DEFAULT } from "#src/services/genshinAssets/rewards/constants";
+import { findTreeRow } from "#src/services/genshinAssets/domains/findTreeRow";
+import { getDisorder } from "#src/services/genshinAssets/domains/getDisorder";
+import { getDungeon } from "#src/services/genshinAssets/domains/getDungeon";
+import { toBookRewards } from "#src/services/genshinAssets/domains/toBookRewards";
+import { toDomainLevel } from "#src/services/genshinAssets/domains/toDomainLevel";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { DomainKind } from "genshin-world";
-
-const getDungeon = (dungeonMap: ReadonlyMap<number, ExcelDungeonRow>, dungeonId: number): ExcelDungeonRow => {
-  const dungeon = dungeonMap.get(dungeonId);
-  if (dungeon === undefined || dungeon.type !== DOMAIN_LEVEL_TYPE)
-    throw new InvalidOperationError(Operation.Read, DUNGEON_TABLE_NAME, `has no domain level ${dungeonId}`);
-  return dungeon;
-};
-
-const getPreview = (
-  previewMap: ReadonlyMap<number, ExcelRewardPreviewRow>,
-  { passRewardPreviewID }: ExcelDungeonRow,
-): ExcelRewardPreviewRow => {
-  const preview = previewMap.get(passRewardPreviewID);
-  if (preview === undefined)
-    throw new InvalidOperationError(
-      Operation.Read,
-      REWARD_PREVIEW_TABLE_NAME,
-      `has no reward preview ${passRewardPreviewID}`,
-    );
-  return preview;
-};
-
-// A level's whole rewards are the items its reward preview gives a whole number of, as Mora, Adventure EXP and Companionship
-// EXP are. An item with no count, or with a count that is fractional or a range, is a drawn item, which its books, weapon
-// Materials or artifacts give instead, so it is left out here. An empty slot has no count
-const toWholeRewards = (preview: ExcelRewardPreviewRow): RewardItem[] =>
-  preview.previewItems.flatMap(({ count = REWARD_COUNT_DEFAULT, id }) => {
-    const itemCount = Number(count);
-    return Number.isInteger(itemCount) && itemCount > 0
-      ? [{ itemId: id, maxCount: itemCount, minCount: itemCount }]
-      : [];
-  });
-
-// A Domain of Forgery's or Mastery's level pays its pair's books, each drawn between the least and most its rarity has in
-// The Adventure Rank's row and to that row's average. A rarity the row has no count for is not paid, and a book whose rarity
-// The materials do not name is refused rather than paid at no rarity
-const toBookRewards = (
-  kind: DomainKind.Forgery | DomainKind.Mastery,
-  books: number[],
-  rarities: ReadonlyMap<number, number>,
-  rank: number,
-): RewardItem[] => {
-  const { counts } = findTreeRow(DOMAIN_TREE_COUNT_ROWS[kind], rank);
-  return books.flatMap((itemId) => {
-    const rarity = rarities.get(itemId);
-    if (rarity === undefined)
-      throw new InvalidOperationError(Operation.Read, MATERIAL_TABLE_NAME, `has no material ${itemId}`);
-    const range = counts[rarity];
-    return range === undefined
-      ? []
-      : [{ averageCount: range.avg, itemId, maxCount: range.maxCount, minCount: range.minCount }];
-  });
-};
-
-// A daily fight's ley line disorder is the one level config its dungeon row names, read through the entity table's config name
-const getDisorder = (dungeon: ExcelDungeonRow, entityNames: ReadonlyMap<number, string>): string => {
-  const entityIds = Object.keys(dungeon.levelConfigMap ?? {});
-  const disorder = entityIds.length === 1 ? entityNames.get(Number(entityIds[0])) : undefined;
-  if (!disorder)
-    throw new InvalidOperationError(
-      Operation.Read,
-      DUNGEON_LEVEL_ENTITY_TABLE_NAME,
-      `names no single ley line disorder for level ${dungeon.id}`,
-    );
-  return disorder;
-};
-
-const toDomainLevel = (
-  dungeon: ExcelDungeonRow,
-  scheduledDaysOfWeek: readonly number[],
-  previewMap: ReadonlyMap<number, ExcelRewardPreviewRow>,
-  bookRewards: RewardItem[],
-  treeArtifacts: TreeArtifact[],
-  disorder: string,
-): DomainLevel => ({
-  dungeonId: dungeon.id,
-  disorder,
-  enemyLevel: dungeon.levelRevise,
-  recommendedRank: dungeon.limitLevel,
-  resinCost: dungeon.statueCostCount,
-  scheduledDaysOfWeek: [...scheduledDaysOfWeek],
-  treeArtifacts,
-  treeRewards: [...toWholeRewards(getPreview(previewMap, dungeon)), ...bookRewards],
-});
 
 // A Domain of Blessing's levels are its entrance point's dungeons, which are open every day. A Domain of Forgery's or
 // Mastery's level is a daily fight whose reward preview names its entry's materials: the day list holding one names the
@@ -163,7 +76,7 @@ export const toDomainLevels = (
 
   const familyEntries = entries.flatMap((entry) => {
     const kind = DungeonEntryTypeDomainKindMap[entry.type];
-    return kind === undefined || kind === DomainKind.Blessing ? [] : [{ entry, kind }];
+    return kind === DomainKind.Forgery || kind === DomainKind.Mastery ? [{ entry, kind }] : [];
   });
   for (const dungeon of dungeons) {
     if (dungeon.type !== DOMAIN_LEVEL_TYPE) continue;
@@ -186,16 +99,12 @@ export const toDomainLevels = (
     const isOnePair = matches.every((other) => other.pair === match.pair);
     const counterpartPair = Math.min(...matches.map(({ pair }) => pair));
     const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : SUNDAY_DAYS_OF_WEEK;
-    // A Trounce level pays no books: the books belong to the Forgery and Mastery domains alone
-    const bookRewards =
-      match.kind === DomainKind.Trounce
-        ? []
-        : toBookRewards(
-            match.kind,
-            takeOne(match.entry.descriptionCycleRewardList, counterpartPair),
-            rarities,
-            dungeon.limitLevel,
-          );
+    const bookRewards = toBookRewards(
+      match.kind,
+      takeOne(match.entry.descriptionCycleRewardList, counterpartPair),
+      rarities,
+      dungeon.limitLevel,
+    );
     addLevel(
       match.entry.id,
       match.kind,

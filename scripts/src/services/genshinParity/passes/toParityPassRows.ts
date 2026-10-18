@@ -1,10 +1,10 @@
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
+import { ROW_PREFIX } from "#src/services/genshinParity/passes/constants";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 
-export const ROW_PREFIX = "| ";
 // One pass's rows in the report: a row for each reading, or one row with its notes where nothing was read
 export const toParityPassRows = ({ measure: { notes, readings }, pass }: ParityPassResult): string[] =>
   readings.length === 0

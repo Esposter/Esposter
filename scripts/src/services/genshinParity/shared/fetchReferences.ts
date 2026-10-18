@@ -13,8 +13,9 @@ import sharp from "sharp";
 // It is missing
 export const fetchReferences = async (): Promise<void> => {
   await mkdir(REFERENCES_DIRECTORY, { recursive: true });
+  // A pending screen names no reference to fetch, so it is never asked of the wiki or the recordings
   const missing = Object.entries(ParityReferenceMap).filter(
-    ([id]) => !existsSync(join(REFERENCES_DIRECTORY, `${id}.png`)),
+    ([id, { pending }]) => pending === undefined && !existsSync(join(REFERENCES_DIRECTORY, `${id}.png`)),
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();

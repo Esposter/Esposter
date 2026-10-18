@@ -74,13 +74,21 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 
 ### Requirement: A screen is never approved without a comparison to its reference
 
-A screen SHALL NOT be approved unless it has been compared against a reference, and a test SHALL fail for any screen with a fixture that no reference names.
+A screen SHALL NOT be approved unless it has been compared against a reference, and a test SHALL fail for any screen with a fixture that no entry of the reference map names. A screen with no reference yet MAY be named as pending, with the reason it has none, and a pending screen is unscored: `compare` scores none of it, and the committed report lists it as pending with that reason.
 
-#### Scenario: Screen with no reference
+#### Scenario: Screen with no entry
 
-- **GIVEN** a screen whose fixture no reference names
+- **GIVEN** a screen whose fixture no entry of the reference map names
 - **WHEN** the tests run
 - **THEN** the test fails for that screen
+
+#### Scenario: Pending screen
+
+- **GIVEN** a screen whose entry is pending, with the reason it has no reference
+- **WHEN** the tests run
+- **THEN** the test passes for that screen
+- **AND** `compare` scores none of it
+- **AND** the committed report lists it as pending with its reason
 
 #### Scenario: Screen approved after comparison
 

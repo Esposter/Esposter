@@ -77,7 +77,6 @@ describe(toSkyReadings, () => {
 
     const readings = toSkyReadings("a", createDistance({ brightness: MISS }), createSpread());
 
-    expect(readings.every((reading) => checkIsReadingHeld(reading))).toBe(false);
     expect(Object.fromEntries(readings.map((reading) => [reading.name, checkIsReadingHeld(reading)]))).toStrictEqual({
       "a clear sky colour": true,
       "a cloud brightness": false,

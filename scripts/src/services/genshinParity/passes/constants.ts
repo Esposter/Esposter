@@ -64,6 +64,15 @@ export const MOTION_PACE_GATE = 0.01;
 export const MOTION_STEP_MS = 0.25;
 export const MOTION_WIDTH = 640;
 export const MOTION_HEIGHT = 360;
+// The header of each component's committed report of its passes, the table's columns and its alignment row
+export const TABLE_HEADER: readonly string[] = [
+  "| Pass | Reading | Value | Gate | Unit | Held |",
+  "| :--- | :------ | ----: | ---: | :--- | :--- |",
+];
+// The heading, the blank line under it and the table's header come before the rows
+export const ROWS_START = 2 + TABLE_HEADER.length;
+// The text each row of the report opens with, before the pass its first cell names
+export const ROW_PREFIX = "| ";
 // The directory each component's committed report of its last run of its passes is written to, a file per component
 export const PARITY_PASSES_DIRECTORY: string = join(
   REPOSITORY_ROOT,

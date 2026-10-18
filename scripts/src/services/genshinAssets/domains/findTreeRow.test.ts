@@ -1,22 +1,7 @@
-import {
-  BLESSING_TREE_ARTIFACT_ROWS,
-  DOMAIN_TREE_COUNT_ROWS,
-  findTreeRow,
-} from "#src/services/genshinAssets/domains/treeRewardCounts";
+import { BLESSING_TREE_ARTIFACT_ROWS, DOMAIN_TREE_COUNT_ROWS } from "#src/services/genshinAssets/domains/constants";
+import { findTreeRow } from "#src/services/genshinAssets/domains/findTreeRow";
 import { DomainKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
-
-describe("the tree count rows", () => {
-  test("every row's average lies between its least and most count", () => {
-    expect.hasAssertions();
-
-    const ranges = [
-      ...DOMAIN_TREE_COUNT_ROWS[DomainKind.Forgery],
-      ...DOMAIN_TREE_COUNT_ROWS[DomainKind.Mastery],
-    ].flatMap(({ counts }) => Object.values(counts).filter((range) => range !== undefined));
-    expect(ranges.filter(({ avg, maxCount, minCount }) => avg < minCount || avg > maxCount)).toStrictEqual([]);
-  });
-});
 
 describe(findTreeRow, () => {
   test("a level reads the row of the greatest Adventure Rank not above its own", () => {

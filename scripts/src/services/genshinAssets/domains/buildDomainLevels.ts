@@ -9,6 +9,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { EQUIP_AFFIX_TABLE_NAME, RELIQUARY_SET_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import {
+  BLESSING_ARTIFACT_SET_NAMES,
   DUNGEON_ENTRY_TABLE_NAME,
   DUNGEON_LEVEL_ENTITY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
@@ -19,7 +20,6 @@ import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/re
 import { resolveBlessingArtifactSetIds } from "#src/services/genshinAssets/domains/resolveBlessingArtifactSetIds";
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
 import { toWeeklyBossDomains } from "#src/services/genshinAssets/domains/toWeeklyBossDomains";
-import { BLESSING_ARTIFACT_SET_NAMES } from "#src/services/genshinAssets/domains/treeRewardCounts";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";

@@ -50,7 +50,7 @@ const readFunctionName = (tokens: readonly GoToken[], position: number): string 
 };
 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Strike type and element by their gcsim names, its durability and poise evaluated through the package's constants, and
+// Element by their gcsim names, its durability and poise evaluated through the package's constants, and
 // The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. A field the code
 // Sets after the literal is not read, but a `Mult` it sets after the literal is an attack of its own under that variable
 // The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by a constant
@@ -131,7 +131,7 @@ const readIterationAt = (
 };
 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Strike type and element by their gcsim names, its durability and poise evaluated through the package's constants, and
+// Element by their gcsim names, its durability and poise evaluated through the package's constants, and
 // The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. The code reads in
 // Source order, so an attack is the literal or copy its variable names as of the line: a `Mult` the code sets after a
 // Literal is an attack of its own under the variable it names, and a copy `aiC2 = ai` is the source as of the copy with

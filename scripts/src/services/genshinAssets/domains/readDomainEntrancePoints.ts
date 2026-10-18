@@ -10,8 +10,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Entrances in no area
 export const readDomainEntrancePoints = async (): Promise<Record<string, DumpedScenePoint>> => {
   const points = await readScenePointsOfKind(DOMAIN_ENTRANCE_POINT);
-  for (const field of [DOMAIN_ENTRANCE_POINT.position, DOMAIN_ENTRANCE_AREA_FIELD])
-    if (!points.some(([, point]) => field in point))
+  const holdsField: [string, (value: unknown) => boolean][] = [
+    [DOMAIN_ENTRANCE_POINT.position, (value) => typeof value === "object"],
+    [DOMAIN_ENTRANCE_AREA_FIELD, (value) => value !== undefined],
+  ];
+  for (const [field, isHeld] of holdsField)
+    if (!points.some(([, point]) => isHeld(point[field])))
       throw new InvalidOperationError(Operation.Read, SCENE_POINT_FILE, `has no point holding ${field}`);
   return Object.fromEntries(points);
 };

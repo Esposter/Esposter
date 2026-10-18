@@ -2,10 +2,6 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { z } from "zod";
 
-// One value of a kit's overlay: a value no source holds with its cause, a value removed with its cause where a source
-// Holds one the kit does not, or the source chosen where the sources disagree. A source chosen by a join, a named hit's
-// Multiplier joined to its talent row, carries the value it joined by, as the join needs it to find the row
-// A value gcsim writes inline is cited by the file of its character's folder and the line it is on, which evaluates to it.
 // A value borrowed from a donor names the donor's character and the path of the value in the donor's record, its index
 // Being the donor's where the borrower's differs, and carries no value of its own
 export interface KitDonor {
@@ -13,6 +9,10 @@ export interface KitDonor {
   path: string;
 }
 
+// One value of a kit's overlay: a value no source holds with its cause, a value removed with its cause where a source
+// Holds one the kit does not, or the source chosen where the sources disagree. A source chosen by a join, a named hit's
+// Multiplier joined to its talent row, carries the value it joined by, as the join needs it to find the row
+// A value gcsim writes inline is cited by the file of its character's folder and the line it is on, which evaluates to it.
 export type KitOverlayEntry =
   | { cause: KitProvisionalCause; donor?: KitDonor; value?: unknown }
   | { file: string; index?: number; line: number; source: KitSource.Gcsim; value?: unknown }

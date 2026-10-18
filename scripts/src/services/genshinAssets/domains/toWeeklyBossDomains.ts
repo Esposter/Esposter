@@ -1,6 +1,6 @@
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
-import type { WeeklyBossDomain } from "#src/models/genshinAssets/domains/WeeklyBossDomain";
+import type { WeeklyBossDomain } from "genshin-world";
 
 import {
   DUNGEON_ENTRY_TABLE_NAME,

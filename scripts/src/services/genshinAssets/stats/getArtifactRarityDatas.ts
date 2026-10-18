@@ -3,6 +3,7 @@ import type { ExcelReliquaryLevelRow } from "#src/models/genshinAssets/stats/Exc
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 import type { ArtifactRarityData } from "genshin-world";
 
+import { RELIQUARY_AFFIX_TABLE_NAME, RELIQUARY_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { ArtifactRarityAffixDepotMap } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
@@ -13,9 +14,9 @@ import { artifactRarityDataSchema } from "genshin-world";
 // With each tier of its value. The reliquary table counts levels from one, so its highest level less one is the highest a
 // Piece reaches, and a level's cost is the level table's row for it
 export const getArtifactRarityDatas = (): ArtifactRarityData[] => {
-  const reliquaryRows = readExcelTable<ExcelReliquaryRow>("ReliquaryExcelConfigData");
+  const reliquaryRows = readExcelTable<ExcelReliquaryRow>(RELIQUARY_TABLE_NAME);
   const levelRows = readExcelTable<ExcelReliquaryLevelRow>("ReliquaryLevelExcelConfigData");
-  const affixRows = readExcelTable<ExcelReliquaryAffixRow>("ReliquaryAffixExcelConfigData");
+  const affixRows = readExcelTable<ExcelReliquaryAffixRow>(RELIQUARY_AFFIX_TABLE_NAME);
   return Array.from(ArtifactRarityAffixDepotMap, ([rarity, depotId]) => {
     const rarityRows = reliquaryRows.filter(
       ({ appendPropDepotId, rankLevel, setId }) => setId > 0 && rankLevel === rarity && appendPropDepotId === depotId,

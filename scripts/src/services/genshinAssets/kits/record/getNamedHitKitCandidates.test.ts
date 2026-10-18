@@ -1,4 +1,5 @@
-import type { NamedHitCall, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";

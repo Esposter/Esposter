@@ -33,14 +33,12 @@ describe(mergeParityScores, () => {
       [],
       { a: createScore([createLayer("frame"), createLayer("walkway")]), b: createScore([createLayer("frame")]) },
       ["a", "b"],
+      {},
     ).split("\n");
 
-    expect(readKeys(mergeParityScores(lines, { a: createScore([createLayer("frame")]) }, ["b", "a"]))).toStrictEqual([
-      "b",
-      "a",
-      "b/frame",
-      "a/frame",
-    ]);
+    expect(
+      readKeys(mergeParityScores(lines, { a: createScore([createLayer("frame")]) }, ["b", "a"], {})),
+    ).toStrictEqual(["b", "a", "b/frame", "a/frame"]);
   });
 
   test("replaces a key's row in place, adds a new key, and collapses a key the lines hold twice into one row", () => {
@@ -54,6 +52,7 @@ describe(mergeParityScores, () => {
       ],
       { b: { ...createScore([]), meanDifference: 3, screen: "S" }, c: { ...createScore([]), screen: "S" } },
       ["a", "b", "c"],
+      {},
     );
 
     expect(readKeys(report)).toStrictEqual(["a", "b", "c"]);
@@ -64,6 +63,17 @@ describe(mergeParityScores, () => {
   test("writes no layers table where no reference has layers", () => {
     expect.hasAssertions();
 
-    expect(mergeParityScores([], { a: createScore([]) }, ["a"])).not.toContain("## Layers");
+    expect(mergeParityScores([], { a: createScore([]) }, ["a"], {})).not.toContain("## Layers");
+  });
+
+  test("lists a pending reference in its place with its reason, over the row it held when it was scored", () => {
+    expect.hasAssertions();
+
+    const report = mergeParityScores(["| `a` | `S` | 1.00% | 0.000 | 0.00% | 0.0000 |"], {}, ["a"], {
+      a: { reason: "no recording yet", screen: "S" },
+    });
+
+    expect(report).toContain("| `a` | `S` | pending: no recording yet | | | |");
+    expect(report).not.toContain("1.00%");
   });
 });

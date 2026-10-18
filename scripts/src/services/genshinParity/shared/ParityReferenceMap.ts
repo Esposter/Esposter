@@ -131,6 +131,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     seconds: 156,
   },
+  "cooking-screen": { pending: "no recording of the screen yet", screen: "CookingScreen" },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {
@@ -148,6 +149,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Court of Fontaine.png",
   },
+  "crafting-strongbox": { pending: "no recording of the screen yet", screen: "CraftingStrongbox" },
   // The crafting table's Craft screen at 1080 high from a public video (yt-qQILsaJKlsI), about 40 seconds in: Condensed
   // Resin picked, Crafting Performed 1 and Diluc as the crafter. No frame shows the spot with the screen closed, so no
   // Plate: the mask scores the opaque panels (the recipe grid, the title and the details, the materials band and the
@@ -664,6 +666,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuTime",
     seconds: 10,
   },
+  "menu-world-level-prompt": { pending: "no recording of the screen yet", screen: "MenuWorldLevelPrompt" },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear
   // Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and east towers'
   // Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
@@ -835,6 +838,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuSettings",
     seconds: 144.5,
   },
+  "spiral-abyss-benediction": { pending: "no recording of the screen yet", screen: "SpiralAbyssBenediction" },
+  "spiral-abyss-entry": { pending: "no recording of the screen yet", screen: "SpiralAbyssEntry" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
   // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
@@ -867,6 +872,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashTitle",
     seconds: 5,
   },
+  "weapon-screen": { pending: "no recording of the screen yet", screen: "WeaponScreen" },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
   // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
   // Refined on the statue's outline
@@ -924,4 +930,5 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuWorldLevelDialog",
     seconds: 5,
   },
+  "world-realm-placement-editor": { pending: "no recording of the screen yet", screen: "WorldRealmPlacementEditor" },
 };

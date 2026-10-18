@@ -1,5 +1,6 @@
 import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
+import type { PendingReference } from "#src/models/genshinParity/reference/PendingReference";
 
 const HEADER = [
   "# Parity scores",
@@ -32,13 +33,16 @@ const toRow = (referenceId: string, { edgeScore, flip, meanDifference, screen, t
   `| \`${referenceId}\` | \`${screen}\` | ${meanDifference.toFixed(2)}% | ${edgeScore.toFixed(3)} | ${toneDifference.toFixed(2)}% | ${flip.toFixed(4)} |`;
 const toLayerRow = (key: string, { colour, coverage, flip, tone }: LayerScore): string =>
   `| \`${key}\` | ${(coverage * 100).toFixed(1)}% | ${colour.toFixed(2)} | ${tone.toFixed(2)}% | ${flip.toFixed(4)} |`;
+const toPendingRow = (referenceId: string, { reason, screen }: PendingReference): string =>
+  `| \`${referenceId}\` | \`${screen}\` | pending: ${reason} | | | |`;
 // The report of every reference's scores and its scene's layers from the report's lines as they were, the given ones
 // Rewritten and the rest kept as they were last scored, in the references' order, a reference not among them dropped
-// With its layers
+// With its layers. A pending reference's row says so with its reason, in its place, and it has no layers
 export const mergeParityScores = (
   lines: readonly string[],
   scores: Readonly<Record<string, ParityScore>>,
   referenceIds: readonly string[],
+  pendingReferences: Readonly<Record<string, PendingReference>>,
 ): string => {
   const rowMap = new Map(
     lines.flatMap((line) => {
@@ -56,12 +60,16 @@ export const mergeParityScores = (
     }
   }
   const rows = referenceIds.flatMap((referenceId) => {
+    const pendingReference = pendingReferences[referenceId];
+    if (pendingReference) return [toPendingRow(referenceId, pendingReference)];
     const row = rowMap.get(referenceId);
     return row ? [row] : [];
   });
-  const layerRows = referenceIds.flatMap((referenceId) =>
-    [...rowMap].flatMap(([key, row]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [row] : [])),
-  );
+  const layerRows = referenceIds
+    .filter((referenceId) => pendingReferences[referenceId] === undefined)
+    .flatMap((referenceId) =>
+      [...rowMap].flatMap(([key, row]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [row] : [])),
+    );
   const layerLines = layerRows.length > 0 ? [...LAYER_HEADER, ...layerRows] : [];
   return `${[...HEADER, ...rows, ...layerLines].join("\n")}\n`;
 };
