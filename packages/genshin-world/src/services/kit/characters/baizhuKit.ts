@@ -119,8 +119,8 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         });
       },
     },
-    // Constellation 2: a hit the active member takes queues a Splice at its enemy, once the cooldown is off. The cooldown
-    // Starts as the Splice is queued, so the Splice's own hit cannot queue another
+    // Constellation 2: a hit the active member lands on an enemy queues a Splice at that enemy, once the cooldown is off.
+    // The cooldown starts as the Splice is queued, so the Splice's own hit cannot queue another
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken || combatant.constellationCount < CONSTELLATION_2) return;
       if (event.striker.characterId !== context.activeCombatant.characterId) return;
