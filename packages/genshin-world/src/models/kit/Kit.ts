@@ -62,7 +62,8 @@ export interface Kit {
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
-  // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it
+  // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
+  // Reads for a bonus its kit's actions set going
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
   // Stats, given the enemy as it stands, the deployed team and the effects on it
