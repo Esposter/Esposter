@@ -3,16 +3,6 @@
   "burst.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "burst.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 739 } },
-  "normalAttacks.0.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 40.5 },
-  "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 21 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 39.6 },
-  "normalAttacks.2.animationFrames": { "cause": "DiffersFromSource", "value": 27 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 48.6 },
-  "normalAttacks.3.animationFrames": { "cause": "DiffersFromSource", "value": 38 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 54 },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 64.8 },
-  "skill.animationFrames": { "cause": "DiffersFromSource", "value": 61 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 732 } },
   "skillCooldownSeconds": { "cause": "Unclassified", "value": 5 }
 }
