@@ -11,13 +11,14 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 - **Cleave is priced conservatively.** Its circle sits 4.5 metres past the target, so its reach from the target is 10.5 metres, the offset plus its radius of 6. The question is on the roadmap.
 - **Balemoon Rising hits once at 110 frames of its 146,** a circle of radius 6.5 six metres ahead, priced at 12.5 metres, with 3.704 of the table's multiplier, a gauge of 1, and the table's cooldown of 15 seconds on 60 energy.
 - **Her skill's cooldown is the table's 30 seconds.**
+- **Balemoon Rising resets her skill's cooldown 107 frames in.** gcsim's `burst.go` queues `ResetActionCooldown(action.ActionSkill)` at that frame, and the kit schedules the same reset as a task that zeroes her party member's skill cooldown.
 
 ## Not built
 
-- **Bond of Life, the strikes' Pyro variant, waits on the HP-debt hook.** While it is up, her strikes and charged attack are Pyro and add a bonus that scales with her HP debt, and each strike consumes some of that debt.
+- **Bond of Life, the strikes' Pyro variant, is not built.** While it is up, her strikes and charged attack are Pyro and add a bonus that scales with her HP debt, and each strike consumes some of that debt. The Bond of Life hook it sits on is built; the HP debt it scales with is not, so it waits on the HP-debt hook alone.
 - **The Masque of the Red Death's debt damage waits on the HP-debt hook.** It adds to her strikes and charged attack as a share of her debt and her total ATK, and its ascension and constellation bonuses go with it.
 - **The Blood-Debt Directive, the sigils her Cleave sets off, waits on the HP-debt hook.** Its debt limit, its Pyro sigils and its ticks all wait on it.
-- **Balemoon Rising's heal waits on the HP-debt hook,** as it is paid from her debt, and its cooldown reset of Spike and Cleave, 107 frames in, waits on a cooldown reset hook.
+- **Balemoon Rising's heal waits on the HP-debt hook,** as it is paid from her debt.
 - **Her utility passive is built, from no ascension,** The Balemoon Alone May Know's 40% Pyro DMG Bonus. Her Ascension 1 passive waits on the HP-debt hook, which its Blood-Debt Directives read, and her Ascension 4 passive's RES is not built, as gcsim v2.47.2 models no Resistances. Constellations 1, 2 and 4 each need the Masque of the Red Death or a Blood-Debt Directive's absorption, which the kit does not record, and Constellation 6's added damage to Balemoon Rising is not built.
 
 ## Key files

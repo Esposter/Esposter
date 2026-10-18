@@ -11,11 +11,13 @@ const FOCUS_ID = "focus";
 const FOCUS_MAXIMUM_STACKS = 5;
 
 // Focus at its rank: each hit its wielder deals adds a stack of the rank's CRIT Rate, up to five.
-// The stacks are holds with no end time: a critical hit releases them all and adds none, and any other hit adds one
+// The stacks are holds with no end time: a critical hit releases them all and adds none, and any other hit adds one.
+// The stacks are a CRIT Rate bonus on the wielder as it is priced, as the game's are a buff on the character, so every
+// Roll its wielder makes reads them, a Lunar reaction's included
 export const createFocusPassiveModule = (params: number[]): WeaponPassiveModule => {
   const criticalRateBonus = takeOne(params, 0);
   return {
-    getPassiveBonuses: (combatant, _healthShare, effects) => [
+    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
         amount: criticalRateBonus * countKitHolds(effects, combatant.characterId, FOCUS_ID),
         attribute: Attribute.CriticalRate,

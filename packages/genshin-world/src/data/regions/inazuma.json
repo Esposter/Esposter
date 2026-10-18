@@ -11474,6 +11474,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -4284.68, "z": 3141.74 },
       "rotation": 1.1764,
+      "titleTextKey": "UI_DUNGEON_ENTRY_368",
       "areaId": "narukami-island",
       "arrival": { "heightOffset": 35.42, "position": { "x": -4284.68, "z": 3141.74 }, "rotation": 1.1764 },
       "heightOffset": 35.42
@@ -11485,6 +11486,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -5092.14, "z": 2664.04 },
       "rotation": 2.5565,
+      "titleTextKey": "UI_DUNGEON_ENTRY_310",
       "areaId": "kannazuka",
       "arrival": { "heightOffset": -1.31, "position": { "x": -5092.14, "z": 2664.04 }, "rotation": 2.5565 },
       "heightOffset": -1.31
@@ -11496,6 +11498,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -5658.85, "z": 1098.8 },
       "rotation": 1.8794,
+      "titleTextKey": "UI_DUNGEON_ENTRY_361",
       "areaId": "yashiori-island",
       "arrival": { "heightOffset": 23.02, "position": { "x": -5658.85, "z": 1098.8 }, "rotation": 1.8794 },
       "heightOffset": 23.02
@@ -11507,6 +11510,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -6193.48, "z": 2942.12 },
       "rotation": -1.9417,
+      "titleTextKey": "UI_DUNGEON_ENTRY_433",
       "areaId": "seirai-island",
       "arrival": { "heightOffset": -24.91, "position": { "x": -6193.48, "z": 2942.12 }, "rotation": -1.9417 },
       "heightOffset": -24.91

@@ -1,9 +1,13 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -30,6 +34,25 @@ const DAWN_SPAWN_METRES = 1;
 const DAWN_METRES_PER_SECOND = 14;
 const DAWN_TICK_COUNT = 8;
 const DAWN_EXPLOSION_SECONDS = 1.7;
+
+// Constellation 4, Flowing Flame: 2s after a Searing Onslaught press, the next press in the combo deals 40% more DMG, for 2s.
+// Wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_DAMAGE_BONUS = 0.4;
+const CONSTELLATION_4_SECONDS = 2;
+const CONSTELLATION_4_STATUS_ID = "diluc-constellation-4-press";
+
+// Constellation 6, Flaming Sword, Nemesis of the Dark: after a Searing Onslaught press, the next two normal attacks within
+// Six seconds deal 30% more DMG and attack 30% faster. Wiki: the constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go
+// Models it, its counter reset by each press and its buffs ending after six seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_BONUS = 0.3;
+const CONSTELLATION_6_SECONDS = 6;
+const CONSTELLATION_6_ATTACKS = 2;
+const CONSTELLATION_6_ARMED_STATUS_ID = "diluc-constellation-6-armed";
+const CONSTELLATION_6_ATTACK_STATUS_ID = "diluc-constellation-6-attack";
 
 export const DILUC_CHARACTER_ID = 10_000_016;
 
@@ -82,10 +105,68 @@ const addSearingEmberStack = (kitEffectState: KitEffectState, characterId: numbe
 // Diluc's behaviour: Dawn infuses his attacks with Pyro, lengthened and joined by a Pyro DMG Bonus from Ascension 4, and
 // Launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its ticks and
 // Explodes at the end of its path
-// Constellation 2 is built for a hit that costs Diluc HP: an enemy's strike, a drown or a wildlife's charge. A hit his
-// Shield takes whole sends no HP change, so it adds no stack, and the damageless hits of his teammates are not built
-// Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart, which the skill does not yet read
-// Constellation 6 needs the next two normal attacks after Searing Onslaught, and their DMG and ATK SPD
+// Constellation 2 is built for a hit on Diluc that costs him HP, an enemy's strike, a drown or a wildlife's charge, and for
+// An enemy's strike on him that a shield takes, whoever owns the shield, as gcsim's OnPlayerHit fires on a shielded hit. The
+// Damageless hits of his teammates are not built
+// Constellation 4 reads each press against the one before it. The status a press leaves runs two seconds, so a press that
+// Finds it running came within two seconds of the last one. A follow-up that does not is the one the bonus lands on, and
+// Its status carries the bonus for the same two seconds. Constellation 6 arms the next two normal attacks on each press
+const createSearingOnslaughtPress =
+  (isFollowUp: boolean) =>
+  ({ activeCombatant: combatant, kitEffectState }: KitContext) => {
+    const { characterId, constellationCount } = combatant;
+    if (constellationCount >= CONSTELLATION_4) {
+      const isWithinTwoSeconds = checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_4_STATUS_ID);
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_4_STATUS_ID,
+        secondsRemaining: CONSTELLATION_4_SECONDS,
+        stacks: isFollowUp && !isWithinTwoSeconds ? 1 : 0,
+      });
+    }
+    if (constellationCount >= CONSTELLATION_6)
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_6_ARMED_STATUS_ID,
+        secondsRemaining: CONSTELLATION_6_SECONDS,
+        stacks: CONSTELLATION_6_ATTACKS,
+      });
+  };
+
+// Constellation 6: each normal attack of the combo takes one of the armed attacks while any remain, and its own status runs
+// For the attack's seconds, which the damage hook and the speed bonus read. An attack the armed ones do not reach clears it
+const createNormalAttackStart =
+  (seconds: number) =>
+  ({ activeCombatant: combatant, kitEffectState }: KitContext) => {
+    if (combatant.constellationCount < CONSTELLATION_6) return;
+    const { characterId } = combatant;
+    const armed = findKitStatus(kitEffectState.effects, characterId, CONSTELLATION_6_ARMED_STATUS_ID);
+    const armedStacks = armed?.stacks ?? 0;
+    const isBuffed =
+      checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_6_ARMED_STATUS_ID) && armedStacks > 0;
+    if (isBuffed && armed)
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_6_ARMED_STATUS_ID,
+        secondsRemaining: armed.secondsRemaining,
+        stacks: armedStacks - 1,
+      });
+    addKitStatus(kitEffectState, characterId, {
+      id: CONSTELLATION_6_ATTACK_STATUS_ID,
+      secondsRemaining: isBuffed ? seconds : 0,
+    });
+  };
+
+// Constellation 6's bonus to a normal attack that is buffed, as its status runs for the attack
+const isConstellation6Buffed = (characterId: number, effects: readonly KitEffect[]): boolean =>
+  checkIsKitStatusActive(effects, characterId, CONSTELLATION_6_ATTACK_STATUS_ID);
+
+// Constellation 4's bonus, as the status a follow-up press leaves on Diluc runs, for his skill's strikes
+const getConstellation4DamageBonus = ({ attackTag, combatant }: KitStrike, effects: readonly KitEffect[]): number =>
+  combatant.constellationCount >= CONSTELLATION_4 &&
+  attackTag === AttackTag.ElementalSkill &&
+  checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_4_STATUS_ID) &&
+  findKitStatus(effects, combatant.characterId, CONSTELLATION_4_STATUS_ID)?.stacks === 1
+    ? CONSTELLATION_4_DAMAGE_BONUS
+    : 0;
+
 export const createDilucKitBehaviour = ({
   kit,
   readArea,
@@ -144,12 +225,20 @@ export const createDilucKitBehaviour = ({
         );
       },
     },
-    // Searing Ember: a hit that costs Diluc HP takes a stack once the interval after the last one has run out. A kit of the
-    // Team that names its source for the HP loss, such as Furina's skill, is not a hit
+    // Searing Ember: a hit on Diluc takes a stack once the interval after the last one has run out. A hit is one that costs
+    // Him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team that names
+    // Its source for the HP loss, such as Furina's skill, is not a hit
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.HealthChanged || combatant.constellationCount < CONSTELLATION_2) return;
+      if (combatant.constellationCount < CONSTELLATION_2) return;
       const { characterId } = combatant;
-      if (event.characterId !== characterId || event.healthShare >= 0 || event.sourceCharacterId !== undefined) return;
+      const isHit =
+        event.kind === KitEventKind.ShieldAbsorbed
+          ? event.struckCharacterId === characterId
+          : event.kind === KitEventKind.HealthChanged &&
+            event.characterId === characterId &&
+            event.healthShare < 0 &&
+            event.sourceCharacterId === undefined;
+      if (!isHit) return;
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
       addKitStatus(kitEffectState, characterId, {
         id: CONSTELLATION_2_INTERVAL_STATUS_ID,
@@ -161,9 +250,30 @@ export const createDilucKitBehaviour = ({
     // Its +3s duration clause is not built, since the talent text does not name what that duration is
     getChargedAttackStaminaMultiplier: ({ activeCombatant }) =>
       activeCombatant.ascension >= DILUC_RELENTLESS_ASCENSION ? DILUC_RELENTLESS_STAMINA_MULTIPLIER : 1,
-    getStrikeDamageBonus: ({ combatant }, enemy) =>
-      combatant.constellationCount >= CONSTELLATION_1 && enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
-        ? CONSTELLATION_1_DAMAGE_BONUS
+    getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
+      activeCombatant.constellationCount >= CONSTELLATION_6 &&
+      isConstellation6Buffed(activeCombatant.characterId, kitEffectState.effects)
+        ? CONSTELLATION_6_BONUS
         : 0,
+    getStrikeDamageBonus: (strike, enemy, _party, effects = []) =>
+      (strike.combatant.constellationCount >= CONSTELLATION_1 &&
+      enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
+        ? CONSTELLATION_1_DAMAGE_BONUS
+        : 0) +
+      getConstellation4DamageBonus(strike, effects) +
+      (strike.combatant.constellationCount >= CONSTELLATION_6 &&
+      strike.attackTag === AttackTag.NormalAttack &&
+      isConstellation6Buffed(strike.combatant.characterId, effects)
+        ? CONSTELLATION_6_BONUS
+        : 0),
+    // Constellation 6: a Searing Onslaught press does not interrupt the normal attack string, as gcsim's diluc Attack
+    // Restores the counter its last normal attack saved when a normal attack starts from the skill's state
+    // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/attack.go
+    keepsNormalAttackCombo: ({ activeCombatant }, action) =>
+      activeCombatant.constellationCount >= CONSTELLATION_6 &&
+      (action === kit.elementalSkill || kit.elementalSkillChain?.followUps.includes(action) === true),
+    normalAttacks: kit.normalAttacks.map((action) => ({ onStart: createNormalAttackStart(action.seconds) })),
+    skill: { onStart: createSearingOnslaughtPress(false) },
+    skillChain: kit.elementalSkillChain?.followUps.map(() => ({ onStart: createSearingOnslaughtPress(true) })),
   };
 };

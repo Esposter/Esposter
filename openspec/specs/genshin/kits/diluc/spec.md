@@ -106,12 +106,18 @@ From constellation 1, each strike Diluc makes SHALL deal 15% more DMG to an enem
 
 ### Requirement: Second constellation stacks Searing Ember on each hit Diluc takes
 
-From constellation 2, each hit that costs Diluc HP SHALL add a stack of Searing Ember, at most one every 1.5 seconds and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
+From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
 
 #### Scenario: A hit that costs Diluc HP adds a stack
 
 - **GIVEN** Diluc is at constellation 2
 - **WHEN** an enemy's strike, a drown or a wildlife's charge costs Diluc HP
+- **THEN** his ATK is raised by 10% and his ATK SPD by 5% for 10 seconds
+
+#### Scenario: A hit a shield takes adds a stack
+
+- **GIVEN** Diluc is at constellation 2
+- **WHEN** an enemy's strike on Diluc is taken by a shield, whoever cast it
 - **THEN** his ATK is raised by 10% and his ATK SPD by 5% for 10 seconds
 
 #### Scenario: A hit inside 1.5 seconds of the last stack adds none
@@ -131,3 +137,53 @@ From constellation 2, each hit that costs Diluc HP SHALL add a stack of Searing 
 - **GIVEN** Diluc is at constellation 1
 - **WHEN** an enemy's strike costs Diluc HP
 - **THEN** his ATK and ATK SPD are unchanged
+
+### Requirement: Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before
+
+From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. The wiki's Flowing Flame text and gcsim v2.47.2's `cons.go` agree on the window.
+
+#### Scenario: A press two seconds after the last gets the bonus
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught, and then presses its next press two seconds later
+- **THEN** that press's strikes deal 40% more DMG, and the bonus ends two seconds after the press
+
+#### Scenario: A press within two seconds of the last gets nothing
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught, and then presses its next press one second later
+- **THEN** that press's strikes gain no bonus
+
+#### Scenario: The first press and his normal attacks get nothing
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught for the first time, or lands a normal attack while the bonus runs
+- **THEN** those strikes gain no bonus
+
+#### Scenario: Below the fourth constellation nothing is added
+
+- **GIVEN** Diluc is at constellation 3
+- **WHEN** he presses a follow-up Searing Onslaught press two seconds after the one before it
+- **THEN** that press's strikes gain no bonus
+
+### Requirement: Sixth constellation adds 30% DMG and ATK SPD to the next two normal attacks
+
+From constellation 6, after a Searing Onslaught press the next two normal attacks within six seconds SHALL deal 30% more DMG and attack 30% faster. Each press re-arms them. Searing Onslaught does not interrupt the normal attack combo: the next normal attack after a press continues the string where it stopped.
+
+#### Scenario: The next two normal attacks are buffed
+
+- **GIVEN** Diluc is at constellation 6
+- **WHEN** he presses Searing Onslaught, and then lands normal attacks
+- **THEN** the first two normal attacks deal 30% more DMG and attack 30% faster, and the third does not
+
+#### Scenario: The attacks must come within six seconds
+
+- **GIVEN** Diluc is at constellation 6 and six seconds have passed since his Searing Onslaught press
+- **WHEN** he lands a normal attack
+- **THEN** that attack gains nothing
+
+#### Scenario: Below the sixth constellation nothing is added
+
+- **GIVEN** Diluc is at constellation 5
+- **WHEN** he lands a normal attack after Searing Onslaught
+- **THEN** that attack gains nothing

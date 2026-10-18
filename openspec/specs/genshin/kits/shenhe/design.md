@@ -8,12 +8,13 @@ Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`,
 - **Spring Spirit Summoning's hold begins at 0.5 seconds.** Provisional: gcsim reads the hold from the input alone, as it does for Eula and Diona.
 - **Divine Maiden's Deliverance's RES Decrease holds between its DoT ticks.** `shenheKit.ts` holds the decrease for one 117-frame tick interval from each tick, where gcsim refreshes it every 18 frames.
 - **Constellation 1's extra use is a skill charge.** Spring Spirit Summoning's second use before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
+- **Constellation 2 extends the field by six seconds, and gives the active character Cryo CRIT DMG in it.** gcsim's burst lasts six seconds longer at two constellations, so the kit adds six to the field's seconds where it is cast, and its ticks stay as they are. gcsim's `c2` gives the active character 15% CRIT DMG on her Cryo attacks while she stands in the field, so each tick adds an element CRIT DMG effect for the tick's interval, which the strikes of that element by that character price in as CRIT DMG. The effect belongs to the active character, not to Shenhe, and the next tick restarts it rather than stacking it.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                 |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/shenheKit.ts` | `createShenheKitBehaviour`, Shenhe's kit with Spring Spirit Summoning's press and hold, Divine Maiden's Deliverance's field and its DoT, and her strikes and plunges |
+| File                                                              | Role                                                                                                                                                                                                    |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/shenheKit.ts` | `createShenheKitBehaviour`, Shenhe's kit with Spring Spirit Summoning's press and hold, Divine Maiden's Deliverance's field, its DoT and its Constellation 2 Cryo CRIT DMG, and her strikes and plunges |
 
 ## Sources
 

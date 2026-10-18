@@ -1,3 +1,4 @@
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import {
   VERDANT_DEW_GATHER_SECONDS,
   VERDANT_DEW_GATHERING_SECONDS,
@@ -36,5 +37,15 @@ describe(stepVerdantDew, () => {
       gatheredSeconds: 0,
       gatheringSeconds: 0,
     });
+  });
+
+  test("the gathering ends on the step its seconds run out, not one step late", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    party.verdantDew.gatheringSeconds = 5;
+    for (let step = 0; step < 300; step++) stepVerdantDew(party, FIXED_STEP_SECONDS);
+
+    expect(party.verdantDew.gatheringSeconds).toBe(0);
   });
 });

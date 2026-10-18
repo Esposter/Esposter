@@ -1,7 +1,7 @@
 {
-  "frames.fantasticVoyageFieldBuff": { "cause": "Unclassified", "value": 126 },
-  "frames.fantasticVoyageFieldFirstTick": { "cause": "Unclassified", "value": 34 },
-  "frames.fantasticVoyageFieldStart": { "cause": "Unclassified", "value": 34 },
+  "frames.fantasticVoyageFieldBuff": { "file": "burst.go", "line": 20, "source": "Gcsim", "value": 126 },
+  "frames.fantasticVoyageFieldFirstTick": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 34 },
+  "frames.fantasticVoyageFieldStart": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 34 },
   "parameters.fantasticVoyageFlatHeal": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3239 } },
   "parameters.fantasticVoyageMaxHealthHealShare": {
     "cause": "Unclassified",
@@ -17,7 +17,7 @@
   },
   "plungeCollision.element": { "cause": "Unsourced", "value": "Fire" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 98 },
+  "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 37, "source": "Gcsim", "value": 98 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
@@ -41,7 +41,7 @@
   },
   "skillHolds.0.action.hits.1.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": 7.5 },
-  "skillHolds.1.action.animationFrames": { "cause": "Unclassified", "value": 343 },
+  "skillHolds.1.action.animationFrames": { "file": "skill.go", "line": 50, "source": "Gcsim", "value": 343 },
   "skillHolds.1.action.hits.length": { "cause": "Unclassified", "value": 3 },
   "skillHolds.1.action.hits.0.area": {
     "cause": "Unclassified",
@@ -79,7 +79,7 @@
   "skillHolds.1.action.hits.2.poiseDamage": { "cause": "Unclassified", "value": 250 },
   "skillHolds.1.cooldownSeconds": { "cause": "Unclassified", "value": 10 },
   "skillHolds.1.minimumHeldSeconds": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.1.variant.animationFrames": { "cause": "Unclassified", "value": 175 },
+  "skillHolds.1.variant.animationFrames": { "file": "skill.go", "line": 58, "source": "Gcsim", "value": 175 },
   "skillHolds.1.variant.hits.length": { "cause": "Unclassified", "value": 3 },
   "skillHolds.1.variant.hits.0.area": {
     "cause": "Unclassified",

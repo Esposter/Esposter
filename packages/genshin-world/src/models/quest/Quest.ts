@@ -59,6 +59,9 @@ export const questSchema = z
       offerTalkIds.every((talkId) => talkIds.has(talkId)) &&
       steps
         .flatMap(({ objectives }) => objectives)
-        .every(({ kind, targetId }) => kind !== QuestObjectiveKind.TalkTo || talkIds.has(targetId))
+        .every(
+          ({ kind, targetIds }) =>
+            kind !== QuestObjectiveKind.TalkTo || targetIds.every((targetId) => talkIds.has(targetId)),
+        )
     );
   }, "Talk-to objectives and offers must name talks the quest runs") satisfies z.ZodType<Quest>;

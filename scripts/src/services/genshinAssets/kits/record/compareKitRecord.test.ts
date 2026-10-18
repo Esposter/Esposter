@@ -17,7 +17,16 @@ describe(compareKitRecord, () => {
       ["parameters.lumiDuration", [{ provenance: { file: "linnea.go", line: 12, source: KitSource.Gcsim }, value: 5 }]],
     ]);
 
-    const { overlay } = compareKitRecord(publishedRecord, sourceCandidateMap, new Map(), false, {}, new Map(), tables);
+    const { overlay } = compareKitRecord(
+      publishedRecord,
+      sourceCandidateMap,
+      new Map(),
+      false,
+      {},
+      new Map(),
+      new Map(),
+      tables,
+    );
 
     expect(overlay).toStrictEqual({});
   });

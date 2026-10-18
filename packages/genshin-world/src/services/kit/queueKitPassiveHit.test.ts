@@ -7,10 +7,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const [KIT_HIT] = TRAVELER_KIT.normalAttacks[0].hits;
+const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 
 const createCombatant = (): Combatant => ({
   ascension: 0,

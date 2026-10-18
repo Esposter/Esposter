@@ -1,6 +1,6 @@
 ## Purpose
 
-Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1 and 6, and what is left to build.
+Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1 and 6, and what is left to build, which includes Constellations 2 and 4.
 
 ## Requirements
 
@@ -135,3 +135,13 @@ At constellation 6, while the Prayer stands, an elemental normal attack by the c
 - **GIVEN** a constellation 6 wave was set off less than 2.3 seconds ago
 - **WHEN** another elemental normal attack lands
 - **THEN** no wave is set off
+
+### Requirement: Constellations 2 and 4 are not built
+
+Candace's Constellations 2 and 4 SHALL NOT take effect: Constellation 2's Max HP buff is not read back into her Max HP, and Constellation 4's shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
+
+#### Scenario: Constellation 2 and 4 do nothing
+
+- **GIVEN** Candace has Constellation 2 or Constellation 4
+- **WHEN** the player fights with Candace
+- **THEN** that constellation has no effect

@@ -9,6 +9,7 @@ describe(toTalentTables, () => {
   const ROWS: ExcelProudSkillRow[] = [
     {
       breakLevel: 0,
+      descTextMapHash: 0,
       coinCost: 0,
       costItems: [],
       level: 2,
@@ -18,6 +19,7 @@ describe(toTalentTables, () => {
     },
     {
       breakLevel: 0,
+      descTextMapHash: 0,
       coinCost: 0,
       costItems: [],
       level: 1,
@@ -27,6 +29,7 @@ describe(toTalentTables, () => {
     },
     {
       breakLevel: 0,
+      descTextMapHash: 0,
       coinCost: 0,
       costItems: [],
       level: 1,

@@ -6,6 +6,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createShenheKitBehaviour, SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
@@ -26,9 +27,11 @@ const createShenheCombatant = (ascension = 0): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-const castField = (ascension: number): KitField => {
+const castField = (ascension: number, constellationCount = 0): KitField => {
   const kitEffectState: KitEffectState = { effects: [] };
-  SHENHE_KIT.elementalBurst.onStart?.(createKitTestContext(createShenheCombatant(ascension), { kitEffectState }));
+  SHENHE_KIT.elementalBurst.onStart?.(
+    createKitTestContext({ ...createShenheCombatant(ascension), constellationCount }, { kitEffectState }),
+  );
   return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
 };
 // The effects a field's tick adds, from a field cast by a combatant of the given ascension
@@ -85,6 +88,48 @@ describe(createShenheKitBehaviour, () => {
     expect(field.tickIntervalSeconds).toBeCloseTo(117 / 60);
     expect(field.radius).toBe(7);
     expect(tickSummon(1)?.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60))).toStrictEqual([0, 32]);
+  });
+
+  test("a Constellation 2 burst's field lasts six seconds longer than a Constellation 0 burst's", () => {
+    expect.hasAssertions();
+
+    expect(castField(0, 2).secondsRemaining - castField(0).secondsRemaining).toBeCloseTo(6);
+  });
+
+  test("a Constellation 2 field gives the active character 15% CRIT DMG on its Cryo attacks for a tick", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    castField(0, 2).onTick(
+      createKitTestContext({ ...createShenheCombatant(), constellationCount: 2 }, { kitEffectState }),
+      0,
+    );
+
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "elementCriticalDamage")).toStrictEqual([
+      {
+        amount: 0.15,
+        characterId: SHENHE_CHARACTER_ID,
+        element: Element.Cryo,
+        kind: "elementCriticalDamage",
+        secondsRemaining: 117 / 60,
+        source: "shenhe-burst-constellation-2",
+      },
+    ]);
+  });
+
+  test("a Constellation 2 field's ticks restart the active character's CRIT DMG rather than stacking it", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const field = castField(0, 2);
+    const combatant = { ...createShenheCombatant(), constellationCount: 2 };
+    field.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
+    field.onTick(createKitTestContext(combatant, { kitEffectState }), 1);
+
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "elementCriticalDamage")).toHaveLength(1);
+  });
+
+  test("a Constellation 0 field gives no CRIT DMG", () => {
+    expect.hasAssertions();
+    expect(tickField(0, 0).filter((effect) => effect.kind === "elementCriticalDamage")).toStrictEqual([]);
   });
 
   test("the field's Cryo DMG Bonus comes from Ascension 1, for the active character", () => {

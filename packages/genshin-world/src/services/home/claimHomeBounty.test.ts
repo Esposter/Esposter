@@ -32,6 +32,7 @@ describe(claimHomeBounty, () => {
   };
   const progress: HomeProgress = {
     accruedAt: EPOCH,
+    claimedRewardIds: [],
     companionIds: [FIRST_CHARACTER_ID, SECOND_CHARACTER_ID],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],

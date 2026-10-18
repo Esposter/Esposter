@@ -18,7 +18,7 @@ Bennett's kit is its record and one behaviour module, `createBennettKitBehaviour
 ## Not built
 
 - **Bennett's self infusion is left.** "ApplySelfInfusion" puts a 1U Pyro aura on the character on the field each tick, [gcsim v2.47.2](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go) (MIT), an elemental aura and not a weapon infusion. Its aura on Bennett is not built. The wiki's Fire Ventures With Me page says the C6 infusion and bonus also apply when the field heals a character under 70%, where gcsim applies them on the ATK bonus alone; the kit follows gcsim, and the two differ on that case.
-- **Unexpected Odyssey, constellation 4, is not built.** A Passion Overload Charge Level 1 Normal Attack's second hit adds a follow-up attack at 135% of that hit's DMG. It needs a hook that adds a hit to a Normal Attack the record does not hold, and no module hook gives one.
+- **Unexpected Odyssey, constellation 4, is not built.** A Passion Overload Level 1 hold adds a follow-up attack at 135% of its second hit's DMG, [gcsim v2.47.2](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go) (MIT). The record holds no variant of that hold for it, and the hook that adds a hit, `getNormalAttackExtraHit`, runs only for a kit's normal attacks, so no module hook reaches the hold.
 
 ## Key files
 

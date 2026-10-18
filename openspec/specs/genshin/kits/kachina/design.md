@@ -12,6 +12,8 @@ gcsim has no folder for Kachina at v2.47.2, so no value comes from gcsim. Her re
 - **The burst's hit is Geo, scaled by DEF.** The wiki gives her burst's Skill DMG as a share of her DEF, 380.57% at level 1, and the kit reads it as 3.8057 with the scaling attribute set to Defense. Its poise is none, as neither gcsim nor the wiki gives it, and its gauge is unset.
 - **The burst's energy and cooldown are the table's.** Her burst is one hit at 18 frames of a 50-frame animation, and its field and its Turbo Twirly are not built.
 
+- **Her values no source gives are `NoGcsimUnit`, the unit gcsim does not model.** gcsim has no folder for Kachina, so every value her overlay holds with no source names that cause in place of `Unclassified`: her frames, areas, hit counts and scaling attribute. Her burst's multiplier is the dump's proud skill group 10039 at index 0, 3.805672, held in her overlay: the table reader takes only the normal attack, charged attack, plunge and cooldown labels, and a generic `Skill DMG` label reads for every burst and skill would move the wiki's poise and gauge values of other kits, through the label map the wiki reads by. Her burst's Geo element is no overlay value: the energy element rule takes the energy skill's `costElemType` through the element map, where no source gives one.
+
 ## Not built
 
 - **The skill's Turbo Twirly is waiting on its record.** Its press summons Turbo Twirly, and its mounted and independent hits scale with DEF. The tables do not name those rows, and the wiki gives their levels without a table, so the kit's skill plays its 48-frame animation and deals no hit, and her skill's hits are not built.

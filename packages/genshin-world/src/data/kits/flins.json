@@ -1,7 +1,7 @@
 {
   "burst.hits.length": { "cause": "Unclassified", "value": 2 },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 93 },
+  "burst.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 0 },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 75 },
   "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.1.element": { "cause": "Unclassified", "value": "Electric" },

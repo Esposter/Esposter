@@ -13,6 +13,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `albedo`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `alhaitham`          | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `aloy`               | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `alyosha`            | —                      |                                                                          |
 | `amber`              | —                      |                                                                          |
 | `arataki-itto`       | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `arlecchino`         | 2026-10-14 · Haiku 5.5 |                                                                          |
@@ -51,7 +52,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `hu-tao`             | —                      |                                                                          |
 | `iansan`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `ifa`                | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `illuga`             | —                      |                                                                          |
+| `illuga`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ineffa`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `jahoda`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `jean`               | —                      |                                                                          |
@@ -81,18 +82,20 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `mualani`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `nahida`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `navia`              | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `nefer`              | —                      |                                                                          |
+| `nefer`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `neuvillette`        | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `nicole`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `nilou`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `ningguang`          | —                      |                                                                          |
 | `noelle`             | —                      |                                                                          |
+| `odette`             | —                      |                                                                          |
 | `ororon`             | —                      |                                                                          |
 | `prune`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `qiqi`               | —                      |                                                                          |
 | `raiden-shogun`      | —                      |                                                                          |
 | `razor`              | 2026-10-18 · Haiku 5.5 |                                                                          |
 | `rosaria`            | —                      |                                                                          |
+| `sandrone`           | —                      |                                                                          |
 | `sangonomiya-kokomi` | —                      |                                                                          |
 | `sayu`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `sethos`             | 2026-10-14 · Haiku 5.5 |                                                                          |
@@ -108,6 +111,8 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `varesa`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `varka`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `venti`              | —                      |                                                                          |
+| `vesna`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `vodyanitsa`         | —                      |                                                                          |
 | `wanderer`           | —                      |                                                                          |
 | `wriothesley`        | —                      |                                                                          |
 | `xiangling`          | —                      |                                                                          |
@@ -124,4 +129,4 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `yumemizuki-mizuki`  | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `yun-jin`            | —                      |                                                                          |
 | `zhongli`            | —                      |                                                                          |
-| `zibai`              | —                      |                                                                          |
+| `zibai`              | 2026-10-19 · Haiku 5.5 |                                                                          |

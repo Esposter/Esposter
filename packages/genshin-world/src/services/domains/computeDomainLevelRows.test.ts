@@ -18,6 +18,7 @@ describe(computeDomainLevelRows, () => {
     expect(
       computeDomainLevelRows(
         {
+          artifactSetIds: [],
           kind: DomainKind.Forgery,
           levels: [
             {
@@ -69,6 +70,7 @@ describe(computeDomainLevelRows, () => {
     expect(
       computeDomainLevelRows(
         {
+          artifactSetIds: [],
           kind: DomainKind.Blessing,
           levels: [
             {

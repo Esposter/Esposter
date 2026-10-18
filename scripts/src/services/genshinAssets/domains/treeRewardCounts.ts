@@ -1,6 +1,7 @@
 import type { TreeArtifact } from "genshin-world";
 
 import { DomainKind } from "genshin-world";
+import { takeOne } from "@esposter/shared";
 
 // The counts a Domain of Forgery's or Mastery's Petrified Tree draws of one item of a rarity: the least and most a claim
 // Draws, and the wiki's average, which the claim draws to (see drawRewardItems)
@@ -116,7 +117,7 @@ export const BLESSING_TREE_ARTIFACT_ROWS: TreeArtifactRow[] = [
 // The row a level reads from a table sorted by Adventure Rank: the greatest rank not above the level's, or the lowest row
 // For a level below every row
 export const findTreeRow = <T extends { rank: number }>(rows: T[], rank: number): T =>
-  rows.findLast((row) => row.rank <= rank) ?? rows[0];
+  rows.findLast((row) => row.rank <= rank) ?? takeOne(rows);
 // The four artifact sets of each Domain of Blessing, by entry id, as each domain's wiki infobox gives them: the `sets`
 // Line of its page on https://genshin-impact.fandom.com/wiki/Domain_of_Blessing. A name is resolved to its set id through
 // The dump's equip affixes by resolveBlessingArtifactSetIds, so no set id is typed in

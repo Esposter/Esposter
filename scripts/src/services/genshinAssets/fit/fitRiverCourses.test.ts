@@ -38,12 +38,34 @@ describe(fitRiverCourses, () => {
       .mockResolvedValueOnce({ vertices: pond } as Awaited<ReturnType<typeof readObjMesh>>);
     vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");
 
-    await fitRiverCourses(DerivedAssetComponent.Liyue);
+    await fitRiverCourses(DerivedAssetComponent.Liyue, { isDryRun: false });
 
     expect(vi.mocked(readObjMesh)).toHaveBeenCalledTimes(2);
     expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
       enemyCamps: [],
       rivers: [Array.from({ length: 7 }, (_, x) => ({ level: 10 - x / 2, width: 2, x, z: 0 }))],
     });
+  });
+
+  test("a dry run writes no region data and says nothing was written", async () => {
+    expect.hasAssertions();
+
+    const placement = {
+      mesh: "Area_Ly_Water_LYG_Slums_02_Vo",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0, 1],
+      scale: [1, 1, 1],
+    };
+    const river = Array.from({ length: 7 }, (_, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
+    vi.mocked(readFile)
+      .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
+      .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));
+    vi.mocked(readObjMesh).mockResolvedValueOnce({ vertices: river } as Awaited<ReturnType<typeof readObjMesh>>);
+    vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");
+
+    const { notes } = await fitRiverCourses(DerivedAssetComponent.Liyue, { isDryRun: true });
+
+    expect(vi.mocked(writeWorldData).mock.calls[0]?.[2]).toStrictEqual({ isDryRun: true });
+    expect(notes).toStrictEqual(["regions/liyue.json: 1 river courses, 7 course points, nothing written"]);
   });
 });

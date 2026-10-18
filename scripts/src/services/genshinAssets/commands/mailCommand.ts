@@ -16,6 +16,12 @@ export const mailCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const { note, publication } = buildMailPublication();
     console.log(note);
-    console.log(await publishGameDataStep({ isDryRun: args["dry-run"], publication, scopes: [GameDataset.Mail] }));
+    console.log(
+      await publishGameDataStep({
+        isDryRun: args["dry-run"],
+        publication,
+        scopes: [GameDataset.Mail, GameDataset.MailText],
+      }),
+    );
   },
 });

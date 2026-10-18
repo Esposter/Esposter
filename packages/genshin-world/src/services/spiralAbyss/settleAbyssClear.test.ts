@@ -39,8 +39,10 @@ describe(settleAbyssClear, () => {
   const definition = getItemDefinition(MATERIAL_ID, names, materialDataMap);
   const chamber: AbyssChamber = {
     conditions: [{ kind: AbyssStarConditionKind.LeftTime, threshold: 90 }],
+    halfMonsterDescribeIds: [],
     id: CHAMBER_ID,
     index: 1,
+    monsterLevel: 1,
   };
   const floor: AbyssFloor = { chambers: [chamber], id: 1, index: 1, teamCount: 1, unlockStarCount: 6 };
   const reward: AbyssFloorReward = {

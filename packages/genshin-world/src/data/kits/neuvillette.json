@@ -19,5 +19,89 @@
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8732 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8732 } }
+  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8732 } },
+  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 436 },
+  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.judgement.length": { "cause": "Unsourced", "value": 8 },
+  "hits.judgement.0.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.0.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.0.hitmarkFrames": { "cause": "Unsourced", "value": 6 },
+  "hits.judgement.0.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.1.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.1.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.1.hitmarkFrames": { "cause": "Unsourced", "value": 28 },
+  "hits.judgement.1.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.1.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.2.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.2.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.2.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.2.hitmarkFrames": { "cause": "Unsourced", "value": 53 },
+  "hits.judgement.2.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.2.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.3.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.3.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.3.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.3.hitmarkFrames": { "cause": "Unsourced", "value": 78 },
+  "hits.judgement.3.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.3.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.3.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.4.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.4.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.4.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.4.hitmarkFrames": { "cause": "Unsourced", "value": 103 },
+  "hits.judgement.4.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.4.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.4.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.5.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.5.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.5.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.5.hitmarkFrames": { "cause": "Unsourced", "value": 128 },
+  "hits.judgement.5.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.5.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.5.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.6.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.6.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.6.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.6.hitmarkFrames": { "cause": "Unsourced", "value": 153 },
+  "hits.judgement.6.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.6.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.6.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "hits.judgement.7.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.101738310538956 }
+  },
+  "hits.judgement.7.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.judgement.7.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.judgement.7.hitmarkFrames": { "cause": "Unsourced", "value": 173 },
+  "hits.judgement.7.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8731 } },
+  "hits.judgement.7.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.judgement.7.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
+  "chargedAttack.hits.length": { "cause": "NamedHitList", "value": 0 }
 }

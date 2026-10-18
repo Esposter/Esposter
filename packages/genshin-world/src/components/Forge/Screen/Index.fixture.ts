@@ -47,7 +47,7 @@ export const props = {
   completedMainQuestIds: new Set<string>(),
   definitions,
   gameText: ENGLISH_GAME_TEXT,
-  inventory: { items: [], nextId: 1 },
+  inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
   isInRealm: false,
   now,
   partyCharacterIds: [],

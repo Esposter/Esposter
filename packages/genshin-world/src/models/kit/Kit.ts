@@ -1,7 +1,9 @@
 import type { Attribute } from "#src/models/character/Attribute";
+import type { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -45,24 +47,28 @@ export interface Kit {
   // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
   // Constellation raises it, given the kit's effects as they stand
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
-  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
-  // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
+  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands, its
+  // HP as a share of its Max HP, which a bonus at low or high HP reads, and the deployed team's built combatants, each
+  // Flagged with whether it is on the field, which a bonus gated on the field reads, and the effects on the team, which
+  // A bonus gated on a status reads
   getPassiveBonuses?: (
     combatant: Combatant,
     healthShare: number,
-    deployedCombatants: readonly Combatant[],
+    deployedCombatants: readonly DeployedCombatant[],
+    effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
+  // The DMG bonus a transformative reaction adds to its own damage, if a constellation raises it for that reaction,
+  // Given the combatant as it stands and the reaction
+  getReactionDamageBonus?: (combatant: Combatant, reactionType: TransformativeReactionType) => number;
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
-  // The CRIT Rate a strike of the kit's own adds as its CRIT roll is made against an enemy, if a constellation raises it
-  // Against some enemies only, given the enemy as it stands
-  getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
-  // Against some enemies only, given the enemy as it stands and the deployed team
-  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
+  // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
+  // Reads for a bonus its kit's actions set going
+  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
   // Stats, given the enemy as it stands, the deployed team and the effects on it
   getStrikeAdditiveBaseDamageBonus?: (
@@ -71,10 +77,13 @@ export interface Kit {
     party: Party,
     effects: readonly KitEffect[],
   ) => number;
-  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive raises it on the strike,
-  // Given the enemy as it stands, the deployed team and the effects on it
+  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
+  // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   highPlunge: KitAction;
+  // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
+  // Constellation's exception to the actions that break it
+  keepsNormalAttackCombo?: (context: KitContext, action: KitAction) => boolean;
   lowPlunge: KitAction;
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
   moonsignBenediction?: KitMoonsignBenediction;

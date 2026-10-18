@@ -7,7 +7,13 @@ describe(toQuestChapter, () => {
   test("a chapter lists its title and number", () => {
     expect.hasAssertions();
 
-    const chapter: DumpedChapter = { chapterNumTextMapHash: 2, chapterTitleTextMapHash: 1, cityId: 3, id: 4 };
+    const chapter: DumpedChapter = {
+      chapterNumTextMapHash: 2,
+      chapterTitleTextMapHash: 1,
+      cityId: 3,
+      endQuestId: 0,
+      id: 4,
+    };
 
     expect(toQuestChapter(chapter, "5", ["6"], [])).toStrictEqual({
       id: "4",
@@ -23,7 +29,13 @@ describe(toQuestChapter, () => {
   test("a chapter with no number has none to list", () => {
     expect.hasAssertions();
 
-    const chapter: DumpedChapter = { chapterNumTextMapHash: 0, chapterTitleTextMapHash: 1, cityId: 3, id: 4 };
+    const chapter: DumpedChapter = {
+      chapterNumTextMapHash: 0,
+      chapterTitleTextMapHash: 1,
+      cityId: 3,
+      endQuestId: 0,
+      id: 4,
+    };
 
     expect(toQuestChapter(chapter, "5", ["6"], []).numberTextId).toBe("");
   });

@@ -10,6 +10,6 @@ export interface GcgSkillModule {
   afterSkillUsed?: (context: GcgEffectContext) => void;
   getDamage?: (context: GcgEffectContext) => GcgDamage;
   getStandbyPiercing?: (context: GcgEffectContext) => number;
-  getStartingStatus?: () => GcgZoneCard;
+  getStartingStatuses?: () => GcgZoneCard[];
   isSwitchFast?: (context: GcgEffectContext) => boolean;
 }

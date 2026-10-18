@@ -19,16 +19,42 @@ describe(advanceQuest, () => {
       {
         id: "0",
         objectives: [
-          { count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" },
-          { count: 2, kind: QuestObjectiveKind.Collect, targetId: "0" },
+          { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] },
+          { count: 2, kind: QuestObjectiveKind.Collect, targetIds: ["0"] },
         ],
         textId: "textId",
       },
-      { id: "1", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "textId" },
+      { id: "1", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }], textId: "textId" },
     ],
     talks: [],
     titleTextId: "titleTextId",
   };
+
+  test("meets a collect objective of any of its targets, and moves on once its count is met by them", () => {
+    expect.hasAssertions();
+
+    const anyOfQuest: Quest = {
+      ...quest,
+      steps: [
+        {
+          id: "0",
+          objectives: [{ count: 2, kind: QuestObjectiveKind.Collect, targetIds: ["1", "2"] }],
+          textId: "textId",
+        },
+      ],
+    };
+    const counted = advanceQuest(
+      anyOfQuest,
+      { objectiveCounts: [], stepIndex: 0 },
+      { kind: QuestObjectiveKind.Collect, targetId: "2" },
+    );
+
+    expect(counted).toStrictEqual({ objectiveCounts: [1], stepIndex: 0 });
+    expect(advanceQuest(anyOfQuest, counted, { kind: QuestObjectiveKind.Collect, targetId: "1" })).toStrictEqual({
+      objectiveCounts: [],
+      stepIndex: 1,
+    });
+  });
 
   test("meets the objective an event names", () => {
     expect.hasAssertions();
@@ -46,7 +72,7 @@ describe(advanceQuest, () => {
       steps: [
         {
           id: "0",
-          objectives: [{ alternativeTargetIds: ["1"], count: 2, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          objectives: [{ count: 2, kind: QuestObjectiveKind.Collect, targetIds: ["0", "1"] }],
           textId: "textId",
         },
       ],

@@ -74,6 +74,13 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   },
   [DerivedAssetComponent.Snezhnaya]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Sumeru]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`, in the character
+  // Block `00/00035183.blk` the asset index names. Her model is rooted by PlayerGirl's entry, so this one roots nothing
+  [DerivedAssetComponent.Traveler]: {
+    clipPattern: "^Ani_Avatar_Girl_(Standby|WalkCycle|RunCycle|SprintCycle)$",
+    roots: [],
+    screen: "WorldScreen",
+  },
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
   // Four terrain tiles under the valley and the slopes north of it, with their base maps

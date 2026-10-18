@@ -26,6 +26,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { takeOne } from "@esposter/shared";
 
 // Sacred Rite: Wolf's Swiftness, as gcsim (MIT) cyno/burst.go and cyno/skill.go give it: each Mortuary Rite extends it by
 // The table's seconds, up to two times. From Ascension 4, Pactsworn's normal attacks and the Duststalker Bolts take 150%
@@ -39,10 +40,16 @@ const ELEMENTAL_MASTERY_SHARE_ASCENSION_4_BOLT = 2.5;
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 // Judication, as gcsim (MIT) cyno/asc.go gives it: once Pactsworn Pathclearer has run a while, Endseer recurs while the
-// Burst holds. A Mortuary Rite under Endseer raises its DMG 35%, which the kit cannot price (see the page), and fires
-// Three Duststalker Bolts
+// Burst holds. A Mortuary Rite under Endseer fires three Duststalker Bolts, and its press sets the 35% on the hit it lands
+// As gcsim's a1Buff does, for one second
 const JUDICATION_FIELD_ID = "cyno-judication";
 const ENDSEER_STATUS_ID = "cyno-endseer";
+// The 35% DMG Judication gives Mortuary Rite's own hit, as gcsim (MIT) cyno/asc.go's a1Buff gives it: a press under Endseer
+// Sets its status, which the hit that press lands reads. gcsim's comment there names Secret Rite, but its code gates the
+// Buff on skill B, Mortuary Rite, which the kit follows
+const JUDICATION_DAMAGE_BONUS = 0.35;
+const JUDICATION_DAMAGE_SECONDS = 1;
+const JUDICATION_DAMAGE_STATUS_ID = "cyno-judication-damage";
 // As gcsim (MIT) cyno/cons.go gives them, Constellation 2 raises his Electro DMG 10% for four seconds per normal attack
 // That hits, up to five stacks, once every 0.1 seconds. Constellation 4 restores 3 energy to each other member for up to
 // Five reactions a burst. Constellation 6 gives four stacks of Day of the Jackal, up to eight, which last eight seconds,
@@ -211,6 +218,10 @@ export const createCynoKitBehaviour = ({
           });
         }
         if (!checkHasKitStatus(kitEffectState.effects, characterId, ENDSEER_STATUS_ID)) return;
+        addKitStatus(kitEffectState, characterId, {
+          id: JUDICATION_DAMAGE_STATUS_ID,
+          secondsRemaining: JUDICATION_DAMAGE_SECONDS,
+        });
         if (combatant.constellationCount >= CONSTELLATION_6)
           addDayOfTheJackal(
             kitEffectState,
@@ -225,6 +236,7 @@ export const createCynoKitBehaviour = ({
     },
   });
 
+  const mortuaryRiteHit = takeOne(pactswornPathclearer.elementalSkill.hits);
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
@@ -262,6 +274,11 @@ export const createCynoKitBehaviour = ({
         WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID,
       )
         ? WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS
+        : 0,
+    // Judication's 35% on the hit Mortuary Rite lands, while the status its press sets under Endseer holds
+    getStrikeDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
+      hit === mortuaryRiteHit && checkHasKitStatus(effects, combatant.characterId, JUDICATION_DAMAGE_STATUS_ID)
+        ? JUDICATION_DAMAGE_BONUS
         : 0,
     getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
       findKitStance(kitEffectState.effects, combatant.characterId) ? mortuaryRiteCooldownMultiplier : 1,

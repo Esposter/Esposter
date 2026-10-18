@@ -28,9 +28,9 @@ flowchart TD
 
 **Fitted and drawn:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`, and drawn in the world by `World/Waterfalls`. A sheet with no drop or no width is not drawn, a placement repeated at one lip is drawn once, and a region whose witness export stands in leaves its sheets out. The fit writes no sheet for a fall whose lip has no width, and a sheet's across is a unit direction within a hundredth, which its schema requires. A fall's mesh vertices are turned into three's axes before its placement carries them, because the witness layout's placements are already in three's axes round the origin, the frame the region's landmarks and capitals stand in. Regenerating from the witness reproduces the committed falls exactly, with the one fall that has no width gone.
 
-**Fitted, not drawn:** Liyue's rivers, each read off its water surface (`Area_Ly_Water_*`) as the centreline, width and level of its course into its region data's `rivers`. A surface no longer than twice its width is a pond and has no course, and a course breaks where its surface has no vertices for more than four metres rather than bridging the hole. Nothing draws the rivers yet.
+**Fitted and drawn:** Liyue's rivers, each read off its water surface (`Area_Ly_Water_*`) as the centreline, width and level of its course into its region data's `rivers`. A surface no longer than twice its width is a pond and has no course, and a course breaks where its surface has no vertices for more than four metres rather than bridging the hole. `World/Rivers` draws each course as a ribbon in the water's material, mounted with the still water, and leaves out the rivers of a region whose game export stands in. A river draws still: its flow is not read yet.
 
-**Not yet:** the rivers of the regions other than Liyue, since no other region's witness holds a water surface, the rivers drawn in the world, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
+**Not yet:** the rivers of the regions other than Liyue, since no other region's witness holds a water surface, a river's flow, the falls outside the capitals (their fit entries are in, and their data waits on the fit run), and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 
 ## Key files
 
@@ -42,6 +42,7 @@ flowchart TD
 | `packages/genshin-engine/src/water/constants.ts`                    | The bend foam's attribute and how tight a bend gathers full foam, provisional      |
 | `packages/genshin-engine/src/water/createWaterfallGeometry.ts`      | The waterfall sheet hung from its lip                                              |
 | `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`      | The waterfall's streaks falling down its sheet                                     |
+| `packages/genshin-engine/src/nodes/createRiverMaterial.ts`          | The water material for a river's ribbon, reading its bend foam                     |
 | `packages/genshin-engine/src/models/water/RiverCoursePoint.ts`      | A point along a river's course                                                     |
 | `packages/genshin-engine/src/models/water/WaterfallSheet.ts`        | A waterfall's lip, width and drop                                                  |
 | `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`      | The falls of a region's witness, written to its region data as `waterfalls`        |
@@ -52,6 +53,8 @@ flowchart TD
 | `packages/genshin-world/src/models/world/riverCoursePointSchema.ts` | The region data's river course point                                               |
 | `packages/genshin-world/src/components/World/Water/Index.vue`       | The region's still water, passing it the zero flow                                 |
 | `packages/genshin-world/src/components/World/Waterfalls/Index.vue`  | The regions' sheets drawn as streaked falls, mounted beside the water              |
+| `packages/genshin-world/src/components/World/Rivers/Index.vue`      | The regions' rivers drawn as ribbons in the water's material, mounted beside it    |
+| `packages/genshin-world/src/services/world/getOwnRegionData.ts`     | The regions in reach whose game export does not stand in, so the world draws them  |
 | `packages/genshin-world/src/services/world/getDrawnWaterfalls.ts`   | The sheets drawn: no flat or zero-width sheet, a repeated placement once           |
 
 ## Notes

@@ -49,6 +49,8 @@ const getCriticalRateBonus = (attackTag: AttackTag, auras: AuraType[], constella
         hit: takeOne(takeOne(KAEYA_KIT.normalAttacks).hits),
       },
       enemy,
+      createParty([KAEYA_CHARACTER_ID]),
+      [],
     ) ?? 0
   );
 };
@@ -57,7 +59,13 @@ const getCriticalRateBonus = (attackTag: AttackTag, auras: AuraType[], constella
 const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthShare: number) => {
   getPartyMember(context.party, KAEYA_CHARACTER_ID).healthShare = remainingHealthShare;
   KAEYA_KIT.onKitEvent?.(
-    { characterId: KAEYA_CHARACTER_ID, healthShare: -0.25, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+    {
+      characterId: KAEYA_CHARACTER_ID,
+      healthShare: -0.25,
+      bondOfLifeShare: 0,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare: 0,
+    },
     context,
     combatant,
   );

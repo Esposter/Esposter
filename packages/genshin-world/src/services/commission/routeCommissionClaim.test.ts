@@ -1,5 +1,4 @@
 import type { Character } from "#src/models/character/Character";
-import type { CommissionClaim } from "#src/models/commission/CommissionClaim";
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -21,7 +20,6 @@ import { describe, expect, test } from "vitest";
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(routeCommissionClaim, () => {
-  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
   const noQuest = new Set<string>();
   const FIRST_CHARACTER_ID = 1;
   const ITEM_ID = 2000;
@@ -66,31 +64,25 @@ describe(routeCommissionClaim, () => {
     weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
   };
   const wallet = { ...EMPTY_WALLET, [Currency.Mora]: STARTING_MORA };
-  const claimOf = (rewards: CommissionClaim["rewards"]): CommissionClaim => ({
-    bonus: [],
-    day: { claimedCommissionIds: [], dealtAt: epoch, dealtCommissions: [] },
-    encounterPoints: 0,
-    rewards,
-  });
 
   test("a claim sends its Mora, items and Companionship EXP where they are kept", () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]);
     const characters = [{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER];
-    const claim = claimOf([
+    const items = [
       { count: MORA_COUNT, id: MORA_ITEM_ID },
       { count: ITEM_COUNT, id: ITEM_ID },
       { count: ADVENTURE_EXP, id: ADVENTURE_EXP_ITEM_ID },
       { count: COMPANIONSHIP_EXP, id: COMPANIONSHIP_EXP_ITEM_ID },
-    ]);
+    ];
 
     expect(
       routeCommissionClaim(
         adventureRankTables,
         0,
         characters,
-        claim,
+        items,
         noQuest,
         FRIENDSHIP_LEVELS,
         EMPTY_INVENTORY,
@@ -105,7 +97,11 @@ describe(routeCommissionClaim, () => {
         { ...CHARACTER, id: TRAVELER_CHARACTER_ID },
         { ...CHARACTER, friendshipExp: COMPANIONSHIP_EXP },
       ],
-      inventory: { items: [{ definition: ITEM_DEFINITION, id: 0, quantity: ITEM_COUNT }], nextId: 1 },
+      inventory: {
+        items: [{ definition: ITEM_DEFINITION, id: 0, quantity: ITEM_COUNT }],
+        nextId: 1,
+        quickSwapItemIds: [],
+      },
       wallet: { ...wallet, [Currency.Mora]: STARTING_MORA + MORA_COUNT },
     });
   });
@@ -119,18 +115,18 @@ describe(routeCommissionClaim, () => {
       nextId: 1,
       quickSwapItemIds: [],
     };
-    const claim = claimOf([
+    const items = [
       { count: MORA_COUNT, id: MORA_ITEM_ID },
       { count: ITEM_COUNT, id: ITEM_ID },
       { count: ADVENTURE_EXP, id: ADVENTURE_EXP_ITEM_ID },
-    ]);
+    ];
 
     expect(
       routeCommissionClaim(
         adventureRankTables,
         0,
         [CHARACTER],
-        claim,
+        items,
         noQuest,
         FRIENDSHIP_LEVELS,
         fullInventory,

@@ -39,18 +39,18 @@ describe(createRustPassiveModule, () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    expect(rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party)).toBeCloseTo(
-      0.4,
-    );
-    expect(rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party)).toBeCloseTo(
-      -0.1,
-    );
+    expect(
+      rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+    ).toBeCloseTo(0.4);
+    expect(
+      rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
+    ).toBeCloseTo(-0.1);
   });
 
   test("an elemental skill is not changed", () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    expect(rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party)).toBe(0);
+    expect(rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
   });
 });

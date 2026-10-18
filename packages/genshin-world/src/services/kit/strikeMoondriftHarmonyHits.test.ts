@@ -2,6 +2,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
@@ -73,5 +74,20 @@ describe(strikeMoondriftHarmonyHits, () => {
     strikeMoondriftHarmonyHits(1, createContext(enemy));
 
     expect([enemy.health, enemy.moondriftHarmonyHits]).toStrictEqual([STURDY_HEALTH, []]);
+  });
+
+  test("lands a hit on the step its seconds run out, not one step late", () => {
+    expect.hasAssertions();
+
+    const enemy: Enemy = {
+      ...createHitEnemy(),
+      moondriftHarmonyHits: [
+        { contributorIds: new Set([combatant.characterId]), ownerId: combatant.characterId, secondsRemaining: 5 },
+      ],
+    };
+    const context = createContext(enemy);
+    for (let step = 0; step < 300; step++) strikeMoondriftHarmonyHits(FIXED_STEP_SECONDS, context);
+
+    expect(enemy.moondriftHarmonyHits).toStrictEqual([]);
   });
 });
