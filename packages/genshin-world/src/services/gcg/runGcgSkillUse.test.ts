@@ -182,7 +182,6 @@ describe("a skill's any-side hooks", () => {
 const PLUNGE_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 describe("a Plunging Attack", () => {
-  const XIAO_ID = 1_504;
   const CHONGYUN_ID = 1_104;
   const KABUKI: GcgSkill = {
     costs: [],
