@@ -29,18 +29,6 @@ watch([frameStyleSheet, () => css], ([styleSheet, cssText]) => {
   styleFrame = requestAnimationFrame(() => styleSheet?.replaceSync(cssText));
 });
 onUnmounted(() => cancelAnimationFrame(styleFrame));
-
-const onFrameLoad = () => {
-  const contentWindow = frame.value?.contentWindow;
-  const contentDocument = frame.value?.contentDocument;
-  if (!contentWindow || !contentDocument) return;
-
-  // A sheet adopted into a document must be constructed in that document's realm
-  const styleSheet = new contentWindow.CSSStyleSheet();
-  contentDocument.adoptedStyleSheets = [styleSheet];
-  frameStyleSheet.value = styleSheet;
-  frameDocument.value = contentDocument;
-};
 </script>
 
 <!-- The page draws in its own document at its device's width, scaled down to fit a narrower pane rather than reflowed -->
@@ -58,7 +46,19 @@ const onFrameLoad = () => {
         transformOrigin: '0 0',
         width: `${frameWidth}px`,
       }"
-      @load="onFrameLoad()"
+      @load="
+        () => {
+          const contentWindow = frame?.contentWindow;
+          const contentDocument = frame?.contentDocument;
+          if (!contentWindow || !contentDocument) return;
+
+          // A sheet adopted into a document must be constructed in that document's realm
+          const styleSheet = new contentWindow.CSSStyleSheet();
+          contentDocument.adoptedStyleSheets = [styleSheet];
+          frameStyleSheet = styleSheet;
+          frameDocument = contentDocument;
+        }
+      "
     />
     <Teleport v-if="frameBody" :to="frameBody">
       <slot />
