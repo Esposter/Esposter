@@ -2,6 +2,8 @@ import { getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 import { configDefaults } from "vitest/config";
 
+import { getNuxtEnvironmentOptions } from "./configuration/nuxtEnvironmentOptions.ts";
+
 // `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
 // Are handed in and only the app's own are written here: the project name every member is addressed by, the
 // Persisted transform cache (which matters most for the app, whose module graph is the largest in the workspace),
@@ -14,12 +16,7 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
   // Would otherwise be a forgeable token in production and nothing at all in a test.
   env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
-  // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
-  // App don't resolve) — the run is driven by the root `projects` config. The origin is a `.test` host, which never
-  // Resolves, rather than Nuxt's default of `localhost:3000`: msw intercepts beneath happy-dom's `fetch`, and a
-  // Request it misses there went out to whatever listened on the default port — a running dev server answered
-  // With the real router, so a suite failed only while one was up. On this origin a missed request fails at once
-  environmentOptions: { nuxt: { rootDir: import.meta.dirname, url: "http://nuxt.test" } },
+  environmentOptions: getNuxtEnvironmentOptions(import.meta.dirname),
   // A `*.browser.test.ts` runs in the browser suite alone (`vitest.browser.config.ts`), where a layout engine draws it
   exclude: [...configDefaults.exclude, "**/*.browser.test.ts"],
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
