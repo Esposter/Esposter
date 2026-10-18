@@ -16,11 +16,9 @@ describe(enterKitNightsoulBlessing, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 60, secondsRemaining: 10 });
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 20, secondsRemaining: 10 });
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 20, secondsRemaining: 5 });
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(20);
-    expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)?.secondsRemaining).toBe(
-      10,
-    );
+    expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)?.secondsRemaining).toBe(5);
   });
 
   test("keeps the rate the blessing runs on, and holds none when it has none", () => {
