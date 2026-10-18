@@ -4,7 +4,7 @@ import type { GridItem } from "#src/models/GridItem";
 import { useGridLayout } from "#src/composables/useGridLayout";
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, useTemplateRef } from "vue";
 
@@ -19,7 +19,7 @@ describe(useGridLayout, () => {
 
   // Mounts a grid whose tiles carry their geometry as inline styles, and whose handle resizes from the given edge, so a
   // Test reads where each one is drawn
-  const mountGrid = (items: GridItem[], edge = ResizeEdge.SouthEast) => {
+  const mountGrid = (items: GridItem[], edge = ResizeEdge.SouthEast, gridSpacing = spacing) => {
     const onCommit = vi.fn<(changes: GridItem[]) => void>();
     const wrapper = mount(
       defineComponent({
@@ -32,7 +32,7 @@ describe(useGridLayout, () => {
             items,
             onCommit,
             rowHeight,
-            spacing,
+            spacing: gridSpacing,
           }));
 
           return () =>
@@ -209,6 +209,28 @@ describe(useGridLayout, () => {
     await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
 
     expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("#17 #62 Padding the grid apart from its gaps", async () => {
+    expect.hasAssertions();
+
+    const gridSpacing = { gap: 4, padding: 20 };
+    const { wrapper } = mountGrid(
+      [
+        { h: 1, id: "a", w: 1, x: 0, y: 0 },
+        { h: 1, id: "b", w: 1, x: 1, y: 0 },
+      ],
+      ResizeEdge.SouthEast,
+      gridSpacing,
+    );
+    // The grid measures its width in a microtask after mount, and the tiles are placed from that width
+    await flushPromises();
+    const pitch = getColumnPitch(gridWidth, columnNumber, gridSpacing);
+    const [first, second] = wrapper.findAll(".tile");
+
+    expect(first?.attributes("style")).toContain(`left: ${gridSpacing.padding}px`);
+    expect(first?.attributes("style")).toContain(`top: ${gridSpacing.padding}px`);
+    expect(second?.attributes("style")).toContain(`left: ${getCellPosition(1, pitch, gridSpacing.padding)}px`);
   });
 
   test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {
