@@ -20,3 +20,7 @@ export const CAMPFIRE_PUTTING_OUT_WEATHERS: WeatherKind[] = [WeatherKind.Rain, W
 // Provisional: the share of the regular zone the delicious zone takes, centred on the same point. It is measured off a
 // Recording of the cooking screen, as the zones' layout is
 export const DELICIOUS_ZONE_SHARE = 0.5;
+// The name the scene gives Mondstadt's stove among its building points, and the id of the stove's row in the prompts,
+// Which holds the one stove the world offers
+export const MONDSTADT_COOKING_STOVE_BUILDING_NAME = "Restaurant";
+export const COOKING_STOVE_INTERACTABLE_ID = "cookingStove";
