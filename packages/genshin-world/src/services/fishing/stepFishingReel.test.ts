@@ -21,7 +21,7 @@ describe(stepFishingReel, () => {
     );
   });
 
-  test("a tension out of its zone wears nothing down, and the line breaks past its allowance out of the zone", () => {
+  test("a tension out of its zone wears nothing down", () => {
     expect.hasAssertions();
 
     const outside = { start: 0.9, width: 0.05 };
@@ -29,6 +29,13 @@ describe(stepFishingReel, () => {
 
     expect(stepped.hp).toBe(HP);
     expect(stepped.phase).toBe(FishingPhase.Reeling);
+  });
+
+  test("the line breaks after too long out of the zone", () => {
+    expect.hasAssertions();
+
+    const outside = { start: 0.9, width: 0.05 };
+
     expect(
       stepFishingReel(
         { ...reel, outOfZoneSeconds: REEL_LOST_OUT_OF_ZONE_SECONDS },
