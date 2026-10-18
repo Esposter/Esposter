@@ -59,11 +59,6 @@ const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Recor
     "Night Vigil Duration": ["nightVigilSeconds"],
     "Swift Hunt Bond of Life Gain": ["swiftHuntBondOfLifeGain"],
   },
-  // Sigewinne's bubbles' healing and the final bounce's heal, each at its position in the label
-  Sigewinne: {
-    "Bolstering Bubblebalm Healing": ["bolsteringBubblebalmHealingShare", "bolsteringBubblebalmHealingFlat"],
-    "Final Bounce Healing": ["finalBounceHealingShare"],
-  },
 };
 
 // Every value a character's published tables give its kit, by its path in the record, each as its group and parameter
@@ -106,15 +101,15 @@ export const getTableKitCandidates = ({
   const addParameterLabel = (names: readonly string[], combatTalent: CombatTalent, tableLabel: KitTableLabel) => {
     for (const [position, name] of names.entries()) addLabel(`parameters.${name}`, combatTalent, tableLabel, position);
   };
-  // A folder-less character's skill and burst hits read their labels in hit order, a label spanning several hits giving
-  // One to each of its parameters, and each hit takes the next position across the labels
-  const addSlotHitLabels = (slot: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
+  // A folder-less character's hit slot reads its labels in hit order, a label spanning several hits giving one to each
+  // Of its parameters, and each hit takes the next position across the labels
+  const addSlotHitLabels = (path: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
     let hitIndex = 0;
     for (const name of labelNames) {
       const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === name);
       if (tableLabel === undefined) throw new InvalidOperationError(Operation.Read, name, "has no label in its talent");
       for (const position of tableLabel.indexes.keys()) {
-        addLabel(`${slot}.hits.${hitIndex}.multiplier`, combatTalent, tableLabel, position);
+        addLabel(`${path}.hits.${hitIndex}.multiplier`, combatTalent, tableLabel, position);
         hitIndex += 1;
       }
     }
@@ -165,10 +160,12 @@ export const getTableKitCandidates = ({
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
     else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalBurst, tableLabel);
   }
-  const slotHitLabels = characterIdSlotHitLabelsMap.get(characterId);
-  if (slotHitLabels !== undefined) {
-    addSlotHitLabels("burst", CombatTalent.ElementalBurst, slotHitLabels.burst);
-    addSlotHitLabels("skill", CombatTalent.ElementalSkill, slotHitLabels.skill);
+  const slotLabels = characterIdSlotHitLabelsMap.get(characterId);
+  for (const [path, { combatTalent, labels }] of Object.entries(slotLabels?.hits ?? {}))
+    addSlotHitLabels(path, combatTalent, labels);
+  for (const [path, { combatTalent, label, position }] of Object.entries(slotLabels?.values ?? {})) {
+    const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find((entry) => entry.label === label);
+    if (tableLabel !== undefined) addLabel(path, combatTalent, tableLabel, position);
   }
   return candidateMap;
 };
