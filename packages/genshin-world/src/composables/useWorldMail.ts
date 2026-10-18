@@ -13,6 +13,7 @@ import { birthdayMailRowsSchema } from "#src/models/mail/MailData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
 import { claimMail } from "#src/services/mail/claimMail";
+import { deleteGiftMail } from "#src/services/mail/deleteGiftMail";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
 import { readMailRows } from "#src/services/mail/readMailRows";
@@ -115,6 +116,11 @@ export const useWorldMail = ({
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);
   };
+  const deleteGift = (mailId: number) => {
+    if (!mailData.value) return;
+    const { birthdayMailIds, mailRows } = mailData.value;
+    mails.value = deleteGiftMail(mails.value, mailRows, birthdayMailIds, mailId);
+  };
   const deleteRead = () => {
     if (!mailData.value) return;
     const { birthdayMailIds, mailRows } = mailData.value;
@@ -127,5 +133,5 @@ export const useWorldMail = ({
     mails.value = mails.value.map((mail) => (mail.id === mailId ? { ...mail, isPinned: !mail.isPinned } : mail));
   };
 
-  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailPin };
+  return { claim, claimAll, deleteGift, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailPin };
 };

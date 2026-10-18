@@ -153,3 +153,25 @@ The Mail screen SHALL show, on an opened mail, the date the mail was received, i
 - **GIVEN** the player holds a mail delivered at a given moment
 - **WHEN** the player opens the mail
 - **THEN** its date line shows that date in the reader's locale
+
+### Requirement: A Gift Mail Box mail is deleted only once the player confirms it
+
+Delete on a mail in the Gift Mail Box SHALL show the game's warning first, that a Gift Mail Box mail deleted cannot be recovered (the wiki's Mail page), and SHALL remove that mail only once the player confirms it. Delete on a mail outside the Gift Mail Box is not offered.
+
+#### Scenario: Delete on a gift mail asks first
+
+- **GIVEN** a claimed birthday mail under the Gift Mail Box tab
+- **WHEN** the player presses Delete on it
+- **THEN** the screen shows the warning titled "Delete Gift Mail" with its text, and the mail is still held
+
+#### Scenario: Confirming the warning removes the gift mail
+
+- **GIVEN** the warning is showing for a gift mail
+- **WHEN** the player presses Delete on the warning
+- **THEN** the mail is removed from the save
+
+#### Scenario: Cancelling the warning keeps the gift mail
+
+- **GIVEN** the warning is showing for a gift mail
+- **WHEN** the player presses Cancel
+- **THEN** the warning closes and the mail stays in the Gift Mail Box
