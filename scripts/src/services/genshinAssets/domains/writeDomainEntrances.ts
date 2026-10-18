@@ -1,4 +1,5 @@
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { DomainEntranceLandmark } from "genshin-world";
 
 import { DUNGEON_ENTRY_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
@@ -20,7 +21,7 @@ import { LandmarkKind } from "genshin-world";
 // Game area its point stands in, in the region holding that area. A region's other landmarks stay as its file holds them,
 // And its entrances from an earlier run are replaced. An entry with no point, or in an area no fitted region holds, is
 // Counted and left out. A dry run counts the entrances and writes nothing
-export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
+export const writeDomainEntrances = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const [{ origin, regionFiles }, getWorldHeight, scenePoints, catalogueAreaPlaceMap] = await Promise.all([
     readFittedRegions(),
     readWorldGroundHeight(),

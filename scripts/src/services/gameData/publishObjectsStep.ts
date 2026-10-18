@@ -1,10 +1,10 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
 
-interface PublishObjectsStepOptions {
-  isDryRun: boolean;
+interface PublishObjectsStepOptions extends DryRunOptions {
   objects: GameDataPublication["objects"];
 }
 

@@ -1,5 +1,5 @@
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";

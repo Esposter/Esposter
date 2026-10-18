@@ -1,4 +1,4 @@
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { toWaypointLandmarks } from "#src/services/genshinAssets/fit/toWaypointLandmarks";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";

@@ -1,5 +1,5 @@
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { EnemyKindId } from "genshin-world";
 
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";

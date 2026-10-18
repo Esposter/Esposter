@@ -1,6 +1,6 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { computeWaterfallSheet } from "#src/services/genshinAssets/fit/computeWaterfallSheet";
 import { readWitnessWorldMeshes } from "#src/services/genshinAssets/fit/readWitnessWorldMeshes";

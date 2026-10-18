@@ -1,6 +1,6 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";

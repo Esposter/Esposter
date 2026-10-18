@@ -1,6 +1,6 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { GroundPoint } from "genshin-engine";
 import type { RegionGround } from "genshin-world";
 

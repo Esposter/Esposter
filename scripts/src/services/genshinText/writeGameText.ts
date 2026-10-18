@@ -1,3 +1,4 @@
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { VoiceLine } from "genshin-persona/src/models/VoiceLine.ts";
 
 import {
@@ -29,7 +30,7 @@ import { dirname, join } from "node:path";
 // It runs. A key the account kit files is read from the kit's strings, every other from the text map, its colour tags
 // Kept for the screen to draw. A key missing from one language's strings shows English there and says so, since a
 // Dump that lost a string is the dump's fault rather than a reason to ship none
-export const writeGameText = ({ isDryRun }: { isDryRun: boolean }): string[] => {
+export const writeGameText = ({ isDryRun }: DryRunOptions): string[] => {
   const notes: string[] = [];
   const manualTextMap = readManualTextMap();
   const ids = GameTextKeys.toSorted();

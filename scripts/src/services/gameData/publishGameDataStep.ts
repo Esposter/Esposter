@@ -1,5 +1,6 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
@@ -9,8 +10,7 @@ import { publishGameData } from "#src/services/gameData/publishGameData";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 
-interface PublishGameDataStepOptions {
-  isDryRun: boolean;
+interface PublishGameDataStepOptions extends DryRunOptions {
   publication: GameDataPublication;
   scopes: GameDataScope[];
 }

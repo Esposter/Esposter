@@ -1,5 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
