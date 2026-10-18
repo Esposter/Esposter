@@ -2,7 +2,8 @@ import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMinin
 import { describe, expect, test } from "vitest";
 
 describe(checkIsMiningOutcropStanding, () => {
-  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 2 });
+  // Four o'clock in the game's time zone, UTC+8, is the daily reset of the day the epoch begins
+  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 4 });
 
   test("a mining outcrop not mined stands", () => {
     expect.hasAssertions();

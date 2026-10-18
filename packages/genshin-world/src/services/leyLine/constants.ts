@@ -1,11 +1,9 @@
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 
-// The Adventure Rank a mining outcrop is drawn at, and the time of the game's day each day's outcrops come, in the
-// Game's time zone
 // The region the ley line outcrops are drawn in, whose places the outcrops stand at
 export const OUTCROP_REGION_ID = "mondstadt";
+// The Adventure Rank a mining outcrop is drawn at
 export const MINING_OUTCROP_ADVENTURE_RANK = 30;
-export const MINING_OUTCROP_REFRESH_TIME: Temporal.PlainTime = Temporal.PlainTime.from({ hour: 6 });
 // The id prefix of the camp a touch spawns at an outcrop's place: the camp a place holds is named by it and the place's id
 export const OUTCROP_CAMP_ID_PREFIX = "outcrop";
 // The members a fight's camp places at an outcrop, the radius in metres they stand within of its place, and the level they
