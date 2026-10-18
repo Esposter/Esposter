@@ -91,7 +91,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `prune`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `qiqi`               | —                      |                                                                          |
 | `raiden-shogun`      | —                      |                                                                          |
-| `razor`              | —                      |                                                                          |
+| `razor`              | 2026-10-18 · Haiku 5.5 |                                                                          |
 | `rosaria`            | —                      |                                                                          |
 | `sangonomiya-kokomi` | —                      |                                                                          |
 | `sayu`               | 2026-10-14 · Haiku 5.5 |                                                                          |
