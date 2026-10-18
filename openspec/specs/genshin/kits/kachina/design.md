@@ -15,7 +15,7 @@ gcsim has no folder for Kachina at v2.47.2, so no value comes from gcsim. Her re
 ## Not built
 
 - **The skill's Turbo Twirly is waiting on its record.** Its press summons Turbo Twirly, and its mounted and independent hits scale with DEF. The tables do not name those rows, and the wiki gives their levels without a table, so the kit's skill plays its 48-frame animation and deals no hit, and her skill's hits are not built.
-- **Her Nightsoul state is waiting on the Nightsoul hook.** Kachina's Nightsoul's Blessing and its points, and the Phlogiston she consumes once they run out, are not read by any kit yet.
+- **Her Nightsoul's Blessing waits on Turbo Twirly's riding states, so it is not entered yet.** Her press enters the blessing with 60 points, which Turbo Twirly's actions spend, and it ends when they are gone. The wiki gives the spend as 0.923 a second mounted and not climbing, 1.2 climbing, 3.6 a climb jump, 10 a Perform Attack and 2 a dismount. Those states need the mounted Twirly, which the kit does not build, so entering the blessing now would hold points that never drain. gcsim v2.47.2 has no Kachina folder, so these figures are the wiki's, and the Nightsoul primitive takes them once the Twirly is built.
 - **Her passives wait on their hooks.** Mountain Echoes, The Weight of Stone and Heart of Unity each read the Nightsoul state, the party's Nightsoul Bursts or DEF, which no kit reads yet.
 
 ## Key files
