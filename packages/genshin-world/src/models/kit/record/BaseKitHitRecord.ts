@@ -50,7 +50,7 @@ export const baseKitHitRecordSchema = z.strictObject({
   convertedPoiseDamage: z.number().nonnegative().optional(),
   damageBonus: kitParameterSchema.optional(),
   element: z.enum(Element).optional(),
-  gauge: z.number().nonnegative().optional(),
+  gauge: z.literal([0, 1, 2, 4]).optional(),
   healParty: kitPartyHealRecordSchema.optional(),
   hitmarkFrames: z.number().nonnegative(),
   internalCooldownTag: z.enum(InternalCooldownTag).optional(),

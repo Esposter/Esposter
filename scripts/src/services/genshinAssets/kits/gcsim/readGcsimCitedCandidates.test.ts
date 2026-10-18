@@ -18,6 +18,7 @@ describe("readGcsimCitedCandidates", () => {
     "package albedo\n\nfunc burst() {\n\tcombat.NewCircleHitOnTargetFanAngle(c.Core.Combat.Player(), nil, 8, 120)\n}\n";
   const QUEUE_GO =
     "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, area, 70, 70)\n\t}, 75)\n}\n";
+  const DURABILITY_GO = "package aino\n\nfunc skill() {\n\tai := info.AttackInfo{\n\t\tDurability: 50,\n\t}\n}\n";
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const MULTILINE_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
@@ -25,6 +26,7 @@ describe("readGcsimCitedCandidates", () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
     writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "durability.go"), DURABILITY_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "queue.go"), QUEUE_GO);
@@ -44,6 +46,20 @@ describe("readGcsimCitedCandidates", () => {
     expect(candidate?.provenance).toStrictEqual({
       file: "internal/characters/aino/asc.go",
       line: 4,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited durability line gives the gauge in units of U, gcsim's durability over 25", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.storm.gauge": { file: "durability.go", line: 5, source: KitSource.Gcsim, value: 2 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.storm.gauge")?.[0];
+    expect(candidate?.value).toBe(2);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/durability.go",
+      line: 5,
       source: KitSource.Gcsim,
     });
   });

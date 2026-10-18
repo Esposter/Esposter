@@ -4,7 +4,7 @@ import type { AttackArea } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
-import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_CHARACTERS_PATH, GCSIM_DURABILITY_PER_GAUGE } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
 import { readGcsimEnclosingLoop } from "#src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop";
 import { createGcsimFileResolver } from "#src/services/genshinAssets/kits/gcsim/readGcsimFileConstant";
@@ -19,6 +19,9 @@ import { join } from "node:path";
 // The record's hit field measured from the action's start, as BaseKitHitRecord's schema has it: the only field a queued
 // Block's delay is added to, since a duration, an interval or a count is cited as written whatever block its line is in
 const HITMARK_FIELD = "hitmarkFrames";
+
+// The record's hit field in units of U, which gcsim writes as a durability of GCSIM_DURABILITY_PER_GAUGE to the unit
+const GAUGE_FIELD = "gauge";
 
 // The most lines an area's constructor may run across, its arguments on the lines under its opening line
 const MAX_CONSTRUCTOR_LINES = 12;
@@ -87,7 +90,8 @@ const readCitedArea = (
   return { area, line: cite?.line ?? lineIndex + 1 };
 };
 
-// The value a cited line gives: its one value equal to the cited value, or its first where none is. In a `for` loop,
+// The value a cited line gives, in the record's units: its one value equal to the cited value, or its first where none
+// Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. In a `for` loop,
 // An array of that line's value at each index of the loop, taken at the one expression position whose values equal the
 // Cited array, or at the first position where none does; a scalar citation takes the value equal to it, as outside one.
 // A cited entry of a run of hits takes the loop's element at its index, matched as the one value its hit is cited with
@@ -97,24 +101,23 @@ const readCitedValue = (
   citedValue: unknown,
   file: string,
   hitIndex: number | undefined,
-  isHitmark: boolean,
+  field: string,
 ): unknown => {
   const lineText = lines[lineIndex] ?? "";
   const resolveName = createGcsimFileResolver(lines);
   // A line inside a queued block is read at the time the block queues it, so a hitmark takes the block's delay
   const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
   if (delay === undefined) return undefined;
-  const shift = isHitmark ? delay : 0;
+  const shift = field === HITMARK_FIELD ? delay : 0;
+  const toRecordValue = (value: number) => (field === GAUGE_FIELD ? value / GCSIM_DURABILITY_PER_GAUGE : value + shift);
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
   if (loop === undefined) {
-    const values = readGcsimLineValues(lineText, resolveName).map((value) => value + shift);
+    const values = readGcsimLineValues(lineText, resolveName).map(toRecordValue);
     return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
   }
   if (loop.count === 0) return undefined;
   const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(
-      (value) => value + shift,
-    ),
+    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(toRecordValue),
   );
   if (hitIndex !== undefined) {
     const hitValues = valuesByIndex[hitIndex] ?? [];
@@ -158,8 +161,8 @@ export const readGcsimCitedCandidates = (
         });
       continue;
     }
-    const isHitmark = path.endsWith(`.${HITMARK_FIELD}`);
-    const value = readCitedValue(lines, entry.line - 1, entry.value, file, entry.index, isHitmark);
+    const field = path.slice(path.lastIndexOf(".") + 1);
+    const value = readCitedValue(lines, entry.line - 1, entry.value, file, entry.index, field);
     if (value === undefined) continue;
     addKitCandidate(candidateMap, path, { provenance: { file, line: entry.line, source: KitSource.Gcsim }, value });
   }

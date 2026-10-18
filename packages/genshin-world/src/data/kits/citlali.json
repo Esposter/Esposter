@@ -6,7 +6,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "hits.frostfallStorm.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostfallStorm.gauge": { "cause": "Unclassified", "value": 25 },
+  "hits.frostfallStorm.gauge": { "file": "skill.go", "line": 168, "source": "Gcsim", "value": 1 },
   "hits.frostfallStorm.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.frostfallStorm.internalCooldownTag": { "cause": "Unclassified", "value": "CitlaliFrostfallStorm" },
   "hits.frostfallStorm.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 10732 } },
