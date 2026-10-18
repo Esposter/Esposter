@@ -10,6 +10,7 @@ import type { Stamina } from "genshin-engine";
 import {
   AIRBORNE_LOCOMOTION_STATES,
   HIGH_PLUNGE_MIN_HEIGHT,
+  MOVEMENT_LOCOMOTION_STATES,
   NORMAL_ATTACK_RESET_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
   PLUNGE_COLLISION_SECONDS,
@@ -24,6 +25,18 @@ import { queueKitHits } from "#src/services/kit/queueKitHits";
 import { startKitAction } from "#src/services/kit/startKitAction";
 import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { LocomotionState } from "genshin-engine";
+
+// The kit's action for the dash or the jump the body enters on this step, if it enters one
+const getEnteredMovementAction = (
+  kit: Kit,
+  previousState: LocomotionState,
+  state: LocomotionState,
+): KitAction | undefined => {
+  if (state === previousState) return undefined;
+  if (state === LocomotionState.Dash) return kit.dash;
+  if (state === LocomotionState.Jump) return kit.jump;
+  return undefined;
+};
 
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
 // Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster by
@@ -42,6 +55,7 @@ export const stepKit = (
 ): KitAction | undefined => {
   const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
+  const previousLocomotionState = kitState.locomotionState;
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
   // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it twice
@@ -98,9 +112,11 @@ export const stepKit = (
       action === kit.elementalBurstVariant?.action ||
       kit.elementalSkillChain?.followUps.includes(action) === true ||
       kit.elementalSkillHolds?.some((hold) => hold.action === action || hold.variant?.action === action) === true;
+    const isMovement = action === kit.dash || action === kit.jump;
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
-      (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
+      (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState)) ||
+      (isMovement && MOVEMENT_LOCOMOTION_STATES.includes(locomotionState));
     if (isAllowed) {
       const speedBonus = kit.normalAttacks.includes(action)
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
@@ -140,5 +156,8 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
+  const movementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
+  if (movementAction && movementAction.canStart?.(context) !== false)
+    return startKitAction(kitState, movementAction, landedHits);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
 };

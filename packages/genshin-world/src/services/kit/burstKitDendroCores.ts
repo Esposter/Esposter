@@ -13,7 +13,6 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 
 // The standing enemy nearest a point within a radius of it, measured to the enemy's edge, if one stands there
 const selectNearestEnemy = ({ x, z }: GroundPoint, enemies: Iterable<Enemy>, radius: number): Enemy | undefined => {
@@ -50,18 +49,14 @@ export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], contex
         ? selectNearestEnemy(position, enemyMap.values(), HYPERBLOOM_HOMING_RADIUS)
         : effect;
     if (!target) continue;
-    const reactionBonus = getDeployedCombatants(party, characterIdCombatantMap).reduce(
-      (bonus, member) => bonus + (member.kit.getPartyDendroCoreDamageBonus?.(member, coreKind, context) ?? 0),
-      0,
-    );
     landKitReactionReaches(
       [
         [
           { position: target.position },
           {
+            coreKind,
             element: Element.Dendro,
             reachRadius: coreKind === DendroCoreKind.Bountiful ? BOUNTIFUL_CORE_REACH_RADIUS : undefined,
-            reactionBonus,
             reactionType,
           },
         ],

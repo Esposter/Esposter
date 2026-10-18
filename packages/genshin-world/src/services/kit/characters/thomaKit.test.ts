@@ -153,6 +153,18 @@ describe(createThomaKitBehaviour, () => {
     expect(readShieldHealth(maxShieldHealth - 1, 1)).toStrictEqual([maxShieldHealth]);
   });
 
+  test("a Fiery Collapse's shield is built from Thoma's Max HP with the buffs on it", () => {
+    expect.hasAssertions();
+    const healthPercentBuff: KitEffect = {
+      amount: 0.5,
+      attribute: Attribute.HealthPercent,
+      characterId: THOMA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 8,
+    };
+    expect(readShieldHealth(undefined, 2, [healthPercentBuff])).toStrictEqual([0.01144 * 15_000 + 110.03398]);
+  });
+
   test("constellation 2 holds Crimson Ooyoroi for three seconds longer, and Constellation 1 holds it for the table's seconds", () => {
     expect.hasAssertions();
 

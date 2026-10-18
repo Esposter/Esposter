@@ -23,7 +23,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -176,4 +176,28 @@ describe(burstKitDendroCores, () => {
     expect(getDamage(beside)).toBeCloseTo(hyperbloomDamage);
     expect(apart.health).toBe(STURDY_HEALTH);
   });
+
+  test.each([DendroCoreKind.Bloom, DendroCoreKind.Bountiful])(
+    "hands a %s Core's kind on the reaction its burst is read against",
+    (coreKind) => {
+      expect.hasAssertions();
+
+      const getPartyReactionBonus = vi.fn(() => ({}));
+      const traveler: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
+      const context = createKitTestContext(traveler, {
+        characterIdCombatantMap: new Map([[TRAVELER_CHARACTER_ID, traveler]]),
+        enemyMap: new Map([["0", createSturdyEnemy(1)]]),
+        enemyTables,
+        party: createParty([TRAVELER_CHARACTER_ID]),
+      });
+
+      burstKitDendroCores([{ ...createCore(TransformativeReactionType.Bloom), coreKind }], context);
+
+      expect(getPartyReactionBonus).toHaveBeenCalledWith(
+        expect.objectContaining({ characterId: TRAVELER_CHARACTER_ID }),
+        expect.objectContaining({ coreKind, reactionType: TransformativeReactionType.Bloom }),
+        context,
+      );
+    },
+  );
 });

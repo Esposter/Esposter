@@ -138,7 +138,7 @@ At constellation 6, while the Prayer stands, an elemental normal attack by the c
 
 ### Requirement: Constellations 2 and 4 are not built
 
-Candace's Constellations 2 and 4 SHALL NOT take effect: Constellation 2's Max HP buff is not read back into her Max HP, and Constellation 4's shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
+Candace's Constellations 2 and 4 SHALL NOT take effect: Constellation 2's Max HP buff is not started by Heron's Sanctum's hit on an opponent, and Constellation 4's shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
 
 #### Scenario: Constellation 2 and 4 do nothing
 

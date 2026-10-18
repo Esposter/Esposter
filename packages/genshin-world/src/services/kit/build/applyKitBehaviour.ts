@@ -39,20 +39,20 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     chargedAttackVariant,
     checkCanStartAttack,
     getChargedAttackStaminaMultiplier,
+    getConversionBonuses,
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
-    getPartyDendroCoreDamageBonus,
     getPartyReactionBonus,
     getPartyStrikeBonus,
     getPassiveBonuses,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
     getStrikeAdditiveBaseDamageBonus,
-    isSkillCooldownWaived,
     getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
     getStrikeDefenceIgnored,
+    isSkillCooldownWaived,
     jumpsSkillHoldToTop,
     keepsNormalAttackCombo,
     moonsignBenediction,
@@ -71,20 +71,20 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   } = behaviour;
   if (checkCanStartAttack) kit.checkCanStartAttack = checkCanStartAttack;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
+  if (getConversionBonuses) kit.getConversionBonuses = getConversionBonuses;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
-  if (getPartyDendroCoreDamageBonus) kit.getPartyDendroCoreDamageBonus = getPartyDendroCoreDamageBonus;
   if (getPartyReactionBonus) kit.getPartyReactionBonus = getPartyReactionBonus;
   if (getPartyStrikeBonus) kit.getPartyStrikeBonus = getPartyStrikeBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
   if (getStrikeAdditiveBaseDamageBonus) kit.getStrikeAdditiveBaseDamageBonus = getStrikeAdditiveBaseDamageBonus;
-  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
   if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
+  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
   if (jumpsSkillHoldToTop) kit.jumpsSkillHoldToTop = jumpsSkillHoldToTop;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
