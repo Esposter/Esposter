@@ -48,7 +48,7 @@ const walkToward = (enemy: Enemy, point: GroundPoint, distance: number): boolean
 const stepPoise = (enemy: Enemy, stepSeconds: number): void => {
   const { length, refillPerSecond } = PoiseTypeSettingsMap[enemy.traits.poiseType];
   if (enemy.poiseBrokenSeconds > 0) {
-    enemy.poiseBrokenSeconds = Math.max(0, enemy.poiseBrokenSeconds - stepSeconds);
+    enemy.poiseBrokenSeconds = Math.max(0, runDownSeconds(enemy.poiseBrokenSeconds, stepSeconds));
     if (enemy.poiseBrokenSeconds === 0) enemy.poise = length;
   } else enemy.poise = Math.min(length, enemy.poise + refillPerSecond * stepSeconds);
 };
@@ -67,7 +67,7 @@ export const stepEnemy = (
   enemy.stateSeconds += stepSeconds;
   for (const status of enemy.statuses) status.secondsRemaining = runDownSeconds(status.secondsRemaining, stepSeconds);
   enemy.statuses = enemy.statuses.filter(({ secondsRemaining }) => secondsRemaining > 0);
-  enemy.attackCooldownSeconds = Math.max(0, enemy.attackCooldownSeconds - stepSeconds);
+  enemy.attackCooldownSeconds = Math.max(0, runDownSeconds(enemy.attackCooldownSeconds, stepSeconds));
   if (enemy.state !== EnemyState.Dead) stepPoise(enemy, stepSeconds);
 
   switch (enemy.state) {
