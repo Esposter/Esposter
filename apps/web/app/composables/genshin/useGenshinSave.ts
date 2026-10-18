@@ -195,7 +195,13 @@ export const useGenshinSave = async () => {
     if (journal && !adoptedJournal) journalJson.value = null;
 
     const baseSave = adoptedJournal?.save ?? start.save;
-    const loadedSave = guestSave ? (start.isNew ? guestSave : mergeGenshinSave(baseSave, guestSave)) : baseSave;
+    // The merge reads the wish history's window at the server's moment, as the world's clock does
+    const serverNow = Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs.value });
+    const loadedSave = guestSave
+      ? start.isNew
+        ? guestSave
+        : mergeGenshinSave(baseSave, guestSave, serverNow)
+      : baseSave;
     initialSave.value = loadedSave;
     latestSave = loadedSave;
     persistedJson = JSON.stringify(start.save);

@@ -238,7 +238,7 @@ const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): st
     )
     .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
 
-export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
+export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: Temporal.Instant): GenshinSave => {
   const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
     account.reputationBountyClaimedAts,
     guest.reputationBountyClaimedAts,
@@ -358,7 +358,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? Math.max(account.wallet.primogemResinRefillCount, guest.wallet.primogemResinRefillCount)
         : account.wallet.primogemResinRefillCount,
     },
-    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, Temporal.Now.instant()),
+    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, now),
     wishPity,
     worldLevelAdjustment: checkIsLaterWorldLevelAdjustment(guest.worldLevelAdjustment, account.worldLevelAdjustment)
       ? guest.worldLevelAdjustment
