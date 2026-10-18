@@ -6,6 +6,7 @@ import { FLOAT_RESIDUE } from "#src/services/floatResidue";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { checkIsCharacterOnField } from "#src/services/party/checkIsCharacterOnField";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
@@ -29,9 +30,7 @@ export const createExtinguishingPreceptPassiveModule = (params: number[]): Passi
         consummation !== undefined && checkIsKitStatusActive(effects, characterId, CONSUMMATION_ID)
           ? Math.min(maximumStacks, Math.floor(seconds - consummation.secondsRemaining + FLOAT_RESIDUE))
           : 0;
-      const isOnField = deployedCombatants.some(
-        (deployedCombatant) => deployedCombatant.characterId === characterId && deployedCombatant.isOnField,
-      );
+      const isOnField = checkIsCharacterOnField(deployedCombatants, characterId);
       return [
         ...ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: elementalDamageBonus, attribute })),
         { amount: stacks * attackBonusPerSecond * (isOnField ? 1 : 2), attribute: Attribute.AttackPercent },

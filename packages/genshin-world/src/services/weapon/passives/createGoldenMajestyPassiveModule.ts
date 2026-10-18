@@ -6,6 +6,7 @@ import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { checkIsCharacterOnField } from "#src/services/party/checkIsCharacterOnField";
 import { takeOne } from "@esposter/shared";
 
 const GOLDEN_MAJESTY_ID = "goldenMajesty";
@@ -24,8 +25,7 @@ export const createGoldenMajestyPassiveModule = (params: number[]): PassiveModul
   const stackSeconds = takeOne(params, 2);
   return {
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) => {
-      const isOnField =
-        deployedCombatants.find((member) => member.characterId === combatant.characterId)?.isOnField ?? false;
+      const isOnField = checkIsCharacterOnField(deployedCombatants, combatant.characterId);
       const isProtected = isOnField && effects.some((effect) => checkIsKitShieldLive(effect));
       return [
         { amount: shieldStrength, attribute: Attribute.ShieldStrength },
