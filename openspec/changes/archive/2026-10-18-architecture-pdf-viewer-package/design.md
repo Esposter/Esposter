@@ -4,7 +4,7 @@ The PDF viewer's loading, page drawing and viewer state move into `vue-pdfjs-hea
 
 ## Scope
 
-Today the viewer lives in the app. `apps/web/app/services/pdf/loadPdfDocument.ts` imports the renderer after mount and points it at the app's worker and the folders the server mounts. `apps/web/app/services/pdf/getCanvasScale.ts` caps a page's canvas. The thumbnail and the viewer components hold the rest: the draw cancelled by a newer one, the password prompt, the viewer's event bus, and the toolbar's page, zoom, rotation, search, download and print.
+Today the viewer lives in the app. The app's one load (`loadPdfDocument` before this change) imports the renderer after mount and points it at the app's worker and the folders the server mounts. The canvas scale function (`getCanvasScale`) caps a page's canvas. The thumbnail and the viewer components hold the rest: the draw cancelled by a newer one, the password prompt, the viewer's event bus, and the toolbar's page, zoom, rotation, search, download and print.
 
 After the change:
 

@@ -16,4 +16,4 @@
 
 ## 3. Records
 
-- [ ] 3.1 Write the document and viewer capabilities' designs as built, and move both Upstream tables off the PDF viewer's page into the area's `README.md`, re-judging the rows built here. The PDF viewer's page then covers only the app's side, and the package joins the repo's package index. Verify: the spec suites pass, run as `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/workspace/duplicateProse.test.ts src/services/openspec`.
+- [x] 3.1 Write the document and viewer capabilities' designs as built, and move both Upstream tables off the PDF viewer's page into the area's `README.md`, re-judging the rows built here. The PDF viewer's page then covers only the app's side, and the package joins the repo's package index. Verify: the spec suites pass, run as `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/workspace/duplicateProse.test.ts src/services/openspec`.
