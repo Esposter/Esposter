@@ -1,9 +1,11 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BEIDOU_CHARACTER_ID, createBeidouKitBehaviour } from "#src/services/kit/characters/beidouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -26,6 +28,22 @@ const createBeidouCombatant = (constellationCount: number): Combatant => ({
   kit: BEIDOU_KIT,
   level: 90,
 });
+
+const OTHER_CHARACTER_ID = 10_000_049;
+// Beidou losing a tenth of her Max HP to an enemy's strike, which names no source
+const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => ({
+  characterId,
+  healthShare: -0.1,
+  kind: KitEventKind.HealthChanged,
+  overflowHealthShare: 0,
+});
+// The extra hit a normal attack of Beidou's adds after its hit, as the kit's hook gives it at the attack's first hit
+const getStunningRevengeHit = (combatant: Combatant, activeCombatant: Combatant, kitEffectState: KitEffectState) =>
+  BEIDOU_KIT.getNormalAttackExtraHit?.(
+    { ...createKitTestContext(combatant, { kitEffectState }), activeCombatant },
+    takeOne(takeOne(BEIDOU_KIT.normalAttacks).hits),
+    0,
+  );
 
 describe(createBeidouKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
@@ -126,4 +144,62 @@ describe(createBeidouKitBehaviour, () => {
       expect(kitEffectState.effects).toStrictEqual([]);
     },
   );
+
+  test("constellation 4 adds an electro hit of 20% of her atk after each normal attack hit once she takes damage", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    BEIDOU_KIT.onKitEvent?.(
+      createDamageTakenEvent(BEIDOU_CHARACTER_ID),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
+    const extraHit = getStunningRevengeHit(combatant, combatant, kitEffectState);
+    expect(extraHit?.element).toBe(Element.Electro);
+    expect(extraHit?.talentMultiplier).toBe(0.2);
+  });
+
+  test("constellation 4's extra hit lasts 10 seconds after she takes damage", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    BEIDOU_KIT.onKitEvent?.(createDamageTakenEvent(BEIDOU_CHARACTER_ID), context, combatant);
+    stepKitEffects(9, context);
+    expect(getStunningRevengeHit(combatant, combatant, kitEffectState)).toBeDefined();
+    stepKitEffects(1.1, context);
+    expect(getStunningRevengeHit(combatant, combatant, kitEffectState)).toBeUndefined();
+  });
+
+  test("constellation 4 adds no extra hit before she takes damage", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    expect(getStunningRevengeHit(combatant, combatant, kitEffectState)).toBeUndefined();
+  });
+
+  test("constellation 4 takes no damage off the field, when another member is the one on it", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(4);
+    const otherCombatant = { ...createBeidouCombatant(0), characterId: OTHER_CHARACTER_ID };
+    const { kitEffectState } = createKitTestContext(combatant);
+    BEIDOU_KIT.onKitEvent?.(
+      createDamageTakenEvent(BEIDOU_CHARACTER_ID),
+      { ...createKitTestContext(combatant, { kitEffectState }), activeCombatant: otherCombatant },
+      combatant,
+    );
+    expect(getStunningRevengeHit(combatant, combatant, kitEffectState)).toBeUndefined();
+  });
+
+  test("constellation 4 adds no extra hit below its constellation", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(3);
+    const { kitEffectState } = createKitTestContext(combatant);
+    BEIDOU_KIT.onKitEvent?.(
+      createDamageTakenEvent(BEIDOU_CHARACTER_ID),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
+    expect(getStunningRevengeHit(combatant, combatant, kitEffectState)).toBeUndefined();
+  });
 });

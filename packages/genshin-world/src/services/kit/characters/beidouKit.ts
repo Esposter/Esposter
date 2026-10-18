@@ -7,9 +7,13 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { takeOne } from "@esposter/shared";
 
 // Stormbreaker's Thunderbeast's Targe discharges at most once a second, as the wiki's Stormbreaker and gcsim v2.47.2
@@ -21,6 +25,15 @@ const DISCHARGE_INTERVAL_SECONDS = 1;
 // Enemies within reach of it the cut for the frames its record holds
 // https://genshin-impact.fandom.com/wiki/Bane_of_Evil
 const BANE_OF_EVIL_CONSTELLATION = 6;
+// Stunning Revenge, from Constellation 4: a hit Beidou takes while she is on the field gives her normal attacks an extra
+// Electro hit of 20% of her ATK after each hit they land, for 10 seconds. gcsim v2.47.2 (MIT) beidou/cons.go gives the
+// Status, its 10 seconds and the 20%, and its hit one per attack, and the table's 30 poise and 1U of Electro
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_STATUS_ID = "beidou-constellation-4";
+const CONSTELLATION_4_SECONDS = 10;
+const CONSTELLATION_4_DAMAGE_MULTIPLIER = 0.2;
+const CONSTELLATION_4_POISE_DAMAGE = 30;
 
 // Whether an effect is the Thunderbeast's Targe of a character's, still standing the given seconds from now: the Targe
 // Is her summon that follows the body on the field
@@ -37,7 +50,9 @@ export const BEIDOU_CHARACTER_ID = 10_000_024;
 // Constellations. While the Targe stands, her strikes and charged attack cast its lightning discharge beside their hits
 // Constellation 1 needs a shield that absorbs Electro damage 250% more, which the shield's absorb does not scale
 // Constellation 2 needs Stormbreaker's arc lightning to jump to two more targets, which the burst's hit does not chain
-// Constellation 4 needs a 10-second status set when she takes damage, and an extra Electro hit on each normal attack
+// Constellation 4 is built for a hit she takes on the field, an enemy's strike, a drown or a wildlife's charge: its extra
+// Electro hit lands where her normal attack's hit reaches, where gcsim hits the enemy it struck alone. The wiki says it
+// Also applies to her charged attack, which is not built: gcsim leaves it out, and the hook is handed only normal attacks
 export const createBeidouKitBehaviour = ({
   kit,
   readHitFields,
@@ -121,6 +136,36 @@ export const createBeidouKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castDischarges(body, combatant, kitEffectState, hits),
     })),
+    // Stunning Revenge: a hit she takes while she is on the field starts its status, and each hit a normal attack of hers
+    // Lands while it runs is followed by the extra Electro hit
+    onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.HealthChanged || combatant.constellationCount < CONSTELLATION_4) return;
+      const { characterId } = combatant;
+      if (
+        event.characterId !== characterId ||
+        event.healthShare >= 0 ||
+        event.sourceCharacterId !== undefined ||
+        activeCombatant.characterId !== characterId
+      )
+        return;
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_4_STATUS_ID,
+        secondsRemaining: CONSTELLATION_4_SECONDS,
+      });
+    },
+    getNormalAttackExtraHit: ({ activeCombatant, kitEffectState }, hit) =>
+      activeCombatant.constellationCount >= CONSTELLATION_4 &&
+      checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, CONSTELLATION_4_STATUS_ID)
+        ? {
+            element: Element.Electro,
+            gauge: 1,
+            hitArea: hit.hitArea,
+            hitmarkSeconds: hit.hitmarkSeconds,
+            internalCooldownTag: InternalCooldownTag.ElementalBurst,
+            poiseDamage: CONSTELLATION_4_POISE_DAMAGE,
+            talentMultiplier: CONSTELLATION_4_DAMAGE_MULTIPLIER,
+          }
+        : undefined,
     // Tidecaller's Electro shield is set at the press, of the group's share of Beidou's Max HP plus its flat HP, and
     // Stands until the hit, as gcsim's does
     skill: {
