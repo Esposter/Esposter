@@ -5,7 +5,7 @@ import { deployPartyTeam } from "#src/services/party/deployPartyTeam";
 import { describe, expect, test } from "vitest";
 
 describe(deployPartyTeam, () => {
-  test("deploys a team with its first member standing on the field", () => {
+  test("deploying a team with a standing member puts that member on the field", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
@@ -20,7 +20,7 @@ describe(deployPartyTeam, () => {
     });
   });
 
-  test("refuses a team with nobody in it or nobody standing", () => {
+  test("deploying a team with nobody standing is refused", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
