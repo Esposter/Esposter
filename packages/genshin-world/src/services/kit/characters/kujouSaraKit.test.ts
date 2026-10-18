@@ -14,6 +14,8 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createKujouSaraKitBehaviour, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -103,5 +105,49 @@ describe(createKujouSaraKitBehaviour, () => {
     expect(atkBonus?.amount).toBeCloseTo(0.4296 * 1000);
     expect(atkBonus?.attribute).toBe(Attribute.Attack);
     expect(atkBonus?.characterId).toBe(KUJOU_SARA_CHARACTER_ID);
+  });
+});
+
+const OTHER_CHARACTER_ID = 10_000_001;
+
+// The Energy each party member holds once the Ambush a fully charged shot under the Cover summons has struck, with Sara at
+// The given ascension and Energy Recharge
+const readEnergies = (ascension: number, energyRecharge: number): number[] => {
+  const combatant = {
+    ...createSaraCombatant(ascension),
+    attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: energyRecharge }]),
+  };
+  const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };
+  const party = createParty([KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, {
+    characterIdCombatantMap: new Map([
+      [KUJOU_SARA_CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, other],
+    ]),
+    kitEffectState,
+    party,
+  });
+  SARA_KIT.elementalSkill.onStart?.(context);
+  SARA_KIT.chargedAttack.onStart?.(context);
+  const hit = takeOne(takeOne(kitEffectState.effects.filter(checkIsSummon)).hits);
+  hit.onStrike?.(context, { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit });
+  return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) => getPartyMember(party, characterId).energy);
+};
+
+describe("decorum", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    const energy = readEnergies(4, 1);
+
+    expect(energy[0]).toBeGreaterThan(0);
+    expect(energy[1]).toBe(energy[0]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readEnergies(3, 1)).toStrictEqual([0, 0]);
   });
 });
