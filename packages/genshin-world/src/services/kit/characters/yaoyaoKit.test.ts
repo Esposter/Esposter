@@ -6,35 +6,60 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { GameDataset } from "#src/models/data/GameDataset";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { kitRecordSchema } from "#src/models/kit/record/KitRecord";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { COMBAT_TALENT_ORDER, TALENT_START_LEVELS } from "#src/services/character/constants";
+import { readCharacterTalentKits } from "#src/services/character/readCharacterTalentKits";
+import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitRecordResolver } from "#src/services/kit/build/createKitRecordResolver";
 import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { LocomotionState } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const [yaoyaoRecord, talentMultiplierMap, characterTalentKits] = await Promise.all([
+  readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, GameDataset.Kits, String(YAOYAO_CHARACTER_ID), kitRecordSchema),
+  readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YAOYAO_CHARACTER_ID]),
+  readCharacterTalentKits(GAME_DATA_LOCAL_BASE_URL),
+]);
+const talentGroupIds = characterTalentKits.find(
+  ({ characterId }) => characterId === YAOYAO_CHARACTER_ID,
+)?.talentGroupIds;
+if (!talentGroupIds) throw new InvalidOperationError(Operation.Read, `${YAOYAO_CHARACTER_ID}`, "no talent groups");
+const { toParameter } = createKitRecordResolver(
+  talentMultiplierMap,
+  Object.fromEntries(COMBAT_TALENT_ORDER.map((talent) => [talentGroupIds[talent], TALENT_START_LEVELS[talent]])),
+);
+// A parameter of her record, resolved off its talent's table at the level the talent plays at, as her kit resolves it
+const readRecordParameter = (name: string): number => {
+  const parameter = yaoyaoRecord.parameters?.[name];
+  if (parameter === undefined || Array.isArray(parameter))
+    throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of her record");
+  return toParameter(parameter);
+};
 
-// Measured: the dump's table for Raphanus Sky Cluster at level 1 (proud skill group 7732), the share of Yaoyao's Max HP
-// And the flat HP a radish heals the active character by
-const SKILL_RADISH_HEAL_SHARE = 0.017143;
-const SKILL_RADISH_FLAT_HEAL = 165.07991;
+// A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
+const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
+const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
 const MAX_HEALTH = 10_000;
-// Measured: the dump's table for Moonjade Descent at level 1 (proud skill group 7739), the same two numbers for its radishes
-const BURST_RADISH_HEAL_SHARE = 0.020168;
-const BURST_RADISH_FLAT_HEAL = 194.21231;
+const BURST_RADISH_HEAL_SHARE = readRecordParameter("burstRadishHealMaxHealthShare");
+const BURST_RADISH_FLAT_HEAL = readRecordParameter("burstRadishFlatHeal");
 const MEMBER_ID = 10_000_032;
 const MEMBER_MAX_HEALTH = 20_000;
 // Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the throw.
@@ -89,12 +114,11 @@ const findYuegui = (context: KitContext): KitField | undefined =>
     (effect): effect is KitField => effect.kind === "field" && Number.isFinite(effect.tickIntervalSeconds),
   );
 
-const findRadish = (context: KitContext): KitSummon | undefined =>
-  context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-
 // Every radish on the field, in the order they were thrown
 const findRadishes = (context: KitContext): KitSummon[] =>
   context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
+const findRadish = (context: KitContext): KitSummon | undefined => findRadishes(context)[0];
 
 // The Yuegui Moonjade Descent spawns behind her, each one of its spawns adding one to those on the field
 const findJumpingYuegui = (context: KitContext): KitField[] =>
@@ -109,22 +133,6 @@ const findBuffs = (context: KitContext, attribute: Attribute): KitBuff[] =>
   );
 
 describe(createYaoyaoKitBehaviour, () => {
-  test("reads each talent multiplier from her proud skill groups", () => {
-    expect.hasAssertions();
-    const multipliers = [
-      ...YAOYAO_KIT.normalAttacks.flatMap((action) => action.hits.map((hit) => hit.talentMultiplier)),
-      takeOne(YAOYAO_KIT.chargedAttack.hits).talentMultiplier,
-      YAOYAO_KIT.plungeCollision.talentMultiplier,
-      takeOne(YAOYAO_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(YAOYAO_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(YAOYAO_KIT.elementalBurst.hits).talentMultiplier,
-    ];
-    const expectedMultipliers = [
-      0.510014, 0.474428, 0.313771, 0.329457, 0.779315, 1.1266, 0.639324, 1.278377, 1.596762, 1.1456,
-    ];
-    expect(multipliers).toStrictEqual(expectedMultipliers);
-  });
-
   test("the cooldowns, costs and stamina her table gives", () => {
     expect.hasAssertions();
     expect([

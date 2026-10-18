@@ -31,8 +31,8 @@ import { LocomotionState } from "genshin-engine";
 
 export const YAOYAO_CHARACTER_ID = 10_000_077;
 
-// Measured: gcsim (MIT) yaoyao/yuegui.go, a Yuegui throws at a random enemy within 8 metres of itself while its wielder's
-// HP is above 70% of her Max HP, and at her own position otherwise
+// Measured: gcsim (MIT) yaoyao/yuegui.go, a Yuegui throws at a random enemy within 8 metres of itself while the active
+// Character's HP is above 70% of her Max HP, and at her own position otherwise
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/yuegui.go
 const YUEGUI_TARGET_RADIUS_METRES = 8;
 const YUEGUI_HEALTH_SHARE_THRESHOLD = 0.7;
@@ -237,8 +237,7 @@ const throwAscensionRadish = (context: KitContext, combatant: Combatant, hit: Ki
 // Burst lasts, which a swap ends
 const scheduleAscensionTick = (context: KitContext, combatant: Combatant, hit: KitHit, heal: RadishHeal): void => {
   scheduleKitTask(context.kitEffectState, combatant.characterId, A1_INTERVAL_SECONDS, (tick) => {
-    const burst = findKitStatus(tick.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
-    if (!burst || burst.secondsRemaining <= 0) return;
+    if (!checkIsKitStatusActive(tick.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID)) return;
     if (A1_LOCOMOTION_STATES.has(tick.locomotionState)) throwAscensionRadish(tick, combatant, hit, heal);
     scheduleAscensionTick(tick, combatant, hit, heal);
   });
