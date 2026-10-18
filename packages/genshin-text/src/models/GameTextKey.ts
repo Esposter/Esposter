@@ -469,6 +469,14 @@ export enum GameTextKey {
   SwitchAimingMode = "CONTROL_TOGGLE_ATTACK_MODE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
+  // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons it
+  // Cannot rise: at its last level, the character's Ascension Phase too low, or short of the Mora or the materials
+  TalentLevelUp = "UI_TALENT_LEVEL_UP",
+  TalentMaterialsShort = "UI_TRAININGPLAN_MATERIAL_LACK",
+  TalentMaxLevel = "SKILL_LEVEL_MAX_TIP",
+  TalentMoraShort = "RetScoinNotEnough",
+  TalentPhaseRequired = "SKILL_UPGRADE_NEED_ROLEBREAK_TIP",
+  TalentPhaseShort = "SKILL_UPGRADE_AVATAR_BREAK_NEED",
   // The map's way to a place, as its button says
   Teleport = "UI_BUTTON_GOTO",
   Tidalga = "225224916",

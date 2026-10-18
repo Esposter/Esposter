@@ -95,6 +95,7 @@ const {
   cameraPose,
   catalogue,
   characterPackBaseUrl,
+  characterTalentKits,
   createTerrainWorker,
   enemyTables,
   frostbearingTreePlaces,
@@ -117,6 +118,7 @@ const {
   serverClockOffsetMs = 0,
   startingCharacterIdKitMap,
   statTables,
+  talentUpgradeMap,
   wildlifePlaces,
   windriseData,
 } = defineProps<Props>();
@@ -825,17 +827,23 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #[ScreenKind.Character]>
         <CharacterScreen
+          v-model:characters="characters"
+          v-model:wallet="wallet"
           :active-character-id="getActiveCharacterId(party)"
-          :characters
+          :character-talent-kits="characterTalentKits"
           :companionship-exp-map="savedState.companionshipExpMap"
           :game-data-base-url
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
+          :inventory
           :language
+          :material-data-map="materialDataMap"
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables
+          :talent-upgrade-map="talentUpgradeMap"
           @close="screenKind = ScreenKind.World"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >
           <template #scene="{ tab }">
             <CharacterScene :tab />

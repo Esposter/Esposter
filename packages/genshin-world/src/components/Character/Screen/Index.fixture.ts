@@ -6,10 +6,15 @@ import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readTalentTables } from "#src/services/character/readTalentTables";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { CharacterMenuTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const { characterTalentKits, talentUpgradeMap } = await readTalentTables(GAME_DATA_LOCAL_BASE_URL);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
 // Beside fourteen of the player's other characters, the Traveler among them, their weapons held at the first level
@@ -63,12 +68,17 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
 export const props = {
   activeCharacterId: XILONEN_ID,
   characters: roster,
+  characterTalentKits,
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
   initialTab: CharacterMenuTab.Attributes,
+  inventory: EMPTY_INVENTORY,
+  materialDataMap,
   maxStamina: STAMINA,
   nameText: englishNameText,
   statTables,
+  talentUpgradeMap,
+  wallet: EMPTY_WALLET,
 };
 
 // The other tabs the English client shows at the same level, each opened on its own, the panel under it not drawn yet

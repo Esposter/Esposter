@@ -1,5 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -17,6 +19,9 @@ export interface WorldTables {
   adventureRankTables: AdventureRankTables;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
+  // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
+  // Reads a talent's upgrades by
+  characterTalentKits: CharacterTalentKit[];
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
   // The Frostbearing Trees' places in Mondstadt, each stood in the world
@@ -33,6 +38,9 @@ export interface WorldTables {
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from
   statTables: StatTables;
+  // The game's talent upgrades by proud skill group, the level and phase and Mora and items each combat talent's next
+  // Level takes
+  talentUpgradeMap: TalentUpgradeMap;
   // The Mondstadt animals the official map marks
   wildlifePlaces: WildlifePlace[];
   // Windrise's records and the regions' grounds, which the world's one ground and everything drawn on it are built from
