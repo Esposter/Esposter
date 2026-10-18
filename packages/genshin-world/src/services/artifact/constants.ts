@@ -78,6 +78,7 @@ export const LONG_NIGHTS_OATH_ARTIFACT_SET_ID = 15_039;
 // Gilded Dreams's id in the set table
 export const GILDED_DREAMS_ARTIFACT_SET_ID = 15_026;
 export const PALE_FLAME_ARTIFACT_SET_ID = 15_018;
+export const HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID = 15_021;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
