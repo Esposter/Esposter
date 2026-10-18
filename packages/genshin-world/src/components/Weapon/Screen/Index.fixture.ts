@@ -1,4 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
 import { englishNameText } from "#parity/englishNameText";
@@ -8,6 +9,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { ENHANCEMENT_ORES } from "#src/services/weapon/constants";
 import { readWeaponLevelRequiredExps } from "#src/services/weapon/readWeaponLevelRequiredExps";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -17,56 +19,97 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const rarityRequiredExpsMap = await readWeaponLevelRequiredExps(GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
+const { weaponDataMap } = statTables;
 
 const getWeaponData = (id: number) => {
-  const data = statTables.weaponDataMap.get(id);
+  const data = weaponDataMap.get(id);
   if (!data) throw new InvalidOperationError(Operation.Read, "weapon screen fixture", `weapon ${id} has no data`);
   return data;
 };
-// A five-star weapon held at level one in its first phase with no EXP, the weapon the screen opens on
+// A five-star weapon, the weapon the screen opens on
 const WEAPON_ID = 11516;
-const weaponData = getWeaponData(WEAPON_ID);
-const weapon: Weapon = { ascension: 0, experience: 0, id: WEAPON_ID, level: 1, refinement: 1 };
+export const weaponData = getWeaponData(WEAPON_ID);
 // A two-star weapon, which the game gives no refinement costs at all
 const TWO_STAR_WEAPON_ID = 11201;
-const twoStarWeapon: Weapon = { ...weapon, id: TWO_STAR_WEAPON_ID };
-// Three of each enhancement ore in the bag, the bag otherwise empty
-const inventory: Inventory = {
-  items: ENHANCEMENT_ORES.map(({ id }, index) => ({
-    definition: getItemDefinition(id, englishNameText, materialDataMap),
-    id: index + 1,
-    quantity: 3,
-  })),
-  nextId: ENHANCEMENT_ORES.length + 1,
+// A three-star weapon the bag holds as fodder
+const fodderWeaponData = [...weaponDataMap.values()].find((data) => data.rarity === 3);
+if (!fodderWeaponData) throw new InvalidOperationError(Operation.Read, "weapon screen fixture", "no three-star weapon");
+// The largest ore, which an Enhance picks, by its item id and its name in English
+export const ORE_ID = 104013;
+export const oreName = getItemDefinition(ORE_ID, englishNameText, materialDataMap).name;
+export const fodderName = englishNameText[fodderWeaponData.nameTextId] ?? "";
+// The bag entries of the open weapon, the ores, the fodder and the copy, which the screen tells apart by these ids
+export const OPEN_ENTRY_ID = 0;
+export const FODDER_ENTRY_ID = 4;
+export const COPY_ENTRY_ID = 5;
+const NEXT_ENTRY_ID = 6;
+
+// The open weapon at level one in its first phase with no EXP, and a copy of it at the level cap in the bag
+const openWeapon: Weapon = { ascension: 0, experience: 0, id: WEAPON_ID, level: 1, refinement: 1 };
+export const atCapWeapon: Weapon = {
+  ...openWeapon,
+  level: weaponData.ascensionPhases[0]?.maxLevel ?? openWeapon.level,
 };
+const copyWeapon: Weapon = atCapWeapon;
+const fodderWeapon: Weapon = { ascension: 0, experience: 0, id: fodderWeaponData.id, level: 3, refinement: 1 };
+
+// A weapon in the bag as its entry holds it, named in English
+const toWeaponEntry = (weapon: Weapon, entryId: number): InventoryItem => {
+  const data = getWeaponData(weapon.id);
+  return {
+    ascension: weapon.ascension,
+    definition: toWeaponDefinition(data, englishNameText[data.nameTextId] ?? ""),
+    experience: weapon.experience,
+    id: entryId,
+    level: weapon.level,
+    quantity: 1,
+    refinement: weapon.refinement,
+  };
+};
+// Three of each enhancement ore in the bag, beside the weapons
+const oreItems: InventoryItem[] = ENHANCEMENT_ORES.map(({ id }, index) => ({
+  definition: getItemDefinition(id, englishNameText, materialDataMap),
+  id: index + 1,
+  quantity: 3,
+}));
+// The bag holding the open weapon in the given state, the ores, one fodder weapon and one copy of the open weapon
+const createBag = (openEntry: Weapon): Inventory => ({
+  items: [
+    toWeaponEntry(openEntry, OPEN_ENTRY_ID),
+    ...oreItems,
+    toWeaponEntry(fodderWeapon, FODDER_ENTRY_ID),
+    toWeaponEntry(copyWeapon, COPY_ENTRY_ID),
+  ],
+  nextId: NEXT_ENTRY_ID,
+});
+const bag = createBag(openWeapon);
 
 export const props = {
   adventureRank: 30,
+  entryId: OPEN_ENTRY_ID,
   gameText: ENGLISH_GAME_TEXT,
-  inventory,
+  inventory: bag,
   materialDataMap,
   nameText: englishNameText,
   rarityRequiredExpsMap,
   tab: WeaponMenuTab.Enhance,
   wallet: { ...EMPTY_WALLET, [Currency.Mora]: 100_000 },
-  weapon,
-  weaponData,
+  weaponDataMap,
 };
 
-// The same weapon at its phase's cap, where the Ascend tab is offered, and at refinement one with the Refine tab open
+// The bag at the cap, and the same bag with the next phase's items held, with the Mora and the Adventure Rank it requires
 const nextPhase = weaponData.ascensionPhases[1];
-const atCap = { ...weapon, level: weaponData.ascensionPhases[0]?.maxLevel ?? weapon.level };
-// The bag and the wallet holding the next phase's items and Mora, and the Adventure Rank it requires
+const atCapBag = createBag(atCapWeapon);
 const ascendInventory: Inventory = {
   items: [
-    ...inventory.items,
+    ...atCapBag.items,
     ...(nextPhase?.costItems ?? []).map(({ count, id }, index) => ({
       definition: getItemDefinition(id, englishNameText, materialDataMap),
-      id: inventory.nextId + index,
+      id: atCapBag.nextId + index,
       quantity: count,
     })),
   ],
-  nextId: inventory.nextId + (nextPhase?.costItems.length ?? 0),
+  nextId: atCapBag.nextId + (nextPhase?.costItems.length ?? 0),
 };
 
 export const variants = {
@@ -75,11 +118,12 @@ export const variants = {
     inventory: ascendInventory,
     tab: WeaponMenuTab.Ascend,
     wallet: { ...EMPTY_WALLET, [Currency.Mora]: nextPhase?.coinCost ?? 0 },
-    weapon: atCap,
   },
-  atCap: { weapon: atCap },
+  atCap: { inventory: atCapBag },
+  // The Refine tab open, with the copy in the bag to pick
+  refine: { tab: WeaponMenuTab.Refine },
   // A weapon at rank five, which no Refine tab is offered for
-  rankFive: { weapon: { ...weapon, refinement: 5 } },
+  rankFive: { inventory: createBag({ ...openWeapon, refinement: 5 }) },
   // The two-star weapon, which no Refine tab is offered for
-  twoStar: { weapon: twoStarWeapon, weaponData: getWeaponData(TWO_STAR_WEAPON_ID) },
+  twoStar: { inventory: createBag({ ...openWeapon, id: TWO_STAR_WEAPON_ID }) },
 };

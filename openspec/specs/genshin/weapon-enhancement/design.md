@@ -45,7 +45,7 @@ flowchart TD
 - **Ranks past the fifth are lost**, and the result counts them. A weapon already at rank five is refused.
 - **A copy is never a wielded weapon.** A character's weapon sits on the character, outside the bag, so a copy or a material can only come from the bag.
 
-No screen or bag entry calls these services yet. A bag weapon carries only its level, so the EXP and refinement it would hold wait on the bag entry and the Weapons tab of the [character screen](../../../changes/genshin-character-screen/design.md).
+A bag weapon's entry holds its level, EXP, ascension and refinement, so the [weapon screen](../../../changes/genshin-weapon-screen/design.md) calls these services on a bag weapon by its entry. A wielded weapon is not in the bag, and its state waits on the Weapons tab of the [character screen](../../../changes/genshin-character-screen/design.md).
 
 ## Key files
 
