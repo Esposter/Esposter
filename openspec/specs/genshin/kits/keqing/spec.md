@@ -1,6 +1,6 @@
 ## Purpose
 
-Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her Ascension 4 passive built, and her other passives and constellations not built.
+Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with both her passives built, and her constellations not built.
 
 ## Requirements
 
@@ -36,8 +36,8 @@ Stellar Restoration SHALL leave Lightning Stiletto, which a second press recasts
 - **GIVEN** Lightning Stiletto stands
 - **WHEN** the player presses again within five seconds and twenty frames
 - **THEN** the recast lands
-- **AND** her attacks are infused with Electro for six seconds
-- **AND** the six seconds stay provisional until a recording settles them
+- **AND** from Ascension 1 her attacks are infused with Electro for five seconds
+- **AND** below Ascension 1 no infusion is given
 
 #### Scenario: A press after the window recasts nothing
 

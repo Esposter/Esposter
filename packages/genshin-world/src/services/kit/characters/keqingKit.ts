@@ -5,9 +5,12 @@ import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 
-// The Electro infusion the Lightning Stiletto's recast gives lasts 6 seconds from the recast, which the Mac measures from
-// The game's text since gcsim gives its seconds outside the file fetched
-const ELECTRO_INFUSION_SECONDS = 6;
+// Thundering Penance, as the dump's Keqing_PermanentSkill_1 row (promote 1, param 5.0) and gcsim v2.47.2 (MIT)
+// Keqing/asc.go give it: from Ascension 1, the Lightning Stiletto's recast infuses her attacks with Electro for 5 seconds.
+// Gcsim holds it 20 frames longer than the table's seconds, which stand
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
+const THUNDERING_PENANCE_ASCENSION = 1;
+const THUNDERING_PENANCE_SECONDS = 5;
 // Measured: gcsim v2.47.2 (MIT) keqing/asc.go, A4: Starward Sword gives Keqing 15% CRIT Rate and 15% Energy Recharge for
 // 8 seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/asc.go
@@ -18,9 +21,9 @@ const STARWARD_SWORD_SECONDS = 8;
 
 export const KEQING_CHARACTER_ID = 10_000_042;
 
-// Keqing's behaviour: the Lightning Stiletto's recast, a second press of Stellar Restoration within its window, infuses
-// Her attacks with Electro for the infusion's seconds as it starts. From Ascension 4 Starward Sword gives her CRIT Rate and
-// Energy Recharge. Her other passives and constellations are not built, as no kit event reaches a value the fetched
+// Keqing's behaviour: from Ascension 1 the Lightning Stiletto's recast, a second press of Stellar Restoration within its
+// Window, infuses her attacks with Electro for the infusion's seconds as it starts. From Ascension 4 Starward Sword gives
+// Her CRIT Rate and Energy Recharge. Her constellations are not built, as no kit event reaches a value the fetched
 // Sources give
 // Constellation 1 needs an ATK-scaled Electro hit on each Lightning Stiletto recast, which no hit carries
 // Constellation 2 needs an Elemental Particle chance on each hit against Electro, which no hit drops yet
@@ -46,13 +49,15 @@ export const createKeqingKitBehaviour = (): KitBehaviour => ({
   },
   skillChain: [
     {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        if (combatant.ascension < THUNDERING_PENANCE_ASCENSION) return;
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Electro,
           kind: "infusion",
-          secondsRemaining: ELECTRO_INFUSION_SECONDS,
-        }),
+          secondsRemaining: THUNDERING_PENANCE_SECONDS,
+        });
+      },
     },
   ],
 });
