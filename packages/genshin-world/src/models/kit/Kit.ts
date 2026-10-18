@@ -2,6 +2,7 @@ import type { Attribute } from "#src/models/character/Attribute";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -45,12 +46,13 @@ export interface Kit {
   // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
   // Constellation raises it, given the kit's effects as they stand
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
-  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
-  // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
+  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands, its
+  // HP as a share of its Max HP, which a bonus at low or high HP reads, and the deployed team's built combatants, each
+  // Flagged with whether it is on the field, which a bonus gated on the field reads
   getPassiveBonuses?: (
     combatant: Combatant,
     healthShare: number,
-    deployedCombatants: readonly Combatant[],
+    deployedCombatants: readonly DeployedCombatant[],
   ) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
