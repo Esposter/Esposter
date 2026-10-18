@@ -2,10 +2,13 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Blizzard Blade Seki no To, from two constellations, casts two smaller storms beside the storm, as the wiki's
@@ -24,13 +27,20 @@ const CONSTELLATION_1_CHANCE = 0.5;
 const CONSTELLATION_1_CUT_SECONDS = 0.3;
 const CONSTELLATION_1_ICD_SECONDS = 0.1;
 const CONSTELLATION_1_ICD_STATUS_ID = "ayaka-snowswept-sakura-icd";
+// Amatsumi Kunitsumi Sanctification, from Ascension 1: after Kamisato Art: Hyouka her Normal and Charged attacks deal 30%
+// Increased DMG for 6 seconds, as genshin.gg gives the talent text. It is read as an additive DMG Bonus on each strike
+// https://genshin.gg/characters/ayaka/
+const ASCENSION_1 = 1;
+const AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS = 0.3;
+const AMATSUMI_KUNITSUMI_SANCTIFICATION_SECONDS = 6;
+const AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID = "ayaka-amatsumi-kunitsumi-sanctification";
 
 export const AYAKA_CHARACTER_ID = 10_000_002;
 
 // Kamisato Ayaka's behaviour: Kamisato Art: Soumetsu casts its storm, a summon standing where she cast it and priced by
 // Her, and from two constellations Blizzard Blade Seki no To's two smaller storms beside it, and Kamisato Art: Senho
 // Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and charged
-// Hits. Senho's Cryo application and movement, A1's and A4's effects, and Constellations 4 and 6 are not built: 4's DEF
+// Hits. Senho's Cryo application and movement, A4's effect, and Constellations 4 and 6 are not built: 4's DEF
 // Reduction needs a status that changes an enemy's defence, and 6's charged attack bonus needs a DMG bonus that only her
 // Charged attack reads
 // Constellation 1's roll on a hit of her normal or charged attack, read as the hit strikes an enemy
@@ -64,7 +74,21 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
       },
     },
     chargedAttack: { hits: kit.chargedAttack.hits.map(() => snowsweptSakuraHit) },
+    getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) =>
+      (attackTag === AttackTag.NormalAttack || attackTag === AttackTag.ChargedAttack) &&
+      findKitStatus(effects, combatant.characterId, AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID)
+        ? AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS
+        : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => snowsweptSakuraHit) })),
+    skill: {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        if (combatant.ascension < ASCENSION_1) return;
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID,
+          secondsRemaining: AMATSUMI_KUNITSUMI_SANCTIFICATION_SECONDS,
+        });
+      },
+    },
     onSprint: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
