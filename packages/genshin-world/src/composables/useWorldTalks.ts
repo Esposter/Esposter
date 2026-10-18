@@ -19,6 +19,7 @@ import { InteractionKind } from "genshin-interface";
 // Yet started the talks offering them, and the residents their standing talks, read with their words as the world
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
+  checkIsResidentGcgDuelOpen,
   gameDataBaseUrl,
   getAdventureRank,
   getGroundHeight,
@@ -31,6 +32,8 @@ export const useWorldTalks = ({
   questsOffered,
   questTextMap,
 }: {
+  // Whether a resident's duel is open to the player at the Player Level the card game is at
+  checkIsResidentGcgDuelOpen: (resident: Resident) => boolean;
   gameDataBaseUrl: string;
   // The Adventure Rank the player stands at, which opens the card game's duels from its rank
   getAdventureRank: () => number;
@@ -46,9 +49,8 @@ export const useWorldTalks = ({
   questTextMap: Ref<Readonly<Record<string, string>>>;
 }) => {
   const talk = shallowRef<Talk>();
-  // The game of the card game the resident's talk offers a duel of, if it offers one, and the game being played now
+  // The game of the card game the talk being begun offers a duel of, if it offers one
   const talkDuelGameId = shallowRef<number>();
-  const gcgGameId = shallowRef<number>();
   const standingTalks = shallowRef<Talk[]>([]);
   const standingTalkTextMap = shallowRef<Readonly<Record<string, string>>>({});
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -91,11 +93,16 @@ export const useWorldTalks = ({
       ? getTalkOffers(questsOpen.value, questProgressMap.value, talk.value.npcIds)
       : [],
   );
-  // The card game's duel a resident offers from the talk it begins, if that resident offers one and the card game is open
-  const getTalkDuelGameId = (talkId: string) =>
-    checkIsGcgCardGameOpen(getAdventureRank())
-      ? getResidents().find((resident) => resident.talkId === talkId)?.duelGameId
-      : undefined;
+  // The card game's duel a resident offers from the talk it begins, if that resident offers one, the card game is open and the
+  // Resident's duel is open to the player. A duel is offered from its duel talk where the resident has one, else the talk they begin
+  const getTalkDuelGameId = (talkId: string) => {
+    if (!checkIsGcgCardGameOpen(getAdventureRank())) return undefined;
+    const resident = getResidents().find(
+      ({ duelGameId, duelTalkId, talkId: standingTalkId }) =>
+        duelGameId !== undefined && (duelTalkId ?? standingTalkId) === talkId,
+    );
+    return resident !== undefined && checkIsResidentGcgDuelOpen(resident) ? resident.duelGameId : undefined;
+  };
   // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row. F begins their
   // Own talk where the world holds it, else the first quest talk open to them, and a resident with neither is no row
   const residentInteractables = computed<Interactable[]>(() =>
@@ -116,14 +123,5 @@ export const useWorldTalks = ({
       ];
     }),
   );
-  return {
-    gcgGameId,
-    getTalkDuelGameId,
-    residentInteractables,
-    talk,
-    talkDuelGameId,
-    talkMap,
-    talkOffers,
-    talkTextMap,
-  };
+  return { getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap };
 };

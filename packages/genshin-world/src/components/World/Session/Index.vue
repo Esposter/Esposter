@@ -101,6 +101,8 @@ import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
+import { useGcgPlayerLevel } from "#src/composables/useGcgPlayerLevel";
+import { useWorldGcgDuel } from "#src/composables/useWorldGcgDuel";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldTips } from "#src/composables/useWorldTips";
@@ -111,9 +113,10 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
-import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
+import { QuestId, ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
@@ -931,7 +934,9 @@ const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].f
 // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
 // the way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
 const payCardGameReward = (gameId: number | undefined, won: boolean) => {
-  const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
+  const weekGame = getResidents()
+    .flatMap(({ weekGames }) => weekGames ?? [])
+    .find((game) => game.gameId === gameId);
   if (!won || !weekGame) return;
   const granted = grantGcgGameReward(
     {
@@ -950,10 +955,25 @@ const payCardGameReward = (gameId: number | undefined, won: boolean) => {
   setInventory(granted.inventory);
   setWallet(granted.wallet);
 };
+// The card game's introduction quest, whose finish sets the card game's Player Level from zero
+const isTutorialQuestFinished = computed(() => {
+  const tutorialQuest = quests.value.find(({ id }) => id === QuestId.GeniusInvokationTcg);
+  return (
+    tutorialQuest !== undefined && checkIsQuestFinished(tutorialQuest, questProgressMap.value.get(tutorialQuest.id))
+  );
+});
+const { checkIsResidentGcgDuelOpen } = useGcgPlayerLevel({
+  cardGameExp,
+  finishedMainQuestIds,
+  gameDataBaseUrl,
+  isTutorialQuestFinished,
+});
+const { gcgGameId, leaveGcgDuel } = useWorldGcgDuel({ events });
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
-const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
+const { getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
   useWorldTalks({
+    checkIsResidentGcgDuelOpen,
     gameDataBaseUrl,
     getAdventureRank: () => rank.value,
     getGroundHeight,
@@ -2349,9 +2369,7 @@ defineExpose({ jumpTo, readCameraPosition });
       @leave="
         (won) => {
           payCardGameReward(gcgGameId, won);
-          if (won && gcgGameId !== undefined)
-            events.emit('questEvent', { kind: QuestObjectiveKind.Win, targetId: String(gcgGameId) });
-          gcgGameId = undefined;
+          leaveGcgDuel(won);
           screenKind = ScreenKind.World;
         }
       "
