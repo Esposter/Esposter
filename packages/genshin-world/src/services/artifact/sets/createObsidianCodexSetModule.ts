@@ -6,6 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
@@ -46,13 +47,9 @@ export const createObsidianCodexSetModule = (bonus: ArtifactSetBonus): PassiveMo
         event.characterId !== combatant.characterId ||
         event.points < pointCount ||
         getActiveCharacterId(context.party) !== combatant.characterId ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, OBSIDIAN_CODEX_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, OBSIDIAN_CODEX_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: OBSIDIAN_CODEX_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       addKitStatus(context.kitEffectState, combatant.characterId, {
         id: OBSIDIAN_CODEX_CRITICAL_RATE_ID,
         secondsRemaining: criticalRateSeconds,

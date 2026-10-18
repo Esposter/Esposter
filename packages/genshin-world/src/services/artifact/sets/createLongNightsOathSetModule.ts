@@ -5,9 +5,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
@@ -49,11 +48,7 @@ export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveM
       const { characterId } = combatant;
       const { kitEffectState, party } = context;
       if (getActiveCharacterId(party) !== characterId) return;
-      if (checkIsKitStatusActive(kitEffectState.effects, characterId, getTriggerCooldownId(attackTag))) return;
-      addKitStatus(kitEffectState, characterId, {
-        id: getTriggerCooldownId(attackTag),
-        secondsRemaining: cooldownSeconds,
-      });
+      if (!startKitCooldown(kitEffectState, characterId, getTriggerCooldownId(attackTag), cooldownSeconds)) return;
       for (let stackIndex = 0; stackIndex < stacks; stackIndex++)
         addKitHold(kitEffectState, characterId, {
           id: RADIANCE_EVERLASTING_ID,

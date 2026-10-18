@@ -3,8 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -22,13 +21,9 @@ export const createScholarSetModule = (bonus: ArtifactSetBonus): PassiveModule =
     onKitEvent: (event, context, combatant) => {
       if (
         event.kind !== KitEventKind.EnergyParticleCollected ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, SCHOLAR_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, SCHOLAR_COOLDOWN_ID, SCHOLAR_COOLDOWN_SECONDS)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: SCHOLAR_COOLDOWN_ID,
-        secondsRemaining: SCHOLAR_COOLDOWN_SECONDS,
-      });
       for (const characterId of getDeployedCharacterIds(context.party)) {
         const member = context.characterIdCombatantMap.get(characterId);
         if (

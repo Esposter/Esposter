@@ -10,6 +10,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 const VERMILLION_HEREAFTER_NASCENT_LIGHT_ID = "vermillionHereafterNascentLight";
@@ -77,16 +78,12 @@ export const createVermillionHereafterSetModule = (bonus: ArtifactSetBonus): Pas
         event.characterId === characterId &&
         event.healthShare < 0 &&
         checkIsKitStatusActive(kitEffectState.effects, characterId, VERMILLION_HEREAFTER_NASCENT_LIGHT_ID) &&
-        !checkIsKitStatusActive(kitEffectState.effects, characterId, VERMILLION_HEREAFTER_COOLDOWN_ID)
+        startKitCooldown(kitEffectState, characterId, VERMILLION_HEREAFTER_COOLDOWN_ID, cooldownSeconds)
       ) {
         addKitHold(kitEffectState, characterId, {
           id: VERMILLION_HEREAFTER_INCREASE_ID,
           maximum: maximumIncreases,
           seconds: Number.POSITIVE_INFINITY,
-        });
-        addKitStatus(kitEffectState, characterId, {
-          id: VERMILLION_HEREAFTER_COOLDOWN_ID,
-          secondsRemaining: cooldownSeconds,
         });
       }
     },

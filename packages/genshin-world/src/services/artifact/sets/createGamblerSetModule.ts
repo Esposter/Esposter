@@ -4,8 +4,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { endPartyMemberSkillCooldown } from "#src/services/party/endPartyMemberSkillCooldown";
 import { takeOne } from "@esposter/shared";
 
@@ -24,13 +23,9 @@ export const createGamblerSetModule = (bonus: ArtifactSetBonus): PassiveModule =
       if (
         event.kind !== KitEventKind.EnemyDefeated ||
         event.striker?.characterId !== combatant.characterId ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, GAMBLER_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, GAMBLER_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: GAMBLER_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       endPartyMemberSkillCooldown(context.party, combatant.characterId);
     },
   };

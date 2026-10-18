@@ -13,8 +13,8 @@ import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHealedHp } from "#src/services/kit/getKitHealedHp";
 import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { takeOne } from "@esposter/shared";
@@ -79,8 +79,7 @@ export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveMo
         characterId,
         Math.min(maximumHp, getGatheredHp(kitEffectState, characterId) + healedHp),
       );
-      if (foam || checkIsKitStatusActive(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID)) return;
-      addKitStatus(kitEffectState, characterId, { id: OCEAN_HUED_CLAM_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
+      if (foam || !startKitCooldown(kitEffectState, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID, cooldownSeconds)) return;
       castKitField(kitEffectState, characterId, body.position, {
         id: OCEAN_HUED_CLAM_FOAM_ID,
         nextTickSeconds: foamSeconds,

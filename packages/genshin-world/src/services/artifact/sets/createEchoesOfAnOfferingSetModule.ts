@@ -6,6 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
@@ -33,8 +34,7 @@ export const createEchoesOfAnOfferingSetModule = (bonus: ArtifactSetBonus): Pass
       if (event.kind !== KitEventKind.NormalAttackLanded || !combatant.kit.normalAttacks.includes(event.action)) return;
       const { characterId } = combatant;
       const { kitEffectState, party, random } = context;
-      if (checkIsKitStatusActive(kitEffectState.effects, characterId, VALLEY_RITE_COOLDOWN_ID)) return;
-      addKitStatus(kitEffectState, characterId, { id: VALLEY_RITE_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
+      if (!startKitCooldown(kitEffectState, characterId, VALLEY_RITE_COOLDOWN_ID, cooldownSeconds)) return;
       const failedChecks = findKitStatus(kitEffectState.effects, characterId, VALLEY_RITE_ODDS_ID)?.stacks ?? 0;
       if (random() < chance + oddsIncrease * failedChecks) {
         addKitStatus(kitEffectState, characterId, {

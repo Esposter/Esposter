@@ -7,6 +7,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
@@ -44,7 +45,7 @@ export const createPaleFlameSetModule = (bonus: ArtifactSetBonus): PassiveModule
         event.striker.characterId !== characterId ||
         event.attackTag !== AttackTag.ElementalSkill ||
         getActiveCharacterId(party) !== characterId ||
-        checkIsKitStatusActive(kitEffectState.effects, characterId, PALE_FLAME_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, characterId, PALE_FLAME_COOLDOWN_ID, cooldownSeconds)
       )
         return;
       // The stacks end together, so a stack gained once they have ended starts again from one
@@ -56,7 +57,6 @@ export const createPaleFlameSetModule = (bonus: ArtifactSetBonus): PassiveModule
         secondsRemaining: seconds,
         stacks: Math.min(stacks + 1, MAXIMUM_STACKS),
       });
-      addKitStatus(kitEffectState, characterId, { id: PALE_FLAME_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
     },
   };
 };
