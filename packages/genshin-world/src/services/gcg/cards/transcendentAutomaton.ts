@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
@@ -17,6 +18,6 @@ export const transcendentAutomaton: GcgCardModule = {
     const step = skill.id === BLUSTERING_BLADE_ID ? 1 : skill.id === FROSTY_ASSAULT_ID ? -1 : undefined;
     if (step === undefined) return;
     const nextIndex = findGcgAdjacentCharacterIndex(side, side.activeIndex, step);
-    if (nextIndex !== undefined) side.activeIndex = nextIndex;
+    if (nextIndex !== undefined) switchGcgSideActive(side, nextIndex);
   },
 };

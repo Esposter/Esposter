@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
@@ -8,5 +9,5 @@ import { takeOne } from "@esposter/shared";
 export const switchGcgOpposingActive = (duel: GcgDuel, sideIndex: number, step: -1 | 1): void => {
   const targetSide = takeOne(duel.sides, 1 - sideIndex);
   const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, step);
-  if (nextIndex !== undefined) targetSide.activeIndex = nextIndex;
+  if (nextIndex !== undefined) switchGcgSideActive(targetSide, nextIndex);
 };

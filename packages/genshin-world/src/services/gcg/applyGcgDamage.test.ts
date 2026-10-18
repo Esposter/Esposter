@@ -153,7 +153,7 @@ describe(applyGcgDamage, () => {
     });
   });
 
-  test("should switch an Overloaded active character forward to the next standing one", async () => {
+  test("should switch an Overloaded active character forward to the next standing one, flagged as switched in", async () => {
     expect.hasAssertions();
 
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -166,7 +166,8 @@ describe(applyGcgDamage, () => {
     expect({
       activeIndex: takeOne(duel.sides, 1).activeIndex,
       hp: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
-    }).toStrictEqual({ activeIndex: 1, hp: FULL_HP - PYRO_VALUE - 2 });
+      switchedIn: takeOne(takeOne(duel.sides, 1).characters, 1).isSwitchedIn,
+    }).toStrictEqual({ activeIndex: 1, hp: FULL_HP - PYRO_VALUE - 2, switchedIn: true });
   });
 
   test("should pierce the other opposing characters for one under Superconduct", async () => {
