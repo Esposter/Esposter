@@ -10,6 +10,7 @@ describe(toGadgetRows, () => {
     const widgets: Record<string, ConfigWidgetRow> = {
       "101516": { $type: "ConfigWidgetTakePhoto" },
       "220004": { $type: "ConfigWidgetClientCollector", coolDown: 100, isEquipable: true, maxPoints: 5 },
+      "220017": { $type: "ConfigWidgetGadgetBuilder", coolDown: 120, maxCountByPlayer: 1, maxCountInScene: 5 },
     };
 
     expect(toGadgetRows(widgets, new Map())).toStrictEqual([
@@ -21,7 +22,22 @@ describe(toGadgetRows, () => {
         id: 220004,
         isEquipable: true,
         kind: "Collector",
+        maxCountByPlayer: 0,
+        maxCountInScene: 0,
         maxPoints: 5,
+        region: "",
+      },
+      {
+        cooldownGroup: 0,
+        cooldownOnFailSeconds: 0,
+        cooldownSeconds: 120,
+        gatherItemId: 0,
+        id: 220017,
+        isEquipable: false,
+        kind: "Device",
+        maxCountByPlayer: 1,
+        maxCountInScene: 5,
+        maxPoints: 0,
         region: "",
       },
     ]);
