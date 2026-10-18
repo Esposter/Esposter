@@ -19,7 +19,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the Seelies' trails are built and recorded in the [as-built page](../../specs/genshin/elemental-sight/design.md). A bounty's target and a quest's clue are not placed in the world yet, so no trail is drawn toward either.
+**Today:** the Seelies' trails are built and recorded in the [as-built page](../../specs/genshin/elemental-sight/design.md). A quest's clue is not placed in the world yet, so no trail is drawn toward it; a bounty's trail is drawn while its target stands.
 
 **This adds, each with its page:**
 
