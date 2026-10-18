@@ -2,8 +2,8 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
-import { readRegionAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
+import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
 import { toGroundPiece } from "#src/services/genshinAssets/fit/toGroundPiece";
 
 export interface RegionGroundFit {
