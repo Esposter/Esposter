@@ -1,7 +1,8 @@
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
 import type { DomainEntranceLandmark } from "genshin-world";
 
-import { DUNGEON_ENTRY_TABLE_NAME, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
+import { DUNGEON_ENTRY_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
+import { getDomainEntryKind } from "#src/services/genshinAssets/domains/getDomainEntryKind";
 import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
@@ -28,7 +29,7 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
   ]);
   const [, originY] = origin;
   const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME).filter(
-    ({ sceneId, type }) => sceneId === OPEN_WORLD_SCENE_ID && DungeonEntryTypeDomainKindMap[type] !== undefined,
+    (entry) => entry.sceneId === OPEN_WORLD_SCENE_ID && getDomainEntryKind(entry) !== undefined,
   );
   const otherLandmarksMap = new Map(
     regionFiles.map(({ data, region }) => [

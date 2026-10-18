@@ -5,29 +5,33 @@ import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedSce
 import {
   DOMAIN_ENTRANCE_AREA_FIELD,
   DOMAIN_ENTRANCE_POINT,
-  DungeonEntryTypeDomainKindMap,
+  DOMAIN_ENTRANCE_TITLE_FIELD,
 } from "#src/services/genshinAssets/domains/constants";
+import { getDomainEntryKind } from "#src/services/genshinAssets/domains/getDomainEntryKind";
 import { toRegionAxesPlace } from "#src/services/genshinAssets/shared/toRegionAxesPlace";
 import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
+import { GameTextKey } from "genshin-text";
 import { LandmarkKind } from "genshin-world";
+import { z } from "zod";
 
 // A domain entrance's place in its region's axes round the Windrise origin, as the region's landmarks are: the transport
-// Point's place and turn, carried by `toRegionAxesPlace`. Its height is the transport point's own, and its game area is the
-// Level-one area the point stands in, 0 where the point holds none. An entry naming no Domain, or whose point is missing or
-// Holds no transport position, gives none
+// Point's place and turn, carried by `toRegionAxesPlace`. Its height is the transport point's own, its game area is the
+// Level-one area the point stands in, 0 where the point holds none, and its name is the title text id the point holds,
+// Which a title naming no game text key is refused rather than guessed. An entry naming no domain, or whose point is
+// Missing or holds no transport position, gives none
 export const toDomainEntrance = (
   entry: ExcelDungeonEntryRow,
   point: DumpedScenePoint | undefined,
   origin: readonly [number, number, number],
 ): DomainEntrancePlace | undefined => {
-  const domainKind = DungeonEntryTypeDomainKindMap[entry.type];
+  const domainKind = getDomainEntryKind(entry);
   if (domainKind === undefined || point === undefined) return undefined;
   const transport = point[DOMAIN_ENTRANCE_POINT.position];
   if (typeof transport !== "object") return undefined;
-  const { x = 0, y = 0, z = 0 } = toDumpedVector(transport);
+  const { x = 0, y = 0, z: transportZ = 0 } = toDumpedVector(transport);
   const turn = point[DOMAIN_ENTRANCE_POINT.rotation];
   const { y: turnDegrees = 0 } = toDumpedVector(turn);
-  const { position, rotation } = toRegionAxesPlace({ x, z }, turnDegrees, origin);
+  const { position, rotation } = toRegionAxesPlace({ x, z: transportZ }, turnDegrees, origin);
   const area = point[DOMAIN_ENTRANCE_AREA_FIELD];
   return {
     domainKind,
@@ -38,5 +42,6 @@ export const toDomainEntrance = (
     kind: LandmarkKind.DomainEntrance,
     position,
     rotation,
+    titleTextKey: z.enum(GameTextKey).parse(point[DOMAIN_ENTRANCE_TITLE_FIELD]),
   };
 };
