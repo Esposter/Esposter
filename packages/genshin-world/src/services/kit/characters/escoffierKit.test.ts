@@ -151,7 +151,6 @@ describe("escoffier kit constellation 1", () => {
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       context.party,
       context.kitEffectState.effects,
-      context.characterIdCombatantMap,
     ) ?? 0;
 
   // The CRIT DMG her kit adds to a strike of a teammate's, of the element given, read once her skill is pressed
@@ -170,6 +169,7 @@ describe("escoffier kit constellation 1", () => {
         createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       )?.criticalDamageBonus ?? 0
     );
   };
