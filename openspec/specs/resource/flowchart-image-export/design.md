@@ -18,7 +18,7 @@ flowchart LR
 
 - **The editor stays untouched.** Export snapshots the graph, renders it in a separate read-only canvas, and fits that canvas to every node. It works from the Overview blade and never moves the editor's pan or zoom.
 - **SVG keeps text as embedded HTML.** The SVG wraps the styled canvas in a `foreignObject`, copies computed styles, and embeds page font faces. PNG rasterizes that same SVG at twice the device pixel ratio.
-- **The export surface is lazy.** Flowchart's dialog component loads only for a Flowchart resource. The capture service is dynamically imported when an export begins, so other resource pages do not load it.
+- **The export surface is lazy.** Flowchart's dialog component loads only for a Flowchart resource. The export canvas statically imports the capture service, so the capture service loads with the Flowchart dialogs, and other resource pages do not load it.
 - **The page supplies the background.** The export canvas uses the current theme's background and omits the dot grid.
 
 ## Key files
