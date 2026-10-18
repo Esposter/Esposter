@@ -189,7 +189,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [x] `opening-japanese.mkv` — **Japanese opening**, found as `captures/yt-57d2PwbOdr0-opening-japanese.mp4`, read by [login](../../specs/genshin/compute/login/design.md).
 - [ ] `opening-korean.mkv` — **Korean launch to the title**, waits on [localized opening](../genshin-localized-opening/design.md).
 - [ ] **World HUD** — `world-hud.mkv`, waits on [HUD](../genshin-hud/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Map top bar** — `map-top-bar.mkv`, waits on [original resin](../genshin-original-resin/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Map top bar** — `map-top-bar.mkv`, waits on [original resin](../../specs/genshin/original-resin/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Statue resonance** — `statue-resonance.mkv`, waits on [statues of the Seven](../genshin-statues-of-the-seven/design.md).
 - [ ] **Statue's Blessing** — `statue-blessing.mkv`, waits on [statues of the Seven](../genshin-statues-of-the-seven/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Anemoculus on the minimap** — `oculus-minimap.mkv`, waits on [minimap](../../specs/genshin/minimap/design.md).

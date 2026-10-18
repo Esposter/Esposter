@@ -21,7 +21,7 @@ The rank's sources, rewards and gates take effect as the pages that hold them la
 ## Waiting on
 
 - `openspec/changes/genshin-quests/`: the quests that carry Adventure EXP into the holds as they complete.
-- `openspec/changes/genshin-original-resin/`: the resin spent that gives Adventure EXP.
+- `openspec/specs/genshin/original-resin/`: the resin spent that gives Adventure EXP.
 - `openspec/changes/genshin-resident-schedules/`: Katheryne standing among Mondstadt's residents, which her rewards need.
 - The chests, unlocks and commissions pages, each of which gives its own Adventure EXP when built.
 
