@@ -85,7 +85,6 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
@@ -812,6 +811,7 @@ const {
   events,
   gameText,
   getGroundHeight,
+  getWorldNow,
   inventory,
   materialDataMap,
   nameText,
@@ -1057,7 +1057,7 @@ defineExpose({ jumpTo, readCameraPosition });
               pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
-            else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.value.has(interactable.id))
+            else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.has(interactable.id))
               openTrounceBlossomClaim(interactable.id, getWorldNow());
             else if (interactable?.kind === InteractionKind.Claim)
               openOutcropClaim(Number(interactable.id), getWorldNow());
@@ -1068,9 +1068,9 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_STOVE_INTERACTABLE_ID
             ) {
-              openCookingRecipes.value = listOpenCookingRecipes(cookingRecipes.value, cookingProgress.value);
-              cookingRecipe.value = openCookingRecipes.value[0];
-              if (cookingRecipe.value) screenKind = ScreenKind.Cooking;
+              openCookingRecipes = listOpenCookingRecipes(cookingRecipes, cookingProgress);
+              cookingRecipe = openCookingRecipes[0];
+              if (cookingRecipe) screenKind = ScreenKind.Cooking;
             } else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
@@ -1144,7 +1144,6 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
-        :jump-pose
         :last-teleport-at
         :trounce-blossoms
         :oculus-places="unfoundOculusPlaces"

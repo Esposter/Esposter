@@ -166,7 +166,7 @@ interface Props {
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  lastTeleportAt?: Temporal.ZonedDateTime;
+  lastTeleportAt?: Temporal.Instant;
   // The Oculi not yet found, each stood in at its place
   oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
@@ -563,7 +563,6 @@ onUnmounted(() => {
       :get-ground-height
       :get-world-now
       :is-held
-      :jump-pose
       :last-teleport-at
       :trounce-blossoms
       :light-uniforms

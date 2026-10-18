@@ -39,7 +39,7 @@ const progress = defineModel<CookingProgress>("progress", { required: true });
 // The recipe on the screen, whose zone parameters lay out the indicator, and the dishes the list offers
 const recipe = defineModel<CookingRecipe>("recipe", { required: true });
 const zones = computed(() => readCookingZones(recipe.value.qteParam));
-const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] })));
+const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] ?? "" })));
 const isAutoCookable = computed(() => checkCanAutoCook(recipe.value, progress.value, avatarId));
 const selectDish = (id: number) => {
   const selected = recipes.find((dish) => dish.id === id);
@@ -70,7 +70,7 @@ const stopCooking = () => {
     random,
     stopPosition: pointer.value,
     talent,
-    zones,
+    zones: zones.value,
   });
   if (cooked) {
     inventory.value = cooked.inventory;

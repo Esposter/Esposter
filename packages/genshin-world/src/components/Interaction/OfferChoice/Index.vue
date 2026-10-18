@@ -5,7 +5,7 @@ interface Props {
   // The text of the row that leaves the choice unmade
   cancelLabel: string;
   // Whether a row restores Original Resin with a Fragile Resin, where the held Original Resin covers no claim
-  canRestore: boolean;
+  canRestore?: boolean;
   // The text of a row paid in Condensed Resin
   condensedLabel: string;
   // The claims the held resin affords, one row each
@@ -13,7 +13,7 @@ interface Props {
   // The text of a row paid in Original Resin
   originalLabel: string;
   // The text of the restore row
-  restoreLabel: string;
+  restoreLabel?: string;
 }
 
 const { cancelLabel, canRestore, condensedLabel, offers, originalLabel, restoreLabel } = defineProps<Props>();

@@ -59,6 +59,7 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
     v-else-if="
       screenKind !== ScreenKind.World &&
       screenKind !== ScreenKind.Dialogue &&
+      screenKind !== ScreenKind.GameOver &&
       !checkIsNpcScreenKind(screenKind) &&
       slots[screenKind]
     "
@@ -66,7 +67,10 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
   />
   <MenuPlaceholder
     v-else-if="
-      screenKind !== ScreenKind.World && screenKind !== ScreenKind.Dialogue && !checkIsNpcScreenKind(screenKind)
+      screenKind !== ScreenKind.World &&
+      screenKind !== ScreenKind.Dialogue &&
+      screenKind !== ScreenKind.GameOver &&
+      !checkIsNpcScreenKind(screenKind)
     "
     :game-text
     :title="gameText[ScreenKindGameTextKeyMap[screenKind]]"
