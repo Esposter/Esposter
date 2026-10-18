@@ -25,7 +25,7 @@ export const strikeReactionDamage = (
     damageKitEnemy(
       enemy,
       { damage: damage * getResistanceMultiplier(resistance), poiseDamage: 0 },
-      element !== undefined,
+      { isElemental: element !== undefined },
       owner,
       context,
     ),

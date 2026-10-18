@@ -14,7 +14,7 @@ import { emitKitEnemyDefeated } from "#src/services/kit/emitKitEnemyDefeated";
 export const damageKitEnemy = (
   enemy: Enemy,
   hit: EnemyHit,
-  isElemental: boolean,
+  { isElemental }: { isElemental: boolean },
   owner: Combatant | undefined,
   context: KitContext,
 ): EnergyDrop[] => {

@@ -56,7 +56,13 @@ const strikeOwnedTicks = (
   }
   collectKitEnergyDrops(
     [
-      ...damageKitEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }, true, combatant, context),
+      ...damageKitEnemy(
+        enemy,
+        { damage: transformativeDamage + burningDamage, poiseDamage },
+        { isElemental: true },
+        combatant,
+        context,
+      ),
       ...getReactionParticleDrops(context.party, reactions, combatant.elementalResonances),
     ],
     combatant.element,
