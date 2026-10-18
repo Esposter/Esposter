@@ -1,14 +1,9 @@
 import type { Reaction } from "#src/models/combat/Reaction";
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
-import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
-import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
-import type { KitRecord } from "#src/models/kit/record/KitRecord";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -16,23 +11,22 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { KitPlunge } from "#src/models/kit/record/KitPlunge";
-import { KitTargeting } from "#src/models/kit/record/KitTargeting";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { STELLAR_VORTEX_LEVEL_TWO_STACKS } from "#src/services/combat/damage/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { buildKit } from "#src/services/kit/buildKit";
 import { createOdetteKitBehaviour, ODETTE_CHARACTER_ID } from "#src/services/kit/characters/odetteKit";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const kit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ODETTE_CHARACTER_ID);
 // The vortex's id and its stacks, shaped as the effects read for a test to compare
 const shapeEffects = (context: KitContext) =>
   context.kitEffectState.effects.map((effect) =>
@@ -47,65 +41,6 @@ const findDanceDoubles = (kitEffectState: KitEffectState) => kitEffectState.effe
 const toHitFrames = ({ hits }: KitSummon) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
 
 describe(createOdetteKitBehaviour, () => {
-  const PROUD_SKILL_GROUP_ID = 1;
-  const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5] }] };
-  const TALENT_LEVEL_MAP = { [PROUD_SKILL_GROUP_ID]: 1 };
-  const HIT_RECORD: KitHitRecord = {
-    area: { angle: 2 * Math.PI, height: 2, radius: 1 },
-    hitmarkFrames: 12,
-    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-    poiseDamage: 0,
-  };
-  const PLUME_HIT_RECORD: KitHitRecord = {
-    area: { angle: 2 * Math.PI, height: 2, radius: 19 },
-    hitmarkFrames: 134,
-    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-    poiseDamage: 0,
-  };
-  const WING_HIT_RECORD: KitHitRecord = {
-    area: { angle: 2 * Math.PI, height: 2, radius: 20 },
-    hitmarkFrames: 243,
-    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-    poiseDamage: 0,
-  };
-  const createFollowUpRecord = (): KitActionRecord => ({
-    animationFrames: 76,
-    hits: [HIT_RECORD],
-    targeting: KitTargeting.Skill,
-  });
-  const createActionRecord = (): KitActionRecord => ({
-    animationFrames: 30,
-    hits: [HIT_RECORD],
-    targeting: KitTargeting.Strike,
-  });
-  const RECORD: KitRecord = {
-    areas: {},
-    burst: createActionRecord(),
-    burstCooldownSeconds: 15,
-    chargedAttack: createActionRecord(),
-    chargedAttackStamina: 20,
-    frames: {
-      danceDoubleBurstFirstTick: 252,
-      danceDoubleBurstSpawn: 1,
-      danceDoubleDuration: 1262,
-      danceDoubleRecastFirstTick: 114,
-      danceDoubleFirstTick: 134,
-      danceDoubleSkillSpawn: 23,
-      plumeTickInterval: 109,
-      stellarVortex: 181,
-      wingTickInterval: 125,
-    },
-    hits: { plume: PLUME_HIT_RECORD, wing: WING_HIT_RECORD },
-    normalAttacks: [createActionRecord()],
-    plungeCollision: HIT_RECORD,
-    plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
-    skill: createActionRecord(),
-    skillCooldownSeconds: 6,
-    skillHolds: [],
-    skillChain: { followUps: [createFollowUpRecord()], windowSeconds: 394 / 60 },
-    stellarJubilee: { stellarReactionTypes: [StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl] },
-  };
-  const kit: Kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, createOdetteKitBehaviour);
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
