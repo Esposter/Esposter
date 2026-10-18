@@ -31,6 +31,7 @@ import {
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
+import { followLoginWitnessDoor } from "#src/services/login/door/followLoginWitnessDoor";
 import { getLoginDoorPosition } from "#src/services/login/door/getLoginDoorPosition";
 import { rideLoginWitnessDoor } from "#src/services/login/door/rideLoginWitnessDoor";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
@@ -360,7 +361,7 @@ watchImmediate(
     if (!family) return;
     family.visible = false;
     if (!isExported) return;
-    const copies = family.children.flatMap((part) => rideLoginWitnessDoor(part, doorPieces, doorRest));
+    const copies = rideLoginWitnessDoor(family, doorPieces);
     onCleanup(() => {
       for (const copy of copies) copy.removeFromParent();
     });
@@ -437,7 +438,8 @@ onRender(({ delta: frameDelta }) => {
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = doorRestPosition[2] + doorAhead.value - cameraZ.value;
   // The exported parts ride the glide with ours, off by whatever offset a witness tool sets them: their towers and
-  // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours
+  // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours, its copies
+  // At the offset too
   for (const group of exportedParts.value?.children ?? []) {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
@@ -449,7 +451,7 @@ onRender(({ delta: frameDelta }) => {
         cameraZ: cameraZ.value,
         doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
-    }
+    } else if (group.name === LoginPartFamily.Door) followLoginWitnessDoor(group, doorPieces, doorRest);
   }
   walkwayBatch.position.z = -walkwayScrolled;
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
