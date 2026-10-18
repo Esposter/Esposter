@@ -4,6 +4,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createXilonenKitBehaviour, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
@@ -177,6 +178,19 @@ describe(createXilonenKitBehaviour, () => {
     stepKitSeconds(context, 7.5);
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
     stepKitSeconds(context, 1);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
+  });
+
+  test("a sprint that drains the last points ends her Blade Roller stance on the step the Blessing ends", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXilonenCombatant());
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+    // Eight seconds of drain leave 5 points, and at 8.2 seconds 4, which the sprint's five drain to none
+    stepKitSeconds(context, 8.2);
+    sprintKitSeconds(context, createKitState(), FIXED_STEP_SECONDS);
+    expect(countKitResource(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
+    stepKitSeconds(context, FIXED_STEP_SECONDS);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });
