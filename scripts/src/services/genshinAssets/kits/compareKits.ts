@@ -73,7 +73,13 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
       (overlay) =>
         getResult(() =>
-          buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables.talentGroupIdMap),
+          buildKitRecord(
+            sourceCandidateMap,
+            overlay,
+            namedHitCandidateMap,
+            tables.talentGroupIdMap,
+            gcsimFolder !== undefined,
+          ),
         ).match(
           ({ record }) => ({
             committedOverlay: overlay,
