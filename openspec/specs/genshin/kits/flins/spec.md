@@ -12,7 +12,7 @@ Flins's normal attacks SHALL be five physical strikes, a charged attack, a colli
 
 - **GIVEN** Flins is the character on the field
 - **WHEN** the player presses the attack button repeatedly
-- **THEN** his five strikes land at 11, 11, 16, 20 and 29 frames into their animations, the fourth strike hitting twice
+- **THEN** his five strikes land their hits at 11, 11, 16, 20, 29 and 29 frames into their animations, the fourth strike hitting at 20 and 29 and the fifth at 29
 
 ### Requirement: Charged attack box
 

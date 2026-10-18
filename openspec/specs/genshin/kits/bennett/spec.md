@@ -66,7 +66,7 @@ Fantastic Voyage SHALL heal the character standing inside its circle and give th
 
 ### Requirement: Constellation 6 infuses and buffs the character on the field
 
-At constellation 6, each tick of Fantastic Voyage SHALL give the character on the field a 15% Pyro DMG Bonus and a Pyro infusion for 2.1 seconds.
+At constellation 6, each tick of Fantastic Voyage SHALL give the character on the field a 15% Pyro DMG Bonus, and a Pyro infusion for 2.1 seconds where that character wields a sword, claymore or polearm.
 
 #### Scenario: A sword, claymore or polearm wielder gets Pyro on its weapon
 

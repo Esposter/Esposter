@@ -9,7 +9,7 @@ gcsim sources: her attack, charge, skill and burst files, with the table data in
 ## Decisions
 
 - **The skill's DoT reaches 4 metres, its Moonsign level 1 value.** gcsim reaches 6 metres from Moonsign level 2, which the Moonsign hook would read. Until the hook reads the level the DoT stays at 4 metres, a provisional value.
-- **Her strikes and plunges deal no poise.** gcsim gives none, and no source gives Columbina's yet, so each one's poise is zero, as the proposal's poise gap records.
+- **Her strikes and plunges deal no poise.** gcsim gives none, and no source gives Columbina's yet, so each one's poise is zero.
 - **The first strike's two-frame windup is not built.** gcsim adds it to a first strike that follows a strike or a charged attack. The kit keeps no record of the state the previous action left, so each strike lands on its gcsim hitmark without it.
 - **The charged attack's stamina is the catalyst's 50.** gcsim's default for a catalyst's charged attack is 50, and her table reads the same. gcsim makes it free while Dew is held, which waits on the Dew hook.
 - **The plunges borrow gcsim's Bennett plunge reach.** gcsim has no plunge file for Columbina, so the reach is the kit constants' borrowed one, and the 0.4 seconds are the wiki's standard, not measured.

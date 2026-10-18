@@ -89,15 +89,31 @@ From Ascension 4, an Electro-related reaction SHALL trigger Thundering Retributi
 - **WHEN** another Electro-related reaction occurs
 - **THEN** no strike is made
 
+### Requirement: Constellation 2 gives Oz's hit Devourer of All Sins
+
+From constellation 2, the hit Oz's summon deals SHALL be Devourer of All Sins' in place of Oz's own.
+
+#### Scenario: Oz's hit is Devourer of All Sins from constellation 2
+
+- **GIVEN** Fischl is at constellation 2
+- **WHEN** Nightrider's Oz summons its hit
+- **THEN** the hit is Devourer of All Sins
+
 ### Requirement: Constellation 1 and 6 strikes
 
-From constellation 1, Gaze of the Deep SHALL strike together with each of Fischl's arrows, and from constellation 6, Evernight Raven SHALL strike together with each attack of the character on the field.
+From constellation 1, while Oz is not on the field and Fischl is the character on the field, Gaze of the Deep SHALL strike together with each of her normal attacks that lands, and from constellation 6, Evernight Raven SHALL strike together with each attack of the character on the field.
 
-#### Scenario: Gaze of the Deep strikes with an arrow
+#### Scenario: Gaze of the Deep strikes with a normal attack while Oz is away
 
-- **GIVEN** Fischl is at constellation 1
-- **WHEN** one of her arrows strikes
+- **GIVEN** Fischl is at constellation 1 and Oz is not on the field
+- **WHEN** one of her normal attacks lands
 - **THEN** Gaze of the Deep strikes along with it
+
+#### Scenario: Gaze of the Deep does not strike while Oz stands
+
+- **GIVEN** Fischl is at constellation 1 and Oz is on the field
+- **WHEN** one of her arrows strikes
+- **THEN** Gaze of the Deep does not strike
 
 #### Scenario: Evernight Raven strikes with the field's attack
 

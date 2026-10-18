@@ -116,13 +116,19 @@ While the Prayer stands, each swap SHALL set off a Hydro wave round Candace's bo
 
 ### Requirement: Constellation 6 waves on elemental normal attacks
 
-At constellation 6, while the Prayer stands, an elemental normal attack by another party member on the character on the field SHALL set off a Hydro wave dealing 15% of Candace's Max HP, at most once every 2.3 seconds.
+At constellation 6, while the Prayer stands, an elemental normal attack by the character on the field, other than Candace, SHALL set off a Hydro wave dealing 15% of Candace's Max HP, at most once every 2.3 seconds.
 
-#### Scenario: An elemental normal attack sets off a wave
+#### Scenario: An elemental normal attack by the character on the field sets off a wave
 
 - **GIVEN** Candace is at constellation 6 and the Prayer stands
-- **WHEN** another party member lands an elemental normal attack on the enemies while the character on the field is the attacker's target's ally
+- **WHEN** the character on the field, not Candace, lands an elemental normal attack
 - **THEN** a Hydro wave is set off dealing 15% of her Max HP
+
+#### Scenario: An off-field party member's attack sets off no wave
+
+- **GIVEN** Candace is at constellation 6 and the Prayer stands
+- **WHEN** a party member off the field lands an elemental normal attack
+- **THEN** no wave is set off
 
 #### Scenario: A second attack within 2.3 seconds sets off no wave
 

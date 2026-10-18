@@ -32,13 +32,19 @@ Particular Field SHALL strike four hits plus two more for each Chisel-Light Mirr
 
 ### Requirement: Alhaitham holds up to three Mirrors that decay one at a time
 
-Alhaitham SHALL hold up to three Chisel-Light Mirrors, one made by each use of his skill or burst, each decaying after 233 frames, and a swap SHALL clear every Mirror he holds.
+Alhaitham SHALL hold up to three Chisel-Light Mirrors, one made by each use of his skill or burst, one of them decaying every 233 frames, and a swap SHALL clear every Mirror he holds.
 
-#### Scenario: A Mirror decays after 233 frames
+#### Scenario: A Mirror decays every 233 frames
 
 - **GIVEN** Alhaitham holds a Mirror
 - **WHEN** 233 frames pass
 - **THEN** one Mirror is removed
+
+#### Scenario: A new Mirror restarts the decay count
+
+- **GIVEN** Alhaitham holds a Mirror that has been decaying for 100 frames
+- **WHEN** he makes a second Mirror
+- **THEN** the next Mirror is removed 233 frames after the new one is made, the decay count starting again from it
 
 #### Scenario: A swap clears every Mirror
 

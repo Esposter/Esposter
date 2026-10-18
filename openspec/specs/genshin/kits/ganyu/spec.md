@@ -54,7 +54,7 @@ Celestial Shower SHALL leave a field that ticks and strikes enemies for the burs
 - **THEN** the field ticks and strikes enemies within it
 - **AND** the field ends when the burst's seconds run out
 
-#### Scenario: The field gives Cryo DMG Bonus from her first ascension onward
+#### Scenario: The field gives Cryo DMG Bonus from her fourth ascension onward
 
 - **GIVEN** Ganyu has her fourth ascension
 - **WHEN** the active character stands inside the field

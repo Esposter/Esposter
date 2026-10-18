@@ -52,7 +52,7 @@ Heartstopper Strike SHALL release as a press when tapped and as a full hold when
 
 ### Requirement: Fudou Style Vacuum Slugger sets a Windmuster Iris
 
-Fudou Style Vacuum Slugger SHALL strike a circle and set a Windmuster Iris on the first of its first four enemies that holds Pyro, Hydro, Electro or Cryo.
+Fudou Style Vacuum Slugger SHALL strike a circle and set a Windmuster Iris on each of its first four enemies that holds Pyro, Hydro, Electro or Cryo.
 
 #### Scenario: The aura is read before the Anemo hit
 
