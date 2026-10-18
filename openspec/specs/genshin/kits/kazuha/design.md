@@ -6,10 +6,8 @@ The Autumn Whirlwind absorbs an element as gcsim's does: a check from 81 frames,
 
 ```mermaid
 flowchart TD
-  START["Autumn Whirlwind starts"] --> CHECK["Absorb check at 81 frames, then every 18 frames, at most 17 checks"]
-  CHECK --> REACH["Enemies within 9 metres of where he cast it"]
-  REACH --> ELEMENT["The first of Pyro, Hydro, Electro and Cryo any of them holds, in gcsim's priority"]
-  ELEMENT --> TICK["Each later Anemo tick is preceded by an elemental tick in that element, 1U"]
+  CHECK{"Absorb check<br/>an enemy within 9 metres holds an element"} -- "no, 18 frames later, at most 17 checks" --> CHECK
+  CHECK -- "yes, the first in gcsim's priority" --> TICK["Each later Anemo tick<br/>preceded by an elemental tick, 1U"]
 ```
 
 ## Decisions
