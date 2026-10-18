@@ -57,6 +57,10 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
+# pnpm's install state, stamped with the install's time and read by nothing at runtime
+node_modules/.modules.yaml
+node_modules/.pnpm-workspace-state*.json
+
 # Optional: exclude source maps to reduce package size
 dist/**/*.map
 

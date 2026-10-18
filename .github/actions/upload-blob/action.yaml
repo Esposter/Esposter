@@ -1,0 +1,59 @@
+name: Upload Blob
+description: Upload one file to a blob unless the blob already holds the same bytes — so a rerun of an unchanged build writes nothing, and blob soft delete keeps a copy only of what actually changed
+inputs:
+  account-name:
+    description: The storage account's name
+    required: true
+  container-name:
+    description: The container the blob lives in, created when it does not exist yet
+    required: true
+  blob-name:
+    description: The blob's name inside the container
+    required: true
+  file:
+    description: The local file to upload. A skip needs the producer to write the same bytes for the same content
+    required: true
+runs:
+  using: composite
+  steps:
+    # `container create` is idempotent — an existing container is `created: false` and exit 0, so the only thing
+    # a `|| true` here could swallow is a real failure (a revoked role, a container mid-delete), which then
+    # surfaces one line later as an upload that cannot find its container.
+    - name: 📦 Create the container
+      shell: bash
+      env:
+        ACCOUNT_NAME: ${{ inputs.account-name }}
+        CONTAINER_NAME: ${{ inputs.container-name }}
+      run: az storage container create --account-name "$ACCOUNT_NAME" --name "$CONTAINER_NAME" --auth-mode login --public-access off
+    # The CLI stores the MD5 it computes on every upload as the blob's Content-MD5, so equal digests are equal bytes.
+    # A blob with no stored digest compares unequal and is uploaded, so the step fails toward a redundant write
+    - name: 🔍 Compare with the stored blob
+      id: compare
+      shell: bash
+      env:
+        ACCOUNT_NAME: ${{ inputs.account-name }}
+        CONTAINER_NAME: ${{ inputs.container-name }}
+        BLOB_NAME: ${{ inputs.blob-name }}
+        FILE: ${{ inputs.file }}
+      run: |
+        file_md5="$(openssl dgst -md5 -binary "$FILE" | base64)"
+        stored_md5=""
+        if [ "$(az storage blob exists --account-name "$ACCOUNT_NAME" --container-name "$CONTAINER_NAME" --name "$BLOB_NAME" --auth-mode login --query exists --output tsv)" = "true" ]; then
+          stored_md5="$(az storage blob show --account-name "$ACCOUNT_NAME" --container-name "$CONTAINER_NAME" --name "$BLOB_NAME" --auth-mode login --query properties.contentSettings.contentMd5 --output tsv)"
+        fi
+        if [ "$file_md5" = "$stored_md5" ]; then
+          echo "$CONTAINER_NAME/$BLOB_NAME already holds these bytes ($file_md5), so nothing is uploaded"
+          echo "is-changed=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "is-changed=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: 🚀 Upload
+      if: steps.compare.outputs.is-changed == 'true'
+      shell: bash
+      env:
+        ACCOUNT_NAME: ${{ inputs.account-name }}
+        CONTAINER_NAME: ${{ inputs.container-name }}
+        BLOB_NAME: ${{ inputs.blob-name }}
+        FILE: ${{ inputs.file }}
+      run: az storage blob upload --account-name "$ACCOUNT_NAME" --container-name "$CONTAINER_NAME" --name "$BLOB_NAME" --file "$FILE" --auth-mode login --overwrite

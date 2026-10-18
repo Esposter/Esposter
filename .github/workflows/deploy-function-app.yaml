@@ -51,9 +51,15 @@ jobs:
       - name: 📦 Collect Deployment Output
         run: pnpm --filter @esposter/functions deploy --prod "$OUTPUT_DIRECTORY" --config.inject-workspace-packages=true --config.node-linker=hoisted
 
+      # Every entry carries one fixed time and is added in sorted order, and `-X` drops the owner and timestamp extra
+      # fields, so an unchanged package zips to the same bytes and the upload below writes nothing. `-L` follows a
+      # symlink as `-r` did, storing what it points at
       - name: 📦 Zip Artifact for Deployment
         working-directory: ${{ env.OUTPUT_DIRECTORY }}
-        run: zip -r "../$ZIP_FILE_NAME" . -x@.funcignore
+        shell: bash
+        run: |
+          find -L . -mindepth 1 -exec touch --date=2000-01-01T00:00:00Z {} +
+          find -L . -mindepth 1 -printf '%P\n' | LC_ALL=C sort | zip -X -@ "../$ZIP_FILE_NAME" -x@.funcignore
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
@@ -77,13 +83,13 @@ jobs:
           RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
         run: az storage account network-rule add --account-name "$STORAGE_ACCOUNT_NAME" --ip-address "$RUNNER_IP"
 
-      # `container create` is idempotent — an existing container is `created: false` and exit 0, so the only thing
-      # a `|| true` here could swallow is a real failure (a revoked role, a container mid-delete), which then
-      # surfaces one line later as an upload that cannot find its container.
       - name: 🚀 Upload Package to Blob Storage
-        run: |
-          az storage container create --account-name "$STORAGE_ACCOUNT_NAME" --name "$FUNCTION_APP_NAME" --auth-mode login --public-access off
-          az storage blob upload --account-name "$STORAGE_ACCOUNT_NAME" --container-name "$FUNCTION_APP_NAME" --name "$ZIP_FILE_NAME" --file "$ZIP_FILE_NAME" --auth-mode login --overwrite
+        uses: ./.github/actions/upload-blob
+        with:
+          account-name: ${{ env.STORAGE_ACCOUNT_NAME }}
+          container-name: ${{ env.FUNCTION_APP_NAME }}
+          blob-name: ${{ env.ZIP_FILE_NAME }}
+          file: ${{ env.ZIP_FILE_NAME }}
 
       # `always()` so the rule is removed even when the upload failed — and gated on the IP having been read, so a
       # run that failed before the firewall was ever touched reports that failure rather than an `az` call with an
