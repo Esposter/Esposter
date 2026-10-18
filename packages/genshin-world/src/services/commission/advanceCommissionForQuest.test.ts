@@ -23,8 +23,10 @@ describe(advanceCommissionForQuest, () => {
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 2003,
+    preferredRegion: "mondstadt",
     questId: QUEST_ID,
     rewardTier: 2,
+    titleTextId: 1,
   };
   const slice: CommissionSlice = { bonuses: [], rewardTiers: [], tasks: [questTask] };
   const day: CommissionDay = {

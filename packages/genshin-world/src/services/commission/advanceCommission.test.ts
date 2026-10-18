@@ -18,8 +18,10 @@ describe(advanceCommission, () => {
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
+    preferredRegion: "mondstadt",
     questId: "",
     rewardTier: 2,
+    titleTextId: 1,
   };
 
   test("should count the doings up to the finish count and hold there", () => {
