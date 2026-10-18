@@ -1,4 +1,5 @@
 import type { InventorySave } from "#src/models/inventory/InventorySave";
+import type { PartySave } from "#src/models/party/PartySave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
@@ -12,6 +13,12 @@ import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import {
+  DEFAULT_PARTY_TEAM_COUNT,
+  PARTY_TEAM_MAX_COUNT,
+  PARTY_TEAM_SIZE,
+  STARTING_TEAM_CHARACTER_IDS,
+} from "#src/services/party/constants";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
@@ -22,6 +29,9 @@ export const MAX_SAVE_ID_LENGTH = 64;
 // The longest name a save holds for the Traveler. The game's own limit on the name is unread, so this only bounds a
 // Crafted save
 export const MAX_TRAVELER_NAME_LENGTH = 32;
+// The longest name a save holds for a party team, bounded as the Traveler's name is: the game's own limit on a team's
+// Name is unread, so this only bounds a crafted save
+export const MAX_PARTY_TEAM_NAME_LENGTH = 32;
 // The most of each list a save may hold: a landmark or quest is unique, and a player holds fewer characters
 // Than the bound
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
@@ -105,6 +115,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   inventory: { items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
   openedChests: [],
+  party: { activeIndex: MAX_SAVE_NUMBER, deployedTeamIndex: MAX_SAVE_NUMBER, downCharacterIds: [], teams: [] },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   statues: { foundOculusIds: [], regions: {} },
@@ -152,6 +163,12 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  PARTY_TEAM_MAX_COUNT *
+    getListEntryLength({
+      characterIds: Array.from({ length: PARTY_TEAM_SIZE }, () => MAX_SAVE_NUMBER),
+      name: "x".repeat(MAX_PARTY_TEAM_NAME_LENGTH),
+    }) +
+  MAX_CHARACTER_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
   MAX_INVENTORY_ITEM_COUNT *
@@ -165,6 +182,17 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
 export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0 };
 // Mondstadt's Reputation at its first level, with no EXP toward the next
 export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
+// A new player's party as the game starts one: the four default teams, the starting team deployed with its characters on
+// The field, and nobody down
+export const EMPTY_PARTY_SAVE: PartySave = {
+  activeIndex: 0,
+  deployedTeamIndex: 0,
+  downCharacterIds: [],
+  teams: Array.from({ length: DEFAULT_PARTY_TEAM_COUNT }, (_value, index) => ({
+    characterIds: index === 0 ? [...STARTING_TEAM_CHARACTER_IDS] : [],
+    name: "",
+  })),
+};
 // A new player's save: the wallet as a new player's holds it, its Original Resin at the cap from the epoch, and nothing
 // Else. The instants are ISO strings, as the save stores them
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
@@ -177,6 +205,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   inventory: EMPTY_INVENTORY_SAVE,
   offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
   openedChests: [],
+  party: EMPTY_PARTY_SAVE,
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
   statues: { foundOculusIds: [], regions: {} },

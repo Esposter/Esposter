@@ -10,6 +10,7 @@ import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
+import { partySaveSchema } from "#src/models/party/PartySave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
@@ -33,6 +34,8 @@ export const genshinSaveSchema = z
     inventory: inventorySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
+    // The party: its teams, the one deployed, the member on the field and the characters down
+    party: partySaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     // The statues' progress in each region, and the Oculi found

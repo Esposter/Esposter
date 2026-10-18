@@ -2,6 +2,7 @@ import type { Artifact } from "#src/models/artifact/Artifact";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { TalentLevels } from "#src/models/character/TalentLevels";
+import type { PartySave } from "#src/models/party/PartySave";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -135,6 +136,18 @@ describe(readGenshinSave, () => {
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: 0 },
   };
+  // The party of a player with a second team deployed, its second member on the field and the first held character down
+  const PARTY_SAVE: PartySave = {
+    activeIndex: 1,
+    deployedTeamIndex: 1,
+    downCharacterIds: [CHARACTER_ID],
+    teams: [
+      { characterIds: [CHARACTER_ID], name: "" },
+      { characterIds: [CHARACTER_ID, 7], name: "Second" },
+      { characterIds: [], name: "" },
+      { characterIds: [], name: "" },
+    ],
+  };
   const POPULATED_SAVE: GenshinSave = {
     ...EMPTY_GENSHIN_SAVE,
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
@@ -151,6 +164,7 @@ describe(readGenshinSave, () => {
     },
     offerings: { frostbearingTree: FROSTBEARING_TREE_PROGRESS },
     openedChests: [CHEST_ID],
+    party: PARTY_SAVE,
     quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 1 } },
     reputation: REPUTATION,
     statues: { foundOculusIds: [FOUND_OCULUS_ID], regions: { [STATUE_REGION_ID]: STATUE_REGION_PROGRESS } },
@@ -166,6 +180,23 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       EMPTY_GENSHIN_SAVE,
     );
+  });
+
+  test("the deployed team and member on field return after a visit", () => {
+    expect.hasAssertions();
+    const visit = (save: GenshinSave) =>
+      readGenshinSave(
+        toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map())),
+        NAMES,
+        WEAPON_DATA_MAP,
+        new Map(),
+      );
+    const { party } = visit({ ...EMPTY_GENSHIN_SAVE, party: PARTY_SAVE });
+
+    expect({ activeIndex: party.activeIndex, deployedTeamIndex: party.deployedTeamIndex }).toStrictEqual({
+      activeIndex: 1,
+      deployedTeamIndex: 1,
+    });
   });
 
   test("a new player starts with no region started and no Oculus found", () => {

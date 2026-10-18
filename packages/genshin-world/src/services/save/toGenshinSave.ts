@@ -5,6 +5,7 @@ import { toAchievementProgressSave } from "#src/services/save/toAchievementProgr
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
+import { toPartySave } from "#src/services/save/toPartySave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
 
@@ -22,6 +23,7 @@ export const toGenshinSave = ({
   frostbearingTreeProgress,
   inventory,
   openedChestIds,
+  party,
   quests,
   regionStatueProgressMap,
   reputation,
@@ -43,6 +45,7 @@ export const toGenshinSave = ({
   inventory: toInventorySave(inventory),
   offerings: { frostbearingTree: frostbearingTreeProgress },
   openedChests: [...openedChestIds],
+  party: toPartySave(party),
   quests: Object.fromEntries(quests),
   reputation,
   statues: { foundOculusIds: [...foundOculusIds], regions: Object.fromEntries(regionStatueProgressMap) },

@@ -12,7 +12,7 @@
 
 ## 3. Memory
 
-- [ ] 3.1 Keep the party between visits, in the account and the browser. Verify: a test named after the scenario 'The deployed team and member on field return after a visit'.
+- [x] 3.1 Keep the party between visits, in the account and the browser. Verify: a test named after the scenario 'The deployed team and member on field return after a visit'.
 
 ## 4. Resonance effects waiting on mechanisms
 

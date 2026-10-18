@@ -13,8 +13,8 @@ import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
-import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
+import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
@@ -27,6 +27,10 @@ import { getResultAsync } from "@esposter/shared";
 const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const tables = shallowRef<WorldTables>();
+// The deployed team the save holds, whose kits the world reads before it opens: a new player's starting team, as a new
+// Player's save holds it
+const { party } = props.save ?? EMPTY_GENSHIN_SAVE;
+const deployedCharacterIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() =>
   measureLoadStep(
@@ -38,7 +42,7 @@ getResultAsync(() =>
       measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
       measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
       measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
-      measureLoadStep("character-kits", readCharacterKits(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS)),
+      measureLoadStep("character-kits", readCharacterKits(props.gameDataBaseUrl, deployedCharacterIds)),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
