@@ -4,7 +4,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { takeOne } from "@esposter/shared";
@@ -21,15 +20,13 @@ export const createSkyPiercingFangPassiveModule = (params: number[]): WeaponPass
   const damageShare = takeOne(params, 3);
   const seconds = takeOne(params, 4);
   return {
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) => {
       if (
         !checkIsNormalOrChargedAttack(strike.attackTag) ||
         !checkIsKitStatusActive(effects, strike.combatant.characterId, SKYWARD_BLADE_MIGHT_ID)
       )
         return 0;
-      return (
-        damageShare * getBuffedCombatant(strike.combatant, effects, party, characterIdCombatantMap).attributes.attack
-      );
+      return damageShare * strike.combatant.attributes.attack;
     },
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.BurstUsed || event.characterId !== combatant.characterId) return;
