@@ -288,6 +288,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     },
     enemyRespawns: mergeEnemyRespawns(account.enemyRespawns, guest.enemyRespawns),
     homePlacements: account.homePlacements,
+    homePlantings: account.homePlantings,
+    homeProgress: account.homeProgress,
     inventory: account.inventory,
     offerings: {
       frostbearingTree: checkIsFurtherOffering(guest.offerings.frostbearingTree, account.offerings.frostbearingTree)

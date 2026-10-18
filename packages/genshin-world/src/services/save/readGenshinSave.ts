@@ -9,6 +9,8 @@ import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
 import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toEncounterPoints } from "#src/services/save/toEncounterPoints";
+import { toHomePlanting } from "#src/services/save/toHomePlanting";
+import { toHomeProgress } from "#src/services/save/toHomeProgress";
 import { toInventory } from "#src/services/save/toInventory";
 import { toParty } from "#src/services/save/toParty";
 import { toProcessingJobs } from "#src/services/save/toProcessingJobs";
@@ -39,6 +41,8 @@ export const readGenshinSave = (
     enemyRespawns,
     longTermEncounterPoints,
     homePlacements,
+    homePlantings,
+    homeProgress,
     inventory,
     mails,
     namecardItemId,
@@ -94,6 +98,8 @@ export const readGenshinSave = (
     foundOculusIds: new Set(statues.foundOculusIds),
     frostbearingTreeProgress: offerings.frostbearingTree,
     homePlacements,
+    homePlantings: homePlantings.map((planting) => toHomePlanting(planting)),
+    homeProgress: toHomeProgress(homeProgress),
     inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
     mails,
     namecardItemId,

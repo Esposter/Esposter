@@ -7,6 +7,8 @@ import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toEncounterPointsSave } from "#src/services/save/toEncounterPointsSave";
+import { toHomePlantingSave } from "#src/services/save/toHomePlantingSave";
+import { toHomeProgressSave } from "#src/services/save/toHomeProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
@@ -40,6 +42,8 @@ export const toGenshinSave = ({
   foundOculusIds,
   frostbearingTreeProgress,
   homePlacements,
+  homePlantings,
+  homeProgress,
   inventory,
   mails,
   namecardItemId,
@@ -87,6 +91,8 @@ export const toGenshinSave = ({
   crafting: { craftedCounts: Object.fromEntries(craftedCountMap), learnedRecipeIds: craftingProgress.learnedRecipeIds },
   enemyRespawns: Object.fromEntries(enemyRespawnMap),
   homePlacements,
+  homePlantings: homePlantings.map((planting) => toHomePlantingSave(planting)),
+  homeProgress: toHomeProgressSave(homeProgress),
   inventory: toInventorySave(inventory),
   mails,
   namecardItemId,

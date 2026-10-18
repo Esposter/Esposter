@@ -63,6 +63,20 @@ describe(readGenshinSave, () => {
   const SOLVED_PUZZLE_ID = "puzzle-1";
   // A furnishing placed in the realm: its item, the area of its scene it stands in and where, and the turn it faces
   const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
+  // The realm's progress and a seed in its garden, each instant as the save holds it, at a made-up moment after the epoch
+  const REALM_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
+  const HOME_PROGRESS_SAVE = {
+    accruedAt: REALM_AT,
+    claimedRewardIds: [6],
+    companionIds: [7],
+    learnedBlueprintIds: [8],
+    madeBlueprintIds: [8],
+    orders: [{ blueprintId: 8, startedAt: REALM_AT }],
+    realmBounty: 9,
+    realmCurrency: 10,
+    trustExp: 11,
+  };
+  const PLANTING_SAVE = { plantedAt: REALM_AT, plotId: 4, seedItemId: 5 };
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const EQUIPPED_GADGET_ID = 1001;
   const FORGED_WEAPON_ID = 13_401;
@@ -187,6 +201,8 @@ describe(readGenshinSave, () => {
     cooking: COOKING_SAVE,
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     homePlacements: [PLACEMENT],
+    homePlantings: [PLANTING_SAVE],
+    homeProgress: HOME_PROGRESS_SAVE,
     inventory: {
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [

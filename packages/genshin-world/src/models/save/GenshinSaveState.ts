@@ -11,6 +11,8 @@ import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
+import type { HomePlanting } from "#src/models/home/HomePlanting";
+import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MailSave } from "#src/models/mail/MailSave";
@@ -61,6 +63,8 @@ export interface GenshinSaveState {
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];
+  homePlantings: HomePlanting[];
+  homeProgress: HomeProgress;
   inventory: Inventory;
   mails: MailSave[];
   namecardItemId: number;

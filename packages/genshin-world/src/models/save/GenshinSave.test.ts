@@ -10,12 +10,18 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
-import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
+import {
+  MAX_HOME_BLUEPRINT_COUNT,
+  MAX_HOME_COMPANION_COUNT,
+  MAX_HOME_ORDER_COUNT,
+  MAX_HOME_PLACEMENT_COUNT,
+  MAX_HOME_PLANTING_COUNT,
+  MAX_HOME_REWARD_CLAIM_COUNT,
+} from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
@@ -195,6 +201,23 @@ describe("genshinSaveSchema", () => {
         rotation: -Number.MAX_VALUE,
         sceneId: maxNumber,
       })),
+      characterTrials: { claimedStageIds: [] },
+      homePlantings: Array.from({ length: MAX_HOME_PLANTING_COUNT }, (_value, index) => ({
+        plantedAt: maxInstant,
+        plotId: maxNumber - index,
+        seedItemId: maxNumber,
+      })),
+      homeProgress: {
+        accruedAt: maxInstant,
+        claimedRewardIds: Array.from({ length: MAX_HOME_REWARD_CLAIM_COUNT }, (_value, index) => maxNumber - index),
+        companionIds: Array.from({ length: MAX_HOME_COMPANION_COUNT }, (_value, index) => maxNumber - index),
+        learnedBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
+        madeBlueprintIds: Array.from({ length: MAX_HOME_BLUEPRINT_COUNT }, (_value, index) => maxNumber - index),
+        orders: Array.from({ length: MAX_HOME_ORDER_COUNT }, () => ({ blueprintId: maxNumber, startedAt: maxInstant })),
+        realmBounty: maxNumber,
+        realmCurrency: maxNumber,
+        trustExp: maxNumber,
+      },
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
           ascension: maxNumber,
