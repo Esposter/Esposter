@@ -77,6 +77,7 @@ import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
 import { thunderSummonersCrown } from "#src/services/gcg/cards/thunderSummonersCrown";
 import { timaeus } from "#src/services/gcg/cards/timaeus";
 import { timmie } from "#src/services/gcg/cards/timmie";
+import { tossUp } from "#src/services/gcg/cards/tossUp";
 import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutomaton";
 import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword";
 import { tubby } from "#src/services/gcg/cards/tubby";
@@ -157,6 +158,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [331_401, elementalResonanceWovenThunder],
   [332_001, theBestestTravelCompanion],
   [332_002, changingShifts],
+  [332_003, tossUp],
   [332004, strategize],
   [332_005, iHaventLostYet],
   [332_006, leaveItToMe],
