@@ -1,10 +1,11 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { SectionTag } from "#shared/models/pageBuilder/SectionTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { z } from "zod";
 
-const sectionFormSchema = z.strictObject({ tag: z.enum(["header", "main", "section", "footer", "div"]) });
+const sectionFormSchema = z.strictObject({ tag: z.enum(SectionTag) });
 const sectionPropsSchema = z.strictObject({
   ...sectionFormSchema.shape,
   children: z.array(z.unknown()),
