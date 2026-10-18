@@ -571,7 +571,7 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).encounterPoints).toStrictEqual(guest.encounterPoints);
   });
 
-  test("keeps the Frostbearing Tree's progress of the copy that has reached the further level", () => {
+  test("keeps the account's Frostbearing Tree progress, and not the further one only the guest holds", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -583,23 +583,7 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
-      frostbearingTree: { heldCounts: { 1: 9 }, level: GUEST_LEVEL },
-    });
-  });
-
-  test("keeps the Frostbearing Tree's progress that holds more items on the same level", () => {
-    expect.hasAssertions();
-    const account = {
-      ...EMPTY_GENSHIN_SAVE,
-      offerings: { frostbearingTree: { heldCounts: { 1: 4 }, level: ACCOUNT_LEVEL } },
-    };
-    const guest = {
-      ...EMPTY_GENSHIN_SAVE,
-      offerings: { frostbearingTree: { heldCounts: { 1: 9 }, level: ACCOUNT_LEVEL } },
-    };
-
-    expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
-      frostbearingTree: { heldCounts: { 1: 9 }, level: ACCOUNT_LEVEL },
+      frostbearingTree: { heldCounts: { 1: 4 }, level: ACCOUNT_LEVEL },
     });
   });
 
@@ -657,7 +641,7 @@ describe(mergeGenshinSave, () => {
     ]);
   });
 
-  test("merged saves keep every found Oculus", () => {
+  test("keeps the account's found Oculi, and not one only the guest found, since the bag paid for each", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [OCULUS_ID, SHARED_OCULUS_ID], regions: {} } };
     const guest = {
@@ -666,7 +650,7 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).statues).toStrictEqual({
-      foundOculusIds: [OCULUS_ID, SHARED_OCULUS_ID, GUEST_OCULUS_ID],
+      foundOculusIds: [OCULUS_ID, SHARED_OCULUS_ID],
       regions: {},
     });
   });
@@ -723,7 +707,7 @@ describe(mergeGenshinSave, () => {
     expect(merged.wishHistory).toStrictEqual([accountDraw]);
   });
 
-  test("a dish keeps the higher proficiency of the two copies", () => {
+  test("keeps the account's dish proficiency, and not a higher one only the guest reached", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -734,7 +718,7 @@ describe(mergeGenshinSave, () => {
       cooking: { ...EMPTY_GENSHIN_SAVE.cooking, proficiencies: { [COOKING_DISH_ID]: 5 } },
     };
 
-    expect(mergeGenshinSave(account, guest).cooking.proficiencies).toStrictEqual({ [COOKING_DISH_ID]: 5 });
+    expect(mergeGenshinSave(account, guest).cooking.proficiencies).toStrictEqual({ [COOKING_DISH_ID]: 3 });
   });
 
   test("the learned dishes of both copies union", () => {

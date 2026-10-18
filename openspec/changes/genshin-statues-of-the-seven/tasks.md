@@ -1,7 +1,7 @@
 ## 1. Save and Oculi
 
 - [x] 1.1 Keep the statues' levels, held counts and found Oculi in the save, a new player's save holding none started and none found. Verify: a test whose scenario is 'a new player starts with no region started and no Oculus found' in readGenshinSave.test.ts, written first and seen failing.
-- [x] 1.2 Merge the found Oculi, and keep each region as the account's copy, its level claimed included. Verify: mergeGenshinSave.test.ts, named after 'merged saves keep every found Oculus', 'a region only the guest holds is not kept, since the account's bag paid for none of its Oculi' and 'a region both saves hold is the account's, though the guest's is further on'.
+- [x] 1.2 Keep the account's found Oculi, and each region as the account's copy, its level claimed included. Verify: mergeGenshinSave.test.ts, named after 'keeps the account's found Oculi, and not one only the guest found, since the bag paid for each', 'a region only the guest holds is not kept, since the account's bag paid for none of its Oculi' and 'a region both saves hold is the account's, though the guest's is further on'.
 - [x] 1.3 Collect an Oculus once, hold it in its region until the Worship Statue offers it, and hold it in an unstarted region. Verify: findOculus.test.ts, named after 'touching an Oculus collects it and gives Adventure EXP', 'a found Oculus is held until the Worship Statue offers it' and 'an Oculus found in an unstarted region is held until the region starts'.
 - [x] 1.4 Show each region's Oculi in the world and mark a near one on the minimap with a sound. Verify: a test named after 'a near Oculus shows on the minimap with a sound'. The distance is provisional until the owed recording re-measures it.
 

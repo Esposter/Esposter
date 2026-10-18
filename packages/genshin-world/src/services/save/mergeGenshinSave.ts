@@ -6,15 +6,12 @@ import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave
 import type { EncounterPointsSave } from "#src/models/commission/EncounterPointsSave";
 import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTermEncounterPointsSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
-import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
-import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
-import { countHeldItems } from "#src/services/offering/countHeldItems";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished
@@ -39,15 +36,6 @@ const checkIsFurtherByLevel = <T extends { level: number }>(
 // Mondstadt's Reputation is the further of the two, by its level and then by the EXP toward the next
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   checkIsFurtherByLevel(reputation, than, ({ exp }) => exp);
-// The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
-const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
-  checkIsFurtherByLevel(progress, than, ({ heldCounts }) => countHeldItems(heldCounts));
-// The statues' found Oculi are the union of both copies', and their regions are the account's, since the Oculi a region
-// Holds came out of the account's bag, by the settlement rule of mergeGenshinSave
-const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => ({
-  foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])],
-  regions: account.regions,
-});
 // A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts stay
 // One copy's. A tie on both keeps the account's
 const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
@@ -123,20 +111,20 @@ const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): Cleare
 // Bag or the wallet is the account's copy, since the merge keeps the account's bag and wallet, and a guest's copy of
 // One would claim a payment the account never received or charge one it never made. That covers each mail's claimed
 // State (a mail only the guest holds merges unclaimed), the character trial stages claimed, the games rewarded, the
-// Domains cleared, the Adventure Rank rewards claimed, the statues' regions, whose held Oculi came out of the bag, the
-// Reputation bounty and request claims, the Spiral Abyss's rewards claimed, the shop purchases, each processing's
-// Queue, the quests' progress, each kind of wish's pity and history, the enemies' respawns, the crafted counts, the
-// Investigation day and the puzzles. The bag, the party, the opened chests and the realm's placements are the account's
-// Copy too, and so is the wallet, but for a Primogem refill count from the same game day, which takes the larger, as a
-// Count of refills within a day only grows. Every other record merges by its own rule. The landmarks, the cleared
-// Camps, the learned recipes and the achievements union, and an achievement keeps the larger count and the earlier
-// Moment it was finished. The Archive's opened entries union by section, and each Living Being's defeat count keeps the
-// Larger. The statues' found Oculi union. Each character's Companionship EXP and the Adventure EXP keep the larger, as
-// A counter only grows. The Reputation and the Frostbearing Tree each keep the further. The World Level adjustment is
-// The copy changed later, since the one change of it the player made last is the one they still stand by. The day's
+// Domains cleared, the Adventure Rank rewards claimed, the statues' found Oculi and regions, whose Oculi came out of
+// The bag, the Reputation bounty and request claims, the Spiral Abyss's rewards claimed, the shop purchases, each
+// Processing's queue, the quests' progress, each kind of wish's pity and history, the enemies' respawns, the crafted
+// Counts, the cooking proficiencies, the Frostbearing Tree's progress, the investigation day and the puzzles. The bag,
+// The party, the opened chests and the realm's placements are the account's copy too, and so is the wallet, but for a
+// Primogem refill count from the same game day, which takes the larger, as a count of refills within a day only grows.
+// Every other record merges by its own rule. The landmarks, the cleared camps, the learned recipes and the achievements
+// Union, and an achievement keeps the larger count and the earlier moment it was finished. The Archive's opened entries
+// Union by section, and each Living Being's defeat count keeps the larger. Each character's Companionship EXP and the
+// Adventure EXP keep the larger, as a counter only grows. The Reputation keeps the further. The World Level adjustment
+// Is the copy changed later, since the one change of it the player made last is the one they still stand by. The day's
 // Commissions are the copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's
 // While the account has chosen none. The characters both copies hold are the copy further on, and a character only the
-// Guest holds is kept. Each dish keeps the higher proficiency of its two copies, and the learned dishes union.
+// Guest holds is kept. The learned dishes union.
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
@@ -149,9 +137,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   const companionshipExp = { ...account.companionshipExp };
   for (const [characterId, guestExp] of Object.entries(guest.companionshipExp))
     companionshipExp[characterId] = Math.max(companionshipExp[characterId] ?? 0, guestExp);
-  const proficiencies = { ...account.cooking.proficiencies };
-  for (const [recipeId, guestProficiency] of Object.entries(guest.cooking.proficiencies))
-    proficiencies[recipeId] = Math.max(proficiencies[recipeId] ?? 0, guestProficiency);
   // A mail is kept once per delivery, and a read or pinned mail stays so whichever save it was read or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find((mail) => isSameHeldMail(mail, accountMail));
@@ -193,7 +178,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     cooking: {
       learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],
       processingJobs: account.cooking.processingJobs,
-      proficiencies,
+      proficiencies: account.cooking.proficiencies,
     },
     crafting: {
       craftedCounts: account.crafting.craftedCounts,
@@ -204,11 +189,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     homePlantings: account.homePlantings,
     homeProgress: account.homeProgress,
     inventory: account.inventory,
-    offerings: {
-      frostbearingTree: checkIsFurtherOffering(guest.offerings.frostbearingTree, account.offerings.frostbearingTree)
-        ? guest.offerings.frostbearingTree
-        : account.offerings.frostbearingTree,
-    },
+    offerings: account.offerings,
     openedChests: account.openedChests,
     party: account.party,
     puzzles: account.puzzles,
@@ -221,7 +202,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     ...(reputationBountyHunt && { reputationBountyHunt }),
     shopPurchases: account.shopPurchases,
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
-    statues: mergeStatueProgress(account.statues, guest.statues),
+    statues: account.statues,
     tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],

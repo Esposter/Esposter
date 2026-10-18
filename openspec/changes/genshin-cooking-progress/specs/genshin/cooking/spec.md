@@ -12,13 +12,13 @@ The dishes learned, each dish's proficiency and each processing's queue SHALL be
 
 ### Requirement: Two copies of the cooking progress merge, each queue from the account's copy
 
-When two copies of a save are merged, each dish SHALL keep the higher proficiency, the learned dishes SHALL union, and each processing queue SHALL be the account's copy.
+When two copies of a save are merged, each dish SHALL keep the account's proficiency, the learned dishes SHALL union, and each processing queue SHALL be the account's copy.
 
-#### Scenario: A dish keeps the higher proficiency of the two copies
+#### Scenario: A dish keeps the account's proficiency
 
-- **GIVEN** one copy has a dish's proficiency at three and the other at five
+- **GIVEN** the account's copy has a dish's proficiency at three and the guest's at five
 - **WHEN** the copies are merged
-- **THEN** the dish's proficiency is five
+- **THEN** the dish's proficiency is three
 
 #### Scenario: The learned dishes of both copies union
 

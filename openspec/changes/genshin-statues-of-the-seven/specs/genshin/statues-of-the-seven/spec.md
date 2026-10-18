@@ -134,7 +134,7 @@ Pressing F at a resonated statue SHALL open the Worship Statue, which shows each
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the account's, its level claimed included, so a level only the guest's copy claimed is claimed again on the account.
+The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the account's found Oculi and each region the account's, its level claimed included, so a level only the guest's copy claimed is claimed again on the account.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -142,11 +142,11 @@ The statues' levels, levels claimed, held counts and found Oculi SHALL be kept w
 - **WHEN** the world opens
 - **THEN** no region is started and no Oculus is found
 
-#### Scenario: Merged saves keep every found Oculus
+#### Scenario: Merged saves keep the account's found Oculi
 
 - **GIVEN** a guest save and an account save with different found Oculi
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds every Oculus either save found
+- **THEN** the merged save holds the Oculi the account found, and not one only the guest found
 
 #### Scenario: A region only the account holds is kept as it is
 
