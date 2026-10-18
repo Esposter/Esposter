@@ -1,5 +1,4 @@
-import type { Element } from "#src/models/Element";
-import type { ReactionType } from "#src/models/combat/ReactionType";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -12,7 +11,7 @@ const REACTION_ATTACK_SECONDS = 12;
 // A passive that raises its wielder's ATK by the rank's percentage for twelve seconds when the wielder triggers one of the
 // Reactions it names, a Swirl named by the element it infuses
 export const createReactionAttackPassiveModule = (
-  reactions: { element?: Element; reactionType: ReactionType }[],
+  reactions: Pick<Reaction, "element" | "reactionType">[],
   params: number[],
 ): PassiveModule =>
   // The buff takes no Ascendant Gleam amount
