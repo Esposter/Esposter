@@ -10,8 +10,10 @@ import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
@@ -105,6 +107,21 @@ describe("sacred Cryo Pearl", () => {
   });
 });
 
+describe("electro Infusion", () => {
+  test("converts the Physical DMG its character deals to Electro, and lasts two rounds", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(114_032, electroInfusion);
+    expect(zoneCard.rounds).toBe(2);
+    expect(
+      electroInfusion.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Electro, value: 2 });
+    expect(
+      electroInfusion.modifyDamageDealt?.(context, { damageType: Element.Pyro, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Pyro, value: 2 });
+  });
+});
+
 describe("ice Lotus", () => {
   test("the active character takes one less DMG, and the lotus is spent after two", () => {
     expect.hasAssertions();
@@ -145,10 +162,26 @@ describe("stellar Restoration", () => {
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
     expect(takeOne(duel.sides, 0).hand).toStrictEqual([114_031]);
   });
+
+  test("a Lightning Stiletto in hand is discarded, with every copy, and Keqing gains Electro Infusion in its place", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    const side = takeOne(duel.sides, 0);
+    side.activeIndex = 1;
+    side.hand.push(114_031, 114_031);
+    runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+    expect({
+      hand: side.hand,
+      keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
+    }).toStrictEqual({ hand: [], keqingStatuses: [114_032] });
+  });
 });
 
 describe("lightning Stiletto", () => {
-  test("a played card switches Keqing in for free, so the field's switch hook fires, and she uses her skill once", () => {
+  test("a played card switches Keqing in for free, so the field's switch hook fires, and her skill grants Electro Infusion", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
@@ -169,10 +202,11 @@ describe("lightning Stiletto", () => {
     side.hand.push(card.id);
     side.onstages.push(icicleZoneCard);
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
-    expect({ activeIndex: side.activeIndex, hand: side.hand, icicleUsages: icicleZoneCard.usages }).toStrictEqual({
-      activeIndex: 1,
-      hand: [],
-      icicleUsages: 2,
-    });
+    expect({
+      activeIndex: side.activeIndex,
+      hand: side.hand,
+      icicleUsages: icicleZoneCard.usages,
+      keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
+    }).toStrictEqual({ activeIndex: 1, hand: [], icicleUsages: 2, keqingStatuses: [114_032] });
   });
 });
