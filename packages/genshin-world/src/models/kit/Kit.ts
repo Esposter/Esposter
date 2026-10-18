@@ -63,9 +63,11 @@ export interface Kit {
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
-  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a reaction a member makes, given
-  // The member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the deployed
-  // Team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being itself
+  // The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and Elevation a deployed member's kit adds to a reaction a member
+  // Makes, given the member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the
+  // Deployed team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being
+  // Itself. The Elevation multiplies a Lunar or Stellar reaction's damage and a direct Lunar hit's last, the only damage the
+  // Game elevates
   getPartyReactionBonus?: (
     member: Combatant,
     reaction: KitReaction,
@@ -75,6 +77,7 @@ export interface Kit {
     criticalDamageBonus?: number;
     criticalRateBonus?: number;
     damageBonus?: number;
+    elevationBonus?: number;
   };
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
