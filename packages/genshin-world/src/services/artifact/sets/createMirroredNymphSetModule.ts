@@ -41,8 +41,8 @@ export const createMirroredNymphSetModule = (bonus: ArtifactSetBonus): PassiveMo
       if (count === 0) return [];
       const tier = Math.min(count, 3) - 1;
       return [
-        { amount: takeOne(bonus.params, 1 + tier) ?? 0, attribute: Attribute.AttackPercent },
-        { amount: takeOne(bonus.params, 4 + tier) ?? 0, attribute: Attribute.HydroDamageBonus },
+        { amount: takeOne(bonus.params, 1 + tier), attribute: Attribute.AttackPercent },
+        { amount: takeOne(bonus.params, 4 + tier), attribute: Attribute.HydroDamageBonus },
       ];
     },
     onKitEvent: (event, context, combatant) => {
