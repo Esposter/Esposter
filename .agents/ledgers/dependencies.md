@@ -38,7 +38,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@iconify-json/mdi`                     | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@iconify-json/pixelarticons`           | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@jsonforms/core`                       | —                     | Keep — engine     | the form engine                                                                                        |
-| `@jsonforms/vue`                        | —                     | Absorb — own code | the form engine's Vue bindings, rebuilt as the app's own over its core (schema form bindings)          |
 | `@kjanat/actionlint`                    | —                     | Keep — tooling    | workflow lint                                                                                          |
 | `@lerna-lite/cli`                       | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
 | `@lerna-lite/publish`                   | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
@@ -75,7 +74,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/starter-kit`                   | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/suggestion`                    | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/vue-3`                         | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
-| `@tresjs/cientos`                       | —                     | Keep — framework  | TresJS's helpers, which the Genshin world reaches for before raw `three`                               |
+| `@tresjs/cientos`                       | —                     | Keep — framework  | TresJS's helpers: the gem visual's orbit controls and its model and texture loaders                    |
 | `@tresjs/core`                          | —                     | Keep — framework  | the declarative renderer the Genshin world is built on, its WebGPU renderer given through `TresCanvas` |
 | `@trpc/client`                          | —                     | Keep — framework  | the API layer                                                                                          |
 | `@trpc/server`                          | —                     | Keep — framework  | the API layer                                                                                          |
@@ -104,7 +103,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vue-flow/core`                        | —                     | Keep — engine     | the flow-diagram engine                                                                                |
 | `@vue-flow/minimap`                     | —                     | Keep — hold       | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
 | `@vue-flow/node-resizer`                | —                     | Keep — hold       | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
-| `@vue-pdf-viewer/viewer`                | —                     | Absorb — own code | a closed-source viewer, rebuilt over the renderer's own viewer components (PDF viewer)                 |
 | `@vue/compiler-core`                    | —                     | Keep — framework  | Vue's compiler, read by the app's tooling                                                              |
 | `@vue/test-utils`                       | —                     | Keep — tooling    | component tests                                                                                        |
 | `@vuetify/v0`                           | —                     | Keep — framework  | the UI library's headless base, on the stop list for accessibility                                     |
@@ -148,7 +146,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `grapesjs-tui-image-editor`             | —                     | Keep — engine     | the image editor (the admission doc's large plugins)                                                   |
 | `grapesjs-typed`                        | —                     | Absorb — own code | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
 | `grid-engine`                           | —                     | Keep — engine     | the tile-movement engine                                                                               |
-| `grid-layout-plus`                      | —                     | Absorb — own code | the dashboard grid, rebuilt as the app's own placement over Pointer Events (dashboard grid)            |
 | `h3`                                    | —                     | Keep — framework  | the server framework nitro is built on; the security module augments its route-rule types              |
 | `happy-dom`                             | —                     | Keep — tooling    | the DOM test environment                                                                               |
 | `imagetracerjs`                         | —                     | Keep — engine     | raster tracing for the glyph pipeline                                                                  |
@@ -211,6 +208,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `unocss`                                | —                     | Keep — framework  | the styling engine                                                                                     |
 | `unplugin-auto-import`                  | —                     | Keep — tooling    | auto-imports in the packages' builds                                                                   |
 | `unplugin-vue`                          | —                     | Keep — tooling    | Vue SFCs in the packages' builds                                                                       |
+| `unstorage`                             | —                     | Keep — framework  | Nitro's storage layer, which Nitro loads from the app for its key-value mounts                         |
 | `vite`                                  | —                     | Keep — tooling    | the dev server and bundler                                                                             |
 | `vite-plugin-glsl`                      | —                     | Keep — tooling    | the shader plugin the module loads only when its glsl option is on, an optional peer                   |
 | `vite-plus`                             | —                     | Keep — tooling    | the task runner, lint and format                                                                       |
@@ -218,7 +216,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vitest-browser-vue`                    | —                     | Keep — tooling    | browser-mode component tests                                                                           |
 | `vue`                                   | —                     | Keep — framework  | the UI framework                                                                                       |
 | `vue-eslint-parser`                     | —                     | Keep — tooling    | ESLint's Vue parser                                                                                    |
-| `vue-pdf-embed`                         | —                     | Absorb — own code | a component over the PDF renderer, rebuilt as the app's own (PDF viewer)                               |
 | `vue-router`                            | —                     | Keep — framework  | routing                                                                                                |
 | `vue-tsc`                               | —                     | Keep — tooling    | Vue's typecheck                                                                                        |
 | `web-push`                              | —                     | Keep — security   | push encryption, on the stop list                                                                      |

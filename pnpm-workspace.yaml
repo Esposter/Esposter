@@ -67,7 +67,6 @@ catalog:
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
-  "@jsonforms/vue": ^3.8.0
   "@kjanat/actionlint": ^1.17.0
   "@lerna-lite/cli": ^5.6.3
   "@lerna-lite/publish": ^5.6.3
@@ -135,7 +134,6 @@ catalog:
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
-  "@vue-pdf-viewer/viewer": ^4.4.0
   "@vue/compiler-core": ^3.5.44
   "@vue/test-utils": ^2.5.1
   "@vuetify/v0": ^1.2.3
@@ -181,7 +179,6 @@ catalog:
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
-  grid-layout-plus: ^1.1.1
   h3: ^2.0.2
   happy-dom: ^21.0.1
   imagetracerjs: ^1.2.6
@@ -249,6 +246,9 @@ catalog:
   unocss: ^66.11.0
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^8.0.0
+  # Nitro does not depend on unstorage: it loads the app's own copy for its `kv` mounts, which must be the 2 line,
+  # While the app's modules install 1
+  unstorage: ^2.0.0-alpha.11
   vite: ^8.3.4
   vite-plugin-glsl: ^1.6.2
   vite-plus: ^1.2.0
@@ -256,7 +256,6 @@ catalog:
   vitest-browser-vue: ^3.1.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
-  vue-pdf-embed: ^2.1.7
   vue-router: ^5.4.0
   # @TODO: https://github.com/vuejs/language-tools/issues/6237 — back to a caret, with the Renovate rule that holds it
   # dropped, once a release fixes it: 3.3.12 reports `Property 'value' does not exist` on imported refs used in templates
@@ -277,7 +276,6 @@ overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
   nitro: npm:nitro-nightly@latest
-  pdfjs-dist: ^6.4.299
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
   vite: ^8.3.4
   # TODO: Remove once phaser4-rex-plugins updates to a fixed backend version (GHSA-xvq9-wjp8-hwqf).

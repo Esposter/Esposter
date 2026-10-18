@@ -25,7 +25,7 @@ It ships no image, model or sound from the game: every mesh, texture and shader 
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i genshin-world genshin-engine genshin-interface @esposter/shared @tresjs/cientos @tresjs/core @vueuse/core three vue zod
+pnpm i genshin-world genshin-engine genshin-interface @esposter/shared @tresjs/core @vueuse/core three vue zod
 ```
 
 Mount `WorldScreen`, which brings its own canvas, and pass in only what your bundler and server decide, and load the screens' styles once:
