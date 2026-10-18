@@ -11,7 +11,7 @@
 ## 3. Realm Depot
 
 - [x] 3.1 Hold Realm Currency in the wallet once its game text name is keyed. Verify: a test named after the scenario 'Realm Currency is held in the wallet'.
-- [ ] 3.2 Write the depot's tabs from the goods rows and buy through the shared shop purchase at each tab's refresh. Verify: tests named after 'Buying a furnishing from the depot takes Realm Currency', 'A purchase the wallet cannot cover is refused' and 'A weekly good's limit returns at its weekly refresh'.
+- [x] 3.2 Write the depot's tabs from the goods rows and buy through the shared shop purchase at each tab's refresh. Verify: tests named after 'Buying a furnishing from the depot takes Realm Currency', 'A purchase the wallet cannot cover is refused' and 'A weekly good's limit returns at its weekly refresh'.
 
 ## 4. Placement
 

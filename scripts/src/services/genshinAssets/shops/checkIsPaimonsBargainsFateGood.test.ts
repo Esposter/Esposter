@@ -25,6 +25,7 @@ describe(checkIsPaimonsBargainsFateGood, () => {
     refreshType: MONTHLY_REFRESH_TYPE,
     rotateId: 0,
     shopType: PAIMON_BARGAINS_SHOP_TYPE,
+    subTabId: 0,
   };
 
   test("should accept a monthly Fate bought with a Masterless currency", () => {
