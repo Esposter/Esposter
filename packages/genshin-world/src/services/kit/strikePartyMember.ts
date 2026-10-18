@@ -25,14 +25,15 @@ export const strikePartyMember = (
 ): KitShieldAbsorbedEvent[] => {
   const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
   const healthsBefore = shields.map((shield) => ({ before: shield.health, shield }));
+  const { attackElement } = enemy.traits;
   hitPartyMember(
     party,
     combatant,
     kitEffectState,
     characterIdCombatantMap,
     computeEnemyStrikeDamage(enemyTables, enemy, combatant),
+    attackElement,
   );
-  const { attackElement } = enemy.traits;
   if (attackElement !== undefined)
     applyPartyMemberElement(
       party,
