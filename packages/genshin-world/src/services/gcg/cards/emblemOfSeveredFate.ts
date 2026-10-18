@@ -13,8 +13,9 @@ export const emblemOfSeveredFate: GcgCardModule = {
     skill?.kind === GcgSkillKind.ElementalBurst && !takeOne(duel.sides, sideIndex).usedCardIds.includes(zoneCard.cardId)
       ? { ...damage, value: damage.value + EMBLEM_OF_SEVERED_FATE_BONUS }
       : damage,
-  onAnySkillUsed: ({ characterIndex, duel, sideIndex }, skill) => {
-    if (skill.kind !== GcgSkillKind.ElementalBurst || characterIndex === undefined) return;
+  onAnySkillUsed: ({ characterIndex, duel, sideIndex, userSideIndex }, skill) => {
+    if (skill.kind !== GcgSkillKind.ElementalBurst || characterIndex === undefined || userSideIndex !== sideIndex)
+      return;
     const side = takeOne(duel.sides, sideIndex);
     const userIndex = side.characters.findIndex(({ character }) => character.skills.some(({ id }) => id === skill.id));
     if (userIndex < 0 || userIndex === characterIndex) return;

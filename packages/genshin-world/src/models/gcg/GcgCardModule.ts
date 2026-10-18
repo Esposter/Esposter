@@ -41,9 +41,14 @@ export interface GcgCardModule {
   ) => number;
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
-  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and the
-  // Skill's user is named by the hits it dealt, not by the context
-  onAnySkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]) => void;
+  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and
+  // userSideIndex is the side of the character who used the skill
+  onAnySkillUsed?: (
+    context: GcgEffectContext & { userSideIndex: number },
+    skill: GcgSkill,
+    zoneCard: GcgZoneCard,
+    dealt: GcgDealtDamage[],
+  ) => void;
   // A side is handed the choice of its action, for a card on its field, before it chooses: the damage the card deals, if any
   onBeforeAction?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   // A card is played by this card's side, for a card on that side's field: the played card is on the field and its own play has

@@ -554,6 +554,22 @@ describe("emblem of Severed Fate", () => {
     expect(takeOne(takeOne(duel.sides, 0).characters, 1).energy).toBe(1);
   });
 
+  test("a burst by a character of the other side gives no Energy to its character", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([withSkills(createCharacterState(YAE_MIKO_ID, Element.Electro), [TENKO])]),
+      createSideState([
+        {
+          ...createCharacterState(KOKOMI_ID, Element.Hydro),
+          equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
+        },
+        withSkills(createCharacterState(YAE_MIKO_ID, Element.Electro), [TENKO]),
+      ]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, TENKO);
+    expect(takeOne(takeOne(duel.sides, 1).characters, 0).energy).toBe(0);
+  });
+
   test("its character's Elemental Bursts deal 2 more DMG, once a round", () => {
     expect.hasAssertions();
     const duel = createDuel([
