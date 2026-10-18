@@ -1,7 +1,7 @@
 ## 1. Passive data
 
-- [ ] 1.1 Read each weapon's passive rows from its skill affix into the weapons' record, ordered by rank, with the zeros past the longest used place cut and a weapon with no affix given none. Verify: `toWeaponPassive.test.ts`, written first and seen failing, asserting rows given out of order come back by rank and a weapon with no affix gives empty values; the scenario 'Passive ranks are shown in refinement order' names the same ordering.
-- [ ] 1.2 Republish the weapons record from the stats table. Verify: `pnpm -C scripts genshin:assets stats` completes, and the republished weapons record carries the passive fields for each weapon.
+- [x] 1.1 Read each weapon's passive rows from its skill affix into the weapons' record, ordered by rank, with the zeros past the longest used place cut and a weapon with no affix given none. Verify: `toWeaponPassive.test.ts`, written first and seen failing, asserting rows given out of order come back by rank and a weapon with no affix gives empty values; the scenario 'Passive ranks are shown in refinement order' names the same ordering.
+- [x] 1.2 Republish the weapons record from the stats table. Verify: `pnpm -C scripts genshin:assets stats` completes, and the republished weapons record carries the passive fields for each weapon.
 
 ## 2. Passives as modules
 

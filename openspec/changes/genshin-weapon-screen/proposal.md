@@ -21,7 +21,9 @@ The weapon screen shows a weapon the player holds and spends on it through the w
 ## Waiting on
 
 - `openspec/changes/genshin-character-kits/`: a weapon's passive takes effect through the kits' shared effects, so the passive's effect waits on the kits, whose tasks are not yet started. The three actions do not wait on them. The passive's name and per-rank descriptions are the weapon enhancement's requirement, shown on this screen once it lands.
-- Game exports, which the three action labels' text ids are read from (per the change's needs).
+- Game exports, which the three action labels' text ids are read from (per the change's needs). The equipment page's ids are `UI_EQUIP_PAGE_LEVELUP_BUTTON`, `UI_EQUIP_PAGE_STARUP_BUTTON` and `UI_EQUIP_PAGE_AWAKEN_BUTTON` ("Enhance", "Ascend", "Refine" in English), but `pnpm -C scripts genshin:text write` cannot run on the PC that holds the install's text: three ids the generated text already uses (`UI_ACTIVITY_LOLI_RUN_JUMP`, `tips_enter_game`, `UI_ACTIVITY_LOLIGOLF_DISTANCE`) are missing from its `ExcelBinOutput/ManualTextMapConfigData.json`, so that dump is at another revision than the generated text. The three keys wait on a dump that matches it.
+- The bag's weapon entries hold only a level (`InventoryItem.level`), so a fodder weapon's invested EXP cannot be read, and a held weapon taken from the bag has no ascension, EXP or refinement. The Enhance fodder picks and the bag-held weapon's Ascend and Refine wait on the bag's weapon entries carrying the weapon's state. The ores-only Enhance does not.
+- The passive's name and rank descriptions wait on the game text publishing their text ids in a reader-language record (`genshin:text names` covers materials only), and on a formatter for the `{paramN:FORMAT}` placeholders the descriptions carry.
 
 ## Impact
 

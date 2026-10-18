@@ -46,6 +46,7 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 | `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`         | The levelling the screen's Enhance calls                           |
 | `packages/genshin-world/src/services/weapon/ascendWeapon.ts`          | The ascension the screen's Ascend calls, and its phase gate        |
 | `packages/genshin-world/src/services/weapon/refineWeapon.ts`          | The refinement the screen's Refine calls                           |
+| `packages/genshin-world/src/services/weapon/getWeaponActions.ts`      | Which of Ascend and Refine the screen offers for a weapon          |
 | `packages/genshin-world/src/services/inventory/takeInventoryItems.ts` | The items the actions spend, taken out of the bag's stacks         |
 | `packages/genshin-text/src/models/GameTextKey.ts`                     | Gains the three action labels                                      |
 
