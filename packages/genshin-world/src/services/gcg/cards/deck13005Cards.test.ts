@@ -134,6 +134,8 @@ const FIREWORK_FLARE_UP: GcgSkill = {
 };
 
 // A character of the given id, who wields the weapon kind named
+const createWielder = (id: number, weapon: string): GcgCharacterState =>
+  createGcgCharacterState({ character: { element: Element.Cryo, id, weapon } });
 describe("frostflake Seki no To", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
