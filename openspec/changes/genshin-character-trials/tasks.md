@@ -12,7 +12,7 @@
 
 ## 3. Fight and reward
 
-- [ ] 3.1 Give a trial's first-clear reward once and record the claim. Verify: tests named after 'A trial's first clear gives its reward once' and 'A trial's later clear gives no reward'.
+- [ ] 3.1 Give a trial's first-clear reward once and record the claim. The claim is built (`claimTrialStageReward`, paying through the abyss's reward claim); the fight that calls it on a clear is open with 3.2. Verify: tests named after 'A trial's first clear gives its reward once' and 'A trial's later clear gives no reward'.
 - [ ] 3.2 Stand a trial's enemies in the domain arena. Blocked: the dungeon rows carry no monsters, and the wiki's Trial Challenge wave lists join to 11 of the 80 cited builds by page, so the waves are not carried yet.
 
 ## 4. Weapon and constellation
