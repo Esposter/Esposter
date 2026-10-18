@@ -732,6 +732,10 @@ export enum GameTextKey {
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
   TimeConfirm = "UI_STC_LEVELUP_DIALOG_OK",
+  // The tip popup's heading, the game's own word for a tutorial
+  TipHeading = "UI_PUSHTIPS_NEW_TIP",
+  // The tip popup's button that closes it, in the game's own words for Got it
+  TipDismiss = "507052072",
   // The label over the hour the Time screen's dial points at, before the player confirms it
   TimeWaitUntil = "UI_CLOCK_PAGE_TO_TIME",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder

@@ -7,6 +7,7 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
+import type { Tip } from "#src/models/tip/Tip";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 // Every reaction one world system has to another, by its name, with the payload its listeners are handed. A system emits
@@ -38,4 +39,6 @@ export interface WorldEventMap {
   reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
   // The player jumping to a waypoint, a landmark or a map point, with the pose the character is placed at
   teleport: [pose: WorldJumpPose];
+  // A tip the world shows for the first time in the save, with the tip it shows
+  tipShown: [tip: Tip];
 }

@@ -51,6 +51,7 @@ import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
+import TipPopup from "#src/components/World/Tip/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
@@ -95,6 +96,7 @@ import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
+import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
@@ -263,6 +265,8 @@ const {
   wildlifePlaces,
   windriseData,
   wishSchedule,
+  tipText,
+  tips,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
@@ -327,6 +331,8 @@ const {
   wishHistory,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
+// The tips the world shows, each once per save, in the order the quests that trigger them finish
+const { closeTip, showingTip } = useWorldTips({ events, shownTipIds, tips });
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -1754,6 +1760,13 @@ defineExpose({ jumpTo, readCameraPosition });
     >
       <template #prompts>
         <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
+        <TipPopup
+          v-if="showingTip"
+          :game-text="gameText"
+          :subtitle="tipText[showingTip.subtitleTextId] || ''"
+          :title="tipText[showingTip.titleTextId] || ''"
+          @close="closeTip"
+        />
         <OfferChoice
           v-if="claimPrompt"
           :cancel-label="gameText[GameTextKey.Cancel]"

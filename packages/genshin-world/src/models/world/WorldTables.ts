@@ -22,6 +22,7 @@ import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { Tip } from "#src/models/tip/Tip";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
 // Opens its session
@@ -76,6 +77,10 @@ export interface WorldTables {
   talentUpgradeMap: TalentUpgradeMap;
   // The Time Trial Challenges of Mondstadt, each started from its marker in the world
   timeTrialPlaces: PuzzlePlace[];
+  // The tutorial tips' titles and subtitles in the reader's language, by their text ids, which the tip popup reads from
+  tipText: Readonly<Record<string, string>>;
+  // The tutorial tips the game's tables hold, each shown when its trigger's quest finishes
+  tips: Tip[];
   // The Mondstadt animals the official map marks
   wildlifePlaces: WildlifePlace[];
   // Windrise's records and the regions' grounds, which the world's one ground and everything drawn on it are built from
