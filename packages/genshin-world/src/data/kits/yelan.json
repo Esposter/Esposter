@@ -44,7 +44,7 @@
   "normalAttacks.3.hits.1.poiseDamage": { "source": "Wiki", "value": 7.56 },
   "parameters.depthClarionDiceSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6039 } },
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 10, "radius": 15 } },
-  "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 36 },
+  "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 19, "source": "Gcsim", "value": 35 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 6032 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.internalCooldownTag": { "source": "Wiki" }
