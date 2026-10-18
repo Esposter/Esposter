@@ -90,6 +90,8 @@ export const DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID = 15_046;
 export const THUNDERING_FURY_ARTIFACT_SET_ID = 15_005;
 // Crimson Witch of Flames' id in the set table
 export const CRIMSON_WITCH_ARTIFACT_SET_ID = 15_006;
+// Scarletproof's id in the set table
+export const SCARLETPROOF_ARTIFACT_SET_ID = 15_047;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one

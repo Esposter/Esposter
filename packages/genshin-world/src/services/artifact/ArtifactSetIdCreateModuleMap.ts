@@ -36,6 +36,7 @@ import {
   PALE_FLAME_ARTIFACT_SET_ID,
   RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID,
   RETRACING_BOLIDE_ARTIFACT_SET_ID,
+  SCARLETPROOF_ARTIFACT_SET_ID,
   SCHOLAR_ARTIFACT_SET_ID,
   SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID,
   SONG_OF_DAYS_PAST_ARTIFACT_SET_ID,
@@ -82,6 +83,7 @@ import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/create
 import { createPaleFlameSetModule } from "#src/services/artifact/sets/createPaleFlameSetModule";
 import { createResolutionOfSojournerSetModule } from "#src/services/artifact/sets/createResolutionOfSojournerSetModule";
 import { createRetracingBolideSetModule } from "#src/services/artifact/sets/createRetracingBolideSetModule";
+import { createScarletproofSetModule } from "#src/services/artifact/sets/createScarletproofSetModule";
 import { createScholarSetModule } from "#src/services/artifact/sets/createScholarSetModule";
 import { createShimenawasReminiscenceSetModule } from "#src/services/artifact/sets/createShimenawasReminiscenceSetModule";
 import { createSongOfDaysPastSetModule } from "#src/services/artifact/sets/createSongOfDaysPastSetModule";
@@ -133,6 +135,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [PALE_FLAME_ARTIFACT_SET_ID]: createPaleFlameSetModule,
   [RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID]: createResolutionOfSojournerSetModule,
   [RETRACING_BOLIDE_ARTIFACT_SET_ID]: createRetracingBolideSetModule,
+  [SCARLETPROOF_ARTIFACT_SET_ID]: createScarletproofSetModule,
   [SCHOLAR_ARTIFACT_SET_ID]: createScholarSetModule,
   [SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID]: createShimenawasReminiscenceSetModule,
   [SONG_OF_DAYS_PAST_ARTIFACT_SET_ID]: createSongOfDaysPastSetModule,
