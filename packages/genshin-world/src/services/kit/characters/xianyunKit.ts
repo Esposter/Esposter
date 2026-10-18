@@ -92,21 +92,18 @@ const createDriftcloudVariant = (presses: number): KitVariantBehaviour => ({
   },
 });
 
+// Constellation 6: whether the presses that cost no cooldown last, so a press starts whatever the cooldown is
+const checkIsCooldownFreePressActive = (context: KitContext): boolean =>
+  countKitResource(context.kitEffectState.effects, context.activeCombatant.characterId, XIANYUN_CONSTELLATION_6_ID) > 0;
+
 // Xianyun's behaviour covers her Skyladder presses and their state, the Driftcloud Wave with its heal and CRIT DMG, and
 // Constellations 1, 2, 4 and 6. Starwicker, the Burst's heals, her airborne buff and her passives are not built
 // Her four strikes, charged attack, plunges and Stars Gather at Dusk's hit are her record's alone
 export const createXianyunKitBehaviour = (): KitBehaviour => ({
-  checkIsSkillCooldownWaived: (context) =>
-    countKitResource(context.kitEffectState.effects, context.activeCombatant.characterId, XIANYUN_CONSTELLATION_6_ID) >
-    0,
   // Purifying Wind, from Constellation 1: White Clouds at Dawn gains one more charge
   getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
-  // Constellation 6: while the presses that cost no cooldown last, a press starts whatever the cooldown is
-  getSkillCooldownMultiplier: (context) =>
-    countKitResource(context.kitEffectState.effects, context.activeCombatant.characterId, XIANYUN_CONSTELLATION_6_ID) >
-    0
-      ? 0
-      : 1,
+  getSkillCooldownMultiplier: (context) => (checkIsCooldownFreePressActive(context) ? 0 : 1),
+  checkIsSkillCooldownWaived: checkIsCooldownFreePressActive,
   // Constellation 6: a Driftcloud Wave's hit gains CRIT DMG for the presses made in its state
   getStrikeCriticalDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) => {
     if (combatant.constellationCount < CONSTELLATION_6 || attackTag !== AttackTag.PlungingAttack) return 0;

@@ -56,7 +56,7 @@ describe(createEquitableJudgementLength, () => {
         castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: -1 - index });
       for (let index = 0; index < outside; index++)
         castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: 20 });
-      return createEquitableJudgementLength(() => waves).decide(context) * 60;
+      return createEquitableJudgementLength(waves).decide(context) * 60;
     };
     expect([lengthAfter(0, 0), lengthAfter(1, 0), lengthAfter(3, 1)]).toStrictEqual([436, 379, 227]);
   });
@@ -65,7 +65,7 @@ describe(createEquitableJudgementLength, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    createEquitableJudgementLength(() => waves).decide(context);
+    createEquitableJudgementLength(waves).decide(context);
     expect(getLandingFrames(context, 383)).toStrictEqual([215, 237, 262, 287, 312, 337, 362, 382]);
   });
 
@@ -83,7 +83,7 @@ describe(createEquitableJudgementLength, () => {
     if (!member) throw new Error("the wielder is not in the party");
     member.healthShare = 0.5;
     castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: -1 });
-    createEquitableJudgementLength(() => []).decide(context);
+    createEquitableJudgementLength([]).decide(context);
     stepKitSeconds(context, 4 * FIXED_STEP_SECONDS);
     expect(getHealthShare()).toBe(0.5);
     stepKitSeconds(context, FIXED_STEP_SECONDS);

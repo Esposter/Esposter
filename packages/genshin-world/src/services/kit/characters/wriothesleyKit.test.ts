@@ -12,7 +12,13 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createWriothesleyKitBehaviour, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
+import {
+  createWriothesleyKitBehaviour,
+  ICEFANG_RUSH_ID,
+  PARTICLE_DELAY_ID,
+  PROSECUTION_EDICT_ID,
+  WRIOTHESLEY_CHARACTER_ID,
+} from "#src/services/kit/characters/wriothesleyKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -40,9 +46,7 @@ const findWriothesleyStatus = (context: KitContext, id: string): KitStatus | und
 
 // The ATK share Prosecution Edict's buff gives him, if it has one
 const readProsecutionEdictAttackShare = ({ kitEffectState: { effects } }: KitContext): number | undefined =>
-  effects.find(
-    (effect): effect is KitBuff => effect.kind === "buff" && effect.source === "wriothesley-prosecution-edict",
-  )?.amount;
+  effects.find((effect): effect is KitBuff => effect.kind === "buff" && effect.source === PROSECUTION_EDICT_ID)?.amount;
 
 // His health share, which a drain or a heal moves
 const readHealthShare = (context: KitContext): number =>
@@ -126,15 +130,15 @@ describe(createWriothesleyKitBehaviour, () => {
     expect.hasAssertions();
     const context = createKitTestContext(createWriothesleyCombatant());
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
-    expect(findWriothesleyStatus(context, "wriothesley-icefang-rush")).toStrictEqual({
+    expect(findWriothesleyStatus(context, ICEFANG_RUSH_ID)).toStrictEqual({
       characterId: WRIOTHESLEY_CHARACTER_ID,
-      id: "wriothesley-icefang-rush",
+      id: ICEFANG_RUSH_ID,
       isEndedOnSwap: true,
       kind: "status",
       secondsRemaining: toKitSeconds(10 * 60 + 1),
     });
     endKitSwapEffects(context.kitEffectState.effects, WRIOTHESLEY_CHARACTER_ID);
-    expect(findWriothesleyStatus(context, "wriothesley-icefang-rush")?.secondsRemaining).toBe(0);
+    expect(findWriothesleyStatus(context, ICEFANG_RUSH_ID)?.secondsRemaining).toBe(0);
   });
 
   test("a normal attack drains 4.5% of his Max HP as Chilling Penalty while Icefang Rush holds, once per 6 frames", () => {
@@ -169,17 +173,17 @@ describe(createWriothesleyKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
     strikeNormalAttack(context, 0);
-    const particle = findWriothesleyStatus(context, "wriothesley-particle");
+    const particle = findWriothesleyStatus(context, PARTICLE_DELAY_ID);
     expect(particle).toStrictEqual({
       characterId: WRIOTHESLEY_CHARACTER_ID,
-      id: "wriothesley-particle",
+      id: PARTICLE_DELAY_ID,
       kind: "status",
       secondsRemaining: toKitSeconds(100),
       stacks: 1,
     });
     stepKitSeconds(context, 1);
     strikeNormalAttack(context, 1);
-    expect(findWriothesleyStatus(context, "wriothesley-particle")?.stacks).toBe(1);
+    expect(findWriothesleyStatus(context, PARTICLE_DELAY_ID)?.stacks).toBe(1);
     assert(particle);
     WRIOTHESLEY_KIT.onKitEvent?.({ effect: particle, kind: KitEventKind.EffectExpired }, context, combatant);
     expect(getPartyMember(context.party, WRIOTHESLEY_CHARACTER_ID).energy).toBe(1);
@@ -191,7 +195,7 @@ describe(createWriothesleyKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
     for (let drain = 0; drain < 6; drain++) WRIOTHESLEY_KIT.onKitEvent?.(createSelfDrain(), context, combatant);
-    expect(findWriothesleyStatus(context, "wriothesley-prosecution-edict")?.stacks).toBe(5);
+    expect(findWriothesleyStatus(context, PROSECUTION_EDICT_ID)?.stacks).toBe(5);
     expect(readProsecutionEdictAttackShare(context)).toBeCloseTo(0.3);
   });
 
@@ -212,7 +216,7 @@ describe(createWriothesleyKitBehaviour, () => {
       context,
       combatant,
     );
-    expect(findWriothesleyStatus(context, "wriothesley-prosecution-edict")?.stacks).toBe(0);
+    expect(findWriothesleyStatus(context, PROSECUTION_EDICT_ID)?.stacks).toBe(0);
   });
 
   test("below Ascension 4, a self-drain gives no Prosecution Edict", () => {
@@ -221,7 +225,7 @@ describe(createWriothesleyKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
     WRIOTHESLEY_KIT.onKitEvent?.(createSelfDrain(), context, combatant);
-    expect(findWriothesleyStatus(context, "wriothesley-prosecution-edict")).toBeUndefined();
+    expect(findWriothesleyStatus(context, PROSECUTION_EDICT_ID)).toBeUndefined();
   });
 
   test("recasting Icefang Rush resets Prosecution Edict's stacks and its ATK", () => {
@@ -231,7 +235,7 @@ describe(createWriothesleyKitBehaviour, () => {
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
     WRIOTHESLEY_KIT.onKitEvent?.(createSelfDrain(), context, combatant);
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
-    expect(findWriothesleyStatus(context, "wriothesley-prosecution-edict")?.stacks).toBe(0);
+    expect(findWriothesleyStatus(context, PROSECUTION_EDICT_ID)?.stacks).toBe(0);
     expect(readProsecutionEdictAttackShare(context)).toBe(0);
   });
 });

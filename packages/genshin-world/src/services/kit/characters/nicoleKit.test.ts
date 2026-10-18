@@ -24,7 +24,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 const NICOLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NICOLE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -48,7 +48,9 @@ const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Part
   const nicole = { ...createNicoleCombatant(1000), ...nicoleFields };
   const traveler: Combatant = {
     ...nicole,
+    ascension: 0,
     characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
     element: Element.Hydro,
     kit: { ...TRAVELER_KIT, onKitEvent },
   };
@@ -77,15 +79,15 @@ const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag)
   striker,
 });
 
-// The projections a team's kit heard land, each reported as the damage its enemy takes
-const countDamageTaken = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number =>
-  onKitEvent.mock.calls.filter(([event]) => event.kind === KitEventKind.DamageTaken).length;
-
 // The talent multipliers of the hits a team's kit heard land, one for each damage its enemy takes
 const getDamageTakenMultipliers = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number[] =>
   onKitEvent.mock.calls.flatMap(([event]) =>
     event.kind === KitEventKind.DamageTaken ? [event.hit.talentMultiplier] : [],
   );
+
+// The projections a team's kit heard land, each reported as the damage its enemy takes
+const countDamageTaken = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number =>
+  getDamageTakenMultipliers(onKitEvent).length;
 
 // The buffs a character holds among the kit's effects, in the order they were given
 const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
@@ -115,8 +117,14 @@ const emitEnemyHits = (
   for (let hit = 0; hit < count; hit += 1) emitKitEvent(createEnemyHit(enemy, striker, attackTag), context);
 };
 
-// The flat base damage Nicole's kit gives a strike as a deployed member of the team, zero when it gives none
-const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
+// A field of the strike bonus Nicole's kit gives a strike of a deployed member, zero when it gives none
+const getPartyStrikeBonus = (
+  field: "additiveBaseDamageBonus" | "defenseIgnored",
+  context: KitContext,
+  nicole: Combatant,
+  strike: KitStrike,
+  enemy: Enemy,
+): number =>
   NICOLE_KIT.getPartyStrikeBonus?.(
     nicole,
     strike,
@@ -124,18 +132,7 @@ const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: K
     context.party,
     context.kitEffectState.effects,
     context.characterIdCombatantMap,
-  )?.additiveBaseDamageBonus ?? 0;
-
-// The share of its enemy's defence Nicole's kit has a strike of a deployed member ignore, zero when it ignores none
-const getPartyDefenceIgnored = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
-  NICOLE_KIT.getPartyStrikeBonus?.(
-    nicole,
-    strike,
-    enemy,
-    context.party,
-    context.kitEffectState.effects,
-    context.characterIdCombatantMap,
-  )?.defenseIgnored ?? 0;
+  )?.[field] ?? 0;
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -560,7 +557,13 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 3);
 
     expect(
-      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+      getPartyStrikeBonus(
+        "additiveBaseDamageBonus",
+        context,
+        nicole,
+        createTravelerStrike(context, traveler, AttackTag.NormalAttack),
+        enemy,
+      ),
     ).toBe(700);
   });
 
@@ -576,7 +579,13 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 3);
 
     expect(
-      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+      getPartyStrikeBonus(
+        "additiveBaseDamageBonus",
+        context,
+        nicole,
+        createTravelerStrike(context, traveler, AttackTag.NormalAttack),
+        enemy,
+      ),
     ).toBe(0);
   });
 
@@ -593,9 +602,9 @@ describe(createNicoleKitBehaviour, () => {
     const strike = createTravelerStrike(context, traveler, AttackTag.NormalAttack);
 
     emitEnemyHits(context, enemy, traveler, AttackTag.NormalAttack, 7);
-    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(700);
+    expect(getPartyStrikeBonus("additiveBaseDamageBonus", context, nicole, strike, enemy)).toBe(700);
     emitEnemyHits(context, enemy, traveler, AttackTag.NormalAttack, 1);
-    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(0);
+    expect(getPartyStrikeBonus("additiveBaseDamageBonus", context, nicole, strike, enemy)).toBe(0);
   });
 
   test("her fourth constellation's bonus neither reaches nor takes a stack from a hit with no attack tag", () => {
@@ -611,9 +620,17 @@ describe(createNicoleKitBehaviour, () => {
     emitEnemyHits(context, enemy, traveler, undefined, 8);
 
     expect(
-      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+      getPartyStrikeBonus(
+        "additiveBaseDamageBonus",
+        context,
+        nicole,
+        createTravelerStrike(context, traveler, AttackTag.NormalAttack),
+        enemy,
+      ),
     ).toBe(700);
-    expect(getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler), enemy)).toBe(0);
+    expect(
+      getPartyStrikeBonus("additiveBaseDamageBonus", context, nicole, createTravelerStrike(context, traveler), enemy),
+    ).toBe(0);
   });
 
   test("her fourth constellation waits 16 seconds before an upgraded character gets eight stacks again", () => {
@@ -633,7 +650,7 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 7);
     emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
     stepKitSeconds(context, 3);
-    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(0);
+    expect(getPartyStrikeBonus("additiveBaseDamageBonus", context, nicole, strike, enemy)).toBe(0);
 
     // Her skill is cast again past the cooldown, and the next upgrade gives eight stacks
     stepKitSeconds(context, 7);
@@ -641,7 +658,7 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 8 / 60);
     emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
     stepKitSeconds(context, 3);
-    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(700);
+    expect(getPartyStrikeBonus("additiveBaseDamageBonus", context, nicole, strike, enemy)).toBe(700);
   });
 
   test("her fourth constellation gives her own strikes 0.7 of her attack too", () => {
@@ -681,11 +698,11 @@ describe(createNicoleKitBehaviour, () => {
     const strike = createTravelerStrike(context, traveler, AttackTag.NormalAttack);
     NICOLE_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8 / 60);
-    expect(getPartyDefenceIgnored(context, nicole, strike, enemy)).toBe(0);
+    expect(getPartyStrikeBonus("defenseIgnored", context, nicole, strike, enemy)).toBe(0);
 
     emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
     stepKitSeconds(context, 3);
-    expect(getPartyDefenceIgnored(context, nicole, strike, enemy)).toBe(0.4);
+    expect(getPartyStrikeBonus("defenseIgnored", context, nicole, strike, enemy)).toBe(0.4);
   });
 
   test("her sixth constellation ignores 40% of defence on her own upgraded hits", () => {
@@ -738,7 +755,9 @@ describe(createNicoleKitBehaviour, () => {
     const buffs = getBuffs(context, TRAVELER_CHARACTER_ID);
     const skill = buffs.find(({ source }) => source === "grace-of-kenosis");
     const upgrade = buffs.find(({ source }) => source === "nicole-a1");
-    expect(upgrade?.secondsRemaining).toBeCloseTo(skill?.secondsRemaining ?? Number.NaN);
+    assert.exists(skill);
+    assert.exists(upgrade);
+    expect(upgrade.secondsRemaining).toBeCloseTo(skill.secondsRemaining);
   });
 
   test("her sixth constellation keeps the ascension buff on the character she swaps away from", () => {

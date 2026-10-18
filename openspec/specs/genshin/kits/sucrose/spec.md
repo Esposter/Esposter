@@ -1,6 +1,6 @@
 ## Purpose
 
-Sucrose's kit as built: Astable Anemohypostasis Creation-6308 with its Swirl and Forbidden Creation's absorbing Anemo field, with Ascension 1 and 4 and Constellations 1, 2 and 6 built and the skill's pull, Constellation 4 and her Hexerei team bonus left out.
+Sucrose's kit as built: Astable Anemohypostasis Creation-6308 with its Swirl and Forbidden Creation's absorbing Anemo field, with Ascension 1 and 4 and Constellations 1, 2, 4 and 6 built and the skill's pull and her Hexerei team bonus left out.
 
 ## Requirements
 

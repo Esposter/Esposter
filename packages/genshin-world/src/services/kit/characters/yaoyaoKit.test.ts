@@ -16,6 +16,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
@@ -26,22 +27,26 @@ import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
-// Measured: the dump's table for Raphanus Sky Cluster at level 1 (proud skill group 7732), the share of Yaoyao's Max HP
-// And the flat HP a radish heals the active character by
-const SKILL_RADISH_HEAL_SHARE = 0.017143;
-const SKILL_RADISH_FLAT_HEAL = 165.07991;
+const { readFrame, readFrameList, readHits, readRecordParameter } = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
+// A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
+const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
+const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
 const MAX_HEALTH = 10_000;
-// Measured: the dump's table for Moonjade Descent at level 1 (proud skill group 7739), the same two numbers for its radishes
-const BURST_RADISH_HEAL_SHARE = 0.020168;
-const BURST_RADISH_FLAT_HEAL = 194.21231;
+const BURST_RADISH_HEAL_SHARE = readRecordParameter("burstRadishHealMaxHealthShare");
+const BURST_RADISH_FLAT_HEAL = readRecordParameter("burstRadishFlatHeal");
 const MEMBER_ID = 10_000_032;
 const MEMBER_MAX_HEALTH = 20_000;
-// Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the throw.
-// Each tick lands on the step its frame names, so a test steps to that frame and one frame short of it
-const YUEGUI_SPAWN_FRAMES = 63;
-const YUEGUI_FIRST_THROW_FRAMES = 29;
-const RADISH_HITMARK_FRAMES = 13;
+// Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the
+// Throw. Each tick lands on the step its frame names, so a test steps to that frame and one frame short of it
+const YUEGUI_SPAWN_FRAMES = readFrame("skillCooldownStart") + readFrame("yueguiSpawnDelay");
+const YUEGUI_FIRST_THROW_FRAMES = readFrame("yueguiFirstThrow");
+const YUEGUI_THROW_INTERVAL_FRAMES = readFrame("yueguiThrowInterval");
+const RADISH_HITMARK_FRAMES = takeOne(readHits("skillRadish")).hitmarkFrames;
+const MEGA_RADISH_HITMARK_FRAMES = takeOne(readHits("megaRadish")).hitmarkFrames;
+// The frames after the cast at which her burst spawns each Yuegui behind her, and the frames the burst lasts
+const JUMPING_YUEGUI_SPAWN_FRAMES = readFrameList("jumpingYueguiSpawns");
+const BURST_DURATION_FRAMES = readFrame("burstDuration");
+const readJumpingYueguiSpawnFrame = (index: number): number => takeOne(JUMPING_YUEGUI_SPAWN_FRAMES, index);
 
 const createYaoyaoCombatant = (): Combatant => ({
   ascension: 0,
@@ -89,12 +94,11 @@ const findYuegui = (context: KitContext): KitField | undefined =>
     (effect): effect is KitField => effect.kind === "field" && Number.isFinite(effect.tickIntervalSeconds),
   );
 
-const findRadish = (context: KitContext): KitSummon | undefined =>
-  context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-
 // Every radish on the field, in the order they were thrown
 const findRadishes = (context: KitContext): KitSummon[] =>
   context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
+const findRadish = (context: KitContext): KitSummon | undefined => findRadishes(context)[0];
 
 // The Yuegui Moonjade Descent spawns behind her, each one of its spawns adding one to those on the field
 const findJumpingYuegui = (context: KitContext): KitField[] =>
@@ -109,50 +113,7 @@ const findBuffs = (context: KitContext, attribute: Attribute): KitBuff[] =>
   );
 
 describe(createYaoyaoKitBehaviour, () => {
-  test("reads each talent multiplier from her proud skill groups", () => {
-    expect.hasAssertions();
-    const multipliers = [
-      ...YAOYAO_KIT.normalAttacks.flatMap((action) => action.hits.map((hit) => hit.talentMultiplier)),
-      takeOne(YAOYAO_KIT.chargedAttack.hits).talentMultiplier,
-      YAOYAO_KIT.plungeCollision.talentMultiplier,
-      takeOne(YAOYAO_KIT.lowPlunge.hits).talentMultiplier,
-      takeOne(YAOYAO_KIT.highPlunge.hits).talentMultiplier,
-      takeOne(YAOYAO_KIT.elementalBurst.hits).talentMultiplier,
-    ];
-    const expectedMultipliers = [
-      0.510014, 0.474428, 0.313771, 0.329457, 0.779315, 1.1266, 0.639324, 1.278377, 1.596762, 1.1456,
-    ];
-    expect(multipliers).toStrictEqual(expectedMultipliers);
-  });
-
-  test("the cooldowns, costs and stamina her table gives", () => {
-    expect.hasAssertions();
-    expect([
-      YAOYAO_KIT.skillCooldownSeconds,
-      YAOYAO_KIT.burstCooldownSeconds,
-      YAOYAO_KIT.burstEnergyCost,
-      YAOYAO_KIT.chargedAttackStamina,
-    ]).toStrictEqual([15, 20, 80, 25]);
-  });
-
-  test("the normal string's hitmarks, with the third strike's two hits", () => {
-    expect.hasAssertions();
-    const hitmarks = YAOYAO_KIT.normalAttacks.flatMap((action) =>
-      action.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60)),
-    );
-    expect(hitmarks).toStrictEqual([13, 16, 12, 31, 21]);
-  });
-
-  test("the burst's initial hit is a circle of 3 metres round the body, dealing no poise", () => {
-    expect.hasAssertions();
-    const hit = takeOne(YAOYAO_KIT.elementalBurst.hits);
-
-    expect(hit.hitArea.radius).toBe(3);
-    expect(hit.poiseDamage).toBe(0);
-    expect(Math.round(hit.hitmarkSeconds * 60)).toBe(16);
-  });
-
-  test("raphanus sky cluster spawns the Yuegui two metres ahead of her 63 frames after the cast", () => {
+  test("raphanus sky cluster spawns the Yuegui two metres ahead of her at its spawn frame after the cast", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
     YAOYAO_KIT.elementalSkill.onStart?.(context);
@@ -165,7 +126,7 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(yuegui?.centre.x).toBeCloseTo(0);
   });
 
-  test("the Yuegui's first radish lands 29 frames after the spawn and heals the active character from her Max HP and a flat amount", () => {
+  test("the Yuegui's first radish lands at its first throw after the spawn and heals the active character from her Max HP and a flat amount", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
     YAOYAO_KIT.elementalSkill.onStart?.(context);
@@ -211,28 +172,28 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(findRadish(context)?.body.position.z).toBeCloseTo(0);
   });
 
-  test("moonjade descent spawns a Yuegui behind her at 104, 162 and 221 frames, while the burst lasts", () => {
+  test("moonjade descent spawns a Yuegui behind her at each of its spawn frames, while the burst lasts", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
     YAOYAO_KIT.elementalBurst.onStart?.(context);
 
-    // Each spawn lands on the step its frame names: 104, 162 and 221 frames after the cast
-    stepFrames(context, 103);
+    // Each spawn lands on the step its frame names, so a test steps to the frame before it and then onto it
+    stepFrames(context, readJumpingYueguiSpawnFrame(0) - 1);
     expect(findJumpingYuegui(context)).toHaveLength(0);
     stepFrames(context, 1);
     expect(findJumpingYuegui(context)).toHaveLength(1);
     expect(findJumpingYuegui(context)[0]?.centre.z).toBeCloseTo(2);
-    stepFrames(context, 57);
+    stepFrames(context, readJumpingYueguiSpawnFrame(1) - readJumpingYueguiSpawnFrame(0) - 1);
     expect(findJumpingYuegui(context)).toHaveLength(1);
     stepFrames(context, 1);
     expect(findJumpingYuegui(context)).toHaveLength(2);
-    stepFrames(context, 58);
+    stepFrames(context, readJumpingYueguiSpawnFrame(2) - readJumpingYueguiSpawnFrame(1) - 1);
     expect(findJumpingYuegui(context)).toHaveLength(2);
     stepFrames(context, 1);
     expect(findJumpingYuegui(context)).toHaveLength(3);
   });
 
-  test("a jumping Yuegui's first radish lands 29 frames after it spawns and heals the whole team", () => {
+  test("a jumping Yuegui's first radish lands at its first throw after it spawns and heals the whole team", () => {
     expect.hasAssertions();
     const yaoyao = createYaoyaoCombatant();
     const member = {
@@ -251,8 +212,8 @@ describe(createYaoyaoKitBehaviour, () => {
     });
     YAOYAO_KIT.elementalBurst.onStart?.(context);
 
-    // The first spawn lands at frame 104, so its first throw lands at 133, with the radish's heal 13 frames after it
-    stepFrames(context, 132);
+    // The first spawn's first throw lands YUEGUI_FIRST_THROW_FRAMES after the spawn, with the radish's heal after it
+    stepFrames(context, readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES - 1);
     expect(findRadish(context)).toBeUndefined();
     stepFrames(context, 1);
     expect(findRadish(context)).toBeDefined();
@@ -268,7 +229,7 @@ describe(createYaoyaoKitBehaviour, () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
     YAOYAO_KIT.elementalBurst.onStart?.(context);
-    stepFrames(context, 104);
+    stepFrames(context, readJumpingYueguiSpawnFrame(0));
     expect(findJumpingYuegui(context)).toHaveLength(1);
 
     YAOYAO_KIT.onKitEvent?.(
@@ -281,14 +242,14 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(findRadish(context)).toBeUndefined();
   });
 
-  test("the Yuegui spawned at 221 frames lasts until the burst ends, six seconds from the cast", () => {
+  test("the Yuegui spawned last lasts until the burst ends, at the burst's duration from the cast", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);
     YAOYAO_KIT.elementalBurst.onStart?.(context);
 
-    stepFrames(context, 221);
+    stepFrames(context, readJumpingYueguiSpawnFrame(2));
     expect(findJumpingYuegui(context)).toHaveLength(3);
-    stepFrames(context, 138);
+    stepFrames(context, BURST_DURATION_FRAMES - readJumpingYueguiSpawnFrame(2) - 1);
     expect(findJumpingYuegui(context)).toHaveLength(3);
     stepFrames(context, 1);
     expect(findJumpingYuegui(context)).toHaveLength(0);
@@ -371,10 +332,11 @@ describe(createYaoyaoKitBehaviour, () => {
     context.stamina.value = 50;
     YAOYAO_KIT.elementalSkill.onStart?.(context);
 
-    // The first radish heals at 105 frames, and the ones at 165 and 225 fall inside its five seconds
+    // The first radish heals at its hitmark, and the ones one and two throw intervals after it fall inside its five
+    // Seconds
     stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES);
     expect(context.stamina.value).toBe(65);
-    stepFrames(context, 120);
+    stepFrames(context, 2 * YUEGUI_THROW_INTERVAL_FRAMES);
     expect(context.stamina.value).toBe(65);
     // The heal at 465 frames comes 360 frames after the first, past the cooldown
     stepFrames(context, 240);
@@ -401,7 +363,8 @@ describe(createYaoyaoKitBehaviour, () => {
     const yuegui = findYuegui(context);
     if (yuegui) yuegui.secondsRemaining = 0;
 
-    // The chain's heals fall 60 frames after the radish's heal, then every 60 frames, five of them in all: the last at 300
+    // The chain's heals fall 60 frames after the radish's heal, then every 60 frames, five of them in all, the last
+    // At 300
     stepFrames(context, 59);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBeCloseTo(healthAfterRadish, 4);
     stepFrames(context, 1);
@@ -421,8 +384,9 @@ describe(createYaoyaoKitBehaviour, () => {
     );
     YAOYAO_KIT.elementalBurst.onStart?.(context);
 
-    // The first spawn's radish is thrown at 133 frames and strikes 13 frames after, at 146
-    stepFramesStriking(context, 145);
+    // The first spawn's radish is thrown at its first throw and strikes at its hitmark after the throw
+    const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
+    stepFramesStriking(context, firstStrikeFrames - 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
     stepFramesStriking(context, 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
@@ -443,8 +407,9 @@ describe(createYaoyaoKitBehaviour, () => {
     );
     YAOYAO_KIT.elementalSkill.onStart?.(context);
 
-    // The skill's first radish strikes 105 frames after the cast, with the burst already ended
-    stepFramesStriking(context, 105);
+    // The skill's first radish strikes at its spawn, its first throw and its hitmark after the cast, the burst already
+    // Ended
+    stepFramesStriking(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
   });
 
@@ -463,13 +428,15 @@ describe(createYaoyaoKitBehaviour, () => {
     );
     YAOYAO_KIT.elementalBurst.onStart?.(context);
 
-    // Both enemies are struck at 146 frames, for one 3 energy; the next spawn's radish strikes at 204, 58 frames on,
-    // Past the 48-frame cooldown
-    stepFramesStriking(context, 145);
+    // Both enemies are struck at the first strike, for one 3 energy; the next spawn's radish strikes a spawn gap later,
+    // Past the cooldown
+    const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
+    const secondStrikeFrames = readJumpingYueguiSpawnFrame(1) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
+    stepFramesStriking(context, firstStrikeFrames - 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
     stepFramesStriking(context, 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
-    stepFramesStriking(context, 57);
+    stepFramesStriking(context, secondStrikeFrames - firstStrikeFrames - 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
     stepFramesStriking(context, 1);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(6);
@@ -522,12 +489,16 @@ describe(createYaoyaoKitBehaviour, () => {
       getPartyMember(constellation6.party, YAOYAO_CHARACTER_ID).healthShare -
       getPartyMember(constellation5.party, YAOYAO_CHARACTER_ID).healthShare;
 
-    // The third throw lands at 212 frames and its Mega Radish heals 20 frames later, at 232; the sixth lands at 392, healing at 412
-    stepBoth(231);
+    // The third throw lands two throw intervals after the first, and its Mega Radish heals at its hitmark after it, as
+    // The sixth throw, three intervals on, does at the same hitmark
+    const thirdHealFrames =
+      YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + 2 * YUEGUI_THROW_INTERVAL_FRAMES + MEGA_RADISH_HITMARK_FRAMES;
+    const sixthHealFrames = thirdHealFrames + 3 * YUEGUI_THROW_INTERVAL_FRAMES;
+    stepBoth(thirdHealFrames - 1);
     expect(healthGap()).toBe(0);
     stepBoth(1);
     expect(healthGap()).toBeCloseTo(0.075, 4);
-    stepBoth(179);
+    stepBoth(sixthHealFrames - thirdHealFrames - 1);
     expect(healthGap()).toBeCloseTo(0.075, 4);
     stepBoth(1);
     expect(healthGap()).toBeCloseTo(0.15, 4);

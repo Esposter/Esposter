@@ -4,7 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { createKitFallRefusal } from "#src/services/kit/createKitFallRefusal";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { getKitBuffedCombatant } from "#src/services/kit/effects/getKitBuffedCombatant";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -20,7 +20,9 @@ export const changeKitMemberHealth = (
 ): void => {
   const member = characterIdCombatantMap.get(characterId);
   if (!member) return;
-  const maxHealth = getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap);
+  const { effects } = kitEffectState;
+  const buffedMember = getKitBuffedCombatant(member, effects, party, characterIdCombatantMap);
+  const maxHealth = buffedMember.attributes.maxHealth;
   if (health < 0) {
     damagePartyMember(
       party,
@@ -31,12 +33,10 @@ export const changeKitMemberHealth = (
     );
     return;
   }
-  const { effects } = kitEffectState;
   const healingBonus = getBuffedCombatant(source, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
     Attribute.HealingBonus
   ];
-  const incomingHealingBonus = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes
-    .attributeTotalMap[Attribute.IncomingHealingBonus];
+  const incomingHealingBonus = buffedMember.attributes.attributeTotalMap[Attribute.IncomingHealingBonus];
   healPartyMember(
     party,
     characterId,

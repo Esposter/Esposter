@@ -9,12 +9,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
@@ -58,7 +60,6 @@ const ICY_QUILL_ATTACK_TAGS = new Set<AttackTag>([
   AttackTag.NormalAttack,
   AttackTag.PlungingAttack,
 ]);
-const CONSTELLATION_6_UNCOUNTED_ATTACK_TAGS = new Set<AttackTag>([AttackTag.ChargedAttack, AttackTag.NormalAttack]);
 
 // Whether a hit is dealt as an attack kind the Icy Quill names, a hit with none, such as a reaction or a field's tick, not
 const checkIsIcyQuillAttack = (attackTag: AttackTag | undefined): attackTag is AttackTag =>
@@ -191,7 +192,7 @@ export const createShenheKitBehaviour = ({
       if (
         getKitHitElement(strike.hit, strike.combatant) !== Element.Cryo ||
         !checkIsIcyQuillAttack(strike.attackTag) ||
-        !findKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
+        !checkHasKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
       )
         return {};
       const { attack } = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes;
@@ -208,8 +209,8 @@ export const createShenheKitBehaviour = ({
       )
         return;
       const { characterId } = event.striker;
-      if (findKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID) === undefined) return;
-      if (combatant.constellationCount < CONSTELLATION_6 || !CONSTELLATION_6_UNCOUNTED_ATTACK_TAGS.has(event.attackTag))
+      if (!checkHasKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID)) return;
+      if (combatant.constellationCount < CONSTELLATION_6 || !checkIsNormalOrChargedAttack(event.attackTag))
         spendIcyQuillTrigger(kitEffectState, characterId);
       if (combatant.constellationCount >= CONSTELLATION_4) gainSkyfrostMantra(kitEffectState, combatant.characterId);
     },

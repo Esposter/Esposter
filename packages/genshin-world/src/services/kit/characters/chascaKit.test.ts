@@ -6,6 +6,7 @@ import { Element } from "#src/models/Element";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { CHASCA_CHARACTER_ID, createChascaKitBehaviour } from "#src/services/kit/characters/chascaKit";
@@ -19,15 +20,18 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
+const { readFrameList, record: chascaRecord, toParameter } = await readCharacterKitRecord(CHASCA_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 const createPartyMember = (characterId: number, element: Element): Combatant => ({
@@ -103,7 +107,7 @@ describe(createChascaKitBehaviour, () => {
     ]);
   });
 
-  test("lands her normal attacks at gcsim's hitmarks, her third attack's two hits at 14 and 20 frames", () => {
+  test("lands her normal attacks at their record's hitmarks, her third attack's two hits among them", () => {
     expect.hasAssertions();
 
     expect(
@@ -111,44 +115,52 @@ describe(createChascaKitBehaviour, () => {
         frames: toFrames(action.seconds),
         hitmarks: action.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds)),
       })),
-    ).toStrictEqual([
-      { frames: 27, hitmarks: [10] },
-      { frames: 29, hitmarks: [8] },
-      { frames: 53, hitmarks: [14, 20] },
-      { frames: 73, hitmarks: [39] },
-    ]);
+    ).toStrictEqual(
+      chascaRecord.normalAttacks.map((action) => ({
+        frames: action.animationFrames,
+        hitmarks: action.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+      })),
+    );
   });
 
-  test("the fully-charged Aimed Shot lands at 86 frames of 96 and spends no stamina", () => {
+  test("the fully-charged Aimed Shot lands at its record's hitmark and costs its record's stamina", () => {
     expect.hasAssertions();
 
-    expect(toFrames(CHASCA_KIT.chargedAttack.seconds)).toBe(96);
-    expect(toFrames(CHASCA_KIT.chargedAttack.hits[0]?.hitmarkSeconds ?? 0)).toBe(86);
-    expect(CHASCA_KIT.chargedAttackStamina).toBe(0);
+    expect(toFrames(CHASCA_KIT.chargedAttack.seconds)).toBe(chascaRecord.chargedAttack.animationFrames);
+    expect(toFrames(CHASCA_KIT.chargedAttack.hits[0]?.hitmarkSeconds ?? 0)).toBe(
+      takeOne(chascaRecord.chargedAttack.hits).hitmarkFrames,
+    );
+    expect(CHASCA_KIT.chargedAttackStamina).toBe(toParameter(chascaRecord.chargedAttackStamina));
   });
 
-  test("plunges land at gcsim's hitmarks, the collision at 44 frames and the low plunge at 50 of 80", () => {
+  test("plunges land at their record's hitmarks, and the low plunge lasts its record's frames", () => {
     expect.hasAssertions();
 
-    expect(toFrames(CHASCA_KIT.plungeCollision.hitmarkSeconds)).toBe(44);
-    expect(toFrames(CHASCA_KIT.lowPlunge.seconds)).toBe(80);
-    expect(CHASCA_KIT.lowPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([50]);
+    expect(toFrames(CHASCA_KIT.plungeCollision.hitmarkSeconds)).toBe(chascaRecord.plungeCollision.hitmarkFrames);
+    expect(toFrames(CHASCA_KIT.lowPlunge.seconds)).toBe(chascaRecord.plunges[KitPlunge.Low].animationFrames);
+    expect(CHASCA_KIT.lowPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      chascaRecord.plunges[KitPlunge.Low].hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
   });
 
-  test("spirit reins' resonance lands at 3 frames, on a 6.5 second cooldown", () => {
+  test("spirit reins' resonance lands at its record's hitmark, on its record's cooldown", () => {
     expect.hasAssertions();
 
-    expect(CHASCA_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([3]);
-    expect(CHASCA_KIT.skillCooldownSeconds).toBe(6.5);
+    expect(CHASCA_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      chascaRecord.skill.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
+    expect(CHASCA_KIT.skillCooldownSeconds).toBe(toParameter(chascaRecord.skillCooldownSeconds));
   });
 
-  test("galesplitting lands at 96 frames of its 114-frame animation, costing 60 energy on a 15 second cooldown", () => {
+  test("galesplitting lands at its record's hitmark, costing its record's energy on its record's cooldown", () => {
     expect.hasAssertions();
 
-    expect(toFrames(CHASCA_KIT.elementalBurst.seconds)).toBe(114);
-    expect(CHASCA_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([96]);
-    expect(CHASCA_KIT.burstEnergyCost).toBe(60);
-    expect(CHASCA_KIT.burstCooldownSeconds).toBe(15);
+    expect(toFrames(CHASCA_KIT.elementalBurst.seconds)).toBe(chascaRecord.burst.animationFrames);
+    expect(CHASCA_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      chascaRecord.burst.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
+    expect(CHASCA_KIT.burstEnergyCost).toBe(toParameter(chascaRecord.burstEnergyCost));
+    expect(CHASCA_KIT.burstCooldownSeconds).toBe(toParameter(chascaRecord.burstCooldownSeconds));
   });
 
   test("the skill's press enters the Nightsoul Blessing with 80 points, which drain eight a second", () => {
@@ -239,13 +251,13 @@ describe(createChascaKitBehaviour, () => {
     expect(CHASCA_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(true);
   });
 
-  test("galesplitting's six shells land at gcsim's hitmarks, from 103 to 160 frames", () => {
+  test("galesplitting's six shells land at their record's frames", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createChascaCombatant());
     CHASCA_KIT.elementalBurst.onStart?.(context);
-    expect(readShells(context).map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([
-      103, 139, 147, 153, 157, 160,
-    ]);
+    expect(readShells(context).map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      readFrameList("shellHitmarks"),
+    );
   });
 
   test("each shell takes its enemy in turn by its place among the six", () => {

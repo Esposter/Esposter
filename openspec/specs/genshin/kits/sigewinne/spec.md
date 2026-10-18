@@ -1,6 +1,6 @@
 ## Purpose
 
-Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Shot, collision and two plunges, Bolstering Bubblebalm's five bubbles and Super Saturated Syringing's six waves, with her healing, her hold tiers and her Surging Blade not built.
+Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Shot, collision and two plunges, Bolstering Bubblebalm's five bubbles, Super Saturated Syringing's six waves and Semi-Strict Bedrest, with her healing, her hold tiers and her Surging Blade not built.
 
 ## Requirements
 
@@ -55,6 +55,22 @@ Super Saturated Syringing SHALL cast six waves from Sigewinne, the first at 99 f
 - **GIVEN** Sigewinne has less than 70 energy
 - **WHEN** the player casts Super Saturated Syringing
 - **THEN** the burst does not start
+
+### Requirement: Semi-Strict Bedrest
+
+From Ascension 1, each press of Rebound Hydrotherapy SHALL give Sigewinne an 8% Hydro DMG Bonus for 18 seconds, and below Ascension 1 the press SHALL give none.
+
+#### Scenario: A press at Ascension 1 gives the Hydro DMG Bonus
+
+- **GIVEN** Sigewinne is at Ascension 1
+- **WHEN** the player presses Rebound Hydrotherapy
+- **THEN** she gains an 8% Hydro DMG Bonus for 18 seconds
+
+#### Scenario: A press below Ascension 1 gives no Hydro DMG Bonus
+
+- **GIVEN** Sigewinne is at Ascension 0
+- **WHEN** the player presses Rebound Hydrotherapy
+- **THEN** she gains no Hydro DMG Bonus
 
 ### Requirement: Unbuilt Sigewinne effects
 

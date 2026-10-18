@@ -7,6 +7,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SOURCEWATER_DROPLET_FIELD_ID } from "#src/services/kit/constants";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILLETTE_CHARACTER_ID);
@@ -81,6 +82,21 @@ describe(createNeuvilletteKitBehaviour, () => {
     expect(getPassiveBonusPairs(4, 1)).toStrictEqual([[Attribute.HydroDamageBonus, 0.3]]);
   });
 
+  test("reads the judgement's waves as its kit is built, so a record without them fails at build", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      createNeuvilletteKitBehaviour({
+        kit: NEUVILLETTE_KIT,
+        readHits: () => {
+          throw new InvalidOperationError(Operation.Read, "hits.judgement", "is not a hit of the record");
+        },
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: hits.judgement, is not a hit of the record]`,
+    );
+  });
+
   test("a passive does not take effect below its ascension phase", () => {
     expect.hasAssertions();
     expect(getPassiveBonusPairs(3, 0.5)).toStrictEqual([]);
@@ -112,12 +128,12 @@ describe("the burst's droplets", () => {
         ).length,
       );
     }
-    expect([
-      dropletCounts[93],
-      dropletCounts[94],
-      dropletCounts[133],
-      dropletCounts[134],
-      dropletCounts[153],
-    ]).toStrictEqual([0, 3, 3, 5, 6]);
+    // No droplet until the first tick at frame 95, then three to frame 134, five to frame 153 and six on the last frame
+    expect(dropletCounts).toStrictEqual([
+      ...Array.from({ length: 94 }, () => 0),
+      ...Array.from({ length: 40 }, () => 3),
+      ...Array.from({ length: 19 }, () => 5),
+      6,
+    ]);
   });
 });
