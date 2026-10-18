@@ -8,6 +8,7 @@ import { computeBernoulliNumber } from "#src/services/computeBernoulliNumber";
 import { computeCombinations } from "#src/services/computeCombinations";
 import { computeComparison } from "#src/services/computeComparison";
 import { computeCorrelation } from "#src/services/computeCorrelation";
+import { computeDeterminant } from "#src/services/computeDeterminant";
 import { computeDistance } from "#src/services/computeDistance";
 import { computeDotProduct } from "#src/services/computeDotProduct";
 import { computeErf } from "#src/services/computeErf";
@@ -20,6 +21,7 @@ import { computeModularInverse } from "#src/services/computeModularInverse";
 import { computeModulo } from "#src/services/computeModulo";
 import { computeNthRoot } from "#src/services/computeNthRoot";
 import { computePartitionSelect } from "#src/services/computePartitionSelect";
+import { computeProduct } from "#src/services/computeProduct";
 import { computeQuantile } from "#src/services/computeQuantile";
 import { computeVectorNorm } from "#src/services/computeVectorNorm";
 import { computeZeta } from "#src/services/computeZeta";
@@ -359,7 +361,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     signature([MathExpressionParameterType.Number, MathExpressionParameterType.List], 2, 2, () => toNumber(false)),
     signature([MathExpressionParameterType.List, MathExpressionParameterType.Number], 2, 2, () => toNumber(false)),
   ],
-  det: identity(),
+  det: [...unary((value) => value), listSignature((...values) => computeDeterminant(values))],
   distance: [listPairSignature(computeDistance)],
   divide: binary((left, right) => left / right),
   divideScalar: binary((left, right) => left / right),
@@ -428,6 +430,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   multiply: [
     ...variadic(2, (...values) => values.reduce((total, value) => total * value, 1)),
     listPairSignature(computeDotProduct),
+    signature([MathExpressionParameterType.Any], 2, Number.POSITIVE_INFINITY, (...values) => computeProduct(values)),
   ],
   multiplyScalar: binary((left, right) => left * right),
   norm: [

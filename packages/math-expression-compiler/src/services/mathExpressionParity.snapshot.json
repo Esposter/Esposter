@@ -8522,5 +8522,12 @@
 {"formula":"bitOr(0, 0, 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":0},
 {"formula":"bitAnd(7)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
 {"formula":"nullish(3, 4, 5)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3},
-{"formula":"or(0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's or throws for a single operand, where the truth of that operand is the answer","value":0}}
+{"formula":"or(0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's or throws for a single operand, where the truth of that operand is the answer","value":0}},
+{"formula":"det([])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1},
+{"formula":"multiply(2, [1, 2], [1, 2])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":10},
+{"formula":"multiply([1, 2], 2, [1, 2])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":10},
+{"formula":"multiply([1, 2], [1, 2], 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":10},
+{"formula":"multiply([], [])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's multiply throws for two empty vectors, as its dot product does, where the sum of no products is zero","value":0}},
+{"formula":"dot([], [])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's dot product throws for two empty vectors, where the sum of no products is zero","value":0}},
+{"formula":"xor(2, 2, 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's xor takes exactly two operands, so three is an error, where ours folds them as xor is associative","value":1}}
 ]}
