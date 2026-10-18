@@ -441,6 +441,39 @@ describe("mona kit", () => {
     }).toStrictEqual({ offFieldHexerei: expect.closeTo(0.24), offFieldNoTeam: 0.15, onFieldHexerei: 0.15 });
   });
 
+  test("constellation 1 gives a party member's Hydro Swirl 15% DMG for 8 seconds after it hits an Omen, and no other Swirl", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 1 };
+    const other = createOther();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(mona, {
+      characterIdCombatantMap: new Map([
+        [MONA_CHARACTER_ID, mona],
+        [OTHER_CHARACTER_ID, other],
+      ]),
+      kitEffectState,
+      party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+    const readBonus = (element: Element) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        mona,
+        { combatant: other, element, enemy: createSturdyEnemy(), reactionType: TransformativeReactionType.Swirl },
+        context,
+      )?.damageBonus ?? 0;
+    MONA_KIT.onKitEvent?.(
+      { element: Element.Electro, enemy: createOmenedEnemy(), kind: KitEventKind.EnemyHit, striker: other },
+      context,
+      mona,
+    );
+    const afterHit = { anemo: readBonus(Element.Anemo), hydro: readBonus(Element.Hydro) };
+    stepKitTestEffects(8, context);
+
+    expect({ afterExpiry: readBonus(Element.Hydro), afterHit }).toStrictEqual({
+      afterExpiry: 0,
+      afterHit: { anemo: 0, hydro: 0.15 },
+    });
+  });
+
   test("constellation 4 gives 15% CRIT Rate to a party member's strike on an enemy under an Omen, and nothing below it or on another enemy", () => {
     expect.hasAssertions();
     const party = createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]);

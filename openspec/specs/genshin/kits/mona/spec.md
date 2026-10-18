@@ -76,13 +76,19 @@ Mona's Ascension 4 SHALL add 20% of her Energy Recharge to her Hydro DMG Bonus o
 
 ### Requirement: Constellation 1 adds to a striker's Hydro-related reactions while an Omen holds
 
-From Constellation 1, a party member's hit on an enemy under the Omen SHALL give that member's Electro-Charged, Vaporize, Lunar-Charged and Lunar-Crystallize 15% more DMG for eight seconds, and 160% of that for an off-field member while Mona is Hexerei with a second Hexerei member on the team.
+From Constellation 1, a party member's hit on an enemy under the Omen SHALL give that member's Electro-Charged, Vaporize, Lunar-Charged, Lunar-Crystallize and Hydro Swirl 15% more DMG for eight seconds, and 160% of that for an off-field member while Mona is Hexerei with a second Hexerei member on the team.
 
 #### Scenario: A hit on an Omen adds 15% to the striker's reactions for eight seconds
 
 - **GIVEN** Mona has Constellation 1
 - **WHEN** a party member hits an enemy under the Omen, and then its Electro-Charged reaction lands
 - **THEN** that reaction deals 15% more DMG, and the bonus is gone eight seconds after the hit
+
+#### Scenario: A Hydro Swirl gains the bonus, and another Swirl does not
+
+- **GIVEN** Mona has Constellation 1
+- **WHEN** a party member hits an enemy under the Omen, and then a Hydro Swirl and an Anemo Swirl land on it
+- **THEN** the Hydro Swirl deals 15% more DMG, and the Anemo Swirl deals no more
 
 #### Scenario: An off-field member gets 160% while Mona is Hexerei with a second Hexerei member
 
@@ -158,7 +164,7 @@ From Constellation 6, each second of sprint SHALL give her next Charged Attack 6
 
 ### Requirement: Unbuilt Mona effects
 
-Constellation 1's Hydro Swirl and Frozen duration, Constellation 4's Lunar-Charged and Lunar-Crystallize CRIT, and Hexerei's post-burst follow-up SHALL NOT take effect.
+Constellation 1's Frozen duration, Constellation 4's Lunar-Charged and Lunar-Crystallize CRIT, and Hexerei's post-burst follow-up SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

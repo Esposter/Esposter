@@ -4,6 +4,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
@@ -13,6 +14,7 @@ import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionTyp
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsKitSecretRite } from "#src/services/kit/checkIsKitSecretRite";
 import { checkIsKitHexerei } from "#src/services/kit/countKitHexereiMembers";
@@ -39,7 +41,7 @@ const A1_PHANTOM_SECONDS = 2;
 const A4_HYDRO_BONUS_OF_ENERGY_RECHARGE = 0.2;
 // Constellation 1: a party member's hit on an enemy under the Omen gives it the Hydro-related reactions' DMG bonus for 8 seconds,
 // Which is 160% of 15% when Mona is Hexerei with a second Hexerei member and the member is off the field, as gcsim v2.47.2 (MIT)
-// Mona/cons.go gives them. Hydro Swirl is left out, as a reaction carries no element to tell it from the other Swirls
+// Mona/cons.go gives them. A Swirl counts only for the Hydro it absorbs, as a reaction carries that element
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
@@ -52,6 +54,10 @@ const CONSTELLATION_1_REACTION_TYPES = new Set<ReactionType>([
   LunarReactionType.LunarCrystallize,
   TransformativeReactionType.ElectroCharged,
 ]);
+// Whether a reaction is one Constellation 1 enhances: the Hydro-related reactions, and a Swirl that absorbed Hydro
+const checkIsConstellation1Reaction = ({ element, reactionType }: KitReaction): boolean =>
+  CONSTELLATION_1_REACTION_TYPES.has(reactionType) ||
+  (reactionType === TransformativeReactionType.Swirl && element === Element.Hydro);
 // Constellation 4: each party member's strike on an enemy under the Omen or her bubble gains 15% CRIT Rate, and a Hexerei
 // Member's gains 15% CRIT DMG while Mona is Hexerei with a second Hexerei member, as gcsim v2.47.2 (MIT) mona/cons.go gives them
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
@@ -158,7 +164,7 @@ export const MONA_CHARACTER_ID = 10_000_041;
 // Stellaris Phantasm holds each enemy its cast strikes in its bubble, whose burst leaves the Omen. From Ascension 1 every
 // 2 seconds of sprint casts a phantom that explodes as it ends, and from Ascension 4 her Energy Recharge raises her Hydro
 // DMG Bonus
-// Constellation 1 is built but for Hydro Swirl and the Frozen duration, which no reaction or status carries, and Constellation 4 is
+// Constellation 1 is built but for the Frozen duration, which no reaction or status carries, and Constellation 4 is
 // Built but for its Lunar-Charged and Lunar-Crystallize CRIT, as the reaction hook is given no enemy to read the Omen on
 export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitBehaviour => {
   const mirrorReflectionHits = readHits("mirrorReflectionPhantom");
@@ -209,8 +215,9 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     },
     // Constellation 1: a struck member's Hydro-related reactions gain 15% DMG while its bonus holds, 160% of that for an off-field
     // Member when Mona is Hexerei with a second Hexerei member
-    getPartyReactionBonus: (member, { combatant, reactionType }, context) => {
-      if (member.constellationCount < CONSTELLATION_1 || !CONSTELLATION_1_REACTION_TYPES.has(reactionType)) return {};
+    getPartyReactionBonus: (member, reaction, context) => {
+      const { combatant } = reaction;
+      if (member.constellationCount < CONSTELLATION_1 || !checkIsConstellation1Reaction(reaction)) return {};
       if (!checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, CONSTELLATION_1_STATUS_ID))
         return {};
       const isEnhanced =
