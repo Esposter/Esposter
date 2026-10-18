@@ -35,6 +35,9 @@ export const BEIDOU_CHARACTER_ID = 10_000_024;
 // Beidou's behaviour: Tidecaller's press sets her Electro shield until its hit, and Stormbreaker casts the Thunderbeast's
 // Targe, a summon that follows the body on the field for its seconds, landing Bane of Evil's cut from six
 // Constellations. While the Targe stands, her strikes and charged attack cast its lightning discharge beside their hits
+// Constellation 1 needs a shield that absorbs Electro damage 250% more, which the shield's absorb does not scale
+// Constellation 2 needs Stormbreaker's arc lightning to jump to two more targets, which the burst's hit does not chain
+// Constellation 4 needs a 10-second status set when she takes damage, and an extra Electro hit on each normal attack
 export const createBeidouKitBehaviour = ({
   kit,
   readHitFields,
