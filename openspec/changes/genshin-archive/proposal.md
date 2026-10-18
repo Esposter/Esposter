@@ -23,7 +23,6 @@ Archive entries open and count from the doings the world does.
 - The wildlife's strike, which the animals' Living Beings entries and their turning models need.
 - A shown tip, which the Tutorials section's opening needs.
 - Books placed in the world, since no world drop is a volume's material yet.
-- The first artifact drop, which the artifact sets' caller needs.
 
 ## Impact
 

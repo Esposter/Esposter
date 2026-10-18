@@ -85,7 +85,6 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
@@ -179,6 +178,8 @@ const {
   paimonsBargainsRotation,
   qualityTier,
   regionDataBaseUrl,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   removeAccountCharacterPack,
   save,
   sceneExportBaseUrl,
@@ -221,7 +222,13 @@ const screenKind = ref(ScreenKind.World);
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
 // Names are the game's own in the reader's language, and its weapons and materials are read from the game's tables, so
 // All of them arrive first
-const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTables.weaponDataMap, materialDataMap);
+const savedState = readGenshinSave(
+  save ?? EMPTY_GENSHIN_SAVE,
+  nameText,
+  statTables.weaponDataMap,
+  materialDataMap,
+  reliquaryPieceEntryMap,
+);
 // The cross-system reactions of this screen, one emitter the systems share
 const events = createWorldEvents();
 const {
@@ -324,7 +331,10 @@ const { archiveData, bookReading, readBook } = useWorldArchive({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
+  inventory,
   language,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   screenKind,
 });
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
@@ -407,6 +417,7 @@ const {
   inventory,
   materialDataMap,
   nameText,
+  reliquaryPieceEntryMap,
   serverClockOffsetMs,
   setInventory,
   setWallet,
@@ -449,6 +460,8 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   setInventory,
   setWallet,
   wallet,

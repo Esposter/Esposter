@@ -35,7 +35,7 @@ describe(useWorldSaveSync, () => {
 
   test("a held character survives a reload", () => {
     expect.hasAssertions();
-    const savedState = readGenshinSave(HELD_SAVE, {}, new Map(), new Map());
+    const savedState = readGenshinSave(HELD_SAVE, {}, new Map(), new Map(), new Map());
     const characters = shallowRef(savedState.characters);
     const characterCopyCountMap = shallowRef(savedState.characterCopyCountMap);
     const emitSave = vi.fn<(save: GenshinSave) => void>();
@@ -56,6 +56,6 @@ describe(useWorldSaveSync, () => {
 
     const [emittedSave] = emitSave.mock.lastCall ?? [];
     assert.exists(emittedSave);
-    expect(readGenshinSave(emittedSave, {}, new Map(), new Map())).toStrictEqual(savedState);
+    expect(readGenshinSave(emittedSave, {}, new Map(), new Map(), new Map())).toStrictEqual(savedState);
   });
 });

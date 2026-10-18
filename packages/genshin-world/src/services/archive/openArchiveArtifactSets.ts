@@ -15,7 +15,7 @@ export const openArchiveArtifactSets = (
   equipmentEntryIds: ReadonlySet<number>,
   reliquarySets: readonly ReliquarySetData[],
 ): ArchiveProgress => {
-  const setPieceCountMap = new Map(reliquarySets.map(({ id, pieceItemIds }) => [id, pieceItemIds.length]));
+  const setPieceCountMap = new Map(reliquarySets.map(({ id, pieces }) => [id, pieces.length]));
   const slotsSetMap = new Map<number, Set<ArtifactSlot>>();
   for (const { setId, slot } of artifacts) {
     const slots = slotsSetMap.get(setId) ?? new Set<ArtifactSlot>();
