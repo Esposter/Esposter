@@ -6,8 +6,7 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
-import { checkIsShopGoodSoldOut } from "#src/services/shop/checkIsShopGoodSoldOut";
-import { recordShopPurchase } from "#src/services/shop/recordShopPurchase";
+import { payShopGood } from "#src/services/shop/payShopGood";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
 // The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, its price
@@ -26,22 +25,16 @@ export const buyShopGood = (
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
   const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
   const itemCurrency = ShopItemCurrencyMap[good.itemId];
-  if (
-    priceCurrency === undefined ||
-    !checkIsShopGoodOffered(good, adventureRank, now) ||
-    checkIsShopGoodSoldOut(good, purchases, now) ||
-    wallet[priceCurrency] < good.priceCount
-  )
-    return undefined;
-  const boughtPurchases = recordShopPurchase(purchases, good, now);
-  const paidWallet = { ...wallet, [priceCurrency]: wallet[priceCurrency] - good.priceCount };
+  if (priceCurrency === undefined || !checkIsShopGoodOffered(good, adventureRank, now)) return undefined;
+  const paid = payShopGood(wallet, purchases, good, priceCurrency, now);
+  if (!paid) return undefined;
   if (itemCurrency !== undefined)
     return {
       inventory,
-      purchases: boughtPurchases,
-      wallet: { ...paidWallet, [itemCurrency]: paidWallet[itemCurrency] + good.itemCount },
+      purchases: paid.purchases,
+      wallet: { ...paid.wallet, [itemCurrency]: paid.wallet[itemCurrency] + good.itemCount },
     };
   const addition = addInventoryItem(inventory, getGoodItemDefinition(good.itemId), good.itemCount);
   if (addition.overflow > 0) return undefined;
-  return { inventory: addition.inventory, purchases: boughtPurchases, wallet: paidWallet };
+  return { inventory: addition.inventory, purchases: paid.purchases, wallet: paid.wallet };
 };

@@ -1,4 +1,4 @@
-import type { ShopGood } from "#src/models/shop/ShopGood";
+import type { ShopGoodLimit } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { computeShopGoodBought } from "#src/services/shop/computeShopGoodBought";
@@ -8,7 +8,7 @@ import { computeShopGoodBought } from "#src/services/shop/computeShopGoodBought"
 // The list holds one entry for each limited good the player has bought
 export const recordShopPurchase = (
   purchases: ShopPurchase[],
-  good: ShopGood,
+  good: ShopGoodLimit,
   now: Temporal.Instant,
 ): ShopPurchase[] => {
   if (good.buyLimit === 0) return purchases;

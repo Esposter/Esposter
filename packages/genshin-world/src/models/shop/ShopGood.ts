@@ -19,6 +19,10 @@ export interface ShopGood {
   reputationDiscountLevel?: number;
 }
 
+// What a good's limit is counted from: its id, its buy limit and the refresh the limit comes back on. A good with no sale
+// Dates, such as a Paimon's Bargains rotation's, is counted from these alone
+export type ShopGoodLimit = Pick<ShopGood, "buyLimit" | "goodsId" | "refresh">;
+
 export const shopGoodSchema = z.object({
   beginTime: z.string(),
   buyLimit: z.int().nonnegative(),
