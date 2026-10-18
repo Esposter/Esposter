@@ -139,9 +139,8 @@ let followCamera: FollowCamera | undefined;
 let poser: CharacterPoser | undefined;
 let posedMesh: SkinnedMesh | undefined;
 const skinnedMeshFinder = createSkinnedMeshFinder(body);
-// The kit of the character on the field, which starts over when a switch brings another on
+// The kit of the character on the field, which the step starts over when a switch brings another on
 let kitState = createKitState();
-let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
 // Where the character is on the ground and how fast it moves across it, which the grass trail is stamped from
@@ -191,10 +190,6 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   }
 
   const characterId = getActiveCharacterId(party);
-  if (characterId !== kitCharacterId) {
-    kitState = createKitState();
-    kitCharacterId = characterId;
-  }
   // A member who is down plays its fall with no presses, so its kit starts nothing while the team's effects still run
   const isFieldStanding = !checkIsCharacterDown(party, characterId);
   stepActiveKit(

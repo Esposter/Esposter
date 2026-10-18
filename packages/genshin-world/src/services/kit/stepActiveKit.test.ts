@@ -447,6 +447,43 @@ describe(stepActiveKit, () => {
     ).toStrictEqual([{ hit: lateHit, striker: lateCombatant }]);
   });
 
+  // A strike whose one hit lands halfway through its action, which runs on past it
+  const cutAttack: KitAction = {
+    ...takeOne(TRAVELER_KIT.normalAttacks),
+    hits: [lateHit],
+    seconds: lateHit.hitmarkSeconds * 2,
+  };
+
+  test("a swap mid-action keeps the hit the action has still to land, landing at its hitmark as the character that played it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const cutCombatant = createCombatant(TRAVELER_CHARACTER_ID, {
+      ...TRAVELER_KIT,
+      normalAttacks: [cutAttack],
+      onKitEvent,
+    });
+    const context = createStrikeContext([cutCombatant, createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
+    const readHits = () =>
+      onKitEvent.mock.calls.flatMap(([event]) =>
+        event.kind === KitEventKind.DamageTaken ? [{ hit: event.hit, striker: event.striker }] : [],
+      );
+    const kitState = createKitState();
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateHit.hitmarkSeconds / 4, context, controls);
+
+    expect(kitState.action).toBe(cutAttack);
+
+    context.party.activeIndex = 1;
+    stepActiveKit(kitState, IDLE_INPUT, lateHit.hitmarkSeconds / 4, context, controls);
+
+    expect(kitState.action).toBeUndefined();
+    expect(readHits()).toStrictEqual([]);
+
+    stepActiveKit(kitState, IDLE_INPUT, lateHit.hitmarkSeconds, context, controls);
+
+    expect(readHits()).toStrictEqual([{ hit: lateHit, striker: cutCombatant }]);
+  });
+
   test("strikes the ores an Overloaded's explosion reaches from the enemy it lands on, after the step's own hits", () => {
     expect.hasAssertions();
     const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);

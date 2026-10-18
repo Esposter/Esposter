@@ -11,6 +11,7 @@ import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
+import { createKitState } from "#src/services/kit/createKitState";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -22,6 +23,7 @@ import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { pickUpKitPickUps } from "#src/services/kit/pickUpKitPickUps";
+import { queueKitHits } from "#src/services/kit/queueKitHits";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { sendKitOutbox } from "#src/services/kit/sendKitOutbox";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
@@ -101,7 +103,19 @@ export const stepActiveKit = (
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== characterId) {
-    if (fieldCharacterId !== undefined) endKitSwapEffects(kitEffectState.effects, fieldCharacterId);
+    if (fieldCharacterId !== undefined) {
+      // The combatant that played the outgoing action: its stance's when it holds one, read before the swap ends the stance
+      const outgoingCombatant =
+        findKitStance(kitEffectState.effects, fieldCharacterId)?.combatant ??
+        characterIdCombatantMap.get(fieldCharacterId);
+      endKitSwapEffects(kitEffectState.effects, fieldCharacterId);
+      // gcsim queues each attack at its hitmark whatever its character does next, so the hits the outgoing action still
+      // has to land are queued on the world's clock from where it was played, priced by the combatant that played it
+      if (outgoingCombatant && kitState.action)
+        queueKitHits(kitState.action, kitState, { ...context, activeCombatant: outgoingCombatant });
+    }
+    // The character brought on starts its kit over, with no action playing
+    Object.assign(kitState, createKitState(), { action: undefined, queuedMovementAction: undefined });
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
   }
   sendKitOutbox(context);

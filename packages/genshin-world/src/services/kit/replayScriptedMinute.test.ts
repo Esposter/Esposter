@@ -136,8 +136,7 @@ export const replayScriptedMinute = ({
   // Whether a step at this place in its turn falls in the script's span of seconds, which idle never does
   const checkIsInSpan = (turnStep: number, fromSeconds: number, toSeconds: number): boolean =>
     isInCombat && turnStep >= toStepCount(fromSeconds) && turnStep < toStepCount(toSeconds);
-  let kitState = createKitState();
-  let kitCharacterId: number | undefined;
+  const kitState = createKitState();
 
   for (let stepIndex = 0; stepIndex < toStepCount(60); stepIndex++) {
     const turnIndex = Math.floor(stepIndex / turnStepCount);
@@ -152,10 +151,6 @@ export const replayScriptedMinute = ({
     const characterId = getActiveCharacterId(party);
     characterController.step(inputState, 0, getCharacterLocomotion(characterId, characterDataMap), FIXED_STEP_SECONDS);
     stepPartyCooldowns(party, FIXED_STEP_SECONDS);
-    if (characterId !== kitCharacterId) {
-      kitState = createKitState();
-      kitCharacterId = characterId;
-    }
     const skillHeldSeconds = stepIndex < toStepCount(30) ? 0.1 : 3.25;
     const { phase, position } = characterController;
     stepActiveKit(
