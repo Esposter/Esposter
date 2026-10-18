@@ -16,7 +16,7 @@ describe(fitWaterfallSheets, () => {
     vi.clearAllMocks();
   });
 
-  test("turns a placed fall's vertices into three's axes last, so its lip lands where the placement stands it", async () => {
+  test("turns a placed fall's vertices into three's axes first, so its lip lands where the layout's placement stands it", async () => {
     expect.hasAssertions();
 
     const placement = { mesh: "Eff_Model_WaterFall_A", position: [0, 0, 10], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
@@ -37,7 +37,7 @@ describe(fitWaterfallSheets, () => {
 
     expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
       enemyCamps: [],
-      waterfalls: [{ across: { x: 1, y: 0, z: 0 }, drop: 5, lip: { x: 0.5, y: 5, z: -10 }, width: 1 }],
+      waterfalls: [{ across: { x: 1, y: 0, z: 0 }, drop: 5, lip: { x: 0.5, y: 5, z: 10 }, width: 1 }],
     });
   });
 });

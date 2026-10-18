@@ -19,10 +19,10 @@ import { Vector3 } from "three";
 const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 
 // A region's waterfalls, each sheet read off its fall's mesh as the witness lays it out: every placement of one, its
-// Vertices carried into the world by its scale, turn and place in that order and turned into three's axes last, as a
-// Lathe's are, and each mesh read as one sheet, or none where its lip has no width. Written to the region's data file as its
-// `waterfalls`, returning the
-// File's path as the build's note
+// Vertices turned into three's axes first and then carried into the world by its scale, turn and place. The layout's
+// Placements are already in three's axes round the origin, so nothing after the placement flips them again, and each
+// Mesh is read as one sheet, or none where its lip has no width. Written to the region's data file as its `waterfalls`,
+// Returning the file's path as the build's note
 export const fitWaterfallSheets = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
   const { assets, root } = getComponentDirectory(component);
   const layout = parseMachineJson<SceneLayout>(await readFile(join(root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
@@ -31,7 +31,10 @@ export const fitWaterfallSheets = async (component: DerivedAssetComponent): Prom
       .filter(({ mesh }) => mesh.startsWith(WATERFALL_MESH_PREFIX))
       .map(async (placement) => {
         const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${placement.mesh}.obj`));
-        const world = toWorldVertices(vertices, placement).map((vertex) => toRightHanded(vertex));
+        const world = toWorldVertices(
+          vertices.map((vertex) => toRightHanded(vertex)),
+          placement,
+        );
         return computeWaterfallSheet(world.map((vertex) => new Vector3(...vertex)));
       }),
   );
