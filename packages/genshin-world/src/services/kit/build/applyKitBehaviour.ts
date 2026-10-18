@@ -39,6 +39,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getChargedAttackStaminaMultiplier,
     getPassiveBonuses,
     getSkillCooldownMultiplier,
+    getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
     moonsignBenediction,
     normalAttacks = [],
@@ -53,6 +54,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
+  if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
   if (onSprint) kit.onSprint = onSprint;

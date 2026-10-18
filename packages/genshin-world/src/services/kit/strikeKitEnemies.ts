@@ -64,6 +64,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
+      const criticalRateBonus = combatant.kit.getStrikeCriticalRateBonus?.(strike, enemy) ?? 0;
       const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,
@@ -71,6 +72,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         pricedCombatant,
         random,
         moonsign,
+        criticalRateBonus,
       );
       collectKitEnergyDrops(energyDrops, combatant.element, context);
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
