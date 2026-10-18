@@ -104,12 +104,12 @@ describe(parseMjmlDocument, () => {
   test("rendering a parsed email returns its source", () => {
     expect.hasAssertions();
 
-    const json = renderMjmlDocument(EVERY_TYPE_DOCUMENT, TEST_REGISTRY, { isStampingIds: false });
+    const json = renderMjmlDocument(EVERY_TYPE_DOCUMENT, TEST_REGISTRY, { context: undefined, isStampingIds: false });
     const result = parseMjmlDocument(serializeMjml(json), TEST_REGISTRY, TEST_RICH_TEXT, TEST_MAX_NODES);
     expect(result.error?.issues.map((issue) => issue.message) ?? []).toStrictEqual([]);
-    expect(renderMjmlDocument(result.data ?? TEST_DOCUMENT, TEST_REGISTRY, { isStampingIds: false })).toStrictEqual(
-      json,
-    );
+    expect(
+      renderMjmlDocument(result.data ?? TEST_DOCUMENT, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
+    ).toStrictEqual(json);
   });
   test("an import holding a tag the package leaves out is refused", () => {
     expect.hasAssertions();

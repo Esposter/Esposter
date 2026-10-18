@@ -11,7 +11,9 @@ import {
 import { checkIsAllowedUrl } from "@esposter/shared";
 
 // The document's head and body, checked against the definitions it may name: each per-type attribute map is one the type takes
-export const createMjmlRootPropsSchema = (definitions: MjmlBlockTypeDefinition[]): typeof mjmlRootPropsSchema =>
+export const createMjmlRootPropsSchema = (
+  definitions: Pick<MjmlBlockTypeDefinition, "allowedAttributes" | "type">[],
+): typeof mjmlRootPropsSchema =>
   mjmlRootPropsSchema.superRefine((props, context) => {
     checkMjmlAttributeValues(props.body ?? {}, MJML_BODY_ATTRIBUTES, ["body"], context);
     if (props.breakpoint)

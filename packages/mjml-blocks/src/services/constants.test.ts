@@ -1,6 +1,6 @@
-import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlDocument } from "#src/models/MjmlDocument";
+import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
-import type { BlockDocument, BlockRegistry } from "headless-block-editor";
 
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { describe } from "vitest";
@@ -20,10 +20,7 @@ export const TEST_RICH_TEXT: MjmlRichTextDefinition<string> = {
   renderHtml: (html) => html,
   schema: z.string(),
 };
-export const TEST_REGISTRY: BlockRegistry<MjmlBlockTypeDefinition> = createMjmlRegistry({
-  leafTypes: [],
-  richText: TEST_RICH_TEXT,
-});
-export const TEST_DOCUMENT: BlockDocument = { content: [], root: { props: {} } };
+export const TEST_REGISTRY: MjmlRegistry = createMjmlRegistry({ leafTypes: [], richText: TEST_RICH_TEXT });
+export const TEST_DOCUMENT: MjmlDocument = { content: [], root: { props: {} } };
 
 describe.todo("constants");

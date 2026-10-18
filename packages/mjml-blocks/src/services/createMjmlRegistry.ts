@@ -1,8 +1,8 @@
 import type { CreateMjmlRegistryOptions } from "#src/models/CreateMjmlRegistryOptions";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
-import type { BlockRegistry } from "headless-block-editor";
 
 import { MJML_BODY_CHILDREN, MJML_COMPONENT_SPECIFICATIONS, MJML_LEAF_HOST_TYPES } from "#src/services/constants";
 import { createMjmlPropsSchema } from "#src/services/createMjmlPropsSchema";
@@ -10,11 +10,11 @@ import { createMjmlRootPropsSchema } from "#src/services/createMjmlRootPropsSche
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 
 // A component's definition, with the consumer's leaf types appended to the children of the containers MJML lets hold them
-const createMjmlDefinition = <TContent>(
+const createMjmlDefinition = <TContent, TContext>(
   specification: MjmlComponentSpecification,
   richText: MjmlRichTextDefinition<TContent>,
   leafTypeNames: string[],
-): MjmlBlockTypeDefinition => {
+): MjmlBlockTypeDefinition<TContext> => {
   const children = MJML_LEAF_HOST_TYPES.includes(specification.type)
     ? [...specification.children, ...leafTypeNames]
     : specification.children;
@@ -29,13 +29,13 @@ const createMjmlDefinition = <TContent>(
 };
 
 // MJML's component set as block types, with the consumer's leaf types beside them and the body's children as the root's content
-export const createMjmlRegistry = <TContent>(
-  options: CreateMjmlRegistryOptions<TContent>,
-): BlockRegistry<MjmlBlockTypeDefinition> => {
+export const createMjmlRegistry = <TContent, TContext = undefined>(
+  options: CreateMjmlRegistryOptions<TContent, TContext>,
+): MjmlRegistry<TContext> => {
   const leafTypeNames = options.leafTypes.map((leafType) => leafType.type);
   const types = [
     ...MJML_COMPONENT_SPECIFICATIONS.map((specification) =>
-      createMjmlDefinition(specification, options.richText, leafTypeNames),
+      createMjmlDefinition<TContent, TContext>(specification, options.richText, leafTypeNames),
     ),
     ...options.leafTypes,
   ];

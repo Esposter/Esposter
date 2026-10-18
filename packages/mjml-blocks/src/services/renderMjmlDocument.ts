@@ -1,9 +1,10 @@
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlJson } from "#src/models/MjmlJson";
+import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
-import type { BlockDocument, BlockNode, BlockRegistry } from "headless-block-editor";
+import type { BlockNode } from "headless-block-editor";
 
-import { mjmlRootPropsSchema } from "#src/models/MjmlRootProps";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { escapeAttribute } from "@esposter/shared";
@@ -19,16 +20,17 @@ const stampNode = (output: MjmlJson, node: BlockNode, isStampingIds: boolean): M
 };
 
 // A validated document in MJML's JSON form: the root's language and direction, its head when it sets any, and the body
-export const renderMjmlDocument = (
-  document: BlockDocument,
-  registry: BlockRegistry<MjmlBlockTypeDefinition>,
-  options: RenderMjmlDocumentOptions,
+export const renderMjmlDocument = <TContext>(
+  document: MjmlDocument,
+  registry: MjmlRegistry<TContext>,
+  options: RenderMjmlDocumentOptions<TContext>,
 ): MjmlJson => {
-  const rootProps = mjmlRootPropsSchema.parse(document.root.props);
-  const content = renderBlockNodes<MjmlBlockTypeDefinition, MjmlJson>(
+  const rootProps = document.root.props;
+  const content = renderBlockNodes<MjmlBlockTypeDefinition<TContext>, MjmlJson>(
     document.content,
     registry,
-    (node, definition, slots) => stampNode(definition.render(node, slots), node, options.isStampingIds),
+    (node, definition, slots) =>
+      stampNode(definition.render(node, slots, options.context), node, options.isStampingIds),
   );
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};

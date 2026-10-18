@@ -1,4 +1,3 @@
-import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { BlockNode, BlockRegistry } from "headless-block-editor";
 import type { Node } from "node-html-parser";
@@ -13,7 +12,7 @@ import { HTMLElement, TextNode } from "node-html-parser";
 // are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
 const readMjmlNode = <TContent>(
   element: HTMLElement,
-  registry: BlockRegistry<MjmlBlockTypeDefinition>,
+  registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): BlockNode => {
   const type = element.rawTagName;
@@ -38,7 +37,7 @@ const readMjmlNode = <TContent>(
 // The nodes of a list of children: each element a node, each text that is not blank a node no registry holds
 export const readMjmlNodes = <TContent>(
   children: Node[],
-  registry: BlockRegistry<MjmlBlockTypeDefinition>,
+  registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): BlockNode[] =>
   children.flatMap((child) => {

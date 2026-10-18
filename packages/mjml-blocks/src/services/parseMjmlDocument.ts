@@ -1,6 +1,7 @@
-import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
-import type { BlockDocument, BlockNode, BlockRegistry } from "headless-block-editor";
+import type { MjmlRootProps } from "#src/models/MjmlRootProps";
+import type { BlockNode, BlockRegistry, BlockTypeDefinition } from "headless-block-editor";
 import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
 
@@ -14,7 +15,7 @@ import { parse, TextNode } from "node-html-parser";
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
 const readMjmlRoot = <TContent>(
   mjml: HTMLElement,
-  registry: BlockRegistry<MjmlBlockTypeDefinition>,
+  registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): { content: BlockNode[]; root: { props: Record<string, unknown> } } => {
   const props: Record<string, unknown> = { ...mjml.attributes };
@@ -41,10 +42,10 @@ const readMjmlRoot = <TContent>(
 // Or a value its type refuses is refused there, at the node it names
 export const parseMjmlDocument = <TContent>(
   source: string,
-  registry: BlockRegistry<MjmlBlockTypeDefinition>,
+  registry: BlockRegistry<BlockTypeDefinition, MjmlRootProps>,
   richText: MjmlRichTextDefinition<TContent>,
   maxNodes: number,
-): z.ZodSafeParseResult<BlockDocument> => {
+): z.ZodSafeParseResult<MjmlDocument> => {
   const root = parse(source, {
     blockTextElements: Object.fromEntries(MJML_BLOCK_TEXT_TAGS.map((tagName) => [tagName, true])),
     comment: false,

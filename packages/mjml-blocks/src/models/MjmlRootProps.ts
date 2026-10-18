@@ -1,19 +1,6 @@
 import { MjmlDirection } from "#src/models/MjmlDirection";
 import { z } from "zod";
 
-// The document's head and body: what MJML writes outside the email's sections, each value as the author set it
-export interface MjmlRootProps {
-  attributes?: Record<string, Record<string, string>>;
-  body?: Record<string, string>;
-  breakpoint?: { width: string };
-  dir?: MjmlDirection;
-  fonts?: { href: string; name: string }[];
-  lang?: string;
-  preview?: string;
-  styles?: { css: string; inline: boolean }[];
-  title?: string;
-}
-
 // The shape alone: the document schema adds each attribute's grammar and each address's scheme check to it
 export const mjmlRootPropsSchema: z.ZodObject<
   {
@@ -46,3 +33,6 @@ export const mjmlRootPropsSchema: z.ZodObject<
     .optional(),
   title: z.string().optional(),
 });
+// The document's head and body: what MJML writes outside the email's sections, each value as the author set it. Its type is
+// Inferred, since an inferred object type takes the implicit index signature the core's root props need
+export type MjmlRootProps = z.infer<typeof mjmlRootPropsSchema>;
