@@ -6,6 +6,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -168,12 +169,12 @@ export const createEscoffierKitBehaviour = ({
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         startConstellation1(combatant, kitEffectState);
-        castKitSummon(kitEffectState, body, combatant, skillTickHits);
+        castKitSummon(kitEffectState, body, combatant, skillTickHits, { attackTag: AttackTag.ElementalSkill });
         if (
           !startKitCooldown(kitEffectState, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID, alignedIntervalSeconds)
         )
           return;
-        castKitSummon(kitEffectState, body, combatant, [surgingBladeHit]);
+        castKitSummon(kitEffectState, body, combatant, [surgingBladeHit], { attackTag: AttackTag.ElementalSkill });
       },
     },
   };

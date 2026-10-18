@@ -4,6 +4,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -88,7 +89,13 @@ export const createGanyuKitBehaviour = ({
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });
-            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [celestialShowerHit]);
+            castKitSummon(
+              tickEffectState,
+              { facing, height, position: field.centre },
+              combatant,
+              [celestialShowerHit],
+              { attackTag: AttackTag.ElementalBurst },
+            );
           },
           radius: CELESTIAL_SHOWER_RADIUS,
           secondsRemaining: celestialShowerSeconds + celestialShowerStartSeconds + 0.1,

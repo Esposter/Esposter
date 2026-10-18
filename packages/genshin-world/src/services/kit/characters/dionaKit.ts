@@ -5,6 +5,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -100,7 +101,10 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
           secondsRemaining: signatureMixSeconds,
           tickIntervalSeconds: SIGNATURE_MIX_TICK_SECONDS,
         });
-        castKitSummon(kitEffectState, body, combatant, signatureMixTicks, { secondsRemaining: signatureMixSeconds });
+        castKitSummon(kitEffectState, body, combatant, signatureMixTicks, {
+          attackTag: AttackTag.ElementalBurst,
+          secondsRemaining: signatureMixSeconds,
+        });
       },
     },
     // Constellation 1 returns 15 energy to Diona as her field ends, as the game's text gives it

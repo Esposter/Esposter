@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -42,7 +43,7 @@ const createDragonOnStart =
       target ? { facing: 0, height: 0, position: target.position } : body,
       combatant,
       hits,
-      { id: DRAGON_SUMMON_ID },
+      { attackTag: AttackTag.ElementalBurst, id: DRAGON_SUMMON_ID },
     );
   };
 
