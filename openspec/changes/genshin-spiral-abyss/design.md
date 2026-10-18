@@ -15,6 +15,10 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 - **A Moon Spire chamber shows its period's blessing and no Benedictions, which the wiki does not match.** The change's scenarios name the period's blessing for a Moon Spire chamber and the choices for a Corridor chamber, so `getAbyssChamberBlessing` gives one or the other. The wiki's Benediction section says every chamber's start offers one, Moon Spire included, so a Moon Spire chamber's Benedictions are left unoffered until a source settles which is true.
 
+- **The entrance is provisional, at the centre of Cape Oath.** The wormhole's own place is in the game's scene export, which is not read yet, so the Spiral Abyss's entrance stands at the centre of Cape Oath's outline in the catalogue, inside it. The F key on it opens the Moon Spire's entry with the period's blessing. It moves to the wormhole's place once the scene export places it.
+- **A chamber's enemies are its monsters, one list per half, by describe id.** The dump lists them for the Corridor's chambers and for some Moon Spire chambers, and for none of the current period's. Those wait on the game's scene group export for their dungeons, the Moon Spire's dungeons of the current period's floors.
+- **A describe is fought as the one kind the regions place of its monsters.** A describe's monsters are a family of variants, and the dump gives no rule for choosing among them. A describe with exactly one placed kind takes it, one with none is left out, and one with two is an error. No Corridor chamber resolves in full, so no Corridor fight can be started until the kinds the regions do not place are added, or the variant rule is read from the game.
+
 ## Scope and order
 
 **Today:** the Abyss's floors, chambers, clock, halves, monolith, stars, unlocks, rewards and periods are built as pure rules, so the [as-built page](../../specs/genshin/spiral-abyss/design.md) holds them. Nothing enters a chamber, fights one, or shows the Abyss.

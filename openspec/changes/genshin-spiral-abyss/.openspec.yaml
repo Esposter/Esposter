@@ -8,4 +8,7 @@ x-touches:
     "scripts/src/services/genshinAssets/spiralAbyss/**",
     "packages/genshin-world/src/models/spiralAbyss/**",
     "packages/genshin-world/src/services/spiralAbyss/**",
+    "packages/genshin-world/src/components/World/Session/Index.vue",
+    "packages/genshin-world/src/models/screen/ScreenKind.ts",
+    "packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts",
   ]
