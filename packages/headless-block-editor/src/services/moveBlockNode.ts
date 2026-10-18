@@ -23,8 +23,9 @@ const getSlotPointerAfterRemoval = (nodePointer: string, slotPointer: string): s
   return toJsonPointer(shiftedSegments);
 };
 
-// A move is a remove and an add of the same node, refused when the target slot does not accept its type or sits inside it
-// The index is in the target slot once the node is removed, so moving the first of two siblings to the end of their slot is index 1
+// A move is a remove and an add of the same node, refused when the target slot does not accept its type or sits inside
+// It. The index is in the target slot once the node is removed, so moving the first of two siblings to the end of their
+// Slot is index 1
 export const moveBlockNode = (
   document: BlockDocument,
   registry: BlockRegistry,
