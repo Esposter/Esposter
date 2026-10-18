@@ -1718,7 +1718,7 @@ defineExpose({ jumpTo, readCameraPosition });
               inputState.pressedActions.has(PARTY_MEMBER_BURST_INPUT_ACTIONS[index] ?? action),
           );
           if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
-            switchPartyMember(party, partyMemberIndex, context.elapsed);
+            switchPartyMember(party, partyMemberIndex, context.elapsed, kitContext.kitEffectState.effects);
           if (
             !isPaused &&
             screenKind === ScreenKind.World &&
