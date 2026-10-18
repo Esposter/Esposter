@@ -14,6 +14,9 @@ import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Sparkly Explosion, from four constellations, goes off as Klee leaves the field while Sparks 'n' Splash stands, as the
 // Wiki's constellation page and gcsim v2.47.2 (MIT) klee/burst.go give it
@@ -41,6 +44,14 @@ const EXPLOSIVE_SPARK_SOURCE = "Explosive Spark";
 // The seconds past the charged attack's hit its spark's damage bonus lasts, so the step that lands the hit still has it
 const CHARGED_ATTACK_LINGER_SECONDS = 0.1;
 
+// Sparkling Burst, as the dump's Klee_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) klee/asc.go give it: from
+// Ascension 4, a CRIT hit of her charged attack's bomb gives every member of the party 2 energy, once in 0.6 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/asc.go
+const SPARKLING_BURST_ASCENSION = 4;
+const SPARKLING_BURST_ENERGY = 2;
+const SPARKLING_BURST_COOLDOWN_SECONDS = 0.6;
+const SPARKLING_BURST_COOLDOWN_ID = "klee-sparkling-burst-cooldown";
+
 export const KLEE_CHARACTER_ID = 10_000_029;
 
 // Each hit of her normal attacks or Jumpy Dumpty rolls for a spark once a strike of Klee's with Ascension 1 lands, unless
@@ -66,7 +77,7 @@ const rollExplosiveSpark = ({ kitEffectState, random }: KitContext, { combatant 
 
 // Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n' Splash's
 // Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing Delight's Pyro DMG
-// Bonus
+// Bonus. From Ascension 4 a CRIT hit of her charged attack gives the party energy
 export const createKleeKitBehaviour = ({
   readHit,
   readHits,
@@ -133,8 +144,28 @@ export const createKleeKitBehaviour = ({
         castKitSummon(kitEffectState, body, combatant, [bomb]),
     })),
     // From four constellations her leaving the field while her sparks stand, which the swap has just ended, sets off
-    // Sparkly Explosion where they stood, priced as she cast the burst
-    onKitEvent: (event, { kitEffectState }, { characterId, constellationCount }) => {
+    // Sparkly Explosion where they stood, priced as she cast the burst. From Ascension 4 a CRIT hit of her charged attack's
+    // Bomb gives each member of the deployed team its energy, unless one did within the cooldown
+    onKitEvent: (
+      event,
+      { characterIdCombatantMap, kitEffectState, party },
+      { ascension, characterId, constellationCount },
+    ) => {
+      if (event.kind === KitEventKind.DamageTaken) {
+        if (
+          ascension < SPARKLING_BURST_ASCENSION ||
+          !event.isCritical ||
+          event.hit !== chargedAttackBomb ||
+          event.striker.characterId !== characterId ||
+          !startKitCooldown(kitEffectState, characterId, SPARKLING_BURST_COOLDOWN_ID, SPARKLING_BURST_COOLDOWN_SECONDS)
+        )
+          return;
+        for (const memberCharacterId of getDeployedCharacterIds(party)) {
+          const member = characterIdCombatantMap.get(memberCharacterId);
+          if (member) gainPartyMemberEnergy(party, member, SPARKLING_BURST_ENERGY);
+        }
+        return;
+      }
       if (
         event.kind !== KitEventKind.CharacterSwapped ||
         event.previousCharacterId !== characterId ||

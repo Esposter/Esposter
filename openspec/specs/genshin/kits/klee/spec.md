@@ -1,6 +1,6 @@
 ## Purpose
 
-Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her Ascension 1 Explosive Spark built, and her other passives, her other constellations and her Hexerei kit not built.
+Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her Ascension 1 Explosive Spark and her Ascension 4 Sparkling Burst built, and her other constellations and her Hexerei kit not built.
 
 ## Requirements
 
@@ -88,12 +88,23 @@ Klee's plunge attacks SHALL land their low and high bombs at 47 and 48 frames, a
 - **THEN** the low bomb lands at 47 frames and the high bomb at 48 frames
 - **AND** the collision lands on the enemies within reach
 
-### Requirement: Klee's other passives and constellations not yet built
+### Requirement: A CRIT charged attack gives the party energy from Ascension 4
 
-Klee's other passives, her other constellations and her Hexerei kit SHALL NOT take effect.
+From Ascension 4, a CRIT hit of Klee's charged attack SHALL give each member of the deployed team 2 energy, at most once in 0.6 seconds.
 
-#### Scenario: Unbuilt passives do nothing
+#### Scenario: Sparkling Burst on a CRIT charged attack
 
-- **GIVEN** Klee has another passive, a constellation beyond the built ones or the Hexerei kit unlocked
+- **GIVEN** Klee has reached Ascension 4
+- **WHEN** her charged attack's bomb lands a CRIT hit
+- **THEN** each member of the deployed team gains 2 energy
+- **AND** another CRIT hit within 0.6 seconds gives none
+
+### Requirement: Klee's other constellations not yet built
+
+Klee's other constellations and her Hexerei kit SHALL NOT take effect.
+
+#### Scenario: Unbuilt constellations do nothing
+
+- **GIVEN** Klee has a constellation beyond the built ones or the Hexerei kit unlocked
 - **WHEN** the player fights with Klee
-- **THEN** that passive or constellation has no effect
+- **THEN** that constellation has no effect
