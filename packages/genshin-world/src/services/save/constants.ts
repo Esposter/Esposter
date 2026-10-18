@@ -32,10 +32,12 @@ export const MAX_OPENED_CHEST_COUNT = 4096;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
 export const MAX_FOUND_OCULUS_COUNT = 4096;
-// The Seelies a player settles in their courts once each, and the puzzles a player solves once each, across every region
-// The game has, so each bound is the map's with room to spare
-export const MAX_SETTLED_SEELIE_COUNT = 1024;
-export const MAX_SOLVED_PUZZLE_COUNT = 1024;
+// The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
+// Mapped regions, counted from the official map's point list the puzzles build places on 2026-10-18
+export const MAX_SETTLED_SEELIE_COUNT = 547;
+// The puzzles a player solves once each, so the bound is the map's 632 Time Trial Challenge marks and 200 Elemental
+// Monument marks on the ground in the mapped regions, counted from the same point list on the same day
+export const MAX_SOLVED_PUZZLE_COUNT = 832;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
