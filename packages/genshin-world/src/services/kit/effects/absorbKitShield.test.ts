@@ -1,12 +1,13 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
@@ -27,7 +28,7 @@ describe(absorbKitShield, () => {
 
   test("absorbs damage up to its health and gives back the rest, and is spent when its health runs out", () => {
     expect.hasAssertions();
-    const effects: KitEffect[] = [{ characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 }];
+    const effects: KitShield[] = [{ characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 }];
     expect(absorbKitShield(effects, combatant, 40)).toBe(0);
     expect(absorbKitShield(effects, combatant, 80)).toBe(20);
     expect(effects).toStrictEqual([{ characterId: CHARACTER_ID, health: 0, kind: "shield", secondsRemaining: 0 }]);
@@ -35,7 +36,7 @@ describe(absorbKitShield, () => {
 
   test("takes a strike on the character on the field from a shield another character cast", () => {
     expect.hasAssertions();
-    const effects: KitEffect[] = [
+    const effects: KitShield[] = [
       { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 },
     ];
     expect(absorbKitShield(effects, combatant, 40)).toBe(0);
@@ -46,7 +47,7 @@ describe(absorbKitShield, () => {
 
   test("every live shield takes the strike at once, and the character loses the least any of them passes on", () => {
     expect.hasAssertions();
-    const effects: KitEffect[] = [
+    const effects: KitShield[] = [
       { characterId: OTHER_CHARACTER_ID, health: 30, kind: "shield", secondsRemaining: 12 },
       { characterId: CHARACTER_ID, health: 20, kind: "shield", secondsRemaining: 12 },
     ];
@@ -68,7 +69,13 @@ describe(absorbKitShield, () => {
     addKitEffect(kitEffectState, { characterId: CHARACTER_ID, health: 50, kind: "shield", secondsRemaining: 12 });
     const otherCombatant = { ...combatant, characterId: OTHER_CHARACTER_ID };
 
-    expect(absorbKitShield(kitEffectState.effects, otherCombatant, 40)).toBe(0);
+    expect(
+      absorbKitShield(
+        kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect)),
+        otherCombatant,
+        40,
+      ),
+    ).toBe(0);
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 0 },
       { characterId: OTHER_CHARACTER_ID, health: 60, kind: "shield", secondsRemaining: 12 },

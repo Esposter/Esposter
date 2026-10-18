@@ -3,6 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { WILDLIFE_CHARGE_DAMAGE } from "#src/services/wildlife/constants";
 
@@ -10,6 +11,7 @@ import { WILDLIFE_CHARGE_DAMAGE } from "#src/services/wildlife/constants";
 // What none of them absorbs is taken from the member as the share of its Max HP it is
 export const chargePartyMember = (party: Party, combatant: Combatant, kitEffectState: KitEffectState): void => {
   const { maxHealth } = combatant.attributes;
-  const overflow = absorbKitShield(kitEffectState.effects, combatant, WILDLIFE_CHARGE_DAMAGE * maxHealth);
+  const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
+  const overflow = absorbKitShield(shields, combatant, WILDLIFE_CHARGE_DAMAGE * maxHealth);
   damagePartyMember(party, combatant.characterId, overflow / maxHealth);
 };

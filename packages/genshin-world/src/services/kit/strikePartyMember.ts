@@ -26,11 +26,7 @@ export const strikePartyMember = (
 ): KitShieldAbsorbedEvent[] => {
   const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
   const healthsBefore = shields.map((shield) => ({ before: shield.health, shield }));
-  const overflow = absorbKitShield(
-    kitEffectState.effects,
-    combatant,
-    computeEnemyStrikeDamage(enemyTables, enemy, combatant),
-  );
+  const overflow = absorbKitShield(shields, combatant, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
   damagePartyMember(party, combatant.characterId, overflow / combatant.attributes.maxHealth);
   const { attackElement } = EnemyKindTraitsMap[enemy.enemyKindId];
   if (attackElement !== undefined)

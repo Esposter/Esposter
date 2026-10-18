@@ -10,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createZhongliKitBehaviour, ZHONGLI_CHARACTER_ID } from "#src/services/kit/characters/zhongliKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -112,7 +113,11 @@ describe(createZhongliKitBehaviour, () => {
     const cutStrikes = stepKitTestEffects(0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
-    absorbKitShield(kitEffectState.effects, combatant, Number.POSITIVE_INFINITY);
+    absorbKitShield(
+      kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect)),
+      combatant,
+      Number.POSITIVE_INFINITY,
+    );
 
     expect(summonCount).toBe(2);
     expect(shieldHealth).toBeCloseTo(1232.4108 + 0.128 * 10_000);
