@@ -117,6 +117,17 @@ describe("kaeya kit", () => {
     expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
+  test("its Glacial Waltz icicles are dealt as Elemental Burst, the kind gcsim tags them", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createKaeyaCombatant());
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+
+    const icicles = stepKitTestEffects(9, context);
+    expect(icicles.map(({ attackTag }) => attackTag)).toStrictEqual(
+      Array.from({ length: 13 }, () => AttackTag.ElementalBurst),
+    );
+  });
+
   test("ascension 1 heals Kaeya by 15% of his ATK for each enemy Frostgnaw strikes, and gives none before it", () => {
     expect.hasAssertions();
     const hit = takeOne(KAEYA_KIT.elementalSkill.hits);

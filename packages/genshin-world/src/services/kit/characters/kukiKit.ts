@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -104,7 +105,9 @@ export const createKukiKitBehaviour = ({
           tick.activeCombatant.characterId,
           ringMaxHealthHealingShare * maxHealth + ringFlatHealing + ascensionHealing,
         );
-        castKitSummon(tick.kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
+        castKitSummon(tick.kitEffectState, { facing, height, position }, combatant, [ringTickHit], {
+          attackTag: AttackTag.ElementalSkill,
+        });
       },
       secondsRemaining: ringStartSeconds + ringSeconds + SUMMON_LINGER_SECONDS,
       tickIntervalSeconds: ringTickIntervalSeconds,
@@ -119,6 +122,7 @@ export const createKukiKitBehaviour = ({
           body,
           combatant,
           combatant.constellationCount >= BURST_CONSTELLATION ? constellationBurstHits : burstHits,
+          { attackTag: AttackTag.ElementalBurst },
         ),
     },
     getPassiveBonuses,

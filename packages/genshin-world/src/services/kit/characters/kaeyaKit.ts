@@ -92,6 +92,7 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, icicles, {
+          attackTag: AttackTag.ElementalBurst,
           id: GLACIAL_WALTZ_ID,
           secondsRemaining: glacialWaltzSeconds,
         }),
