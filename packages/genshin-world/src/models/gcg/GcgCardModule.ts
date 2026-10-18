@@ -65,9 +65,9 @@ export interface GcgCardModule {
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // A side declares its round's end, for a card on its field, before the declaration counts: the damage the card deals, if any
   onRoundEndDeclared?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
-  // The hits the skill landed, its own damage and its standby piercing alike, with the reactions they triggered
   // The piercing DMG a card deals to every opposing character when its character's shield is depleted by a hit, or none
   onShieldDepleted?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => number | undefined;
+  // The hits the skill landed, its own damage and its standby piercing alike, with the reactions they triggered
   onSkillUsed?: (
     context: GcgEffectContext,
     skill: GcgSkill,
