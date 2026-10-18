@@ -305,7 +305,8 @@ export const createYaoyaoKitBehaviour = ({
 
   return {
     burst: {
-      // Moonjade Descent lasts for its duration, and spawns a Yuegui behind her at each of its three spawns while it lasts
+      // Moonjade Descent lasts for its duration, and spawns a Yuegui behind her at each of its three spawns while it lasts,
+      // The three standing together under one name, as gcsim keeps each
       onStart: (context) => {
         const { activeCombatant: combatant, kitEffectState } = context;
         const { characterId } = combatant;
@@ -319,6 +320,7 @@ export const createYaoyaoKitBehaviour = ({
             const yueguiCentre = createAheadBody(tick.body, -JUMPING_YUEGUI_METRES).position;
             castKitField(tick.kitEffectState, characterId, yueguiCentre, {
               id: JUMPING_YUEGUI_ID,
+              isStacked: true,
               nextTickSeconds: yueguiFirstThrowSeconds,
               onTick: (throwContext) => {
                 throwRadish(throwContext, combatant, yueguiCentre, burstRadish, burstRadishHeal);

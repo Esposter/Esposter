@@ -1,6 +1,16 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.frostfallStorm.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
+  },
+  "hits.frostfallStorm.element": { "cause": "Unclassified", "value": "Ice" },
+  "hits.frostfallStorm.gauge": { "cause": "Unclassified", "value": 25 },
+  "hits.frostfallStorm.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "hits.frostfallStorm.internalCooldownTag": { "cause": "Unclassified", "value": "CitlaliFrostfallStorm" },
+  "hits.frostfallStorm.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 10732 } },
+  "hits.frostfallStorm.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

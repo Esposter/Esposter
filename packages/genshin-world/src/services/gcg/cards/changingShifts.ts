@@ -4,8 +4,7 @@ import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitch
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-
-const CHANGING_SHIFTS_ID = 332_002;
+import { CHANGING_SHIFTS_ID } from "#src/services/gcg/cards/constants";
 
 // Changing Shifts: the next time its side switches characters, one die of any face less is spent, for one usage
 export const changingShifts: GcgCardModule = {

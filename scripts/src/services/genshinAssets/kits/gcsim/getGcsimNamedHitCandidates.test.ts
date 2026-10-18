@@ -69,6 +69,15 @@ describe(getGcsimNamedHitCandidates, () => {
     talentMultiplierMap: {},
     weaponType: WeaponType.Bow,
   };
+  // The Lunar reaction a named hit of the burst's literal gets, its literal's attack tag set to the one given
+  const readLunarReaction = (attackTag: string) =>
+    getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates(
+        { ...gcsim, attacks: [{ ...gcsim.attacks[0], attackTag, fieldLineMap: { AttackTag: 9, Element: 11 } }] },
+        tables,
+      ),
+    ).get("hits.fieryRainArrows.0.lunarReactionType");
 
   test("joins a named hit's multiplier to the one literal of its talent variable, and to none for another group", () => {
     expect.hasAssertions();
@@ -87,6 +96,37 @@ describe(getGcsimNamedHitCandidates, () => {
       { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
+  });
+
+  test("joins a named hit's fields to its variable's one literal where gcsim reassigns that literal's multiplier, and to none for two literals", () => {
+    expect.hasAssertions();
+
+    // Gcsim reassigns a literal's Mult in a closure, a second attack at the literal's own declaration, not a second literal
+    const reassigned = { ...gcsim.attacks[0], line: 14 };
+    const reassignedJoined = getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, reassigned] }, tables),
+    );
+    // A second literal of the variable, declared at its own line, is two literals, so the named hit takes none of them
+    const secondLiteral = { ...gcsim.attacks[0], line: 20, siteLine: 20 };
+    const twoLiteralsJoined = getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, secondLiteral] }, tables),
+    );
+
+    expect(reassignedJoined.get("hits.fieryRainArrows.0.element")?.map(({ value }) => value)).toStrictEqual([
+      Element.Pyro,
+    ]);
+    expect(twoLiteralsJoined.get("hits.fieryRainArrows.0.element")).toBeUndefined();
+  });
+
+  test("gives a named hit the Lunar reaction its literal's attack tag names, from the tag's line, and none for another tag", () => {
+    expect.hasAssertions();
+
+    expect(readLunarReaction("attacks.AttackTagDirectLunarCharged")).toStrictEqual([
+      { provenance: { file: "internal/characters/amber/burst.go", line: 9, source: "Gcsim" }, value: "LunarCharged" },
+    ]);
+    expect(readLunarReaction("attacks.AttackTagElementalBurst")).toBeUndefined();
   });
 
   test("joins a named hit's multiplier to its variable's array by value, where no talent row names it", () => {
@@ -116,7 +156,11 @@ describe(getGcsimNamedHitCandidates, () => {
     expect(joined.get("hits.kick.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
       { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
-    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toMatchObject({ line: 7 });
+    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toStrictEqual({
+      file: "internal/characters/amber/amber.go",
+      line: 7,
+      source: "Gcsim",
+    });
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
@@ -186,13 +230,14 @@ describe(getGcsimNamedHitCandidates, () => {
     ).toStrictEqual([[KitProvisionalCause.NoPoiseSource, 0]]);
   });
 
-  test("joins a skill hold's and a stance's hit to the same talent variable, and a non-hit multiplier to none", () => {
+  test("joins a single hit's, a skill hold's and a stance's multiplier by its value to the one candidate of its key, and a multiplier of no named hit to none", () => {
     expect.hasAssertions();
 
     const namedHitCandidateMap = getGcsimNamedHitCandidates(gcsim, tables);
     const joined = getNamedHitKitCandidates(
       new Map<string, unknown>([
         ["hitFields.dragonBreath.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
+        ["hitFields.otherBreath.multiplier", { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
         ["skillHolds.0.action.hits.0.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
         [
           "stances.windfavored.normalAttacks.0.hits.0.multiplier",
@@ -203,9 +248,11 @@ describe(getGcsimNamedHitCandidates, () => {
     );
 
     expect([...joined.keys()].filter((path) => path.endsWith(".element"))).toStrictEqual([
+      "hitFields.dragonBreath.element",
       "skillHolds.0.action.hits.0.element",
       "stances.windfavored.normalAttacks.0.hits.0.element",
     ]);
+    expect(joined.get("hitFields.dragonBreath.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
   });
 
   test("gives a call after an if else's branches to the attack of each branch, so each branch's list takes it", () => {

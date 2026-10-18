@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
@@ -24,7 +24,7 @@ const PYRO_REACTIONS = [
 
 // Oath of Qhapaq Nan at its rank: after a party member triggers a Pyro-related reaction, on the field or not, the wielder's
 // Elemental Skill DMG rises by the rank's amount for the rank's seconds
-export const createOathOfQhapaqNanPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createOathOfQhapaqNanPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {

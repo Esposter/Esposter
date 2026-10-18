@@ -2,7 +2,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 
-export const SESSHOU_SAKURA_ID = 114_081;
 const SESSHOU_SAKURA_DAMAGE = 1;
 const SESSHOU_SAKURA_MAX_USAGES = 6;
 // The usages a Sesshou Sakura needs left to strike when its side declares the round's end

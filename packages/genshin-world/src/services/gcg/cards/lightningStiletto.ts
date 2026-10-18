@@ -2,9 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { takeOne } from "@esposter/shared";
-
-const KEQING_ID = 1403;
-const STELLAR_RESTORATION_ID = 14_032;
+import { KEQING_ID, STELLAR_RESTORATION_ID } from "#src/services/gcg/cards/constants";
 
 // Lightning Stiletto, Keqing's talent: Keqing is switched in for free, through the switch path, and she uses Stellar
 // Restoration once in its talent variant, which grants her Electro Infusion and creates no other Lightning Stiletto. The

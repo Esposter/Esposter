@@ -29,6 +29,12 @@ Kuki's elemental skill SHALL create a ring that every 90 frames from its 23rd he
 - **THEN** the active character is healed
 - **AND** the ring strikes two frames later
 
+#### Scenario: A second cast replaces the ring
+
+- **GIVEN** Grass Ring of Sanctification is on the field
+- **WHEN** Kuki casts Sanctifying Ring again
+- **THEN** the new ring replaces the old one, and one ring stands
+
 #### Scenario: Drain stops at the floor
 
 - **GIVEN** Kuki's health is at or near 20%

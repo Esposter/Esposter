@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { createAttackInstancePassiveModule } from "#src/services/weapon/passives/createAttackInstancePassiveModule";
@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 // Wielder deals, and ends after the rank's DMG instances or seconds, whichever comes first. The instances counted are the
 // Ones those two hits deal once it is obtained. The rank's CRIT Rate line is a table line the weapon carries whatever its
 // Conditions, so this passive does not repeat it
-export const createWhitemoonBristlePassiveModule = (params: number[]): WeaponPassiveModule =>
+export const createWhitemoonBristlePassiveModule = (params: number[]): PassiveModule =>
   createAttackInstancePassiveModule({
     attackTags: [AttackTag.NormalAttack, AttackTag.ElementalSkill],
     checkIsObtainedBy: (event) => event.attackTag === AttackTag.NormalAttack && event.hit.element !== undefined,

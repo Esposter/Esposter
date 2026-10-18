@@ -17,6 +17,7 @@ import {
 } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
+import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
@@ -114,6 +115,11 @@ export const createGcsimKitCandidateWriter = (
         else if (attack.durability !== undefined)
           add(`${path}.gauge`, attack.durability / GCSIM_DURABILITY_PER_GAUGE, fieldFile, fieldLine("Durability"));
       }
+      // A direct Lunar tag is the Lunar reaction the hit's damage is dealt as, from the tag's own line
+      const lunarReactionType =
+        attack.attackTag === undefined ? undefined : GcsimAttackTagLunarReactionTypeMap[attack.attackTag];
+      if (lunarReactionType !== undefined)
+        add(`${path}.lunarReactionType`, lunarReactionType, fieldFile, fieldLine("AttackTag"));
       // A literal with no tag or strike type has gcsim's zero values, no tag and the default strike
       add(
         `${path}.internalCooldownTag`,

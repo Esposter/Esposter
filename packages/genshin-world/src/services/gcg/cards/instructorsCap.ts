@@ -2,8 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
+import { INSTRUCTORS_CAP_ID } from "#src/services/gcg/cards/constants";
 
-const INSTRUCTORS_CAP_ID = 312_005;
 const INSTRUCTORS_CAP_LIMIT = 3;
 
 // Instructor's Cap, an artifact on a character: after the character's skill triggers an Elemental Reaction, an Elemental Die

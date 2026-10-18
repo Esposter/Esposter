@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import type { Attribute } from "#src/models/character/Attribute";
 
@@ -25,7 +25,7 @@ export interface BondOfLifeSkillPassiveOptions {
 export const createBondOfLifeSkillPassiveModule = (
   params: number[],
   { clearedAttributes, priceClearedAmount, skillAttributes, source }: BondOfLifeSkillPassiveOptions,
-): WeaponPassiveModule => {
+): PassiveModule => {
   const skillAmount = takeOne(params, 0);
   const skillSeconds = takeOne(params, 1);
   const bondOfLifeShare = takeOne(params, 2);

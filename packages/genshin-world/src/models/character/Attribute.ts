@@ -18,6 +18,7 @@ export enum Attribute {
   CriticalRate = "FIGHT_PROP_CRITICAL",
   CryoDamageBonus = "FIGHT_PROP_ICE_ADD_HURT",
   CryoResistance = "FIGHT_PROP_ICE_SUB_HURT",
+  DamageReduction = "FIGHT_PROP_SUB_HURT",
   Defense = "FIGHT_PROP_DEFENSE",
   DefensePercent = "FIGHT_PROP_DEFENSE_PERCENT",
   DendroDamageBonus = "FIGHT_PROP_GRASS_ADD_HURT",

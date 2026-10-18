@@ -1,11 +1,11 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { takeOne } from "@esposter/shared";
 
 // Rust at its rank: a normal attack its wielder deals is raised by the rank's percentage of DMG, and a charged attack is
 // Lowered by the rank's second percentage
-export const createRustPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createRustPassiveModule = (params: number[]): PassiveModule => {
   const normalAttackBonus = takeOne(params, 0);
   const chargedAttackPenalty = takeOne(params, 1);
   return {

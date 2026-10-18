@@ -4,7 +4,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery. Her Ascension 1 passive and Constellations 1 and 6 are not built.** Constellation 4's Energy is built, see the Decisions. Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass.
+- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery. Her Ascension 1 passive and Constellations 1 and 6 are not built.** Constellation 4's Energy is built, see the Decisions. Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), and the discharge gcsim places on its primary target lands on `KitContext.primaryTarget`, so they wait only on her kit's next pass.
 
 ## Decisions
 

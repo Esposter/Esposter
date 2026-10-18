@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
@@ -16,7 +16,7 @@ const EXILE_TICK_INTERVAL_SECONDS = 2;
 // That energy for every other member of the deployed team on each tick of a field with no edge, for those seconds. The
 // Energy is flat, as Energy Recharge does not raise it, and a burst while the field still ticks, its wearer's or another
 // Wearer's, starts no second one, as gcsim (MIT) exile.go rejects it
-export const createExileSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
+export const createExileSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const energy = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {

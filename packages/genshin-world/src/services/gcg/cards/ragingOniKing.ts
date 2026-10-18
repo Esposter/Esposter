@@ -6,7 +6,6 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { takeOne } from "@esposter/shared";
 
-export const RAGING_ONI_KING_ID = 116_053;
 const RAGING_ONI_KING_BONUS = 1;
 const RAGING_ONI_KING_ROUNDS = 2;
 

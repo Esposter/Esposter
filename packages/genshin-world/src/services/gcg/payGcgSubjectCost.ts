@@ -9,6 +9,7 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { reduceGcgCosts } from "#src/services/gcg/effects/reduceGcgCosts";
+import { surchargeGcgCosts } from "#src/services/gcg/effects/surchargeGcgCosts";
 import { payGcgCost } from "#src/services/gcg/payGcgCost";
 import { takeOne } from "@esposter/shared";
 
@@ -29,7 +30,7 @@ export const payGcgSubjectCost = (
   if (character.energy < energyCost) return false;
   let reducedCosts = costs;
   const appliedReductions: GcgZoneCard[] = [];
-  for (const zoneCard of listGcgCostCards(side, characterIndex, subject.switchTo)) {
+  for (const zoneCard of listGcgCostCards(side, characterIndex)) {
     const module = GcgCardIdModuleMap.get(zoneCard.cardId);
     const reduction = module?.reduceCost?.(
       listGcgCardContext(context, side, zoneCard),
@@ -39,6 +40,19 @@ export const payGcgSubjectCost = (
     if (!reduction) continue;
     reducedCosts = reduceGcgCosts(reducedCosts, reduction, character.character.element);
     appliedReductions.push(zoneCard);
+  }
+  // A card on the other side may surcharge the cost, in the dice it adds, and hears the payment only once it is paid
+  const otherSideIndex = 1 - context.sideIndex;
+  const surchargeCards: GcgZoneCard[] = [];
+  for (const zoneCard of listGcgFieldCards(takeOne(context.duel.sides, otherSideIndex), undefined)) {
+    const count = GcgCardIdModuleMap.get(zoneCard.cardId)?.surchargeCost?.(
+      { duel: context.duel, sideIndex: otherSideIndex },
+      { ...subject, costs: reducedCosts, element: character.character.element },
+      zoneCard,
+    );
+    if (!count) continue;
+    reducedCosts = surchargeGcgCosts(reducedCosts, count);
+    surchargeCards.push(zoneCard);
   }
   if (!payGcgCost(side, character.character.element, reducedCosts, paidDiceIndices)) return false;
   character.energy -= energyCost;
@@ -50,18 +64,24 @@ export const payGcgSubjectCost = (
       zoneCard,
     );
   }
+  for (const zoneCard of surchargeCards)
+    GcgCardIdModuleMap.get(zoneCard.cardId)?.onCostPaid?.(
+      { duel: context.duel, sideIndex: otherSideIndex },
+      { ...subject, costs: reducedCosts, element: character.character.element },
+      zoneCard,
+    );
   return true;
 };
 
-// The cards a cost's reductions are read from: the field of the character paying, and for a switch, the cards attached to
-// The character it brings in
-const listGcgCostCards = (side: GcgSideState, characterIndex: number, switchTo: number | undefined): GcgZoneCard[] => {
-  const incoming = switchTo === undefined ? undefined : side.characters.at(switchTo);
-  return [
-    ...listGcgFieldCards(side, characterIndex),
-    ...(incoming ? [...incoming.equipments, ...incoming.statuses] : []),
-  ];
-};
+// The cards a cost's reductions are read from: the field of the character paying, then every other character's equipments
+// And statuses, since a side-wide card reduces a cost whoever pays it (a switch's incoming character among them). A card that
+// Reduces only its own holder's costs checks that the holder is the active character, the one paying
+const listGcgCostCards = (side: GcgSideState, characterIndex: number): GcgZoneCard[] => [
+  ...listGcgFieldCards(side, characterIndex),
+  ...side.characters.flatMap((character, index) =>
+    index === characterIndex ? [] : [...character.equipments, ...character.statuses],
+  ),
+];
 
 // The context a card's reduction is read in, naming the character the card is attached to when it is one's
 const listGcgCardContext = (
