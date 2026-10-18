@@ -163,6 +163,19 @@ describe(createAlbedoKitBehaviour, () => {
     expect(kitEffectState.effects).toHaveLength(1);
   });
 
+  test("a hit as the Solar Isotoma's seconds run out, before the step drops it, sets off no Transient Blossom", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant();
+    const kitEffectState: KitEffectState = { effects: [{ ...createStandingSolarIsotoma(), secondsRemaining: 0 }] };
+    ALBEDO_KIT.onKitEvent?.(
+      createDamageTaken({ x: 0, z: 0 }),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
+
+    expect(kitEffectState.effects).toHaveLength(1);
+  });
+
   test("the Fatal Blossoms land seven times from 145 frames, every 5 frames, while the Solar Isotoma stands", () => {
     expect.hasAssertions();
     const blossomSummon = castEffects(ALBEDO_KIT.elementalBurst, [createStandingSolarIsotoma()]).findLast(
@@ -230,6 +243,25 @@ describe(createAlbedoKitBehaviour, () => {
       const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
 
       expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(1.2 * combatant.attributes.defense);
+    });
+
+    test("the flat damage takes Albedo's DEF with the buffs on her", () => {
+      expect.hasAssertions();
+      const combatant = createAlbedoCombatant(0, 2);
+      const defenseBuff: KitBuff = {
+        amount: 0.5,
+        attribute: Attribute.DefensePercent,
+        characterId: ALBEDO_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 20,
+      };
+      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma(), defenseBuff] };
+      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+      strikeInsideField(context, combatant);
+      ALBEDO_KIT.elementalBurst.onStart?.(context);
+      const [fatalBlossom] = findLastSummon(kitEffectState.effects)?.hits ?? [];
+
+      expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * 1.5 * combatant.attributes.defense);
     });
 
     test("a Constellation 1 Albedo's Fatal Blossoms take no Fatal Reckoning damage", () => {

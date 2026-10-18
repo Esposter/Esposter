@@ -1,4 +1,5 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -15,6 +16,7 @@ import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -85,8 +87,10 @@ const withFatalReckoningBonus = (hit: KitHit, bonus: number): KitHit => ({
   additiveBaseDamageBonus: () => bonus,
 });
 
-// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom
-const consumeFatalReckoningBonus = (kitEffectState: KitEffectState, combatant: Combatant): number => {
+// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom, priced
+// By Albedo's DEF with the buffs on her
+const consumeFatalReckoningBonus = (context: KitContext): number => {
+  const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
   const { characterId } = combatant;
   if (
     combatant.constellationCount < ALBEDO_CONSTELLATION_2 ||
@@ -96,7 +100,8 @@ const consumeFatalReckoningBonus = (kitEffectState: KitEffectState, combatant: C
   const status = findKitStatus(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID);
   const stacks = status?.stacks ?? 0;
   if (status) status.stacks = 0;
-  return stacks * FATAL_RECKONING_DEFENSE_SHARE * combatant.attributes.defense;
+  const { defense } = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes;
+  return stacks * FATAL_RECKONING_DEFENSE_SHARE * defense;
 };
 
 // Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon that
@@ -126,8 +131,9 @@ export const createAlbedoKitBehaviour = ({
   return {
     // Each Fatal Blossom is cast with the Solar Isotoma as a summon, as its own clock runs past the animation
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
-        const fatalReckoningBonus = consumeFatalReckoningBonus(kitEffectState, combatant);
+      onStart: (context) => {
+        const { activeCombatant: combatant, kitEffectState, party } = context;
+        const fatalReckoningBonus = consumeFatalReckoningBonus(context);
         const blossoms =
           fatalReckoningBonus === 0
             ? fatalBlossoms
@@ -156,7 +162,8 @@ export const createAlbedoKitBehaviour = ({
       const { characterId } = combatant;
       const { effects } = kitEffectState;
       const solarIsotoma = findStandingKitSummon(effects, SOLAR_ISOTOMA_ID, characterId);
-      if (!solarIsotoma) return;
+      // A field whose seconds have run out lands nothing, though the step has not dropped it yet
+      if (!solarIsotoma || solarIsotoma.secondsRemaining <= 0) return;
       const { position } = event.enemy;
       if (
         Math.hypot(position.x - solarIsotoma.body.position.x, position.z - solarIsotoma.body.position.z) >
