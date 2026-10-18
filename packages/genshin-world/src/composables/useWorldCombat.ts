@@ -14,6 +14,7 @@ import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -200,6 +201,9 @@ export const useWorldCombat = ({
       getEnemyDroppedItems(enemyDrops),
     );
     events.emit("defeatEnemy", enemy);
+    events.emit("achievementEvents", [
+      { kind: AchievementEventKind.MonsterDefeated, quantity: 1, targetId: String(enemy.enemyKindId) },
+    ]);
     events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
   };
   // A team that has all fallen revives at the share the game brings it back with, and is jumped to where the host places it

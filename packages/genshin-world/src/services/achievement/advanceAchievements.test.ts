@@ -4,6 +4,8 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { describe, expect, test } from "vitest";
 
+const defeat = (targetId: string) => ({ kind: AchievementEventKind.MonsterDefeated, quantity: 1, targetId });
+
 describe(advanceAchievements, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const PRIMOGEMS = 5;
@@ -210,6 +212,35 @@ describe(advanceAchievements, () => {
     expect(secondOpening).toStrictEqual({
       primogems: PRIMOGEMS,
       progressMap: new Map([[COUNTED_ID, { count: 2, finishedAt: EPOCH }]]),
+    });
+  });
+
+  test("a multi-id AND trigger counts each named id once, and is done when every named id is counted", () => {
+    expect.hasAssertions();
+    const FIRST_MONSTER_ID = "41";
+    const SECOND_MONSTER_ID = "42";
+    const THIRD_MONSTER_ID = "43";
+    const everyMonster: Achievement = {
+      ...counted,
+      progress: 1,
+      trigger: {
+        parameters: [[FIRST_MONSTER_ID, SECOND_MONSTER_ID, THIRD_MONSTER_ID]],
+        type: "TRIGGER_BATTLE_FOR_MONSTER_DIE_AND",
+      },
+    };
+    const firstDefeat = advanceAchievements([everyMonster], new Map(), defeat(FIRST_MONSTER_ID), EPOCH);
+    expect(firstDefeat).toStrictEqual({
+      primogems: 0,
+      progressMap: new Map([[COUNTED_ID, { count: 1, countedTargetIds: [FIRST_MONSTER_ID] }]]),
+    });
+    expect(advanceAchievements([everyMonster], firstDefeat.progressMap, defeat(FIRST_MONSTER_ID), EPOCH)).toStrictEqual(
+      firstDefeat,
+    );
+    const secondDefeat = advanceAchievements([everyMonster], firstDefeat.progressMap, defeat(SECOND_MONSTER_ID), EPOCH);
+    const thirdDefeat = advanceAchievements([everyMonster], secondDefeat.progressMap, defeat(THIRD_MONSTER_ID), EPOCH);
+    expect(thirdDefeat).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 3, finishedAt: EPOCH }]]),
     });
   });
 

@@ -34,7 +34,11 @@ export const advanceAchievements = (
     const isLevel = levelSlot !== undefined;
     const isCountedOnce = !isLevel && !isAnyTarget && !watch.countsQuantity;
     if (isCountedOnce && countedTargetIds.includes(event.targetId)) continue;
-    const target = isLevel ? Number(achievement.trigger.parameters[levelSlot]?.[0]) : achievement.progress;
+    const target = isLevel
+      ? Number(achievement.trigger.parameters[levelSlot]?.[0])
+      : watch.everyTarget
+        ? namedTargetIds.length
+        : achievement.progress;
     if (!Number.isInteger(target) || target <= 0) continue;
     const count = isLevel
       ? Math.min(event.quantity, target)
