@@ -211,3 +211,49 @@ Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two s
 - **GIVEN** Ellin's deck is played in a duel
 - **WHEN** the battle begins
 - **THEN** its side starts with the Flowfire Edge and Elemental Lifeform statuses and no cards
+
+### Requirement: A defeat a card answers restores the character, once
+
+A character about to fall SHALL first be offered to the cards attached to it. A card that answers SHALL restore the character to the HP it names and spend itself, and a character with no answer SHALL fall as before.
+
+#### Scenario: Fiery Rebirth restores Abyss Lector to 4 HP once
+
+- **GIVEN** Abyss Lector has 3 HP and Fiery Rebirth attached
+- **WHEN** an opposing skill deals her 5 Pyro DMG
+- **THEN** she stands at 4 HP with Fiery Rebirth triggered, and a second lethal hit defeats her
+
+#### Scenario: Electro Crystal Core restores Electro Hypostasis to 1 HP once
+
+- **GIVEN** Electro Hypostasis has 2 HP and Electro Crystal Core attached
+- **WHEN** a lethal hit lands on her
+- **THEN** she stands at 1 HP, the Electro Crystal Core is spent, and the next lethal hit defeats her
+
+### Requirement: A skill prepared for a side runs as its turn begins
+
+A side's prepared skills SHALL run as its turn begins, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn.
+
+#### Scenario: Rock-Paper-Scissors Combo's preparations run at the next turn
+
+- **GIVEN** Electro Hypostasis uses Rock-Paper-Scissors Combo, preparing Scissors and Paper
+- **WHEN** the turn passes to that side
+- **THEN** Scissors deals 2 Electro DMG and Paper deals 3 Electro DMG to the opposing active character before the side chooses, and Scissors' own preparation of Paper waits for the turn after
+
+### Requirement: A card on one side surcharges the other side's switch once a round
+
+A card's surcharge on a switch SHALL add its dice to the switch cost the opposing side pays, once that cost is paid the surcharging card SHALL hear the payment, and Chains of Warding Thunder SHALL surcharge at most one switch a round.
+
+#### Scenario: Chains of Warding Thunder adds one die to the first switch of a round
+
+- **GIVEN** a side holds Chains of Warding Thunder, and the opposing side holds a character it can switch to
+- **WHEN** the opposing side switches for the first time this round
+- **THEN** the switch costs one die more, and a second switch in the same round costs no more than its own cost
+
+### Requirement: A depleted shield is answered by the card attached to its character
+
+A hit that takes a character's shield to 0 SHALL call each card attached to that character that answers depletion, and the piercing DMG the card names SHALL reach every opposing character, the active one and those on standby alike.
+
+#### Scenario: Aegis of Abyssal Flame answers the depletion of Abyss Lector's shield
+
+- **GIVEN** Abyss Lector has 2 shield points and Aegis of Abyssal Flame attached, and the opposing side has an active character and one on standby
+- **WHEN** a 3 Physical hit lands on Abyss Lector
+- **THEN** her shield is gone and she stands at 9 HP, each opposing character takes 1 piercing DMG, and the Aegis is spent

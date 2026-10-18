@@ -36,7 +36,9 @@ export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Elem
 // 11005's Cat-Claw Shield; the Oceanic Mimics of decks 2, 4 and 11005, which the Oceanid Mimic (122010) that Rhodeia of
 // Loch's skills name stands for; and deck 13105's Shadowsword summons, Niwabi Enshou, Aurous Blaze and Oz, which its
 // Characters' skills create. Deck 12305's are Chonghua Frost Field, Icy Quill, Talisman Spirit and Yaksha's Mask, which its
-// Characters' skills create too
+// Characters' skills create too. Deck 14410's are Tengu Juurai: Ambush and Stormcluster, Crowfeather Cover, Darkfire Furnace,
+// Fiery Rebirth, Aegis of Abyssal Flame, Chains of Warding Thunder, Electro Crystal Core and the three Hilichurl summons, which
+// its characters' skills and cards create
 export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number, number[]>([
   [1, [113_011, 113_031, 112_031, 112_032]],
   [2, [113_021, 113_022, 114_011, 122_010, 122_011, 122_012, 122_013]],
@@ -52,6 +54,7 @@ export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number,
   [13_005, [111_051, 111_052]],
   [13_105, [113_051, 113_052, 114_011, 125_011, 125_012]],
   [14_405, [112_051, 112_052, 114_081, 114_083, 116_051, 116_053, 116_054]],
+  [14_410, [114_061, 114_062, 114_063, 123_021, 123_022, 123_024, 124_013, 124_014, 303_211, 303_213, 303_214]],
   [30_111, [113_011, 111_031, 115_011]],
   [30_112, [113_031, 114_011, 111_031]],
 ]);
