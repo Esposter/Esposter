@@ -177,11 +177,7 @@ export const useWorldCombat = ({
       health: partyMember.healthShare * combatant.attributes.maxHealth,
       level: combatant.level,
       maxHealth: combatant.attributes.maxHealth,
-      skillCooldown: getSkillReadySeconds(
-        combatant.kit,
-        combatant.elementalResonances,
-        partyMember.skillCooldownSeconds,
-      ),
+      skillCooldown: getSkillReadySeconds(combatant.kit, combatant, partyMember.skillCooldownSeconds),
       skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
       weaponType: combatant.weaponType,
     };

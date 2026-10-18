@@ -56,8 +56,7 @@ export const startNextKitAction = (
   }
 
   // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set
-  const isSkillReady =
-    getSkillReadySeconds(kit, context.activeCombatant.elementalResonances, partyMember.skillCooldownSeconds) <= 0;
+  const isSkillReady = getSkillReadySeconds(kit, context.activeCombatant, partyMember.skillCooldownSeconds) <= 0;
   const isChaining = kitState.skillChainCount > 0;
   const isSkillTriggered = kit.elementalSkillHolds ? kitState.skillReleasedSeconds > 0 : isSkillPressed;
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {

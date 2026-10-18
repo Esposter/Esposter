@@ -1,5 +1,5 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
 
@@ -7,15 +7,13 @@ import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/ge
 // Seconds until every charge is back, each use adding its own, so a charge stands to use once no more than the other
 // Charges' cooldowns are left, each shortened by Impetuous Winds as a use's is, and a skill of one charge waits out the
 // Whole of it
-export const getSkillReadySeconds = (
-  kit: Kit,
-  elementalResonances: readonly ElementalResonance[],
-  skillCooldownSeconds: number,
-): number =>
-  Math.max(
+export const getSkillReadySeconds = (kit: Kit, combatant: Combatant, skillCooldownSeconds: number): number => {
+  const charges = (kit.elementalSkillCharges ?? 1) + (kit.getSkillChargeBonus?.(combatant) ?? 0);
+  return Math.max(
     0,
     skillCooldownSeconds -
-      ((kit.elementalSkillCharges ?? 1) - 1) *
+      (charges - 1) *
         kit.skillCooldownSeconds *
-        getImpetuousWindsSkillCooldownMultiplier(elementalResonances),
+        getImpetuousWindsSkillCooldownMultiplier(combatant.elementalResonances),
   );
+};
