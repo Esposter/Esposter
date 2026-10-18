@@ -18,7 +18,7 @@ describe(computeUnlockedStatuePointIds, () => {
     region: ExpeditionRegion.Mondstadt,
     statuePointId: STATUE_POINT_ID,
   };
-  const isPlaceOpen = (regions: StatueProgressSave["regions"]) =>
+  const checkIsPlaceOpen = (regions: StatueProgressSave["regions"]): boolean =>
     checkIsExpeditionPlaceOpen(place, {
       adventureRank: RANK_LEVEL,
       completedQuestIds: new Set(),
@@ -28,15 +28,15 @@ describe(computeUnlockedStatuePointIds, () => {
   test("a place opens when its statue is resonated", () => {
     expect.hasAssertions();
 
-    expect(isPlaceOpen({ mondstadt: { claimedLevel: 0, heldCount: 0, level: 1 } })).toBe(true);
+    expect(checkIsPlaceOpen({ mondstadt: { claimedLevel: 0, heldCount: 0, level: 1 } })).toBe(true);
   });
 
   test("a place whose statue is not resonated stays closed", () => {
     expect.hasAssertions();
 
-    expect([isPlaceOpen({ mondstadt: { claimedLevel: 0, heldCount: 0, level: 0 } }), isPlaceOpen({})]).toStrictEqual([
-      false,
-      false,
-    ]);
+    expect([
+      checkIsPlaceOpen({ mondstadt: { claimedLevel: 0, heldCount: 0, level: 0 } }),
+      checkIsPlaceOpen({}),
+    ]).toStrictEqual([false, false]);
   });
 });

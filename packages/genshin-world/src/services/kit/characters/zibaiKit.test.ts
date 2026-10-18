@@ -132,7 +132,8 @@ describe(createZibaiKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = createZibaiCombatant();
     const context = createKitTestContext(combatant);
-    const isShiftActive = () => findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID) !== undefined;
+    const checkIsShiftActive = (): boolean =>
+      findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID) !== undefined;
     const playStride = () =>
       findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID)?.combatant.kit.elementalSkill.onStart?.(
         context,
@@ -146,9 +147,9 @@ describe(createZibaiKitBehaviour, () => {
     );
     playStride();
     playStride();
-    expect(isShiftActive()).toBe(true);
+    expect(checkIsShiftActive()).toBe(true);
     playStride();
-    expect(isShiftActive()).toBe(false);
+    expect(checkIsShiftActive()).toBe(false);
   });
 
   test("spirit steed's stride starts only with 70 radiance held", () => {

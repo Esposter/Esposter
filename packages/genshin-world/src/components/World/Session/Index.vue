@@ -383,19 +383,26 @@ const {
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
-const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoint, openFishingPoint, stepFishing } =
-  useWorldFishing({
-    gameDataBaseUrl,
-    getRegionIds: () => [...(windrise.value?.regionDataMap.keys() ?? [])],
-    getWorldNow,
-    inventory,
-    materialDataMap,
-    names: nameText,
-    questProgressMap,
-    quests,
-    random: () => kitContext.random(),
-    setInventory,
-  });
+const {
+  castView,
+  checkIsFishingPoint,
+  closeFishing,
+  fishingPointPlaces,
+  isFishingOpen,
+  openFishingPoint,
+  stepFishing,
+} = useWorldFishing({
+  gameDataBaseUrl,
+  getRegionIds: () => [...(windrise.value?.regionDataMap.keys() ?? [])],
+  getWorldNow,
+  inventory,
+  materialDataMap,
+  names: nameText,
+  questProgressMap,
+  quests,
+  random: () => kitContext.random(),
+  setInventory,
+});
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
   adventureExp,
@@ -1812,7 +1819,7 @@ defineExpose({ jumpTo, readCameraPosition });
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
               resonateStatue(interactable.id);
-            } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
+            } else if (interactable?.kind === InteractionKind.Use && checkIsFishingPoint(interactable.id)) {
               openFishingPoint(interactable.id);
               screenKind = ScreenKind.Fishing;
             } else if (interactable?.id === FORGE_INTERACTABLE_ID) {
