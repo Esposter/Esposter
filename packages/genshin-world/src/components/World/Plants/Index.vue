@@ -10,7 +10,7 @@ import type {
   TreeOptions,
 } from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
-import type { Node, UniformNode } from "three/webgpu";
+import type { Node, Renderer, UniformNode } from "three/webgpu";
 
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 import {
@@ -24,7 +24,7 @@ import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColo
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { composePlantPlaceMatrix } from "#src/services/world/composePlantPlaceMatrix";
 import { withFinalizer } from "@esposter/shared";
-import { useLoop, useTres } from "@tresjs/core";
+import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
   createImpostorMaterial,
   createInstancedGeometry,
@@ -36,7 +36,6 @@ import {
 } from "genshin-engine";
 import { Group, Matrix4, Mesh, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
-import { WebGPURenderer } from "three/webgpu";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each plant stands on
@@ -124,7 +123,7 @@ if (domeMatrices.length > 0)
   );
 
 // The oak's impostor is baked once from its mesh on the first frame the renderer can draw, then each tree is one card
-const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
+const bakeOakImpostor = (webGPURenderer: Renderer): void => {
   const { branchGeometry, leafGeometry } = createTreeGeometry(treeSpeciesOptionsMap[TreeSpecies.GreatOak]);
   const impostor = withFinalizer(
     () =>
@@ -156,7 +155,7 @@ const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
 
 // Every batch's pass runs each frame, its clip matrix taken from the camera the frame draws with, as the grass's is
 onBeforeRender(() => {
-  if (!(renderer instanceof WebGPURenderer)) return;
+  if (!isWebGPURenderer(renderer)) return;
   if (!oakImpostor) bakeOakImpostor(renderer);
   const activeCamera = camera.value;
   if (!activeCamera) return;
