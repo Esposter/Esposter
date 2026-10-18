@@ -80,3 +80,8 @@ export const POLESTAR_FIELD_SECONDS = 7;
 export const POLESTAR_FIELD_TICK_SECONDS = 4;
 // The id a Polestar Field is found by, so a standing one is refreshed rather than a second placed
 export const POLESTAR_FIELD_ID = "polestar";
+// The Physical RES a Polestar Field takes off the enemies inside it, 40%: the wiki's Stellar-Conduct page, and gcsim's
+// Physical RES of -0.40 in the field's area (pkg/reactable/stellarconduct_gadget.go)
+export const POLESTAR_PHYSICAL_RES_REDUCTION = 0.4;
+// The id a Polestar Field's reduction is held under on each enemy it is over, so each step refreshes it rather than adds
+export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";

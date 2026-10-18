@@ -66,7 +66,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
-A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered while a field stands SHALL set its time back to 7 seconds rather than leave a second field.
+A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered while a field stands SHALL set its time back to 7 seconds rather than leave a second field. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
 #### Scenario: a Stellar-Conduct sustains its Polestar Field for 7 seconds
 

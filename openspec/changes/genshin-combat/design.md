@@ -20,7 +20,7 @@ This page builds on [combat](../../specs/genshin/combat/design.md) as built: aur
 
 ## What this does not propose
 
-- **The Stellar fields and their effects.** The Polestar Field and the Stellar Vortex each reaction places, their stacks, lifetimes and buffs, the Stellar Swirl and Stellar-Conduct damage (the Glimmer formula and the Starlight Prism's coefficient table, which are separate), and the enablers' kits.
+- **The Stellar fields and their effects.** The Starlight Prism's recorded hits and the buffs they raise, the Stellar Vortex's stacks, lifetimes and detonation, the Stellar Swirl's Anemo instance, the Stellar Swirl and Stellar-Conduct damage (the Glimmer formula and the Starlight Prism's coefficient table, which are separate), and the enablers' kits.
 - **Characters' kits.** Talent multipliers, each ability's gauge, internal cooldown tag and particles are a character's data, added with the [characters](../../specs/genshin/characters/README.md) that use them. The Lunar reactions leave these kit lines waiting on nothing but their kit's next pass: Flins's Lunar-Charged hits, Aino's Moonsign, Columbina's Benediction, the first to trigger Lunar-Crystallize, Ineffa's passives and constellations, and Lauma's Pale Hymn, Moon Song and passives, with each kit's Lunar flat-damage and elevation bonuses, High Voltage's particle on Lunar-Charged and Enduring Rock's clause for Moondrifts.
 - **Anything drawn.** A reaction's text, an aura's icon over its target and a shield's bar belong to the HUD and the enemies.
 

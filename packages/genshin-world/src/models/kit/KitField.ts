@@ -14,6 +14,8 @@ export interface KitField {
   isFollowing?: true;
   kind: "field";
   nextTickSeconds: number;
+  // What the field does on each step while it stands, before its ticks, to the enemies it is over, given the field itself
+  onStep?: (context: KitContext, field: KitField) => void;
   onTick: (context: KitContext, tickIndex: number) => void;
   radius: number;
   secondsRemaining: number;
