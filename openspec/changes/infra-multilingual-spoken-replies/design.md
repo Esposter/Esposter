@@ -66,7 +66,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ## Failure semantics
 
-Every rule on the [spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md) page stands — a reply that cannot be spoken is not spoken, nothing waits — with one added and one sharpened:
+Every rule on the [spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md) page stands — a reply that cannot be spoken is not spoken, nothing waits — with these added and sharpened:
 
 - **A script no model reads** is a decision, not a fault: the request is dropped before synthesis, logged once, and the ladder does not move. The interim gate already applies this rule to everything but Latin, silently; the log line is what this adds.
 - **Silence** keeps meaning a provider fault, because the only text that reaches the engine is text it can read. The check's two thresholds are unchanged.
