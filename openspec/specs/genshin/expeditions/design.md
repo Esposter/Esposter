@@ -1,6 +1,6 @@
 # Expeditions
 
-The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game; the other nations' places and the expedition bonus and talents are not built.
+The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game, and the talents are applied; the other nations' places are not built, and the bonus is its chance only.
 
 ## How it works
 
@@ -35,7 +35,7 @@ stateDiagram-v2
 - **Katheryne and the screen.** Her talk opens the expedition screen, and the screen's loader reads Mondstadt's places and the limit's steps from the hosted data as it opens. The screen's layout is still a parity matter.
 - **The other nations' places.** Only Mondstadt's places are published. A nation's places join when its statues are in the region data with their scene points.
 - **Statues beyond Windrise's.** The places that name points 7 and 29 stay closed until those statues are in the region data.
-- **The bonus and the talents.** The bonus's payload is not in the tables read, and the characters' expedition talents wait on the character kits' passives.
+- **The bonus and the talents.** The bonus's payload is not in the tables read, so the bonus is its chance and its kind only. A talent is a proud skill whose description names an expedition, read from the dump's text (`expeditions/passives`); it applies when its character holds it unlocked at its ascension, and its percent and hours come from that text, since the rows' `paramList` is zero.
 
 ## Key files
 

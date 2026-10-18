@@ -20,4 +20,14 @@ describe(checkIsExpeditionReturned, () => {
 
     expect(checkIsExpeditionReturned(expedition, returnedAt)).toBe(true);
   });
+
+  test("a talent that shortens expeditions shortens the one it is sent on", () => {
+    expect.hasAssertions();
+
+    // Four hours less a quarter of them is three hours
+    const shortenedAt = leftAt.add({ hours: 3 });
+
+    expect(checkIsExpeditionReturned(expedition, shortenedAt.subtract({ nanoseconds: 1 }), 25)).toBe(false);
+    expect(checkIsExpeditionReturned(expedition, shortenedAt, 25)).toBe(true);
+  });
 });

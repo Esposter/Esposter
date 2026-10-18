@@ -1,4 +1,5 @@
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 
 import { checkIsExpeditionPlaceOpen } from "#src/services/expedition/checkIsExpeditionPlaceOpen";
 import { GameTextKey } from "genshin-text";
@@ -14,6 +15,7 @@ describe(checkIsExpeditionPlaceOpen, () => {
     nameTextId: GameTextKey.Windrise,
     questId: "",
     rankLevel: RANK_LEVEL,
+    region: ExpeditionRegion.Mondstadt,
     statuePointId: STATUE_POINT_ID,
   };
   const unlockedStatuePointIds: ReadonlySet<number> = new Set([STATUE_POINT_ID]);

@@ -1,8 +1,11 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
+import type { ExpeditionPassive } from "#src/models/expedition/ExpeditionPassive";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { ExpeditionPassiveKind } from "#src/models/expedition/ExpeditionPassiveKind";
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { Currency } from "#src/models/inventory/Currency";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -27,6 +30,7 @@ describe(claimExpedition, () => {
     nameTextId: GameTextKey.StormterrorsLair,
     questId: "",
     rankLevel: 20,
+    region: ExpeditionRegion.Mondstadt,
     statuePointId: 0,
   };
   const leftAt = Temporal.Instant.fromEpochMilliseconds(0);
@@ -107,5 +111,35 @@ describe(claimExpedition, () => {
       inventory: EMPTY_INVENTORY,
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
     });
+  });
+
+  test("a talent that adds to a reward adds to the one it is sent on", () => {
+    expect.hasAssertions();
+
+    const rewardPassives: ExpeditionPassive[] = [
+      {
+        hours: HOURS,
+        kind: ExpeditionPassiveKind.Reward,
+        percent: 25,
+        proudSkillGroupId: 1,
+        region: ExpeditionRegion.Mondstadt,
+      },
+    ];
+
+    // The 625 Mora with a quarter added, rounded
+    expect(
+      claimExpedition(
+        expeditions,
+        CHARACTER_ID,
+        place,
+        EMPTY_INVENTORY,
+        EMPTY_WALLET,
+        englishNameText,
+        materialDataMap,
+        returnedAt,
+        random,
+        rewardPassives,
+      )?.wallet,
+    ).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 781 });
   });
 });
