@@ -13,6 +13,7 @@ import type { DataTexture, Scene } from "three";
 
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
@@ -156,7 +157,12 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
     // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
     advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
     const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
-    const enemyEvent = stepEnemy(enemy, taunt ? taunt.body.position : target, ENEMY_STEP_SECONDS);
+    const enemyEvent = stepEnemy(
+      enemy,
+      taunt ? taunt.body.position : target,
+      ENEMY_STEP_SECONDS,
+      BossMovesMap[enemy.enemyKindId],
+    );
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
     else if (enemyEvent === EnemyEvent.Defeated) {
       isAnyDefeated = true;
