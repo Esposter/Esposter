@@ -43,9 +43,25 @@ Cliffbreaker's Banner's initial hit SHALL land on the enemies in its circle as t
 - **WHEN** the player casts Cliffbreaker's Banner
 - **THEN** its initial hit lands on the enemies in its circle
 
+### Requirement: Constellation 4 DEF on Crystallize
+
+From Constellation 4, a Crystallize or Lunar-Crystallize reaction of Yun Jin's SHALL give her 20% DEF for 12 seconds.
+
+#### Scenario: Constellation 4 raises DEF on her Crystallize
+
+- **GIVEN** Yun Jin has Constellation 4
+- **WHEN** her own hit triggers a Crystallize or Lunar-Crystallize reaction
+- **THEN** she gains 20% DEF for 12 seconds
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Yun Jin has Constellation 3
+- **WHEN** her own hit triggers a Crystallize reaction
+- **THEN** no DEF is gained
+
 ### Requirement: Banner's increase and passives not built
 
-The banner's DMG Increase on the party's normal attacks, Yun Jin's passives and her constellations SHALL have no effect yet.
+The banner's DMG Increase on the party's normal attacks, Yun Jin's passives and her Constellations 1, 2 and 6 SHALL have no effect yet.
 
 #### Scenario: Party attacks under the banner
 
