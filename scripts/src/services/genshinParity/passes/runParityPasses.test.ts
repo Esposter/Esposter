@@ -23,7 +23,7 @@ describe(runParityPasses, () => {
   const held: ParityPassMeasure = { notes: [], readings: [{ gate: 1, name: "", unit: "", value: 1 }] };
   const failed: ParityPassMeasure = { notes: [], readings: [{ gate: 0, name: "", unit: "", value: 1 }] };
 
-  test("stops at the first pass that fails its gate", async () => {
+  test("a frame outside its gate is not accepted", async () => {
     expect.hasAssertions();
 
     measureInventory.mockResolvedValueOnce(held);
@@ -35,6 +35,21 @@ describe(runParityPasses, () => {
       { isHeld: false, measure: failed, pass: ParityPass.Layout },
     ]);
     expect(measureCamera).not.toHaveBeenCalled();
+  });
+
+  test("a pass is accepted when its frame scores within its gate", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(held);
+    measureCamera.mockResolvedValueOnce(failed);
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Layout },
+      { isHeld: false, measure: failed, pass: ParityPass.Camera },
+    ]);
   });
 
   test("prints a pass the scene is not owed and runs on past it", async () => {

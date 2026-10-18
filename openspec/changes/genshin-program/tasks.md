@@ -1,6 +1,6 @@
 ## 1. The recreation passes and their measures
 
-- [ ] 1.1 Build the recreation passes' runner and their measures first, so every later page is judged by them. Verify: a test named after the scenario "A pass is accepted when its frame scores within its gate", written first and seen failing, and a test named after "A frame outside its gate is not accepted".
+- [x] 1.1 Build the recreation passes' runner and their measures first, so every later page is judged by them. Verify: a test named after the scenario "A pass is accepted when its frame scores within its gate", written first and seen failing, and a test named after "A frame outside its gate is not accepted".
 
 ## 2. The world engine
 
