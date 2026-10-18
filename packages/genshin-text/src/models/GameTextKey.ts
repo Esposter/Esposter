@@ -461,6 +461,7 @@ export enum GameTextKey {
   MailClaimAll = "UI_MAIL_GET_ALL_BUTTON",
   MailClaimed = "UI_MAIL_HAS_GET_TIP",
   MailDeleteRead = "UI_PLAYER_PROFILE_MAIL_DELETE",
+  MailDetailDate = "MAIL_DETAIL_DATE",
   MailExpiresInDay = "MAIL_EXPIRE_TIME_DAY",
   MailExpiresInHour = "MAIL_EXPIRE_TIME_HOUR",
   MailExpiresInLessThanMinute = "MAIL_EXPIRE_TIME_WITHIN_ONE_MINUTE",
