@@ -21,6 +21,7 @@ flowchart TD
 - **Two spots by the hour.** `computeResidentSpot` returns the day spot from six in the morning until seven at night and the night spot the rest of the day. A resident with no night spot keeps their day spot through the night, and is absent at night only when the data sets `absentAtNight`. A resident with no day spot is absent in the day, so is neither drawn nor offered as a talk then.
 - **Held while in view.** `computeShownResidentSpot` keeps the spot a resident stands at while the spot the clock now gives differs and the resident is in view, and moves them once they are out of view. An absence is treated as a spot, so a resident who appears or disappears at the turn does so out of view too.
 - **Read each frame.** `useResidentSpots` runs each frame in the world: it reads the clock's minute, tests each resident's ground point against the camera's frustum in world coordinates, and replaces its map of shown spots only when one changed. A resident is placed the first frame they are in the data, and one whose region leaves reach is dropped, so they are placed afresh on return.
+- **Vendors by their hours.** `checkIsVendorHourOpen` opens a city vendor's shop only in the hours their wiki page gives: Draff's and Brook's from six in the morning until seven at night, and every other vendor's at any hour, since their pages give none. The world's talk opens a dialogue in place of a shop outside them, as it does for a Souvenir Shop still closed.
 - **Consumers read the shown spot.** The world screen's prompts list a resident at their shown spot, and the quest's navigation marker points at it, so a resident absent at this hour is neither a prompt nor a marker.
 
 ## Where the residents come from
@@ -50,6 +51,7 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 | `packages/genshin-world/src/services/resident/computeResidentSpot.ts`      | The spot the clock gives at a minute, or none                                     |
 | `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                |
 | `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera    |
+| `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`        | The hours a city vendor's shop is open, from the wiki's pages                     |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                   |
 | `packages/genshin-world/src/components/World/Session/Index.vue`            | Lists the residents at their shown spot as talk prompts                           |
 | `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                   |

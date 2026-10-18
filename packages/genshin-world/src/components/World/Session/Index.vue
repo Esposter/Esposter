@@ -137,6 +137,7 @@ import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutW
 import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
@@ -1341,10 +1342,12 @@ defineExpose({ jumpTo, readCameraPosition });
               talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = getTalkScreenKind(interactable.id, getResidents());
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
-              // A Souvenir Shop stays closed until its region's offering is at its last level, and its talk is a dialogue until then
+              // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
+              // And its talk is a dialogue until then
               if (
                 screenKind === ScreenKind.Shop &&
-                !checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels)
+                (!checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels) ||
+                  !checkIsVendorHourOpen(shopId, windrise.value?.gameClock.minutes ?? 0))
               )
                 screenKind = ScreenKind.Dialogue;
               reputationLevel = reputation.level;

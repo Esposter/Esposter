@@ -7,6 +7,10 @@ export const PAIMON_BARGAINS_PAIR_COUNT = 6;
 export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
 // Marjorie's shop, the Mondstadt Souvenir Shop, which the Frostbearing Tree's last level opens
 export const MONDSTADT_SOUVENIR_SHOP_ID = 1002;
+// Brook's and Draff's shops, the two city vendors the wiki gives by day only, from six in the morning until seven at night
+export const BROOK_SHOP_ID = 1015;
+export const DRAFF_SHOP_ID = 1017;
+export const DAY_VENDOR_SHOP_IDS: readonly number[] = [BROOK_SHOP_ID, DRAFF_SHOP_ID];
 // The shop Paimon's Bargains sells its Fates from, by the shop's id, which its screen reads the Fates of
 export const PAIMON_BARGAINS_SHOP_ID = 1001;
 // The shops a city vendor sells from, by the shop's id, each with the key of the shops dataset its goods are published in
