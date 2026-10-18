@@ -23,7 +23,7 @@ const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
 export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const stackSeconds = takeOne(params, 1);
-  const attackShares = params.slice(2, 6);
+  const attackShares = params.slice(2, 2 + ASHEN_NIGHTSTAR_MAXIMUM_STACKS);
   return {
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
