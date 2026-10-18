@@ -5013,14 +5013,14 @@
       "talkId": "7510427"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -2182.18, "z": -10305.13 }, "rotation": -0.6002 },
       "id": "6402",
       "nameTextId": "3963262344",
       "talkId": "7516102"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -2500.95, "z": -10436.92 }, "rotation": -1.6507 },
       "id": "6403",
       "nameTextId": "1871930728",
@@ -5125,7 +5125,7 @@
       "talkId": "7516209"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -2092.18, "z": -11119.16 }, "rotation": 2.7324 },
       "id": "6401",
       "nameTextId": "4055721416",
@@ -5160,42 +5160,42 @@
       "talkId": "7516217"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1710.69, "z": -10942.46 }, "rotation": 1.9197 },
       "id": "6299",
       "nameTextId": "2292574536",
       "talkId": "7512611"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1670.07, "z": -10948.38 }, "rotation": 0 },
       "id": "6225",
       "nameTextId": "738417960",
       "talkId": "7512602"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1724.64, "z": -10895.06 }, "rotation": 0 },
       "id": "6226",
       "nameTextId": "1974905128",
       "talkId": "7512603"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1686.98, "z": -10902.68 }, "rotation": 0 },
       "id": "6298",
       "nameTextId": "1015602296",
       "talkId": "7512604"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1625.51, "z": -10960.16 }, "rotation": 0 },
       "id": "6224",
       "nameTextId": "2688108792",
       "talkId": "7512601"
     },
     {
-      "areaId": "toyac-springs",
+      "areaId": "coatepec-mountain",
       "day": { "position": { "x": -1664.3, "z": -11345.25 }, "rotation": 2.9464 },
       "id": "6406",
       "nameTextId": "2544308640",

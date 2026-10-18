@@ -25,6 +25,7 @@ describe(createCombatant, () => {
       attributes: computeCharacterAttributes(getCharacterAttributeLines(character, statTables), []),
       characterId: AMBER_CHARACTER_ID,
       constellationCount: 0,
+      deployedElements: undefined,
       element: Element.Pyro,
       elementalResonances: [],
       kit: TRAVELER_KIT,

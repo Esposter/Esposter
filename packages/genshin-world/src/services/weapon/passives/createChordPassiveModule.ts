@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -17,7 +17,7 @@ const CHORD_HARMONIC_COOLDOWN_SECONDS = 0.5;
 // The Flute's Chord at its rank: a normal or charged attack hit gains a harmonic, a maximum of one every half second, and
 // Five harmonics, which last thirty seconds from the last gained, deal the rank's multiplier of ATK to the surrounding
 // Enemies and clear the count. The area is provisional, the text naming only the surrounding opponents
-export const createChordPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createChordPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 1);
   return {
     onKitEvent: (event, context, combatant) => {

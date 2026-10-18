@@ -10,6 +10,7 @@ import { addGcsimNormalAttackCandidates } from "#src/services/genshinAssets/kits
 import { addGcsimPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates";
 import { addGcsimSkillAndBurstCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates";
 import { addGcsimSkillHoldCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates";
+import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
 
@@ -41,6 +42,7 @@ export const getGcsimKitCandidates = (
   addGcsimPlungeCandidates(writer, gcsim, plungeFallback, plungeFallbackWriter);
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);
+  GcsimCharacterMappingMap[gcsim.folder]?.(writer, gcsim);
   addGcsimNamedConstantCandidates(writer, gcsim, bagPaths);
   addGcsimFrameListCandidates(writer, gcsim, bagPaths);
   return candidateMap;

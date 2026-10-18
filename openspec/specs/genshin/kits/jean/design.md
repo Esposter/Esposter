@@ -21,7 +21,7 @@ Jean's kit is its record and one behaviour module, `createJeanKitBehaviour`, on 
 
 ## Not built
 
-- **Jean's Constellation 6 is not built.** Lion's Fang's DMG reduction has no hook in an enemy's strike, as no party member's incoming DMG is read. When the West Wind Arises and Outbursting Gust raise talent levels, which the [talents](../../talents/design.md) page holds.
+- **Jean's Constellation 6 is not built.** Lion's Fang's DMG reduction is a buff of `Attribute.DamageReduction` on the member in the field, which an enemy's strike reads, for its 3 strikes or 10 seconds. When the West Wind Arises and Outbursting Gust raise talent levels, which the [talents](../../talents/design.md) page holds.
 
 ## Key files
 

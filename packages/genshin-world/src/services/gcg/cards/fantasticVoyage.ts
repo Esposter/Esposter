@@ -3,9 +3,10 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { INSPIRATION_FIELD_ID } from "#src/services/gcg/cards/constants";
 
-const INSPIRATION_FIELD_ID = 113_031;
 // Fantastic Voyage, Bennett's burst: 2 Pyro DMG, and an Inspiration Field is created once the damage is dealt (the wiki's
 // Fantastic Voyage (Character Card Skill))
 const FANTASTIC_VOYAGE_DAMAGE = 2;

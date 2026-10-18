@@ -33,4 +33,5 @@ export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTex
   [ScreenKind.Time]: GameTextKey.Time,
   [ScreenKind.TrainingGuide]: GameTextKey.TrainingGuide,
   [ScreenKind.Wish]: GameTextKey.Wish,
+  [ScreenKind.Worship]: GameTextKey.StatueWorship,
 };

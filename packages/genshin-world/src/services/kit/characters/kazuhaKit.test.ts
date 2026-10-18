@@ -14,6 +14,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKazuhaKitBehaviour, KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -82,8 +83,13 @@ describe(createKazuhaKitBehaviour, () => {
 describe("poetics of Fuubutsu", () => {
   const TEAMMATE_CHARACTER_ID = 1;
 
-  // The buffs a Pyro Swirl Kazuha triggers gives the team, with her at the given ascension and Elemental Mastery
-  const readSwirlBuffs = (ascension: number, elementalMastery: number): KitEffectState["effects"] => {
+  // The buffs a Pyro Swirl Kazuha triggers gives the team, with her at the given ascension and Elemental Mastery, and
+  // The effects her kit state starts with
+  const readSwirlBuffs = (
+    ascension: number,
+    elementalMastery: number,
+    kitEffectState: KitEffectState = { effects: [] },
+  ): KitEffectState["effects"] => {
     const combatant = {
       ...createKazuhaCombatant(),
       ascension,
@@ -93,6 +99,7 @@ describe("poetics of Fuubutsu", () => {
       ]),
     };
     const context = createKitTestContext(combatant, {
+      kitEffectState,
       party: createParty([KAZUHA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
     });
     KAZUHA_KIT.onKitEvent?.(
@@ -127,5 +134,34 @@ describe("poetics of Fuubutsu", () => {
     expect.hasAssertions();
 
     expect(readSwirlBuffs(3, 1000)).toStrictEqual([]);
+  });
+
+  test("an Elemental Mastery buff on her raises the passive's share, as her Elemental Mastery is read buffed", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    buffKitMember(kitEffectState, KAZUHA_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.ElementalMastery,
+      secondsRemaining: 8,
+    });
+
+    expect(readSwirlBuffs(4, 0, kitEffectState)).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.ElementalMastery,
+        characterId: KAZUHA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 8,
+      },
+      ...[KAZUHA_CHARACTER_ID, TEAMMATE_CHARACTER_ID].map((characterId) => ({
+        amount: 0.0004 * 100,
+        attribute: Attribute.PyroDamageBonus,
+        characterId,
+        kind: "buff",
+        secondsRemaining: 8,
+        source: "kazuha-poetics-of-fuubutsu",
+      })),
+    ]);
   });
 });

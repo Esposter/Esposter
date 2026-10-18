@@ -2,22 +2,23 @@ import type { GcgDeck } from "#src/models/gcg/GcgDeck";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GCG_STARTING_HAND_COUNT } from "#src/services/gcg/constants";
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
-import { shuffleGcgCards } from "#src/services/gcg/shuffleGcgCards";
+import { shuffleWithRandom } from "#src/services/shared/shuffleWithRandom";
 
 // A side as a duel opens it: its characters at full HP with the first one active once it prepares, its cards shuffled
 // Into the draw pile, and the starting hand drawn from its top
 export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSideState => {
-  const drawPile = shuffleGcgCards(deck.cardIds, random);
+  const drawPile = shuffleWithRandom(deck.cardIds, random);
   return {
     activeIndex: 0,
     cards: deck.cards,
     characters: deck.characters.map((character) => {
       const statuses = listGcgStartingStatuses(character);
       return {
-        aura: findGcgPermanentAura(statuses) ?? GcgAura.None,
+        aura: findGcgPermanentAura(statuses, GcgCardIdModuleMap) ?? GcgAura.None,
         character,
         energy: 0,
         equipments: [],

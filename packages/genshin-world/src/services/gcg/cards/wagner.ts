@@ -6,8 +6,8 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { checkIsGcgPlayCost } from "#src/services/gcg/effects/checkIsGcgPlayCost";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { takeOne } from "@esposter/shared";
+import { WAGNER_ID } from "#src/services/gcg/cards/constants";
 
-export const WAGNER_ID = 322_004;
 const WAGNER_INITIAL_BILLETS = 2;
 const WAGNER_WEAPON_KINDS_FOR_DRAW = 3;
 

@@ -4,8 +4,8 @@ import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
+import { TIMMIE_ID } from "#src/services/gcg/cards/constants";
 
-const TIMMIE_ID = 322_007;
 const PIGEONS_TO_DISCARD = 3;
 
 // Timmie: once per round at the end phase it gains a Pigeon, and at three Pigeons it is discarded, a card is drawn and an

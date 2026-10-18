@@ -1,7 +1,17 @@
+import { RELIQUARY_TABLE_NAME, WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { FURNITURE_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
 import { MaterialType } from "genshin-world";
 
 // The game's material table in the dump beside its text maps
 export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
+// The item tables of the dump, each holding its own kind of item by its id: a material is a bag item, while a weapon, a
+// Furnishing or a reliquary is an item of its own table, which the bag does not hold
+export const ITEM_TABLE_NAMES: readonly string[] = [
+  MATERIAL_TABLE_NAME,
+  WEAPON_TABLE_NAME,
+  FURNITURE_TABLE_NAME,
+  RELIQUARY_TABLE_NAME,
+];
 // The use a row names when using its item adds an item to the bag, so the consumable is itself an item the bag shows
 export const ADD_ITEM_USE_OP = "ITEM_USE_ADD_ITEM";
 // The bag's tab for a table type the bag has no tab of its own for: the batch-use consumables are filed with the consume

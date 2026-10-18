@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -12,7 +12,7 @@ const CRIT_ENERGY = 6;
 
 // Windfall at its rank: a CRIT hit its wielder deals has the rank's chance of regenerating energy for the wielder, and a
 // Proc holds off the next for the rank's cooldown in seconds
-export const createCritEnergyPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createCritEnergyPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);
   return {

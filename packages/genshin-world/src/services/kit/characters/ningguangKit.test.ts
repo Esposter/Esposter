@@ -9,6 +9,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNingguangKitBehaviour, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -18,6 +21,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const NINGGUANG_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NINGGUANG_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createNingguangCombatant = (ascension: number, constellationCount: number): Combatant => ({
@@ -38,7 +42,8 @@ const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
 
 // Strikes an enemy with each strike, as the world does for an enemy within its area
 const landStrikes = (strikes: KitStrike[], context: KitContext): void => {
-  for (const strike of strikes) strike.hit.onStrike?.(context, strike);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  for (const strike of strikes) strike.hit.onStrike?.(context, strike, enemy);
 };
 
 describe(createNingguangKitBehaviour, () => {

@@ -14,14 +14,22 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { adventurersBandana, ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/adventurersBandana";
-import { aquilaFavonia, AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/aquilaFavonia";
-import { CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
-import { kantenSenmyouBlessing, KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/kantenSenmyouBlessing";
-import { WAGNER_ID, wagner } from "#src/services/gcg/cards/wagner";
-import { parametricTransformer, PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/parametricTransformer";
-import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
-import { kamisatoArtSenho, SENHO_STATUS_ID } from "#src/services/gcg/cards/kamisatoArtSenho";
+import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
+import { ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/constants";
+import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
+import { AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/constants";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
+import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
+import { KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/constants";
+import { wagner } from "#src/services/gcg/cards/wagner";
+import { WAGNER_ID } from "#src/services/gcg/cards/constants";
+import { parametricTransformer } from "#src/services/gcg/cards/parametricTransformer";
+import { PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/constants";
+import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { FROSTFLAKE_SEKI_NO_TO_ID } from "#src/services/gcg/cards/constants";
+import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
+import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
@@ -32,6 +40,8 @@ import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveChara
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -75,6 +85,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -147,6 +159,21 @@ describe("kamisato Art: Soumetsu", () => {
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([FROSTFLAKE_SEKI_NO_TO_ID]);
+  });
+
+  test("a Frostflake Seki no To already on its side is refreshed rather than doubled", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      {
+        ...createSideState([createCharacterState(1105)]),
+        summons: [{ ...createGcgZoneCard(FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo), usages: 1 }],
+      },
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, SOUMETSU);
+
+    expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([2]);
   });
 });
 

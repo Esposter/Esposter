@@ -11,6 +11,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the field's ticks every second to its end, its circle of radius 6, and
@@ -89,7 +90,7 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
   const createFieldTick =
     (owner: Combatant) =>
     (context: KitContext, tickIndex: number): void => {
-      const { activeCombatant, kitEffectState, party } = context;
+      const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
       const { characterId, weaponType } = activeCombatant;
       const { healthShare } = getPartyMember(party, characterId);
       if (tickIndex > 0 && healthShare < BENNETT_FIELD_HP_THRESHOLD)
@@ -97,7 +98,8 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
           context,
           owner,
           characterId,
-          fieldFlatHeal + fieldMaxHealthHealShare * owner.attributes.maxHealth,
+          fieldFlatHeal +
+            fieldMaxHealthHealShare * getKitMaxHealth(owner, kitEffectState.effects, party, characterIdCombatantMap),
         );
       const hasGrandExpectation = owner.constellationCount >= GRAND_EXPECTATION_CONSTELLATION;
       if (healthShare <= (hasGrandExpectation ? 0 : BENNETT_FIELD_HP_THRESHOLD)) return;

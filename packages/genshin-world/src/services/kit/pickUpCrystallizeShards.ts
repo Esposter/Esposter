@@ -1,6 +1,8 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { GroundPoint } from "genshin-engine";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   CRYSTALLIZE_SHARD_PICKUP_DELAY_SECONDS,
   CRYSTALLIZE_SHARD_PICKUP_RADIUS,
@@ -9,9 +11,15 @@ import {
 } from "#src/services/combat/shield/constants";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 
-// The Crystallize shards the body on the field stands within reach of, picked up once each may be: each ends, and grants
-// The team its Crystallize shield, which overwrites the one the team held
-export const pickUpCrystallizeShards = (kitEffectState: KitEffectState, body: GroundPoint): void => {
+// The Crystallize shards the body of the character on the field stands within reach of, picked up once each may be:
+// Each ends, grants the team its Crystallize shield, which overwrites the one the team held, and raises its pickup by
+// That character into the outbox, as gcsim's shard adds its shield and the shield's add emits OnShielded
+export const pickUpCrystallizeShards = (
+  kitEffectState: KitEffectState,
+  fieldCharacterId: number,
+  body: GroundPoint,
+  outbox: KitEvent[],
+): void => {
   for (const effect of kitEffectState.effects) {
     if (
       effect.kind !== "crystallizeShard" ||
@@ -28,5 +36,6 @@ export const pickUpCrystallizeShards = (kitEffectState: KitEffectState, body: Gr
       isCrystallize: true,
       secondsRemaining: CRYSTALLIZE_SHIELD_SECONDS,
     });
+    outbox.push({ characterId: fieldCharacterId, element, kind: KitEventKind.CrystallizeShardPickedUp });
   }
 };

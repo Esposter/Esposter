@@ -84,4 +84,29 @@ describe(changeKitMemberHealth, () => {
       },
     ]);
   });
+
+  test("a member's HP share is taken of its buffed Max HP", () => {
+    expect.hasAssertions();
+    const party = createParty([SOURCE_ID, MEMBER_ID]);
+    const healthBuffEffects: KitEffect[] = [
+      ...effects,
+      { amount: 4000, attribute: Attribute.Health, characterId: MEMBER_ID, kind: "buff", secondsRemaining: 1 },
+    ];
+    changeKitMemberHealth(
+      createKitTestContext(source, { characterIdCombatantMap, kitEffectState: { effects: healthBuffEffects }, party }),
+      source,
+      MEMBER_ID,
+      -5000,
+    );
+
+    expect(party.healthChanges).toStrictEqual([
+      {
+        bondOfLifeShare: 0,
+        characterId: MEMBER_ID,
+        healthShare: -0.25,
+        overflowHealthShare: 0,
+        sourceCharacterId: SOURCE_ID,
+      },
+    ]);
+  });
 });

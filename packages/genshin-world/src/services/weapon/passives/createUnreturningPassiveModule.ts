@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 
 // Unreturning at its rank: a charged attack hit on a weak point raises its wielder's Movement SPD and ATK for the seconds
 // Given. A kit still sets no weak-point flag, so this waits on that data
-export const createUnreturningPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createUnreturningPassiveModule = (params: number[]): PassiveModule => {
   const movementSpeed = takeOne(params, 0);
   const attackPercentage = takeOne(params, 1);
   const seconds = takeOne(params, 2);

@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -24,7 +25,8 @@ const STALWART_AND_TRUE_TICK_COUNT = 5;
 // Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves, with
 // its DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and
 // Incineration Drive. Her Ascension 1 passive waits on the Sanctum
-// Constellation 1 needs her Max HP raised by 20%, which the attributes do not read back, and Molten Inferno's DMG on it
+// A Max HP buff of 20% reaches her damage reads, so Constellation 1 needs Molten Inferno's DMG, whose DoT waits on the
+// Sanctum Molten Inferno leaves
 // Constellation 2 needs the Fiery Sanctum field that Molten Inferno: Ranging Flame recreates, not built by the burst
 // Constellation 4 needs the Flame-Mane's Fist and Incineration Drive hits during Leonine Bite, not built
 // Constellation 6 needs Leonine Bite's CRIT Rate and the Flame-Mane's Fist follow-up, not built
@@ -37,8 +39,8 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
       combatant.ascension < ASCENSION_4
     )
       return;
-    const { attributes, characterId } = combatant;
-    const { kitEffectState, party } = context;
+    const { characterId } = combatant;
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     if (getPartyMember(party, characterId).healthShare >= STALWART_AND_TRUE_THRESHOLD) return;
     if (
       !startKitCooldown(
@@ -49,14 +51,21 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
       )
     )
       return;
-    changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * attributes.maxHealth);
+    const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+    changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * maxHealth);
     for (const tick of Array.from({ length: STALWART_AND_TRUE_TICK_COUNT }, (_value, index) => index + 1))
       scheduleKitTask(kitEffectState, characterId, tick * STALWART_AND_TRUE_TICK_INTERVAL_SECONDS, (tickContext) =>
         changeKitMemberHealth(
           tickContext,
           combatant,
           characterId,
-          STALWART_AND_TRUE_TICK_HEAL_SHARE * attributes.maxHealth,
+          STALWART_AND_TRUE_TICK_HEAL_SHARE *
+            getKitMaxHealth(
+              combatant,
+              tickContext.kitEffectState.effects,
+              tickContext.party,
+              tickContext.characterIdCombatantMap,
+            ),
         ),
       );
   },

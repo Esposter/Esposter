@@ -1,5 +1,5 @@
 import type { KitBuff } from "#src/models/kit/KitBuff";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const DEBUT_COOLDOWN_ID = "debutCooldown";
 // The Widsith's Debut at its rank: when its wielder takes the field, a random theme song lasts for the rank's seconds, the
 // Recitative raising ATK, the Aria all Elemental DMG and the Interlude Elemental Mastery, and the rank's cooldown holds off
 // The next. The three themes are read from the rank's three values in turn
-export const createDebutPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createDebutPassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const elementalDamageBonus = takeOne(params, 1);
   const elementalMastery = takeOne(params, 2);

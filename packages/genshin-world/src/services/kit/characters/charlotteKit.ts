@@ -141,7 +141,7 @@ export const createCharlotteKitBehaviour = ({
     // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not built
     // Yet, as its hit falls a held duration later, which a skill's fixed hold levels cannot give (see the character's
     // Page)
-    getPassiveBonuses: (combatant, _healthShare, _effects, deployedCombatants) => {
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, _effects) => {
       if (combatant.ascension < ASCENSION_4) return [];
       const otherMembers = deployedCombatants.filter(({ characterId }) => characterId !== combatant.characterId);
       const fontaineCount = otherMembers.filter(({ regionId }) => regionId === FONTAINE_REGION_ID).length;

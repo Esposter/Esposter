@@ -1,10 +1,11 @@
 import type { Element } from "#src/models/Element";
 import type { ReactionType } from "#src/models/combat/ReactionType";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReactionNamed";
 import { takeOne } from "@esposter/shared";
 
 const REACTION_ATTACK_SECONDS = 12;
@@ -14,20 +15,14 @@ const REACTION_ATTACK_SECONDS = 12;
 export const createReactionAttackPassiveModule = (
   reactions: { element?: Element; reactionType: ReactionType }[],
   params: number[],
-): WeaponPassiveModule => {
+): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         event.striker.characterId !== combatant.characterId ||
-        !event.reactions.some((triggered) =>
-          reactions.some(
-            (named) =>
-              named.reactionType === triggered.reactionType &&
-              (named.element === undefined || named.element === triggered.element),
-          ),
-        )
+        !checkIsReactionNamed(event.reactions, reactions)
       )
         return;
       buffKitMember(kitEffectState, combatant.characterId, {

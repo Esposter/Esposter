@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { createReactionStellarBuffPassiveModule } from "#src/services/weapon/passives/createReactionStellarBuffPassiveModule";
@@ -9,7 +9,7 @@ const REPENTANCE_AND_REDEMPTION_SOURCE = "repentanceAndRedemption";
 // Repentance and Redemption, Blade of Atonement's passive at its rank: after its wielder triggers an Elemental Reaction, its
 // Elemental Mastery rises by the rank's amount for the rank's seconds, and after a Stellar Glimmer reaction its ATK rises by
 // The rank's percentage for the rank's seconds, whether or not the wielder is on the field
-export const createRepentanceAndRedemptionPassiveModule = (params: number[]): WeaponPassiveModule =>
+export const createRepentanceAndRedemptionPassiveModule = (params: number[]): PassiveModule =>
   createReactionStellarBuffPassiveModule({
     reactionAmount: takeOne(params, 0),
     reactionAttribute: Attribute.ElementalMastery,

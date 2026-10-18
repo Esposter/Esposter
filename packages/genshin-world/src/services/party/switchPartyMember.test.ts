@@ -1,4 +1,7 @@
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
 import { PartySwitchResult } from "#src/models/party/PartySwitchResult";
+import { addKitSwapLock } from "#src/services/kit/effects/addKitSwapLock";
 import { PARTY_FALL_SECONDS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
@@ -12,9 +15,9 @@ describe(switchPartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1, 2, 3]);
-    const switched = switchPartyMember(party, 1, 0);
-    const held = switchPartyMember(party, 2, PARTY_SWITCH_COOLDOWN_SECONDS / 2);
-    const released = switchPartyMember(party, 2, PARTY_SWITCH_COOLDOWN_SECONDS);
+    const switched = switchPartyMember(party, 1, 0, []);
+    const held = switchPartyMember(party, 2, PARTY_SWITCH_COOLDOWN_SECONDS / 2, []);
+    const released = switchPartyMember(party, 2, PARTY_SWITCH_COOLDOWN_SECONDS, []);
 
     expect({ activeIndex: party.activeIndex, held, released, switched }).toStrictEqual({
       activeIndex: 2,
@@ -31,9 +34,9 @@ describe(switchPartyMember, () => {
     party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
 
     expect([
-      switchPartyMember(party, 1, 0),
-      switchPartyMember(party, 3, 0),
-      switchPartyMember(party, 0, 0),
+      switchPartyMember(party, 1, 0, []),
+      switchPartyMember(party, 3, 0, []),
+      switchPartyMember(party, 0, 0, []),
     ]).toStrictEqual([PartySwitchResult.Down, PartySwitchResult.Unchanged, PartySwitchResult.Unchanged]);
   });
 
@@ -42,16 +45,45 @@ describe(switchPartyMember, () => {
 
     const party = createParty([1, 2]);
     damagePartyMember(party, 1, 1);
-    const locked = switchPartyMember(party, 1, 10);
+    const locked = switchPartyMember(party, 1, 10, []);
     const activeIndexWhileFalling = party.activeIndex;
     stepPartyFall(party, PARTY_FALL_SECONDS);
-    const released = switchPartyMember(party, 1, 10);
+    const released = switchPartyMember(party, 1, 10, []);
 
     expect({ activeIndex: party.activeIndex, activeIndexWhileFalling, locked, released }).toStrictEqual({
       activeIndex: 1,
       activeIndexWhileFalling: 0,
       locked: PartySwitchResult.Falling,
       released: PartySwitchResult.Switched,
+    });
+  });
+
+  test("refuses a swap off the character on the field while their swap lock holds, not while another's does", () => {
+    expect.hasAssertions();
+
+    const lockedState: KitEffectState = { effects: [] };
+    addKitSwapLock(lockedState, 1, 5);
+    const otherState: KitEffectState = { effects: [] };
+    addKitSwapLock(otherState, 2, 5);
+
+    expect([
+      switchPartyMember(createParty([1, 2]), 1, 0, lockedState.effects),
+      switchPartyMember(createParty([1, 2]), 1, 0, otherState.effects),
+    ]).toStrictEqual([PartySwitchResult.Blocked, PartySwitchResult.Switched]);
+  });
+
+  test("switches off an empty field slot without a swap lock blocking it", () => {
+    expect.hasAssertions();
+
+    const lockedState: KitEffectState = { effects: [] };
+    addKitSwapLock(lockedState, 1, 5);
+    const party = createParty([1, 2]);
+    party.activeIndex = 2;
+    const result = switchPartyMember(party, 1, 0, lockedState.effects);
+
+    expect({ activeIndex: party.activeIndex, result }).toStrictEqual({
+      activeIndex: 1,
+      result: PartySwitchResult.Switched,
     });
   });
 });

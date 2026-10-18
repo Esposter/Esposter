@@ -11,12 +11,22 @@ export const props = {
   countLabel: "Quantity",
   countMaximum: 5,
   goods: [
-    { id: 1, limitLabel: "Left This Month: 5", name: "Intertwined Fate", price: 75, priceName: "Starglitter" },
-    { id: 2, limitLabel: "Left This Month: 5", name: "Acquaint Fate", price: 75, priceName: "Starglitter" },
-    { id: 3, limitLabel: "Left This Month: 100", name: "Adventurer's Experience ×3", price: 8, priceName: "Stardust" },
-    { id: 4, limitLabel: "Left This Month: 60", name: "Mystic Enhancement Ore", price: 5, priceName: "Stardust" },
-    { id: 5, limitLabel: "Left This Month: 30", name: "Mora ×10000", price: 10, priceName: "Stardust" },
-    { id: 6, limitLabel: "Left This Month: 12", name: "Black Bronze Horn", price: 15, priceName: "Stardust" },
+    { id: 1, limitLabel: "Left This Month: 5", name: "Intertwined Fate", costs: [{ count: 75, name: "Starglitter" }] },
+    { id: 2, limitLabel: "Left This Month: 5", name: "Acquaint Fate", costs: [{ count: 75, name: "Starglitter" }] },
+    {
+      id: 3,
+      limitLabel: "Left This Month: 100",
+      name: "Adventurer's Experience ×3",
+      costs: [{ count: 8, name: "Stardust" }],
+    },
+    {
+      id: 4,
+      limitLabel: "Left This Month: 60",
+      name: "Mystic Enhancement Ore",
+      costs: [{ count: 5, name: "Stardust" }],
+    },
+    { id: 5, limitLabel: "Left This Month: 30", name: "Mora ×10000", costs: [{ count: 10, name: "Stardust" }] },
+    { id: 6, limitLabel: "Left This Month: 12", name: "Black Bronze Horn", costs: [{ count: 15, name: "Stardust" }] },
   ],
   tabId: 3,
   tabs: [

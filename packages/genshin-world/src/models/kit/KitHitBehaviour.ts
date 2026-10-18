@@ -8,7 +8,7 @@ import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
 // Whose stacks set the hit. A hit that takes its wielder's element drops the one its record names, so it deals the element
 // The wielder holds when it strikes
 export interface KitHitBehaviour extends Partial<
-  Pick<KitHit, "additiveBaseDamageBonus" | "enemyStatus" | "healAttackShare" | "onStrike">
+  Pick<KitHit, "additiveBaseDamageBonus" | "enemyStatus" | "healAttackShare" | "landsWhen" | "onStrike">
 > {
   bubbleOmenId?: EnemyStatus["id"];
   healPartyChance?: KitPartyHeal["chance"];

@@ -86,4 +86,23 @@ describe(drawRandomGcgCard, () => {
     drawRandomGcgCard(side, GcgCardKind.Artifact, () => 0, HAND_CARD_LIMIT);
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({ drawPile: [ACTION_ID], hand: [] });
   });
+
+  test("should draw only a card the filter accepts", () => {
+    expect.hasAssertions();
+    const side = createSide(
+      [createCard(ARTIFACT_ID, GcgCardKind.Artifact), createCard(OTHER_ARTIFACT_ID, GcgCardKind.Artifact)],
+      [ARTIFACT_ID, OTHER_ARTIFACT_ID],
+    );
+    drawRandomGcgCard(
+      side,
+      GcgCardKind.Artifact,
+      () => 0,
+      HAND_CARD_LIMIT,
+      ({ id }) => id === OTHER_ARTIFACT_ID,
+    );
+    expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
+      drawPile: [ARTIFACT_ID],
+      hand: [OTHER_ARTIFACT_ID],
+    });
+  });
 });

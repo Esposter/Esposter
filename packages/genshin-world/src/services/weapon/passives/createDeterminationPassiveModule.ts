@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffAttackAndMovementSpeed } from "#src/services/weapon/passives/buffAttackAndMovementSpeed";
@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 
 // Determination at its rank: a burst its wielder uses raises its ATK and Movement SPD by the rank's percentage for the
 // Rank's seconds
-export const createDeterminationPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createDeterminationPassiveModule = (params: number[]): PassiveModule => {
   const percentage = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {

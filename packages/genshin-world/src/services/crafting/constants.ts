@@ -19,3 +19,7 @@ export const MYSTIC_OFFERING_ADVENTURE_RANK = 45;
 // The bench's conversions are listed under tabs of their own, each the id of its combine type past this offset: the craft
 // Tabs run to the highest combine type the bench names, twelve, so the two sections never share a tab
 export const CONVERSION_TAB_ID_OFFSET = 100;
+
+// The id of the bench's Mystic Offering tab, listed after the recipe tabs: the conversions' tabs run to the offset plus
+// Twelve, so this id is past both sections and no tab takes it
+export const MYSTIC_OFFERING_TAB_ID = CONVERSION_TAB_ID_OFFSET * 2;

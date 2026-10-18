@@ -10,6 +10,8 @@ import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalRes
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const FULL_HP = 10;
 
@@ -17,6 +19,8 @@ const FULL_HP = 10;
 // Dice the side holds afterwards
 const playResonance = (module: GcgCardModule, elements: Element[]) => {
   const duel: GcgDuel = {
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,

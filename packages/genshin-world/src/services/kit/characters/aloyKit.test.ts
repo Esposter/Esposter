@@ -7,6 +7,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALOY_CHARACTER_ID, createAloyKitBehaviour } from "#src/services/kit/characters/aloyKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -15,6 +18,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ALOY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALOY_CHARACTER_ID);
 const createAloyCombatant = (): Combatant => ({
   ascension: 0,
@@ -68,7 +72,8 @@ describe(createAloyKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(combatant, { kitEffectState });
     const bomblet = takeOne(bombletHits());
-    const strike = (): void => bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const strike = (): void => bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet }, enemy);
 
     for (let index = 0; index < 3; index++) strike();
     expect(kitEffectState.effects).toStrictEqual([
@@ -95,7 +100,9 @@ describe(createAloyKitBehaviour, () => {
     const combatant: Combatant = { ...createAloyCombatant(), ascension };
     const context = createKitTestContext(combatant);
     const bomblet = takeOne(bombletHits());
-    for (let index = 0; index < 4; index++) bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    for (let index = 0; index < 4; index++)
+      bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet }, enemy);
     return { combatant, context };
   };
   const getBuffedAttributeTotal = (

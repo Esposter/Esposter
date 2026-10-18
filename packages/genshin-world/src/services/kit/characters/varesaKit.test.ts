@@ -1,7 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -42,12 +44,12 @@ describe(createVaresaKitBehaviour, () => {
     ]);
   });
 
-  test("the three strikes hit at their hitmarks and cancel into a walk at their table frames", () => {
+  test("the three strikes hit at their hitmarks and end at their animation frames", () => {
     expect.hasAssertions();
     expect(
       VARESA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
     ).toStrictEqual([[23], [7], [33]]);
-    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([49, 28, 59]);
+    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([49, 30, 59]);
   });
 
   test("the charged attack hits at 69 frames of a 143-frame animation, costing 50 stamina", () => {
@@ -82,6 +84,23 @@ describe(createVaresaKitBehaviour, () => {
     expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
   });
 
+  test("the skill's press raises a generation event for each press that gains points", () => {
+    expect.hasAssertions();
+    const events: KitEvent[] = [];
+    const combatant: Combatant = {
+      ...createVaresaCombatant(),
+      kit: { ...VARESA_KIT, onKitEvent: (event) => void events.push(event) },
+    };
+    const context = createKitTestContext(combatant);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    expect(events).toStrictEqual([
+      { characterId: VARESA_CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 20 },
+      { characterId: VARESA_CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 20 },
+    ]);
+  });
+
   test("a plunge gains 25 Nightsoul points, and filling them to 40 enters the Blessing for 15 seconds", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createVaresaCombatant());
@@ -103,5 +122,30 @@ describe(createVaresaKitBehaviour, () => {
     VARESA_KIT.elementalBurst.onStart?.(context);
     expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(true);
+  });
+
+  test("a burst inside the Nightsoul Blessing is the Fiery Passion Flying Kick, and one outside it is her burst", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createVaresaCombatant());
+    expect(VARESA_KIT.elementalBurstVariant?.checkIsActive(context)).toBe(false);
+    VARESA_KIT.elementalBurst.onStart?.(context);
+    expect(VARESA_KIT.elementalBurstVariant?.checkIsActive(context)).toBe(true);
+  });
+
+  test("the Fiery Passion Flying Kick lands at 88 frames of 122 with Poise 150", () => {
+    expect.hasAssertions();
+    expect(
+      VARESA_KIT.elementalBurstVariant?.action.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
+    ).toStrictEqual([88]);
+    expect(VARESA_KIT.elementalBurstVariant?.action.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([150]);
+    expect(Math.round((VARESA_KIT.elementalBurstVariant?.action.seconds ?? 0) * 60)).toBe(122);
+  });
+
+  test("the Fiery Passion Flying Kick fills her Nightsoul points to 40, as her burst does", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createVaresaCombatant());
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalBurstVariant?.action.onStart?.(context);
+    expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
   });
 });

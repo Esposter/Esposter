@@ -33,6 +33,16 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import {
+  FULL_PLATE_ID,
+  RAINBOW_BLADEWORK_ID,
+  RAIN_SWORD_ID,
+  STONEHIDE_ID,
+  STONE_FORCE_ID,
+  SWEEPING_TIME_ID,
+} from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -76,6 +86,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -97,11 +109,11 @@ describe("rain Sword", () => {
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAIN_SWORD_ID, rainSword);
-    expect(rainSword.modifyDamageReceived?.(context, 2, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 2, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(2);
-    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(1);
-    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(0);
   });
 });
@@ -375,6 +387,7 @@ describe("sweeping Time", () => {
     kind: GcgSkillKind.ElementalSkill,
   };
   const createSweepingTimeContext = (): GcgEffectContext => ({
+    characterIndex: 0,
     duel: createDuel([createSideState([createCharacterState(1602)]), createSideState([])]),
     sideIndex: 0,
   });

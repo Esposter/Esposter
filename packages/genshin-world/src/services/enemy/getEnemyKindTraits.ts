@@ -1,11 +1,11 @@
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
 
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
 import { takeOne } from "@esposter/shared";
 
 // The poise a kind takes when no kind of its type in its family has one, the most common poise of its type
@@ -14,8 +14,6 @@ const TYPE_POISE_TYPE_MAP: Record<EnemyType, PoiseType> = {
   [EnemyType.Common]: PoiseType.Minion,
   [EnemyType.Elite]: PoiseType.HumanoidDemiboss,
 };
-
-const isEnemyKindId = (enemyKindId: number): enemyKindId is EnemyKindId => enemyKindId in EnemyKindTraitsMap;
 
 // A kind's traits: the ones the traits map writes for it, else defaults from its row. Its poise and the Mora and materials
 // It drops are its family's, the ones the kinds of its family and type share, the poise of its type where they share none.

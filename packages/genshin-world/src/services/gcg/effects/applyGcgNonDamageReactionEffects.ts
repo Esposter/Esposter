@@ -15,9 +15,10 @@ import {
   GCG_CRYSTALLIZE_SHIELD,
   GCG_DENDRO_CORE_ID,
   GCG_DENDRO_CORE_MAX_USAGES,
-  GCG_SHIELD_LIMIT,
 } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
@@ -36,14 +37,14 @@ export const applyGcgNonDamageReactionEffects = (
   if (reaction === GcgReactionKind.Frozen) hit.isFrozen = true;
   else if (reaction === GcgReactionKind.Crystallize) {
     const user = sourceSide.characters.at(sourceSide.activeIndex);
-    if (user) user.shield = Math.min(GCG_SHIELD_LIMIT, user.shield + GCG_CRYSTALLIZE_SHIELD);
+    if (user) addGcgShield(user, GCG_CRYSTALLIZE_SHIELD);
   } else if (
     reaction === GcgReactionKind.Overloaded &&
     hit.hp > 0 &&
     targetSide.characters.at(targetSide.activeIndex) === hit
   ) {
     const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, 1);
-    if (nextIndex !== undefined) targetSide.activeIndex = nextIndex;
+    if (nextIndex !== undefined) switchGcgSideActive(targetSide, nextIndex);
   } else if (reaction === GcgReactionKind.Burning)
     addGcgReactionCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame, GCG_BURNING_FLAME_MAX_USAGES);
   else if (reaction === GcgReactionKind.Bloom)

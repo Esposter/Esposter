@@ -1,7 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
@@ -9,12 +11,21 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createGanyuKitBehaviour, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
-import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { CHARGED_ATTACK_HOLD_SECONDS } from "#src/services/kit/constants";
+import { createKitState } from "#src/services/kit/createKitState";
+import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const GANYU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GANYU_CHARACTER_ID);
 const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -38,6 +49,33 @@ const getTickBuffs = (ascension: number): KitEffect[] => {
     0,
   );
   return kitEffectState.effects.filter((effect) => effect.kind === "buff");
+};
+
+const IDLE_INPUT: KitInput = {
+  height: 0,
+  isAttackHeld: false,
+  isAttackPressed: false,
+  isBurstPressed: false,
+  isSkillHeld: false,
+  isSkillPressed: false,
+  locomotionState: LocomotionState.Idle,
+};
+
+// Starts a fully charged shot from a held attack whose strike has ended, as the charge holds it, and returns it with its state
+const startChargedShot = (context: KitContext) => {
+  const kitState = createKitState();
+  kitState.attackHeldSeconds = CHARGED_ATTACK_HOLD_SECONDS;
+  const action = startNextKitAction(
+    kitState,
+    GANYU_KIT,
+    IDLE_INPUT,
+    createPartyMember(),
+    createStamina(STAMINA_MAX),
+    true,
+    [],
+    context,
+  );
+  return { action, kitState };
 };
 
 describe(createGanyuKitBehaviour, () => {
@@ -71,7 +109,11 @@ describe(createGanyuKitBehaviour, () => {
     const hit = takeOne(GANYU_KIT.chargedAttack.hits);
     const combatant = createGanyuCombatant(1);
     const context = createKitTestContext(combatant, { kitEffectState });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(kitEffectState.effects).toStrictEqual([
       {
@@ -91,7 +133,11 @@ describe(createGanyuKitBehaviour, () => {
     const hit = takeOne(GANYU_KIT.chargedAttack.hits);
     const combatant = createGanyuCombatant(0);
     const context = createKitTestContext(combatant, { kitEffectState });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -155,6 +201,49 @@ describe(createGanyuKitBehaviour, () => {
     const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
+  });
+
+  test("constellation 6's Ice Lotus gives the next fully charged shot a charge skip, which starts it 83 frames in", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createGanyuCombatant(0, 6));
+    GANYU_KIT.elementalSkill.onStart?.(context);
+
+    const { action, kitState } = startChargedShot(context);
+
+    expect(action).toBe(GANYU_KIT.chargedAttack);
+    expect(Math.round(kitState.actionSeconds * 60)).toBe(83);
+  });
+
+  test("a charge skip is spent by the shot it starts, so the shot after it is charged in full", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createGanyuCombatant(0, 6));
+    GANYU_KIT.elementalSkill.onStart?.(context);
+    startChargedShot(context);
+
+    const { kitState } = startChargedShot(context);
+
+    expect(kitState.actionSeconds).toBe(0);
+  });
+
+  test("constellation 5's Ice Lotus gives no charge skip", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createGanyuCombatant(0, 5));
+    GANYU_KIT.elementalSkill.onStart?.(context);
+
+    const { kitState } = startChargedShot(context);
+
+    expect(kitState.actionSeconds).toBe(0);
+  });
+
+  test("a charge skip runs out 30 seconds after the Ice Lotus is cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createGanyuCombatant(0, 6));
+    GANYU_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 31);
+
+    const { kitState } = startChargedShot(context);
+
+    expect(kitState.actionSeconds).toBe(0);
   });
 
   test("an active constellation's switch changes its character's kit", () => {

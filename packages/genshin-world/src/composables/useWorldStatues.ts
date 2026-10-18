@@ -10,17 +10,20 @@ import type { Ref, ShallowRef } from "vue";
 
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
+import { claimStatueLevel } from "#src/services/statue/claimStatueLevel";
 import { computeStatueLevelEvents } from "#src/services/statue/computeStatueLevelEvents";
 import { findOculus } from "#src/services/statue/findOculus";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
 import { getResultAsync } from "@esposter/shared";
 
-// The statues' state the world holds: each region's level and held count, and the Oculi found. A touch collects an Oculus
-// And a resonance starts its region, each paying the levels it reaches and their rewards as a bag offer does. What the bag
-// Has no room for drops where the touch or the resonance was made
+// The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
+// and the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
+// and the Worship Statue offers the Oculi held and pays each level's rewards as that level is claimed, one level an action.
+// What the bag has no room for drops where the claim was made
 export const useWorldStatues = ({
   events,
   foundOculusIds,
@@ -48,9 +51,8 @@ export const useWorldStatues = ({
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
-  // The levels of the region's statues are read from the game's table as a statue is touched or resonated with, and the
-  // Region's progress is kept as the save holds it, its levels left to the table
-  // A level the region rises to is an achievement event for its city, read against the level the region held before it
+  // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
+  // Achievement event for its city, read against the level the region held before it
   const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
     const achievementEvents = computeStatueLevelEvents(regionId, getRegionProgress(regionId).level, progress.level);
     if (achievementEvents.length > 0) events.emit("achievementEvents", achievementEvents);
@@ -58,7 +60,7 @@ export const useWorldStatues = ({
   };
   // A region's progress as the save holds it, which a region no save holds yet starts from at none
   const getRegionProgress = (regionId: string): StatueRegionProgressSave =>
-    regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
+    regionStatueProgressMap.value.get(regionId) ?? { claimedLevel: 0, heldCount: 0, level: 0 };
   const payLevels = (gainedLevels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const paid = payOfferingLevels(gainedLevels, inventory.value, wallet.value, nameText, materialDataMap);
     setInventory(paid.inventory);
@@ -71,7 +73,13 @@ export const useWorldStatues = ({
     const key: `statueLevels/${string}` = `statueLevels/${regionId}`;
     return checkIsGameDataKey(key) ? readStatueLevels(gameDataBaseUrl, key) : Promise.resolve([]);
   };
-  // Touching an Oculus collects it once: its Adventure EXP and the levels it completes are paid
+  // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with its
+  // screen showing each level and its rewards, and a resonance reads them before it acts
+  const readRegionLevels = (regionId: string, onRead: (levels: StatueLevel[]) => void) =>
+    getResultAsync(() => readRegionStatueLevels(regionId)).match(onRead, (error) => {
+      console.error(error);
+    });
+  // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
   const collectOculus = (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
@@ -85,8 +93,8 @@ export const useWorldStatues = ({
         const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
         foundOculusIds.value = found.foundOculusIds;
         if (isNewlyFound && found.foundOculusIds.has(source.id)) events.emit("oculusFound");
-        gainWorldAdventureExp(found.adventureExp + payLevels(found.gainedLevels, source));
-        setRegionProgress(regionId, toStatueRegionProgressSave(found.progress));
+        gainWorldAdventureExp(found.adventureExp);
+        setRegionProgress(regionId, toStatueRegionProgressSave(found.progress, progress.claimedLevel));
       },
       (error) => {
         collectingOculusIds.delete(source.id);
@@ -94,21 +102,32 @@ export const useWorldStatues = ({
       },
     );
   };
-  // A resonance with a statue starts its region at level one, paying that level's rewards once
-  const resonateStatue = (landmarkId: string, source: Pick<WorldDrop, "id" | "position">) => {
+  // A resonance with a statue starts its region at level one. Level one is reached, its rewards waiting to be claimed
+  const resonateStatue = (landmarkId: string) => {
     const regionId = getStatueRegionId(landmarkId);
     if (regionId === undefined) return;
-    getResultAsync(() => readRegionStatueLevels(regionId)).match(
-      (levels) => {
-        const progress = getRegionProgress(regionId);
-        const resonated = resonateRegion(toStatueRegionProgress(progress, levels));
-        gainWorldAdventureExp(payLevels(resonated.gainedLevels, source));
-        setRegionProgress(regionId, toStatueRegionProgressSave(resonated.progress));
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
+    readRegionLevels(regionId, (levels) => {
+      const progress = getRegionProgress(regionId);
+      const resonated = resonateRegion(toStatueRegionProgress(progress, levels));
+      setRegionProgress(regionId, toStatueRegionProgressSave(resonated, progress.claimedLevel));
+    });
   };
-  return { collectOculus, resonateStatue };
+  // The Worship Statue offers the Oculi a started region holds, reaching each level they complete and leaving its rewards
+  // to be claimed
+  const offerOculi = (regionId: string, levels: StatueLevel[]) => {
+    const progress = getRegionProgress(regionId);
+    const offered = offerStatueOculi(toStatueRegionProgress(progress, levels));
+    setRegionProgress(regionId, toStatueRegionProgressSave(offered, progress.claimedLevel));
+  };
+  // A claim takes the next level the region has reached, paying its rewards once; a region with none left to claim is left
+  // as it is
+  const claimLevel = (regionId: string, levels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
+    const progress = getRegionProgress(regionId);
+    const offeringProgress = toStatueRegionProgress(progress, levels);
+    const claim = claimStatueLevel(offeringProgress, progress.claimedLevel);
+    if (!claim.claimed) return;
+    gainWorldAdventureExp(payLevels([claim.claimed], source));
+    setRegionProgress(regionId, toStatueRegionProgressSave(offeringProgress, claim.claimedLevel));
+  };
+  return { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLevels, resonateStatue };
 };

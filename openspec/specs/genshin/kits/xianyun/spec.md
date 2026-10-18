@@ -1,6 +1,6 @@
 ## Purpose
 
-Xianyun's kit as built, with her four strikes, charged attack, plunges, Skyladder's first press and Stars Gather at Dusk's hit, and what is left of Driftcloud Wave, Starwicker and her heals.
+Xianyun's kit as built, with her four strikes, charged attack, plunges, Skyladder and its presses, Driftcloud Wave, Stars Gather at Dusk's hit and Constellations 1, 2, 4 and 6, and what is left of Starwicker and her burst's heals.
 
 ## Requirements
 
@@ -47,15 +47,38 @@ Xianyun's burst SHALL deal Stars Gather at Dusk's hit and spend the burst's ener
 - **WHEN** the player casts Xianyun's burst while its cooldown is still running
 - **THEN** no burst is cast
 
-### Requirement: Plunges during Skyladder
+### Requirement: Driftcloud Wave
 
-Xianyun's plunges SHALL remain the standard plunge while Skyladder's state stands.
+While Skyladder's state stands, Xianyun's plunge SHALL play Driftcloud Wave's leap in place of the standard plunge, the leap for the presses made in the state, and the state SHALL end with it.
 
-#### Scenario: Plunge while Skyladder stands
+#### Scenario: Plunge in the state plays the leap for its presses
 
-- **GIVEN** Skyladder's state stands
+- **GIVEN** Skyladder's state stands after two presses
+- **WHEN** Xianyun plunges
+- **THEN** Driftcloud Wave's second leap plays in place of the standard plunge
+- **AND** Skyladder's state ends
+
+#### Scenario: Plunge outside the state
+
+- **GIVEN** Skyladder's state has ended
 - **WHEN** Xianyun plunges
 - **THEN** the standard plunge plays
+
+### Requirement: Skyladder's presses in one state
+
+Xianyun's skill SHALL press Skyladder up to three times in one state, a chained press playing the follow-up of the press before it and starting no cooldown, and each press SHALL set the state for its own length.
+
+#### Scenario: Chained press counts up
+
+- **GIVEN** Xianyun has pressed Skyladder once
+- **WHEN** the player presses her skill again inside the state's window
+- **THEN** the second press plays, and the state counts two presses
+
+#### Scenario: A third press ends the chain
+
+- **GIVEN** Xianyun has pressed Skyladder three times in one state
+- **WHEN** the player presses her skill again
+- **THEN** a new Skyladder chain starts, under its cooldown
 
 ### Requirement: Constellation 1 charge
 
@@ -95,9 +118,36 @@ From Constellation 2, each White Clouds at Dawn press SHALL give Xianyun 20% ATK
 - **WHEN** the player presses her skill again
 - **THEN** the buff runs 15 seconds again, and only one buff stands
 
+### Requirement: Constellation 4 heal
+
+From Constellation 4, each Driftcloud Wave hit SHALL heal the active character by a share of Xianyun's ATK, 50%, 80% or 150% for one, two or three presses in the state, and no second heal SHALL come within 5 seconds of the first.
+
+#### Scenario: Driftcloud Wave heals once in five seconds
+
+- **GIVEN** Xianyun has Constellation 4 and her Driftcloud Wave hits after one press
+- **WHEN** the hit lands
+- **THEN** the active character heals by half of Xianyun's ATK
+- **AND** a second hit within 5 seconds heals nothing
+
+### Requirement: Constellation 6 presses and CRIT DMG
+
+From Constellation 6, a burst SHALL give eight presses of Skyladder that cost no cooldown for 16 seconds, each press spending one, and a press SHALL start whatever its cooldown is while they last. A Driftcloud Wave hit SHALL gain 15%, 35% or 70% CRIT DMG for one, two or three presses in the state.
+
+#### Scenario: Burst gives eight presses
+
+- **GIVEN** Xianyun has Constellation 6
+- **WHEN** she casts her burst
+- **THEN** eight presses of Skyladder that cost no cooldown stand for 16 seconds
+
+#### Scenario: A press on its cooldown starts while the presses last
+
+- **GIVEN** Xianyun has Constellation 6, a press's cooldown runs, and presses that cost no cooldown stand
+- **WHEN** the player presses her skill
+- **THEN** the press starts, and one of the presses is spent
+
 ### Requirement: Unbuilt effects
 
-Xianyun's heals, Starwicker, her passives and her Constellations 4 and 6 SHALL have no effect in the world yet.
+Xianyun's burst heals, Starwicker, her airborne buff and her passives SHALL have no effect in the world yet.
 
 #### Scenario: Burst heals are absent
 

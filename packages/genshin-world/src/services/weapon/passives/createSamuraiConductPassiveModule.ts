@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -16,7 +16,7 @@ const SAMURAI_CONDUCT_TICK_SECONDS = 2;
 // Samurai Conduct at its rank: the Elemental Skill DMG its wielder deals is raised by the rank's percentage. After its
 // Elemental Skill hits an opponent, the wielder loses the rank's first energy and regenerates the rank's second on each
 // Tick for the rank's seconds, once every cooldown the rank gives, whether or not the wielder is on the field
-export const createSamuraiConductPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSamuraiConductPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const energySpent = takeOne(params, 1);
   const energyRegenerated = takeOne(params, 2);

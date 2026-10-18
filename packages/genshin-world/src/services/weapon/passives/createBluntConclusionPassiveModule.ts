@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -13,7 +13,7 @@ const BLUNT_CONCLUSION_COOLDOWN_ID = "bluntConclusionCooldown";
 
 // Blunt Conclusion at its rank: after its wielder uses an elemental skill, each normal or charged attack hit it deals adds
 // An extra hit at the rank's multiplier of ATK on a small area, for the rank's seconds, once per the rank's cooldown
-export const createBluntConclusionPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createBluntConclusionPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   const cooldownSeconds = takeOne(params, 2);

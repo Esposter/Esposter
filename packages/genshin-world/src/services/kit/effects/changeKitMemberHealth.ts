@@ -2,7 +2,9 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { createKitFallRefusal } from "#src/services/kit/createKitFallRefusal";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -11,18 +13,25 @@ import { healPartyMember } from "#src/services/party/healPartyMember";
 // Negative one drains it as it is, as gcsim's Heal and Drain price them. The change is recorded with the source's
 // Character, so every kit of the team hears it. A member whose combatant is not built yet has no Max HP to take it by
 export const changeKitMemberHealth = (
-  { characterIdCombatantMap, kitEffectState: { effects }, party }: KitContext,
+  { characterIdCombatantMap, kitEffectState, party }: KitContext,
   source: Combatant,
   characterId: number,
   health: number,
 ): void => {
   const member = characterIdCombatantMap.get(characterId);
   if (!member) return;
-  const { maxHealth } = member.attributes;
+  const maxHealth = getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap);
   if (health < 0) {
-    damagePartyMember(party, characterId, -health / maxHealth, source.characterId);
+    damagePartyMember(
+      party,
+      characterId,
+      -health / maxHealth,
+      source.characterId,
+      createKitFallRefusal(member, kitEffectState, maxHealth),
+    );
     return;
   }
+  const { effects } = kitEffectState;
   const healingBonus = getBuffedCombatant(source, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
     Attribute.HealingBonus
   ];

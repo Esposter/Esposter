@@ -17,9 +17,11 @@ import {
 } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
+import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
+import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
 
 // The first frames of a constant's list, descending through each level's first element
@@ -29,8 +31,8 @@ const readFirstGoFrames = (value: GoValue | undefined): GoValue | undefined =>
 // The writer of one gcsim character's values into a kit's candidate map, each cited at the file and line it is read from
 export const createGcsimKitCandidateWriter = (
   candidateMap: Map<string, KitCandidate[]>,
-  { configFile, constantMap, folder, talentFile, talentParameterMap }: GcsimCharacter,
-  { talentGroupIdMap }: KitTables,
+  { configFile, constantMap, folder, talentArrayMap, talentFile, talentParameterMap }: GcsimCharacter,
+  { talentGroupIdMap, talentMultiplierMap }: KitTables,
   defaultCause?: KitProvisionalCause,
 ): GcsimKitCandidateWriter => {
   const toFile = (name: string, from = folder) => `${GCSIM_CHARACTERS_PATH}/${from}/${name}`;
@@ -74,18 +76,30 @@ export const createGcsimKitCandidateWriter = (
         if (area !== undefined)
           add(`${path}.area`, area.area, toFile(areaHitbox.file ?? configFile), areaHitbox.line, area.cause);
       }
+      let isLabelled = false;
       if (talentLeaf !== undefined) {
         const { label, selector, type } = talentLeaf.reference;
         const parameter = talentParameterMap.get(`${type}|${label}`);
         const index = parameter?.indexes[selector] ?? parameter?.indexes[0];
-        if (parameter !== undefined && index !== undefined)
+        if (parameter !== undefined && index !== undefined) {
+          isLabelled = true;
           add(
             `${path}.${multiplierKey}`,
             { index, proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]] },
             toFile(talentFile),
             parameter.line,
           );
+        }
       }
+      // A hit whose talent row names no parameter reads the array its attack's variable names, joined to its
+      // Parameter by value
+      const talentArray = isLabelled ? undefined : talentArrayMap.get(attack?.talentVariable ?? "");
+      const joined =
+        talentArray === undefined
+          ? undefined
+          : joinGcsimTalentArray(talentArray, talentMultiplierMap, Object.values(talentGroupIdMap));
+      if (talentArray !== undefined && joined !== undefined)
+        add(`${path}.multiplier`, joined, toFile(talentFile), talentArray.line);
       if (attack === undefined) return;
       const fieldFile = toFile(attack.file);
       const fieldLine = (key: string) => attack.fieldLineMap[key] ?? attack.line;
@@ -101,6 +115,11 @@ export const createGcsimKitCandidateWriter = (
         else if (attack.durability !== undefined)
           add(`${path}.gauge`, attack.durability / GCSIM_DURABILITY_PER_GAUGE, fieldFile, fieldLine("Durability"));
       }
+      // A direct Lunar tag is the Lunar reaction the hit's damage is dealt as, from the tag's own line
+      const lunarReactionType =
+        attack.attackTag === undefined ? undefined : GcsimAttackTagLunarReactionTypeMap[attack.attackTag];
+      if (lunarReactionType !== undefined)
+        add(`${path}.lunarReactionType`, lunarReactionType, fieldFile, fieldLine("AttackTag"));
       // A literal with no tag or strike type has gcsim's zero values, no tag and the default strike
       add(
         `${path}.internalCooldownTag`,

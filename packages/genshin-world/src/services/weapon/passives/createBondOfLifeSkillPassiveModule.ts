@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import type { Attribute } from "#src/models/character/Attribute";
 
@@ -6,6 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { takeOne } from "@esposter/shared";
@@ -24,7 +25,7 @@ export interface BondOfLifeSkillPassiveOptions {
 export const createBondOfLifeSkillPassiveModule = (
   params: number[],
   { clearedAttributes, priceClearedAmount, skillAttributes, source }: BondOfLifeSkillPassiveOptions,
-): WeaponPassiveModule => {
+): PassiveModule => {
   const skillAmount = takeOne(params, 0);
   const skillSeconds = takeOne(params, 1);
   const bondOfLifeShare = takeOne(params, 2);
@@ -60,11 +61,13 @@ export const createBondOfLifeSkillPassiveModule = (
         combatant.characterId,
       );
       if (standingShare) return;
-      const amount = priceClearedAmount(
-        bondOfLifeClearedShare * combatant.attributes.maxHealth,
-        clearedRate,
-        clearedMax,
+      const maxHealth = getKitMaxHealth(
+        combatant,
+        context.kitEffectState.effects,
+        context.party,
+        context.characterIdCombatantMap,
       );
+      const amount = priceClearedAmount(bondOfLifeClearedShare * maxHealth, clearedRate, clearedMax);
       for (const attribute of clearedAttributes)
         buffKitMember(context.kitEffectState, combatant.characterId, {
           amount,
