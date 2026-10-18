@@ -2,12 +2,17 @@ import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 
 // Sparkly Explosion, from four constellations, goes off as Klee leaves the field while Sparks 'n' Splash stands, as the
@@ -22,8 +27,42 @@ const BLAZING_DELIGHT_PYRO_DAMAGE_BONUS = 0.1;
 const BLAZING_DELIGHT_SECONDS = 25;
 const BLAZING_DELIGHT_SOURCE = "Blazing Delight";
 const SPARKS_ID = "klee-sparks";
+// Explosive Spark, from Ascension 1, gives Klee a 50% chance on each hit of her normal attacks and Jumpy Dumpty to
+// Obtain a spark, rolled no more than once each 5 seconds. A spark lasts 30 seconds, and her next charged attack spends
+// It for no stamina and 50% more Pyro DMG, as gcsim v2.47.2 (MIT) klee/asc.go and charge.go give it
+const EXPLOSIVE_SPARK_ASCENSION = 1;
+const EXPLOSIVE_SPARK_CHANCE = 0.5;
+const EXPLOSIVE_SPARK_COOLDOWN_SECONDS = 5;
+const EXPLOSIVE_SPARK_COOLDOWN_ID = "klee-explosive-spark-cooldown";
+const EXPLOSIVE_SPARK_DAMAGE_BONUS = 0.5;
+const EXPLOSIVE_SPARK_ID = "klee-explosive-spark";
+const EXPLOSIVE_SPARK_SECONDS = 30;
+const EXPLOSIVE_SPARK_SOURCE = "Explosive Spark";
+// The seconds past the charged attack's hit its spark's damage bonus lasts, so the step that lands the hit still has it
+const CHARGED_ATTACK_LINGER_SECONDS = 0.1;
 
 export const KLEE_CHARACTER_ID = 10_000_029;
+
+// Each hit of her normal attacks or Jumpy Dumpty rolls for a spark once a strike of Klee's with Ascension 1 lands, unless
+// The roll is on cooldown, which the roll starts only when it passes
+const rollExplosiveSpark = ({ kitEffectState, random }: KitContext, { combatant }: KitStrike): void => {
+  if (
+    combatant.ascension < EXPLOSIVE_SPARK_ASCENSION ||
+    checkHasKitStatus(kitEffectState.effects, KLEE_CHARACTER_ID, EXPLOSIVE_SPARK_COOLDOWN_ID) ||
+    random() >= EXPLOSIVE_SPARK_CHANCE
+  )
+    return;
+  addKitStatus(kitEffectState, KLEE_CHARACTER_ID, {
+    id: EXPLOSIVE_SPARK_COOLDOWN_ID,
+    secondsRemaining: EXPLOSIVE_SPARK_COOLDOWN_SECONDS,
+  });
+  // A spark already standing is not refreshed, as gcsim's status is not
+  if (checkHasKitStatus(kitEffectState.effects, KLEE_CHARACTER_ID, EXPLOSIVE_SPARK_ID)) return;
+  addKitStatus(kitEffectState, KLEE_CHARACTER_ID, {
+    id: EXPLOSIVE_SPARK_ID,
+    secondsRemaining: EXPLOSIVE_SPARK_SECONDS,
+  });
+};
 
 // Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n' Splash's
 // Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing Delight's Pyro DMG
@@ -35,9 +74,9 @@ export const createKleeKitBehaviour = ({
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
   // A bomb lands from a summon cast where Klee stands as the strike starts, as gcsim throws it whatever cancels the strike
-  const bombs = readHits("bomb");
+  const bombs = readHits("bomb", { onStrike: rollExplosiveSpark });
   const chargedAttackBomb = readHit("chargedAttackBomb");
-  const jumpyDumptyHits = readHits("jumpyDumpty");
+  const jumpyDumptyHits = readHits("jumpyDumpty", { onStrike: rollExplosiveSpark });
   const sparkHits = readHits("spark");
   // The burst stands from its start for its seconds
   const burstSeconds = readSeconds("burstStart") + readParameter("burstSeconds");
@@ -68,10 +107,27 @@ export const createKleeKitBehaviour = ({
 
   return {
     burst: { onStart: castSparksNSplash },
+    // A spark is spent as the charged attack starts, and its damage bonus holds until the bomb it powers lands
     chargedAttack: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [chargedAttackBomb]),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, [chargedAttackBomb]);
+        if (!checkHasKitStatus(kitEffectState.effects, KLEE_CHARACTER_ID, EXPLOSIVE_SPARK_ID)) return;
+        removeKitEffects(
+          kitEffectState,
+          (effect) =>
+            effect.kind === "status" && effect.characterId === KLEE_CHARACTER_ID && effect.id === EXPLOSIVE_SPARK_ID,
+        );
+        buffKitMember(kitEffectState, KLEE_CHARACTER_ID, {
+          amount: EXPLOSIVE_SPARK_DAMAGE_BONUS,
+          attribute: Attribute.PyroDamageBonus,
+          secondsRemaining: chargedAttackBomb.hitmarkSeconds + CHARGED_ATTACK_LINGER_SECONDS,
+          source: EXPLOSIVE_SPARK_SOURCE,
+        });
+      },
     },
+    // Her spark is spent by the charged attack alone, which costs none while one stands
+    getChargedAttackStaminaMultiplier: ({ kitEffectState }) =>
+      checkHasKitStatus(kitEffectState.effects, KLEE_CHARACTER_ID, EXPLOSIVE_SPARK_ID) ? 0 : 1,
     normalAttacks: bombs.map((bomb): KitActionBehaviour => ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, [bomb]),

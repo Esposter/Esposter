@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYelanKitBehaviour, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -89,5 +90,19 @@ describe(createYelanKitBehaviour, () => {
 
     expect(strike([]).filter((effect) => effect.kind === "summon")).toStrictEqual([]);
     expect(strike(field ? [field] : []).filter((effect) => effect.kind === "summon")).toHaveLength(1);
+  });
+
+  test("yelan's Breakthrough Barb is rolled on each Lingering Lifeline hit", () => {
+    expect.hasAssertions();
+    const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
+    const rollStrike = (random: number): number => {
+      const combatant = createYelanCombatant();
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
+      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
+      return countKitResource(kitEffectState.effects, YELAN_CHARACTER_ID, "yelan-breakthrough-barb");
+    };
+
+    expect([rollStrike(0.33), rollStrike(0.34)]).toStrictEqual([1, 0]);
   });
 });

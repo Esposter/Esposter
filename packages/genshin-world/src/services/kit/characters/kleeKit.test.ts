@@ -1,6 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,7 +10,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKleeKitBehaviour, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, castKitAction } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -28,6 +30,9 @@ const createKleeCombatant = (constellationCount: number): Combatant => ({
   kit: KLEE_KIT,
   level: 90,
 });
+
+const statusIds = (effects: KitEffect[]): string[] =>
+  effects.flatMap((effect) => (effect.kind === "status" ? [effect.id] : []));
 
 describe(createKleeKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -121,4 +126,41 @@ describe(createKleeKitBehaviour, () => {
       );
     },
   );
+
+  test("klee's Explosive Spark is applied at a 50% chance on a hit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKleeCombatant(0), ascension: 1 };
+    const rollBombHit = (random: number): KitEffect[] => {
+      const kitEffectState = castKitAction(KLEE_KIT.normalAttacks[0], combatant);
+      const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+      const [bombHit] = summon?.hits ?? [];
+      const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
+      bombHit?.onStrike?.(context, { body: context.body, combatant, hit: bombHit });
+      return kitEffectState.effects;
+    };
+
+    expect(statusIds(rollBombHit(0.49))).toStrictEqual(["klee-explosive-spark-cooldown", "klee-explosive-spark"]);
+    expect(statusIds(rollBombHit(0.5))).toStrictEqual([]);
+  });
+
+  test("klee's charged attack spends a standing Explosive Spark for no stamina and 50% more Pyro DMG", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKleeCombatant(0), ascension: 1 };
+    const kitEffectState: KitEffectState = {
+      effects: [{ characterId: KLEE_CHARACTER_ID, id: "klee-explosive-spark", kind: "status", secondsRemaining: 30 }],
+    };
+    const multiplier = KLEE_KIT.getChargedAttackStaminaMultiplier?.(
+      createKitTestContext(combatant, { kitEffectState }),
+    );
+    castKitAction(KLEE_KIT.chargedAttack, combatant, kitEffectState);
+    const pyroBonus = kitEffectState.effects.flatMap((effect) =>
+      effect.kind === "buff" && effect.attribute === Attribute.PyroDamageBonus ? [effect.amount] : [],
+    );
+
+    expect([multiplier, pyroBonus, kitEffectState.effects.some((effect) => effect.kind === "status")]).toStrictEqual([
+      0,
+      [0.5],
+      false,
+    ]);
+  });
 });
