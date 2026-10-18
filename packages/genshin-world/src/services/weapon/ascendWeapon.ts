@@ -5,6 +5,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
+import { getAscendableNextPhase } from "#src/services/weapon/getAscendableNextPhase";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A weapon ascended at its phase's cap into the next phase, as the game takes it: the next phase's Mora and items are
@@ -15,9 +16,8 @@ export const ascendWeapon = (
   weaponData: WeaponData,
   { adventureRank, inventory, wallet }: { adventureRank: number; inventory: Inventory; wallet: Wallet },
 ): { inventory: Inventory; wallet: Wallet; weapon: Weapon } => {
-  const phase = weaponData.ascensionPhases[weapon.ascension];
-  const nextPhase = weaponData.ascensionPhases[weapon.ascension + 1];
-  if (!phase || !nextPhase || weapon.level !== phase.maxLevel)
+  const nextPhase = getAscendableNextPhase(weapon, weaponData);
+  if (!nextPhase)
     throw new InvalidOperationError(
       Operation.Update,
       ascendWeapon.name,

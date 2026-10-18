@@ -49,19 +49,21 @@ No screen or bag entry calls these services yet. A bag weapon carries only its l
 
 ## Key files
 
-| File                                                                        | Role                                                                      |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/weapon/Weapon.ts`                        | A weapon's level, EXP towards the next, ascension and refinement rank     |
-| `packages/genshin-world/src/models/weapon/WeaponData.ts`                    | A weapon's fodder EXP, ascension phases, refinement costs and material    |
-| `packages/genshin-world/src/models/weapon/WeaponAscensionPhase.ts`          | A phase with the Mora, items and Adventure Rank that entering it costs    |
-| `packages/genshin-world/src/models/weapon/RarityRequiredExpsMap.ts`         | Each rarity's EXP to rise past each level                                 |
-| `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`               | Paid EXP at Mora, levels gained, and the excess returned as ores          |
-| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`                | The next phase's gate, and its Mora and items taken                       |
-| `packages/genshin-world/src/services/weapon/refineWeapon.ts`                | Ranks gained at each rank's Mora, past the fifth lost                     |
-| `packages/genshin-world/src/services/weapon/readWeaponLevelRequiredExps.ts` | The levelling table, fetched by its key and checked against its shape     |
-| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts`       | Items taken out of the bag's stacks, refused when the bag holds too few   |
-| `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`                | A weapon's fodder EXP, phases' costs and refinement costs from the tables |
-| `scripts/src/services/genshinAssets/stats/toWeaponLevelRequiredExps.ts`     | The levelling table turned into one column per rarity                     |
+| File                                                                        | Role                                                                                    |
+| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/weapon/Weapon.ts`                        | A weapon's level, EXP towards the next, ascension and refinement rank                   |
+| `packages/genshin-world/src/models/weapon/WeaponData.ts`                    | A weapon's fodder EXP, ascension phases, refinement costs and material                  |
+| `packages/genshin-world/src/models/weapon/WeaponAscensionPhase.ts`          | A phase with the Mora, items and Adventure Rank that entering it costs                  |
+| `packages/genshin-world/src/models/weapon/RarityRequiredExpsMap.ts`         | Each rarity's EXP to rise past each level                                               |
+| `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`               | Paid EXP at Mora, levels gained, and the excess returned as ores                        |
+| `packages/genshin-world/src/services/weapon/getAscendableNextPhase.ts`      | The next phase an ascension may enter, the one gate the offer and the ascension share   |
+| `packages/genshin-world/src/services/weapon/checkCanRefineWeapon.ts`        | Whether a weapon can be refined at all, the one gate the offer and the refinement share |
+| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`                | The next phase's gate, and its Mora and items taken                                     |
+| `packages/genshin-world/src/services/weapon/refineWeapon.ts`                | Ranks gained at each rank's Mora, past the fifth lost                                   |
+| `packages/genshin-world/src/services/weapon/readWeaponLevelRequiredExps.ts` | The levelling table, fetched by its key and checked against its shape                   |
+| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts`       | Items taken out of the bag's stacks, refused when the bag holds too few                 |
+| `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`                | A weapon's fodder EXP, phases' costs and refinement costs from the tables               |
+| `scripts/src/services/genshinAssets/stats/toWeaponLevelRequiredExps.ts`     | The levelling table turned into one column per rarity                                   |
 
 ## Sources
 

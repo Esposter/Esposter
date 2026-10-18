@@ -3,6 +3,7 @@ import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { checkCanRefineWeapon } from "#src/services/weapon/checkCanRefineWeapon";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -15,7 +16,7 @@ export const refineWeapon = (
   wallet: Wallet,
   gainedRanks: number,
 ): { lostRanks: number; wallet: Wallet; weapon: Weapon } => {
-  if (weaponData.refinementCosts.length === 0 || weapon.refinement >= MAX_WEAPON_REFINEMENT)
+  if (!checkCanRefineWeapon(weapon, weaponData))
     throw new InvalidOperationError(Operation.Update, refineWeapon.name, `refinement ${weapon.refinement}`);
   const refinement = Math.min(weapon.refinement + gainedRanks, MAX_WEAPON_REFINEMENT);
   const moraCost = weaponData.refinementCosts
