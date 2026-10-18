@@ -2,7 +2,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 
@@ -12,7 +12,7 @@ const CHONGHUAS_LAYERED_FROST_DAMAGE = 3;
 
 export const chonghuasLayeredFrost: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(CHONGHUA_FROST_FIELD_ID, chonghuaFrostField));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, CHONGHUA_FROST_FIELD_ID, chonghuaFrostField);
   },
   getDamage: () => ({ damageType: Element.Cryo, value: CHONGHUAS_LAYERED_FROST_DAMAGE }),
 };

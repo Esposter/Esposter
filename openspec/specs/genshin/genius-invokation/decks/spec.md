@@ -112,9 +112,9 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 - **WHEN** the dice are rolled
 - **THEN** the two guaranteed dice are set
 
-### Requirement: A summon or combat status placed again is refreshed or stacks, and a support or onstage takes a slot of its own
+### Requirement: A summon or combat status placed again is refreshed or stacks, and a support takes a slot of its own
 
-A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most. A support or onstage SHALL NOT be refreshed: a second copy SHALL take a slot of its own, and the copy already there SHALL keep its counter and usages.
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most. An onstage is a combat status and SHALL follow the same rule, so a second copy of an onstage SHALL NOT take a slot of its own, and the copy already there SHALL keep its counter. A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own.
 
 #### Scenario: A summon placed again refreshes the one on the field
 
@@ -127,6 +127,12 @@ A summon or combat status SHALL be placed by its id: a card of that id already o
 - **GIVEN** a Bake-Kurage is on a side with three usages, and its most is four
 - **WHEN** Kurage's Oath summons a Bake-Kurage again
 - **THEN** the one Bake-Kurage on the field has four usages, and no second copy appears
+
+#### Scenario: An onstage placed again refreshes the one on the field
+
+- **GIVEN** a Changing Shifts is on a side's onstages with no usage left
+- **WHEN** the side plays Changing Shifts again
+- **THEN** the one Changing Shifts on the field has its usage back, and no second copy appears
 
 #### Scenario: A support played again takes its own slot
 
