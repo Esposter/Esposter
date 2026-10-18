@@ -36,6 +36,7 @@ import {
   RETRACING_BOLIDE_ARTIFACT_SET_ID,
   SCHOLAR_ARTIFACT_SET_ID,
   SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID,
+  SONG_OF_DAYS_PAST_ARTIFACT_SET_ID,
   TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID,
   THUNDERSOOTER_ARTIFACT_SET_ID,
   TRAVELING_DOCTOR_ARTIFACT_SET_ID,
@@ -77,6 +78,7 @@ import { createResolutionOfSojournerSetModule } from "#src/services/artifact/set
 import { createRetracingBolideSetModule } from "#src/services/artifact/sets/createRetracingBolideSetModule";
 import { createScholarSetModule } from "#src/services/artifact/sets/createScholarSetModule";
 import { createShimenawasReminiscenceSetModule } from "#src/services/artifact/sets/createShimenawasReminiscenceSetModule";
+import { createSongOfDaysPastSetModule } from "#src/services/artifact/sets/createSongOfDaysPastSetModule";
 import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/sets/createTenacityOfTheMillelithSetModule";
 import { createThundersooterSetModule } from "#src/services/artifact/sets/createThundersooterSetModule";
 import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/createTravelingDoctorSetModule";
@@ -123,6 +125,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [RETRACING_BOLIDE_ARTIFACT_SET_ID]: createRetracingBolideSetModule,
   [SCHOLAR_ARTIFACT_SET_ID]: createScholarSetModule,
   [SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID]: createShimenawasReminiscenceSetModule,
+  [SONG_OF_DAYS_PAST_ARTIFACT_SET_ID]: createSongOfDaysPastSetModule,
   [TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID]: createTenacityOfTheMillelithSetModule,
   [THUNDERSOOTER_ARTIFACT_SET_ID]: createThundersooterSetModule,
   [TRAVELING_DOCTOR_ARTIFACT_SET_ID]: createTravelingDoctorSetModule,

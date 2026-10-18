@@ -20,6 +20,20 @@ export const getPassiveKit = (
     [kit, ...passiveModules].flatMap(
       ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
     ),
+  getPartyStrikeBonus: (member, strike, enemy, party, effects, characterIdCombatantMap) =>
+    [kit, ...passiveModules].reduce(
+      (sum, { getPartyStrikeBonus }) => {
+        const bonus = getPartyStrikeBonus?.(member, strike, enemy, party, effects, characterIdCombatantMap);
+        return {
+          additiveBaseDamageBonus: sum.additiveBaseDamageBonus + (bonus?.additiveBaseDamageBonus ?? 0),
+          criticalDamageBonus: sum.criticalDamageBonus + (bonus?.criticalDamageBonus ?? 0),
+          criticalRateBonus: sum.criticalRateBonus + (bonus?.criticalRateBonus ?? 0),
+          damageBonus: sum.damageBonus + (bonus?.damageBonus ?? 0),
+          defenseIgnored: sum.defenseIgnored + (bonus?.defenseIgnored ?? 0),
+        };
+      },
+      { additiveBaseDamageBonus: 0, criticalDamageBonus: 0, criticalRateBonus: 0, damageBonus: 0, defenseIgnored: 0 },
+    ),
   getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
     (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +
     passiveModules.reduce(
