@@ -25,7 +25,6 @@ import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionship
 import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { advanceOutcropFight } from "#src/services/leyLine/advanceOutcropFight";
-import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
 import { computeDailyOutcrops } from "#src/services/leyLine/computeDailyOutcrops";
 import { computeOutcropClaimRewards } from "#src/services/leyLine/computeOutcropClaimRewards";
 import { computeOutcropInteractables } from "#src/services/leyLine/computeOutcropInteractables";
@@ -39,6 +38,7 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
+import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -148,7 +148,7 @@ export const useWorldOutcrops = ({
   let drawnAt: Temporal.Instant | undefined;
   const drawDayOutcrops = (now: Temporal.Instant, random: () => number) => {
     if (kindRules.value.length === 0 || placements.value.length === 0) return;
-    if (drawnAt !== undefined && checkIsOutcropDayCurrent(drawnAt, now)) return;
+    if (drawnAt !== undefined && checkIsDailyResetDayCurrent(drawnAt, now)) return;
     const unlockedCityIds = [...regionStatueProgressMap.value.keys()].flatMap(
       (regionId) => RegionIdCityIdMap[regionId] ?? [],
     );

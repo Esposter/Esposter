@@ -1,8 +1,8 @@
 import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 
-import { checkIsCommissionDayCurrent } from "#src/services/commission/checkIsCommissionDayCurrent";
 import { dealCommissions } from "#src/services/commission/dealCommissions";
+import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 
 // The day the session holds once its save is loaded: a day dealt at or after the latest daily reset with commissions in it is
 // Kept as it is. A day dealt before the reset, or with none in it (dealt before Adventure Rank 12 opened), is dealt again from
@@ -15,7 +15,7 @@ export const computeCommissionDay = (
   rank: number,
   random: () => number,
 ): CommissionDay =>
-  checkIsCommissionDayCurrent(day.dealtAt, now) && day.dealtCommissions.length > 0
+  checkIsDailyResetDayCurrent(day.dealtAt, now) && day.dealtCommissions.length > 0
     ? day
     : {
         claimedCommissionIds: [],

@@ -10,8 +10,8 @@ import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPo
 import { readMiningOutcropPlaces } from "#src/services/gathering/readMiningOutcropPlaces";
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
 import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
+import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
 import { shallowRef } from "vue";
@@ -59,7 +59,7 @@ export const useMiningOutcrops = ({
     const at = computeShopRefreshTime(ShopRefresh.Daily, now);
     for (const [regionId, places] of placesMap.value) {
       const drawn = drawnMap.value.get(regionId);
-      if (places.length === 0 || (drawn !== undefined && checkIsOutcropDayCurrent(drawn.at, now))) continue;
+      if (places.length === 0 || (drawn !== undefined && checkIsDailyResetDayCurrent(drawn.at, now))) continue;
       const placeIds = computeDailyMiningOutcrops(
         regionId,
         places.map(({ id }) => id),
