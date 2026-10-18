@@ -9,6 +9,7 @@ import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { GOOD_HUNTER_SHOP_TYPE, SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { takeOne } from "@esposter/shared";
 import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -155,7 +156,7 @@ describe(buildItems, () => {
 
   beforeEach(() => {
     const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
-      materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
+      materials.map(({ itemId }) => ({ ...takeOne(materialRows, 0), id: itemId, nameTextMapHash: itemId })),
     );
     materialTable = [...materialRows, ...dropItemRows];
     itemTables = { [MATERIAL_TABLE_NAME]: materialTable };
