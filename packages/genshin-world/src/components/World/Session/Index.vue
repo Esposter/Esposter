@@ -419,6 +419,9 @@ const { offerFrostbearingTree } = useWorldOfferings({
   setWallet,
   wallet,
 });
+// The Traveler's element, which the statue last resonated with gives. The unlocked landmarks, which hold the
+// Resonances, set it again as they change, below the map
+const travelerElement = shallowRef(computeTravelerElement(getResonatedRegionIds(savedState.unlockedLandmarkIds)));
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   characterIdSkillGlyphsMap,
@@ -460,9 +463,6 @@ const useBagEntry = (entryId: number) => {
   });
   if (nextInventory) setInventory(nextInventory);
 };
-// The Traveler's element, which the statue last resonated with gives. The unlocked landmarks, which hold the
-// Resonances, set it again as they change, below the map
-const travelerElement = shallowRef(computeTravelerElement(getResonatedRegionIds(savedState.unlockedLandmarkIds)));
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does
 const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
@@ -691,6 +691,9 @@ const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) =>
 const nearOculusPlaces = computed(() =>
   getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, mapCamera.value, OCULUS_MINIMAP_DISTANCE),
 );
+// The unfound Oculus the body is touching, if it is touching one, which the frame collects
+const findTouchedOculus = () =>
+  getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, characterBody.position, OCULUS_TOUCH_RADIUS)[0];
 // The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
 // One it points to lets the pointer go at once
 const pointedLandmark = shallowRef<Landmark>();
@@ -834,12 +837,7 @@ defineExpose({ jumpTo, readCameraPosition });
             trackedQuestId = trackerQuest.id;
           if (!isPaused && screenKind === ScreenKind.World) {
             const interactable = readInteraction(inputState, context.delta);
-            const [touchedOculus] = getNearOculusPlaces(
-              oculusPlaces.value,
-              foundOculusIds.value,
-              characterBody.position,
-              OCULUS_TOUCH_RADIUS,
-            );
+            const touchedOculus = findTouchedOculus();
             if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
