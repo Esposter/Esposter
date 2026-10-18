@@ -19,6 +19,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
+import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -30,6 +31,9 @@ const FLASK_GAUGE_MAXIMUM = 100;
 const PURSUIT_FIELD_ID = "jahoda-pursuit";
 // The share of her health above which Hidden Aces also heals the member with the lowest share of health
 const BURST_ADDITIONAL_HEAL_HEALTH_SHARE = 0.7;
+// Hidden Aces has two robots, and each strikes the three nearest enemies, as gcsim gives them (burst.go, attack queue)
+const JAHODA_ROBOT_COUNT = 2;
+const ROBOT_STRIKE_TARGET_COUNT = 3;
 const DRAIN_FIELD_ID = "jahoda-drain";
 const FLASK_GAUGE_STATUS_ID = "jahoda-flask-gauge";
 const FLASK_ABSORBED_STATUS_PREFIX = "jahoda-flask-absorbed-";
@@ -82,11 +86,12 @@ const findLowestHealthCharacterId = (party: Party): number | undefined => {
 // From the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and its
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above 70%
-// Health the member with the lowest share of health is healed as well. Her Moonsign's robots and Meowball, and
-// Constellations 1, 2 and 4 and Ascension 1 and 4, are not built yet, as their record holds no burst or skill hits
-// For them. Her Moonsign Benediction, Rooftop Dash (TextMap 801500603), raises the party's Moonsign a level and names
-// No lunar reaction, so its record carries no lunar reaction types. Constellation 6 is built: a full flask's drain at
-// Ascendant Gleam buffs each Moonsign member
+// Health the member with the lowest share of health is healed as well. Her burst's two robots are built at Ascendant
+// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, without the
+// Internal cooldown gcsim gives them, as the engine has no tag for it. Her Meowball, Constellations 1, 2 and 4, and
+// Ascension 1 and 4 are not built yet, as the record does not carry them. Her Moonsign Benediction, Rooftop Dash
+// (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its record carries no lunar
+// Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
   readArea,
   readHitFields,
@@ -110,6 +115,14 @@ export const createJahodaKitBehaviour = ({
   const burstAttackHealShare = readParameter("burstAttackHealShare");
   const burstAdditionalFlatHeal = readParameter("burstAdditionalFlatHeal");
   const burstAdditionalAttackHealShare = readParameter("burstAdditionalAttackHealShare");
+  const robotAbsorbArea = readArea("robotAbsorbCircle");
+  const robotAbsorbFirstSeconds = readSeconds("robotAbsorbFirst");
+  const robotAbsorbSpacingSeconds = readSeconds("robotAbsorbSpacing");
+  const robotAbsorbIntervalSeconds = readSeconds("robotAbsorbInterval");
+  const robotFirstStrikeSeconds = readSeconds("robotFirstStrike");
+  const robotStrikeIntervalSeconds = readSeconds("robotStrikeInterval");
+  const robotStrikeMultiplier = readParameter("robotStrikeTalentMultiplier");
+  const robotStrikeHitFields = readHitFields("robotStrike", ["area", "gauge", "poiseDamage"]);
   // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and the
   // Unfilled flask's hit the same from each
   const filledDrainHit: KitHit = {
@@ -242,13 +255,28 @@ export const createJahodaKitBehaviour = ({
 
   return {
     burst: {
-      onStart: ({ activeCombatant, kitEffectState }) =>
+      onStart: (context) => {
+        const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
         schedulePeriodicKitTask(
           kitEffectState,
           activeCombatant.characterId,
           { firstSeconds: firstHealSeconds, intervalSeconds: healIntervalSeconds, untilSeconds: burstSeconds },
           healBurst(activeCombatant),
-        ),
+        );
+        // The robots are cast only at Ascendant Gleam, as gcsim reads the Moonsign level when she casts
+        if (getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam)
+          startJahodaRobots(context, activeCombatant, burstSeconds, {
+            absorbArea: robotAbsorbArea,
+            absorbFirstSeconds: robotAbsorbFirstSeconds,
+            absorbIntervalSeconds: robotAbsorbIntervalSeconds,
+            absorbSpacingSeconds: robotAbsorbSpacingSeconds,
+            robotCount: JAHODA_ROBOT_COUNT,
+            strikeFirstSeconds: robotFirstStrikeSeconds,
+            strikeHit: { ...robotStrikeHitFields, hitmarkSeconds: 0, talentMultiplier: robotStrikeMultiplier },
+            strikeIntervalSeconds: robotStrikeIntervalSeconds,
+            strikeTargetCount: ROBOT_STRIKE_TARGET_COUNT,
+          });
+      },
     },
     skill: { onStart: startPursuit },
     // The second press drains the flask at once, its hit a summon cast where the body stands, since the hit depends on the

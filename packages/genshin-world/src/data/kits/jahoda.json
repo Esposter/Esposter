@@ -1,5 +1,9 @@
 {
   "areas.pursuitCircle": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 } },
+  "areas.robotAbsorbCircle": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
+  },
   "burst.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
@@ -14,6 +18,11 @@
   "frames.burstDuration": { "file": "burst.go", "line": 20, "source": "Gcsim", "value": 790 },
   "frames.firstHealTick": { "file": "burst.go", "line": 28, "source": "Gcsim", "value": 12 },
   "frames.healInterval": { "file": "burst.go", "line": 29, "source": "Gcsim", "value": 87 },
+  "frames.robotAbsorbFirst": { "file": "burst.go", "line": 25, "source": "Gcsim", "value": 6 },
+  "frames.robotAbsorbInterval": { "cause": "Unsourced", "value": 46 },
+  "frames.robotAbsorbSpacing": { "file": "burst.go", "line": 26, "source": "Gcsim", "value": 41 },
+  "frames.robotFirstStrike": { "file": "burst.go", "line": 23, "source": "Gcsim", "value": 41 },
+  "frames.robotStrikeInterval": { "file": "burst.go", "line": 52, "source": "Gcsim", "value": 140 },
   "frames.filledPressHit": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 2 },
   "hitFields.flaskDrain.area": {
     "cause": "Unsourced",
@@ -22,6 +31,12 @@
   "hitFields.flaskDrain.element": { "cause": "Unsourced", "value": "Wind" },
   "hitFields.flaskDrain.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.flaskDrain.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hitFields.robotStrike.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
+  },
+  "hitFields.robotStrike.gauge": { "cause": "Unsourced", "value": 1 },
+  "hitFields.robotStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -43,6 +58,10 @@
   "parameters.burstAdditionalFlatHeal": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12439 } },
   "parameters.burstAttackHealShare": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12439 } },
   "parameters.burstFlatHeal": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12439 } },
+  "parameters.robotStrikeTalentMultiplier": {
+    "cause": "Unsourced",
+    "value": { "index": 1, "proudSkillGroupId": 12439 }
+  },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
