@@ -1,3 +1,4 @@
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { OUTCROP_CAMP_ENEMY_KIND_IDS } from "#src/services/leyLine/constants";
@@ -18,5 +19,19 @@ describe(createDomainArenaCamp, () => {
         level: 60,
       })),
     );
+  });
+
+  test("a wave that names its boss kind spawns that kind rather than a stand-in", () => {
+    expect.hasAssertions();
+
+    const camp = createDomainArenaCamp(
+      "starfell-valley",
+      "domain-1006-1-0",
+      { x: 0, z: 0 },
+      [{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }],
+      60,
+      () => 0,
+    );
+    expect(camp.members.map(({ enemyKindId }) => enemyKindId)).toStrictEqual([EnemyKindId.StormterrorDvalin]);
   });
 });

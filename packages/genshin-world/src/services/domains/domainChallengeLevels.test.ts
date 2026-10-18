@@ -1,3 +1,4 @@
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { describe, expect, test } from "vitest";
 
@@ -27,5 +28,23 @@ describe("domain challenge levels", () => {
       { defeatTarget: 10, enemies: 10 },
       { defeatTarget: 2, enemies: 2 },
     ]);
+  });
+
+  test("the trounce domain's every level fights Stormterror alone, untimed", () => {
+    expect.hasAssertions();
+
+    expect(
+      Object.values(DOMAIN_CHALLENGE_LEVELS[1006]).map(({ defeatTarget, timeLimitSeconds, waves }) => ({
+        defeatTarget,
+        timeLimitSeconds,
+        waves,
+      })),
+    ).toStrictEqual(
+      Array.from({ length: 6 }, () => ({
+        defeatTarget: 1,
+        timeLimitSeconds: Number.POSITIVE_INFINITY,
+        waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+      })),
+    );
   });
 });
