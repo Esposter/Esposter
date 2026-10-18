@@ -3,15 +3,21 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ESCOFFIER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ESCOFFIER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createEscoffierCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -111,5 +117,49 @@ describe(createEscoffierKitBehaviour, () => {
 
       expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeCloseTo(0.55);
     });
+  });
+});
+
+describe("escoffier kit constellation 1", () => {
+  // The CRIT DMG a Cryo normal attack of hers gets from her constellation, on a team of the given elements
+  const getCriticalDamageBonus = (
+    constellationCount: number,
+    deployedElements: Element[],
+    hitElement = Element.Cryo,
+  ): number => {
+    const combatant: Combatant = { ...createEscoffierCombatant(0), constellationCount, deployedElements };
+    const hit = { ...takeOne(takeOne(ESCOFFIER_KIT.normalAttacks).hits), element: hitElement };
+    return (
+      ESCOFFIER_KIT.getStrikeCriticalDamageBonus?.(
+        { attackTag: AttackTag.NormalAttack, body: createKitTestContext(combatant).body, combatant, hit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        createParty([ESCOFFIER_CHARACTER_ID]),
+        [],
+      ) ?? 0
+    );
+  };
+
+  test("adds 60% CRIT DMG to its own Cryo strike while the deployed team holds only Cryo and Hydro", () => {
+    expect.hasAssertions();
+
+    expect(getCriticalDamageBonus(1, [Element.Cryo, Element.Hydro])).toBe(0.6);
+  });
+
+  test("gives none while the deployed team holds another element", () => {
+    expect.hasAssertions();
+
+    expect(getCriticalDamageBonus(1, [Element.Cryo, Element.Electro])).toBe(0);
+  });
+
+  test("gives none to a strike of another element", () => {
+    expect.hasAssertions();
+
+    expect(getCriticalDamageBonus(1, [Element.Cryo, Element.Hydro], Element.Hydro)).toBe(0);
+  });
+
+  test("gives none below constellation 1", () => {
+    expect.hasAssertions();
+
+    expect(getCriticalDamageBonus(0, [Element.Cryo, Element.Hydro])).toBe(0);
   });
 });

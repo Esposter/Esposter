@@ -43,6 +43,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getReactionDamageBonus,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
+    getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
     keepsNormalAttackCombo,
@@ -64,6 +65,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getReactionDamageBonus) kit.getReactionDamageBonus = getReactionDamageBonus;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
+  if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;

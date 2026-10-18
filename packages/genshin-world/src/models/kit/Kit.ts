@@ -80,6 +80,14 @@ export interface Kit {
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
+  // The CRIT DMG a strike of the kit's own adds as it lands on an enemy, if a constellation raises it on the strike, given the
+  // Enemy as it stands, the deployed team and the effects on it
+  getStrikeCriticalDamageBonus?: (
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => number;
   highPlunge: KitAction;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it
