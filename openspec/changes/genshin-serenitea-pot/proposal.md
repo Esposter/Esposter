@@ -21,6 +21,7 @@ The player gets a realm to furnish and live in, entered from the Serenitea Pot o
 ## Waiting on
 
 - Recordings the page lists as not yet found: the realm stores' fill rate and the Trust Rank queues.
+- The fish rule: no table gives a pond's fish a growth time or count, so a recording of a pond or the game's own rule settles it (the change's `x-waiting`).
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact

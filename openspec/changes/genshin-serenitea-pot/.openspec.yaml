@@ -2,4 +2,11 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
-x-touches: ["packages/genshin-world/src/models/home/**", "packages/genshin-world/src/services/home/**"]
+x-touches:
+  [
+    "packages/genshin-world/src/models/home/**",
+    "packages/genshin-world/src/services/home/**",
+    "scripts/src/models/genshinAssets/home/**",
+    "scripts/src/services/genshinAssets/home/**",
+  ]
+x-waiting: "The fish rule: no table gives a pond's fish a growth time or count, so a recording of a pond or the game's own rule settles it"
