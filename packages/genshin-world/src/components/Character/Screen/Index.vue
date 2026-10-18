@@ -488,10 +488,7 @@ const confirmEnhance = () => {
   const taken = takeFodderArtifacts(inventory.value, enhanceFodderIds.value);
   characters.value = characters.value.map((item) => (item.id === enhanced.character.id ? enhanced.character : item));
   wallet.value = enhanced.wallet;
-  inventory.value = {
-    ...taken.inventory,
-    items: takeItemCounts(taken.inventory.items, enhanceMaterialItemCounts.value, 1),
-  };
+  inventory.value = { ...taken, items: takeItemCounts(taken.items, enhanceMaterialItemCounts.value, 1) };
   enhanceSlot.value = undefined;
 };
 // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag has no room for it

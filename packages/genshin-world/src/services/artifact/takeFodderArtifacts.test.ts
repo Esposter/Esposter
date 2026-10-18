@@ -29,16 +29,15 @@ describe(takeFodderArtifacts, () => {
     stackLimit: 1,
   };
 
-  test("the fodders are taken out of the bag and returned as the artifacts they hold", () => {
+  test("the fodders are taken out of the bag and the entries not picked stay in it", () => {
     expect.hasAssertions();
 
-    const fodder = createArtifact(false);
     const kept = createArtifact(false);
     expect(
       takeFodderArtifacts(
         {
           items: [
-            { artifact: fodder, definition: flowerDefinition, id: 0, quantity: 1 },
+            { artifact: createArtifact(false), definition: flowerDefinition, id: 0, quantity: 1 },
             { artifact: kept, definition: flowerDefinition, id: 1, quantity: 1 },
           ],
           nextId: 2,
@@ -47,12 +46,9 @@ describe(takeFodderArtifacts, () => {
         [0],
       ),
     ).toStrictEqual({
-      fodders: [fodder],
-      inventory: {
-        items: [{ artifact: kept, definition: flowerDefinition, id: 1, quantity: 1 }],
-        nextId: 2,
-        quickSwapItemIds: [],
-      },
+      items: [{ artifact: kept, definition: flowerDefinition, id: 1, quantity: 1 }],
+      nextId: 2,
+      quickSwapItemIds: [],
     });
   });
 
