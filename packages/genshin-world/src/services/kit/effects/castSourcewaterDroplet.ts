@@ -13,6 +13,7 @@ export const castSourcewaterDroplet = (
 ): void => {
   castKitField(kitEffectState, characterId, centre, {
     id: SOURCEWATER_DROPLET_FIELD_ID,
+    isStacked: true,
     nextTickSeconds: Number.POSITIVE_INFINITY,
     onTick: () => undefined,
     radius: 0,
