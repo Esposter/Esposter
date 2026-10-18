@@ -100,7 +100,6 @@ import { computeFishingInteractables } from "#src/services/fishing/computeFishin
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
-import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
@@ -531,7 +530,14 @@ const {
   events,
   gameDataBaseUrl,
   onPartyDown: () => {
-    screenKind.value = ScreenKind.GameOver;
+    // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
+    // Jump to the nearest waypoint, so the entrance is where the player lands
+    if (!isDomainChallengeActive.value) {
+      screenKind.value = ScreenKind.GameOver;
+      return;
+    }
+    reviveFallenParty();
+    stepDomainChallenge(true);
   },
   onPartyRevived: () => {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
@@ -825,12 +831,26 @@ const {
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
-const { domainEntrance, domainLevelRows, openDomain, unlockedDomainEntrances } = useWorldDomains({
+const {
+  domainCamps,
+  domainEntrance,
+  domainLevelRows,
+  enterDomain,
+  isDomainChallengeActive,
+  openDomain,
+  stepDomainChallenge,
+  unlockedDomainEntrances,
+} = useWorldDomains({
+  events,
   gameDataBaseUrl,
   getWorldNow,
+  jumpTo,
+  random: () => kitContext.random(),
   rank,
   unlockedLandmarks,
 });
+// The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
+const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value]);
 const interactables = computed<Interactable[]>(() => {
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
@@ -876,11 +896,10 @@ const pressInteractable = (id: string) => {
   selectInteractable(id);
   tapActionKey(input, InputAction.Interact);
 };
-// A level entered from a domain's screen fades into its stand-in arena beside the entrance, the jump's own fade
-const enterDomain = () => {
-  if (!domainEntrance.value) return;
+// A level entered from a domain's screen leaves the screen for the world, where its challenge begins at the stand-in arena
+const enterDomainLevel = (dungeonId: number) => {
   screenKind.value = ScreenKind.World;
-  jumpTo(computeDomainScenePose(domainEntrance.value.arrival));
+  enterDomain(dungeonId);
 };
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
@@ -1029,6 +1048,7 @@ defineExpose({ jumpTo, readCameraPosition });
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
           if (!isPaused && screenKind === ScreenKind.World) drawDayOutcrops(getWorldNow(), kitContext.random);
+          if (!isPaused) stepDomainChallenge(false);
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
@@ -1187,7 +1207,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
-        :outcrop-camps
+        :outcrop-camps="fightingCamps"
         :is-paused
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
@@ -1578,7 +1598,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :levels="domainLevelRows"
       @close="screenKind = ScreenKind.World"
-      @enter="enterDomain"
+      @enter="enterDomainLevel"
     />
     <CraftingScreen
       v-if="screenKind === ScreenKind.Crafting"
