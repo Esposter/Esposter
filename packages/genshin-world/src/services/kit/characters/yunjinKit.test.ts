@@ -348,4 +348,24 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
     expect(getIncrease(normalAttack, context.kitEffectState)).toBe(0);
   });
+
+  test("with four Elemental Types on the team, Ascension 4 adds 11.5% of her DEF to the banner's increase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ...createYunjinCombatant(),
+      ascension: 4,
+      deployedElements: [Element.Geo, Element.Pyro, Element.Hydro, Element.Electro],
+    };
+    const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+
+    expect(getIncrease(strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack), kitEffectState)).toBeCloseTo(
+      (0.3216 + 0.115) * combatant.attributes.defense,
+    );
+    expect(
+      getIncrease(
+        strikeOf(combatant, takeOne(YUNJIN_KIT.elementalSkill.hits), AttackTag.ElementalSkill),
+        kitEffectState,
+      ),
+    ).toBe(0);
+  });
 });

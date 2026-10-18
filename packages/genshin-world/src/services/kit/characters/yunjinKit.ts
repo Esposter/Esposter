@@ -1,3 +1,4 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -29,6 +30,11 @@ const BANNER_SECONDS = 12;
 const BANNER_STACKS = 30;
 const BANNER_DEFENSE_SHARE = 0.3216;
 const BANNER_STATUS_ID = "yunjin-cliffbreaker-banner";
+// Measured: gcsim (MIT) yunjin/asc.go, Ascension 4 adds 2.5%, 5% and 7.5% of her DEF for one to three Elemental Types
+// In the party, and 11.5% for four
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/asc.go
+const ASCENSION_4 = 4;
+const ASCENSION_4_DEFENSE_SHARES = [0.025, 0.05, 0.075, 0.115];
 const ASCENSION_1 = 1;
 // Unsourced, provisional: gcsim (MIT) yunjin/asc.go leaves Ascension 1 unimplemented, so no gcsim parameter gives the
 // Length of the counter window, and this half second is the kit's own value
@@ -51,9 +57,17 @@ const spendBannerStack = (effects: readonly KitEffect[], characterId: number): v
   if (banner) banner.stacks = countKitResource(effects, characterId, BANNER_STATUS_ID) - 1;
 };
 
+// Ascension 4's share of her DEF for the Elemental Types the deployed team holds, as her combatant reads the team
+// As it stands
+const getAscension4DefenseShare = ({ ascension, deployedElements = [] }: Combatant): number => {
+  if (ascension < ASCENSION_4) return 0;
+  const elementCount = new Set(deployedElements.flatMap((element) => (element === undefined ? [] : [element]))).size;
+  return ASCENSION_4_DEFENSE_SHARES[elementCount - 1] ?? 0;
+};
+
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
-// Cliffbreaker's Banner's DEF-scaled DMG Increase is built on her own normal attacks, as the owner ruled.
-// The party's share, which gcsim also gives, is not built. Her Ascension 4 passive is not built either.
+// Cliffbreaker's Banner's DEF-scaled DMG Increase is built on her own normal attacks, as the owner ruled, with
+// Ascension 4's share of the team's Elemental Types on top. The party's share, which gcsim also gives, is not built.
 // Ascension 1's counter window is built.
 // Constellation 4's DEF is built, from her own Crystallize
 // Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
@@ -121,7 +135,7 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
     // Damage, priced from the striker as its buffs leave it
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
       strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
-        ? BANNER_DEFENSE_SHARE * strike.combatant.attributes.defense
+        ? (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(strike.combatant)) * strike.combatant.attributes.defense
         : 0,
     // While the window stands, her skill's release plays its top level, whatever seconds it was held
     jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>
