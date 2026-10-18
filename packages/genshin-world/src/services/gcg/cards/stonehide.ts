@@ -2,6 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 
+export const STONEHIDE_ID = 126_011;
 const STONEHIDE_DAMAGE_REDUCTION = 1;
 const STONEHIDE_USAGES = 3;
 
