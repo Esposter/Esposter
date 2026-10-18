@@ -257,6 +257,38 @@ describe("spirit Soother", () => {
 
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
   });
+
+  test("Spirit Soother's heal is priced from Hu Tao's buffed Max HP", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    const party = createHuTaoParty(0.6);
+    const kitEffectState: KitEffectState = {
+      effects: [
+        {
+          amount: 10_000,
+          attribute: Attribute.Health,
+          characterId: HU_TAO_CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 10,
+        },
+      ],
+    };
+    const context = createKitTestContext(combatant, { kitEffectState, party });
+
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+
+    expect(party.healthChanges).toStrictEqual([
+      {
+        bondOfLifeShare: 0,
+        characterId: HU_TAO_CHARACTER_ID,
+        // The shares are summed and subtracted as floats, so they are compared to the digits the game gives
+        healthShare: expect.closeTo(SPIRIT_SOOTHER_REGEN_SHARE, 10),
+        overflowHealthShare: expect.closeTo(0, 10),
+        sourceCharacterId: HU_TAO_CHARACTER_ID,
+      },
+    ]);
+  });
 });
 
 describe("constellation 4 and 6", () => {
