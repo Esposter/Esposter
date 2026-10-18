@@ -2,6 +2,7 @@
 import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { Constellation } from "#src/models/character/Constellation";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -24,6 +25,7 @@ import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
 import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
+import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
@@ -53,6 +55,7 @@ import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
+import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
@@ -68,6 +71,9 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
+import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
+import { COOKING_POINTER_START, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
+import { openCookingStove } from "#src/services/cooking/openCookingStove";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -458,6 +464,10 @@ const {
 });
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
 const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
+// The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
+// Is held here while the screen is open
+const { cookingRecipes, cookingStovePlace } = useWorldCooking(gameDataBaseUrl);
+const cookingRecipe = shallowRef<CookingRecipe>();
 const useBagEntry = (entryId: number) => {
   const use = useInventoryEntry(inventory.value, entryId, {
     dishUseMap: dishUseMap.value,
@@ -650,6 +660,7 @@ const interactables = computed<Interactable[]>(() => {
       toLandmarkInteractable(landmark, GameTextKey.DomainEntrance),
     ),
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
+    ...computeCookingStoveInteractables(cookingStovePlace.value, gameText[GameTextKey.CookingTitle], getGroundHeight),
     ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
   ];
 });
@@ -860,7 +871,13 @@ defineExpose({ jumpTo, readCameraPosition });
             else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
               offerFrostbearingTree(frostbearingTreePlace);
-            else if (interactable?.kind === InteractionKind.Activate) {
+            else if (
+              interactable?.kind === InteractionKind.Activate &&
+              interactable.id === COOKING_STOVE_INTERACTABLE_ID
+            ) {
+              cookingRecipe = openCookingStove(cookingRecipes);
+              if (cookingRecipe) screenKind = ScreenKind.Cooking;
+            } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
               resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
             } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
@@ -1223,6 +1240,13 @@ defineExpose({ jumpTo, readCameraPosition });
         gcgGameId = undefined;
         screenKind = ScreenKind.World;
       "
+    />
+    <CookingScreen
+      v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
+      :game-text
+      :pointer="COOKING_POINTER_START"
+      :recipe="cookingRecipe"
+      @close="screenKind = ScreenKind.World"
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
     <CraftingScreen

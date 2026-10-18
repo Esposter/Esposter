@@ -24,3 +24,6 @@ export const DELICIOUS_ZONE_SHARE = 0.5;
 // Which holds the one stove the world offers
 export const MONDSTADT_COOKING_STOVE_BUILDING_NAME = "Restaurant";
 export const COOKING_STOVE_INTERACTABLE_ID = "cookingStove";
+// Where the indicator's pointer stands when a stove opens the cooking screen, at the start of the zones, until the
+// Indicator's motion is built and the Stop it answers is wired
+export const COOKING_POINTER_START = 0;
