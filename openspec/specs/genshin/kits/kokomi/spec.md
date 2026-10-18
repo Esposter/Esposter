@@ -1,6 +1,6 @@
 ## Purpose
 
-Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives and Constellation 4's garment speed built, and Constellations 1, 2 and 6 and Constellation 4's energy not built.
+Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives, Constellation 4's garment speed and energy, and Constellation 6 built, and Constellations 1 and 2 not built.
 
 ## Requirements
 
@@ -91,12 +91,28 @@ Kokomi's plunge attacks SHALL land half a second after they start, provisionally
 - **WHEN** the player starts a plunge attack
 - **THEN** the plunge lands half a second after it starts
 
-### Requirement: Kokomi's Constellations 1, 2 and 6, and Constellation 4's energy not yet built
+### Requirement: Kokomi's Constellations 1 and 2 not yet built
 
-Kokomi's Constellations 1, 2 and 6, and Constellation 4's energy SHALL NOT take effect.
+Kokomi's Constellations 1 and 2 SHALL NOT take effect.
 
 #### Scenario: Constellations do nothing
 
-- **GIVEN** Kokomi has Constellation 1, 2 or 6 unlocked, or Constellation 4 and dons the garment
+- **GIVEN** Kokomi has Constellation 1 or 2 unlocked
 - **WHEN** the player fights with Kokomi
 - **THEN** that constellation has no effect
+
+### Requirement: Constellation 6's Hydro DMG Bonus
+
+From Constellation 6, a Normal or Charged Attack's heal by Kokomi on a member at 80% or more of its Max HP, a member at maximum HP included, SHALL give her a 40% Hydro DMG Bonus on her Hydro strikes for four seconds from the heal. A heal that no normal or charged attack of hers makes, or one on a member below 80%, SHALL NOT give it.
+
+#### Scenario: A garment attack heals a member at 80% HP
+
+- **GIVEN** Kokomi has Constellation 6 and dons the garment
+- **WHEN** her Normal Attack heals a member at 80% HP
+- **THEN** her Hydro strikes deal 40% more DMG for four seconds
+
+#### Scenario: A heal below 80% HP gives nothing
+
+- **GIVEN** Kokomi has Constellation 6
+- **WHEN** her Charged Attack heals a member at 79% HP
+- **THEN** her Hydro strikes deal no more DMG

@@ -8,11 +8,16 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
@@ -44,6 +49,15 @@ const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
 // Decreased by 100%
 const FLAWLESS_STRATEGY_HEALING_BONUS = 0.25;
 const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
+// Constellation 6's Hydro DMG Bonus, as the wiki's text gives it: a Normal or Charged Attack's heal on a member at 80% or more HP,
+// Including one at maximum HP, gives Kokomi 40% Hydro DMG for four seconds. The wiki decides where gcsim differs, and gcsim's
+// Kokomi/cons.go starts the bonus from her burst for 480 frames, which this does not copy
+// Https://genshin-impact.fandom.com/wiki/Sangonomiya_Kokomi
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_HEALTH_SHARE = 0.8;
+const CONSTELLATION_6_HYDRO_DAMAGE_BONUS = 0.4;
+const CONSTELLATION_6_SECONDS = 4;
+const CONSTELLATION_6_STATUS_ID = "kokomi-c6-hydro";
 
 // Constellation 4's energy, given to the striker by each garment normal attack that hits, once every 0.2 seconds
 const giveGarmentNormalAttackEnergy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
@@ -104,7 +118,7 @@ export const KOKOMI_CHARACTER_ID = 10_000_054;
 // Constellation 1 needs the effect the garment's final combo attack unleashes, which the kit does not build
 // Constellation 2 needs her healing bonus to characters at low HP, which her heals do not read
 // Constellation 4's energy is built, from each garment normal attack that hits, on a 0.2-second cooldown
-// Constellation 6 needs the Hydro DMG Bonus her heals grant for a short time, which the kit does not build
+// Constellation 6's Hydro DMG Bonus is built, from her Normal and Charged Attacks' heals on a member at 80% or more HP
 export const createKokomiKitBehaviour = ({
   kit,
   readHits,
@@ -172,6 +186,26 @@ export const createKokomiKitBehaviour = ({
         ? 0.1
         : 0,
     getPassiveBonuses,
+    // Constellation 6's Hydro DMG Bonus, on her own Hydro strikes while it lasts
+    getStrikeDamageBonus: ({ combatant, hit }, enemy, party, effects) =>
+      checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_6_STATUS_ID) &&
+      (hit.element ?? combatant.element) === Element.Hydro
+        ? CONSTELLATION_6_HYDRO_DAMAGE_BONUS
+        : 0,
+    // Constellation 6: a Normal or Charged Attack's heal of hers on a member at 80% or more HP gives her the Hydro DMG Bonus
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (
+        combatant.constellationCount >= CONSTELLATION_6 &&
+        event.kind === KitEventKind.HealthChanged &&
+        event.sourceCharacterId === combatant.characterId &&
+        (event.attackTag === AttackTag.NormalAttack || event.attackTag === AttackTag.ChargedAttack) &&
+        event.healthShareBefore >= CONSTELLATION_6_HEALTH_SHARE
+      )
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: CONSTELLATION_6_STATUS_ID,
+          secondsRemaining: CONSTELLATION_6_SECONDS,
+        });
+    },
     skill: createBakeKurage(bakeKurageRipples),
   };
 };

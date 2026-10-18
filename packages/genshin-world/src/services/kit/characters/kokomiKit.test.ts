@@ -4,6 +4,9 @@ import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -77,6 +80,56 @@ const readGarmentEnergy = (constellationCount: number, strikeSeconds: number[]):
     hit?.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
   }
   return getPartyMember(context.party, KOKOMI_CHARACTER_ID).energy;
+};
+
+// The Hydro DMG Bonus Kokomi's strike gets after a heal, by the given source, of the given attack or of none, on a member at the
+// Given share of its Max HP, then the given seconds later, with the given constellations, on a strike that deals the given element
+const readConstellation6Bonus = ({
+  attackTag,
+  constellationCount = 6,
+  healthShareBefore = 0.8,
+  hitElement,
+  seconds = 0,
+  sourceCharacterId = KOKOMI_CHARACTER_ID,
+}: {
+  attackTag?: AttackTag;
+  constellationCount?: number;
+  healthShareBefore?: number;
+  hitElement?: Element;
+  seconds?: number;
+  sourceCharacterId?: number;
+}): number => {
+  const combatant = { ...createKokomiCombatant(), constellationCount, element: Element.Hydro };
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  KOKOMI_KIT.onKitEvent?.(
+    {
+      ...(attackTag === undefined ? {} : { attackTag }),
+      bondOfLifeShare: 0,
+      characterId: KOKOMI_CHARACTER_ID,
+      healthShare: 0.1,
+      healthShareAfter: Math.min(1, healthShareBefore + 0.1),
+      healthShareBefore,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare: 0,
+      sourceCharacterId,
+    },
+    context,
+    combatant,
+  );
+  stepKitSeconds(context, seconds);
+  const hit = KOKOMI_KIT.normalAttacks[0]?.hits[0];
+  if (hit === undefined) throw new Error("Kokomi has no normal attack hit");
+  const strikeHit = { ...hit, ...(hitElement === undefined ? {} : { element: hitElement }) };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  return (
+    KOKOMI_KIT.getStrikeDamageBonus?.(
+      { body: context.body, combatant, hit: strikeHit },
+      enemy,
+      context.party,
+      kitEffectState.effects,
+    ) ?? 0
+  );
 };
 
 describe(createKokomiKitBehaviour, () => {
@@ -157,5 +210,50 @@ describe("song of Pearls", () => {
     expect.hasAssertions();
 
     expect([readGarmentEnergy(3, [0, 0.25]), readGarmentEnergy(4, [0, 0.1, 0.25])]).toStrictEqual([0, 1.6]);
+  });
+});
+
+describe("constellation 6", () => {
+  test("a Normal or Charged Attack's heal on a member at 80% HP or at maximum gives Kokomi a 40% Hydro DMG Bonus", () => {
+    expect.hasAssertions();
+
+    expect([
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, healthShareBefore: 0.8 }),
+      readConstellation6Bonus({ attackTag: AttackTag.ChargedAttack, healthShareBefore: 1 }),
+    ]).toStrictEqual([0.4, 0.4]);
+  });
+
+  test("a heal on a member below 80% HP, a heal no attack makes, or another character's attack's heal gives no bonus", () => {
+    expect.hasAssertions();
+
+    expect([
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, healthShareBefore: 0.79 }),
+      readConstellation6Bonus({ healthShareBefore: 1 }),
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, sourceCharacterId: 10_000_001 }),
+    ]).toStrictEqual([0, 0, 0]);
+  });
+
+  test("the bonus lasts four seconds", () => {
+    expect.hasAssertions();
+
+    expect([
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, seconds: 3.9 }),
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, seconds: 4 }),
+    ]).toStrictEqual([0.4, 0]);
+  });
+
+  test("constellation 5 gives no bonus", () => {
+    expect.hasAssertions();
+
+    expect(readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, constellationCount: 5 })).toBe(0);
+  });
+
+  test("the bonus raises only Hydro damage", () => {
+    expect.hasAssertions();
+
+    expect([
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack }),
+      readConstellation6Bonus({ attackTag: AttackTag.NormalAttack, hitElement: Element.Pyro }),
+    ]).toStrictEqual([0.4, 0]);
   });
 });

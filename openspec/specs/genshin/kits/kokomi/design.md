@@ -7,6 +7,7 @@ Kokomi's kit is its record and one behaviour module, `createKokomiKitBehaviour`,
 - **Kokomi's Ceremonial Garment is a stance that the burst starts as it lands.** gcsim's garment changes her normal attacks, charged attack and Bake-Kurage for ten seconds, which is the job a stance does: its actions replace the kit's while it lasts. So the Max HP bonuses and the heals sit on the garment's own actions, and the kit's base actions carry neither. A swap ends the garment, whose status gcsim deletes on any swap.
 - **Kokomi's plunges land at half a second, on the reaches the other kits use.** gcsim gives her plunges no timing.
 - **Kokomi's Constellation 4 energy is a garment normal attack's hit, on a 0.2-second cooldown on her.** Each garment normal attack that hits an enemy restores 0.8 energy to the striker, from the hit's own `onStrike` and not a stance check, so the charged attack gives none, as gcsim's Normal Attacks do.
+- **Kokomi's Constellation 6 follows the wiki where gcsim differs.** The wiki's text triggers the Hydro DMG Bonus on her Normal and Charged Attacks' heals and gives it four seconds, where gcsim's `kokomi/cons.go` triggers it from her burst and lasts 480 frames. The heal event carries the attack's tag and the member's share before the heal, so a member at maximum HP counts, as the wiki's text says.
 - **Kokomi's Constellation 4 speed reads any stance she holds, and her garment is her only one.** The check is `findKitStance` on her effects, which for her is the garment; a second stance would need the check to name the garment.
 
 ## Key files
