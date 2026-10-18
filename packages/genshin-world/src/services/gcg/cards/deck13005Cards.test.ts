@@ -9,6 +9,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
@@ -17,6 +18,7 @@ import { adventurersBandana, ADVENTURERS_BANDANA_ID } from "#src/services/gcg/ca
 import { aquilaFavonia, AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/aquilaFavonia";
 import { CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { kantenSenmyouBlessing, KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/kantenSenmyouBlessing";
+import { WAGNER_ID, wagner } from "#src/services/gcg/cards/wagner";
 import { parametricTransformer, PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/parametricTransformer";
 import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { kamisatoArtSenho, SENHO_STATUS_ID } from "#src/services/gcg/cards/kamisatoArtSenho";
@@ -106,6 +108,12 @@ const FIREWORK_FLARE_UP: GcgSkill = {
   id: 13_051,
   kind: GcgSkillKind.NormalAttack,
 };
+
+// A character of the given id, who wields the weapon kind named
+const createWielder = (id: number, weapon: string): GcgCharacterState => ({
+  ...createCharacterState(id),
+  character: { ...createCharacterState(id).character, weapon },
+});
 
 describe("frostflake Seki no To", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
@@ -291,10 +299,6 @@ describe("aquila Favonia", () => {
     nameTextId: 1,
     weapon: "SWORD",
   };
-  const createWielder = (id: number, weapon: string) => ({
-    ...createCharacterState(id),
-    character: { ...createCharacterState(id).character, weapon },
-  });
 
   test("it is equipped on a character who wields a sword", () => {
     expect.hasAssertions();
@@ -490,5 +494,118 @@ describe("kanten Senmyou Blessing's switch clause", () => {
     duel.actingSideIndex = 0;
     expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Unpayable);
     expect(switchGcgCharacter(duel, 0, 1, [0])).toBe(GcgActionResult.Done);
+  });
+});
+
+describe("wagner", () => {
+  const SWORD_ID = 311_503;
+  const CLAYMORE_ID = 311_401;
+  const BOW_ID = 311_301;
+  const EVENT_ID = 331_101;
+  const WAGNER_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: WAGNER_ID,
+    isLocation: false,
+    kind: GcgCardKind.Support,
+    nameTextId: 1,
+  };
+  const EVENT_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: EVENT_ID,
+    isLocation: false,
+    kind: GcgCardKind.Event,
+    nameTextId: 1,
+  };
+  // A weapon card that costs two Unaligned dice, which its Billets stand in for when they cover it
+  const createWeaponCard = (id: number, weapon: string): GcgCard => ({
+    costs: [{ count: 2, kind: GcgCostKind.Unaligned }],
+    descriptionTextId: 1,
+    effects: [],
+    id,
+    isLocation: false,
+    kind: GcgCardKind.Weapon,
+    nameTextId: 1,
+    weapon,
+  });
+  const createWagnerDuel = (billets: number, deckWeapons: GcgCard[]): GcgDuel => {
+    const duel = createDuel([
+      createSideState([createWielder(1105, "SWORD"), createWielder(1202, "SWORD")]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    const side = takeOne(duel.sides, 0);
+    const wagnerZoneCard = createGcgZoneCard(WAGNER_ID, wagner);
+    wagnerZoneCard.counter = billets;
+    side.supports.push(wagnerZoneCard);
+    side.deckCardIds = deckWeapons.map(({ id }) => id);
+    side.cards = [WAGNER_CARD, EVENT_CARD, ...deckWeapons];
+    return duel;
+  };
+
+  test("it comes with 2 Forging Billets", () => {
+    expect.hasAssertions();
+    expect(createGcgZoneCard(WAGNER_ID, wagner).counter).toBe(2);
+  });
+
+  test("at each End Phase it gains a Forging Billet", () => {
+    expect.hasAssertions();
+    const duel = createWagnerDuel(2, []);
+    const zoneCard = takeOne(duel.sides, 0).supports[0];
+    if (!zoneCard) throw new Error("Wagner is not on the field");
+
+    expect(wagner.onEndPhase?.({ duel, sideIndex: 0 }, zoneCard)).toBeUndefined();
+    expect(zoneCard.counter).toBe(3);
+  });
+
+  test("a Weapon card is played free for its cost in Billets, once per Round", () => {
+    expect.hasAssertions();
+    const duel = createWagnerDuel(3, [createWeaponCard(SWORD_ID, "SWORD")]);
+    takeOne(duel.sides, 0).hand = [SWORD_ID, SWORD_ID];
+
+    expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(1);
+
+    takeOne(duel.sides, 0).supports[0]!.counter = 2;
+    duel.actingSideIndex = 0;
+    expect(playGcgCard(duel, 0, 0, 1, [])).toBe(GcgActionResult.Unpayable);
+  });
+
+  test("a Weapon card its Billets do not cover is paid in dice", () => {
+    expect.hasAssertions();
+    const duel = createWagnerDuel(1, [createWeaponCard(SWORD_ID, "SWORD")]);
+    takeOne(duel.sides, 0).hand = [SWORD_ID];
+    takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo];
+
+    expect(playGcgCard(duel, 0, 0, 0, [0, 1])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ dice: [], supports: [expect.objectContaining({ counter: 1 })] });
+  });
+
+  test("with three Weapon kinds in its deck, playing it draws a random Weapon card from the draw pile", () => {
+    expect.hasAssertions();
+    const duel = createWagnerDuel(2, [
+      createWeaponCard(SWORD_ID, "SWORD"),
+      createWeaponCard(CLAYMORE_ID, "CLAYMORE"),
+      createWeaponCard(BOW_ID, "BOW"),
+    ]);
+    takeOne(duel.sides, 0).supports = [];
+    takeOne(duel.sides, 0).hand = [WAGNER_ID];
+    takeOne(duel.sides, 0).drawPile = [EVENT_ID, BOW_ID];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ drawPile: [EVENT_ID], hand: [BOW_ID] });
+  });
+
+  test("with two Weapon kinds in its deck, nothing is drawn", () => {
+    expect.hasAssertions();
+    const duel = createWagnerDuel(2, [createWeaponCard(SWORD_ID, "SWORD"), createWeaponCard(CLAYMORE_ID, "CLAYMORE")]);
+    takeOne(duel.sides, 0).supports = [];
+    takeOne(duel.sides, 0).hand = [WAGNER_ID];
+    takeOne(duel.sides, 0).drawPile = [BOW_ID];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ drawPile: [BOW_ID], hand: [] });
   });
 });

@@ -104,6 +104,7 @@ import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutom
 import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword";
 import { tubby } from "#src/services/gcg/cards/tubby";
 import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
+import { wagner } from "#src/services/gcg/cards/wagner";
 import { wangshuInn } from "#src/services/gcg/cards/wangshuInn";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
 import { whiteIronGreatsword } from "#src/services/gcg/cards/whiteIronGreatsword";
@@ -189,6 +190,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_001, paimon],
   [322002, katheryne],
   [322_003, timaeus],
+  [322_004, wagner],
   [322_006, tubby],
   [322_007, timmie],
   [322_008, liben],
