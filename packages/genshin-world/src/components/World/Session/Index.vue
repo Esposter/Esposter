@@ -310,6 +310,7 @@ const {
   achievementProgressMap,
   archiveKillsMap,
   archiveProgressMap,
+  chooseTravelerBirthday,
   clearedCamps,
   clearedDomainIds,
   cookingProgress,
@@ -328,6 +329,7 @@ const {
   setNamecardItemId,
   setWallet,
   shownTipIds,
+  travelerBirthday,
   wallet,
   wishHistory,
   wishPityMap,
@@ -987,7 +989,7 @@ useWorldSaveSync({
     shownTipIds: shownTipIds.value,
     spiralAbyssProgressMap: abyssProgressMap.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
-    travelerBirthday: savedState.travelerBirthday,
+    travelerBirthday: travelerBirthday.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
@@ -1820,10 +1822,12 @@ defineExpose({ jumpTo, readCameraPosition });
       :namecard-item-id="namecardItemId"
       :namecards="profileNamecards"
       :server-clock-offset-ms
+      :traveler-birthday="travelerBirthday"
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
       @pick-namecard="(itemId) => setNamecardItemId(itemId)"
       @quit="emit('quit')"
+      @set-birthday="(birthday) => chooseTravelerBirthday(birthday)"
       @toggle-world-level="toggleWorldLevel()"
     >
       <template #[ScreenKind.Map]>

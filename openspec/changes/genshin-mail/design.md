@@ -40,7 +40,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **A held mail whose row is gone is left off the list and kept in the save.** The mailbox reads the rows of the held mails the table names, through `readGameDataIndex`, so a mail with no entry in the index has no row: the load does not fail on it, the Mail screen lists only the mails with a row, and the save keeps the mail, since its expiry cannot be read and `removeExpiredMails` keeps a mail with no row.
 - **A claimed birthday mail is labelled as kept in the Gift Mail Box, in place of its expiry.** The Gift Mail Box keeps it past its expiry, so that label is the only difference the screen draws.
 - **The save writes the Traveler's birthday only once it is set.** A save with no birthday has no `travelerBirthday` key, so a reload of an unset birthday is the same save it was.
-- **The profile has no birthday setter yet.** The save holds the birthday and the delivery reads it; the setter is open, and the wiki says the birth date is chosen once in profile customization.
+- **The profile sets the birthday once.** The Paimon card's Set Birthday button opens the dialog that sets it, as `genshin-menu-paimon`'s design records. The save holds the date from then on, and the delivery reads it.
 
 ## Key files
 

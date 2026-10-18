@@ -97,6 +97,14 @@ export enum GameTextKey {
   BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The same confirm line for the twenty-ninth of February, which names that date itself
+  BirthdayConfirmLeapDayTip = "Birthday_CONFIRM_TIPS_02",
+  // The Set Birthday dialog's confirm line once a date is picked, its month and day filled in
+  BirthdayConfirmTip = "Birthday_CONFIRM_TIPS_01",
+  // The warning under the confirm line that the birthday cannot be edited once it is confirmed
+  BirthdayConfirmWarning = "UI_FRIEND_BIRTHDAY_EDIT_WARNING",
+  // The profile's button that opens the birthday dialog while the Traveler's birthday is not set
+  BirthdaySet = "UI_FRIEND_BIRTHDAY_EDIT",
   // The blossom of an outcrop that gives Character EXP materials, by its English name
   BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
   // The blossom of an outcrop that gives Mora, by its English name
