@@ -2,13 +2,50 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createEmilieKitBehaviour, EMILIE_CHARACTER_ID } from "#src/services/kit/characters/emilieKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { createParty } from "#src/services/party/createParty";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const EMILIE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EMILIE_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const ATTACK = 2000;
+const KIT_BODY = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
+// An enemy Burning, as a strike of Emilie's reads it
+const createBurningEnemy = () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.elementalState.auras.set(AuraType.Burning, { decayRate: 0, gauge: 1, isImmutable: false });
+  return enemy;
+};
+
+// Emilie with her total ATK at ATTACK, at the given ascension
+const createEmilieWithAttack = (ascension: number): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
+  characterId: EMILIE_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: EMILIE_KIT,
+  level: 90,
+});
+
+// The DMG Bonus a normal attack of hers takes on a Burning enemy at the ascension
+const getBurningStrikeBonus = (ascension: number): number | undefined => {
+  const combatant = createEmilieWithAttack(ascension);
+  return EMILIE_KIT.getStrikeDamageBonus?.(
+    { body: KIT_BODY, combatant, hit: takeOne(takeOne(EMILIE_KIT.normalAttacks).hits) },
+    createBurningEnemy(),
+    createParty([EMILIE_CHARACTER_ID]),
+  );
+};
 const createEmilieCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -64,4 +101,18 @@ describe(createEmilieKitBehaviour, () => {
       ]);
     },
   );
+
+  describe("the Ascension 4 passive, Rectification", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getBurningStrikeBonus(4)).toBeCloseTo(0.3, 5);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getBurningStrikeBonus(3)).toBe(0);
+    });
+  });
 });
