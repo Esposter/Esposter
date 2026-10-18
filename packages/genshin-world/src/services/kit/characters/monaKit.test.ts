@@ -405,16 +405,15 @@ describe("mona kit", () => {
   test("constellation 1's bonus is multiplied by 160% for a member off the field while Mona is Hexerei with a second Hexerei member", () => {
     expect.hasAssertions();
     const mona = { ...createMonaCombatant(), constellationCount: 1 };
-    const readWithActive = (active: Combatant, hexereiCount: number) => {
-      const other = createOther();
+    const readWithActive = (active: Combatant, teamMemberId: number) => {
+      const other = createOther(teamMemberId);
       const context = createKitTestContext(active, {
         characterIdCombatantMap: new Map([
           [MONA_CHARACTER_ID, mona],
-          [OTHER_CHARACTER_ID, other],
+          [teamMemberId, other],
         ]),
-        hexereiCount,
         kitEffectState: { effects: [] },
-        party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+        party: createParty([MONA_CHARACTER_ID, teamMemberId]),
       });
       MONA_KIT.onKitEvent?.(
         { element: Element.Electro, enemy: createOmenedEnemy(), kind: KitEventKind.EnemyHit, striker: other },
@@ -436,9 +435,9 @@ describe("mona kit", () => {
     };
 
     expect({
-      offFieldHexerei: readWithActive(mona, 2),
-      offFieldNoTeam: readWithActive(mona, 1),
-      onFieldHexerei: readWithActive(createOther(), 2),
+      offFieldHexerei: readWithActive(mona, HEXEREI_CHARACTER_ID),
+      offFieldNoTeam: readWithActive(mona, OTHER_CHARACTER_ID),
+      onFieldHexerei: readWithActive(createOther(HEXEREI_CHARACTER_ID), HEXEREI_CHARACTER_ID),
     }).toStrictEqual({ offFieldHexerei: expect.closeTo(0.24), offFieldNoTeam: 0.15, onFieldHexerei: 0.15 });
   });
 
@@ -500,5 +499,21 @@ describe("mona kit", () => {
       plainTeam: readPartyDamage(plainParty, hexerei),
       otherStrike: readPartyDamage(hexereiParty, createOther()),
     }).toStrictEqual({ hexereiStrike: 0.15, ownStrike: 0.15, otherStrike: 0, plainTeam: 0 });
+  });
+
+  test("constellation 4 gives no CRIT DMG to a Hexerei strike while a second Hexerei character is owned but not deployed", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 4 };
+    const party = createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    party.characterIdMemberMap.set(HEXEREI_CHARACTER_ID, createPartyMember());
+
+    expect(
+      MONA_KIT.getStrikeCriticalDamageBonus?.(
+        { body: kitBody, combatant: mona, hit: takeOne(MONA_KIT.elementalBurst.hits) },
+        createOmenedEnemy(),
+        party,
+        [],
+      ),
+    ).toBe(0);
   });
 });

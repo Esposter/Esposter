@@ -5,7 +5,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { createParty } from "#src/services/party/createParty";
@@ -25,7 +24,6 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   kitEffectState: { effects: [] },
   locomotionState: LocomotionState.Idle,
   isSkillHeld: false,
-  hexereiCount: countKitHexereiMembers([combatant.characterId]),
   stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],
   reactionTriggers: [],

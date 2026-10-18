@@ -200,7 +200,6 @@ export const useWorldCombat = ({
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
     isSkillHeld: false,
-    hexereiCount: 0,
     stamina,
     oreStrikes: [],
     reactionTriggers: [],
