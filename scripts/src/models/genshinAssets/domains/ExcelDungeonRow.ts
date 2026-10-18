@@ -2,6 +2,8 @@
 // Level it fights at, the reward preview a clear of it gives, and the resin claiming its tree costs
 export interface ExcelDungeonRow {
   id: number;
+  // The level configs a daily fight names, keyed by their entity id: one ley line disorder for a domain's level
+  levelConfigMap?: Record<string, number>;
   levelRevise: number;
   limitLevel: number;
   passRewardPreviewID: number;

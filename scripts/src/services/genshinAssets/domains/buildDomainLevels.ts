@@ -1,11 +1,13 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import {
   DUNGEON_ENTRY_TABLE_NAME,
+  DUNGEON_LEVEL_ENTITY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
   REWARD_PREVIEW_TABLE_NAME,
   WEEKLY_BOSS_DOMAINS_KEY,
@@ -30,6 +32,7 @@ export const buildDomainLevels = async (): Promise<{ notes: string[]; publicatio
     readExcelTable<ExcelRewardPreviewRow>(REWARD_PREVIEW_TABLE_NAME),
     points,
     readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
+    readExcelTable<ExcelDungeonLevelEntityRow>(DUNGEON_LEVEL_ENTITY_TABLE_NAME),
   );
   const weeklyBosses = toWeeklyBossDomains(entries, dungeons);
   const levelCount = Object.values(schedules).reduce((count, { levels }) => count + levels.length, 0);
