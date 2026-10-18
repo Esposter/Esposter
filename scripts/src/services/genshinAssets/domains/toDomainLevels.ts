@@ -18,7 +18,6 @@ import {
 } from "#src/services/genshinAssets/domains/constants";
 import {
   BLESSING_TREE_ARTIFACT_ROWS,
-  BLESSING_ARTIFACT_SET_IDS,
   DOMAIN_TREE_COUNT_ROWS,
   findTreeRow,
 } from "#src/services/genshinAssets/domains/treeRewardCounts";
@@ -123,6 +122,7 @@ export const toDomainLevels = (
   points: Record<string, DumpedScenePoint>,
   materials: MaterialRow[],
   levelEntities: ExcelDungeonLevelEntityRow[],
+  blessingArtifactSetIds: Readonly<Record<number, readonly number[]>>,
 ): Record<string, DomainSchedule> => {
   const entityNames = new Map(
     levelEntities.flatMap(({ id, levelConfigName }) => (levelConfigName ? [[id, levelConfigName] as const] : [])),
@@ -133,7 +133,7 @@ export const toDomainLevels = (
   const schedules = new Map<number, DomainSchedule>();
   const addLevel = (entryId: number, kind: DomainKind, level: DomainLevel): void => {
     const schedule = schedules.get(entryId) ?? {
-      artifactSetIds: kind === DomainKind.Blessing ? (BLESSING_ARTIFACT_SET_IDS[entryId] ?? []) : [],
+      artifactSetIds: kind === DomainKind.Blessing ? [...(blessingArtifactSetIds[entryId] ?? [])] : [],
       kind,
       levels: [],
     };
