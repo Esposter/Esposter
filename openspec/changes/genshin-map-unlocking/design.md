@@ -1,6 +1,6 @@
 # Map unlocking
 
-The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. What is left is the rest of the game's places. They wait on the [exploring](../genshin-exploring/design.md) proposal, which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point, and on the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
+The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. What is left is the rest of the game's places. The waypoints are in from [exploring](../../specs/genshin/exploring/design.md), which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point. The rest wait on the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
 
 ## Decisions
 
@@ -11,7 +11,7 @@ The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the 
 - **A first unlock is the only unlock that pays.** `activateLandmark` pays a landmark's reward only when it was not already unlocked, so a landmark reached again pays nothing.
 - **A waypoint the game hides stays hidden.** A waypoint the game hides until a further step stays hidden until that step.
 - **A locked waypoint is pointed to near.** Within 30 metres of a locked waypoint, the HUD points toward it; past 40 metres, or once it is unlocked, the pointer goes, as the wiki gives the two distances.
-- **The pointer points to every locked jump landmark, so it is built before the waypoints.** The wiki gives the pointer for a locked Teleport Waypoint, and a Statue of The Seven is a waypoint too, so the rule reads the locked jump landmarks: it points to the statues today and takes the waypoints once [exploring](../genshin-exploring/design.md) adds them to `JUMP_LANDMARK_KINDS`, with no change of its own.
+- **The pointer points to every locked jump landmark, so it is built before the waypoints.** The wiki gives the pointer for a locked Teleport Waypoint, and a Statue of The Seven is a waypoint too, so the rule reads the locked jump landmarks: it points to the statues today and takes the waypoints, which [exploring](../../specs/genshin/exploring/design.md) added to `JUMP_LANDMARK_KINDS`, with no change of its own.
 - **The pointer is the game's navigation mark, drawn on the HUD.** It is the mark at the landmark's place on screen, held at the screen's edge with its arrow turned toward the landmark while the landmark is out of view. Its look is read from a public clip of a waypoint being reached, and its comparison waits on the user's eyes.
 
 ## How it works

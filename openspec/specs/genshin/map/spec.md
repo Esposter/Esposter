@@ -1,6 +1,6 @@
 ## Purpose
 
-The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (the outlines of its filled areas and every unlocked landmark a jump lands at) placed on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider, which the map is dragged to pan and the wheel or the slider zooms. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to the loading screen, places the view in front of it facing it, and fades back in.
+The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (the outlines of its filled areas and every unlocked landmark a jump lands at) placed on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider, which the map is dragged to pan and the wheel or the slider zooms. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to the loading screen, places the character at the landmark's arrival facing its turn, and fades back in.
 
 ## Requirements
 
@@ -53,26 +53,17 @@ Dragging SHALL pan the map by the metres its pixels cover, and the wheel and the
 
 ### Requirement: Choosing a landmark jumps the character
 
-Choosing a landmark on the map or in the jump list SHALL fade the screen to the loading screen's pale grey, place the character in front of the landmark facing it, and fade back in.
+Choosing a landmark on the map or in the jump list SHALL fade the screen to the loading screen's pale grey, place the character at the landmark's arrival facing its turn, and fade back in.
 
 #### Scenario: Jump to a statue
 
 - **WHEN** the player chooses a statue on the map
-- **THEN** the screen fades to pale grey, the character is placed in front of the statue facing it, and the screen fades back in
+- **THEN** the screen fades to pale grey, the character is placed at the statue's arrival facing its turn, and the screen fades back in
 
 #### Scenario: Cross-region fade durations
 
 - **WHEN** a cross-region jump fades
 - **THEN** the fade out takes 801 milliseconds and the fade in takes 200 milliseconds
-
-### Requirement: Arrival stands in front of the landmark
-
-A jump SHALL arrive a fixed distance in front of the landmark, facing back at it, clear of the statue's plinth.
-
-#### Scenario: Arrival view
-
-- **WHEN** the character arrives at a landmark
-- **THEN** it stands in front of the landmark facing back at it
 
 ### Requirement: Jump list for the keyboard and screen readers
 
@@ -92,9 +83,9 @@ The map SHALL offer the jump landmarks of every region, and a region whose data 
 - **WHEN** a region's data fails to load
 - **THEN** the failure is logged and that region's landmarks are left off the map
 
-### Requirement: Only statues are jump landmarks
+### Requirement: Only statues and waypoints are jump landmarks
 
-Only Statues of The Seven SHALL be jump landmarks, and a tree SHALL never be a jump, with Teleport Waypoints joining once the regions' data holds them.
+Only Statues of The Seven and Teleport Waypoints SHALL be jump landmarks, and a tree SHALL never be a jump.
 
 #### Scenario: Tree in a region
 

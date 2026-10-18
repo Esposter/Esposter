@@ -21,7 +21,7 @@ Teleport Waypoints and domain entrances unlock by reaching them, pay their first
 
 ## Waiting on
 
-- Exploring places Teleport Waypoints in region data, makes them a landmark kind and lands jumps at the game's arrival point: `openspec/changes/genshin-exploring/`. The prompt list offers waypoints and domains once it does.
+- Exploring places Teleport Waypoints in region data, makes them a landmark kind and lands jumps at the game's arrival point: `openspec/specs/genshin/exploring/`. The prompt list offers waypoints and domains once it does.
 - Adventure Rank pays a statue's Adventure EXP as its first step: `openspec/changes/genshin-adventure-rank/`.
 - The unlock's animation, and the length of its hold on the player, are measured off a published clip, and that clip is not yet held.
 

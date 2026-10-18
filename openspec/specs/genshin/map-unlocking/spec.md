@@ -1,6 +1,6 @@
 ## Purpose
 
-The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems. Teleport Waypoints and domain entrances wait on exploring.
+The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems. A Teleport Waypoint unlocks the same way, paying nothing on its first unlock yet, and domain entrances are not yet in the world's data.
 
 ## Requirements
 
@@ -70,11 +70,16 @@ Windrise's statue SHALL pay five Primogems on its first unlock and no more after
 - **WHEN** Windrise's statue is unlocked for the first time
 - **THEN** five Primogems are added to the wallet
 
-### Requirement: Waypoints wait on exploring
+### Requirement: Waypoints unlock as statues do
 
-Teleport Waypoints SHALL not be unlocked, rewarded or pointed to until exploring fits them into the regions' data.
+A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is, and its first unlock SHALL pay nothing.
 
-#### Scenario: Waypoint in the world
+#### Scenario: Waypoint unlocked on F
 
-- **WHEN** a Teleport Waypoint is in the world
-- **THEN** it cannot be unlocked
+- **WHEN** the player resonates with a Teleport Waypoint on F
+- **THEN** the waypoint is unlocked and offered as a jump
+
+#### Scenario: Waypoint's first unlock pays nothing
+
+- **WHEN** a Teleport Waypoint is unlocked for the first time
+- **THEN** no Primogems are added to the wallet
