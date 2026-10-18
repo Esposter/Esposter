@@ -1,9 +1,10 @@
-// The characters that are Hexerei, as gcsim v2.47.2 flags them by default in each character's own package: Razor, Fischl,
-// Mona, Sucrose, Durin, Varka, Prune and Nicole. The dump tags no character as Hexerei and the wiki's list could not be
-// Fetched, so this set is provisional until either one is read
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters
+// The characters that are Hexerei, as the wiki's Hexerei Characters category lists them: Albedo, Durin, Fischl, Klee, Lohen,
+// Mona, Nicole, Prune, Razor, Sucrose, Varka and Venti, read from genshin-impact.fandom.com on 2026-10-19
+// The dump tags none of them, so the wiki is the citation for the set
+// https://genshin-impact.fandom.com/wiki/Category:Hexerei_Characters
 const HEXEREI_CHARACTER_IDS = new Set<number>([
-  10_000_020, 10_000_031, 10_000_041, 10_000_043, 10_000_123, 10_000_128, 10_000_131, 10_000_132,
+  10_000_020, 10_000_022, 10_000_029, 10_000_031, 10_000_038, 10_000_041, 10_000_043, 10_000_123, 10_000_128,
+  10_000_129, 10_000_131, 10_000_132,
 ]);
 
 // The number of the given team's members that are Hexerei characters, counted by their ids alone

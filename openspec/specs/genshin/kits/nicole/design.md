@@ -17,7 +17,7 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 - **A projection copies each hit the active character lands, at its own element and hitbox.** It is dealt as the projected character's own element, reaches the enemies inside the projected character's hitbox anchored on the enemy the hit struck, and lands 30 frames after the hit. The hitbox is gcsim's `projectionHitbox` table, with the default circle for a character the table does not name.
 - **A projection reaches by its hitbox alone.** Its hit has no area of its own, since its target and its hitbox decide what it reaches.
 - **The projections follow every hit of the active character, physical included.** gcsim's enemy-hit event fires for each hit on an enemy, and the kit raises its `EnemyHit` event for each one, carrying the element the hit was dealt as where it deals one. A physical hit projects too, dealt at the projected character's element.
-- **The Hexerei bonus is priced at the projection's tick.** gcsim's `hexereiOnProjection` adds three times her attack when she and the projected character are Hexerei and two or more Hexerei are deployed. The set is provisional (`countKitHexereiMembers.ts`), so the bonus is too.
+- **The Hexerei bonus is priced at the projection's tick.** gcsim's `hexereiOnProjection` adds three times her attack when she and the projected character are Hexerei and two or more Hexerei are deployed. The set is the wiki's Hexerei Characters category (`countKitHexereiMembers.ts`), so the bonus follows it.
 
 ## Not built
 
