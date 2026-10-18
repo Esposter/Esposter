@@ -3,7 +3,7 @@ import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
-import { ANIMAL_CODEX_TABLE_NAME, ANIMAL_CODEX_TYPE } from "#src/services/genshinAssets/archive/constants";
+import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
 import {
   BASE_ATTACK_PROPERTY,
@@ -11,13 +11,13 @@ import {
   BASE_HEALTH_PROPERTY,
   DEFAULT_CODEX_SUBTYPE,
   DEFAULT_SECURITY_LEVEL,
-  MONSTER_CODEX_TYPE,
   MONSTER_CURVE_TABLE_NAME,
   MONSTER_DESCRIBE_TABLE_NAME,
   MONSTER_TABLE_NAME,
   REGIONS_DIRECTORY,
   WEEKLY_BOSS_KIND_IDS,
 } from "#src/services/genshinAssets/enemies/constants";
+import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMonsterCodexRow";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
@@ -61,20 +61,15 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   );
   // A describe the archive does not list is left out, as its kind has no archive entry to publish with: the Moon Spire
   // Lists some of these, and none of the Corridor's
-  const abyssDescribeIds = readAbyssDescribeIds().filter((describeId) =>
-    animalCodexRows.some(
-      ({ describeId: codexDescribeId, type = ANIMAL_CODEX_TYPE }) =>
-        type === MONSTER_CODEX_TYPE && codexDescribeId === describeId,
-    ),
+  const abyssDescribeIds = readAbyssDescribeIds().filter(
+    (describeId) => findMonsterCodexRow(animalCodexRows, describeId) !== undefined,
   );
   const abyssEnemyKindIds = Object.values(toAbyssEnemyKinds(abyssDescribeIds, monsterRows));
   const extraKindIds = [...bountyKindIds, ...WEEKLY_BOSS_KIND_IDS, ...abyssEnemyKindIds];
   const enemyKinds = collectEnemyKindIds(regionDatas, extraKindIds).map((enemyKindId) => {
     const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
     if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
-    const codexRow = animalCodexRows.find(
-      ({ describeId, type = ANIMAL_CODEX_TYPE }) => type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
-    );
+    const codexRow = findMonsterCodexRow(animalCodexRows, monsterRow.describeId);
     if (!codexRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no archive entry");
     const monsterDescribeRow = monsterDescribeRows.find(({ id }) => id === monsterRow.describeId);
     if (!monsterDescribeRow)

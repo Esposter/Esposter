@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { describe, expect, test } from "vitest";
@@ -26,6 +27,22 @@ describe(runFits, () => {
     });
   });
 
+  // A group's name runs every fit under it, so `ground` runs each area's ground fit and `ground/a` runs one of them
+  test("runs every fit under a group's name", async () => {
+    expect.hasAssertions();
+    await expect(
+      runFits(
+        {
+          "ground/a": () => Promise.resolve({ notes: ["a"], objects: { "ground/a": 0 } }),
+          "ground/b": () => Promise.resolve({ notes: ["b"], objects: { "ground/b": 1 } }),
+          sky: () => Promise.resolve({ notes: ["sky"], objects: { "login/sky": 2 } }),
+        },
+        ["ground"],
+        { isDryRun: false },
+      ),
+    ).resolves.toStrictEqual({ notes: ["a", "b"], objects: { "ground/a": 0, "ground/b": 1 } });
+  });
+
   // A fit's compute holds the thread, so a record another fit fetched meanwhile would outwait its timeout
   test("runs one fit at a time", async () => {
     expect.hasAssertions();
@@ -49,12 +66,20 @@ describe(runFits, () => {
     );
   });
 
+  // Names are matched against the fits' own keys, so a prototype's name is no fit and is refused like any unknown name
+  test("refuses a prototype's name, which no fit has", async () => {
+    expect.hasAssertions();
+    await expect(runFits(fits, ["toString"], { isDryRun: false })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: toString, not a fit: one of clouds, sky]`,
+    );
+  });
+
   // A dry run reaches every fit, so a fit that writes a world data file under it writes none
   test("hands the dry run to every fit it runs", async () => {
     expect.hasAssertions();
 
     const dryRuns: boolean[] = [];
-    const createFit = ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
+    const createFit = ({ isDryRun }: DryRunOptions): Promise<GameDataBuild> => {
       dryRuns.push(isDryRun);
       return Promise.resolve({ notes: [], objects: {} });
     };

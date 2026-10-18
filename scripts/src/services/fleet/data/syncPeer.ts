@@ -1,5 +1,6 @@
 import type { FileEntry } from "#src/models/fleet/data/FileEntry";
 import type { Peer } from "#src/models/fleet/data/Peer";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
 import { SUCCESS_EXIT_CODE } from "#src/services/fleet/data/constants";
@@ -26,7 +27,7 @@ export const syncPeer = async (
   folders: string[],
   localDirectory: string,
   remoteDirectory: string,
-  isDryRun: boolean,
+  { isDryRun }: DryRunOptions,
 ): Promise<void> => {
   const isPull = direction === TransferDirection.Pull;
   const [localManifest, remoteManifest] = await Promise.all([

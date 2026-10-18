@@ -49,7 +49,7 @@ export const createTransferCommand = (direction: TransferDirection, description:
             resolveFolders(args.folders),
             args.source || getParityDirectory(),
             remoteDirectory,
-            args["dry-run"],
+            { isDryRun: args["dry-run"] },
           );
         })
       ).match(noop, (error) => {

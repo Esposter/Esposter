@@ -1,7 +1,8 @@
 import type { ExpeditionPassive } from "genshin-world";
 import type { Except } from "type-fest";
 
-import { ExpeditionPassiveKind, ExpeditionRegion } from "genshin-world";
+import { checkIsExpeditionRegion } from "#src/services/genshinAssets/expeditions/checkIsExpeditionRegion";
+import { ExpeditionPassiveKind } from "genshin-world";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The two sentences the game writes an expedition talent's description in: a time talent names its region, and a reward
@@ -21,10 +22,9 @@ export const parseExpeditionPassive = (
   const match = timeMatch ?? rewardMatch;
   if (!match?.groups) return undefined;
   const { hours, percent = "", region = "" } = match.groups;
-  if (!Object.values<string>(ExpeditionRegion).includes(region))
+  if (!checkIsExpeditionRegion(region))
     throw new InvalidOperationError(Operation.Read, description, `names the region ${region}`);
-  const expeditionRegion = region as ExpeditionRegion;
   const percentValue = Number(percent);
-  if (timeMatch) return { kind: ExpeditionPassiveKind.Time, percent: percentValue, region: expeditionRegion };
-  return { hours: Number(hours), kind: ExpeditionPassiveKind.Reward, percent: percentValue, region: expeditionRegion };
+  if (timeMatch) return { kind: ExpeditionPassiveKind.Time, percent: percentValue, region };
+  return { hours: Number(hours), kind: ExpeditionPassiveKind.Reward, percent: percentValue, region };
 };

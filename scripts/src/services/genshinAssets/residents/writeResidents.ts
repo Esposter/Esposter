@@ -1,4 +1,5 @@
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
@@ -34,7 +35,7 @@ import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 // Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk table gives it one, else the
 // Lowest-numbered talk it speaks in. The report counts each region's residents, the ones with a night spot and what was
 // Left out. A dry run reports the same and writes no region data
-export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
+export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const { origin, regionFiles, regionMapPoints } = await readFittedRegions();
   const sceneGroups = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
   const craftingBench = findCraftingBenchMember(sceneGroups);

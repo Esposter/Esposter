@@ -114,8 +114,9 @@ describe(toDishUse, () => {
   test("should read an anti-cold dish's ratio and how long it holds the fill down", () => {
     expect.hasAssertions();
 
-    expect(
-      toDishUse(createRow(), [createBuff("用于抗寒料理，能够抑制低温条提升，ratio-0.3", ANTI_COLD_ABILITY_NAME, 900)]),
-    ).toStrictEqual({ antiCold: { ratio: -0.3, seconds: 900 }, target: DishTarget.Party });
+    expect(toDishUse(createRow(), [createBuff("ratio-0.3", ANTI_COLD_ABILITY_NAME, 900)])).toStrictEqual({
+      antiCold: { ratio: -0.3, seconds: 900 },
+      target: DishTarget.Party,
+    });
   });
 });

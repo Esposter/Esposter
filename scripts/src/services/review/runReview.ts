@@ -2,6 +2,7 @@ import type { ReviewBatchOutcome } from "#src/models/review/ReviewBatchOutcome";
 import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 import type { ReviewRange } from "#src/models/review/ReviewRange";
 import type { ReviewWindow } from "#src/models/review/ReviewWindow";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
@@ -27,10 +28,9 @@ import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#s
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
 
-export interface ReviewRunInput {
+export interface ReviewRunInput extends DryRunOptions {
   findingsDirectory: string;
   from: string;
-  isDryRun: boolean;
   to: string;
 }
 

@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
@@ -20,7 +21,7 @@ import { LandmarkKind } from "genshin-world";
 export const fitRegionLandmarks = async (
   component: DerivedAssetComponent,
   regionFile: string,
-  { isDryRun }: { isDryRun: boolean },
+  { isDryRun }: DryRunOptions,
 ): Promise<string> => {
   const { getWorldHeight, origin, placements, regionJson, regionLandmarks } = await readRegionLandmarkSources(
     component,

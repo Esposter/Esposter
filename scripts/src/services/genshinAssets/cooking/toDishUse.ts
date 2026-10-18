@@ -86,9 +86,10 @@ const toAntiCold = (buff: BuffRow): DishUse["antiCold"] => {
   return { ratio: Number(match.groups.ratio), seconds: buff.time };
 };
 
-// A dish's use from its item row and the buff table: the heal its heal buff gives, the HP its revive buff restores and the
-// Bonus its bonus buff gives, the ratio its anti-cold buff holds the fill down by, and the target its use names. A dish whose buffs give none of these has no use. A dish with
-// More than one buff of a kind, or a target this does not read, throws
+// A dish's use from its item row and the buff table: the heal its heal buff gives, the HP its revive buff restores and
+// The bonus its bonus buff gives, the ratio its anti-cold buff holds the fill down by, and the target its use names. A
+// Dish whose buffs give none of these has no use. A dish with more than one buff of a kind, or a target this does not
+// Read, throws
 export const toDishUse = (materialRow: MaterialRow, buffRows: BuffRow[]): DishUse | undefined => {
   const [healBuff, ...otherHealBuffs] = getBuffs(materialRow, buffRows, HEAL_BUFF_ABILITY_NAME);
   const [reviveBuff, ...otherReviveBuffs] = getBuffs(materialRow, buffRows, REVIVE_BUFF_ABILITY_NAME);
