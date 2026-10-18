@@ -11,6 +11,7 @@ import {
   CRAFTING_BENCH_NPC_ID_MAP,
   REPUTATION_KEEPER_NPC_ID_MAP,
   RESIDENT_DUEL_GAME_ID_MAP,
+  RESIDENT_NIGHT_SPOT_MAP,
   RESIDENT_WEEK_GAME_MAP,
 } from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
@@ -78,6 +79,7 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
     talkIdMap,
     (region, position) => findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
     craftingBenchNpcIds,
+    RESIDENT_NIGHT_SPOT_MAP,
   );
   const reports = await Promise.all(
     regionFiles.map(async ({ data, file, region }) => {
