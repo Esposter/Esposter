@@ -91,6 +91,8 @@ export const parseWishPage = (wikitext: string): WishEventPage | undefined => {
     fiveStarNames: readWishItemNames(fiveStarBullet),
     fourStarNames: readWishItemNames(fourStarBullet),
     kind,
+    // A page marked with a second type is the second banner of its kind in its window, the first having no mark
+    kindNumber: parameters.has("type2") ? 2 : 1,
     startTime: readEpochMilliseconds(readParameter(parameters, "time_start"), timeZone),
   };
 };
