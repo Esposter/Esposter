@@ -152,10 +152,9 @@ const addRerollGroup = () => {
 const playRerollChoice = () => {
   const handIndex = rerollHandIndex.value;
   if (handIndex === undefined) return;
-  const isPicked = selectedDieIndices.value.length > 0 && rerollGroups.value.length < GCG_TOSS_UP_REROLL_COUNT;
-  const groups = isPicked ? [...rerollGroups.value, selectedDieIndices.value] : rerollGroups.value;
+  addRerollGroup();
   emit("playCard", handIndex, undefined, paidDiceIndices.value, {
-    rerollDiceIndices: toGcgRemainingDiceIndices(groups, paidDiceIndices.value),
+    rerollDiceIndices: toGcgRemainingDiceIndices(rerollGroups.value, paidDiceIndices.value),
   });
   clearSelection();
 };
