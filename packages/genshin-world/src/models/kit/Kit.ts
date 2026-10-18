@@ -4,6 +4,7 @@ import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
@@ -58,6 +59,17 @@ export interface Kit {
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands and the deployed team
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
+  // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
+  // Stats, given the enemy as it stands, the deployed team and the effects on it
+  getStrikeAdditiveBaseDamageBonus?: (
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => number;
+  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive raises it on the strike,
+  // Given the enemy as it stands, the deployed team and the effects on it
+  getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   highPlunge: KitAction;
   lowPlunge: KitAction;
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign

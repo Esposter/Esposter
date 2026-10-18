@@ -138,11 +138,9 @@ describe(strikeEnemy, () => {
     strikeEnemy(
       enemyTables,
       boostedEnemy,
-      TRAVELER_KIT.plungeCollision,
+      { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: CRITICAL_RATE_BONUS },
       createCombatantWithCriticalRate(),
       () => ROLL,
-      undefined,
-      CRITICAL_RATE_BONUS,
     );
     strikeEnemy(enemyTables, plainEnemy, TRAVELER_KIT.plungeCollision, createCombatantWithCriticalRate(), () => ROLL);
 
@@ -678,5 +676,27 @@ describe(strikeEnemy, () => {
       [ReactionType.Swirl],
     ]);
     expect([first.reachingReactions, second.reachingReactions]).toStrictEqual([first.reactions, []]);
+  });
+
+  test("a hit's CRIT Rate bonus raises the roll it is made against", () => {
+    expect.hasAssertions();
+
+    const boosted = strikeEnemy(
+      enemyTables,
+      createSturdyEnemy(),
+      { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: 0.6 },
+      createCombatant(),
+      () => 0.5,
+    );
+    const plain = strikeEnemy(
+      enemyTables,
+      createSturdyEnemy(),
+      TRAVELER_KIT.plungeCollision,
+      createCombatant(),
+      () => 0.5,
+    );
+
+    expect(boosted.isCritical).toBe(true);
+    expect(plain.isCritical).toBe(false);
   });
 });

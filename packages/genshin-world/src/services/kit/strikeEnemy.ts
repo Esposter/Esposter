@@ -44,7 +44,6 @@ export const strikeEnemy = (
   combatant: Combatant,
   random: () => number,
   moonsign?: PartyMoonsign,
-  criticalRateBonus = 0,
   stellarReactionTypes: readonly StellarReactionType[] = [],
 ): EnemyStrikeResult => {
   const { elementalState } = enemy;
@@ -97,7 +96,7 @@ export const strikeEnemy = (
     kitHit.isForcedCritical ||
     random() <
       attributeTotalMap[Attribute.CriticalRate] +
-        criticalRateBonus +
+        (kitHit.criticalRateBonus ?? 0) +
         (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const resistance = getEnemyResistance(kind, enemy, element);
   const damage = kitHit.lunarHit

@@ -140,4 +140,46 @@ describe(strikeKitEnemies, () => {
 
     expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.WeakPointHit);
   });
+
+  test("a strike's CRIT Rate hook raises its roll, so a roll above the base rate lands a critical hit", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = {
+      ...createCombatant(onKitEvent),
+      kit: { ...TRAVELER_KIT, getStrikeCriticalRateBonus: () => 0.6, onKitEvent },
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      random: () => 0.5,
+    });
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, target: enemy }], context);
+
+    expect(
+      onKitEvent.mock.calls
+        .map(([event]) => event)
+        .filter((event) => event.kind === KitEventKind.DamageTaken)
+        .map(({ isCritical }) => isCritical),
+    ).toStrictEqual([true]);
+  });
+
+  test("a strike's flat base damage hook adds to the hit, which can defeat an enemy it would not otherwise", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = {
+      ...createCombatant(onKitEvent),
+      kit: { ...TRAVELER_KIT, getStrikeAdditiveBaseDamageBonus: () => 1e10, onKitEvent },
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.health = 1e9;
+    strikeWithHit(KIT_HIT, enemy, combatant);
+
+    expect(
+      onKitEvent.mock.calls
+        .map(([event]) => event)
+        .filter((event) => event.kind === KitEventKind.EnemyDefeated)
+        .map(({ enemy: defeated }) => defeated),
+    ).toStrictEqual([enemy]);
+  });
 });
