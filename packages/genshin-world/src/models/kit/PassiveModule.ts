@@ -6,6 +6,7 @@ import type { Kit } from "#src/models/kit/Kit";
 export type PassiveModule = Pick<
   Kit,
   | "getChargedAttackStaminaMultiplier"
+  | "getPartyReactionBonus"
   | "getPartyStrikeBonus"
   | "getPassiveBonuses"
   | "getStrikeAdditiveBaseDamageBonus"

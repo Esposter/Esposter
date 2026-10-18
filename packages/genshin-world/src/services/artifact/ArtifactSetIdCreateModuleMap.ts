@@ -10,6 +10,7 @@ import {
   DEEPWOOD_MEMORIES_ARTIFACT_SET_ID,
   DEFENDERS_WILL_ARTIFACT_SET_ID,
   DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
+  DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID,
   ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID,
   EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID,
   EXILE_ARTIFACT_SET_ID,
@@ -41,6 +42,7 @@ import {
   THUNDERSOOTER_ARTIFACT_SET_ID,
   TRAVELING_DOCTOR_ARTIFACT_SET_ID,
   VERMILLION_HEREAFTER_ARTIFACT_SET_ID,
+  VIRIDESCENT_VENERER_ARTIFACT_SET_ID,
   VOURUKASHAS_GLOW_ARTIFACT_SET_ID,
   WANDERERS_TROUPE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
@@ -52,6 +54,7 @@ import { createBraveHeartSetModule } from "#src/services/artifact/sets/createBra
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
 import { createDefendersWillSetModule } from "#src/services/artifact/sets/createDefendersWillSetModule";
 import { createDesertPavilionChronicleSetModule } from "#src/services/artifact/sets/createDesertPavilionChronicleSetModule";
+import { createDisenchantmentInDeepShadowSetModule } from "#src/services/artifact/sets/createDisenchantmentInDeepShadowSetModule";
 import { createEchoesOfAnOfferingSetModule } from "#src/services/artifact/sets/createEchoesOfAnOfferingSetModule";
 import { createEmblemOfSeveredFateSetModule } from "#src/services/artifact/sets/createEmblemOfSeveredFateSetModule";
 import { createExileSetModule } from "#src/services/artifact/sets/createExileSetModule";
@@ -83,6 +86,7 @@ import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/se
 import { createThundersooterSetModule } from "#src/services/artifact/sets/createThundersooterSetModule";
 import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/createTravelingDoctorSetModule";
 import { createVermillionHereafterSetModule } from "#src/services/artifact/sets/createVermillionHereafterSetModule";
+import { createViridescentVenererSetModule } from "#src/services/artifact/sets/createViridescentVenererSetModule";
 import { createVourukashasGlowSetModule } from "#src/services/artifact/sets/createVourukashasGlowSetModule";
 import { createWanderersTroupeSetModule } from "#src/services/artifact/sets/createWanderersTroupeSetModule";
 
@@ -99,6 +103,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [DEEPWOOD_MEMORIES_ARTIFACT_SET_ID]: createDeepwoodMemoriesSetModule,
   [DEFENDERS_WILL_ARTIFACT_SET_ID]: createDefendersWillSetModule,
   [DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID]: createDesertPavilionChronicleSetModule,
+  [DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID]: createDisenchantmentInDeepShadowSetModule,
   [ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID]: createEchoesOfAnOfferingSetModule,
   [EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID]: createEmblemOfSeveredFateSetModule,
   [EXILE_ARTIFACT_SET_ID]: createExileSetModule,
@@ -130,6 +135,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [THUNDERSOOTER_ARTIFACT_SET_ID]: createThundersooterSetModule,
   [TRAVELING_DOCTOR_ARTIFACT_SET_ID]: createTravelingDoctorSetModule,
   [VERMILLION_HEREAFTER_ARTIFACT_SET_ID]: createVermillionHereafterSetModule,
+  [VIRIDESCENT_VENERER_ARTIFACT_SET_ID]: createViridescentVenererSetModule,
   [VOURUKASHAS_GLOW_ARTIFACT_SET_ID]: createVourukashasGlowSetModule,
   [WANDERERS_TROUPE_ARTIFACT_SET_ID]: createWanderersTroupeSetModule,
 };

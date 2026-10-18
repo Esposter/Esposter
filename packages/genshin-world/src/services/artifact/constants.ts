@@ -82,6 +82,10 @@ export const HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID = 15_021;
 export const VOURUKASHAS_GLOW_ARTIFACT_SET_ID = 15_030;
 // Song of Days Past's id in the set table
 export const SONG_OF_DAYS_PAST_ARTIFACT_SET_ID = 15_033;
+// Viridescent Venerer's id in the set table
+export const VIRIDESCENT_VENERER_ARTIFACT_SET_ID = 15_002;
+// Disenchantment in Deep Shadow's id in the set table
+export const DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID = 15_046;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
