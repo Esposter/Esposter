@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(offerReputationRequest, () => {
   const REWARD = { exp: 80, items: [{ count: 20_000, id: 202 }] };
+  const OFFERABLE_QUEST_IDS = ["901", "902", "903"];
   const CITY: ReputationCity = {
     bounties: [],
     bountyTargets: [],
@@ -25,14 +26,21 @@ describe(offerReputationRequest, () => {
   test("a request is not offered before level two", () => {
     expect.hasAssertions();
 
-    expect(offerReputationRequest(CITY, 1, 0)).toBeUndefined();
-    expect(offerReputationRequest(CITY, 2, 0)).toStrictEqual(CITY.requests[1]);
+    expect(offerReputationRequest(CITY, 1, 0, OFFERABLE_QUEST_IDS)).toBeUndefined();
+    expect(offerReputationRequest(CITY, 2, 0, OFFERABLE_QUEST_IDS)).toStrictEqual(CITY.requests[1]);
+  });
+
+  test("a request outside the offerable quests is never drawn", () => {
+    expect.hasAssertions();
+
+    expect(offerReputationRequest(CITY, 2, 0.2, ["903"])).toStrictEqual(CITY.requests[2]);
+    expect(offerReputationRequest(CITY, 2, 0.2, [])).toBeUndefined();
   });
 
   test("should draw a request in proportion to its weight", () => {
     expect.hasAssertions();
 
-    expect(offerReputationRequest(CITY, 2, 0.2)).toStrictEqual(CITY.requests[1]);
-    expect(offerReputationRequest(CITY, 2, 0.5)).toStrictEqual(CITY.requests[2]);
+    expect(offerReputationRequest(CITY, 2, 0.2, OFFERABLE_QUEST_IDS)).toStrictEqual(CITY.requests[1]);
+    expect(offerReputationRequest(CITY, 2, 0.5, OFFERABLE_QUEST_IDS)).toStrictEqual(CITY.requests[2]);
   });
 });

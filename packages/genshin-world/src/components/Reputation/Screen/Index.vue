@@ -18,14 +18,16 @@ interface Props {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
+  // The request the keeper offers, its title in the reader's language, or none where she offers none
+  offerTitle?: string;
   // The nation's Reputation the player holds: its level, and the EXP toward the next
   progress: ReputationProgress;
   // The nation's levels and their rewards, as the game's table gives them
   reputation: ReputationCity;
 }
 
-const { gameText, materialDataMap, nameText, progress, reputation } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const { gameText, materialDataMap, nameText, offerTitle, progress, reputation } = defineProps<Props>();
+const emit = defineEmits<{ accept: []; close: [] }>();
 const level = defineModel<number>("level", { required: true });
 // A level is achieved once the nation's Reputation has reached it, and its unlock line is the feature it opens in the
 // Game's words. Each item's slot is read aloud as its name and count; the words its achieved mark is read aloud with wait
@@ -58,8 +60,12 @@ const levels = computed<ReputationLevelCell[]>(() =>
       :level-label="gameText[GameTextKey.LevelShort]"
       :levels
       :not-achieved-label="gameText[GameTextKey.ReputationNotAchieved]"
+      :offer="
+        offerTitle ? { acceptLabel: gameText[GameTextKey.ReputationRequestAccept], title: offerTitle } : undefined
+      "
       :requirement="[]"
       :title="fillGameTextValues(gameText[GameTextKey.ReputationReward], gameText[GameTextKey.Mondstadt])"
+      @accept="emit('accept')"
       @close="emit('close')"
     />
   </GameScreen>
