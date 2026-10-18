@@ -40,16 +40,14 @@ export const useInventoryEntry = (
   switch (item.definition.category) {
     case ItemCategory.Food: {
       const dishUse = dishUseMap.get(item.definition.id);
-      return dishUse === undefined
-        ? undefined
-        : {
-            inventory: eatDish(inventory, item.definition.id, dishUse, {
-              eaterId,
-              getMaxHealth,
-              kitEffectState,
-              party,
-            }),
-          };
+      if (dishUse === undefined) return undefined;
+      const eatenInventory = eatDish(inventory, item.definition.id, dishUse, {
+        eaterId,
+        getMaxHealth,
+        kitEffectState,
+        party,
+      });
+      return eatenInventory === undefined ? undefined : { inventory: eatenInventory };
     }
     default:
       return undefined;
