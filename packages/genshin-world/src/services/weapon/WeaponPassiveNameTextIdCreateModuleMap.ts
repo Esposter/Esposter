@@ -41,6 +41,7 @@ import { createRustPassiveModule } from "#src/services/weapon/passives/createRus
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
+import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
@@ -207,4 +208,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2129974699": createFocusPassiveModule,
   // Undying Admiration (Festering Desire)
   "1399609651": createUndyingAdmirationPassiveModule,
+  // Spotless Heart (Cinnabar Spindle)
+  "1348697123": createSpotlessHeartPassiveModule,
 };
