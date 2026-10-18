@@ -13,7 +13,7 @@ export const createDomainArenaCamp = (
   areaId: string,
   campId: string,
   center: GroundPoint,
-  wave: readonly DomainChallengeEnemy[],
+  wave: readonly Pick<DomainChallengeEnemy, "count" | "enemyKindId">[],
   enemyLevel: number,
   random: () => number,
 ): EnemyCamp => {
