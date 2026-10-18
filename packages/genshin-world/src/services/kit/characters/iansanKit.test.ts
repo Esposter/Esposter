@@ -9,11 +9,11 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import {
   createIansanKitBehaviour,
@@ -179,7 +179,9 @@ describe(createIansanKitBehaviour, () => {
     const context = createKitTestContext(createIansanCombatant());
     IANSAN_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 0.7);
-    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitStatus(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      true,
+    );
     expect(countIansanPoints(context)).toBeCloseTo(15, 0);
   });
 
@@ -285,7 +287,9 @@ describe(createIansanKitBehaviour, () => {
     IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
     IANSAN_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 6);
-    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
     expect(countIansanPoints(context)).toBe(0);
   });
 });

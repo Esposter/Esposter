@@ -3,12 +3,12 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 export const IFA_CHARACTER_ID = 10_000_113;
@@ -69,7 +69,7 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
   skill: {
     onStart: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
-      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         exitKitNightsoulBlessing(kitEffectState, characterId);
       else
         enterKitNightsoulBlessing(kitEffectState, characterId, {
@@ -81,7 +81,8 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
   },
   getPartyReactionBonus: (member, { reactionType }, context) => {
     const { effects } = context.kitEffectState;
-    if (member.ascension < 1 || !hasKitNightsoulBlessing(effects, member.characterId)) return {};
+    if (member.ascension < 1 || !checkHasKitStatus(effects, member.characterId, NIGHTSOUL_BLESSING_STATUS_ID))
+      return {};
     const points = countRescueEssentials(
       member.constellationCount,
       getDeployedCharacterIds(context.party).reduce(

@@ -3,14 +3,14 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
@@ -59,7 +59,7 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
   const enterOpalFire = (context: KitContext) => {
     const { activeCombatant, kitEffectState } = context;
     const { characterId } = activeCombatant;
-    if (!hasKitNightsoulBlessing(kitEffectState.effects, characterId)) return;
+    if (!checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID)) return;
     if (countKitResource(kitEffectState.effects, characterId, NIGHTSOUL_POINTS_ID) < OPAL_FIRE_POINTS) return;
     if (
       kitEffectState.effects.some(
