@@ -3,9 +3,7 @@ import type { ChestKind } from "#src/models/chest/ChestKind";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { drawArtifactPiece } from "#src/services/artifact/drawArtifactPiece";
-import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
+import { drawSetArtifact } from "#src/services/artifact/drawSetArtifact";
 import { ChestDropPoolMap } from "#src/services/chest/ChestDropPoolMap";
 import {
   CHEST_HIGH_RARITY_ARTIFACT_SET_IDS,
@@ -25,13 +23,11 @@ const rollArtifactDrop = (
 ): DroppedItem[] => {
   if (artifactSets.length === 0) return [];
   const set = takeOne(artifactSets, Math.floor(random() * artifactSets.length));
-  const slots = Object.values(ArtifactSlot);
-  const slot = takeOne(slots, Math.floor(random() * slots.length));
   const stars = CHEST_HIGH_RARITY_ARTIFACT_SET_IDS.includes(set.id)
     ? CHEST_HIGH_RARITY_ARTIFACT_STARS
     : CHEST_LOW_RARITY_ARTIFACT_STARS;
   const rarity = takeOne(stars, Math.floor(random() * stars.length));
-  return [rollPieceArtifact(set.id, drawArtifactPiece(set, slot, rarity, random), random, tables)];
+  return [drawSetArtifact(set, rarity, random, tables)];
 };
 
 // What one opening of a chest of a kind pours out: one weapon picked from its pool when the pool names any, one artifact
