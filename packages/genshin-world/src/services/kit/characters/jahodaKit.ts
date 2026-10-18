@@ -23,7 +23,6 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
-import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemies";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import {
   getJahodaConstellationFourEnergy,
@@ -196,12 +195,12 @@ export const createJahodaKitBehaviour = ({
     talentMultiplier: takeOne(drainTalentMultipliers, 1),
   };
 
-  // Each Meowball strikes the living enemy nearest her body, which the kit takes as the primary target, since it reads no
-  // Default target as gcsim does
+  // Each Meowball strikes the primary target, the enemy her last action turned to, as gcsim's does
+  // (jahoda/skill.go 335), and strikes nothing while there is none
   const strikeMeowball = (context: KitContext, combatant: Combatant, element: Element): void => {
-    const [primary] = getNearestLivingEnemies(context.enemyMap.values(), context.body.position, 1);
-    if (primary !== undefined)
-      queueKitPassiveHit(context, combatant, { ...meowballHit, element }, primary, meowballHitbox);
+    const { primaryTarget } = context;
+    if (primaryTarget !== undefined)
+      queueKitPassiveHit(context, combatant, { ...meowballHit, element }, primaryTarget, meowballHitbox);
   };
 
   // A full flask's drain starts ten Meowballs, the first after its first seconds and each after the interval, replacing

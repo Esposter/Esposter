@@ -312,6 +312,22 @@ describe(createJahodaKitBehaviour, () => {
     expect(new Set(meowballs.map(({ element }) => element))).toStrictEqual(new Set([Element.Pyro]));
   });
 
+  test("each Meowball strikes the primary target, not the living enemy nearest her body", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, true);
+    for (const enemy of context.enemyMap.values()) enemy.position = { ...context.body.position };
+    const far = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    far.position = { x: context.body.position.x + 10, z: context.body.position.z };
+    context.enemyMap.set("far", far);
+    context.primaryTarget = far;
+    fillFlaskUntilDrained(pursuit, context);
+    const targets = [];
+    for (let frame = 1; frame <= 129; frame++)
+      for (const { hitbox, target } of stepKitTestEffects(1 / 60, context))
+        if (hitbox !== undefined) targets.push(target);
+    expect(targets).toStrictEqual([far]);
+  });
+
   test("below Ascendant Gleam, a full flask's drain fires no Meowball", () => {
     expect.hasAssertions();
     const { context, pursuit } = createConstellation6Context(0, false);
