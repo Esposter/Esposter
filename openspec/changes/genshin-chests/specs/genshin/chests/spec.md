@@ -92,16 +92,6 @@ A sealed chest SHALL be freed by Pyro when sealed in vines or ice, and by a blun
 - **WHEN** a Hydro attack strikes the seal
 - **THEN** the seal stays in place
 
-### Requirement: Unsettled Chest Kinds Stay Unopened
-
-Luxurious and Remarkable chests SHALL stay unopened until their rewards are settled.
-
-#### Scenario: a Luxurious chest cannot be opened
-
-- **GIVEN** a Luxurious chest in the world
-- **WHEN** the player tries to open it
-- **THEN** the chest does not open
-
 ### Requirement: Opened Chest Counting
 
 An opened chest SHALL count once toward its area's exploration and its region's chest achievements.

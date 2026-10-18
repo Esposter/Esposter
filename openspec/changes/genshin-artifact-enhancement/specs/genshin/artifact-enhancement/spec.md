@@ -16,6 +16,12 @@ The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maxim
 - **WHEN** five seconds pass after the chest was opened
 - **THEN** the restoration stops
 
+#### Scenario: a chest opened in the world reaches the combat
+
+- **GIVEN** a character wearing four Adventurer's pieces is in combat
+- **WHEN** a chest is opened in the world
+- **THEN** the restoration reaches that character's combat
+
 #### Scenario: a wearer of fewer than four pieces is not restored
 
 - **GIVEN** a character wearing two Adventurer's pieces

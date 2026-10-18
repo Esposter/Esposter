@@ -10,6 +10,12 @@ The Archive SHALL open a viewpoint's entry, with a picture of its place, when th
 - **WHEN** the player reaches that place and chooses to view it
 - **THEN** the viewpoint's entry opens with a picture of the place
 
+#### Scenario: a viewpoint is placed at the point its scene group record gives
+
+- **GIVEN** a viewpoint whose scene group record gives a point
+- **WHEN** the player is in the open world
+- **THEN** the viewpoint's place is that point
+
 #### Scenario: a viewpoint with no known place is not offered
 
 - **GIVEN** a viewpoint whose place is not known

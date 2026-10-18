@@ -4,7 +4,7 @@
 
 ## 2. Characters' kits
 
-- [ ] 2.1 Write each playable character without a kit as its own module, from the character kits index. Verify: a test named after the scenario 'a character with its own kit fights by it', seen failing first.
+- [ ] 2.1 Write each playable character without a kit as its own module, from the character kits index. Verify: tests named after the scenarios 'a character with its own kit fights by it' and 'a character without a kit of its own fights by the Traveler's kit', seen failing first.
 - [ ] 2.2 Build Nefer's kit from her game records and the wiki, frames and areas provisional until a recording measures them. Verify: a test named after the scenario 'Nefer's elemental skill uses her own hits', seen failing first.
 
 ## 3. Passives
@@ -14,7 +14,8 @@
 ## 4. Heals and swaps
 
 - [ ] 4.1 Heal under half HP for Hu Tao's Spirit Soother, with her Constellations 4 and 6 and Blood Blossom, once a kit's actions can read party HP. Verify: tests named after the scenarios 'Spirit Soother heals a character under half HP' and 'Spirit Soother does not heal a character at or above half HP', seen failing first.
-- [ ] 4.2 End Klee's, Xiao's, Ningguang's, Razor's and Xingqiu's field effects when their character is swapped off the field. Verify: tests named after the scenarios 'Klee's Sparks 'n' Splash ends when Klee is swapped off the field' and 'a field effect continues while its character stays on the field', seen failing first.
+- [ ] 4.2 End Klee's, Xiao's, Ningguang's and Razor's field effects when their character is swapped off the field. Verify: tests named after the scenarios 'Klee's Sparks 'n' Splash ends when Klee is swapped off the field' and 'a field effect continues while its character stays on the field', seen failing first.
+- [ ] 4.3 Move Xingqiu's Raincutter onto the kit events once gcsim gives each character's attack its delay (design.md). Verify: a requirement and scenarios for it are added to the spec, with a test named after each, seen failing first, when the delay is read.
 
 ## 5. Rolls
 

@@ -18,7 +18,7 @@ Each playable character fights by its own kit, with its passives, its swap effec
 
 ## Capabilities
 
-- **genshin/character-kits** (new)
+- **genshin/kits** (modified: gains the requirements this change adds)
 
 ## Waiting on
 

@@ -66,7 +66,7 @@ Hu Tao's Spirit Soother SHALL heal the character it targets when that character'
 
 ### Requirement: Swap Ends Field Effect
 
-A field effect of Klee, Xiao, Ningguang, Razor or Xingqiu SHALL end when its character is swapped off the field.
+A field effect of Klee, Xiao, Ningguang or Razor SHALL end when its character is swapped off the field.
 
 #### Scenario: Klee's Sparks 'n' Splash ends when Klee is swapped off the field
 
