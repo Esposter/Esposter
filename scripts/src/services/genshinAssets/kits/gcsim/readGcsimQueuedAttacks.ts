@@ -21,6 +21,7 @@ import {
   readGoNamedFunctions,
 } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOptionalDelays";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
@@ -206,12 +207,9 @@ const readCallSiteDelays = (
     )
     .map((iteration) => {
       const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, site);
-      const closureDelay = closureDelayExpressions
-        .map((expression) => evaluateGoNumber(expression, resolveIteration))
-        .reduce<number | undefined>(
-          (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
-          0,
-        );
+      const closureDelay = sumOptionalDelays(
+        closureDelayExpressions.map((expression) => evaluateGoNumber(expression, resolveIteration)),
+      );
       // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay for
       const argumentDelay =
         argumentDelayExpression === undefined ? undefined : evaluateGoNumber(argumentDelayExpression, resolveIteration);
@@ -376,12 +374,10 @@ export const readGcsimQueuedAttacks = (
             hitboxValueStart === undefined ? undefined : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file);
           const hitbox =
             ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
-          const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
-            expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
-          );
-          const delay = delayValues.reduce<number | undefined>(
-            (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
-            0,
+          const delay = sumOptionalDelays(
+            [delayExpression, ...taskDelayExpressions].map((expression) =>
+              expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
+            ),
           );
           const holdValue = iteration.get("hold");
           queuedAttacks.push({
