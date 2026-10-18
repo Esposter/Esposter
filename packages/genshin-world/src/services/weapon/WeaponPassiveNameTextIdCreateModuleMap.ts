@@ -29,6 +29,7 @@ import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
+import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
 import { createInfusionArrowPassiveModule } from "#src/services/weapon/passives/createInfusionArrowPassiveModule";
@@ -267,4 +268,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3123029499": createPhantomFlashPassiveModule,
   // Solemn Silence (Serenity's Call)
   "2280400315": createSolemnSilencePassiveModule,
+  // Full Draw (Hamayumi)
+  "3099408603": createHamayumiPassiveModule,
 };
