@@ -151,15 +151,11 @@ export const useGridLayout = <T extends GridItem>(
     const { left, top } = element.getBoundingClientRect();
     const { padding } = getOptions().spacing;
     const offset = { x: point.x - left - padding, y: point.y - top - padding };
-    const origin = { ...item, x: 0, y: 0 };
-    const gestureCell = getGestureCell({
-      columnNumber: getOptions().columnNumber,
-      columnPitch: columnPitch.value,
-      offset,
-      origin,
-      rowPitch: rowPitch.value,
-    });
-    const cell = takeOne(correctBounds([gestureCell], getOptions().columnNumber));
+    const columnIndex = Math.floor(offset.x / columnPitch.value);
+    const rowIndex = Math.floor(offset.y / rowPitch.value);
+    const x = Math.min(Math.max(columnIndex, 0), getOptions().columnNumber - item.w);
+    const y = Math.max(0, rowIndex);
+    const cell = takeOne(correctBounds([{ h: item.h, id: item.id, w: item.w, x, y }], getOptions().columnNumber));
     const isRefused =
       getOptions().collision === CollisionMode.Prevent && layout.value.some((other) => checkIsColliding(cell, other));
     if (isRefused) return false;

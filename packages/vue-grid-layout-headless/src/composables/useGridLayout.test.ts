@@ -399,20 +399,22 @@ describe(useGridLayout, () => {
     expect(grid.value?.gridHeight.value).toBe(80);
   });
 
-  test("#6 Dropping a palette entry into the grid", async () => {
+  // The drop lands on the column under the pointer, so a pointer a little short of column 2's edge is still in column 1
+  test.each([
+    [cellPitch * 2 + spacing.padding, 2],
+    [138, 1],
+  ])("#6 Dropping a palette entry at clientX %s lands in column %s", async (clientX, x) => {
     expect.hasAssertions();
 
     const { onCommit } = mountGrid({ items: [] });
     await flushPromises();
     const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
-    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    const point = { clientX, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointermove", point);
     dispatch("pointerup", point);
 
-    expect(onCommit.mock.calls).toStrictEqual([
-      [{ changes: [{ h: 2, id: "palette", w: 2, x: 2, y: 0 }], removed: [] }],
-    ]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "palette", w: 2, x, y: 0 }], removed: [] }]]);
   });
 
   test("a palette entry dropped onto an item under prevent is refused", async () => {
