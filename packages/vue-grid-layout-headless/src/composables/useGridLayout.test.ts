@@ -2,6 +2,7 @@
 import type { GridItem } from "#src/models/GridItem";
 
 import { useGridLayout } from "#src/composables/useGridLayout";
+import { CollisionMode } from "#src/models/CollisionMode";
 import { CompactType } from "#src/models/CompactType";
 import type { GridLayout } from "#src/models/GridLayout";
 
@@ -28,6 +29,7 @@ describe(useGridLayout, () => {
     edge = ResizeEdge.SouthEast,
     gridSpacing = spacing,
     compactType = CompactType.Vertical,
+    collision = CollisionMode.Push,
   ) => {
     const onCommit = vi.fn<(changes: GridItem[]) => void>();
     const gridLayout = shallowRef<GridLayout>();
@@ -36,6 +38,7 @@ describe(useGridLayout, () => {
         setup() {
           const root = useTemplateRef<HTMLElement>("root");
           const layout = useGridLayout(root, () => ({
+            collision,
             columnNumber,
             compactType,
             dragStartDistance,
@@ -289,6 +292,88 @@ describe(useGridLayout, () => {
     grid.value?.reportContentHeight("a", 2 * rowPitch - spacing.gap + 1);
 
     expect(onCommit.mock.calls).toStrictEqual([[[{ h: 3, id: "a", w: 2, x: 0, y: 0 }]]]);
+  });
+
+  test("#66 Swapping two items on drop", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid(
+      [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+      ],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Vertical,
+      CollisionMode.Swap,
+    );
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [
+        [
+          { h: 2, id: "b", w: 2, x: 0, y: 0 },
+          { h: 2, id: "a", w: 2, x: 4, y: 0 },
+        ],
+      ],
+    ]);
+  });
+
+  test("a swap that lands on several items", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid(
+      [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 2, y: 0 },
+        { h: 2, id: "c", w: 2, x: 4, y: 0 },
+      ],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Vertical,
+      CollisionMode.Swap,
+    );
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { clientX: cellPitch * 3, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 3, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [
+        [
+          { h: 2, id: "a", w: 2, x: 3, y: 0 },
+          { h: 2, id: "b", w: 2, x: 2, y: 2 },
+          { h: 2, id: "c", w: 2, x: 4, y: 2 },
+        ],
+      ],
+    ]);
+  });
+
+  test("a move refused under prevent", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid(
+      [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+      ],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Vertical,
+      CollisionMode.Prevent,
+    );
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
   });
 
   test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {

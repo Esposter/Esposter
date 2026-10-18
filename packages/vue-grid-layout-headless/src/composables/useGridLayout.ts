@@ -17,7 +17,7 @@ import { getCellSpan } from "#src/placement/getCellSpan";
 import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
-import { moveItem } from "#src/placement/moveItem";
+import { resolveMove } from "#src/placement/resolveMove";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
 
@@ -112,7 +112,8 @@ export const useGridLayout = <T extends GridItem>(
     });
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
     gesture.value = { ...activeGesture, cell, isStarted: true, offset };
-    if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell), getOptions().compactType);
+    if (isCellChanged)
+      preview.value = compactLayout(resolveMove(layout.value, cell, getOptions().collision), getOptions().compactType);
   };
   // The cells of a layout that differ from the saved one, in the form the consumer writes back
   const getChangedCells = (changedLayout: T[]): GridItem[] =>

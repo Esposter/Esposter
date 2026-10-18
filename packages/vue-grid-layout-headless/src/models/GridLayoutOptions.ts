@@ -1,3 +1,4 @@
+import type { CollisionMode } from "#src/models/CollisionMode";
 import type { CompactType } from "#src/models/CompactType";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridSpacing } from "#src/models/GridSpacing";
@@ -5,6 +6,8 @@ import type { GridSpacing } from "#src/models/GridSpacing";
 // What a grid lays out and how its gestures read the pointer. A consumer passes these as a getter, so a changed prop is
 // Read the next time the grid lays out
 export interface GridLayoutOptions<T extends GridItem = GridItem> {
+  // What a dropped item does to the items it lands on
+  collision: CollisionMode;
   columnNumber: number;
   // The direction items compact in once placed, and where a dropped item stays
   compactType: CompactType;

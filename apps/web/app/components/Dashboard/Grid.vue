@@ -4,7 +4,7 @@ import type { GridGeometry, GridItem } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
-import { CompactType, ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
+import { CollisionMode, CompactType, ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 
@@ -22,6 +22,7 @@ const items = computed(() =>
   visuals.map((visual) => ({ h: visual.h, id: visual.id, visual, w: visual.w, x: visual.x, y: visual.y })),
 );
 const { gridHeight, placeholder, startGesture, tiles } = useGridLayout(grid, () => ({
+  collision: CollisionMode.Push,
   columnNumber,
   compactType: CompactType.Vertical,
   dragStartDistance: DRAG_START_DISTANCE,
