@@ -1,6 +1,6 @@
 ## Purpose
 
-Clorinde's kit as built, with her five strikes, her charged attack, Last Lightfall's five strikes and her plunges, and what is left of Hunter's Vigil's Night Vigil stance, her Bond of Life and her constellations.
+Clorinde's kit as built, with her five strikes, her charged attack, Last Lightfall's five strikes and her plunges, and what is left of Hunter's Vigil's Night Vigil stance, her Bond of Life and her constellations, bar the sixth's crit buff.
 
 ## Requirements
 
@@ -73,3 +73,19 @@ Clorinde's normal attacks and plunges SHALL deal no poise, and her plunges SHALL
 
 - **WHEN** the player plunges from the air
 - **THEN** the plunge lands as its action starts, a provisional timing
+
+### Requirement: Sixth constellation raises her crit after Hunter's Vigil
+
+From her sixth constellation, Hunter's Vigil SHALL raise Clorinde's CRIT Rate by 10% and her CRIT DMG by 70% for 12 seconds.
+
+#### Scenario: Hunter's Vigil raises her crit from the sixth constellation
+
+- **GIVEN** Clorinde has six constellations
+- **WHEN** the player uses Hunter's Vigil
+- **THEN** her CRIT Rate and CRIT DMG are raised for 12 seconds
+
+#### Scenario: Below the sixth constellation Hunter's Vigil raises no crit
+
+- **GIVEN** Clorinde has five constellations
+- **WHEN** the player uses Hunter's Vigil
+- **THEN** her CRIT Rate and CRIT DMG are unchanged

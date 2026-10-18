@@ -8,24 +8,61 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { COLLEI_CHARACTER_ID, createColleiKitBehaviour } from "#src/services/kit/characters/colleiKit";
+import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const COLLEI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, COLLEI_CHARACTER_ID);
-const createColleiCombatant = (): Combatant => ({
+const createColleiCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: COLLEI_CHARACTER_ID,
-  constellationCount: 0,
+  constellationCount,
   elementalResonances: [],
   kit: COLLEI_KIT,
   level: 90,
   weaponType: WeaponType.Bow,
 });
 
+const castTrumpCardKitty = (constellationCount: number): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const party = createParty([COLLEI_CHARACTER_ID, JEAN_CHARACTER_ID]);
+  COLLEI_KIT.elementalBurst.onStart?.(
+    createKitTestContext(createColleiCombatant(constellationCount), { kitEffectState, party }),
+  );
+  return kitEffectState;
+};
+
 describe(createColleiKitBehaviour, () => {
+  // The team's Elemental Mastery buffs from Trump-Card Kitty's cast, read off the effects the burst's start adds
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const kitEffectState = castTrumpCardKitty(4);
+
+    expect(
+      kitEffectState.effects.find((effect) => effect.kind === "buff" && effect.characterId === JEAN_CHARACTER_ID),
+    ).toStrictEqual({
+      amount: 60,
+      attribute: Attribute.ElementalMastery,
+      characterId: JEAN_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 12,
+    });
+    expect(
+      kitEffectState.effects.some((effect) => effect.kind === "buff" && effect.characterId === COLLEI_CHARACTER_ID),
+    ).toBe(false);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(castTrumpCardKitty(3).effects.some((effect) => effect.kind === "buff")).toBe(false);
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
