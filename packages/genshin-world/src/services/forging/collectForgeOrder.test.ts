@@ -155,6 +155,7 @@ describe(collectForgeOrder, () => {
       id: WEAPON_ID,
       nameTextId: "",
       passiveNameTextId: "",
+      passiveRankAttributeLines: [],
       passiveRankDescriptionTextIds: [],
       passiveRankParams: [],
       rarity: 1,

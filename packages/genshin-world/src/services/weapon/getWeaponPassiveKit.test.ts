@@ -24,6 +24,7 @@ const WEAPON_DATA: WeaponData = {
   id: 11302,
   nameTextId: "1",
   passiveNameTextId: "2866125259",
+  passiveRankAttributeLines: [[], [], [], [], []],
   passiveRankDescriptionTextIds: ["1", "2", "3", "4", "5"],
   passiveRankParams: [[0.14], [0.175], [0.21], [0.245], [0.28]],
   rarity: 3,

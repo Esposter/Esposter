@@ -32,7 +32,7 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
       notes.push(`weapon ${row.id} is a ${row.weaponType}, a kind the open world gives no one, so it is left out`);
       return [];
     }
-    const passive = toWeaponPassive(affixIdRowsMap.get(takeOne(row.skillAffix, 0)) ?? []);
+    const passive = toWeaponPassive(affixIdRowsMap.get(takeOne(row.skillAffix, 0)) ?? [], notes);
     return [
       weaponDataSchema.parse({
         ascensionPhases: promoteRows
