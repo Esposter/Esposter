@@ -18,6 +18,16 @@ describe(getOpenSpecOwners, () => {
     ]);
   });
 
+  test("gives an archived change's pages the archived change, not the archive folder they share", () => {
+    expect.hasAssertions();
+
+    expect(getOpenSpecOwners("openspec/changes/archive/a-c/design.md")).toStrictEqual(["openspec/changes/archive/a-c"]);
+    expect(getOpenSpecOwners("openspec/changes/archive/a-c/specs/a/b/spec.md")).toStrictEqual([
+      "openspec/changes/archive/a-c",
+      "openspec/specs/a/b",
+    ]);
+  });
+
   test("gives a path outside the tree none", () => {
     expect.hasAssertions();
 
