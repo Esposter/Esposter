@@ -150,10 +150,18 @@ describe(useWorldCommissions, () => {
     expect.hasAssertions();
     const events = createWorldEvents();
     const { encounterPoints } = useAfterReset(events);
+    events.emit("gatheringPickedUp", "107010");
+    expect(encounterPoints.value.halfPoints).toBe(1);
+    events.emit("gatheringPickedUp", "107033");
+    expect(encounterPoints.value.halfPoints).toBe(1);
+  });
+
+  test("a Crimson Agate held by a chest earns nothing, as a chest raises only the quest event", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const { encounterPoints } = useAfterReset(events);
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: "107010" });
-    expect(encounterPoints.value.halfPoints).toBe(1);
-    events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: "107033" });
-    expect(encounterPoints.value.halfPoints).toBe(1);
+    expect(encounterPoints.value.halfPoints).toBe(0);
   });
 
   test("an Oculus found the first time earns a half point", () => {

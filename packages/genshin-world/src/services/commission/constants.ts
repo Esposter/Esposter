@@ -14,7 +14,8 @@ export const MAX_ENCOUNTER_HALF_POINTS = ENCOUNTER_POINT_STORAGE * HALF_POINTS_P
 // The Encounter Points an Archon quest or a Story quest gives on its completion
 export const QUEST_ENCOUNTER_POINTS = 4;
 // The major version the Long-Term Encounter Points are kept through, reset when the game's major version moves past it
-export const LONG_TERM_MAJOR_VERSION = 6;
+// Set by hand to 7, the major version of the 7.1 data, as no published data or client constant records the game's version
+export const LONG_TERM_MAJOR_VERSION = 7;
 // The Original Resin spent to convert one Long-Term Encounter Point into an Encounter Point while the daily points fall short
 export const LONG_TERM_RESIN_COST = 30;
 // The half points a collected item gives, a half point for each of the items the wiki lists, which the dump names by these

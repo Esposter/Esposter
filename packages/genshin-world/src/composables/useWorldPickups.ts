@@ -182,8 +182,10 @@ export const useWorldPickups = ({
     setInventory(addition.inventory);
     bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
-    if (addition.overflow === 0)
+    if (addition.overflow === 0) {
+      events.emit("gatheringPickedUp", String(item.id));
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
+    }
   };
   // A material source is picked into the bag as its item and taken out of the world, which keeps it where it lies when the bag
   // Has no room for it
