@@ -42,7 +42,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Read from the wiki:** the Sigils of each openable tier, from the [Chest](https://genshin-impact.fandom.com/wiki/Chest) page's reward table: 1 to 3 for Common, 2 to 4 for Exquisite, 3 to 10 for Precious, and 4 to 10 for Luxurious, which waits with its Mora. The drop pools: the weapons, artifact sets and Character EXP materials by star, encoded as provisional pools for the weapons and materials. The artifact pieces wait on an artifact drop model.
+- **Read from the wiki:** the Sigils of each openable tier, from the [Chest](https://genshin-impact.fandom.com/wiki/Chest) page's reward table: 1 to 3 for Common, 2 to 4 for Exquisite, 3 to 10 for Precious, and 4 to 10 for Luxurious. The drop pools: the weapons, artifact sets and Character EXP materials by star, encoded as provisional pools for the weapons and materials. The artifact pieces wait on an artifact drop model.
 - **Not on the wiki:** Luxurious's Mora.
 - **Read from the game's tables:** `GadgetExcelConfigData` names 270 gadgets of the `Chest` type, the chest templates such as `70210001`.
 - **The achievements count our own records.** A placed chest has the map's point id and its tier, and the achievements' `TRIGGER_OPEN_WORLD_CHEST` rows and the exploration doings name chests by the game's own numbers, which no placed chest carries. An opened chest is therefore counted through its own record, not joined to the game's, so no join is needed for an opened chest to move an achievement or an area's exploration.
