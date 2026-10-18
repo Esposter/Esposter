@@ -10,7 +10,7 @@ interface Snapshot {
   mathjs: string;
 }
 interface SnapshotEntry {
-  fix?: { issue: string; value: SnapshotValue };
+  fix?: { cause: string; value: SnapshotValue };
   formula: string;
   scope: Record<string, number>;
   tolerance?: boolean;
@@ -45,24 +45,34 @@ const evaluateFormula = (formula: string, scope: Record<string, number>): null |
     () => null,
   );
 
+// The entries whose answer our evaluation does not give, where a fix row's recorded answer is the one we give
+const getMismatches = (entries: SnapshotEntry[]): { actual: null | number; entry: SnapshotEntry; expected: number }[] =>
+  entries.flatMap((entry) => {
+    const recorded = entry.fix === undefined ? entry.value : entry.fix.value;
+    const expected = decodeValue(recorded);
+    const actual = evaluateFormula(entry.formula, entry.scope);
+    // Only a recorded null, where mathjs had no number, may be a formula the parser refuses
+    if (actual === null) return recorded === null ? [] : [{ actual, entry, expected }];
+
+    const isTolerant = entry.tolerance === true;
+    return checkIsMatching(expected, actual, isTolerant) ? [] : [{ actual, entry, expected }];
+  });
+
 const { entries, mathjs }: Snapshot = jsonDateParse(readFileSync(SNAPSHOT_PATH, "utf8"));
+const causes = [...new Set(entries.flatMap((entry) => (entry.fix === undefined ? [] : [entry.fix.cause])))];
 
 describe(compileMathExpression, () => {
   test.each([["The parity corpus matches mathjs's recorded answers"]])("%s", (_title) => {
     expect.hasAssertions();
     expect(mathjs).toBe("15.2.0");
 
-    const mismatches = entries.flatMap((entry) => {
-      const recorded = entry.fix === undefined ? entry.value : entry.fix.value;
-      const expected = decodeValue(recorded);
-      const actual = evaluateFormula(entry.formula, entry.scope);
-      // Only a recorded null, where mathjs had no number, may be a formula the parser refuses
-      if (actual === null) return recorded === null ? [] : [{ actual, entry, expected }];
+    expect(getMismatches(entries.filter((entry) => entry.fix === undefined))).toStrictEqual([]);
+  });
 
-      const isTolerant = entry.tolerance === true;
-      return checkIsMatching(expected, actual, isTolerant) ? [] : [{ actual, entry, expected }];
-    });
+  // A fix row is a known difference from mathjs, pinned to our answer until its cause is fixed
+  test.each(causes)("%s", (cause) => {
+    expect.hasAssertions();
 
-    expect(mismatches).toStrictEqual([]);
+    expect(getMismatches(entries.filter((entry) => entry.fix?.cause === cause))).toStrictEqual([]);
   });
 });
