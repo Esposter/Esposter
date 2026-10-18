@@ -1,3 +1,5 @@
+import type { Reaction } from "#src/models/combat/Reaction";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -14,6 +16,8 @@ export interface ActiveKitControls {
   isAimHeld: boolean;
   // The buffer the step's landed hits are written into, emptied once they have struck
   landedHits: KitHit[];
+  // A reaction a hit or a tick triggered on an enemy, sent to the world once the step's strikes have landed
+  triggerReaction: (enemy: Enemy, reactions: Reaction[]) => void;
   // An ore struck by a hit the step landed or a reaction's explosion, from the body its area is drawn from
   strikeOre: (body: KitBody, hit: OreHit) => void;
   // A puzzle struck by a hit the step landed, from the body its area is drawn from

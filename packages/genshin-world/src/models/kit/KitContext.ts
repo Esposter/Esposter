@@ -7,6 +7,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitReactionTrigger } from "#src/models/kit/KitReactionTrigger";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
@@ -29,6 +30,8 @@ export interface KitContext {
   kitEffectState: KitEffectState;
   // The ores the step's reactions strike, each from where its reaction landed, sent once its strikes have landed
   oreStrikes: OreStrike[];
+  // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed
+  reactionTriggers: KitReactionTrigger[];
   // The events raised outside a kit's own calls: between steps, as a taunt is struck, and as the enemies' statuses tick
   outbox: KitEvent[];
   party: Party;

@@ -160,7 +160,15 @@ export const replayScriptedMinute = ({
       },
       FIXED_STEP_SECONDS,
       context,
-      { aimYaw: 0, characterController, isAimHeld: false, landedHits, strikeOre: noop, strikePuzzle: noop },
+      {
+        aimYaw: 0,
+        characterController,
+        isAimHeld: false,
+        landedHits,
+        strikeOre: noop,
+        strikePuzzle: noop,
+        triggerReaction: noop,
+      },
     );
   }
 };

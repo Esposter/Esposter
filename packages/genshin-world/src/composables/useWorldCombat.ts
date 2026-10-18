@@ -212,6 +212,7 @@ export const useWorldCombat = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     oreStrikes: [],
+    reactionTriggers: [],
     outbox: [],
     party,
     placeWildlifeDrops: (wildlife, droppedItems) =>

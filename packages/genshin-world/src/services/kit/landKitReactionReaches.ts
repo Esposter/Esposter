@@ -25,7 +25,16 @@ export const landKitReactionReaches = (
   combatant: Combatant,
   context: KitContext,
 ): void => {
-  const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, oreStrikes, party, random } = context;
+  const {
+    characterIdCombatantMap,
+    enemyMap,
+    enemyTables,
+    kitEffectState,
+    oreStrikes,
+    party,
+    random,
+    reactionTriggers,
+  } = context;
   if (reaches.length === 0) return;
   const { lunarReactionTypes } = getPartyMoonsign(
     characterIdCombatantMap,
@@ -53,8 +62,10 @@ export const landKitReactionReaches = (
       addDendroCores(kitEffectState, enemy, combatant, reactions, random);
       startPartyLunarReactions(party, reactions);
       for (const reachingReaction of reachingReactions) reaches.push([enemy, reachingReaction]);
-      if (reactions.length > 0)
+      if (reactions.length > 0) {
+        reactionTriggers.push({ enemy, reactions });
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
+      }
     }
   }
 };

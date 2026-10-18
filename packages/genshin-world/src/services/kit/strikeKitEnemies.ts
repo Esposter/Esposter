@@ -96,8 +96,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       healKitStriker(context, combatant, pricedCombatant, hit);
       hit.onStrike?.(context, strike);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, hit);
-      if (reactions.length > 0)
+      if (reactions.length > 0) {
+        context.reactionTriggers.push({ enemy, reactions });
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
+      }
       emitKitEvent(
         {
           attackTag,

@@ -1,4 +1,5 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -21,6 +22,8 @@ export interface WorldEventMap {
   parentQuestFinish: [];
   pickUpMora: [];
   questEvent: [QuestEvent];
+  // A reaction a hit or a tick triggered on an enemy, which the Spiral Abyss's period blessings answer
+  reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
   // The player jumping to a waypoint, a landmark or a map point, with the pose the character is placed at
   teleport: [pose: WorldJumpPose];
 }
