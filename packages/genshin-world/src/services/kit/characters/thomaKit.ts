@@ -18,13 +18,20 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 // Standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
 const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
+// Flaming Assault, as the dump's Tohma_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT) thoma/asc.go give it: a
+// Fiery Collapse deals 2.2% of Thoma's Max HP more DMG. gcsim gates it at Ascension 1, but the talent table names
+// Ascension 4, so the table's phase stands
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/asc.go
+const FLAMING_ASSAULT_ASCENSION = 4;
+const FLAMING_ASSAULT_MAX_HEALTH_SHARE = 0.022;
 
 export const THOMA_CHARACTER_ID = 10_000_050;
 
 // Thoma's behaviour: Blazing Blessing sets its shield as it starts and infuses his own attacks with Pyro, and Crimson
 // Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field starts,
 // At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing Blessing's may
-// Hold. His passives and his constellations are not built yet
+// Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive and his
+// constellations are not built yet
 // Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give, not built
 // Constellation 2 needs Crimson Ooyoroi's duration extended by 3s, which the kit does not build
 // Constellation 4 needs Crimson Ooyoroi's cast to restore 15 Energy to Thoma, which the kit does not build
@@ -47,6 +54,10 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     let isShielded = false;
     return {
       ...fieryCollapse,
+      additiveBaseDamageBonus: (striker) =>
+        striker.ascension >= FLAMING_ASSAULT_ASCENSION
+          ? FLAMING_ASSAULT_MAX_HEALTH_SHARE * striker.attributes.maxHealth
+          : 0,
       onStrike: ({ kitEffectState }, { combatant: { attributes, characterId } }) => {
         if (isShielded) return;
         isShielded = true;

@@ -1,6 +1,6 @@
 ## Purpose
 
-Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with his passives and his constellations left unbuilt.
+Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with Flaming Assault from Ascension 4, and his Ascension 1 passive and his constellations left unbuilt.
 
 ## Requirements
 
@@ -62,12 +62,22 @@ The first enemy a Fiery Collapse strikes SHALL give the team a shield of a share
 - **THEN** the team's shield grows by the collapse's amount
 - **AND** the shield stops at the most Blazing Blessing's shield may hold
 
+### Requirement: A Fiery Collapse adds a share of Thoma's Max HP to its DMG from Ascension 4
+
+From Ascension 4, each Fiery Collapse SHALL add 2.2% of Thoma's Max HP to its base DMG.
+
+#### Scenario: Flaming Assault raises a Fiery Collapse
+
+- **GIVEN** Thoma has reached Ascension 4 and Crimson Ooyoroi stands
+- **WHEN** a Fiery Collapse strikes
+- **THEN** its base DMG gains 2.2% of Thoma's Max HP
+
 ### Requirement: Unbuilt Thoma effects
 
-Thoma's passives, his constellations and Fiery Collapse on a shielded character's damage SHALL NOT take effect.
+Thoma's Ascension 1 passive, his constellations and Fiery Collapse on a shielded character's damage SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Thoma has a passive or constellation unlocked
+- **GIVEN** Thoma has his Ascension 1 passive or a constellation unlocked
 - **WHEN** the player fights with Thoma
 - **THEN** that effect has no effect

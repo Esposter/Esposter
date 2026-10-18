@@ -55,6 +55,18 @@ const readShieldHealth = (standingShieldHealth: number | undefined, strikeCount:
   );
 };
 
+// The flat DMG a Fiery Collapse set off under the burst of Thoma at the ascension adds to its base DMG
+const readFieryCollapseAdditiveBaseDamage = (ascension: number): number | undefined => {
+  const combatant: Combatant = { ...createThomaCombatant(), ascension };
+  const context = createKitTestContext(combatant);
+  THOMA_KIT.elementalBurst.onStart?.(context);
+  startNormalAttack(context);
+  const fieryCollapse = context.kitEffectState.effects.find(
+    (effect) => effect.kind === "summon" && effect.hits.length > 0,
+  );
+  return fieryCollapse?.kind === "summon" ? fieryCollapse.hits[0]?.additiveBaseDamageBonus?.(combatant) : undefined;
+};
+
 describe(createThomaKitBehaviour, () => {
   test("blazing Blessing sets a shield of the table's share of Max HP and flat HP, and infuses Thoma with Pyro", () => {
     expect.hasAssertions();
@@ -109,5 +121,19 @@ describe(createThomaKitBehaviour, () => {
     expect(readShieldHealth(undefined, 2)).toStrictEqual([fieryCollapseShieldHealth]);
     expect(readShieldHealth(1000, 1)).toStrictEqual([1000 + fieryCollapseShieldHealth]);
     expect(readShieldHealth(maxShieldHealth - 1, 1)).toStrictEqual([maxShieldHealth]);
+  });
+});
+
+describe("flaming Assault", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readFieryCollapseAdditiveBaseDamage(4)).toBeCloseTo(0.022 * createThomaCombatant().attributes.maxHealth);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readFieryCollapseAdditiveBaseDamage(3)).toBe(0);
   });
 });
