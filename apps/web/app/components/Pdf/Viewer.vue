@@ -215,6 +215,9 @@ const printDocument = getSynchronizedFunction(async () => {
       );
       printRoot.append(...(await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(printed, pageNumber)))));
     }
+    // A viewer closed while its pages rendered has no dialog left to print from, and a sheet appended now would outlive it
+    if (isUnmounted) return;
+
     document.body.append(printRoot);
     printContainer = printRoot;
     window.print();
@@ -234,6 +237,7 @@ onUnmounted(() => {
   isUnmounted = true;
   if (loadingTask) destroyLoadingTask(loadingTask);
   loadingTask = undefined;
+  destroyPrintContainer();
 });
 useResizeObserver(container, reapplyScale);
 useEventListener("afterprint", destroyPrintContainer);

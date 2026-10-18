@@ -2,7 +2,7 @@
 import type { PDFDocumentLoadingTask } from "pdfjs-dist";
 
 import PdfViewer from "@/components/Pdf/Viewer.vue";
-import { PDF_ROTATION_STEP } from "@/services/pdf/constants";
+import { PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -289,5 +289,28 @@ describe("pdfViewer", () => {
 
     expect(pdfDocument.getPage).toHaveBeenCalledTimes(PAGES_COUNT);
     expect(print).toHaveBeenCalledOnce();
+  });
+
+  // Closing the viewer while its pages still render leaves no dialog to print from, so the sheet is never appended
+  test("Closing the viewer while a print renders prints nothing", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
+    vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,");
+    const rendering = Promise.withResolvers<void>();
+    vi.spyOn(pdfPage, "render").mockReturnValue({ promise: rendering.promise });
+    const print = vi.fn<() => void>();
+    Object.assign(window, { print });
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Print")?.trigger("click");
+    await flushPromises();
+    component.unmount();
+    rendering.resolve();
+    await flushPromises();
+
+    expect(print).not.toHaveBeenCalled();
+    expect(document.body.querySelector(`.${PDF_PRINT_CLASS}`)).toBeNull();
   });
 });
