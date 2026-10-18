@@ -4,6 +4,10 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { sumKitBonuses } from "#src/services/kit/sumKitBonuses";
 
+// The sum of one scalar hook's value over the kit and then each module, a hook a passive lacks giving none
+const sumHookValues = (hookValues: readonly (number | undefined)[]): number =>
+  hookValues.reduce<number>((sum, hookValue) => sum + (hookValue ?? 0), 0);
+
 // A character's kit with passive modules answering beside it: each hook the kit has runs first and then each module's,
 // Its step among them, so the kit's own passives come before a weapon's or a set's. A module hears only the events
 // `answersEvent` takes
@@ -40,23 +44,18 @@ export const getPassiveKit = (
       ),
     ),
   getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects, characterIdCombatantMap) =>
-    (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0) +
-    passiveModules.reduce(
-      (sum, passive) =>
-        sum + (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0),
-      0,
+    sumHookValues(
+      [kit, ...passiveModules].map((source) =>
+        source.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap),
+      ),
     ),
   getStrikeCriticalRateBonus: (strike, enemy, party, effects) =>
-    (kit.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0) +
-    passiveModules.reduce(
-      (sum, passive) => sum + (passive.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0),
-      0,
+    sumHookValues(
+      [kit, ...passiveModules].map((source) => source.getStrikeCriticalRateBonus?.(strike, enemy, party, effects)),
     ),
   getStrikeDamageBonus: (strike, enemy, party, effects) =>
-    (kit.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0) +
-    passiveModules.reduce(
-      (sum, passive) => sum + (passive.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0),
-      0,
+    sumHookValues(
+      [kit, ...passiveModules].map((source) => source.getStrikeDamageBonus?.(strike, enemy, party, effects)),
     ),
   onKitEvent: (event, context, combatant) => {
     kit.onKitEvent?.(event, context, combatant);
