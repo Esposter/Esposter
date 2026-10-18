@@ -2,20 +2,8 @@ import type { HomeArea } from "#src/models/home/HomeArea";
 import type { HomeFurnishing } from "#src/models/home/HomeFurnishing";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 
+import { computeHomeAreaLoad } from "#src/services/home/computeHomeAreaLoad";
 import { HOME_EXTERIOR_FURNISHING_LIMIT, HOME_INTERIOR_FURNISHING_LIMIT } from "#src/services/home/constants";
-
-// The load the placements in one area hold: the first copy of a furnishing takes its load and each further copy its reduced
-// Load. A stored placement whose furnishing the table no longer holds counts nothing
-const getAreaLoad = (placements: HomePlacement[], itemIdFurnishingMap: Map<number, HomeFurnishing>): number => {
-  const copyCounts = new Map<number, number>();
-  return placements.reduce((total, { furnishingItemId }) => {
-    const furnishing = itemIdFurnishingMap.get(furnishingItemId);
-    if (furnishing === undefined) return total;
-    const copyCount = copyCounts.get(furnishingItemId) ?? 0;
-    copyCounts.set(furnishingItemId, copyCount + 1);
-    return total + (copyCount === 0 ? furnishing.load : furnishing.discountLoad);
-  }, 0);
-};
 
 // The realm's placements with `placement` added, kept only while its area holds no more furnishings than the area's count
 // And its load stays within the area's limit. Undefined where the area or the furnishing is not one the game holds, or where
@@ -34,6 +22,7 @@ export const placeHomeFurnishing = (
   ];
   const furnishingLimit = area.exterior ? HOME_EXTERIOR_FURNISHING_LIMIT : HOME_INTERIOR_FURNISHING_LIMIT;
   const isWithinLimits =
-    areaPlacements.length <= furnishingLimit && getAreaLoad(areaPlacements, itemIdFurnishingMap) <= area.loadLimit;
+    areaPlacements.length <= furnishingLimit &&
+    computeHomeAreaLoad(areaPlacements, itemIdFurnishingMap) <= area.loadLimit;
   return isWithinLimits ? [...placements, placement] : undefined;
 };
