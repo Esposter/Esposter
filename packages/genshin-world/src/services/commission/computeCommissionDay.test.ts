@@ -3,12 +3,13 @@ import type { Commission } from "#src/models/commission/Commission";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
-import { DAILY_RESET_TIME } from "#src/services/enemy/constants";
+import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeCommissionDay, () => {
-  const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
-  const dailyReset = epoch.toPlainDate().toZonedDateTime({ plainTime: DAILY_RESET_TIME, timeZone: "UTC" });
+  // The epoch is eight in the morning in the server's zone, four hours past that day's 04:00 reset
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const dailyReset = epoch.subtract({ hours: GAME_DAY_START_HOUR });
   const now = dailyReset.add({ hours: 12 });
   const RANK = 12;
   const commissions: Commission[] = [2, 3, 4, 5].map((id) => ({
@@ -32,12 +33,12 @@ describe(computeCommissionDay, () => {
     expect.hasAssertions();
     const day = {
       claimedCommissionIds: [1],
-      dealtAt: dailyReset.subtract({ minutes: 1 }).toInstant(),
+      dealtAt: dailyReset.subtract({ minutes: 1 }),
       dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
     };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
     expect(dealtDay.claimedCommissionIds).toStrictEqual([]);
-    expect(dealtDay.dealtAt).toStrictEqual(now.toInstant());
+    expect(dealtDay.dealtAt.toString()).toBe(now.toString());
     expect(
       dealtDay.dealtCommissions
         .map(({ commissionId }) => commissionId)
@@ -47,7 +48,7 @@ describe(computeCommissionDay, () => {
 
   test("a day dealt with no commissions is dealt again once the rank allows", () => {
     expect.hasAssertions();
-    const day = { claimedCommissionIds: [], dealtAt: dailyReset.toInstant(), dealtCommissions: [] };
+    const day = { claimedCommissionIds: [], dealtAt: dailyReset, dealtCommissions: [] };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
     expect(dealtDay.dealtCommissions).toHaveLength(4);
   });
@@ -56,7 +57,7 @@ describe(computeCommissionDay, () => {
     expect.hasAssertions();
     const day = {
       claimedCommissionIds: [],
-      dealtAt: dailyReset.toInstant(),
+      dealtAt: dailyReset,
       dealtCommissions: [{ commissionId: 2, count: 0, dealtRank: RANK }],
     };
     expect(computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0)).toBe(day);

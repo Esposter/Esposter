@@ -1,6 +1,6 @@
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
 
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 
 // The period the Moon Spire offers at an instant: the one whose opening has come and whose last second has not passed, read in
 // The game's time zone to the whole second. Undefined when no period covers the instant, as none does before the first opens

@@ -1,6 +1,6 @@
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 
-import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { computeGameDay } from "#src/services/time/computeGameDay";
 import { PAIMON_BARGAINS_PAIR_COUNT, PAIMON_BARGAINS_PAIR_OFFSET } from "#src/services/shop/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -11,7 +11,7 @@ export const getPaimonsBargainsOffer = (
   rotation: PaimonsBargainsRotation,
   now: Temporal.Instant,
 ): { characterIds: number[]; weaponIds: number[] } => {
-  const month = now.toZonedDateTimeISO(GAME_TIME_ZONE).subtract({ hours: GAME_DAY_START_HOUR }).month;
+  const month = computeGameDay(now).month;
   const characterIds = rotation.characterPairs.at((month + PAIMON_BARGAINS_PAIR_OFFSET) % PAIMON_BARGAINS_PAIR_COUNT);
   if (!characterIds)
     throw new InvalidOperationError(Operation.Read, "Paimon's Bargains rotation", `has no pair for month ${month}`);

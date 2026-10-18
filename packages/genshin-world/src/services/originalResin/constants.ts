@@ -8,9 +8,6 @@ export const ORIGINAL_RESIN_REGEN_MINUTES = 8;
 export const PRIMOGEM_RESIN_RESTORE = 60;
 // The Primogems each refill of a game day costs, in order, and a day holds as many refills as this has prices
 export const PRIMOGEM_RESIN_REFILL_PRICES: readonly number[] = [50, 100, 100, 150, 200, 200];
-// The game day starts at this hour in the game's server time, UTC+8, and runs to the same hour the next day
-export const GAME_DAY_START_HOUR = 4;
-export const GAME_TIME_ZONE = "Asia/Shanghai";
 // The Companionship EXP item a claim's reward preview lists beside its items, which the claim leaves out of its draw
 export const COMPANIONSHIP_EXP_ITEM_ID = 105;
 // The item id of Fragile Resin, a stack in the bag whose use restores the Original Resin below

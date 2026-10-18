@@ -34,10 +34,8 @@ export const ENGAGED_ENEMY_STATES: EnemyState[] = [
   EnemyState.Stagger,
   EnemyState.Windup,
 ];
-// A common enemy comes back this long after its defeat, and a camp with an elite at the next daily reset, at this
-// Time of the reader's own day, since the world has no server whose time zone sets it
+// A common enemy comes back this long after its defeat, and a camp with an elite at the next daily reset of the server's clock
 export const COMMON_ENEMY_RESPAWN_DURATION: Temporal.Duration = Temporal.Duration.from({ hours: 12 });
-export const DAILY_RESET_TIME: Temporal.PlainTime = Temporal.PlainTime.from({ hour: 4 });
 // Drops are set by an enemy's level band, five levels wide, the last band holding every level from 90
 export const ENEMY_LEVEL_BAND_SIZE = 5;
 export const ENEMY_LEVEL_BAND_COUNT = 19;

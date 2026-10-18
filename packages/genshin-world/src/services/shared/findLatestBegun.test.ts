@@ -1,4 +1,4 @@
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { findLatestBegun } from "#src/services/shared/findLatestBegun";
 import { describe, expect, test } from "vitest";
 

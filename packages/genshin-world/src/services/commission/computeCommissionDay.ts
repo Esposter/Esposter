@@ -9,7 +9,7 @@ import { dealCommissions } from "#src/services/commission/dealCommissions";
 // The pool, the places no quest in progress holds and the rank the session holds
 export const computeCommissionDay = (
   day: CommissionDay,
-  now: Temporal.ZonedDateTime,
+  now: Temporal.Instant,
   commissions: readonly Commission[],
   heldPlaces: ReadonlySet<string>,
   rank: number,
@@ -19,6 +19,6 @@ export const computeCommissionDay = (
     ? day
     : {
         claimedCommissionIds: [],
-        dealtAt: now.toInstant(),
+        dealtAt: now,
         dealtCommissions: dealCommissions(commissions, heldPlaces, rank, random),
       };

@@ -15,7 +15,7 @@ import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
 import { refundForgeOres } from "#src/services/forging/refundForgeOres";
 import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
-import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { computeGameDay } from "#src/services/time/computeGameDay";
 import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
 
 // The bag, wallet and progress after `count` units of a recipe are started in a free queue at `now`: their materials taken
@@ -74,7 +74,7 @@ export const startForge = (
       recipe.seconds,
     ),
   );
-  const gameDay = now.toZonedDateTimeISO(GAME_TIME_ZONE).subtract({ hours: GAME_DAY_START_HOUR }).toPlainDate();
+  const gameDay = computeGameDay(now);
   const forgedPoints = progress.forgedPointsDay.equals(gameDay) ? progress.forgedPoints : 0;
   const takenInventory = { items: takeItemCounts(inventory.items, bagMaterials, count), nextId: inventory.nextId };
   return {

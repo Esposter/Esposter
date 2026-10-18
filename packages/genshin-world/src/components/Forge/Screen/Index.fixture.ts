@@ -12,7 +12,7 @@ import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
-import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { computeGameDay } from "#src/services/time/computeGameDay";
 import { createSeededRandom } from "genshin-engine";
 import { ForgeTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
@@ -30,7 +30,7 @@ const definitions = new Map<number, ItemDefinition>(
 );
 // The moment the queues are read at, and the game day it falls on, which the forge points counted today are kept under
 const now = Temporal.Instant.fromEpochMilliseconds(0);
-const gameDay = now.toZonedDateTimeISO(GAME_TIME_ZONE).subtract({ hours: GAME_DAY_START_HOUR }).toPlainDate();
+const gameDay = computeGameDay(now);
 // The Enhancement Ore queue forging with its second unit half done, and the Adventure Rank that opens the third queue
 const progress: ForgeProgress = {
   forgedPoints: 0,

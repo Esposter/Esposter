@@ -52,7 +52,7 @@ export const useWorldCommissions = ({
   getResultAsync(() => readCommissionSlices(gameDataBaseUrl)).match(
     (slices) => {
       commissionSlices.value = slices;
-      const now = getWorldNow().toZonedDateTimeISO(Temporal.Now.timeZoneId());
+      const now = getWorldNow();
       const heldPlaces = new Set(
         questsInProgress.value.map((quest) => getQuestTargetId(quest, questProgressMap.value.get(quest.id))),
       );
