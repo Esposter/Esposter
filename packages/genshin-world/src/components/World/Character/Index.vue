@@ -4,7 +4,14 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
-import type { CharacterPoser, FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
+import type {
+  CharacterPoser,
+  FollowCamera,
+  GrassTrail,
+  InputState,
+  LandmarkCollider,
+  Locomotion,
+} from "genshin-engine";
 import type { Object3D, SkinnedMesh } from "three";
 
 import { Element } from "#src/models/Element";
@@ -34,8 +41,9 @@ import {
   InputAction,
   LocomotionState,
   STAMINA_MAX,
+  stepGrassTrail,
 } from "genshin-engine";
-import { PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, Vector2, Vector3 } from "three";
 import { onBeforeUnmount } from "vue";
 
 interface Props {
@@ -44,6 +52,8 @@ interface Props {
   body: Object3D;
   // The world's ground at a point in its own coordinates, which the body stands and walks on
   getGroundHeight: (x: number, z: number) => number;
+  // The bends the character leaves as it walks through the grass, which it writes each step the body moves
+  grassTrail: GrassTrail;
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
@@ -67,6 +77,7 @@ interface Props {
 const {
   body,
   getGroundHeight,
+  grassTrail,
   inputState,
   isHeld,
   isOrbiting,
@@ -109,6 +120,9 @@ let kitState = createKitState();
 let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
+// Where the character is on the ground and how fast it moves across it, which the grass trail is stamped from
+const trailPosition = new Vector2();
+const trailVelocity = new Vector2();
 // The input an action plays under: the same presses with no move, so the body holds still while it plays
 const stillInput: InputState = { ...inputState, moveForward: 0, moveRight: 0 };
 const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
@@ -131,6 +145,11 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     FIXED_STEP_SECONDS,
   );
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);
+  trailPosition.set(position.x, position.z);
+  trailVelocity
+    .set(position.x - characterController.previousPosition.x, position.z - characterController.previousPosition.z)
+    .divideScalar(FIXED_STEP_SECONDS);
+  stepGrassTrail(grassTrail, trailPosition, trailVelocity, FIXED_STEP_SECONDS);
   if (phase.state === LocomotionState.Drown && previousState !== LocomotionState.Drown) {
     drownParty(party);
     emit("clearKitEffects");

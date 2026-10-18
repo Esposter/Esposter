@@ -72,6 +72,7 @@ import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
+  createGrassTrail,
   createInput,
   createLandmarkCollider,
   FOLLOW_CAMERA_PIVOT_SHARE,
@@ -126,6 +127,8 @@ const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinS
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
+// The bends the character leaves as it walks through the grass, written by the character and read by the grass
+const grassTrail = createGrassTrail();
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
@@ -642,6 +645,7 @@ defineExpose({ jumpTo, readCameraPosition });
           ref="character"
           :body="characterBody"
           :get-ground-height
+          :grass-trail="grassTrail"
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
@@ -675,6 +679,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
         :enemy-tables
+        :grass-trail="grassTrail"
         :game-data-base-url
         :get-ground-height
         :held-minutes

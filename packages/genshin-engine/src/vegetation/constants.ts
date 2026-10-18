@@ -14,3 +14,17 @@ export const FLOWER_MATRIX_ATTRIBUTE_NAMES = [
   "flowerMatrix3",
 ] as const;
 export const FLOWER_COLOR_ATTRIBUTE_NAME = "flowerColor";
+// The grass trail is a square of ground this many metres a side round the character, in this many texels a side. The
+// Texel is the trail's resolution and the extent its reach. Provisional: neither is measured off a recording of the
+// Game's grass parting
+export const GRASS_TRAIL_EXTENT = 16;
+export const GRASS_TRAIL_TEXELS = 64;
+// The stamp a character leaves in the trail, a disc this many metres across its footing, and the seconds a stamp takes
+// to fade. Both provisional, like the extent
+export const GRASS_TRAIL_STAMP_RADIUS = 0.6;
+export const GRASS_TRAIL_FADE_SECONDS = 1.5;
+// How far a blade bends at the top, as a share of its height, under a full stamp of the trail
+export const GRASS_TRAIL_BEND_SHARE = 0.9;
+// The trail fades to nothing between these shares of its half extent, so the texels past its reach never bend a blade
+export const GRASS_TRAIL_FADE_START_SHARE = 0.8;
+export const GRASS_TRAIL_FADE_END_SHARE = 0.95;

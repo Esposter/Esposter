@@ -24,25 +24,31 @@ flowchart TD
 - **Blades stand on a capture of the ground.** A camera looking straight down draws only the terrain's layer into a small half-float target: the ground's colour, and its height in alpha (`createGroundCapture`, `renderGroundCapture`). A blade reads its footing and its colour there. It grows only on green ground, never on rock or sand, and only above the water. The capture camera culls by its own frustum and the terrain draws its tiles all round the eye, so the capture holds the ground under its whole square whichever way the view looks. The scene creates it and the grass redraws it; the rain's splashes stand on it too. It is redrawn only when the camera has crossed part of it or a tile drawn under it has come or gone (`checkTerrainDrawsChanged`), never on a tile arriving elsewhere, and never on a turn of the camera, which changes nothing the terrain draws.
 - **Grass shades as a field.** Every blade takes the ground's upward normal instead of its own, and a gradient from a darker root to a lighter tip in the ground's colour, so a meadow toon-shades as one surface with light rolling across it, as Genshin's grass does, rather than a noisy carpet of lit and shaded blades. Wet, the field darkens and takes the sun's glint off that one normal as the ground does ([weather](../weather/design.md)). Blades receive the sun's shadows and cast none.
 - **The wind bends a blade by the square of its height**, so the root stays planted and the tip travels, and the blade dips a little as it bends.
+- **The character bends the grass it walks through.** A trail of bends sits on a square of ground round the character, 16 metres across and 64 texels a side, and each step the character's footing is stamped with its direction of travel and every stamp fades over about a second and a half (`stepGrassTrail`). The square is toroidal: a texel holds one world cell, so the square moves with the character by clearing the texels it leaves behind, and the grass reads it wrapped (`sampleGrassTrail`). Past the square's reach the bend fades out, where a texel holds other ground. The square's size, its resolution and the fade are provisional (`GRASS_TRAIL_*`), with their basis in the [trees and scatter](../../../changes/genshin-trees-and-scatter/design.md) change.
 - **Crowns sway.** The leaf material leans a crown downwind, more the higher up the tree, and each patch of cards flutters on its own phase (`createLeafMaterial`). The lean is the position node, so the crown's shadow sways with it.
 
 ## What it costs to run
 
-- **A draw per ring**, each every blade of its grid in one instanced draw with no per-blade data, shrunk to nothing where nothing grows.
+- **A draw per ring, of the blades in view.** Each ring is one instanced draw with no per-blade data. A compute pass tests every cell of the ring's grid against the view, the fade and whether it grows at all, and writes the cells it keeps into the draw's indirect instance count (`createGrassCulling`, `createInstanceCulling`), so a blade out of view is not drawn and the CPU never sees the count. A cell's root and its top are both tested, widened by a tenth of the clip space, so a blade whose root lies just outside the view is kept while its top shows.
 - **Blade density is the first thing a tier lowers** (`QualityTierSettingsMap`), since the look survives thinner grass better than it survives lost shadows.
 - **The ground capture is one small render of the terrain's tiles**, only when it is owed.
 
 ## Key files
 
-| File                                                            | Role                                                               |
-| :-------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createWindNode.ts`           | The wind at a point on the ground: breeze, gusts and turbulence    |
-| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` | A ring's blades placed, grown, bent and shaded in the vertex stage |
-| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                 |
-| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above        |
-| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                       |
-| `packages/genshin-world/src/components/World/Grass/Index.vue`   | The rings, their tier's density, and when the capture is redrawn   |
-| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                        |
+| File                                                            | Role                                                                |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-engine/src/nodes/createWindNode.ts`           | The wind at a point on the ground: breeze, gusts and turbulence     |
+| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` | A ring's blades placed, grown, bent and shaded in the vertex stage  |
+| `packages/genshin-engine/src/vegetation/createGrassCell.ts`     | A grid cell's place, jitter, turn, size and whether it grows        |
+| `packages/genshin-engine/src/vegetation/createGrassCulling.ts`  | The cells a ring's compute pass keeps in view                       |
+| `packages/genshin-engine/src/culling/createInstanceCulling.ts`  | The per-instance compute pass and its indirect draw                 |
+| `packages/genshin-engine/src/vegetation/stepGrassTrail.ts`      | The trail of bends the character leaves, stepped each fixed step    |
+| `packages/genshin-engine/src/nodes/sampleGrassTrail.ts`         | The trail's bend at a point of the ground, read in the vertex stage |
+| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                  |
+| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above         |
+| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                        |
+| `packages/genshin-world/src/components/World/Grass/Index.vue`   | The rings, their tier's density, and when the capture is redrawn    |
+| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                         |
 
 ## Notes
 

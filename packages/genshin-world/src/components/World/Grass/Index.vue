@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {
   GrassRing,
+  GrassTrail,
   GroundCapture,
   LightUniforms,
   QualityTier,
@@ -20,13 +21,14 @@ import {
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainDrawsChanged,
+  createGrassCulling,
   createGrassGeometry,
   createGrassMaterial,
   createTerrainSelection,
   QualityTierSettingsMap,
   renderGroundCapture,
 } from "genshin-engine";
-import { Mesh, Vector2, Vector3 } from "three";
+import { Matrix4, Mesh, Vector2, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -34,6 +36,8 @@ interface Props {
   bladeWidth: number;
   // The ground under the camera from above, which this redraws as the camera moves and the rain's splashes read too
   groundCapture: GroundCapture;
+  // The bends the character leaves as it walks, which the grass parts round
+  grassTrail: GrassTrail;
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
@@ -51,6 +55,7 @@ const {
   bladeHeight,
   bladeWidth,
   groundCapture,
+  grassTrail,
   lightUniforms,
   origin,
   qualityTier,
@@ -65,16 +70,32 @@ const { camera, renderer, scene } = useTres();
 const { onBeforeRender } = useLoop();
 const cameraGround = uniform(new Vector2());
 const density = uniform(QualityTierSettingsMap[qualityTier].grassDensity);
-// One mesh a ring, each a single draw of its every blade, placed in the vertex stage and so never culled whole
-const grassMeshes = rings.map((ring) => {
+// One mesh a ring, each a single draw of the blades its culling pass keeps, the pass's indirect count sizing the draw.
+// Its matrix to clip space is refreshed each frame from the camera, so the pass tests the blades in view
+const grassRings = rings.map((ring) => {
+  const clipFromModel = uniform(new Matrix4());
+  const culling = createGrassCulling({
+    bladeHeight,
+    cameraGround,
+    clipFromModel,
+    density,
+    groundCapture,
+    ring,
+    segmentCount: GRASS_BLADE_SEGMENT_COUNT,
+    waterUniforms,
+  });
+  const grassGeometry = createGrassGeometry(GRASS_BLADE_SEGMENT_COUNT, ring.cellsPerSide * ring.cellsPerSide);
+  grassGeometry.setIndirect(culling.indirect);
   const grassMesh = new Mesh(
-    createGrassGeometry(GRASS_BLADE_SEGMENT_COUNT, ring.cellsPerSide * ring.cellsPerSide),
+    grassGeometry,
     createGrassMaterial({
       bladeHeight,
       bladeWidth,
       cameraGround,
+      cellIndex: culling.survivor,
       density,
       groundCapture,
+      grassTrail,
       lightUniforms,
       rampTexture,
       ring,
@@ -84,7 +105,7 @@ const grassMeshes = rings.map((ring) => {
   );
   grassMesh.frustumCulled = false;
   grassMesh.receiveShadow = true;
-  return grassMesh;
+  return { clipFromModel, culling, grassMesh };
 });
 const eye = new Vector3();
 const captureCenter = new Vector3();
@@ -96,6 +117,12 @@ onBeforeRender(() => {
   if (!activeCamera || !isWebGPURenderer(renderer)) return;
   eye.copy(activeCamera.position).add(origin);
   cameraGround.value.set(eye.x, eye.z);
+  for (const { clipFromModel, culling, grassMesh } of grassRings) {
+    clipFromModel.value
+      .multiplyMatrices(activeCamera.projectionMatrix, activeCamera.matrixWorldInverse)
+      .multiply(grassMesh.matrixWorld);
+    culling.cull(renderer);
+  }
   const isFar = Math.hypot(eye.x - captureCenter.x, eye.z - captureCenter.z) > GRASS_RECAPTURE_DISTANCE;
   if (
     !isFar &&
@@ -109,7 +136,7 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const grassMesh of grassMeshes) {
+  for (const { grassMesh } of grassRings) {
     grassMesh.geometry.dispose();
     grassMesh.material.dispose();
   }
@@ -117,5 +144,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <primitive v-for="grassMesh of grassMeshes" :key="grassMesh.uuid" :object="grassMesh" />
+  <primitive v-for="{ grassMesh } of grassRings" :key="grassMesh.uuid" :object="grassMesh" />
 </template>

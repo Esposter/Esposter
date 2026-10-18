@@ -1,10 +1,11 @@
 import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { GrassRing } from "#src/models/vegetation/GrassRing";
+import type { GrassTrail } from "#src/models/vegetation/GrassTrail";
 import type { GroundCapture } from "#src/models/vegetation/GroundCapture";
 import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 import type { WindUniforms } from "#src/models/wind/WindUniforms";
 import type { DataTexture, Vector2 } from "three";
-import type { UniformNode } from "three/webgpu";
+import type { Node, UniformNode } from "three/webgpu";
 
 export interface GrassOptions {
   // A near-ring blade's height and root width, in metres
@@ -12,9 +13,13 @@ export interface GrassOptions {
   bladeWidth: number;
   // The camera's position across the ground, in world coordinates, which the ring is centred on and fades by
   cameraGround: UniformNode<"vec2", Vector2>;
+  // The grid cell each blade stands for, which the culling pass kept for the draw
+  cellIndex: Node<"float">;
   // The share of blades grown, which a quality tier lowers first
   density: UniformNode<"float", number>;
   groundCapture: GroundCapture;
+  // The bends the character leaves as it walks through the grass
+  grassTrail: GrassTrail;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   ring: GrassRing;
