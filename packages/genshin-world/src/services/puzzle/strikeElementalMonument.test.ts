@@ -15,7 +15,7 @@ const createMonument = (element: Element, isTimed: boolean): ElementalMonument =
 });
 
 describe(strikeElementalMonument, () => {
-  test("lights a monument struck by its own element", () => {
+  test("a strike of its element lights a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(Element.Pyro, false);
@@ -24,7 +24,7 @@ describe(strikeElementalMonument, () => {
     expect({ isLit: monument.isLit, litSeconds: monument.litSeconds }).toStrictEqual({ isLit: true, litSeconds: 0 });
   });
 
-  test("leaves a monument dark when another element reacts to nothing of its own", () => {
+  test("a strike of another element does not light a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(Element.Pyro, false);
@@ -33,7 +33,7 @@ describe(strikeElementalMonument, () => {
     expect(monument.isLit).toBe(false);
   });
 
-  test("lights a monument by a reaction whose element is its own, the Swirl that spreads the Pyro on it", () => {
+  test("a reaction of its element lights a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(Element.Pyro, false);

@@ -17,7 +17,7 @@ const createMonument = (isTimed: boolean): ElementalMonument => ({
 });
 
 describe(stepElementalMonument, () => {
-  test("takes a timed monument out once its time has passed since it was lit", () => {
+  test("a timed monument goes out after its time", () => {
     expect.hasAssertions();
 
     const monument = createMonument(true);

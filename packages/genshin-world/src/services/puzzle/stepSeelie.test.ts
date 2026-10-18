@@ -49,7 +49,7 @@ describe(stepSeelie, () => {
     });
   });
 
-  test("goes back to where it rests once left unfollowed for its time", () => {
+  test("a Seelie left unfollowed returns to its start", () => {
     expect.hasAssertions();
 
     const seelie = createSeelie(SeelieState.Led);
