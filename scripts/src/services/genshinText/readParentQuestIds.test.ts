@@ -25,7 +25,7 @@ describe(readParentQuestIds, () => {
 
     const questBinary = {
       A: [
-        { B: [{ param: ["1001", "2"], type: "QUEST_COND_STATE_EQUAL" }] },
+        { B: [{ param: ["1001", "3"], type: "QUEST_COND_STATE_EQUAL" }] },
         { B: [{ param: ["2001", "2"], type: "QUEST_COND_STATE_EQUAL" }] },
       ],
     };

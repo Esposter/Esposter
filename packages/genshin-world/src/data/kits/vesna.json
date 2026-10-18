@@ -89,18 +89,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000025, "path": "normalAttacks.4.hits.1.hitmarkFrames" }
   },
-  "plungeCollision.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
-  },
-  "plunges.high.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
-  "plunges.low.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
-  },
   "skill.animationFrames": { "cause": "Unsourced", "value": 30 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
   "skill.hits.0.area": {

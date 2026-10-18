@@ -21,7 +21,7 @@
   "plungeCollision.gauge": { "cause": "DiffersFromSource" },
   "burstVariant.hits.0.area": {
     "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.5 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23.5 }
   },
   "burstVariant.hits.0.poiseDamage": { "file": "burst.go", "line": 70, "source": "Gcsim", "value": 150 },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11139 } }

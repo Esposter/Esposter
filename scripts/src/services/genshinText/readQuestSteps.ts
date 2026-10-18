@@ -4,7 +4,7 @@ import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContent
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
-import { QuestBanType, QuestObjectiveKind } from "genshin-world";
+import { QuestBanTypes, QuestObjectiveKind } from "genshin-world";
 
 // Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do
 const hasCondition = (subQuest: Record<string, unknown>) =>
@@ -93,7 +93,7 @@ export const readQuestSteps = (
       return [];
     }
     const banGroup = readQuestBanType(subQuest);
-    const banType = Object.values(QuestBanType).find((member) => member === banGroup);
+    const banType = QuestBanTypes.find((member) => member === banGroup);
     if (banGroup !== undefined && banType === undefined)
       notes.push(`${questId}'s step ${id} names a ban group the reader does not know, ${banGroup}, so it is left off`);
     const guideNpcId = readQuestGuideNpcId(subQuest);

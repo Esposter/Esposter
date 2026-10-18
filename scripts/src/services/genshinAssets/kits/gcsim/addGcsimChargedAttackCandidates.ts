@@ -11,6 +11,7 @@ import {
   addGcsimChargedAttackVariantCandidates,
   checkIsChargedAttackVariantAttack,
 } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
+import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -38,23 +39,22 @@ export const addGcsimChargedAttackCandidates = (
   const aimedHitmark = toGoNumbers(aimedHitmarks?.value)?.[GCSIM_AIM_CHARGE_LEVEL];
   const aimedFrames = findGcsimConstant(constantMap, "aimedFrames");
   if (chargedHitmarks !== undefined && chargedHitmarkValues !== undefined) {
-    add("chargedAttack.hits.length", chargedHitmarkValues.length, toFile(chargedHitmarks.file), chargedHitmarks.line);
     addFrames("chargedAttack.animationFrames", "chargeFrames");
-    for (const [hitIndex, hitmark] of chargedHitmarkValues.entries())
-      addHit(
-        `chargedAttack.hits.${hitIndex}`,
-        {
-          areaHitbox: findGcsimHitbox(config, "charge", `CA-${hitIndex + 1}`, "CA"),
-          attack: chargedAttack,
-          hitmark: {
-            file: chargedHitmarks.file,
-            line: chargedHitmarks.line,
-            value: getGcsimLandingFrames(travelMap, chargedHitmarks.name, hitmark),
-          },
-          talentLeaf: findGcsimTalentLeaf(config, chargedAttack?.talentVariable, [hitIndex]),
-        },
-        STRIKE_TARGETING_AREA,
-      );
+    addGcsimHitmarkHits(writer, gcsim, {
+      hitmarks: {
+        file: chargedHitmarks.file,
+        line: chargedHitmarks.line,
+        name: chargedHitmarks.name,
+        values: chargedHitmarkValues,
+      },
+      path: "chargedAttack",
+      readHit: (hitIndex) => ({
+        areaHitbox: findGcsimHitbox(config, "charge", `CA-${hitIndex + 1}`, "CA"),
+        attack: chargedAttack,
+        talentLeaf: findGcsimTalentLeaf(config, chargedAttack?.talentVariable, [hitIndex]),
+      }),
+      targetingArea: STRIKE_TARGETING_AREA,
+    });
   } else if (aimedHitmarks !== undefined && aimedHitmark !== undefined) {
     add("chargedAttack.hits.length", 1, toFile(aimedHitmarks.file), aimedHitmarks.line);
     add("chargedAttack.isAimed", true, toFile(aimedHitmarks.file), aimedHitmarks.line);

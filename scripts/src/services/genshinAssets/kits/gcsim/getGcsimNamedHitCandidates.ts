@@ -4,6 +4,7 @@ import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/Gcsim
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+import type { AttackArea } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
@@ -13,7 +14,7 @@ import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
 import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
-import { SKILL_TARGETING_AREA } from "genshin-world";
+import { CombatTalent, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "genshin-world";
 
 // The candidates a hit's writer gives at its key, by their field names
 const readFieldMap = (
@@ -21,9 +22,10 @@ const readFieldMap = (
   gcsim: GcsimCharacter,
   tables: KitTables,
   hit: Parameters<GcsimKitCandidateWriter["addHit"]>[1],
+  targetingArea: AttackArea,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
-  createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(key, hit, SKILL_TARGETING_AREA);
+  createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(key, hit, targetingArea);
   // An attack gcsim gives no poise deals none, as the rule gives an action's hit that has none
   if (hit.attack !== undefined && !candidateMap.has(`${key}.poiseDamage`))
     addKitCandidate(candidateMap, `${key}.poiseDamage`, {
@@ -70,15 +72,25 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
         return callAttack === undefined ? [] : [{ ...queuedAttack, site: `${callAttack.file}:${callAttack.siteLine}` }];
       })
       .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
-    const addNamedHit = (key: string, talentLeaf?: GcsimTalentLeaf) => {
+    const addNamedHit = (proudSkillGroupId: number, index: number, talentLeaf?: GcsimTalentLeaf) => {
+      const key = `${proudSkillGroupId}|${index}`;
+      // The zone a hit's talent targets within, as its action's does: the strikes' for a normal attack's group, which a
+      // Charged attack and a plunge belong to, and the skill's for a skill's or a burst's
+      const targetingArea =
+        proudSkillGroupId === tables.talentGroupIdMap[CombatTalent.NormalAttack]
+          ? STRIKE_TARGETING_AREA
+          : SKILL_TARGETING_AREA;
       const namedHitCandidate: NamedHitCandidate = {
-        fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf }),
+        fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf }, targetingArea),
         queuedCalls: attackCalls.map(({ delay, delayLine, file, hitbox, line, site }) => ({
           delay,
-          fieldMap: readFieldMap(key, gcsim, tables, {
-            areaHitbox: hitbox,
-            hitmark: delay === undefined ? undefined : { file, line: delayLine, value: delay },
-          }),
+          fieldMap: readFieldMap(
+            key,
+            gcsim,
+            tables,
+            { areaHitbox: hitbox, hitmark: delay === undefined ? undefined : { file, line: delayLine, value: delay } },
+            targetingArea,
+          ),
           file,
           line,
           site,
@@ -91,9 +103,9 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
       const { reference } = leaf;
       const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
       const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
-      const key = `${tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]]}|${index}`;
-      if (index === undefined || namedHitCandidateMap.has(key)) continue;
-      addNamedHit(key, leaf);
+      const proudSkillGroupId = tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]];
+      if (index === undefined || namedHitCandidateMap.has(`${proudSkillGroupId}|${index}`)) continue;
+      addNamedHit(proudSkillGroupId, index, leaf);
       isLabelled = true;
     }
     const talentArray = talentArrayMap.get(variable);
@@ -102,8 +114,8 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
         ? undefined
         : joinGcsimTalentArray(talentArray, tables.talentMultiplierMap, Object.values(tables.talentGroupIdMap));
     if (joined === undefined) continue;
-    const key = `${joined.proudSkillGroupId}|${joined.index}`;
-    if (!namedHitCandidateMap.has(key)) addNamedHit(key);
+    if (!namedHitCandidateMap.has(`${joined.proudSkillGroupId}|${joined.index}`))
+      addNamedHit(joined.proudSkillGroupId, joined.index);
   }
   return namedHitCandidateMap;
 };

@@ -160,10 +160,6 @@
   "hits.sparklyExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.sparklyExplosion.multiplier": { "cause": "Unclassified", "value": 5.55 },
   "hits.sparklyExplosion.poiseDamage": { "cause": "Unclassified", "value": 120 },
-  "hits.chargedAttackBomb.area": {
-    "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 18 }
-  },
   "hits.chargedAttackBomb.hitmarkFrames": { "cause": "Unsourced", "value": 72 },
   "hits.chargedAttackBomb.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2931 } },
   "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },

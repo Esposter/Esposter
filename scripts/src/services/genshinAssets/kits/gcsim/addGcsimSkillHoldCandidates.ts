@@ -7,10 +7,10 @@ import {
   GCSIM_SKILL_HOLD_HITBOX_NAME,
   GCSIM_SKILL_HOLD_PREFIXES,
 } from "#src/services/genshinAssets/kits/constants";
+import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
-import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
@@ -20,10 +20,9 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // Or one for each level its `<hold>Hitmarks` lists, each with its frames from `<hold>Frames`, its hit from
 // `<hold>Hitmark` and its area from the `E-Hold` hitbox. A hold's `Hitmarks` listing numbers is its hitmark in each
 // State gcsim reads it at, so it gives no hits
-export const addGcsimSkillHoldCandidates = (
-  { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap, holdCooldowns, queuedAttacks, travelMap }: GcsimCharacter,
-): void => {
+export const addGcsimSkillHoldCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
+  const { add, addFrames, addHit, toFile } = writer;
+  const { attacks, config, constantMap, holdCooldowns, queuedAttacks } = gcsim;
   const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): GcsimHoldSource[] => {
     const hitmarks = findGcsimConstant(constantMap, `${prefix}Hitmarks`, `${prefix}Hitmark`);
     const framesName = `${prefix}Frames`;
@@ -48,31 +47,27 @@ export const addGcsimSkillHoldCandidates = (
     const path = `skillHolds.${holdIndex}.action`;
     if (framesName !== undefined) addFrames(`${path}.animationFrames`, framesName);
     if (hitmarks?.values === undefined) continue;
-    add(`${path}.hits.length`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
-    for (const [hitIndex, hitmark] of hitmarks.values.entries()) {
-      // The hold's attack and area are the one call firing at its hitmark, if one call alone does
-      const firedCalls = queuedAttacks.filter(({ delay, file }) => file === hitmarks.file && delay === hitmark);
-      const [firedCall] = firedCalls;
-      const isFiredAlone = firedCalls.length === 1;
-      const firedAttack = isFiredAlone && firedCall !== undefined ? findQueuedAttack(attacks, firedCall) : undefined;
-      addHit(
-        `${path}.hits.${hitIndex}`,
-        {
+    const isSingleHit = hitmarks.values.length === 1;
+    addGcsimHitmarkHits(writer, gcsim, {
+      hitmarks: { file: hitmarks.file, line: hitmarks.line, name: hitmarks.name, values: hitmarks.values },
+      path,
+      readHit: (hitIndex, hitmark) => {
+        // The hold's attack and area are the one call firing at its hitmark, if one call alone does
+        const firedCalls = queuedAttacks.filter(({ delay, file }) => file === hitmarks.file && delay === hitmark);
+        const [firedCall] = firedCalls;
+        const isFiredAlone = firedCalls.length === 1;
+        const firedAttack = isFiredAlone && firedCall !== undefined ? findQueuedAttack(attacks, firedCall) : undefined;
+        return {
           areaHitbox:
             (isFiredAlone ? firedCall?.hitbox : undefined) ??
-            (hitmarks.values.length === 1 ? findGcsimHitbox(config, "skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined),
+            (isSingleHit ? findGcsimHitbox(config, "skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined),
           attack: firedAttack,
-          hitmark: {
-            file: hitmarks.file,
-            line: hitmarks.line,
-            value: getGcsimLandingFrames(travelMap, hitmarks.name, hitmark),
-          },
           talentLeaf:
             firedAttack === undefined ? undefined : findGcsimTalentLeaf(config, firedAttack.talentVariable, [hitIndex]),
-        },
-        SKILL_TARGETING_AREA,
-      );
-    }
+        };
+      },
+      targetingArea: SKILL_TARGETING_AREA,
+    });
   }
   // A hold no hitmark constant gives, the skill's hold parameter clamped to 1 for it, takes the hitmark of the one call
   // Its delay reads with the hold set, as that call is the hold's hit

@@ -86,8 +86,10 @@ export const ASCENDANT_GLEAM_STATUS_ID = "ascendantGleam";
 // 146 frames of that, as gcsim (MIT) pkg/core/player/verdantdew.go counts them
 // Https://github.com/genshinsim/gcsim/blob/main/pkg/core/player/verdantdew.go
 export const VERDANT_DEW_MAXIMUM_COUNT = 3;
-// The Moonridge Dew a party holds at most, the same most as Verdant Dew, as gcsim's AddMoonridgeDew caps it at MaxVerdantDew
-// (verdantdew.go lines 104-110)
+// The Moonridge Dew a party holds at most. The wiki's Law of the New Moon page gives it a cap of its own, calculated
+// Separately from Verdant Dew's, so it keeps its own constant though both are 3. gcsim's AddMoonridgeDew caps it at
+// MaxVerdantDew instead (verdantdew.go lines 104-110)
+// Https://genshin-impact.fandom.com/wiki/Law_of_the_New_Moon
 export const MOONRIDGE_DEW_MAXIMUM_COUNT = 3;
 export const VERDANT_DEW_GATHERING_SECONDS = 149 / 60;
 export const VERDANT_DEW_GATHER_SECONDS = 146 / 60;

@@ -73,7 +73,7 @@
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {
     "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 }
   },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.flatHealth": {
@@ -96,7 +96,7 @@
   "stances.ceremonialGarment.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.area": {
     "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.flatHealth": {
@@ -119,7 +119,7 @@
   "stances.ceremonialGarment.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.area": {
     "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.flatHealth": {
@@ -142,7 +142,7 @@
   "stances.ceremonialGarment.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.area": {
     "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.flatHealth": {

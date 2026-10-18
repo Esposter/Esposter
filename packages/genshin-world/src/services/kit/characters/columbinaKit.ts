@@ -120,6 +120,10 @@ const MOONRIDGE_DEW_GAINS_PER_WINDOW = 3;
 // Only a Dew read by another member's press in the frames between the two tells apart
 const MOONDEW_CLEANSE_DEW_COUNT = 1;
 const MOONDEW_CLEANSE_DEFENCE_IGNORED = 1;
+// Moondew Cleanse spends no stamina, as the wiki's Normal Attack text and gcsim's columbina.go both give it
+const MOONDEW_CLEANSE_STAMINA_MULTIPLIER = 0;
+// Moondew Cleanse stands while the party holds a Dew to spend, the check both its variant and its stamina cut read
+const checkIsMoondewCleanse = ({ party }: KitContext): boolean => countDew(party) > 0;
 
 // Gains the party a Moonridge Dew for a Lunar-Bloom in the burst's window, as gcsim's a4OnLunarBloom does. The window
 // Counts the gains it has taken and runs from the first, and the gains come no faster than the cooldown lets them
@@ -371,11 +375,14 @@ export const createColumbinaKitBehaviour = ({
       },
     },
     chargedAttackVariant: {
-      checkIsActive: ({ party }) => countDew(party) > 0,
+      checkIsActive: checkIsMoondewCleanse,
       onStart: ({ party }) => {
         spendDew(party, MOONDEW_CLEANSE_DEW_COUNT);
       },
     },
+    // Moondew Cleanse takes her charged attack's place while Dew stands, and spends none of its stamina
+    getChargedAttackStaminaMultiplier: (context) =>
+      checkIsMoondewCleanse(context) ? MOONDEW_CLEANSE_STAMINA_MULTIPLIER : 1,
     getPartyStrikeBonus: (_member, strike, _enemy, _party, effects) => ({
       criticalDamageBonus: getConstellation6CriticalDamage(strike, effects),
     }),

@@ -33,9 +33,9 @@ const SANCTUARY_SECONDS = 15;
 const SHRED_SECONDS = 10;
 const SHRED_STATUS_ID = "lauma-skill-shred";
 
-// Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold spends up to three Verdant Dew. The Dew is spent as
-// The hold starts, where gcsim spends it at 29 frames, since the hit's multiplier is set as it is cast. A hold with no
-// Dew plays the press, as gcsim refuses it
+// Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold spends up to three Verdant Dew. The hold spends
+// Dew, Verdant first and then Moonridge, through spendDew. The Dew is spent as the hold starts, where gcsim spends it
+// At 29 frames, since the hit's multiplier is set on the cast. A hold with no Dew plays the press, as gcsim refuses it
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
 const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
 

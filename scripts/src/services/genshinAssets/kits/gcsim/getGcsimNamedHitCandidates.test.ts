@@ -8,9 +8,10 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
-import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, Element, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const multiplierMap = (proudSkillGroupId: number) =>
@@ -229,6 +230,63 @@ describe(getGcsimNamedHitCandidates, () => {
     expect(
       joined.get("hits.fieryRainArrows.0.poiseDamage")?.map(({ provenance, value }) => [cause(provenance), value]),
     ).toStrictEqual([[KitProvisionalCause.NoPoiseSource, 0]]);
+  });
+
+  test("prices a normal or charged attack's named hit round the strikes' targeting area, and a burst's round the skill's", () => {
+    expect.hasAssertions();
+
+    const NORMAL_PROUD_SKILL_GROUP_ID = 2131;
+    const radius = 0.8;
+    const readArea = (type: GcsimTalentType, proudSkillGroupId: number) =>
+      getNamedHitKitCandidates(
+        multiplierMap(proudSkillGroupId),
+        getGcsimNamedHitCandidates(
+          {
+            ...gcsim,
+            config: {
+              ...gcsim.config,
+              talentVariables: [
+                {
+                  leaves: [{ path: [0], reference: { label: "Arrow DMG", selector: 0, type } }],
+                  line: 1,
+                  name: "burst",
+                },
+              ],
+            },
+            queuedAttacks: [
+              {
+                attackLine: 10,
+                delay: 3,
+                delayLine: 11,
+                file: "burst.go",
+                hitbox: {
+                  center: GcsimHitboxCenter.PrimaryTarget,
+                  file: "burst.go",
+                  line: 11,
+                  name: "NewCircleHit",
+                  radius,
+                  shape: GcsimHitboxShape.Circle,
+                },
+                line: 11,
+              },
+            ],
+            talentParameterMap: new Map([[`${type}|Arrow DMG`, { indexes: [0], line: 3 }]]),
+          },
+          {
+            ...tables,
+            talentGroupIdMap: { ...tables.talentGroupIdMap, [CombatTalent.NormalAttack]: NORMAL_PROUD_SKILL_GROUP_ID },
+          },
+        ),
+      )
+        .get("hits.fieryRainArrows.0.area")
+        ?.map(({ value }) => value);
+
+    expect(readArea(GcsimTalentType.Attack, NORMAL_PROUD_SKILL_GROUP_ID)).toStrictEqual([
+      createTargetedHitArea(STRIKE_TARGETING_AREA, radius),
+    ]);
+    expect(readArea(GcsimTalentType.Burst, BURST_PROUD_SKILL_GROUP_ID)).toStrictEqual([
+      createTargetedHitArea(SKILL_TARGETING_AREA, radius),
+    ]);
   });
 
   test("joins a single hit's, a skill hold's and a stance's multiplier by its value to the one candidate of its key, and a multiplier of no named hit to none", () => {
