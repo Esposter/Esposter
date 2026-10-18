@@ -80,6 +80,7 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
       [
         { reactionType: ReactionType.Overloaded },
         { reactionType: ReactionType.Superconduct },
+        { reactionType: ReactionType.StellarConduct },
         { reactionType: ReactionType.ElectroCharged },
         { reactionType: ReactionType.Quicken },
         { reactionType: ReactionType.Aggravate },
