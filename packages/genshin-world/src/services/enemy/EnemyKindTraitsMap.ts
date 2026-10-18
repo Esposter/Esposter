@@ -132,6 +132,8 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
     poiseType: PoiseType.Boss,
   },
   [EnemyKindId.GoldflameQucusaurTyrant]: { element: Element.Pyro, energyDrops: [], poiseType: PoiseType.Boss },
+  // Provisional: the wiki's Hilichurl Fighter page gives its damage type and every attack in its Attacks section as
+  // Physical DMG, so the kind has no attack element
   [EnemyKindId.HilichurlFighter]: {
     enemyDropFamily: EnemyDropFamily.Hilichurls,
     energyDrops: [
