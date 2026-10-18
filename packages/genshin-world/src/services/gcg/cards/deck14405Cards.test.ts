@@ -586,6 +586,27 @@ describe("emblem of Severed Fate", () => {
     expect(takeOne(takeOne(duel.sides, 1).characters, 0).energy).toBe(0);
   });
 
+  test("two Emblems of Severed Fate, on two characters, each add their own 2 DMG to a burst in one round", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([
+        {
+          ...withSkills(createCharacterState(ITTO_ID, Element.Geo), [ROYAL]),
+          equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
+        },
+        {
+          ...withSkills(createCharacterState(KOKOMI_ID, Element.Hydro), [NEREID]),
+          equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
+        },
+      ]),
+      createSideState([withHp(createCharacterState(XIAO_ID, Element.Anemo), 20)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
+    takeOne(duel.sides, 0).activeIndex = 1;
+    runGcgSkillUse({ duel, sideIndex: 0 }, NEREID);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([10]);
+  });
+
   test("its character's Elemental Bursts deal 2 more DMG, once a round", () => {
     expect.hasAssertions();
     const duel = createDuel([
