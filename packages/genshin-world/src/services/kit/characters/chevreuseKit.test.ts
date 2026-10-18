@@ -1,9 +1,11 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -26,6 +28,31 @@ const createChevreuseCombatant = (): Combatant => ({
   kit: CHEVREUSE_KIT,
   level: 90,
 });
+
+// The Attack buff a Pyro or Electro member of the party holds, from when the Overcharged Ball is fired
+const getAttackBuff = (kitEffectState: KitEffectState): number =>
+  kitEffectState.effects.find(
+    (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
+  )?.amount ?? 0;
+
+// Chevreuse, a Pyro character with 10,000 Max HP, fires the Overcharged Ball from a hold with the Overloaded reaction set
+const fireOverchargedBall = (ascension: number): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const pyroCombatant = { ...createChevreuseCombatant(), ascension, element: Element.Pyro };
+  const context = createKitTestContext(pyroCombatant, { kitEffectState });
+  CHEVREUSE_KIT.onKitEvent?.(
+    {
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ reactionType: ReactionType.Overloaded }],
+      striker: pyroCombatant,
+    },
+    context,
+    pyroCombatant,
+  );
+  takeOne(CHEVREUSE_KIT.elementalSkillHolds ?? []).variant?.action.onStart?.(context);
+  return kitEffectState;
+};
 
 describe(createChevreuseKitBehaviour, () => {
   const combatant = createChevreuseCombatant();
@@ -75,5 +102,20 @@ describe(createChevreuseKitBehaviour, () => {
 
     expect(shellHitmarks).toHaveLength(8);
     expect(Math.max(...shellHitmarks)).toBeGreaterThan(CHEVREUSE_KIT.elementalBurst.seconds);
+  });
+
+  describe("the Ascension 4 passive, Vertical Force Coordination", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      // 1% for every 1,000 of 10,000 Max HP
+      expect(getAttackBuff(fireOverchargedBall(4))).toBeCloseTo(0.1, 5);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getAttackBuff(fireOverchargedBall(3))).toBe(0);
+    });
   });
 });
