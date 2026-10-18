@@ -36,3 +36,12 @@ export const SHOP_REFRESH_BY_TABLE_TYPE: Partial<Record<string, ShopRefresh>> = 
 };
 // The offset the game's own shop times carry, UTC+8, appended to each one as it is built
 export const GAME_TIME_OFFSET = "+08:00";
+// Paimon's Bargains' two character rotations, one for each character of a pair, and the five weapon rotations, each of
+// Which gives a Royal weapon at its first order and a Blackcliff weapon at its second
+export const PAIMON_BARGAINS_CHARACTER_ROTATE_IDS = [10201, 10202] as const;
+export const PAIMON_BARGAINS_WEAPON_ROTATE_IDS: readonly number[] = [10203, 10204, 10205, 10206, 10207];
+export const PAIMON_BARGAINS_PAIR_COUNT = 6;
+export const PAIMON_BARGAINS_ROYAL_ORDER = 1;
+export const PAIMON_BARGAINS_BLACKCLIFF_ORDER = 2;
+// The item use that gives a character card's avatar, and where the avatar's id sits in its parameters
+export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";

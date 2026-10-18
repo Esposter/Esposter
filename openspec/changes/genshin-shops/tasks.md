@@ -10,7 +10,7 @@
 
 ## 3. Paimon's Bargains
 
-- [ ] 3.1 Offer the monthly characters and bi-monthly weapons, refusing a character with full constellations. Verify: tests named after 'Two characters are offered each month' and 'A character with full constellations cannot be bought'. The screen waits on the bag holding the items' definitions.
+- [x] 3.1 Offer the monthly characters and bi-monthly weapons, refusing a character with full constellations. Verify: tests named after 'Two characters are offered each month' and 'A character with full constellations cannot be bought'. The screen waits on the bag holding the items' definitions.
 
 ## 4. Souvenir Shops, city shops and vendors
 
