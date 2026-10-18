@@ -7,7 +7,7 @@ describe(readOculusPlaces, () => {
   test("reads each Oculus of a region with its kind and its ground point", async () => {
     expect.hasAssertions();
 
-    const oculusPlaces = await readOculusPlaces(GAME_DATA_LOCAL_BASE_URL, "mondstadt");
+    const oculusPlaces = await readOculusPlaces(GAME_DATA_LOCAL_BASE_URL, "oculi/mondstadt");
 
     expect(oculusPlaces.length).toBeGreaterThan(0);
     for (const { kind, position } of oculusPlaces) {
