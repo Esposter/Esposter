@@ -77,7 +77,7 @@ Deleting or pinning a message SHALL ask the reader to confirm before it happens.
 
 ### Requirement: Each kind of message renders in one of two shared layouts
 
-Each kind of message SHALL render in one of two shared layouts: an authored body, or a system line with an icon and a timestamp.
+Each kind of message SHALL render in one of two shared layouts, an authored body or a system line with an icon and a timestamp, or, for a poll, in its own card.
 
 #### Scenario: Authored messages share one body
 

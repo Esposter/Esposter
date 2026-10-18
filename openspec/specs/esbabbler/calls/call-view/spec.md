@@ -229,7 +229,7 @@ A standalone call page SHALL show a ready room before any visitor joins, includi
 
 ### Requirement: Leaving a standalone call page ends the reader's participation
 
-Leaving a standalone call page SHALL end the reader's participation in the call unless the call has been popped out.
+Leaving a standalone call page SHALL end the reader's participation in the call unless the call has been popped out, the exception [picture-in-picture](../picture-in-picture/spec.md) owns.
 
 #### Scenario: Navigating away leaves the call
 
@@ -237,12 +237,6 @@ Leaving a standalone call page SHALL end the reader's participation in the call 
 - **WHEN** the reader navigates away from the call page
 - **THEN** the reader leaves the call
 - **AND** any pending request to join is cancelled
-
-#### Scenario: A popped-out call stays connected
-
-- **GIVEN** the standalone call is popped out
-- **WHEN** the reader navigates away from the call page
-- **THEN** the call continues
 
 ### Requirement: Moderation actions are offered only inside a room's call
 

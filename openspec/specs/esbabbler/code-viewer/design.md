@@ -4,15 +4,28 @@ A code file attached to a message opens in a read-only CodeMirror view. The file
 
 ## How it works
 
+```mermaid
+sequenceDiagram
+  participant Code as Code.vue
+  participant Lang as getLanguage and getLanguageExtension
+  participant Use as useExtensions
+  Code->>Code: fetch the text, empty on failure
+  Code->>Lang: the language from the filename
+  Lang->>Lang: load the grammar on first use of its kind
+  Lang-->>Use: the grammar
+  Use->>Use: join it with the app's chrome and highlight specs
+  Use-->>Code: the extensions, and the editor mounts
+```
+
 - **The language comes from the filename.** `getLanguage` matches the name against `LanguageRegexMap`. A name no pattern matches gets no grammar and shows as plain text.
 - **The grammar loads on first use.** `getLanguageExtension` looks the language up in `EXTENDED_LANGUAGES`: the list `@codemirror/language-data` ships, with a Vue entry appended because that package has none. A file's grammar loads when a file of that kind first opens, not with the page.
 - **The colours are the app's own.** `uiEditorExtensions` sets the chrome, meaning the transparent background, the text, the selection, the cursor and the gutters, in the UI library's tokens. `uiHighlightSpecs` sets the highlight styles in the same tokens. No bundled theme is loaded, so the viewer follows the app's themes like the rest of the UI.
 - **A failed fetch shows an empty file.** The text falls back to empty and the error is logged, so a broken link never blocks the message.
 - **A preview is capped.** In a message preview the viewer takes at most `PREVIEW_MAX_HEIGHT` and its pointer events are enabled.
 
-## Upstream audit of the replaced theme
+## Upstream audit of `codemirror/theme-one-dark`
 
-The viewer's chrome and highlighting moved off `@codemirror/theme-one-dark`. The [dependency admission](../../architecture/dependency-admission/design.md) rule asks every upstream issue, open and closed, to get an evidenced verdict before a replacement lands. The audit of `codemirror/theme-one-dark` found:
+The [dependency admission](../../architecture/dependency-admission/design.md) rule asks every upstream issue, open and closed, to get an evidenced verdict. The audit of `codemirror/theme-one-dark` found:
 
 - **The repository is archived.** Its last push was 2026-04-15.
 - **The issue tracker is disabled.** Its issue numbers are not found, and the list of issues cannot be read, so no issue can be ruled on.

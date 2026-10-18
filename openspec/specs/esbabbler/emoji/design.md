@@ -71,7 +71,7 @@ The picker and the `:` autocomplete share this one function and therefore one ra
 
 One tone, chosen once and persisted per device, applied to every emoji that supports one — Discord's model, not a per-emoji long-press.
 
-`applySkinTone` takes the record rather than the character so the support flag cannot be forgotten; toning an emoji that does not support one would otherwise append a stray modifier beside it (🍎🏽). **The modifier attaches to the first code point, never the end**: 🧑‍💻 is a ZWJ sequence whose tone belongs to the person, so appending naively gives 🧑‍💻🏻 where the correct form is 🧑🏽‍💻. Variation selectors are dropped from the remainder, since a toned code point is already fully qualified.
+`applySkinTone` takes the record rather than the character so the support flag cannot be forgotten; toning an emoji that does not support one would otherwise append a stray modifier beside it (🍎🏽). **The modifier attaches to the first code point, never the end**: 🧑‍💻 is a ZWJ sequence whose tone belongs to the person, so appending naively gives 🧑‍💻🏻 where the correct form is 🧑🏽‍💻. Only the base's own variation selector is dropped, since the toned code point is already fully qualified; every later selector stays with the component it qualifies, so 🧔‍♂️ tones to 🧔🏽‍♂️ and keeps the sign's emoji presentation.
 
 The accepted limitation: Unicode allows a different tone per person in a sequence like 🧑‍🤝‍🧑, and one global setting only tones the first. Discord behaves the same way.
 

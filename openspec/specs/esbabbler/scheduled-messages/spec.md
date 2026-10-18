@@ -90,10 +90,17 @@ The creator SHALL be able to cancel, reschedule or send a scheduled message now,
 
 #### Scenario: a creator sends it now but a room rule refuses
 
-- **GIVEN** a scheduled message in a room that refuses it at this moment
+- **GIVEN** a scheduled message in a room that refuses it at this moment, by a rule other than the word filter
 - **WHEN** the creator chooses to send it now
 - **THEN** the send is refused
 - **AND** the message stays scheduled
+
+#### Scenario: a creator sends it now but the word filter blocks it
+
+- **GIVEN** a scheduled message holding a word the room filters
+- **WHEN** the creator chooses to send it now
+- **THEN** the send is refused
+- **AND** the job is cancelled, so the room's automod action is applied once
 
 #### Scenario: a creator cancels a message whose delivery has begun
 

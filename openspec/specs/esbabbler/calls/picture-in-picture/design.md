@@ -8,7 +8,7 @@ Chromium 116+ only; the pop-out button is feature-detected and never renders uns
 
 ## How it works
 
-The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cleared by `resetCallMedia`, so leaving the call auto-docks for free). `MessageContentCallPictureInPictureHost` — mounted once in `app.vue`, the persistent root outside `<NuxtPage>`, so the window survives all route and layout changes — watches it, opens/closes the OS window, and `<Teleport>`s the compact view into `pictureInPictureWindow.document.body` (the element, not a selector — Vue must teleport across documents). Component instances, reactivity, and handlers are unchanged; `<video :srcObject.prop>` keeps playing because the same `MediaStream` objects stay attached.
+The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cleared by `resetCallMedia`, so leaving the call auto-docks for free). `MessageContentCallPictureInPictureHost` — mounted once in `App.vue`, the persistent root outside `<NuxtPage>`, so the window survives all route and layout changes — watches it, opens/closes the OS window, and `<Teleport>`s the compact view into `pictureInPictureWindow.document.body` (the element, not a selector — Vue must teleport across documents). Component instances, reactivity, and handlers are unchanged; `<video :srcObject.prop>` keeps playing because the same `MediaStream` objects stay attached.
 
 ```mermaid
 stateDiagram-v2
@@ -58,7 +58,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 | :------------------------------------------------------------------------------ | :--------------------------------------------------------------- |
 | `apps/web/app/types/documentPictureInPicture.d.ts`                              | ambient types (API not yet in lib.dom)                           |
 | `apps/web/app/composables/useDocumentPictureInPicture.ts`                       | SSR-safe `requestWindow` wrapper + style bridge + cleanup        |
-| `apps/web/app/components/Message/Content/Call/PictureInPicture/Host.vue`        | persistent window owner + teleport target (mounted in app.vue)   |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/Host.vue`        | persistent window owner + teleport target (mounted in App.vue)   |
 | `apps/web/app/components/Message/Content/Call/PictureInPicture/View.vue`        | compact call surface inside the window                           |
 | `apps/web/app/components/Message/Content/Call/PictureInPicture/ControlBar.vue`  | trimmed control row (mute/camera/share/deafen/hand/expand/leave) |
 | `apps/web/app/components/Message/Content/Call/PictureInPicture/Button.vue`      | feature-detected pop-out toggle                                  |
