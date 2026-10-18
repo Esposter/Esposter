@@ -8,6 +8,7 @@ import { MenuEntryIcon as EntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { MenuFrameIcon as FrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { MINUTES_PER_DAY } from "genshin-engine";
 import { GameTextKey } from "genshin-text";
 
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is
@@ -29,6 +30,9 @@ export const PAIMON_MENU_CONTENTS: readonly { icon: MenuEntryIcon; screenKind: T
   { icon: EntryIcon.BattlePass, screenKind: ScreenKind.BattlePass },
   { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
+// The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
+export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
+export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
 export const PAIMON_MENU_LINKS: readonly { icon: MenuEntryIcon; labelKey: GameTextKey }[] = [
   { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
