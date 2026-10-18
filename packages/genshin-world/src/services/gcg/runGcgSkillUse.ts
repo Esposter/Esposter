@@ -59,7 +59,12 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
-        { ...context, characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard), sideIndex },
+        {
+          ...context,
+          characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard),
+          sideIndex,
+          userSideIndex: context.sideIndex,
+        },
         skill,
         zoneCard,
         dealt,
