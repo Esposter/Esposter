@@ -36,6 +36,12 @@ Tubby's making, the Trust Rank, Adeptal Energy and the realm's Realm Currency an
 
 - **The placement editor is a Genshin screen on the interface's parts, and its meter and notice read the placement's own rules.** The editor is `components/World/Realm/PlacementEditor`, built on `genshin-interface`'s `GameScreen`, `GameButton` and `ProgressBar`. Its area is `getHomeAreaPlacements` over the realm's placements, its load is `computeHomeAreaLoad` with the candidate on them, and its state is `computeHomeLoadState` against the area's `orangeLoad` and `redLoad`. Its placement is `placeHomeFurnishing`, which reads the same `getHomeFurnishingLimit` the notice does, so the limit a placement refuses for is the one its notice names. Its confirm reads the game's own placement word, `HomeDeploy` ("Place"), and a refused placement shows a disabled confirm and the notice for the limit it passed: `RetHomeFurnitureArrangeLimit` for the count, `RetHomeFurnitureExceedLimit` for the load. The colours and layout are provisional until the parity pass reads the game's placement mode.
 
+- **The Serenitea Pot's gadget is material row 220026, and the stand-in realm is a scene swapped in for the world.** The wiki gives the pot's item id as 220026, and `MaterialExcelConfigData` has that row as a `MATERIAL_WIDGET` named by the text hash 200477924, "Serenitea Pot". Those name hashes appear in no other table but the map, chat, tip and tag tables, and 220026 is not a key in `ConfigWidget.json`, so the pot has no device row and its gadget is the material. The Session shows `components/World/Realm/Index.vue` in place of the world while a visit is set, on the same character, on a flat ground at `HOME_REALM_GROUND_HEIGHT`, and leaves by `leaveHomeRealm`. The stand-in pot's point and region, the island, its two standing points and the spawn are made up and provisional until the PC exports the realm layout.
+
+- **A visit records the character's pose and the stand-in pot's region.** The world has no reader for the region a point stands in, so a visit names `HOME_STAND_IN_POT_REGION_ID`, the region the stand-in pot is entered from, beside the pose the character stands at. The region stays the stand-in's until a placed pot reads its own.
+
+- **Tubby sells from the Realm Depot by his NPC id.** He is a resident of no region, so `getTalkVendorShopId` does not reach him; the Session's talk key on him reads `VendorShopTypeMap` by `HOME_TUBBY_NPC_ID`, shop 1048, and opens the shop screen.
+
 ## How it works
 
 ```mermaid
@@ -87,6 +93,11 @@ flowchart TD
 | `packages/genshin-world/src/services/home/getHomeAreaPlacements.ts`           | The placements in one area, the filter the placement and the editor share |
 | `packages/genshin-world/src/services/home/getHomeFurnishingLimit.ts`          | The count or the load a placement would pass, read once                   |
 | `packages/genshin-world/src/models/home/HomeFurnishingLimit.ts`               | The limit a placement passes: the count or the load                       |
+| `packages/genshin-world/src/components/World/Realm/Index.vue`                 | The stand-in realm's island, with Tubby and the exit pot                  |
+| `packages/genshin-world/src/services/home/computeHomePotInteractable.ts`      | The stand-in pot in the open world, named by its text                     |
+| `packages/genshin-world/src/services/home/computeHomeRealmInteractables.ts`   | The realm's Tubby and exit pot, as interactables                          |
+| `packages/genshin-world/src/services/home/computeHomeRealmVisit.ts`           | The place a visit into the realm records, from the character's pose       |
+| `packages/genshin-text/src/models/GameTextKey.ts`                             | The notices, the placement word, the pot and Tubby as game text keys      |
 | `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`               | Tubby, keyed to the realm depot's shop type                               |
 
 ## Sources

@@ -4,6 +4,7 @@ import type { CharacterConstellationKit } from "#src/models/character/CharacterC
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
+import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -57,6 +58,7 @@ import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Inde
 import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
+import WorldRealm from "#src/components/World/Realm/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
@@ -108,6 +110,17 @@ import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId"
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
+import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
+import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
+import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
+import {
+  HOME_POT_GADGET_ID,
+  HOME_REALM_GROUND_HEIGHT,
+  HOME_REALM_SPAWN,
+  HOME_STAND_IN_POT_REGION_ID,
+  HOME_TUBBY_NPC_ID,
+} from "#src/services/home/constants";
+import { leaveHomeRealm } from "#src/services/home/leaveHomeRealm";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
@@ -141,6 +154,7 @@ import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen"
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
+import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
@@ -398,12 +412,16 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
+// The realm the player is in, once they have gone into it from the pot: the place they went in from. While it is set the realm's
+// Island is shown in place of the world, and the world's ground gives way to the realm's flat ground
+const homeRealmVisit = shallowRef<HomeRealmVisit>();
 // The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
 // Reach, which everything in the world stands on. It is built again only as a region's ground arrives
 const worldHeight = computed(() =>
   createWorldHeight(windriseData.baseGround, [...(windrise.value?.regionGroundMap.values() ?? [])]),
 );
-const getGroundHeight = (x: number, z: number): number => worldHeight.value(x, z);
+const getGroundHeight = (x: number, z: number): number =>
+  homeRealmVisit.value ? HOME_REALM_GROUND_HEIGHT : worldHeight.value(x, z);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
@@ -981,6 +999,7 @@ const domainArenaInteractables = computed<Interactable[]>(() => {
   ];
 });
 const interactables = computed<Interactable[]>(() => {
+  if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
   const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
@@ -1024,6 +1043,7 @@ const interactables = computed<Interactable[]>(() => {
       getGroundHeight,
     ),
     ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
+    computeHomePotInteractable(gameText, getGroundHeight),
   ];
 });
 const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
@@ -1329,6 +1349,25 @@ defineExpose({ jumpTo, readCameraPosition });
             ) {
               openAbyssEntrance();
               screenKind = ScreenKind.SpiralAbyss;
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              interactable.id === String(HOME_POT_GADGET_ID)
+            ) {
+              if (homeRealmVisit) {
+                jumpTo(leaveHomeRealm(homeRealmVisit).pose);
+                homeRealmVisit = undefined;
+              } else {
+                homeRealmVisit = computeHomeRealmVisit(
+                  { position: characterBody.position, yaw: characterBody.rotation.y },
+                  getGroundHeight(characterBody.position.x, characterBody.position.z),
+                  HOME_STAND_IN_POT_REGION_ID,
+                );
+                jumpTo(HOME_REALM_SPAWN);
+              }
+            } else if (interactable?.kind === InteractionKind.Talk && interactable.id === String(HOME_TUBBY_NPC_ID)) {
+              shopId = VendorShopTypeMap[String(HOME_TUBBY_NPC_ID)] ?? 0;
+              reputationLevel = reputation.level;
+              screenKind = ScreenKind.Shop;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
               resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
@@ -1406,6 +1445,7 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <WorldWindrise
+        v-if="!homeRealmVisit"
         ref="windrise"
         :last-teleport-at
         :trounce-blossoms
@@ -1454,6 +1494,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
+      <WorldRealm v-else />
     </TresCanvas>
     <WorldEnemyNameTags
       :elemental-sight
