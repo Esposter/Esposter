@@ -16,9 +16,10 @@ import {
   TYPE_KINDS,
 } from "#src/services/sweeps/fileOrganization/constants";
 import { getNames } from "#src/services/sweeps/fileOrganization/getNames";
+import { getTopLevelFunctions } from "#src/services/sweeps/fileOrganization/getTopLevelFunctions";
 import { basename, extname } from "node:path";
 
-// The three shapes the file-organization skill states that a read of one file can decide, as candidates for the
+// The four shapes the file-organization skill states that a read of one file can decide, as candidates for the
 // Pass rather than findings in themselves — the skill's exceptions are a roster no scan can hold, so what is
 // Reported is what the pass then reads. A second export is a second concern only when it is not a companion of
 // The file's shortest one; a drizzle table file's `pgEnum` wrappers sit beside the table that reads them. An
@@ -26,7 +27,9 @@ import { basename, extname } from "node:path";
 // Twin, schema and composable-options shapes the skill allows. A local type is reported unless it is the event
 // Or hook map the skill colocates, in a composable, or in an SFC, whose `Props` is the vue skill's; a suite's
 // Fixture shapes are the testing ledger's, and no suite reaches here — and a shape another file reads sits beside
-// The component that owns it, named after its one export.
+// The component that owns it, named after its one export. The fourth is a file's top-level functions: two or more,
+// With one not exported, is reported with every name the file declares, since an export count cannot see a private
+// Helper beside a function, while two exports alone are the second-export shape's.
 export const getFileOrganizationFindings = (path: string, text: string): FileOrganizationFinding[] => {
   const isVue = path.endsWith(".vue");
   const isComposable = path.includes(COMPOSABLES_DIRECTORY);
@@ -50,6 +53,16 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
     const strangers = exportNames.filter((name) => !checkIsCompanion(name, base) && !isSanctionedBeside(name));
     if (strangers.length > 0)
       findings.push({ names: exportNames, path, type: FileOrganizationFindingType.ExportsPerFile });
+  }
+
+  if (!isVue) {
+    const functions = getTopLevelFunctions(text);
+    if (functions.length > 1 && functions.some(({ isExported }) => !isExported))
+      findings.push({
+        names: functions.map(({ name }) => name),
+        path,
+        type: FileOrganizationFindingType.FunctionsPerFile,
+      });
   }
 
   if (!isVue && !MODEL_DIRECTORIES.some((directory) => path.includes(directory))) {

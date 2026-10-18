@@ -98,4 +98,52 @@ describe(getFileOrganizationFindings, () => {
       ),
     ).toStrictEqual([]);
   });
+
+  test.each([
+    ["a private arrow helper beside an exported function", "export const a = () => 0;\nconst b = () => 1;\n"],
+    ["a private function declaration beside an exported arrow", "export const a = () => 0;\nfunction b() {}\n"],
+  ])("reports %s as a function beside another", (_description, source) => {
+    expect.hasAssertions();
+
+    expect(getFileOrganizationFindings(SERVICE_PATH, source)).toStrictEqual([
+      { names: ["a", "b"], path: SERVICE_PATH, type: FileOrganizationFindingType.FunctionsPerFile },
+    ]);
+  });
+
+  test.each([
+    [
+      "a function's overloads",
+      "export function a(): void;\nexport function a(b: 0): void;\nexport function a(b: 0) {}\n",
+    ],
+    [
+      "a function holding inner functions",
+      "export const a = () => {\n  const inner = () => 0;\n  function deep() {}\n  return inner;\n};\n",
+    ],
+    ["an object literal of function entries", "export const thingEntries = { a: () => 0, b: function () {} };\n"],
+    ["a const initialized by a call that returns a function", "export const a = () => 0;\nconst b = createB();\n"],
+  ])("leaves %s alone as a function shape", (_description, source) => {
+    expect.hasAssertions();
+
+    expect(
+      getFileOrganizationFindings(SERVICE_PATH, source).filter(
+        ({ type }) => type === FileOrganizationFindingType.FunctionsPerFile,
+      ),
+    ).toStrictEqual([]);
+  });
+
+  test("leaves a vue file's script functions alone", () => {
+    expect.hasAssertions();
+
+    expect(
+      getFileOrganizationFindings("apps/web/app/components/Thing.vue", "const a = () => 0;\nconst b = () => 1;\n"),
+    ).toStrictEqual([]);
+  });
+
+  test("reports two exported functions as an export pair only", () => {
+    expect.hasAssertions();
+
+    expect(
+      getFileOrganizationFindings(SERVICE_PATH, "export const a = () => 0;\nexport function b() {}\n"),
+    ).toStrictEqual([{ names: ["a", "b"], path: SERVICE_PATH, type: FileOrganizationFindingType.ExportsPerFile }]);
+  });
 });
