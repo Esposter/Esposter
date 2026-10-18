@@ -35,6 +35,8 @@
     "cause": "Unclassified",
     "value": { "index": 6, "proudSkillGroupId": 4639 }
   },
+  "parameters.spiritSootherRegen": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 4639 } },
+  "parameters.spiritSootherLowRegen": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 4639 } },
   "parameters.guideToAfterlifeHealthCost": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 4632 }
