@@ -28,6 +28,7 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 export const NICOLE_CHARACTER_ID = 10_000_131;
@@ -35,7 +36,7 @@ export const NICOLE_CHARACTER_ID = 10_000_131;
 // Revelation's shield and the team's ATK buff come on at the skill's hitmark less one frame, which gcsim queues on the
 // Character's task (skill.go's QueueCharTask at skillHitmark-1)
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/nicole/skill.go
-const SKILL_SNAPSHOT_SECONDS = 8 / 60;
+const SKILL_SNAPSHOT_FRAMES = 8;
 // The shield and the buff last 20 seconds, gcsim's skillDur
 const SKILL_SECONDS = 20;
 // The buff's source is gcsim's skillBuffKey: a recast deletes the buff it gave before its own snapshot, so it restarts
@@ -45,10 +46,10 @@ const SKILL_BUFF_SOURCE = "grace-of-kenosis";
 const BURST_SECONDS = 20;
 // The burst starts its status and clears its projections one frame after its hit, as gcsim's task at burstHitmark+1 does,
 // So a hit before that makes no projection
-const BURST_STATUS_SECONDS = 109 / 60;
+const BURST_STATUS_FRAMES = 109;
 const BURST_STATUS_ID = "nicole-burst";
 // A projection lands 30 frames after the hit that starts it, gcsim's projectionHitmark, and four come from one burst at most
-const PROJECTION_SECONDS = 30 / 60;
+const PROJECTION_FRAMES = 30;
 const PROJECTION_LIMIT = 4;
 // A projection holds a 3-second internal cooldown, gcsim's burstICDKey
 const PROJECTION_ICD_SECONDS = 3;
@@ -173,7 +174,7 @@ const scheduleProjection = (
   talentMultiplier: number,
   hitbox: KitHitbox,
 ): void =>
-  scheduleKitTask(kitEffectState, nicole.characterId, PROJECTION_SECONDS, (tick) => {
+  scheduleKitTask(kitEffectState, nicole.characterId, toKitSeconds(PROJECTION_FRAMES), (tick) => {
     // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
     // Hexerei and two or more Hexerei are deployed
     const flatDamage =
@@ -291,7 +292,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       // Her burst clears any status it left, and starts its own one frame after its hit, which then counts its projections
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         removeKitEffects(kitEffectState, (effect) => effect.kind === "status" && effect.id === BURST_STATUS_ID);
-        scheduleKitTask(kitEffectState, combatant.characterId, BURST_STATUS_SECONDS, (tick) => {
+        scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(BURST_STATUS_FRAMES), (tick) => {
           addKitStatus(tick.kitEffectState, combatant.characterId, {
             id: BURST_STATUS_ID,
             secondsRemaining: BURST_SECONDS,
@@ -378,7 +379,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             effect.kind === "buff" &&
             (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE || effect.source === C2_SOURCE),
         );
-        scheduleKitTask(kitEffectState, combatant.characterId, SKILL_SNAPSHOT_SECONDS, (tick) => {
+        scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(SKILL_SNAPSHOT_FRAMES), (tick) => {
           castKitShield(tick.kitEffectState, combatant.characterId, {
             element: Element.Pyro,
             health: skillShieldAtk * combatant.attributes.attack + skillShieldFlat,
