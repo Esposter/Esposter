@@ -23,7 +23,7 @@ export const resolveKitValues = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
   isGcsimModelled: boolean,
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
@@ -66,12 +66,12 @@ export const resolveKitValues = (
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     }
-  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, talentGroupIdMap);
+  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap);
   chooseDefaults(sourceCandidateMap);
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   chooseDefaults(namedHitKitCandidateMap);
-  const ruleCandidateMap = getRuleKitCandidates(valueMap);
+  const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
   chooseDefaults(ruleCandidateMap);
   return {
     candidateMap: mergeKitCandidateSources({
