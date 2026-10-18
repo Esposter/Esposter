@@ -7,7 +7,7 @@ import { measureVerticalExtent } from "#src/services/genshinAssets/measure/measu
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
-import { parsePmx, PMX_UNIT_METRES } from "genshin-engine";
+import { parsePmx } from "genshin-engine";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -39,6 +39,5 @@ export const measureCommand: SubCommandsDef[string] = defineCommand({
     console.log(`model height: ${format(modelHeight)} m`);
     console.log(`pmx height: ${format(pmxHeight)} units`);
     console.log(`scale: ${format(modelHeight / pmxHeight)} m per unit`);
-    console.log(`reckoned: ${format(pmxHeight * PMX_UNIT_METRES)} m at ${PMX_UNIT_METRES} m per unit`);
   },
 });

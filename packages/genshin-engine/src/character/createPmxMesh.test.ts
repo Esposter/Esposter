@@ -1,7 +1,6 @@
 import type { PmxMaterial } from "#src/models/character/PmxMaterial";
 import type { PmxModel } from "#src/models/character/PmxModel";
 
-import { PMX_UNIT_METRES } from "#src/character/constants";
 import { createPmxMesh } from "#src/character/createPmxMesh";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { Matrix4, MeshBasicMaterial, Vector3 } from "three";
@@ -52,7 +51,7 @@ describe(createPmxMesh, () => {
         uvs: new Float32Array(),
       },
     };
-    const mesh = createPmxMesh(pmxModel, [new MeshBasicMaterial(), new MeshBasicMaterial()]);
+    const mesh = createPmxMesh(pmxModel, [new MeshBasicMaterial(), new MeshBasicMaterial()], 0.5);
     const {
       geometry: { groups },
       skeleton: { boneInverses, bones },
@@ -78,7 +77,7 @@ describe(createPmxMesh, () => {
     ]);
   });
 
-  test("scales the mesh by the metres each unit stands for, and by the reckoned unit where none is given", () => {
+  test("scales the mesh by the metres each unit stands for", () => {
     expect.hasAssertions();
 
     const pmxModel: PmxModel = {
@@ -100,7 +99,6 @@ describe(createPmxMesh, () => {
       },
     };
 
-    expect(createPmxMesh(pmxModel, []).scale.x).toBe(PMX_UNIT_METRES);
-    expect(createPmxMesh(pmxModel, [], 0.0909).scale.x).toBe(0.0909);
+    expect(createPmxMesh(pmxModel, [], 0.5).scale.x).toBe(0.5);
   });
 });
