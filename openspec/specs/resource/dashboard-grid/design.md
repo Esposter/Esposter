@@ -50,3 +50,4 @@ The package the grid is built on is [grid layout](../../vue-grid-layout-headless
 ## Sources
 
 - [Pointer Events, W3C](https://www.w3.org/TR/pointerevents/): pointer capture, the pointer cancel path, and `touch-action`, which the editor's tiles set and the published view leaves unset.
+- [grid-layout-plus#26, qmhc](https://github.com/qmhc/grid-layout-plus/issues/26): the report that the library injected its CSS from JavaScript, where a build cannot prefix, transpile or minify it, the ground for rejecting runtime CSS here.
