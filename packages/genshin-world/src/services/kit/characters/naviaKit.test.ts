@@ -60,6 +60,10 @@ const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(crea
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
   action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
+// The summons a shot left, in the order they were cast: the blade first, then any cannon shot the blade fired
+const readSummons = (kitEffectState: KitEffectState): KitSummon[] =>
+  kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
 // The infusions Rosula Shardshot's press leaves on Navia at the ascension
 const castShotInfusions = (ascension: number): KitInfusion[] => {
   const kitEffectState: KitEffectState = { effects: [] };
@@ -82,6 +86,22 @@ describe(createNaviaKitBehaviour, () => {
 
   const readShrapnel = (kitEffectState: KitEffectState): number =>
     getStatus(kitEffectState, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
+
+  // The state after a press that follows the shrapnel the given cannon hits gain, from a constellation count
+  const pressAfterShrapnel = (constellationCount: number, shrapnelStacks: number): KitEffectState => {
+    const combatant = createNaviaCombatant(constellationCount);
+    const kitEffectState: KitEffectState = { effects: [] };
+    for (let strike = 0; strike < shrapnelStacks; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+    startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
+    return kitEffectState;
+  };
+
+  // The CRIT Rate a press's blade carries after the shrapnel the press consumes, from a constellation count
+  const readBladeCriticalRateBonus = (constellationCount: number, shrapnelStacks: number): number | undefined =>
+    takeOne(takeOne(readSummons(pressAfterShrapnel(constellationCount, shrapnelStacks))).hits).criticalRateBonus;
 
   // A hit landing on one enemy from the team's effects
   const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
@@ -183,6 +203,40 @@ describe(createNaviaKitBehaviour, () => {
       bladeCountAfterCooldown: countSummons(kitEffectState),
       bladeFrames: Math.round(takeOne(blade.hits).hitmarkSeconds * 60),
     }).toStrictEqual({ bladeCount: 1, bladeCountAfterCooldown: 2, bladeFrames: 75 });
+  });
+
+  test("constellation 2 gives a press's blade 12% CRIT Rate for each shrapnel the press consumes, up to 36%, and nothing before it", () => {
+    expect.hasAssertions();
+    expect({
+      base: readBladeCriticalRateBonus(0, 2),
+      constellation2One: readBladeCriticalRateBonus(2, 1),
+      constellation2Six: readBladeCriticalRateBonus(2, 6),
+      constellation2Two: readBladeCriticalRateBonus(2, 2),
+    }).toStrictEqual({ base: undefined, constellation2One: 0.12, constellation2Six: 0.36, constellation2Two: 0.24 });
+  });
+
+  test("constellation 2's blade fires one cannon shot at the first enemy it strikes, and a second strike in the same use fires none", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    // The summon count after the blade strikes the enemy twice, and the position of the cannon shot it fired
+    const readStrikes = (constellationCount: number): { count: number; shotPosition: unknown } => {
+      const combatant = createNaviaCombatant(constellationCount);
+      const kitEffectState = pressAfterShrapnel(constellationCount, 0);
+      const blade = takeOne(takeOne(readSummons(kitEffectState)).hits);
+      const context = createKitTestContext(combatant, { kitEffectState });
+      blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+      blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+      const summons = readSummons(kitEffectState);
+      return {
+        count: summons.length,
+        shotPosition: summons.length > 1 ? takeOne(summons.slice(1)).body.position : undefined,
+      };
+    };
+
+    expect({ base: readStrikes(0), constellation2: readStrikes(2) }).toStrictEqual({
+      base: { count: 1, shotPosition: undefined },
+      constellation2: { count: 2, shotPosition: enemy.position },
+    });
   });
 
   test("constellation 4 cuts geo RES by 20% for eight seconds on what a burst hits, and nothing before it", () => {
