@@ -5,7 +5,6 @@ import { GCG_CRYSTALLIZE_SHIELD } from "#src/services/gcg/constants";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { takeOne } from "@esposter/shared";
 
-export const GENERALS_GLORY_ID = 116_062;
 const GENERALS_GLORY_DAMAGE = 1;
 const GENERALS_GLORY_USAGES = 2;
 const GENERALS_GLORY_GEO_CHARACTERS = 2;

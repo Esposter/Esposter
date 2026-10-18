@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { takeOne } from "@esposter/shared";
 
-export const WEEPING_WILLOW_OF_THE_LAKE_ID = 321_016;
 const WEEPING_WILLOW_OF_THE_LAKE_USAGES = 2;
 const WEEPING_WILLOW_OF_THE_LAKE_HAND_LIMIT = 2;
 const WEEPING_WILLOW_OF_THE_LAKE_DRAW = 2;

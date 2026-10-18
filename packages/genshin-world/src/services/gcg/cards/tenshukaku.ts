@@ -4,7 +4,6 @@ import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
-export const TENSHUKAKU_ID = 321_007;
 const TENSHUKAKU_DIE_KINDS = 5;
 
 // Tenshukaku, a Support: when the Action Phase begins, with 5 different kinds of Elemental Die, an Omni Die is created

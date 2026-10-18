@@ -3,12 +3,10 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { takeOne } from "@esposter/shared";
+import { BEACON_DAMAGE_TRIGGER_ID, BEACON_SKILL_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 
-export const BEACON_OF_THE_REED_SEA_ID = 311_306;
 const BEACON_DAMAGE = 1;
 // The two effects the card names, each once per Round, keyed by the id of the skill that gives each
-const BEACON_SKILL_TRIGGER_ID = 3_113_061;
-const BEACON_DAMAGE_TRIGGER_ID = 3_113_062;
 
 // Beacon of the Reed Sea, a Claymore: its character deals +1 DMG. After she uses an Elemental Skill, or takes DMG, the next DMG
 // She deals is +1 more, each trigger once per Round. The pending bonus is the card's counter

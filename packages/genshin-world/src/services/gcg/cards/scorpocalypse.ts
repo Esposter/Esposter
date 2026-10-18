@@ -3,10 +3,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { addScorpionBlessingStack } from "#src/services/gcg/cards/scorpionBlessing";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
-
-export const SCORPOCALYPSE_ID = 223_031;
-const EREMITE_SCORCHING_LOREMASTER_ID = 2_303;
-const BLAZING_STRIKE_SKILL_ID = 23_032;
+import { BLAZING_STRIKE_SKILL_ID, EREMITE_SCORCHING_LOREMASTER_ID } from "#src/services/gcg/cards/constants";
 
 // Scorpocalypse, Eremite Scorching Loremaster's Talent: it is equipped to her and uses Blazing Strike at once. While she holds
 // It, the defeat Burning Assault makes is marked for a Pyro Scorpion card to the hand, and at each End Phase a Scorpion

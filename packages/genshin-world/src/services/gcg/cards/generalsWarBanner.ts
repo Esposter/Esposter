@@ -3,8 +3,8 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { Element } from "#src/models/Element";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { GENERALS_WAR_BANNER_ID } from "#src/services/gcg/cards/constants";
 
-export const GENERALS_WAR_BANNER_ID = 116_061;
 const GENERALS_WAR_BANNER_ROUNDS = 2;
 const GENERALS_WAR_BANNER_MAX_ROUNDS = 3;
 const GENERALS_WAR_BANNER_DAMAGE = 1;

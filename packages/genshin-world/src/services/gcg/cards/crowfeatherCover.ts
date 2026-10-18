@@ -4,8 +4,8 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import { checkIsGcgElementalUse } from "#src/services/gcg/effects/checkIsGcgElementalUse";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
 
-export const CROWFEATHER_COVER_ID = 114_063;
 const CROWFEATHER_COVER_DAMAGE_BONUS = 1;
 
 // Crowfeather Cover, a state its character gains: the character deals 1 more Elemental Skill and Elemental Burst DMG, and each

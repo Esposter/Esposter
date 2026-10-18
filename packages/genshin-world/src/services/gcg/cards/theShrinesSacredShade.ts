@@ -1,12 +1,11 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import { TENKO_KENSHIN_ID } from "#src/services/gcg/cards/tenkoKenshin";
-import { YAKAN_EVOCATION_ID } from "#src/services/gcg/cards/yakanEvocation";
+import { TENKO_KENSHIN_ID } from "#src/services/gcg/cards/constants";
+import { YAKAN_EVOCATION_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
+import { YAE_MIKO_ID } from "#src/services/gcg/cards/constants";
 
-export const THE_SHRINES_SACRED_SHADE_ID = 214_081;
-const YAE_MIKO_ID = 1_408;
 const SHRINES_SACRED_SHADE_REDUCTION = 2;
 
 // The Shrine's Sacred Shade, Yae Miko's talent: it is equipped and Great Secret Art: Tenko Kenshin is used at once. Its counter

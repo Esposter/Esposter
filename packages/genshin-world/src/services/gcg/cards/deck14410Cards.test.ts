@@ -16,27 +16,40 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { ABSORBING_PRISM_ID, absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
-import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
-import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
-import { CHINJU_FOREST_ID, chinjuForest } from "#src/services/gcg/cards/chinjuForest";
-import { ABYSSAL_SUMMONS_ID } from "#src/services/gcg/cards/abyssalSummons";
-import { CROWFEATHER_COVER_ID, crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
-import { CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
-import { DARKFIRE_FURNACE_ID, darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
-import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
-import { ELECTRO_HILICHURL_SHOOTER_ID, electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
-import {
-  ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID,
-  elementalResonanceHighVoltage,
-} from "#src/services/gcg/cards/elementalResonanceHighVoltage";
-import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
-import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
-import { HILICHURL_BERSERKER_ID, hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
-import { SIN_OF_PRIDE_ID, sinOfPride } from "#src/services/gcg/cards/sinOfPride";
-import { SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
-import { TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
-import { TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
+import { absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
+import { ABSORBING_PRISM_ID } from "#src/services/gcg/cards/constants";
+import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/constants";
+import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
+import { CHAINS_OF_WARDING_THUNDER_ID } from "#src/services/gcg/cards/constants";
+import { chinjuForest } from "#src/services/gcg/cards/chinjuForest";
+import { CHINJU_FOREST_ID } from "#src/services/gcg/cards/constants";
+import { ABYSSAL_SUMMONS_ID } from "#src/services/gcg/cards/constants";
+import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
+import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
+import { cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
+import { CRYO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
+import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
+import { DARKFIRE_FURNACE_ID } from "#src/services/gcg/cards/constants";
+import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
+import { ELECTRO_CRYSTAL_CORE_ID } from "#src/services/gcg/cards/constants";
+import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
+import { ELECTRO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
+import { elementalResonanceHighVoltage } from "#src/services/gcg/cards/elementalResonanceHighVoltage";
+import { ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID } from "#src/services/gcg/cards/constants";
+import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
+import { EMBERS_REKINDLED_ID } from "#src/services/gcg/cards/constants";
+import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
+import { FIERY_REBIRTH_ID } from "#src/services/gcg/cards/constants";
+import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
+import { HILICHURL_BERSERKER_ID } from "#src/services/gcg/cards/constants";
+import { sinOfPride } from "#src/services/gcg/cards/sinOfPride";
+import { SIN_OF_PRIDE_ID } from "#src/services/gcg/cards/constants";
+import { shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
+import { SHIMENAWAS_REMINISCENCE_ID } from "#src/services/gcg/cards/constants";
+import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
+import { TENGU_JUURAI_AMBUSH_ID } from "#src/services/gcg/cards/constants";
+import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
+import { TENGU_JUURAI_STORMCLUSTER_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -47,11 +60,12 @@ import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { ELECTRO_HYPOSTASIS_ID, KUJOU_SARA_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const ABYSS_LECTOR_ID = 2_302;
-const ELECTRO_HYPOSTASIS_ID = 2_401;
-const KUJOU_SARA_ID = 1_406;
 
 const createCharacterState = (id: number, element: Element): GcgCharacterState => ({
   aura: GcgAura.None,
@@ -82,6 +96,8 @@ const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["di
   usedSkillIds: [],
 });
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

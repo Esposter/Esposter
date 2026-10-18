@@ -6,8 +6,7 @@ import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActi
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-
-export const MINTY_MEAT_ROLLS_ID = 333_008;
+import { MINTY_MEAT_ROLLS_ID } from "#src/services/gcg/cards/constants";
 
 // Minty Meat Rolls: until the round ends, the target character's next three Normal Attacks cost one Unaligned die less, as
 // A status the target holds, and it eats no other food this round

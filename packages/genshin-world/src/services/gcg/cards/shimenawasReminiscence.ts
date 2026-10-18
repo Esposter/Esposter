@@ -5,8 +5,8 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 import { takeOne } from "@esposter/shared";
+import { SHIMENAWAS_REMINISCENCE_ID } from "#src/services/gcg/cards/constants";
 
-export const SHIMENAWAS_REMINISCENCE_ID = 312_014;
 const SHIMENAWAS_REMINISCENCE_ENERGY = 2;
 const SHIMENAWAS_REMINISCENCE_DAMAGE_BONUS = 1;
 

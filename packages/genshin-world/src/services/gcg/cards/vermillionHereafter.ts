@@ -5,11 +5,10 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { VERMILLION_HEREAFTER_ID, VERMILLION_HEREAFTER_STATUS_ID } from "#src/services/gcg/cards/constants";
 
-const VERMILLION_HEREAFTER_ID = 312_012;
 // The status a character switched to holds for the Round, under the artifact's own second skill id, since the dump names no
 // card for it (as Senho's passive is held under its skill id)
-const VERMILLION_HEREAFTER_STATUS_ID = 3_120_111;
 const VERMILLION_HEREAFTER_BONUS = 1;
 
 // The Normal Attack DMG a character switched to the active character deals for the Round

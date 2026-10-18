@@ -5,8 +5,8 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { createGcgElementCostReduction } from "#src/services/gcg/effects/createGcgElementCostReduction";
+import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 
-export const SWEEPING_TIME_ID = 116_022;
 const SWEEPING_TIME_BONUS = 2;
 const SWEEPING_TIME_ROUNDS = 2;
 

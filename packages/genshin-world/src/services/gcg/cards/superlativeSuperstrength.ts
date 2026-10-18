@@ -6,8 +6,8 @@ import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActi
 import { checkIsGcgChargedAttack } from "#src/services/gcg/effects/checkIsGcgChargedAttack";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
 
-export const SUPERLATIVE_SUPERSTRENGTH_ID = 116_054;
 const SUPERLATIVE_SUPERSTRENGTH_BONUS = 1;
 const SUPERLATIVE_SUPERSTRENGTH_MAX_USAGES = 3;
 // The usages a Superlative Superstrength needs left for its character's Charged Attacks to cost one Unaligned die less

@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { CEREMONIAL_GARMENT_ID, ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
+import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
+import { CEREMONIAL_GARMENT_ID } from "#src/services/gcg/cards/constants";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

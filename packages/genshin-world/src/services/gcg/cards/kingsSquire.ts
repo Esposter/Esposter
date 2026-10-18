@@ -6,9 +6,8 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { KINGS_SQUIRE_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 
-export const KINGS_SQUIRE_ID = 311_206;
-export const KINGS_SQUIRE_IN_EFFECT_ID = 301_103;
 const KINGS_SQUIRE_REDUCTION = 2;
 
 // Whether a cost is one King's Squire reduces: a Talent card's, or an Elemental Skill's

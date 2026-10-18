@@ -6,7 +6,6 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
-export const PARAMETRIC_TRANSFORMER_ID = 323_001;
 const PARAMETRIC_TRANSFORMER_PROGRESS = 3;
 const PARAMETRIC_TRANSFORMER_DICE = 3;
 

@@ -4,8 +4,8 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 import { takeOne } from "@esposter/shared";
+import { SUMERU_CITY_ID } from "#src/services/gcg/cards/constants";
 
-export const SUMERU_CITY_ID = 321_010;
 const SUMERU_CITY_REDUCTION = 1;
 
 // Sumeru City, a Support: when its side plays a Talent card or uses a Skill, while the side does not have more Elemental Dice

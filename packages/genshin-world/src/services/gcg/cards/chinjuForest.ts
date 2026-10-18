@@ -4,8 +4,6 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { takeOne } from "@esposter/shared";
 
-export const CHINJU_FOREST_ID = 321_012;
-
 // Chinju Forest, a support: while the side's Elemental Dice are an even number, its character's Normal Attacks cost 1 fewer
 // Unaligned die, and each reduction spends one of its four usages (the wiki's Chinju Forest)
 export const chinjuForest: GcgCardModule = {

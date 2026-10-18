@@ -15,29 +15,37 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
-import { BEACON_OF_THE_REED_SEA_ID, beaconOfTheReedSea } from "#src/services/gcg/cards/beaconOfTheReedSea";
+import { beaconOfTheReedSea } from "#src/services/gcg/cards/beaconOfTheReedSea";
+import { BEACON_OF_THE_REED_SEA_ID } from "#src/services/gcg/cards/constants";
 import { BURNING_ASSAULT_SKILL } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { elementalResonanceEnduringRock } from "#src/services/gcg/cards/elementalResonanceEnduringRock";
 import { elementalResonanceWovenStone } from "#src/services/gcg/cards/elementalResonanceWovenStone";
 import { ellin } from "#src/services/gcg/cards/ellin";
-import { GENERALS_GLORY_ID, generalsGlory } from "#src/services/gcg/cards/generalsGlory";
-import { GENERALS_WAR_BANNER_ID, generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
-import { GRAND_NARUKAMI_SHRINE_ID, grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
-import {
-  KINGS_SQUIRE_ID,
-  KINGS_SQUIRE_IN_EFFECT_ID,
-  kingsSquire,
-  kingsSquireInEffect,
-} from "#src/services/gcg/cards/kingsSquire";
-import { PYRO_SCORPION_ID, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
-import { RUSHING_HOUND_ID, rushingHound } from "#src/services/gcg/cards/rushingHound";
-import { SANGONOMIYA_SHRINE_ID, sangonomiyaShrine } from "#src/services/gcg/cards/sangonomiyaShrine";
-import { SCORPION_BLESSING_ID } from "#src/services/gcg/cards/scorpionBlessing";
-import { SCORPOCALYPSE_ID, scorpocalypse } from "#src/services/gcg/cards/scorpocalypse";
-import { SUMERU_CITY_ID, sumeruCity } from "#src/services/gcg/cards/sumeruCity";
-import { TENSHUKAKU_ID, tenshukaku } from "#src/services/gcg/cards/tenshukaku";
-import { VOURUKASHAS_GLOW_ID, vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
-import { WEEPING_WILLOW_OF_THE_LAKE_ID, weepingWillowOfTheLake } from "#src/services/gcg/cards/weepingWillowOfTheLake";
+import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
+import { GENERALS_GLORY_ID } from "#src/services/gcg/cards/constants";
+import { generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
+import { GENERALS_WAR_BANNER_ID } from "#src/services/gcg/cards/constants";
+import { grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
+import { GRAND_NARUKAMI_SHRINE_ID } from "#src/services/gcg/cards/constants";
+import { kingsSquire, kingsSquireInEffect } from "#src/services/gcg/cards/kingsSquire";
+import { KINGS_SQUIRE_ID, KINGS_SQUIRE_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
+import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { rushingHound } from "#src/services/gcg/cards/rushingHound";
+import { RUSHING_HOUND_ID } from "#src/services/gcg/cards/constants";
+import { sangonomiyaShrine } from "#src/services/gcg/cards/sangonomiyaShrine";
+import { SANGONOMIYA_SHRINE_ID } from "#src/services/gcg/cards/constants";
+import { SCORPION_BLESSING_ID } from "#src/services/gcg/cards/constants";
+import { scorpocalypse } from "#src/services/gcg/cards/scorpocalypse";
+import { SCORPOCALYPSE_ID } from "#src/services/gcg/cards/constants";
+import { sumeruCity } from "#src/services/gcg/cards/sumeruCity";
+import { SUMERU_CITY_ID } from "#src/services/gcg/cards/constants";
+import { tenshukaku } from "#src/services/gcg/cards/tenshukaku";
+import { TENSHUKAKU_ID } from "#src/services/gcg/cards/constants";
+import { vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
+import { VOURUKASHAS_GLOW_ID } from "#src/services/gcg/cards/constants";
+import { weepingWillowOfTheLake } from "#src/services/gcg/cards/weepingWillowOfTheLake";
+import { WEEPING_WILLOW_OF_THE_LAKE_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -46,15 +54,16 @@ import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { ELLIN_ID, GOROU_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const GOROU_ID = 1_606;
 const EREMITE_ID = 2_303;
 const ITTO_ID = 1_605;
 const BOW = "BOW";
 const CLAYMORE = "CLAYMORE";
 const CARD_ID = 999_999;
-const ELLIN_ID = 322_010;
 
 const createSkill = (id: number, effect: string, kind: GcgSkillKind, costs: GcgSkill["costs"] = []): GcgSkill => ({
   costs,
@@ -126,6 +135,8 @@ const createSideState = (
   usedSkillIds: [],
 });
 const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

@@ -2,7 +2,8 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
-import { USHI_ID, ushi } from "#src/services/gcg/cards/ushi";
+import { ushi } from "#src/services/gcg/cards/ushi";
+import { USHI_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 

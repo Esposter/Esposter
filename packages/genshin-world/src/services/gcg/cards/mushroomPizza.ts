@@ -5,9 +5,8 @@ import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneC
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
+import { MUSHROOM_PIZZA_ID, MUSHROOM_PIZZA_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 
-const MUSHROOM_PIZZA_ID = 333_007;
-const MUSHROOM_PIZZA_IN_EFFECT_ID = 303_305;
 const HEAL_VALUE = 1;
 
 // Mushroom Pizza, a food: the target character heals 1 HP, holds the food as a status until the Round ends, so it eats no other

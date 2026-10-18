@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { GENERALS_GLORY_ID, generalsGlory } from "#src/services/gcg/cards/generalsGlory";
+import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
+import { GENERALS_GLORY_ID } from "#src/services/gcg/cards/constants";
 import { placeGeneralsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

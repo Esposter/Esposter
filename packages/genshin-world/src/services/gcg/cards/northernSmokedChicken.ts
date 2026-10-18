@@ -5,8 +5,7 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
-
-const NORTHERN_SMOKED_CHICKEN_ID = 333_004;
+import { NORTHERN_SMOKED_CHICKEN_ID } from "#src/services/gcg/cards/constants";
 
 // Northern Smoked Chicken: the target character's next Normal Attack this round costs one Unaligned die less, and a
 // Character eats one food a round

@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
 
-export const SANGONOMIYA_SHRINE_ID = 321_009;
 const SANGONOMIYA_SHRINE_USAGES = 2;
 const SANGONOMIYA_SHRINE_HEAL = 1;
 

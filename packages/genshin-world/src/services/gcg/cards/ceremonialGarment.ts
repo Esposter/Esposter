@@ -4,7 +4,6 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
 
-export const CEREMONIAL_GARMENT_ID = 112_052;
 const CEREMONIAL_GARMENT_BONUS = 1;
 const CEREMONIAL_GARMENT_HEAL = 1;
 const CEREMONIAL_GARMENT_ROUNDS = 2;

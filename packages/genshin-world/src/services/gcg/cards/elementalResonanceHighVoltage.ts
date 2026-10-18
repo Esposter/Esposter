@@ -2,8 +2,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
 
-export const ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID = 331_402;
-
 // Elemental Resonance: High Voltage, an event: the active character and the next character without maximum Energy each gain
 // 1 Energy (the wiki's Elemental Resonance: High Voltage)
 export const elementalResonanceHighVoltage: GcgCardModule = {

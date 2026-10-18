@@ -2,10 +2,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
 import { attachGcgAegisOfAbyssalFlame } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
-import { FIERY_REBIRTH_ID } from "#src/services/gcg/cards/fieryRebirth";
+import { FIERY_REBIRTH_ID } from "#src/services/gcg/cards/constants";
 import { takeOne } from "@esposter/shared";
-
-export const EMBERS_REKINDLED_ID = 223_021;
+import { EMBERS_REKINDLED_ID } from "#src/services/gcg/cards/constants";
 
 // Embers Rekindled, Abyss Lector's talent: once its character has triggered Fiery Rebirth, whether when the card is played on it
 // Or when the character triggers it, the card is discarded and the character gains the Aegis of Abyssal Flame (the wiki's

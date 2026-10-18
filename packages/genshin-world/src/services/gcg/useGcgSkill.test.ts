@@ -10,22 +10,25 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { MINTY_MEAT_ROLLS_ID, mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
-import {
-  BURNING_ASSAULT_SKILL,
-  PYRO_SCORPION_ID,
-  pyroScorpion,
-} from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
-import { SWEEPING_TIME_ID, sweepingTime } from "#src/services/gcg/cards/sweepingTime";
+import { mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
+import { MINTY_MEAT_ROLLS_ID } from "#src/services/gcg/cards/constants";
+import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
+import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

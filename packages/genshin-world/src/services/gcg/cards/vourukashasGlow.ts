@@ -3,11 +3,10 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
+import { VOURUKASHAS_GLOW_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 
-export const VOURUKASHAS_GLOW_ID = 312_022;
 const VOURUKASHAS_GLOW_HEAL = 1;
 // Its once-per-Round effect, keyed by the id of the skill that gives it
-const VOURUKASHAS_GLOW_TRIGGER_ID = 3_120_221;
 
 // Vourukasha's Glow, an Artifact: after its character takes DMG and survives it, if she is active a card is drawn, and at this
 // End Phase she heals 1 HP, once per Round. The heal waits in the counter

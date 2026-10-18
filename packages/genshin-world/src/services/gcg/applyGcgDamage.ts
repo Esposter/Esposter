@@ -13,8 +13,6 @@ import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import {
   GCG_AURA_ELEMENTS,
   GCG_FROZEN_BONUS,
@@ -82,9 +80,9 @@ const hitGcgCharacter = (
   } else if (damage.damageType === GcgDamageKind.Physical) {
     recordGcgHit(dealt, hit, damage.damageType);
     hurtGcgCharacter(duel, 1 - sourceSideIndex, hit, damage.value + takeGcgFrozenBonus(hit, damage.damageType), false);
-  } else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
+  } else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType, duel.cardModules)) {
     applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule, dealt, context);
-    const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses]);
+    const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses], duel.cardModules);
     if (permanentAura !== undefined) hit.aura = permanentAura;
   }
 };
@@ -99,10 +97,10 @@ const notifyGcgDamageTaken = (
 ): void => {
   const context: GcgEffectContext = { characterIndex, duel, sideIndex };
   for (const zoneCard of [...character.equipments, ...character.statuses])
-    GcgCardIdModuleMap.get(zoneCard.cardId)?.onDamageTaken?.(context, zoneCard);
+    duel.cardModules.get(zoneCard.cardId)?.onDamageTaken?.(context, zoneCard);
   for (const skill of character.character.skills)
     if (skill.kind === GcgSkillKind.Passive)
-      GcgEffectNameSkillModuleMap.get(skill.effect)?.afterDamageTaken?.({ ...context, skill });
+      duel.skillModules.get(skill.effect)?.afterDamageTaken?.({ ...context, skill });
 };
 
 // An elemental hit: its Frozen bonus, then the reaction its aura makes with the element if the rule lists one, which
@@ -178,7 +176,7 @@ const applyGcgReactionEffects = (
       }
     }
     for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
+      duel.cardModules.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
   }
   applyGcgNonDamageReactionEffects(duel, sourceSideIndex, 1 - sourceSideIndex, hit, reaction);
 };
@@ -256,10 +254,9 @@ const notifyGcgShieldDepleted = (
 ): void => {
   const characterIndex = takeOne(duel.sides, sideIndex).characters.indexOf(character);
   for (const zoneCard of [...character.equipments, ...character.statuses]) {
-    const value = GcgCardIdModuleMap.get(zoneCard.cardId)?.onShieldDepleted?.(
-      { characterIndex, duel, sideIndex },
-      zoneCard,
-    );
+    const value = duel.cardModules
+      .get(zoneCard.cardId)
+      ?.onShieldDepleted?.({ characterIndex, duel, sideIndex }, zoneCard);
     if (!value) continue;
     applyGcgDamage(duel, sideIndex, { damageType: GcgDamageKind.Piercing, value }, rule, { duel, sideIndex });
     applyGcgStandbyPiercing(duel, sideIndex, value);
@@ -272,11 +269,11 @@ const replaceGcgDefeat = (duel: GcgDuel, sideIndex: number, characterIndex: numb
   const character = takeOne(takeOne(duel.sides, sideIndex).characters, characterIndex);
   const context: GcgEffectContext = { characterIndex, duel, sideIndex };
   for (const zoneCard of [...character.equipments, ...character.statuses]) {
-    const hp = GcgCardIdModuleMap.get(zoneCard.cardId)?.replaceDefeat?.(context, zoneCard);
+    const hp = duel.cardModules.get(zoneCard.cardId)?.replaceDefeat?.(context, zoneCard);
     if (hp === undefined) continue;
     character.hp = hp;
     for (const heard of [...character.equipments, ...character.statuses])
-      GcgCardIdModuleMap.get(heard.cardId)?.onDefeatReplaced?.(context, heard);
+      duel.cardModules.get(heard.cardId)?.onDefeatReplaced?.(context, heard);
     return true;
   }
   return false;
@@ -287,10 +284,12 @@ const replaceGcgDefeat = (duel: GcgDuel, sideIndex: number, characterIndex: numb
 const notifyGcgOpposingDefeat = (duel: GcgDuel, sideIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   for (const zoneCard of listGcgFieldCards(side, undefined))
-    GcgCardIdModuleMap.get(zoneCard.cardId)?.onOpposingDefeated?.(
-      { characterIndex: findGcgZoneCardOwner(side.characters, zoneCard), duel, sideIndex },
-      zoneCard,
-    );
+    duel.cardModules
+      .get(zoneCard.cardId)
+      ?.onOpposingDefeated?.(
+        { characterIndex: findGcgZoneCardOwner(side.characters, zoneCard), duel, sideIndex },
+        zoneCard,
+      );
 };
 
 // A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect or an End Phase

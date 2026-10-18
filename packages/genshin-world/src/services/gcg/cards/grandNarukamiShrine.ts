@@ -3,8 +3,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
+import { GRAND_NARUKAMI_SHRINE_ID } from "#src/services/gcg/cards/constants";
 
-export const GRAND_NARUKAMI_SHRINE_ID = 321_008;
 const GRAND_NARUKAMI_SHRINE_ROUND_LIMIT = 2;
 
 // Grand Narukami Shrine, a Support: after a character of its side uses a Skill, if the total of Elemental Dice is odd, an

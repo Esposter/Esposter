@@ -4,11 +4,8 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import {
-  BURNING_ASSAULT_SKILL,
-  PYRO_SCORPION_ID,
-  pyroScorpion,
-} from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { describe, expect, test } from "vitest";

@@ -6,9 +6,9 @@ import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { FULL_PLATE_ID } from "#src/services/gcg/cards/constants";
 
 const BREASTPLATE_DAMAGE = 1;
-const FULL_PLATE_ID = 116_021;
 const FULL_PLATE_SHIELD = 2;
 
 // Breastplate, Noelle's elemental skill: 1 Geo DMG, and a Full Plate onstage, which grants 2 Shield points to the active

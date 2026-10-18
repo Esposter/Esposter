@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { Element } from "#src/models/Element";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 
-export const CHAINS_OF_WARDING_THUNDER_ID = 124_013;
 const CHAINS_OF_WARDING_THUNDER_DAMAGE = 1;
 
 // Chains of Warding Thunder, Electro Hypostasis' summon: 1 Electro DMG at each End Phase, for two usages. While it is on the

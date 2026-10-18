@@ -1,6 +1,5 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-export const FIERY_REBIRTH_ID = 123_022;
 const FIERY_REBIRTH_HP = 4;
 const FIERY_REBIRTH_SKILL_DAMAGE_BONUS = 1;
 

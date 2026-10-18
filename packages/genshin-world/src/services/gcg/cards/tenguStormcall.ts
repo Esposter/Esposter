@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
+import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
+import { TENGU_JUURAI_AMBUSH_ID } from "#src/services/gcg/cards/constants";
 import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgSummonAfterDamage";
 
 const TENGU_STORMCALL_DAMAGE = 1;

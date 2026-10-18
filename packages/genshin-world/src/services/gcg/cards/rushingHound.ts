@@ -1,14 +1,11 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
-import { GENERALS_WAR_BANNER_ID } from "#src/services/gcg/cards/generalsWarBanner";
+import { GENERALS_WAR_BANNER_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { takeOne } from "@esposter/shared";
-
-export const RUSHING_HOUND_ID = 216_061;
-const GOROU_ID = 1_606;
-const INUZAKA_ALL_ROUND_DEFENSE_SKILL_ID = 16_062;
+import { GOROU_ID, INUZAKA_ALL_ROUND_DEFENSE_SKILL_ID, RUSHING_HOUND_ID } from "#src/services/gcg/cards/constants";
 
 // Rushing Hound: Swift as the Wind, Gorou's Talent: it is equipped to her and uses her Elemental Skill at once. While it is
 // On her, a skill of her side that deals Geo DMG draws a card while a General's War Banner is in play, once per Round
