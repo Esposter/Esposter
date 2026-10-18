@@ -8,6 +8,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
+import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
@@ -35,6 +36,7 @@ import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
@@ -64,6 +66,7 @@ import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
+import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
@@ -89,6 +92,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
+import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -262,6 +266,7 @@ const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoin
 const {
   adventureExp,
   adventureExpProgress,
+  completedMainQuestIds,
   gainWorldAdventureExp,
   isWorldLevelAdjustable,
   rank,
@@ -651,6 +656,37 @@ const crafting = computed(() =>
     (characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "",
   ),
 );
+// The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
+// With resin. No kind rule is hosted yet, so none is drawn until the outcrop region's data is read
+const outcropKindRules = ref<OutcropKindRule[]>([]);
+// The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
+const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
+const {
+  chooseOutcropClaim,
+  claimPrompt,
+  closeOutcropClaim,
+  openOutcropClaim,
+  outcropCamps,
+  outcropInteractables,
+  touchOutcropsNear,
+} = useWorldOutcrops({
+  adventureExp,
+  adventureRankTables,
+  areaId: ref(OUTCROP_REGION_ID),
+  completedMainQuestIds,
+  enemyMap: kitContext.enemyMap,
+  events,
+  gameText,
+  getGroundHeight,
+  inventory,
+  kindRules: outcropKindRules,
+  materialDataMap,
+  nameText,
+  placements: outcropPlaces,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
@@ -673,6 +709,7 @@ const interactables = computed<Interactable[]>(() => {
     ...pickUpInteractables.value,
     ...residentInteractables.value,
     ...chestInteractables.value,
+    ...outcropInteractables.value,
     ...frostbearingTrees,
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
@@ -849,6 +886,8 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
+          if (!isPaused && screenKind === ScreenKind.World)
+            touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
             stepFishing({
               isReeling: inputState.heldActions.has(InputAction.NormalAttack),
@@ -892,6 +931,8 @@ defineExpose({ jumpTo, readCameraPosition });
               pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
+            else if (interactable?.kind === InteractionKind.Claim)
+              openOutcropClaim(Number(interactable.id), getWorldNow());
             else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
               offerFrostbearingTree(frostbearingTreePlace);
@@ -981,6 +1022,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
+        :outcrop-camps="outcropCamps"
         :is-paused
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
@@ -1046,6 +1088,15 @@ defineExpose({ jumpTo, readCameraPosition });
     >
       <template #prompts>
         <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
+        <OfferChoice
+          v-if="claimPrompt"
+          :cancel-label="gameText[GameTextKey.Cancel]"
+          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :offers="claimPrompt.offers"
+          :original-label="gameText[GameTextKey.UseOriginalResin]"
+          @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
+          @close="closeOutcropClaim"
+        />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
     </HudScreen>
