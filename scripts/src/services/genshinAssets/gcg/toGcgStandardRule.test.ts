@@ -8,8 +8,9 @@ import { describe, expect, test } from "vitest";
 describe(toGcgStandardRule, () => {
   const DRAW_COUNT = 2;
   const HAND_CARD_LIMIT = 10;
-  const CRYO_PYRO_REACTION_ID = 101;
-  const ANEMO_CRYO_REACTION_ID = 107;
+  const CRYO_PYRO_REACTION_ID = 1;
+  const ANEMO_CRYO_REACTION_ID = 2;
+  const MISSING_REACTION_ID = 3;
   const reactionRows: ExcelGcgElementReactionRow[] = [
     { elementType1: "GCG_ELEMENT_CRYO", elementType2: "GCG_ELEMENT_PYRO", id: CRYO_PYRO_REACTION_ID },
     { elementType1: "GCG_ELEMENT_ANEMO", elementType2: "GCG_ELEMENT_CRYO", id: ANEMO_CRYO_REACTION_ID },
@@ -40,13 +41,13 @@ describe(toGcgStandardRule, () => {
 
     const ruleRow: ExcelGcgRuleRow = {
       drawCardNum: DRAW_COUNT,
-      elementReactionList: [CRYO_PYRO_REACTION_ID, 999],
+      elementReactionList: [CRYO_PYRO_REACTION_ID, MISSING_REACTION_ID],
       handCardLimit: HAND_CARD_LIMIT,
       id: 2,
     };
 
     expect(() => toGcgStandardRule(ruleRow, reactionRows)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: standard rule, rule 2 lists reaction 999, which the reaction table does not hold]`,
+      `[InvalidOperationError: Invalid operation: Read, name: standard rule, rule 2 lists reaction 3, which the reaction table does not hold]`,
     );
   });
 });
