@@ -1,3 +1,4 @@
+import type { BossMove } from "#src/models/bosses/BossMove";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
@@ -157,5 +158,57 @@ describe(stepEnemy, () => {
 
     expect(stepEnemy(enemy, undefined, ENEMY_DEATH_SECONDS)).toBe(EnemyEvent.Defeated);
     expect(stepEnemy(enemy, undefined, ENEMY_STEP_SECONDS)).toBeUndefined();
+  });
+
+  test("a boss's windup lasts its move's windup rather than the common one", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const moves: BossMove[] = [
+      {
+        atkPercent: 100,
+        name: "Test move",
+        recoverySeconds: ENEMY_RECOVERY_SECONDS,
+        windupSeconds: ENEMY_WINDUP_SECONDS * 2,
+      },
+    ];
+    setEnemyState(enemy, EnemyState.Windup);
+    stepEnemy(enemy, undefined, ENEMY_WINDUP_SECONDS, moves);
+
+    expect(enemy.state).toBe(EnemyState.Windup);
+
+    stepEnemy(enemy, undefined, ENEMY_WINDUP_SECONDS, moves);
+
+    expect(enemy.state).toBe(EnemyState.Recovery);
+  });
+
+  test("a boss's moves run in turn, each after its own recovery, and wrap back to the first", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const moves: BossMove[] = [
+      {
+        atkPercent: 100,
+        name: "First test move",
+        recoverySeconds: ENEMY_STEP_SECONDS,
+        windupSeconds: ENEMY_WINDUP_SECONDS,
+      },
+      {
+        atkPercent: 100,
+        name: "Second test move",
+        recoverySeconds: ENEMY_RECOVERY_SECONDS,
+        windupSeconds: ENEMY_WINDUP_SECONDS,
+      },
+    ];
+    setEnemyState(enemy, EnemyState.Recovery);
+    stepEnemy(enemy, undefined, ENEMY_STEP_SECONDS, moves);
+
+    expect(enemy.state).toBe(EnemyState.Chase);
+    expect(enemy.moveIndex).toBe(1);
+
+    setEnemyState(enemy, EnemyState.Recovery);
+    stepEnemy(enemy, undefined, ENEMY_RECOVERY_SECONDS, moves);
+
+    expect(enemy.moveIndex).toBe(0);
   });
 });
