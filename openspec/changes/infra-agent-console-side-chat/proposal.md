@@ -21,7 +21,7 @@ A side chat opens beside the conversation for a question that uses the session's
 
 ## Waiting on
 
-None.
+- The drawer (tasks 2.1 and 2.3 of the change's tasks) is open. The conversation and composer must first render a session other than the current one, a store and component refactor this change does not yet include. The host side is built: the fork, plan mode, no saved transcript, and the sessions list leaving an open side chat out.
 
 ## Impact
 
