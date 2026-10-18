@@ -62,6 +62,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard data binding](dashboard-data-binding/design.md) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Dashboard duplicate visual](dashboard-duplicate-visual/design.md) — Duplicate on a tile's corner copies its chart settings and binding
 - [Dashboard chart interaction](dashboard-chart-interaction/design.md) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
+- [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: pure placement functions, Pointer Events, one write per gesture
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
