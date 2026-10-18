@@ -1,7 +1,7 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
-import { StatueRegionCityIdMap } from "#src/services/statue/StatueRegionCityIdMap";
+import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
 
 // The achievement event of a region's statue level rising, its quantity the level reached and its target the city the
 // Table numbers it by. A level that does not rise, and a region with no city, emit nothing
@@ -10,7 +10,7 @@ export const computeStatueLevelEvents = (
   previousLevel: number,
   level: number,
 ): AchievementEvent[] => {
-  const cityId: string | undefined = StatueRegionCityIdMap[regionId];
+  const cityId: number | undefined = RegionIdCityIdMap[regionId];
   if (cityId === undefined || level <= previousLevel) return [];
-  return [{ kind: AchievementEventKind.StatueLevelReached, quantity: level, targetId: cityId }];
+  return [{ kind: AchievementEventKind.StatueLevelReached, quantity: level, targetId: String(cityId) }];
 };
