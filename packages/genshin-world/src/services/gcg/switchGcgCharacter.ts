@@ -33,7 +33,7 @@ export const switchGcgCharacter = (
     !payGcgSubjectCost(
       { duel, sideIndex },
       side.activeIndex,
-      { card: undefined, skill: undefined },
+      { card: undefined, skill: undefined, switchTo: characterIndex },
       [{ count: GCG_SWITCH_DICE_COUNT, kind: GcgCostKind.Unaligned }],
       paidDiceIndices,
     )
