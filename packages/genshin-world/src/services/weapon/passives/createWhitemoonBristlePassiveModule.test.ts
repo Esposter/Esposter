@@ -68,6 +68,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
+          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([120, 120]);
@@ -89,6 +90,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -105,6 +107,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -127,6 +130,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       );
     const bonusAfter27Instances = createBonus();
     whitemoonBristlePassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
@@ -151,6 +155,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -170,6 +175,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       );
     const bonusInsideCooldown = createBonus();
     stepKitSeconds(context, 12);

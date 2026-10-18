@@ -16,7 +16,6 @@
   },
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9131 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "hits.surgingBlades.length": { "cause": "Unsourced", "value": 2 },
   "hits.surgingBlades.0.area": {
     "cause": "Unsourced",

@@ -105,4 +105,15 @@ describe("stepKitField", () => {
     expect(onTick).toHaveBeenCalledTimes(2);
     expect(onTick).toHaveBeenLastCalledWith(context, 1);
   });
+
+  test("a field's step hook is given the seconds the step covers, so a rate on the field counts them", () => {
+    expect.hasAssertions();
+
+    const onStep = vi.fn();
+    const field: KitField = { ...createField(60, 60, vi.fn()), onStep };
+    const context = createKitTestContext(COMBATANT);
+    stepKitField(field, 0.5, context);
+
+    expect(onStep).toHaveBeenCalledWith(context, field, 0.5);
+  });
 });

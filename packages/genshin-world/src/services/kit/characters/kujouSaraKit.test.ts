@@ -9,13 +9,21 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKujouSaraKitBehaviour, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import {
+  createKujouSaraKitBehaviour,
+  KUJOU_SARA_CHARACTER_ID,
+  KUJOU_SARA_C6_MARK_ID,
+} from "#src/services/kit/characters/kujouSaraKit";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -161,5 +169,126 @@ describe("decorum", () => {
     expect.hasAssertions();
 
     expect(readEnergies(3, 1)).toStrictEqual([0, 0]);
+  });
+});
+
+// The seconds the mark stands on the character an Ambush-carrying hit gives the ATK Bonus, with Sara at the constellation count
+const readMarkSeconds = (constellationCount: number): number | undefined => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const combatant = createSaraCombatant(0, constellationCount);
+  const hit = takeOne(SARA_KIT.elementalBurst.hits);
+  hit.onStrike?.(
+    createKitTestContext(combatant, { kitEffectState }),
+    { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  );
+  return findKitStatus(kitEffectState.effects, KUJOU_SARA_CHARACTER_ID, KUJOU_SARA_C6_MARK_ID)?.secondsRemaining;
+};
+
+describe("constellation 6", () => {
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };
+  const markedOther = (): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, OTHER_CHARACTER_ID, { id: KUJOU_SARA_C6_MARK_ID, secondsRemaining: 6 });
+    return kitEffectState;
+  };
+
+  test("the ATK Bonus Tengu Stormcall gives marks the character on the field for six seconds, from Constellation 6", () => {
+    expect.hasAssertions();
+    expect({ at5: readMarkSeconds(5), at6: readMarkSeconds(6) }).toStrictEqual({ at5: undefined, at6: 6 });
+  });
+
+  test("the mark lasts six seconds, and is gone after them", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const combatant = createSaraCombatant(0, 6);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const hit = takeOne(SARA_KIT.elementalBurst.hits);
+    hit.onStrike?.(context, { body: kitBody, combatant, hit }, enemy);
+
+    stepKitSeconds(context, 5);
+    const secondsBeforeExpiry = findKitStatus(
+      kitEffectState.effects,
+      KUJOU_SARA_CHARACTER_ID,
+      KUJOU_SARA_C6_MARK_ID,
+    )?.secondsRemaining;
+    stepKitSeconds(context, 1.1);
+
+    expect({
+      afterExpiry: findKitStatus(kitEffectState.effects, KUJOU_SARA_CHARACTER_ID, KUJOU_SARA_C6_MARK_ID),
+      beforeExpiry: secondsBeforeExpiry,
+    }).toStrictEqual({ afterExpiry: undefined, beforeExpiry: expect.closeTo(1, 1) });
+  });
+
+  test("an Electro strike of the marked character takes 60% CRIT DMG from Sara's kit, whoever lands it, and another element takes none", () => {
+    expect.hasAssertions();
+    const party = createParty([KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const sara = createSaraCombatant(0, 6);
+    const electroHit = takeOne(SARA_KIT.elementalBurst.hits);
+    const pyroHit = { ...electroHit, element: Element.Pyro };
+    const markedEffects = markedOther().effects;
+    const unmarkedEffects: KitEffect[] = [];
+
+    expect({
+      electro: SARA_KIT.getPartyStrikeBonus?.(
+        sara,
+        { body: kitBody, combatant: other, hit: electroHit },
+        enemy,
+        party,
+        markedEffects,
+        new Map(),
+      )?.criticalDamageBonus,
+      electroUnmarked: SARA_KIT.getPartyStrikeBonus?.(
+        sara,
+        { body: kitBody, combatant: other, hit: electroHit },
+        enemy,
+        party,
+        unmarkedEffects,
+        new Map(),
+      )?.criticalDamageBonus,
+      pyro: SARA_KIT.getPartyStrikeBonus?.(
+        sara,
+        { body: kitBody, combatant: other, hit: pyroHit },
+        enemy,
+        party,
+        markedEffects,
+        new Map(),
+      )?.criticalDamageBonus,
+    }).toStrictEqual({ electro: 0.6, electroUnmarked: 0, pyro: 0 });
+  });
+
+  test("an Electro strike Sara makes takes 60% CRIT DMG from her own kit while she holds the mark", () => {
+    expect.hasAssertions();
+    const party = createParty([KUJOU_SARA_CHARACTER_ID]);
+    const sara = createSaraCombatant(0, 6);
+    const hit = takeOne(SARA_KIT.elementalBurst.hits);
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, KUJOU_SARA_CHARACTER_ID, { id: KUJOU_SARA_C6_MARK_ID, secondsRemaining: 6 });
+
+    expect(
+      SARA_KIT.getStrikeCriticalDamageBonus?.(
+        { body: kitBody, combatant: sara, hit },
+        enemy,
+        party,
+        kitEffectState.effects,
+      ),
+    ).toBe(0.6);
+  });
+
+  test("a Lunar-Charged reaction by the marked character takes 60% CRIT DMG, and no other reaction or character does", () => {
+    expect.hasAssertions();
+    const sara = createSaraCombatant(0, 6);
+    const context = createKitTestContext(sara, { kitEffectState: markedOther() });
+    const readBonus = (combatant: Combatant, reactionType: LunarReactionType | TransformativeReactionType) =>
+      SARA_KIT.getPartyReactionBonus?.(sara, { combatant, element: Element.Electro, enemy, reactionType }, context)
+        ?.criticalDamageBonus ?? 0;
+
+    expect({
+      electroChargedByMarked: readBonus(other, TransformativeReactionType.ElectroCharged),
+      lunarChargedByMarked: readBonus(other, LunarReactionType.LunarCharged),
+      lunarChargedByUnmarked: readBonus(sara, LunarReactionType.LunarCharged),
+    }).toStrictEqual({ electroChargedByMarked: 0, lunarChargedByMarked: 0.6, lunarChargedByUnmarked: 0 });
   });
 });

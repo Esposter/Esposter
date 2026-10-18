@@ -43,9 +43,6 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
-  // Whether the character may start a normal attack, a charged attack or a plunge as it stands, which a state it holds
-  // Can restrict, as gcsim's ActionReady does for Mizuki's Dreamdrifter; a kit without the hook may start all of them
-  checkCanStartAttack?: (context: KitContext) => boolean;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
@@ -69,9 +66,11 @@ export interface Kit {
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
-  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a reaction a member makes, given
-  // The member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the deployed
-  // Team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being itself
+  // The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and Elevation a deployed member's kit adds to a reaction a member
+  // Makes, given the member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the
+  // Deployed team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being
+  // Itself. The Elevation multiplies a Lunar or Stellar reaction's damage and a direct Lunar hit's last, the only damage the
+  // Game elevates
   getPartyReactionBonus?: (
     member: Combatant,
     reaction: KitReaction,
@@ -81,6 +80,7 @@ export interface Kit {
     criticalDamageBonus?: number;
     criticalRateBonus?: number;
     damageBonus?: number;
+    elevationBonus?: number;
   };
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands

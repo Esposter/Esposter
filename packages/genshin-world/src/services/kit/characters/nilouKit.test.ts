@@ -350,7 +350,13 @@ describe(createNilouKitBehaviour, () => {
       const bonus =
         NILOU_KIT.getPartyReactionBonus?.(
           combatant,
-          { combatant, coreKind, reactionType: ReactionType.Bloom },
+          {
+            combatant,
+            coreKind,
+            element: Element.Dendro,
+            enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+            reactionType: ReactionType.Bloom,
+          },
           createTeamContext(combatant, []),
         )?.damageBonus ?? 0;
       return Math.round(bonus * 1000) / 1000;

@@ -3,6 +3,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { isAscendantGleam } from "#src/services/kit/isAscendantGleam";
 
 export const FLINS_CHARACTER_ID = 10_000_120;
 
@@ -18,7 +19,7 @@ const CONSTELLATION_4_ATTACK_PERCENT = 0.2;
 // Stance for the Manifest Flame's seconds, ending as he leaves the field, whose strikes and charged attack are the Electro
 // Ones. Not built yet: Thunderous Symphony, the burst Northland Spearstorm arms for six seconds, whose hits are
 // Lunar-Charged; Northland Spearstorm, the stance's skill, which waits on a stance's own skill cooldown, so the stance
-// Keeps the kit's own skill as Raiden's Musou Isshin does; Cometh the Night's middle hits, which are Lunar-Charged; and
+// Keeps the kit's own skill as Raiden's Musou Isshin does; Cometh the Night's middle hits' Lunar-Charged reaction, which the builder sources for the first middle hit only; and
 // Constellation 4's ATK is built; its Elemental Mastery part needs the ATK total, which a passive bonus does not read.
 // His passives, and Constellations 1, 2 and 6, read the Lunar-Charged reaction or the Manifest Flame's own skill
 // Constellation 1 needs Spearstorm's four-second cooldown and party members' Lunar-Charged reactions, not built
@@ -43,6 +44,9 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
         ? [{ amount: CONSTELLATION_4_ATTACK_PERCENT, attribute: Attribute.AttackPercent }]
         : []),
     ],
+    // Cometh the Night's middle hits: two land always, and two more at Ascendant Gleam, as gcsim's burst reads the Moonsign
+    // Level when its initial hit lands, the team's composition not changing within the burst
+    burst: { hits: [{}, {}, {}, { landsWhen: isAscendantGleam }, { landsWhen: isAscendantGleam }, {}] },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),

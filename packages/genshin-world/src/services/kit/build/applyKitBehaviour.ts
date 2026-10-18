@@ -37,7 +37,6 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burstVariant,
     chargedAttack,
     chargedAttackVariant,
-    checkCanStartAttack,
     getChargedAttackStaminaMultiplier,
     getConversionBonuses,
     getNormalAttackExtraHit,
@@ -67,8 +66,8 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     skill,
     skillChain = [],
     skillHolds = [],
+    stellarJubilee,
   } = behaviour;
-  if (checkCanStartAttack) kit.checkCanStartAttack = checkCanStartAttack;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getConversionBonuses) kit.getConversionBonuses = getConversionBonuses;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
@@ -94,6 +93,11 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     if (!kit.moonsignBenediction)
       throw new InvalidOperationError(Operation.Update, "moonsignBenediction", "its record holds none");
     kit.moonsignBenediction.getBaseDamageBonus = moonsignBenediction.getBaseDamageBonus;
+  }
+  if (stellarJubilee?.getBaseDamageBonus) {
+    if (!kit.stellarJubilee)
+      throw new InvalidOperationError(Operation.Update, "stellarJubilee", "its record holds none");
+    kit.stellarJubilee.getBaseDamageBonus = stellarJubilee.getBaseDamageBonus;
   }
   applyKitActionBehaviour(kit.elementalBurst, burst, "burst");
   applyKitVariantBehaviour(kit.elementalBurstVariant, burstVariant, "burstVariant");

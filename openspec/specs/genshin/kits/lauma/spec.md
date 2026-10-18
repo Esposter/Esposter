@@ -1,6 +1,6 @@
 ## Purpose
 
-Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, and what is left waiting on the Spirit Envoy, the Pale Hymn's Bloom bonus and her constellations.
+Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, and what is left waiting on the Spirit Envoy and her other constellations.
 
 ## Requirements
 
@@ -131,12 +131,28 @@ Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasti
 - **WHEN** a Bloom reaction triggers
 - **THEN** one of Moon Song's stacks is spent
 
-### Requirement: Spirit Envoy, Constellation 2 and her other passives and constellations not yet built
+### Requirement: Constellation 2 adds to Pale Hymn's Bloom ratios
 
-Lauma's Spirit Envoy state, her Constellation 2 Pale Hymn scaling, and her other passives and constellations SHALL NOT take effect.
+From Constellation 2, each Bloom, Hyperbloom and Burgeon the party makes while it holds Pale Hymn SHALL take 5 more of Lauma's Elemental Mastery ratio, and each Lunar-Bloom 4 more.
+
+#### Scenario: Constellation 2 raises the Bloom ratio
+
+- **GIVEN** Lauma has Constellation 2 and the party holds Pale Hymn
+- **WHEN** a Bloom reaction triggers
+- **THEN** its base damage adds her Elemental Mastery times the Bloom ratio plus 5
+
+#### Scenario: Constellation 1 leaves the Bloom ratio alone
+
+- **GIVEN** Lauma has Constellation 1 and the party holds Pale Hymn
+- **WHEN** a Bloom reaction triggers
+- **THEN** its base damage adds her Elemental Mastery times the Bloom ratio alone
+
+### Requirement: Spirit Envoy and her other passives and constellations not yet built
+
+Lauma's Spirit Envoy state, and her other passives and constellations, SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has the Spirit Envoy state, Constellation 2 or another passive or constellation unlocked
+- **GIVEN** Lauma has the Spirit Envoy state or another passive or constellation unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect

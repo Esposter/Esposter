@@ -56,6 +56,7 @@ describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
       enemy,
       context.party,
       context.kitEffectState.effects,
+      context.characterIdCombatantMap,
     );
 
   test("a charged attack obtains Tireless Hunt, adding the share of Elemental Mastery to charged attack hits", () => {
