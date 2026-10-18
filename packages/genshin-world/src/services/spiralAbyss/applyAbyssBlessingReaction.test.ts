@@ -17,15 +17,28 @@ const STARDREAD_BLESSING: AbyssPeriodBlessing = {
   nameTextHash: STARDREAD_NAME_TEXT_HASH,
 };
 const OTHER_BLESSING: AbyssPeriodBlessing = { ...STARDREAD_BLESSING, nameTextHash: 0 };
-const INITIAL_STATE: AbyssBlessingState = { shockwavePositions: [], stardreadReadySeconds: 0 };
+const INITIAL_STATE: AbyssBlessingState = { blessingReadySecondsMap: new Map(), shockwavePositions: [] };
 
 describe(applyAbyssBlessingReaction, () => {
   test("a Stardread Moon chamber's reaction fires a shockwave at the enemy's position", () => {
     expect.hasAssertions();
 
     expect(applyAbyssBlessingReaction(STARDREAD_BLESSING, INITIAL_STATE, POSITION, SUPERCONDUCT, 0)).toStrictEqual({
+      blessingReadySecondsMap: new Map([[STARDREAD_NAME_TEXT_HASH, STARDREAD_COOLDOWN_SECONDS]]),
       shockwavePositions: [POSITION],
-      stardreadReadySeconds: STARDREAD_COOLDOWN_SECONDS,
+    });
+  });
+
+  test("a cooldown held for another blessing does not hold the Stardread Moon's shockwave", () => {
+    expect.hasAssertions();
+    const held = { ...INITIAL_STATE, blessingReadySecondsMap: new Map([[OTHER_BLESSING.nameTextHash, 100]]) };
+
+    expect(applyAbyssBlessingReaction(STARDREAD_BLESSING, held, POSITION, SUPERCONDUCT, 0)).toStrictEqual({
+      blessingReadySecondsMap: new Map([
+        [OTHER_BLESSING.nameTextHash, 100],
+        [STARDREAD_NAME_TEXT_HASH, STARDREAD_COOLDOWN_SECONDS],
+      ]),
+      shockwavePositions: [POSITION],
     });
   });
 

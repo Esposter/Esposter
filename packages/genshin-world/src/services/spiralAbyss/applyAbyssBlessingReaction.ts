@@ -19,13 +19,13 @@ export const applyAbyssBlessingReaction = (
 ): AbyssBlessingState => {
   if (blessing?.nameTextHash !== STARDREAD_NAME_TEXT_HASH) return state;
   const { readySeconds, shockwavePosition } = applyStardreadShockwave(
-    state.stardreadReadySeconds,
+    state.blessingReadySecondsMap.get(STARDREAD_NAME_TEXT_HASH) ?? 0,
     reactions,
     position,
     seconds,
   );
   return {
+    blessingReadySecondsMap: new Map(state.blessingReadySecondsMap).set(STARDREAD_NAME_TEXT_HASH, readySeconds),
     shockwavePositions: shockwavePosition ? [...state.shockwavePositions, shockwavePosition] : state.shockwavePositions,
-    stardreadReadySeconds: readySeconds,
   };
 };

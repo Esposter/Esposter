@@ -46,7 +46,7 @@ interface AbyssPendingChoice {
 }
 
 // The blessing state a chamber starts with, before any reaction in it has been answered
-const INITIAL_ABYSS_BLESSING_STATE: AbyssBlessingState = { shockwavePositions: [], stardreadReadySeconds: 0 };
+const INITIAL_ABYSS_BLESSING_STATE: AbyssBlessingState = { blessingReadySecondsMap: new Map(), shockwavePositions: [] };
 
 // Reads one piece of the Spiral Abyss's game data once, and names a failed read in the console
 const readAbyssData = <T>(read: () => Promise<T>, onRead: (value: T) => void) => {
