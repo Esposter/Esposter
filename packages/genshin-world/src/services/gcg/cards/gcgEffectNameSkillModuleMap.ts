@@ -26,14 +26,18 @@ import { illusoryTorrent } from "#src/services/gcg/cards/illusoryTorrent";
 import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
+import { kurageOath } from "#src/services/gcg/cards/kurageOath";
 import { lightningFang } from "#src/services/gcg/cards/lightningFang";
+import { masatsuZetsugi } from "#src/services/gcg/cards/masatsuZetsugi";
 import { midnightPhantasmagoria } from "#src/services/gcg/cards/midnightPhantasmagoria";
 import { mirrorReflectionOfDoom } from "#src/services/gcg/cards/mirrorReflectionOfDoom";
+import { nereidsAscension } from "#src/services/gcg/cards/nereidsAscension";
 import { nightrider } from "#src/services/gcg/cards/nightrider";
 import { niwabiFireDance } from "#src/services/gcg/cards/niwabiFireDance";
 import { oceanidMimicSummoning } from "#src/services/gcg/cards/oceanidMimicSummoning";
 import { pyronado } from "#src/services/gcg/cards/pyronado";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
+import { royalDescent } from "#src/services/gcg/cards/royalDescent";
 import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
 import { signatureMix } from "#src/services/gcg/cards/signatureMix";
@@ -42,9 +46,11 @@ import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gc
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
 import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
+import { tenkoKenshin } from "#src/services/gcg/cards/tenkoKenshin";
 import { theMyriadWilds } from "#src/services/gcg/cards/theMyriadWilds";
 import { tideAndTorrent } from "#src/services/gcg/cards/tideAndTorrent";
 import { trumpCardKitty } from "#src/services/gcg/cards/trumpCardKitty";
+import { yakanEvocation } from "#src/services/gcg/cards/yakanEvocation";
 
 // Every character skill's own script, by the effect name the game gives the skill
 export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<string, GcgSkillModule>([
@@ -62,6 +68,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_12032", mirrorReflectionOfDoom],
   ["Char_Skill_12033", stellarisPhantasm],
   ["Char_Skill_12034", illusoryTorrent],
+  ["Char_Skill_12052", kurageOath],
+  ["Char_Skill_12053", nereidsAscension],
   ["Char_Skill_13012", searingOnslaught],
   ["Char_Skill_13013", dawn],
   ["Char_Skill_13022", guobaAttack],
@@ -76,6 +84,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_14032", stellarRestoration],
   ["Char_Skill_14032_Ex_1", stellarRestorationFromCard],
   ["Char_Skill_14033", starwardSword],
+  ["Char_Skill_14082", yakanEvocation],
+  ["Char_Skill_14083", tenkoKenshin],
   ["Char_Skill_15012", astableAnemohypostasisCreation],
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
@@ -83,6 +93,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15043", baneOfAllEvil],
   ["Char_Skill_16022", breastplate],
   ["Char_Skill_16023", sweepingTimeSkill],
+  ["Char_Skill_16052", masatsuZetsugi],
+  ["Char_Skill_16053", royalDescent],
   ["Char_Skill_17012", floralBrush],
   ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],

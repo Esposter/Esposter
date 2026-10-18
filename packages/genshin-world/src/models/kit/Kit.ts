@@ -41,6 +41,9 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
+  // Whether the character may start a normal attack, a charged attack or a plunge as it stands, which a state it holds
+  // Can restrict, as gcsim's ActionReady does for Mizuki's Dreamdrifter; a kit without the hook may start all of them
+  checkCanStartAttack?: (context: KitContext) => boolean;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
@@ -82,6 +85,8 @@ export interface Kit {
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
+  // Whether a skill starts whatever its cooldown is, while the kit's effects waive it, as a constellation's status does
+  isSkillCooldownWaived?: (context: KitContext) => boolean;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
   // Reads for a bonus its kit's actions set going
@@ -107,10 +112,13 @@ export interface Kit {
     party: Party,
     effects: readonly KitEffect[],
   ) => number;
+  // The share of its enemy's defence a strike of the kit's own ignores as it lands on an enemy, if a constellation gives one,
+  // Given the enemy as it stands, the deployed team and the effects on it
+  getStrikeDefenceIgnored?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
   // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team, the effects on
   // It and the team's built combatants by id, which a member's current attributes are read from. A member's own strikes
-  // Are priced by its own hooks, not this one
+  // Are priced by its own hooks, not this one. The defence it ignores joins the hit's defenseIgnored
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
@@ -123,6 +131,7 @@ export interface Kit {
     criticalDamageBonus?: number;
     criticalRateBonus?: number;
     damageBonus?: number;
+    defenseIgnored?: number;
   };
   highPlunge: KitAction;
   // Whether a skill with holds releases at its top level whatever seconds it was held, as a counter window on its
@@ -132,6 +141,9 @@ export interface Kit {
   // Constellation's exception to the actions that break it
   keepsNormalAttackCombo?: (context: KitContext, action: KitAction) => boolean;
   lowPlunge: KitAction;
+  // The plunges a character's skill state turns its plunge into while each one's check holds, the first holding one playing
+  // In place of the standard plunge when the body lands, as Xianyun's Driftcloud Wave does at each Skyladder press
+  plungeVariants?: KitVariant[];
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
   moonsignBenediction?: KitMoonsignBenediction;
   normalAttacks: KitAction[];

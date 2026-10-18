@@ -4,7 +4,7 @@ Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`,
 
 ## Decisions
 
-- **Her strikes are priced as gcsim has them, round the primary target.** Her first, third and fourth are circles centred 0.4 metres ahead, of radii 2, 2.5 and 3, and her second a box of 1.6 by 3 metres on the target. Each is priced as the circle round the body that holds its reach from the target, as the strike's targeting area does. Her strikes and charged attack are physical, so they deal no element and no gauge.
+- **Her strikes are priced as gcsim has them, round the primary target.** Her first, third and fourth are circles centred 0.4 metres ahead, of radii 2, 2.5 and 3, and her second a box of 1.6 by 3 metres on the target. Each circle is priced as the circle round the body that holds its reach from the target: the targeting area's radius, plus its offset, plus its own radius. Her strikes and charged attack are physical, so they deal no element and no gauge.
 - **Spiritbreath Thorn lands with every press.** Its cooldown of 10 seconds has always run out before the skill's of 14 comes round again, so the skill lands it each time. Its hit at 62 frames falls past the skill's 37-frame animation, and lands on the action's clock as the framework has late hitmarks.
 - **Constellation 2 cuts the Dendro RES of each enemy the skill's hits strike by 30% for 10 seconds.** gcsim applies it to every enemy hit whose damage is not zero, which the kit reads as an enemy status on each hit, given Emilie's constellations.
 - **Ascension 4 adds a DMG Bonus of 0.15 per 1000 of her total ATK, to a cap of 36%, to each strike that lands on a Burning enemy.** It is read through the kit's strike damage bonus, from her attack as it stands.

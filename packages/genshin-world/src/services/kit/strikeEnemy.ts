@@ -1,9 +1,9 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
 
@@ -39,14 +39,17 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Bonuses instead. It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and
 // Those of them that landed and reach round the enemy, and the element it applied at a gauge its cooldown let through
 export const strikeEnemy = (
-  { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
   kitHit: KitHit,
   combatant: Combatant,
-  random: () => number,
+  context: KitContext,
   moonsign?: PartyMoonsign,
   stellarReactionTypes: readonly StellarReactionType[] = [],
 ): EnemyStrikeResult => {
+  const {
+    enemyTables: { enemyKindMap, enemyLevelCurves },
+    random,
+  } = context;
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
   const { gauge, internalCooldownTag } = kitHit;
@@ -93,7 +96,7 @@ export const strikeEnemy = (
     poiseDamage: reactionPoiseDamage,
     reachingReactions,
     transformativeDamage,
-  } = priceEnemyReactions(kind, enemy, reactions, combatant, element);
+  } = priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
 
   const isCritical =
     kitHit.isForcedCritical ||
@@ -123,6 +126,7 @@ export const strikeEnemy = (
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
         defense,
+        defenseIgnored: kitHit.defenseIgnored,
         // The DEF each status takes off the enemy, which the defence multiplier reads against the attacker's level
         defenseReduction: enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0),
         isCritical,

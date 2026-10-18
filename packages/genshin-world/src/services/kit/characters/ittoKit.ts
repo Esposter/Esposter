@@ -15,8 +15,10 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // The Arataki Kesagiri drains no stamina, as gcsim v2.47.2 (MIT) itto/charge.go's ActionStam gives none while Itto holds
@@ -49,6 +51,11 @@ const BLOODLINE_DEFENSE_SHARE = 0.35;
 // Royal Descent's 0.1 Normal ATK SPD, as gcsim v2.47.2 (MIT) itto/burst.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/burst.go
 const BURST_NORMAL_ATTACK_SPEED_BONUS = 0.1;
+const CONSTELLATION_1 = 1;
+// Constellation 1 adds two stacks 75 frames after Royal Descent, as gcsim's burst.go line 90 queues it, then one more
+// Each 60, 90 and 120 frames after those, as its cons.go lines 20 to 22 queue them
+const CONSTELLATION_1_CAST_FRAMES = 75;
+const CONSTELLATION_1_TIMER_FRAMES = [60, 90, 120];
 
 // Bloodline of the Crimson Oni: each slash of the Arataki Kesagiri adds its DEF share, from Ascension 4
 const addBloodlineDamage = (striker: Combatant): number =>
@@ -69,8 +76,8 @@ export const ITTO_CHARACTER_ID = 10_000_057;
 // Itto's behaviour: his normal attacks and Ushi give him Superlative Superstrength, whose stacks turn his charged attack
 // Into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal Descent adds
 // His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field. Bloodline of the
-// Crimson Oni is built; Arataki Ichiban's ATK SPD, which no attribute holds, and his constellations are not
-// Constellation 1 needs Royal Descent's two Superlative Superstrength stacks, and the third a second later, not built
+// Crimson Oni and Constellation 1 are built; Arataki Ichiban's ATK SPD, which no attribute holds, and Constellations 2,
+// 4 and 6 are not
 // Constellation 2 needs each Geo party member's element, which the kit does not read, and the skill's cooldown cut
 // Constellation 4 needs the Raging Oni King state's end, which no stance hook reports, and the nearby buffs
 // Constellation 6 needs the charged attacks' CRIT DMG and Arataki Kesagiri's 50% stack save, neither built
@@ -150,6 +157,14 @@ export const createIttoKitBehaviour = ({
           normalAttackSpeedBonus: BURST_NORMAL_ATTACK_SPEED_BONUS,
           secondsRemaining: royalDescentSeconds,
         });
+        if (combatant.constellationCount >= CONSTELLATION_1)
+          scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(CONSTELLATION_1_CAST_FRAMES), (tick) => {
+            gainSuperstrength(tick.kitEffectState, combatant, 2);
+            for (const frames of CONSTELLATION_1_TIMER_FRAMES)
+              scheduleKitTask(tick.kitEffectState, combatant.characterId, toKitSeconds(frames), (timer) =>
+                gainSuperstrength(timer.kitEffectState, combatant, 1),
+              );
+          });
       },
     },
     // A normal attack of his gives him its stacks as it lands, more as the Raging Oni King, and Ushi one as it takes an

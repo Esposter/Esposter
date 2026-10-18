@@ -18,8 +18,9 @@ export const toStatueRegionProgress = (
   levels,
 });
 
-// A region's progress as the save holds it: the Oculi held, whichever kind they are, and the level reached
-export const toStatueRegionProgressSave = ({
-  heldCounts,
-  level,
-}: OfferingProgress<StatueLevel>): StatueRegionProgressSave => ({ heldCount: countHeldItems(heldCounts), level });
+// A region's progress as the save holds it: the Oculi held, whichever kind they are, the level reached, and the level its
+// Rewards have been claimed through, which the offering does not hold and so is passed beside it
+export const toStatueRegionProgressSave = (
+  { heldCounts, level }: OfferingProgress<StatueLevel>,
+  claimedLevel: number,
+): StatueRegionProgressSave => ({ claimedLevel, heldCount: countHeldItems(heldCounts), level });

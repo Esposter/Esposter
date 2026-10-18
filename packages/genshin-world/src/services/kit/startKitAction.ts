@@ -4,12 +4,18 @@ import type { KitState } from "#src/models/kit/KitState";
 
 import { landKitHits } from "#src/services/kit/landKitHits";
 
-// An action begun in place at the start of its seconds, its queued press spent and the hits at its start landed
-export const startKitAction = (kitState: KitState, action: KitAction, landedHits: KitHit[]): KitAction => {
+// An action begun in place at the start of its seconds, or past the given seconds of its charge when a charge skip stands,
+// Its queued press spent and the hits its start reaches landed
+export const startKitAction = (
+  kitState: KitState,
+  action: KitAction,
+  landedHits: KitHit[],
+  startSeconds = 0,
+): KitAction => {
   kitState.action = action;
   kitState.actionLengthSeconds = action.seconds;
-  kitState.actionSeconds = 0;
+  kitState.actionSeconds = startSeconds;
   kitState.isAttackQueued = false;
-  kitState.nextHitIndex = landKitHits(action.hits, 0, 0, landedHits);
+  kitState.nextHitIndex = landKitHits(action.hits, 0, startSeconds, landedHits);
   return action;
 };

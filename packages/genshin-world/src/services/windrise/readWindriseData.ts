@@ -8,6 +8,7 @@ import { windriseStatueSchema } from "#src/models/windrise/WindriseStatue";
 import { windriseSurfacesSchema } from "#src/models/windrise/WindriseSurfaces";
 import { windriseWaterSchema } from "#src/models/windrise/WindriseWater";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
+import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseBaseGrounds } from "#src/services/windrise/readWindriseBaseGrounds";
@@ -20,7 +21,7 @@ import { z } from "zod";
 // Names are unique
 export const readWindriseData = async (gameDataBaseUrl: string): Promise<WindriseData> => {
   const [baseGrounds, groundLayers, oak, paving, plantsRecord, statue, surfaces, water] = await Promise.all([
-    readWindriseBaseGrounds(Object.keys(gameDataLock.objects), (key) =>
+    readWindriseBaseGrounds(Object.keys(gameDataLock.objects).filter(checkIsGameDataKey), (key) =>
       readGameData(gameDataBaseUrl, key, regionGroundSchema),
     ),
     readGameData(gameDataBaseUrl, "windrise/ground-layers", groundLayerFieldSchema),

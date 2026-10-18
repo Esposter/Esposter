@@ -2,6 +2,7 @@
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
+  "frames.shootingStarTravels.length": { "cause": "Unsourced", "value": 4 },
   "frames.shootingStarTravels.0": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 35 },
   "frames.shootingStarTravels.1": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 33 },
   "frames.shootingStarTravels.2": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 30 },

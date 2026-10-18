@@ -9,6 +9,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createWriothesleyKitBehaviour, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
@@ -18,6 +21,7 @@ import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { assert, describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const WRIOTHESLEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, WRIOTHESLEY_CHARACTER_ID);
 
 const createWriothesleyCombatant = (ascension = 0): Combatant => ({
@@ -47,7 +51,12 @@ const readHealthShare = (context: KitContext): number =>
 // Lands the first hit of one of his normal attacks, as a strike of his own
 const strikeNormalAttack = (context: KitContext, index: number): void => {
   const hit = WRIOTHESLEY_KIT.normalAttacks[index]?.hits[0];
-  if (hit?.onStrike) hit.onStrike(context, { body: context.body, combatant: context.activeCombatant, hit });
+  if (hit?.onStrike)
+    hit.onStrike(
+      context,
+      { body: context.body, combatant: context.activeCombatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 };
 
 // A drain of his own HP by Chilling Penalty, as the party records it with him as its source

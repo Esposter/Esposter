@@ -174,6 +174,19 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 - **WHEN** the guest signs in
 - **THEN** the account's bag and wallet are kept
 
+#### Scenario: A statue region's claimed level is the account's
+
+- **GIVEN** the guest has claimed a level of a statue region that the account has not claimed, its rewards paid into the guest's bag
+- **WHEN** the guest signs in
+- **THEN** the account claims that level again, and is paid for it once from its own bag
+- **AND** the rewards the guest's copy paid are lost with the guest's bag
+
+#### Scenario: A rank reward claimed only in the guest's copy is claimed again on the account
+
+- **GIVEN** the guest has claimed a rank's Katheryne reward, paid into the guest's bag, and the account has not claimed it
+- **WHEN** the guest signs in
+- **THEN** the account claims that rank's reward again, and is paid for it once from its own bag and wallet
+
 #### Scenario: A mail is kept once by its id, and read or claimed on either copy stays so
 
 - **GIVEN** a guest and the account each hold a mail with the same id, the account having read it and the guest having claimed it

@@ -167,11 +167,5 @@
   },
   "stances.musouIsshin.normalAttacks.4.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.musouIsshin.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "chargedAttack.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

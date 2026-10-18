@@ -28,14 +28,18 @@ export const strikeLunarReaction = (
 ): boolean => {
   const { characterIdCombatantMap, kitEffectState, party } = context;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
-  const damages = priceReactionContributors(contributorIds, context, (level, attributeTotalMap) =>
-    getLunarDamage(
-      lunarReactionType,
-      takeOne(CharacterLevelMultiplierMap, level),
-      attributeTotalMap[Attribute.ElementalMastery],
-      moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
-      moonsign.reactionBonus,
-    ),
+  const damages = priceReactionContributors(
+    contributorIds,
+    context,
+    (level, attributeTotalMap, partyDamageBonus) =>
+      getLunarDamage(
+        lunarReactionType,
+        takeOne(CharacterLevelMultiplierMap, level),
+        attributeTotalMap[Attribute.ElementalMastery],
+        moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
+        moonsign.reactionBonus + partyDamageBonus,
+      ),
+    lunarReactionType,
   );
   if (damages.length === 0) return false;
   strikeReactionDamage(

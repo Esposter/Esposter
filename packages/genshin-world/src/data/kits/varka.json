@@ -1,6 +1,16 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
+  "burst.hits.0.area": {
+    "file": "burst.go",
+    "line": 51,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
+  },
   "burst.hits.0.element": { "cause": "Unsourced", "value": "Wind" },
-  "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
-  "burst.hits.1.element": { "cause": "Unsourced", "value": "Wind" }
+  "burst.hits.1.area": {
+    "file": "burst.go",
+    "line": 51,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
+  },
+  "burst.hits.1.element": { "file": "burst.go", "line": 30, "source": "Gcsim", "value": "Wind" }
 }

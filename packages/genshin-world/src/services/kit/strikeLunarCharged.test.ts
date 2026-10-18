@@ -19,15 +19,18 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
 
 describe(strikeLunarCharged, () => {
   const LEVEL = 90;
@@ -116,5 +119,42 @@ describe(strikeLunarCharged, () => {
       kind: KitEventKind.EnemyDefeated,
       striker: member,
     });
+  });
+  test("a passive takes effect at its ascension phase: Ifa's Rescue Essentials add 0.2% a point to the Lunar-Charged DMG the party deals, up to 150 points", () => {
+    expect.hasAssertions();
+    const ifa: Combatant = { ...createMember(IFA_CHARACTER_ID, 0), ascension: 1, kit: IFA_KIT };
+    const deployed = [...members, ifa];
+    const kitEffectState = castKitAction(IFA_KIT.elementalSkill, ifa);
+    const enemy = createSturdyEnemy();
+    const lunarReactionTypes = [LunarReactionType.LunarCharged];
+    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: SECOND_CHARACTER_ID });
+    const context = createKitTestContext(takeOne(members), {
+      characterIdCombatantMap: new Map(deployed.map((member) => [member.characterId, member])),
+      enemyMap: new Map([["", enemy]]),
+      enemyTables,
+      kitEffectState,
+      party: createParty(deployed.map(({ characterId }) => characterId)),
+    });
+    const { baseDamageBonusMap, reactionBonus } = getPartyMoonsign(
+      context.characterIdCombatantMap,
+      kitEffectState.effects,
+      context.party,
+      context.body.position,
+    );
+    const damageOf = (elementalMastery: number) =>
+      getLunarDamage(
+        LunarReactionType.LunarCharged,
+        takeOne(CharacterLevelMultiplierMap, LEVEL),
+        elementalMastery,
+        baseDamageBonusMap[LunarReactionType.LunarCharged] ?? 0,
+        reactionBonus + 80 * 0.002,
+      );
+
+    strikeLunarCharged(enemy, context);
+
+    expect(STURDY_HEALTH - enemy.health).toBeCloseTo(
+      (0.6 * damageOf(100) + 0.3 * damageOf(0)) * getResistanceMultiplier(kind.elementResistances[Element.Electro]),
+    );
   });
 });

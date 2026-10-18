@@ -172,6 +172,22 @@ A switch an effect makes SHALL count as a switch, and a defeat's replacement SHA
 - **WHEN** the replacement's next skill is a normal attack
 - **THEN** that normal attack is no plunging attack
 
+### Requirement: A normal attack is a charged attack when the side's dice are even before its action phase
+
+A normal attack SHALL be a charged attack when its side held an even number of Elemental Dice as its Action Phase began. That number SHALL be settled then and SHALL hold for the round, so a die added later does not change it.
+
+#### Scenario: An even number of dice makes the Normal Attacks charged
+
+- **GIVEN** a side holds two Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is a charged attack
+
+#### Scenario: An odd number of dice leaves them plain
+
+- **GIVEN** a side holds three Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is no charged attack
+
 ### Requirement: Elements apply an aura and Anemo and Geo set none
 
 Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, and Anemo and Geo damage SHALL set no aura.

@@ -37,6 +37,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burstVariant,
     chargedAttack,
     chargedAttackVariant,
+    checkCanStartAttack,
     getChargedAttackStaminaMultiplier,
     getConversionBonuses,
     getNormalAttackExtraHit,
@@ -50,6 +51,8 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
+    getStrikeDefenceIgnored,
+    isSkillCooldownWaived,
     jumpsSkillHoldToTop,
     keepsNormalAttackCombo,
     moonsignBenediction,
@@ -59,11 +62,13 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     onStep,
     plungeCollision = {},
     plunges = {},
+    plungeVariants = [],
     refusesFall,
     skill,
     skillChain = [],
     skillHolds = [],
   } = behaviour;
+  if (checkCanStartAttack) kit.checkCanStartAttack = checkCanStartAttack;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getConversionBonuses) kit.getConversionBonuses = getConversionBonuses;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
@@ -77,6 +82,8 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
+  if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
+  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
   if (jumpsSkillHoldToTop) kit.jumpsSkillHoldToTop = jumpsSkillHoldToTop;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
@@ -98,6 +105,10 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   applyKitHitBehaviour(kit.plungeCollision, plungeCollision, "plungeCollision");
   applyKitActionBehaviour(kit.highPlunge, plunges[KitPlunge.High], `plunges.${KitPlunge.High}`);
   applyKitActionBehaviour(kit.lowPlunge, plunges[KitPlunge.Low], `plunges.${KitPlunge.Low}`);
+  const kitPlungeVariants = kit.plungeVariants ?? [];
+  checkHasCount("plungeVariants", plungeVariants.length, kitPlungeVariants.length);
+  for (const [index, variant] of kitPlungeVariants.entries())
+    applyKitVariantBehaviour(variant, plungeVariants[index], `plungeVariants.${index}`);
   applyKitActionBehaviour(kit.elementalSkill, skill, "skill");
   const followUps = kit.elementalSkillChain?.followUps ?? [];
   checkHasCount("skillChain", skillChain.length, followUps.length);
