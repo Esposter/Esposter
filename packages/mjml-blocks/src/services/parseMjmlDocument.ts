@@ -5,12 +5,12 @@ import type { BlockNode, BlockRegistry, BlockTypeDefinition } from "headless-blo
 import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
 
-import { MJML_BLOCK_TEXT_TAGS, STRAY_TEXT_TYPE } from "#src/services/constants";
+import { MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
-import { normalizeString } from "@esposter/shared";
+import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 import { createBlockDocumentSchema } from "headless-block-editor";
-import { parse, TextNode } from "node-html-parser";
+import { parse } from "node-html-parser";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
 const readMjmlRoot = <TContent>(
@@ -18,10 +18,8 @@ const readMjmlRoot = <TContent>(
   registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): { content: BlockNode[]; root: { props: Record<string, unknown> } } => {
-  const props: Record<string, unknown> = { ...mjml.attributes };
+  const props: Record<string, unknown> = { ...mjml.attributes, ...readMjmlStrayText(mjml) };
   let content: BlockNode[] = [];
-  for (const text of mjml.childNodes)
-    if (text instanceof TextNode && normalizeString(text.text) !== "") props[STRAY_TEXT_TYPE] = text.text;
   for (const child of mjml.children)
     switch (child.rawTagName) {
       case "mj-body":

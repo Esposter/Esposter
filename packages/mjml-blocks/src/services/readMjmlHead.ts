@@ -1,8 +1,7 @@
 import type { HTMLElement } from "node-html-parser";
 
-import { ALL_ATTRIBUTES_KEY, STRAY_TEXT_TYPE } from "#src/services/constants";
-import { normalizeString } from "@esposter/shared";
-import { TextNode } from "node-html-parser";
+import { ALL_ATTRIBUTES_KEY } from "#src/services/constants";
+import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
 // A head's components as the root's props: each one the root's schema reads, and a component it does not name kept under its own tag
 export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
@@ -10,8 +9,7 @@ export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
   const typeAttributesMap: Record<string, Record<string, string>> = {};
   const fonts: Record<string, string>[] = [];
   const styles: { css: string; inline: boolean }[] = [];
-  for (const text of head.childNodes)
-    if (text instanceof TextNode && normalizeString(text.text) !== "") props[STRAY_TEXT_TYPE] = text.text;
+  Object.assign(props, readMjmlStrayText(head));
   for (const child of head.children) {
     switch (child.rawTagName) {
       case "mj-attributes":
