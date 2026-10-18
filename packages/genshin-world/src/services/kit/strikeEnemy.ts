@@ -42,6 +42,7 @@ export const strikeEnemy = (
   combatant: Combatant,
   random: () => number,
   moonsign?: PartyMoonsign,
+  criticalRateBonus = 0,
 ): EnemyStrikeResult => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
@@ -82,7 +83,9 @@ export const strikeEnemy = (
 
   const isCritical =
     random() <
-    attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
+    attributeTotalMap[Attribute.CriticalRate] +
+      criticalRateBonus +
+      (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const resistance = getEnemyResistance(kind, enemy, element);
   const damage = kitHit.lunarHit
     ? getDirectLunarDamage(kitHit, kitHit.lunarHit, talentMultiplier, combatant, moonsign, resistance, isCritical)
