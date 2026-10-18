@@ -42,10 +42,10 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
 // Whether a strike's reach misses an enemy: its target's hitbox, its target alone, or else its hit's area about the body
-const checkIsOutOfStrikeReach = (strike: KitStrike, target: Enemy | undefined, enemy: Enemy): boolean => {
-  if (target === undefined) return !checkIsInAttackArea(strike.hit.hitArea, strike.body, enemy);
-  if (strike.hitbox === undefined) return target !== enemy;
-  return !checkIsInKitHitbox(strike.hitbox, target.position, enemy.position);
+const checkIsOutOfStrikeReach = ({ body, hit, hitbox, target }: KitStrike, enemy: Enemy): boolean => {
+  if (target === undefined) return !checkIsInAttackArea(hit.hitArea, body, enemy);
+  if (hitbox === undefined) return target !== enemy;
+  return !checkIsInKitHitbox(hitbox, target.position, enemy.position);
 };
 
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each
@@ -66,6 +66,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit } = strike;
     const target = strike.target ?? selectKitHitTarget(hit, body, enemyMap.values());
+    const targetedStrike: KitStrike = { ...strike, target };
     const pricedCombatant = getBuffedCombatant(
       combatant,
       kitEffectState.effects,
@@ -79,9 +80,9 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     let isPartyHealed = false;
     // The reactions that landed with a reach, each with the enemy it landed on, reached once the strike has landed
     const reaches: [Enemy, TransformativeReaction][] = [];
-    strikeKitDendroCores(kitEffectState, party, { ...strike, target }, pricedCombatant);
+    strikeKitDendroCores(kitEffectState, party, targetedStrike, pricedCombatant);
     for (const enemy of enemyMap.values()) {
-      if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(strike, target, enemy))
+      if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(targetedStrike, enemy))
         continue;
       isStruck = true;
       addEnduringRockStatus(
@@ -94,7 +95,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
       const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
       // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
-      const pricedStrike = { ...strike, combatant: pricedCombatant, hit: enemyHit };
+      const pricedStrike = { ...targetedStrike, combatant: pricedCombatant, hit: enemyHit };
       const deployedBonuses = getDeployedStrikeBonuses(
         pricedStrike,
         deployedCombatants,
@@ -163,7 +164,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, enemyHit);
       healKitStriker(context, combatant, pricedCombatant, enemyHit);
-      enemyHit.onStrike?.(context, strike, enemy);
+      enemyHit.onStrike?.(context, targetedStrike, enemy);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
       // The defeat the strike dealt is reported here, and a Stellar reaction's defeat by the damage point it deals
