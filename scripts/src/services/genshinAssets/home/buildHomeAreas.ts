@@ -4,11 +4,19 @@ import { AREA_COMFORT_TABLE_NAME } from "#src/services/genshinAssets/home/consta
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
-// The load each realm area holds at most, from the game's area table, as one record of the home dataset: each area by its
-// Scene and its id within the scene, sorted by both
+// The load each realm area holds at most, whether it is an exterior area and the loads its meter turns orange and red at,
+// From the game's area table, as one record of the home dataset: each area by its scene and its id within the scene, sorted
+// By both
 export const buildHomeAreas = (): Record<string, unknown> => ({
   [`${GameDataset.Home}/areas`]: readExcelTable<ExcelHomeWorldAreaComfortRow>(AREA_COMFORT_TABLE_NAME)
-    .map(({ MMLKIBLLOGP, areaID, sceneID }) => ({ areaId: areaID, loadLimit: MMLKIBLLOGP, sceneId: sceneID }))
+    .map(({ MMLKIBLLOGP, areaID, areaType, highLoadLimit, lowLoadLimit, sceneID }) => ({
+      areaId: areaID,
+      exterior: areaType === "ExteriorArea",
+      loadLimit: MMLKIBLLOGP,
+      orangeLoad: highLoadLimit,
+      redLoad: lowLoadLimit,
+      sceneId: sceneID,
+    }))
     .toSorted(
       (firstArea, secondArea) => firstArea.sceneId - secondArea.sceneId || firstArea.areaId - secondArea.areaId,
     ),
