@@ -33,7 +33,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Undying Admiration.** Elemental Skill strikes gain the rank's DMG Bonus through getStrikeDamageBonus and its CRIT Rate through getStrikeCriticalRateBonus, at 16% and 6% at rank one. The text is one sentence with both numbers, so the reading is not provisional.
 - **Spotless Heart (provisional reading).** Elemental Skill strikes gain the rank's 40% of the wielder's DEF as flat base damage through getStrikeAdditiveBaseDamageBonus, while a status stands. A skill use sets a 1.5 s cooldown and the status; a skill hit shortens the status to 0.1 s, which is the reading of cleared 0.1s after the skill deals DMG. The rank's second value, 4000, is not described by the text and is not read.
 - **Sword of Descension (out of scope, platform exclusive).** The text makes it effective only on the PlayStation Network platform, which the game has no platform to gate on. The coordinator put it out of scope, so it is not built, and the table row names the gate.
-- **Iwakura Succession (named, not built).** Iwakura Succession needs seeds that each hold their own thirty seconds and an energy gain two seconds after a burst.
+- **Iwakura Succession (provisional reading).** A skill use gains a seed as a hold of the rank's thirty seconds, up to three, once per five seconds. A burst releases every seed, and two seconds later the wielder gains the rank's six energy for each one released, through a delayed energy status. A burst with no seeds gives no energy.
 
 ## How it works
 
