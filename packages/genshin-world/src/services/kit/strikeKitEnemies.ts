@@ -141,7 +141,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         );
       if (reactions.length > 0) {
         context.reactionTriggers.push({ enemy, reactions });
-        emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
+        emitKitEvent(
+          { attackTag: enemyHit.attackTag, enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant },
+          context,
+        );
       }
       const element = getKitHitElement(enemyHit, combatant);
       if (element !== undefined)
