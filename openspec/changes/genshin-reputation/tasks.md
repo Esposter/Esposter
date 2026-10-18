@@ -10,7 +10,7 @@
 
 ## 3. Exploration, quests and discounts
 
-- [ ] 3.1 Pay each exploration threshold once as the percentage passes it, and each Reputation quest once, bound as task 2.3 settles. Verify: tests named after the scenarios 'Passing an exploration threshold pays once', 'A passed threshold does not pay again' and 'A finished Reputation quest pays once'. Its Reputation-quest half is built; the exploration thresholds wait on the exploration progress proposal.
+- [ ] 3.1 Pay each exploration threshold once as the percentage passes it, and each Reputation quest once, bound as task 2.3 settles. Verify: tests named after the scenarios 'Passing an exploration threshold pays once', 'A passed threshold does not pay again' and 'A finished Reputation quest pays once'. Its Reputation-quest half is built, and Mondstadt's 25 parents are carried; their records wait on their binaries in the dump, so the quest reader cannot publish them yet. The exploration thresholds wait on the exploration progress proposal.
 - [x] 3.2 Apply discounts at their named shops once the shops have a screen. Verify: tests named after the scenarios 'A discount applies at its named shop' and 'A discount does not apply at an unnamed shop'.
 
 ## 4. Natlan

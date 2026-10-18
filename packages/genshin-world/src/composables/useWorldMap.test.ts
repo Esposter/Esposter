@@ -12,6 +12,7 @@ import { useWorldMap } from "#src/composables/useWorldMap";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { QuestId, QuestIds } from "#src/models/quest/QuestId";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -81,6 +82,10 @@ describe(useWorldMap, () => {
   const REPUTATION_QUEST_ID = 902;
   const REPUTATION_QUEST_EXP = 120;
   const REPUTATION_QUEST_MORA = 700;
+  // A Mondstadt reputation quest's parent the world carries, by its game id, bound to its own reward
+  const REPUTATION_PARENT_ID = Number(QuestId.ReputationParent70078);
+  const REPUTATION_PARENT_EXP = 90;
+  const REPUTATION_PARENT_MORA = 400;
   const requestQuest = createQuest(REQUEST_QUEST_ID);
   const reputationQuest = createQuest(REPUTATION_QUEST_ID);
   const requestFinishedProgress: QuestProgress = { objectiveCounts: [], stepIndex: 1 };
@@ -160,6 +165,10 @@ describe(useWorldMap, () => {
       {
         questId: REPUTATION_QUEST_ID,
         reward: { exp: REPUTATION_QUEST_EXP, items: [{ count: REPUTATION_QUEST_MORA, id: MORA_ITEM_ID }] },
+      },
+      {
+        questId: REPUTATION_PARENT_ID,
+        reward: { exp: REPUTATION_PARENT_EXP, items: [{ count: REPUTATION_PARENT_MORA, id: MORA_ITEM_ID }] },
       },
     ],
     requests: [
@@ -242,6 +251,22 @@ describe(useWorldMap, () => {
 
     expect(reputation.value).toStrictEqual({ exp: REPUTATION_QUEST_EXP, level: 1 });
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REPUTATION_QUEST_MORA });
+  });
+
+  test("a finished Mondstadt reputation quest the world carries pays its reward once", async () => {
+    expect.hasAssertions();
+
+    expect(QuestIds).toContain(QuestId.ReputationParent70078);
+
+    const { events, reputation, wallet } = createWorldMap();
+    await waitForReads();
+    const parentQuest = createQuest(REPUTATION_PARENT_ID);
+
+    events.emit("finishQuest", parentQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", parentQuest, requestFinishedProgress, requestFinishedProgress);
+
+    expect(reputation.value).toStrictEqual({ exp: REPUTATION_PARENT_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REPUTATION_PARENT_MORA });
   });
 
   test("a request finished before the Reputation loads is paid once it has", async () => {
