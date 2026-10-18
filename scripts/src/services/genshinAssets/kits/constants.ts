@@ -70,3 +70,5 @@ export const GCSIM_STANCE_NORMAL_ATTACKS: Partial<Record<string, GcsimStanceNorm
 };
 // Each character's authored overlay, `<character>.json` by its English name in kebab case
 export const KIT_OVERLAY_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "kits");
+// The most iterations a Go loop may take before its calls are read once, as a loop too long to expand
+export const GO_MAX_LOOP_ITERATIONS = 100;
