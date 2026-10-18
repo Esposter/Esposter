@@ -182,6 +182,14 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
   });
 
+  test("compare orders a NaN operand before any number, as mathjs does", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("compare(0 / 0, 1)")).toBe(-1);
+    expect(evaluateFormula("compare(1, 0 / 0)")).toBe(-1);
+    expect(evaluateFormula("compareNatural(0 / 0, 1)")).toBe(-1);
+  });
+
   test("isPrime is false above the safe integers, where every number is even", () => {
     expect.hasAssertions();
 

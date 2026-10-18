@@ -8447,5 +8447,10 @@
 {"formula":"(c & (x = 2)) + x","scope":{"c":1,"x":7},"value":2},
 {"formula":"isPrime(1e16)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false},
 {"formula":"isPrime(9007199254740993)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false},
-{"formula":"isPrime(9007199254740994)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false}
+{"formula":"isPrime(9007199254740994)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false},
+{"formula":"compare(0 / 0, 1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
+{"formula":"compare(1, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
+{"formula":"compare(0 / 0, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
+{"formula":"compareNatural(0 / 0, 1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
+{"formula":"compareNatural(1, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1}
 ]}

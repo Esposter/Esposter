@@ -79,10 +79,10 @@ const medianAbsoluteDeviation = (values: number[]): number => {
   return median(values.map((value) => Math.abs(value - center)));
 };
 // Three-way comparison: zero when nearly equal, one when larger, minus one when smaller, and NaN when unordered
+// Unordered operands, a NaN among them, compare as less, as mathjs compares them
 const computeComparison = (left: number, right: number): number => {
   if (checkIsNearlyEqual(left, right)) return 0;
-  if (left > right) return 1;
-  return left < right ? -1 : Number.NaN;
+  return left > right ? 1 : -1;
 };
 const computeGreatestCommonDivisor = (left: number, right: number): number =>
   right === 0 ? Math.abs(left) : computeGreatestCommonDivisor(right, left % right);
