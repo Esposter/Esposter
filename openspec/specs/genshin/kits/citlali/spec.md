@@ -134,6 +134,28 @@ The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points
 - **THEN** the first and third strikes apply Cryo to it and the second applies none
 - **AND** every strike deals its damage
 
+### Requirement: Ascension 4
+
+At Ascension 4 Citlali SHALL gain four Nightsoul points on each Nightsoul burst on the team, and Ice Storm and each Frostfall Storm SHALL add flat damage from her Elemental Mastery, 12 times it for Ice Storm and 0.9 times it for a Frostfall Storm.
+
+#### Scenario: A Nightsoul burst on the team gives four points from Ascension 4
+
+- **GIVEN** Citlali is at Ascension 4 and holds no Nightsoul points
+- **WHEN** a Nightsoul burst goes off on the team
+- **THEN** she holds four Nightsoul points
+
+#### Scenario: A Nightsoul burst gives no points below Ascension 4
+
+- **GIVEN** Citlali is at Ascension 3 and holds no Nightsoul points
+- **WHEN** a Nightsoul burst goes off on the team
+- **THEN** she holds no Nightsoul points
+
+#### Scenario: Ice Storm adds 12 times Elemental Mastery as flat damage
+
+- **GIVEN** Citlali is at Ascension 4 with 1000 Elemental Mastery
+- **WHEN** Ice Storm's hit is priced
+- **THEN** it adds 12000 flat damage
+
 ### Requirement: Strikes and charged attack deal no poise
 
 Citlali's strikes and charged attack SHALL deal no poise, a provisional value until a recording of the game's poise settles it.

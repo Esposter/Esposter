@@ -42,6 +42,16 @@ const createCitlaliCombatant = (): Combatant => ({
   level: 90,
 });
 
+const createCitlaliCombatantAt = (ascension: number, elementalMastery = 0): Combatant => ({
+  ...createCitlaliCombatant(),
+  ascension,
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseAttack, value: 1000 },
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.ElementalMastery, value: elementalMastery },
+  ]),
+});
+
 const CITLALI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CITLALI_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ENEMY_HEALTH = 1e9;
@@ -69,8 +79,8 @@ const createSturdyEnemy = (x: number): Enemy => ({
 });
 
 // A team whose skill's press and two bursts put Citlali's points at 72 in the Blessing, which starts the Opal Fire at once
-const createOpalFireContext = (enemies: Enemy[]) => {
-  const context = createKitTestContext(createCitlaliCombatant(), {
+const createOpalFireContext = (enemies: Enemy[], combatant = createCitlaliCombatant()) => {
+  const context = createKitTestContext(combatant, {
     enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
     enemyTables,
   });
@@ -249,5 +259,53 @@ describe(createCitlaliKitBehaviour, () => {
     expect(enemy.elementalState.auras.has(AuraType.Cryo)).toBe(false);
     stepFrames(context, 59);
     expect(enemy.elementalState.auras.has(AuraType.Cryo)).toBe(true);
+  });
+
+  test("a passive takes effect at its ascension phase: a Nightsoul burst on the team gives Citlali four points from Ascension 4", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(4);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.onKitEvent?.(
+      { enemy: createSturdyEnemy(3), kind: KitEventKind.NightsoulBurst, striker: combatant },
+      context,
+      combatant,
+    );
+    expect(countPoints(context)).toBe(4);
+  });
+
+  test("does not take effect below its ascension phase: a Nightsoul burst gives Citlali no points below Ascension 4", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(3);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.onKitEvent?.(
+      { enemy: createSturdyEnemy(3), kind: KitEventKind.NightsoulBurst, striker: combatant },
+      context,
+      combatant,
+    );
+    expect(countPoints(context)).toBe(0);
+  });
+
+  test("a passive takes effect at its ascension phase: Ice Storm adds 12 Elemental Mastery of flat damage from Ascension 4", () => {
+    expect.hasAssertions();
+    expect(takeOne(CITLALI_KIT.elementalBurst.hits).additiveBaseDamageBonus?.(createCitlaliCombatantAt(4, 1000))).toBe(
+      12_000,
+    );
+  });
+
+  test("does not take effect below its ascension phase: Ice Storm adds no flat damage below Ascension 4", () => {
+    expect.hasAssertions();
+    expect(takeOne(CITLALI_KIT.elementalBurst.hits).additiveBaseDamageBonus?.(createCitlaliCombatantAt(3, 1000))).toBe(
+      0,
+    );
+  });
+
+  test("a passive takes effect at its ascension phase: a Frostfall Storm adds 0.9 Elemental Mastery of flat damage from Ascension 4", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(4, 1000);
+    const context = createOpalFireContext([createSturdyEnemy(3)], combatant);
+    stepFrames(context, 58);
+    context.strikes.length = 0;
+    stepKitEffects(FRAME_SECONDS, context);
+    expect(context.strikes.at(-1)?.hit.additiveBaseDamageBonus?.(combatant)).toBe(900);
   });
 });

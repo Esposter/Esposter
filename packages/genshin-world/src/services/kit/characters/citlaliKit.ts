@@ -3,6 +3,8 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -25,6 +27,13 @@ const NIGHTSOUL_BURST_POINTS = 24;
 const NIGHTSOUL_SKILL_POINTS = 24;
 const NIGHTSOUL_BLESSING_SECONDS = 20;
 
+// Ascension 4 gives four points on each Nightsoul burst that goes off on the team, and flat damage from Elemental Mastery:
+// 12 on Ice Storm and 0.9 on each Frostfall Storm, as gcsim (MIT) citlali/asc.go's a4 and a4Dmg give them (lines 57 to 76)
+const ASCENSION_4 = 4;
+const ASCENSION_4_BURST_POINTS = 4;
+const ICE_STORM_ELEMENTAL_MASTERY_SHARE = 12;
+const FROSTFALL_STORM_ELEMENTAL_MASTERY_SHARE = 0.9;
+
 // The Opal Fire takes effect in the Blessing at 50 points or more and drains 0.8 points every 6 frames, eight a second,
 // until none is left, as gcsim (MIT) citlali/skill.go tryEnterOpalFireState and nightsoulPointReduceTask do. Itzpapa's
 // Frostfall Storm strikes every 59 frames from when it takes effect, as skill.go's itzpapaInterval and itzpapaHitTask do
@@ -34,17 +43,24 @@ const OPAL_FIRE_DRAIN_FRAMES = 6;
 const FROSTFALL_STORM_FRAMES = 59;
 export const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 
+// The flat base damage a hit adds from a share of its striker's Elemental Mastery, from Ascension 4
+const createElementalMasteryFlatDamage =
+  (share: number) =>
+  ({ ascension, attributes }: Combatant): number =>
+    ascension >= ASCENSION_4 ? share * attributes.attributeTotalMap[Attribute.ElementalMastery] : 0;
+
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
 // Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit
-// Not built: Ascension 1 and 4 and Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start
-// Below 50 points and outlast its points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres,
-// Which the burst's start cannot place since it reads no enemies but its target. Ascension 4's flat damage on the Frostfall
-// Storm from Elemental Mastery is not built either
+// Not built: Ascension 1 and Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below
+// 50 points and outlast its points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres,
+// Which the burst's start cannot place since it reads no enemies but its target
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
 export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
-  const frostfallStormHit = readHit("frostfallStorm");
+  const frostfallStormHit = readHit("frostfallStorm", {
+    additiveBaseDamageBonus: createElementalMasteryFlatDamage(FROSTFALL_STORM_ELEMENTAL_MASTERY_SHARE),
+  });
 
   // Strikes every living enemy in the Frostfall Storm's circle round the body, the circle gcsim centres on the player
   const strikeFrostfallStorm = (context: KitContext, combatant: Combatant) => {
@@ -100,10 +116,17 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
 
   return {
     burst: {
+      hits: [{ additiveBaseDamageBonus: createElementalMasteryFlatDamage(ICE_STORM_ELEMENTAL_MASTERY_SHARE) }],
       onStart: (context) => {
         generateKitNightsoulPoints(context, NIGHTSOUL_BURST_POINTS, NIGHTSOUL_MAXIMUM);
         enterOpalFire(context);
       },
+    },
+    // Ascension 4 gives points on each Nightsoul burst that goes off anywhere on the team, on the field or off it, as gcsim's
+    // OnNightsoulBurst subscription does
+    onKitEvent: (event, context, combatant) => {
+      if (event.kind === KitEventKind.NightsoulBurst && combatant.ascension >= ASCENSION_4)
+        generateKitNightsoulPoints(context, ASCENSION_4_BURST_POINTS, NIGHTSOUL_MAXIMUM, combatant.characterId);
     },
     skill: {
       onStart: (context) => {
