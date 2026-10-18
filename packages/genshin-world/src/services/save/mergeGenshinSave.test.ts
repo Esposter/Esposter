@@ -137,6 +137,14 @@ describe(mergeGenshinSave, () => {
     });
   });
 
+  test("keeps a domain cleared on either save cleared after the merge", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, clearedDomains: ["1"] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, clearedDomains: ["2"] };
+
+    expect(mergeGenshinSave(account, guest).clearedDomains).toStrictEqual(["1", "2"]);
+  });
+
   test("keeps the account's opened chests over the guest's", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, openedChests: [CHEST_ID] };
