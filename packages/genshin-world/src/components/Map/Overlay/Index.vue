@@ -18,6 +18,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
 import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
+import { findAreaAt } from "#src/services/map/findAreaAt";
 import {
   MAP_DRAG_THRESHOLD_PIXELS,
   MAP_GROUND,
@@ -154,6 +155,11 @@ const areaLabels = computed(() =>
     z,
   })),
 );
+// The area the character stands in, named at the bottom right with its progress line as the map names it
+const regionTag = computed(() => {
+  const area = findAreaAt(catalogue, camera.x, camera.z);
+  return area && { name: area.name, progressSegments: progressSegmentsMap.value.get(area.id) ?? [] };
+});
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
 const originalResin = computed(
@@ -234,6 +240,14 @@ onMounted(() => {
       :landmarks
       @jump="(landmark) => emit('jump', computeJumpPose(landmark))"
     />
+    <p v-if="regionTag" class="region-tag">
+      <span class="region-name">{{ regionTag.name }}</span>
+      <span v-if="regionTag.progressSegments.length > 0" class="region-progress">
+        <span v-for="({ color, text }, index) of regionTag.progressSegments" :key="index" :style="{ color }">{{
+          text
+        }}</span>
+      </span>
+    </p>
     <p class="resin">
       <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
       <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
@@ -334,6 +348,27 @@ onMounted(() => {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Provisional: the region tag's place, bottom right, and its type, until a recording of the English PC client's map
+   measures them */
+.region-tag {
+  position: absolute;
+  right: calc(var(--unit) * 130);
+  bottom: calc(var(--unit) * 60);
+  margin: 0;
+  color: #ece5d7;
+  text-align: end;
+}
+
+.region-name {
+  display: block;
+  font-size: calc(var(--unit) * 36);
+}
+
+.region-progress {
+  display: block;
+  font-size: calc(var(--unit) * 24);
 }
 
 /* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC
