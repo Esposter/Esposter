@@ -124,5 +124,5 @@
     "value": { "index": 5, "proudSkillGroupId": 8939 }
   },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }

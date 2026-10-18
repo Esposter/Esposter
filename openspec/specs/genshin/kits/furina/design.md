@@ -19,6 +19,7 @@ Not built yet:
 - **Endless Waltz from a whole team's heal.** Gcsim starts it from a heal on the whole team that runs past full HP on any member, as it sums the team's overflow; the kit reads each member's `HealthChanged` alone, so such a heal starts it only when it runs past full HP on the character on the field. It waits on an event that carries a heal's whole overflow.
 - **The schedule's jitter.** Gcsim gives each Salon member a random spread round its mean interval; the kit takes the mean.
 - **Pneuma's skill animation** is gcsim's Ousia one, 54 frames, though gcsim gives Pneuma's 57 and a 10-frame delay to its cooldown; the charged attack after a strike is not 11 frames shorter as gcsim has it.
+- **Salon Solitaire's strikes are summoned, so the skill's own count holds at 0.** gcsim counts the bubble and the three members' attacks as four hits, which the reader gives no count for, so removing the 0 breaks the build. A count of summoned strikes settles it.
 
 Gcsim gives her strikes, charged attack and the Salon's hits no poise, so each deals none. A Salon member with no enemy within the skill's reach neither drains nor strikes, a provisional reading of gcsim's targeting. Each is provisional until a recording settles it.
 
