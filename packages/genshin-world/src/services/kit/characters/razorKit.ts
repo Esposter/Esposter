@@ -14,6 +14,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { endPartyMemberSkillCooldown } from "#src/services/party/endPartyMemberSkillCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -95,7 +96,7 @@ export const createRazorKitBehaviour = ({
       nextTickSeconds: lightningFangHitmarkSeconds,
       onTick: ({ kitEffectState: tickKitEffectState, party }, tickIndex) => {
         if (tickIndex > 0) return;
-        if (owner.ascension >= AWAKENING_ASCENSION) getPartyMember(party, owner.characterId).skillCooldownSeconds = 0;
+        if (owner.ascension >= AWAKENING_ASCENSION) endPartyMemberSkillCooldown(party, owner.characterId);
         buffKitMember(tickKitEffectState, owner.characterId, {
           amount: electroResistanceBonus,
           attribute: Attribute.ElectroResistance,
