@@ -13,6 +13,7 @@ describe(computeAbyssChamberStars, () => {
       { kind: AbyssStarConditionKind.LeftTime, threshold: SECONDS_MARK },
       { kind: AbyssStarConditionKind.MonolithHealth, threshold: MONOLITH_MARK },
     ],
+    halfMonsterDescribeIds: [],
     id: 1,
     index: 1,
   };

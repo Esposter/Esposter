@@ -2,6 +2,7 @@ import type { ExcelTowerFloorRow } from "#src/models/genshinAssets/spiralAbyss/E
 import type { ExcelTowerLevelRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerLevelRow";
 import type { AbyssFloor } from "genshin-world";
 
+import { toAbyssHalfMonsterDescribeIds } from "#src/services/genshinAssets/spiralAbyss/toAbyssHalfMonsterDescribeIds";
 import { toAbyssStarCondition } from "#src/services/genshinAssets/spiralAbyss/toAbyssStarCondition";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -15,6 +16,7 @@ export const toAbyssFloor = (row: ExcelTowerFloorRow, levelRows: ExcelTowerLevel
       .toSorted((firstLevel, secondLevel) => firstLevel.levelIndex - secondLevel.levelIndex)
       .map((levelRow) => ({
         conditions: levelRow.conds.map((condition) => toAbyssStarCondition(condition, levelRow.levelId)),
+        halfMonsterDescribeIds: toAbyssHalfMonsterDescribeIds(levelRow, row.teamNum),
         id: levelRow.levelId,
         index: levelRow.levelIndex,
       })),

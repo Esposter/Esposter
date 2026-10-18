@@ -17,9 +17,9 @@ describe(checkIsAbyssFloorUnlocked, () => {
   const UNLOCK_STAR_COUNT = 6;
   const floor: AbyssFloor = {
     chambers: [
-      { conditions: [], id: 1, index: 1 },
-      { conditions: [], id: 2, index: 2 },
-      { conditions: [], id: 3, index: 3 },
+      { conditions: [], halfMonsterDescribeIds: [], id: 1, index: 1 },
+      { conditions: [], halfMonsterDescribeIds: [], id: 2, index: 2 },
+      { conditions: [], halfMonsterDescribeIds: [], id: 3, index: 3 },
     ],
     id: 1,
     index: 1,
