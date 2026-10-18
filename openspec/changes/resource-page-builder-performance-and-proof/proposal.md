@@ -26,7 +26,6 @@ The editors and their output meet measured targets, and every type's output and 
 - `openspec/changes/resource-page-builder-undo-as-patches/`, whose command layer the patch round-trip bench measures.
 - `openspec/changes/resource-page-builder-canvas/`, whose canvas and browser suite the box and mark tests run in.
 - `openspec/changes/resource-page-builder-email/`, whose email canvas and compile service the email proof and bench measure.
-- `openspec/changes/resource-page-builder-cutover/`, whose production build holds the editors' script ceiling.
 
 ## Impact
 
