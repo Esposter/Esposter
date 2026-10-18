@@ -22,7 +22,12 @@ export const strikeReactionDamage = (
   const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
   const resistance = getEnemyResistance(kind, enemy, element);
   collectKitEnergyDrops(
-    damageKitEnemy(enemy, { damage: damage * getResistanceMultiplier(resistance), poiseDamage: 0 }, owner, context),
+    damageKitEnemy(
+      enemy,
+      { damage: damage * getResistanceMultiplier(resistance), element, poiseDamage: 0 },
+      owner,
+      context,
+    ),
     owner?.element,
     context,
   );

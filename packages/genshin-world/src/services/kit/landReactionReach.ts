@@ -95,6 +95,7 @@ export const landReactionReach = (
     enemyStrikeResultMap.set(enemy, {
       energyDrops: damageEnemy(enemy, {
         damage: reactionDamage + transformativeDamage,
+        element,
         poiseDamage: reachPoiseDamage + poiseDamage,
       }),
       isCritical: false,
