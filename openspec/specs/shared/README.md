@@ -7,6 +7,7 @@
 - [Deep equality](deep-equal/design.md) — `checkIsDeepEqual`, which replaced `fast-deep-equal`.
 - [dedent](dedent/design.md) — the template tag that strips a template's indentation, replacing `dedent`.
 - [IndexedDB](indexed-db/design.md) — the typed IndexedDB wrapper, replacing `idb`.
+- [IndexedDB upgrade logging](indexed-db-upgrade-log/spec.md) — a failed upgrade is logged once, with the message its callback threw.
 - [Media types](mime-types/design.md) — the extension and media type lookup over `mime-db`, replacing `mime-types`.
 - [HTML sanitiser](sanitize-html/design.md) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
 - [Roadmap](../../changes/shared-roadmap/tasks.md) — open decisions in the shared utilities, each linked to its proposal.
