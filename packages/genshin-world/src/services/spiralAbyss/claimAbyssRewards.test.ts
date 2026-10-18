@@ -68,7 +68,10 @@ describe(claimAbyssRewards, () => {
         names,
         materialDataMap,
       ),
-    ).toStrictEqual({ inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1 }, wallet: EMPTY_WALLET });
+    ).toStrictEqual({
+      inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },
+      wallet: EMPTY_WALLET,
+    });
   });
 
   test("a claim is refused whole when the bag has no room", () => {
