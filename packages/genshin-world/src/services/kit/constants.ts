@@ -72,6 +72,10 @@ export const NIGHTSOUL_BLESSING_STATUS_ID = "nightsoul-blessing";
 export const KIT_SKILL_CHARGE_ID = "kit-skill-charge";
 // The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
 export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
+// The id the team as a whole holds its own statuses under, which no character takes, as the Nightsoul burst's interval is
+export const KIT_TEAM_ID = 0;
+// The status the team's Nightsoul burst waits out after it goes off, before the next one can, under the team's id
+export const NIGHTSOUL_BURST_COOLDOWN_ID = "nightsoul-burst-cooldown";
 // The status Haunted Night puts a Geo character in, for the seconds it lasts, which its Nightingale's Song stacks last with
 export const HAUNTED_NIGHT_STATUS_ID = "haunted-night";
 // The stacks of Nightingale's Song a character holds in Haunted Night, each one a hit of Geo DMG by its party consumes

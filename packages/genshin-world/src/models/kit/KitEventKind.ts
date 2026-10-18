@@ -5,7 +5,8 @@
 // Reactions on an enemy, a status on an enemy struck on its own schedule, a taunt took an enemy's strike, or a shield
 // Took a strike on a party member for its owner. A charged attack of the character on the field landed, a skill was
 // Used, a hit landed on an enemy with the element it was dealt as, a hit on a weak point landed on an enemy, or a hit
-// Defeated one, or a hit felled an animal in the world, or a Nightsoul blessing drained a character's points
+// Defeated one, or a hit felled an animal in the world, or a Nightsoul burst went off on an enemy, or a Nightsoul blessing
+// Drained a character's points
 export enum KitEventKind {
   BurstUsed = "BurstUsed",
   CharacterSwapped = "CharacterSwapped",
@@ -20,6 +21,7 @@ export enum KitEventKind {
   FallRefused = "FallRefused",
   HealthChanged = "HealthChanged",
   MoraPickedUp = "MoraPickedUp",
+  NightsoulBurst = "NightsoulBurst",
   NightsoulPointsConsumed = "NightsoulPointsConsumed",
   NightsoulPointsGained = "NightsoulPointsGained",
   NormalAttackLanded = "NormalAttackLanded",

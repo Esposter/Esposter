@@ -30,6 +30,7 @@ import { selectKitHitTarget } from "#src/services/kit/selectKitHitTarget";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
+import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
@@ -174,6 +175,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       }
       const element = getKitHitElement(enemyHit, combatant);
       emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
+      triggerKitNightsoulBurst(enemy, combatant, element, context);
       if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {
