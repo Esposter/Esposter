@@ -167,4 +167,71 @@ func (c *char) Burst() {
       { branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
     ]);
   });
+
+  test("reads a poise an if on a constant loop's variable sets on a copy as the copy's attack for that iteration only", () => {
+    expect.hasAssertions();
+
+    const name = "burst.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
+    const fieldLineMap = {
+      Abil: 48,
+      ActorIndex: 47,
+      AttackTag: 49,
+      Durability: 54,
+      Element: 53,
+      ICDGroup: 51,
+      ICDTag: 50,
+      Mult: 55,
+      StrikeType: 52,
+    };
+    const literal = {
+      abil: "Presto: Bluebird Finale (Slash)",
+      attackTag: "attacks.AttackTagElementalBurst",
+      durability: 25,
+      element: "attributes.Cryo",
+      fieldLineMap,
+      file: name,
+      internalCooldownTag: "attacks.ICDTagElementalBurst",
+      line: 46,
+      poiseDamage: undefined,
+      poiseDamageVariable: undefined,
+      siteLine: 46,
+      talentVariable: "burst",
+      variableName: "ai",
+    };
+
+    expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      literal,
+      { ...literal, line: 66, siteLine: 66, variableName: "aiCopy" },
+      {
+        ...literal,
+        branch: { chain: 0, endLine: 70, index: 0 },
+        fieldLineMap: { ...fieldLineMap, PoiseDMG: 69 },
+        iteration: { value: 0, variable: "i" },
+        line: 69,
+        poiseDamage: 30,
+        siteLine: 66,
+        variableName: "aiCopy",
+      },
+      {
+        ...literal,
+        abil: "Presto: Bluebird Finale (Final)",
+        fieldLineMap: {
+          Abil: 78,
+          ActorIndex: 77,
+          AttackTag: 79,
+          Durability: 84,
+          Element: 83,
+          ICDGroup: 81,
+          ICDTag: 80,
+          Mult: 85,
+          StrikeType: 82,
+        },
+        line: 76,
+        siteLine: 76,
+        talentVariable: "burstFinal",
+        variableName: "aiFinal",
+      },
+    ]);
+  });
 });
