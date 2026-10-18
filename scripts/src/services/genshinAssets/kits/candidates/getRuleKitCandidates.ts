@@ -5,7 +5,10 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
-import { Element, KitPlunge, KitTargeting } from "genshin-world";
+import type { Element } from "genshin-world";
+import { KitPlunge, KitTargeting } from "genshin-world";
+
+const STANCE_PATH_REGEX = /^stances\.(?<name>[^.]+)\./u;
 
 // The values the builder's rules give a kit's record, by their paths, over the actions and hits its sources and overlay
 // Already give it: each action's targeting zone by its slot, a hit's poise where no source gives one, no hold, a hold's
@@ -47,7 +50,24 @@ export const getRuleKitCandidates = (
       KitTargeting.Skill,
     ]),
   ];
-  for (const [path, targeting] of actionTargetingEntries) {
+  // A stance's strikes and charged attack target as the kit's own do, and its skill as the kit's skill does, for each stance
+  // The value map names
+  const stanceNames = new Set<string>();
+  for (const path of valueMap.keys()) {
+    const name = STANCE_PATH_REGEX.exec(path)?.groups?.name;
+    if (name !== undefined) stanceNames.add(name);
+  }
+  const stanceTargetingEntries: [string, KitTargeting][] = [];
+  for (const name of stanceNames) {
+    const stancePath = `stances.${name}`;
+    for (let index = 0; index < readLength(`${stancePath}.normalAttacks`); index++)
+      stanceTargetingEntries.push([`${stancePath}.normalAttacks.${index}`, KitTargeting.Strike]);
+    stanceTargetingEntries.push(
+      [`${stancePath}.chargedAttack`, KitTargeting.Strike],
+      [`${stancePath}.skill`, KitTargeting.Skill],
+    );
+  }
+  for (const [path, targeting] of [...actionTargetingEntries, ...stanceTargetingEntries]) {
     if (!checkHasNode(path)) continue;
     add(`${path}.targeting`, targeting, KitRule.Targeting);
     for (let hitIndex = 0; hitIndex < readLength(`${path}.hits`); hitIndex++)
