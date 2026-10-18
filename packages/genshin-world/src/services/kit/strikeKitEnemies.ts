@@ -16,6 +16,7 @@ import { addMoondrifts } from "#src/services/kit/addMoondrifts";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getElementCriticalDamageBonus } from "#src/services/kit/effects/getElementCriticalDamageBonus";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
@@ -94,6 +95,13 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       const pricedHit = {
         ...enemyHit,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
+        criticalDamageBonus:
+          (enemyHit.criticalDamageBonus ?? 0) +
+          getElementCriticalDamageBonus(
+            kitEffectState.effects,
+            combatant.characterId,
+            getKitHitElement(enemyHit, combatant),
+          ),
         criticalRateBonus:
           (enemyHit.criticalRateBonus ?? 0) +
           (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),

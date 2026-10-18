@@ -2,6 +2,7 @@ import type { KitBubble } from "#src/models/kit/KitBubble";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitCrystallizeShard } from "#src/models/kit/KitCrystallizeShard";
 import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
+import type { KitElementCriticalDamage } from "#src/models/kit/KitElementCriticalDamage";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -16,6 +17,7 @@ export type KitEffect =
   | KitBuff
   | KitCrystallizeShard
   | KitDendroCore
+  | KitElementCriticalDamage
   | KitField
   | KitInfusion
   | KitShield
