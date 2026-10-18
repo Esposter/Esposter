@@ -2,6 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { FLOAT_RESIDUE } from "#src/services/floatResidue";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -23,9 +24,10 @@ export const createExtinguishingPreceptPassiveModule = (params: number[]): Passi
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) => {
       const { characterId } = combatant;
       const consummation = findKitStatus(effects, characterId, CONSUMMATION_ID);
+      // Float error can leave the seconds passed a sliver under a whole second, so FLOAT_RESIDUE is added before the floor
       const stacks =
         consummation !== undefined && checkIsKitStatusActive(effects, characterId, CONSUMMATION_ID)
-          ? Math.min(maximumStacks, Math.floor(seconds - consummation.secondsRemaining))
+          ? Math.min(maximumStacks, Math.floor(seconds - consummation.secondsRemaining + FLOAT_RESIDUE))
           : 0;
       const isOnField = deployedCombatants.some(
         (deployedCombatant) => deployedCombatant.characterId === characterId && deployedCombatant.isOnField,

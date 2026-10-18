@@ -57,6 +57,20 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     ).toBe(2 * attackBonusPerSecond);
   });
 
+  test("the first stack is read once a whole second has passed, though the stepping leaves a float residue", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(wielder);
+    extinguishingPreceptPassiveModule.onKitEvent?.(skillUsed, context, wielder);
+    stepKitSeconds(context, 1);
+
+    expect(
+      extinguishingPreceptPassiveModule
+        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
+    ).toBe(attackBonusPerSecond);
+  });
+
   test("the ATK rise stops at six stacks", () => {
     expect.hasAssertions();
 
