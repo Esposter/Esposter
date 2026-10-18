@@ -16,7 +16,9 @@ import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { Currency } from "#src/models/inventory/Currency";
 import { activateConstellation } from "#src/services/character/activateConstellation";
+import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -27,6 +29,7 @@ import {
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
@@ -56,6 +59,8 @@ interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
   // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
+  // The player's Adventure Rank, which an ascension's phase requires
+  adventureRank: number;
   characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The kit each character's combat talents are read from, the proud skill group each of them names
   characterTalentKits: CharacterTalentKit[];
@@ -93,6 +98,7 @@ defineSlots<{
 }>();
 const {
   activeCharacterId,
+  adventureRank,
   characterIdConstellationsMap,
   characterTalentKits,
   companionshipExpMap = new Map<number, number>(),
@@ -252,6 +258,39 @@ const liftCharacter = () => {
   characters.value = characters.value.map((item) => (item.id === lifted.character.id ? lifted.character : item));
   inventory.value = lifted.inventory;
 };
+// The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
+// Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
+// The table carries no cost for that phase yet
+const ascendRows = computed(() => {
+  const nextPhase =
+    character.value &&
+    statTables.characterDataMap.get(character.value.id)?.ascensionPhases[character.value.ascension + 1];
+  if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return undefined;
+  return [
+    { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },
+    { label: gameText[GameTextKey.Mora], value: `${wallet.value[Currency.Mora]}/${nextPhase.coinCost}` },
+    ...getAscensionMaterials(nextPhase, inventory.value).map(({ count, held, id }) => ({
+      label: getItemDefinition(id, nameText, materialDataMap).name,
+      value: `${held}/${count}`,
+    })),
+  ];
+});
+// The chosen character ascended into its next phase, with the Mora and materials taken, or undefined where that is
+// Refused now
+const ascendResult = computed(() => {
+  const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
+  return character.value && phases
+    ? ascendCharacter(character.value, { adventureRank, inventory: inventory.value, phases, wallet: wallet.value })
+    : undefined;
+});
+// The chosen character ascended, with its Mora and materials taken and the character written back in its place
+const ascendCharacterAt = () => {
+  const ascended = ascendResult.value;
+  if (!ascended) return;
+  characters.value = characters.value.map((item) => (item.id === ascended.character.id ? ascended.character : item));
+  inventory.value = ascended.inventory;
+  wallet.value = ascended.wallet;
+};
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
   if (!character.value || !talentGroupIds.value || !talent) return;
@@ -295,12 +334,15 @@ const activate = () => {
         v-if="character && tab === CharacterMenuTab.Attributes"
         :character
         :game-text
+        :ascend-rows="ascendRows"
+        :is-ascendable="ascendResult !== undefined"
         :is-level-upable="levelUpResult !== undefined"
         :is-liftable
         :traveler-bonus-lines
         :max-stamina
         :name="characterName"
         :stat-tables
+        @ascend="ascendCharacterAt"
         @level-up="levelUpCharacterAt"
         @lift="liftCharacter"
       />

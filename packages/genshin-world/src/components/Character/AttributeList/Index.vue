@@ -11,9 +11,13 @@ import { getCharacterAttributeLines } from "#src/services/character/getCharacter
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
+  ascendRows?: { label: string; value: string }[];
   character: Character;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase takes
+  isAscendable?: boolean;
   // Whether the character can be raised a level with its Character EXP materials now
   isLevelUpable?: boolean;
   // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
@@ -29,8 +33,10 @@ interface Props {
 }
 
 const {
+  ascendRows,
   character,
   gameText,
+  isAscendable = false,
   isLevelUpable = false,
   isLiftable = false,
   maxStamina,
@@ -38,7 +44,7 @@ const {
   statTables,
   travelerBonusLines = [],
 } = defineProps<Props>();
-const emit = defineEmits<{ levelUp: []; lift: [] }>();
+const emit = defineEmits<{ ascend: []; levelUp: []; lift: [] }>();
 const levelText = computed(() =>
   fillGameTextValues(
     gameText[GameTextKey.LevelFormat],
@@ -91,6 +97,15 @@ const detailGroups = computed(() =>
     </button>
     <button type="button" class="details" :disabled="!isLiftable" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
+    </button>
+    <dl v-if="ascendRows" class="rows">
+      <div v-for="{ label, value } of ascendRows" :key="label" class="row">
+        <dt>{{ label }}</dt>
+        <dd class="value">{{ value }}</dd>
+      </div>
+    </dl>
+    <button v-if="ascendRows" type="button" class="details" :disabled="!isAscendable" @click="emit('ascend')">
+      {{ gameText[GameTextKey.CharacterAscend] }}
     </button>
     <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">
       <h2 class="title">{{ title }}</h2>
