@@ -1,3 +1,4 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBuff } from "#src/models/kit/KitBuff";
@@ -48,13 +49,26 @@ export const RAZOR_CHARACTER_ID = 10_000_020;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CRIT_RATE_BONUS = 0.1;
 const CONSTELLATION_2_HEALTH_SHARE = 0.3;
+// Constellation 4, Bite: each enemy Claw and Thunder's press strikes takes 15% less DEF for 7 seconds, as gcsim v2.47.2 (MIT)
+// Gives it on the press's attacks, and the hold gives none
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/cons.go
+const CONSTELLATION_4 = 4;
+const BITE_DEFENSE_REDUCTION = 0.15;
+const BITE_SECONDS = 7;
+const BITE_STATUS: EnemyStatus = {
+  damageTakenBonus: 0,
+  defenseReduction: BITE_DEFENSE_REDUCTION,
+  id: "razor-constellation-4",
+  secondsRemaining: BITE_SECONDS,
+};
+const getBiteStatus = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
+  constellationCount >= CONSTELLATION_4 ? BITE_STATUS : undefined;
 
 // Razor's behaviour: Claw and Thunder's press gives him an Electro Sigil, up to three, and its hold clears them into
 // Energy at its hit. Lightning Fang clears them too and casts the Wolf Within, which stands while he stays on the field,
 // Resets the skill's cooldown from Ascension 1 and casts a strike's Soul Companion beside it. Awakening cuts the skill's
 // Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
 // Fulguris's lightning
-// Constellation 4 needs an enemy DEF decrease on Claw and Thunder's hits, which EnemyStatus does not carry
 export const createRazorKitBehaviour = ({
   kit,
   readHits,
@@ -188,8 +202,9 @@ export const createRazorKitBehaviour = ({
           checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
       );
     },
-    // The press gains its Electro Sigil as it starts
+    // The press gains its Electro Sigil as it starts, and each enemy it strikes takes Bite's DEF cut from Constellation 4
     skill: {
+      hits: [{ enemyStatus: getBiteStatus }],
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         addElectroSigil(combatant.characterId, kitEffectState),
     },
