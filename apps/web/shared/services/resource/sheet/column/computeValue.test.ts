@@ -61,4 +61,37 @@ describe(computeValue, () => {
 
     expect(computeValue(dataSource.rows, row, dataSource.columns, firstColumnWithCycle)).toBeNull();
   });
+
+  test("reads a computed source twice when two variables share it", () => {
+    expect.hasAssertions();
+
+    const storedColumn = createColumn("x");
+    const doubledColumn = new ComputedColumn({
+      name: "doubled",
+      size: 0,
+      sourceName: "doubled",
+      transformation: {
+        expression: "x * 2",
+        type: ColumnTransformationType.Math,
+        variables: [{ name: "x", sourceColumnId: storedColumn.id }],
+      },
+    });
+    const sumColumn = new ComputedColumn({
+      name: "sum",
+      size: 0,
+      sourceName: "sum",
+      transformation: {
+        expression: "a + b",
+        type: ColumnTransformationType.Math,
+        variables: [
+          { name: "a", sourceColumnId: doubledColumn.id },
+          { name: "b", sourceColumnId: doubledColumn.id },
+        ],
+      },
+    });
+    const row = createRow({ x: 5 });
+    const dataSource = createDataSource([storedColumn, doubledColumn, sumColumn], [row]);
+
+    expect(computeValue(dataSource.rows, row, dataSource.columns, sumColumn)).toBe(20);
+  });
 });

@@ -22,7 +22,7 @@ export const computeValue = (
   else if (visitedColumnIds.has(column.id)) return null;
   else {
     visitedColumnIds.add(column.id);
-    return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, {
+    const value = ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, {
       computeSource: (sourceColumnId) => {
         const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
         if (sourceColumn)
@@ -34,5 +34,8 @@ export const computeValue = (
       rows,
       transformationReaderMap,
     });
+    // Off the path once computed, so a second source reading the same column is a diamond, not a cycle
+    visitedColumnIds.delete(column.id);
+    return value;
   }
 };
