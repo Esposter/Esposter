@@ -14,8 +14,9 @@ const setWildlifeState = (wildlife: Wildlife, state: WildlifeState): void => {
 // Animal in place. An idle one within the escape radius of the target starts running, and a running one keeps running
 // Until its escape time has passed. It is then idle again, or running again if the target is still in reach, and a
 // Target that is gone leaves it running on its last heading until its time is up, then idle. Running is straight away
-// From the target, at the flight speed
+// From the target, at the flight speed. A struck one stays where it fell, its state and time unmoved
 export const stepWildlife = (wildlife: Wildlife, target: GroundPoint | undefined, stepSeconds: number): void => {
+  if (wildlife.state === WildlifeState.Struck) return;
   wildlife.stateSeconds += stepSeconds;
   const isInReach = target !== undefined && computeDistance(wildlife.position, target) <= WILDLIFE_ESCAPE_RADIUS;
   if (wildlife.state === WildlifeState.Idle) {

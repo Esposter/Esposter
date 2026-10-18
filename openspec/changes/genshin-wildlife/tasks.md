@@ -1,7 +1,7 @@
 ## 1. What a struck animal gives
 
-- [ ] 1.1 Map each bird and beast kind to its drop, and mark an animal struck so that it gives its drop once. Verify: strikeWildlife.test.ts, written first and seen failing, named after 'A Crimson Fox gives two Raw Meat when struck' and 'A struck animal gives nothing when struck again'.
-- [ ] 1.2 Keep a struck animal where it fell, so that stepping it does not flee. Verify: a test named after the scenario 'A struck animal stays where it fell', in stepWildlife.test.ts.
+- [x] 1.1 Map each bird and beast kind to its drop, and mark an animal struck so that it gives its drop once. Verify: strikeWildlife.test.ts, written first and seen failing, named after 'A Crimson Fox gives two Raw Meat when struck' and 'A struck animal gives nothing when struck again'.
+- [x] 1.2 Keep a struck animal where it fell, so that stepping it does not flee. Verify: a test named after the scenario 'A struck animal stays where it fell', in stepWildlife.test.ts.
 
 ## 2. Strikes reach the animals
 

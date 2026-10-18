@@ -5,6 +5,7 @@ import { WildlifeState } from "#src/models/wildlife/WildlifeState";
 import { WILDLIFE_ESCAPE_RADIUS, WILDLIFE_ESCAPE_SECONDS, WILDLIFE_FLEE_SPEED } from "#src/services/wildlife/constants";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
+import { strikeWildlife } from "#src/services/wildlife/strikeWildlife";
 import { describe, expect, test } from "vitest";
 
 // An animal one metre north of the target, within the escape radius and facing south
@@ -67,6 +68,23 @@ describe(stepWildlife, () => {
     stepWildlife(wildlife, TARGET, STEP_SECONDS);
     stepWildlife(wildlife, undefined, WILDLIFE_ESCAPE_SECONDS);
     expect(wildlife.state).toBe(WildlifeState.Idle);
+  });
+
+  test("a struck animal stays where it fell", () => {
+    expect.hasAssertions();
+
+    const wildlife = createNearWildlife();
+    strikeWildlife(wildlife);
+    stepWildlife(wildlife, TARGET, WILDLIFE_ESCAPE_SECONDS);
+    expect(wildlife).toStrictEqual({
+      heading: 0,
+      home: { x: 0, z: 1 },
+      id: "animal",
+      kind: WildlifeKind.Squirrel,
+      position: { x: 0, z: 1 },
+      state: WildlifeState.Struck,
+      stateSeconds: 0,
+    });
   });
 
   test("runs for another escape time while the target is still in reach", () => {
