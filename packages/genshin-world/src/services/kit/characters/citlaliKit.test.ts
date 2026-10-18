@@ -608,6 +608,24 @@ describe("constellation 2", () => {
     expect(getBuffedMastery(teammate, teammateOnField)).toBe(base);
   });
 
+  test("a teammate keeps her Elemental Mastery while the longer of the Blessing and the shield holds", () => {
+    expect.hasAssertions();
+    const { context, teammate } = createCitlaliTeam(2);
+    enterKitNightsoulBlessing(context.kitEffectState, CITLALI_CHARACTER_ID, { points: 24, secondsRemaining: 1 });
+    castKitShield(context.kitEffectState, CITLALI_CHARACTER_ID, {
+      element: Element.Cryo,
+      health: 1000,
+      secondsRemaining: 3,
+    });
+    const base = getBuffedMastery(teammate, context);
+    const teammateOnField = { ...context, activeCombatant: teammate };
+    // One second in, the Blessing has ended and the shield still holds
+    stepTeamFrames(teammateOnField, 60);
+    expect(getBuffedMastery(teammate, teammateOnField) - base).toBe(250);
+    stepTeamFrames(teammateOnField, 180);
+    expect(getBuffedMastery(teammate, teammateOnField)).toBe(base);
+  });
+
   test("Ascension 1's Hydro and Pyro RES cut is 40% from Constellation 2", () => {
     expect.hasAssertions();
     const enemy = createSturdyEnemy(3);

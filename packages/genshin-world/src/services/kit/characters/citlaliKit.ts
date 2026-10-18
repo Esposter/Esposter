@@ -14,12 +14,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
@@ -28,6 +26,7 @@ import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKi
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
@@ -102,13 +101,10 @@ const triggerAscension1Reaction = (context: KitContext, combatant: Combatant, en
       ? CONSTELLATION_2_RESISTANCE_REDUCTION
       : ASCENSION_1_RESISTANCE_REDUCTION;
   if (!hasKitNightsoulBlessing(kitEffectState.effects, characterId)) return;
-  if (!checkIsKitStatusActive(kitEffectState.effects, characterId, ASCENSION_1_POINTS_COOLDOWN_ID)) {
-    addKitStatus(kitEffectState, characterId, {
-      id: ASCENSION_1_POINTS_COOLDOWN_ID,
-      secondsRemaining: ASCENSION_1_POINTS_COOLDOWN_SECONDS,
-    });
+  if (
+    startKitCooldown(kitEffectState, characterId, ASCENSION_1_POINTS_COOLDOWN_ID, ASCENSION_1_POINTS_COOLDOWN_SECONDS)
+  )
     generateKitNightsoulPoints(context, ASCENSION_1_POINTS, NIGHTSOUL_MAXIMUM, characterId);
-  }
   addEnemyStatus(enemy, {
     damageTakenBonus: 0,
     id: ASCENSION_1_RESISTANCE_ID,
