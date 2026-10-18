@@ -86,7 +86,7 @@ The owner SHALL be able to export invites for everyone, or reminders for those w
 
 - **GIVEN** the program has no key column bound
 - **WHEN** the owner exports invites
-- **THEN** the export says which binding is missing
+- **THEN** the export is refused with the one message every unresolvable binding shares, which does not name the missing binding
 
 #### Scenario: A person past the read limit is counted, not filled
 
