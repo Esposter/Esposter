@@ -1,6 +1,6 @@
 ## Purpose
 
-Qiqi's kit as built: five strikes, a charged attack, Herald of Frost with its swipes and regeneration, and Fortune-Preserving Talisman's damage and heal, with Life-Prolonging Methods not built.
+Qiqi's kit as built: five strikes, a charged attack, Herald of Frost with its swipes and regeneration, Fortune-Preserving Talisman's damage and heal, Life-Prolonging Methods, and Constellations 1, 2, 4 and 6.
 
 ## Requirements
 
@@ -72,7 +72,7 @@ From Ascension 4, a Talisman with six seconds or more left SHALL NOT be replaced
 
 ### Requirement: Qiqi's constellations
 
-Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations, and Life-Prolonging Methods SHALL NOT take effect.
+Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations.
 
 #### Scenario: Frozen to the Bone on a Cryo enemy
 
@@ -86,8 +86,12 @@ Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Res
 - **WHEN** the player casts her burst
 - **THEN** a defeated party member is revived on the step after the burst starts, at most once every 15 minutes
 
-#### Scenario: Life-Prolonging Methods does nothing
+### Requirement: Life-Prolonging Methods
 
-- **GIVEN** Qiqi has Life-Prolonging Methods unlocked
-- **WHEN** the player fights with Qiqi
-- **THEN** that passive has no effect
+From Ascension 1, a reaction the character on the field triggers SHALL give that character 20% Healing Bonus for 8 seconds, unless Herald of Frost stands.
+
+#### Scenario: A reaction gives the character on the field Healing Bonus
+
+- **GIVEN** Qiqi has Ascension 1 and Herald of Frost is not standing
+- **WHEN** the character on the field triggers a reaction
+- **THEN** that character gains 20% Healing Bonus for 8 seconds
