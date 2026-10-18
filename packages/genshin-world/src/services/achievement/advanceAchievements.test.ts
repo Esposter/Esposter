@@ -4,6 +4,7 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { describe, expect, test } from "vitest";
 
+const craft = (quantity: number, targetId: string) => ({ kind: AchievementEventKind.ItemCrafted, quantity, targetId });
 const defeat = (targetId: string) => ({ kind: AchievementEventKind.MonsterDefeated, quantity: 1, targetId });
 
 describe(advanceAchievements, () => {
@@ -266,6 +267,26 @@ describe(advanceAchievements, () => {
     expect(advanceAchievements([chestInRegion], new Map(), openChest(REGION_ID), EPOCH)).toStrictEqual({
       primogems: PRIMOGEMS,
       progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]),
+    });
+  });
+
+  test("a crafting trigger counts the items its crafts make, by the combine type it names", () => {
+    expect.hasAssertions();
+    const COMBINE_TYPE = "7";
+    const OTHER_COMBINE_TYPE = "9";
+    const craftItems: Achievement = {
+      ...counted,
+      progress: 5,
+      trigger: { parameters: [[COMBINE_TYPE]], type: "TRIGGER_COMBINE_ITEM" },
+    };
+    const firstCraft = advanceAchievements([craftItems], new Map(), craft(3, COMBINE_TYPE), EPOCH);
+    expect(firstCraft).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 3 }]]) });
+    expect(
+      advanceAchievements([craftItems], firstCraft.progressMap, craft(2, OTHER_COMBINE_TYPE), EPOCH),
+    ).toStrictEqual(firstCraft);
+    expect(advanceAchievements([craftItems], firstCraft.progressMap, craft(2, COMBINE_TYPE), EPOCH)).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 5, finishedAt: EPOCH }]]),
     });
   });
 

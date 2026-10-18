@@ -32,6 +32,7 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
     levelSlot: 1,
     targetSlot: 0,
   },
+  TRIGGER_COMBINE_ITEM: { countsQuantity: true, kind: AchievementEventKind.ItemCrafted, targetSlot: 0 },
   TRIGGER_OPEN_WORLD_CHEST: {
     countsQuantity: false,
     kind: AchievementEventKind.ChestOpened,
