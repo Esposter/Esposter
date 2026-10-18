@@ -404,9 +404,12 @@ const {
 const {
   commissionDay,
   commissionSlice,
+  encounterPointLimit,
   encounterPoints,
   handbookDayCommissions,
+  isAdventureEncountersUnlocked,
   longTermEncounterPoints,
+  wholeEncounterPoints,
   wholeLongTermEncounterPoints,
 } = useWorldCommissions({
   events,
@@ -1961,11 +1964,14 @@ defineExpose({ jumpTo, readCameraPosition });
         <HandbookScreen
           :commissions="[]"
           :completed-count="0"
-          :can-use-long-term-encounter-points="canConvertLongTermPoint"
+          :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && canConvertLongTermPoint"
           :day-commissions="handbookDayCommissions"
           :domains="handbookDomains"
+          :encounter-point-limit="encounterPointLimit"
+          :encounter-points="wholeEncounterPoints"
           :game-text
           :investigation-rewards="[]"
+          :is-adventure-encounters-unlocked="isAdventureEncountersUnlocked"
           :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"
