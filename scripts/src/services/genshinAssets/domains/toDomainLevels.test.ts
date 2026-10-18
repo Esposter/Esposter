@@ -4,7 +4,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expedition
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
-import { checkIsDomainKindOpenOnDay, DomainKind } from "genshin-world";
+import { checkIsDomainKindOpenOnDay, DomainKind, GAME_TIME_ZONE } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({
@@ -67,8 +67,11 @@ describe(toDomainLevels, () => {
     const schedules = toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {});
     const epochDay = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
     // The epoch fell on a Thursday, so four days after it is a Monday and five a Tuesday
-    const monday = epochDay.add({ days: 4 });
-    const tuesday = epochDay.add({ days: 5 });
+    // Noon of each day in the game's time zone, a moment that falls on that game day
+    const atNoon = (day: Temporal.PlainDate) =>
+      day.toZonedDateTime({ plainTime: "12:00", timeZone: GAME_TIME_ZONE }).toInstant();
+    const monday = atNoon(epochDay.add({ days: 4 }));
+    const tuesday = atNoon(epochDay.add({ days: 5 }));
     for (const { kind, levels } of Object.values(schedules))
       for (const { scheduledDaysOfWeek } of levels) {
         expect(checkIsDomainKindOpenOnDay(kind, monday, scheduledDaysOfWeek)).toBe(false);

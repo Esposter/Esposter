@@ -1,3 +1,6 @@
+import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
+import type { EnemyKindId } from "genshin-world";
+
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";
 import { FamilyLabelEnemyKindIdMap } from "#src/services/genshinAssets/camps/FamilyLabelEnemyKindIdMap";
 import { replaceEnemyCamps } from "#src/services/genshinAssets/camps/replaceEnemyCamps";
@@ -30,7 +33,9 @@ export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promi
     regionFiles
       .filter(({ region }) => region in InteractiveMapRegionMap)
       .map(async ({ data, file, region }) => {
-        const places = placement.places[region] ?? [];
+        const places = (placement.places[region] ?? []).filter(
+          (place): place is MapPointPlace<EnemyKindId> => place.kind !== undefined,
+        );
         const enemyCamps = buildEnemyCamps(region, places, areaIdAt);
         const enemyCount = enemyCamps.reduce((count, { members }) => count + members.length, 0);
         if (JSON.stringify(enemyCamps) !== JSON.stringify(data.enemyCamps ?? []) && !isDryRun)

@@ -7,7 +7,7 @@ import { Attributes } from "genshin-world";
 // A table's properties as attribute lines, an empty slot and a line of none left out; a property no attribute names is
 // Left out too and noted, since the run's output then lacks it
 export const toAttributeLines = (properties: readonly ExcelProperty[], notes: string[]): AttributeLine[] =>
-  properties.flatMap(({ GGKIEIJLCJJ: value, propType = EMPTY_PROPERTY_TYPE }) => {
+  properties.flatMap(({ GGKIEIJLCJJ: value = 0, propType = EMPTY_PROPERTY_TYPE }) => {
     if (propType === EMPTY_PROPERTY_TYPE || value === 0) return [];
     const attribute = Attributes.find((knownAttribute) => knownAttribute === propType);
     if (!attribute) {

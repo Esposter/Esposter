@@ -74,7 +74,9 @@ export const toDomainLevels = (
       throw new InvalidOperationError(Operation.Read, DUNGEON_TABLE_NAME, `names level ${dungeon.id} in two domains`);
     // A level naming one pair's material is open on that pair's days. One naming several pairs' materials is open on
     // Sunday only, the one day every material is open on
-    const scheduledDaysOfWeek = matches.every((other) => other.pair === match.pair) ? DOMAIN_DAY_PAIRS[match.pair] : [];
+    const scheduledDaysOfWeek = matches.every((other) => other.pair === match.pair)
+      ? (DOMAIN_DAY_PAIRS[match.pair] ?? [])
+      : [];
     addLevel(match.entry.id, match.kind, toDomainLevel(dungeon, scheduledDaysOfWeek));
   }
 
