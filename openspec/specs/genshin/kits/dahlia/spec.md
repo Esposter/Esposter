@@ -1,6 +1,6 @@
 ## Purpose
 
-Dahlia's kit as built: her four strikes, charged attack, Immersive Ordinance's tap and hold, and Radiant Psalter's shield. Her Benison stacks, Favonian Favor's attack speed and her passives wait on the Benison and attack-speed hooks.
+Dahlia's kit as built: her four strikes, charged attack, Immersive Ordinance's tap and hold, Radiant Psalter's shield, the Benison stacks her normal attacks gain, and Constellations 1 and 4. The shield's regeneration from the stacks, Constellation 2, Favonian Favor's attack speed and her passives wait on the delays, the attack-speed hook and the passives' own hooks.
 
 ## Requirements
 
@@ -81,6 +81,39 @@ Radiant Psalter SHALL cost 60 energy, cool for 15 seconds, and place a shield on
 - **GIVEN** Radiant Psalter was cast less than 15 seconds ago
 - **WHEN** the player casts it again
 - **THEN** it does not cast
+
+### Requirement: Normal attacks gain Benison stacks, and Constellation 1 returns energy for each
+
+Four hits by the active member with normal attacks during Favonian Favor SHALL gain Dahlia one Benison stack, up to four a Favonian Favor. From constellation 1, each stack gained SHALL return 2.5 energy.
+
+#### Scenario: Four hits gain a stack
+
+- **GIVEN** Dahlia is at constellation 1 and her Favonian Favor holds
+- **WHEN** her active member hits opponents 4 times with normal attacks
+- **THEN** Dahlia gains 2.5 energy
+
+#### Scenario: Stacks are capped at four a Favonian Favor
+
+- **GIVEN** four stacks have been gained during one Favonian Favor
+- **WHEN** her active member hits opponents with normal attacks again
+- **THEN** no further stack is gained
+
+#### Scenario: A hit within three frames of a counted hit counts once
+
+- **GIVEN** a hit has counted
+- **WHEN** another hit lands within three frames of it
+- **THEN** the second hit does not count
+
+#### Scenario: Hits that do not count
+
+- **WHEN** a member other than the active one hits, a hit is not a normal attack, or a hit lands outside Favonian Favor
+- **THEN** no stack is gained
+
+#### Scenario: Below constellation 1 a stack gives no energy
+
+- **GIVEN** Dahlia is at constellation 0
+- **WHEN** a stack is gained
+- **THEN** she gains no energy
 
 ### Requirement: Fourth constellation lengthens Favonian Favor
 
