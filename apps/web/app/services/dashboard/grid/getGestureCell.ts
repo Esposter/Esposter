@@ -3,6 +3,7 @@ import type { GridItem } from "@/models/dashboard/GridItem";
 import { GridGestureType } from "@/models/dashboard/GridGestureType";
 import { getCellSize } from "@/services/dashboard/grid/getCellSize";
 import { getCellSpan } from "@/services/dashboard/grid/getCellSpan";
+import { clamp } from "@vueuse/core";
 
 // The cell a pointer's travel from where it pressed puts a tile on: a move shifts its origin by whole cells and keeps it
 // Within the columns, and a resize grows or shrinks its span by whole cells, never below one
@@ -22,7 +23,7 @@ export const getGestureCell = ({
   rowPitch: number;
 }): GridItem => {
   if (kind === GridGestureType.Move) {
-    const x = Math.min(Math.max(0, origin.x + Math.round(offset.x / columnPitch)), columnNumber - origin.w);
+    const x = clamp(origin.x + Math.round(offset.x / columnPitch), 0, columnNumber - origin.w);
     const y = Math.max(0, origin.y + Math.round(offset.y / rowPitch));
     return { h: origin.h, id: origin.id, w: origin.w, x, y };
   }
