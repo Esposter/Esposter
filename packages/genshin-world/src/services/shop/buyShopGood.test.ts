@@ -317,20 +317,14 @@ describe(buyShopGood, () => {
   const THIRD_FISH_ITEM_ID = 9003;
   const FOURTH_FISH_ITEM_ID = 9004;
   const multiFishGood: ShopGood = {
-    beginTime: EPOCH.toString(),
-    buyLimit: 0,
+    ...groceryGood,
+    goodsId: 3003,
     costs: [
       { count: 2, itemId: FISH_ITEM_ID },
       { count: 1, itemId: SECOND_FISH_ITEM_ID },
       { count: 1, itemId: THIRD_FISH_ITEM_ID },
       { count: 1, itemId: FOURTH_FISH_ITEM_ID },
     ],
-    endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
-    goodsId: 3003,
-    itemCount: 1,
-    itemId: GROCERY_ITEM_ID,
-    minPlayerLevel: ADVENTURE_RANK,
-    refresh: ShopRefresh.None,
   };
 
   test("a good priced in several fish is paid from the bag only when the bag holds every fish", () => {
