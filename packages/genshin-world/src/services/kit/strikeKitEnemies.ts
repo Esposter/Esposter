@@ -44,10 +44,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     wildlifeList,
   } = context;
   let struckCount = 0;
-  const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
+  const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, body.position);
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
-    const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party);
+    const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, body.position);
     let isStruck = false;
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
@@ -61,7 +61,13 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       )
         continue;
       isStruck = true;
-      addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
+      addEnduringRockStatus(
+        enemy,
+        pricedCombatant,
+        kitEffectState.effects,
+        party.lunarCrystallize.moondrifts,
+        body.position,
+      );
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
       const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(

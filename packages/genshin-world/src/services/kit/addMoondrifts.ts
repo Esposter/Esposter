@@ -5,12 +5,12 @@ import type { Party } from "#src/models/party/Party";
 import type { GroundPoint } from "genshin-engine";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { checkIsNearMoondrift } from "#src/services/party/checkIsNearMoondrift";
 import {
   LUNAR_CRYSTALLIZE_MAXIMUM_COUNT,
   MOONDRIFT_HARMONY_COOLDOWN_SECONDS,
   MOONDRIFT_HARMONY_COUNT,
   MOONDRIFT_HARMONY_HIT_SECONDS,
-  MOONDRIFT_NEARBY_RADIUS,
   MOONDRIFT_OFFSETS,
   MOONDRIFT_SECONDS,
 } from "#src/services/party/constants";
@@ -32,9 +32,8 @@ export const addMoondrifts = (
     if (reactionType !== ReactionType.LunarCrystallize) continue;
     lunarCrystallize.count = Math.min(lunarCrystallize.count + 1, LUNAR_CRYSTALLIZE_MAXIMUM_COUNT);
     for (const contributorId of [characterId, ...sourceIds]) lunarCrystallize.contributorIds.add(contributorId);
-    const nearbyMoondrifts = lunarCrystallize.moondrifts.filter(
-      (moondrift) =>
-        Math.hypot(moondrift.position.x - position.x, moondrift.position.z - position.z) < MOONDRIFT_NEARBY_RADIUS,
+    const nearbyMoondrifts = lunarCrystallize.moondrifts.filter((moondrift) =>
+      checkIsNearMoondrift(moondrift, position),
     );
     if (nearbyMoondrifts.length < MOONDRIFT_OFFSETS.length)
       for (const offset of MOONDRIFT_OFFSETS.slice(0, MOONDRIFT_OFFSETS.length - nearbyMoondrifts.length))

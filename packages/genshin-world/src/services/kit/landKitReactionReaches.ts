@@ -26,7 +26,12 @@ export const landKitReactionReaches = (
 ): void => {
   const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, oreStrikes, party, random } = context;
   if (reaches.length === 0) return;
-  const { lunarReactionTypes } = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
+  const { lunarReactionTypes } = getPartyMoonsign(
+    characterIdCombatantMap,
+    kitEffectState.effects,
+    party,
+    context.body.position,
+  );
   for (const [origin, reaction] of reaches) {
     const oreHit = readReactionOreHit(reaction.reactionType);
     if (oreHit) oreStrikes.push({ body: { facing: 0, height: 0, position: origin.position }, hit: oreHit });
