@@ -514,4 +514,55 @@ describe(getGcsimKitCandidates, () => {
 
     expect(candidateMap.get("skillHolds.0.action.hits.0.area")).toBeUndefined();
   });
+
+  test("gives a skill no hit from the queue call firing at its hold's hitmark, which is the hold's own", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArtHold",
+          element: "attributes.Geo",
+          fieldLineMap: {},
+          file: "skill.go",
+          line: 4,
+          siteLine: 4,
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["skillHoldFrames", toConstant(96)],
+        ["skillHoldHitmark", toConstant(48)],
+        ["skillPressFrames", toConstant(38)],
+      ]),
+      filePaths: [],
+      folder: "zhongli",
+      queuedAttacks: [{ attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", line: 5 }],
+      talentFile: "zhongli.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Zhongli",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Polearm,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["skill.hits.length", "skill.hits.0.hitmarkFrames", "skillHolds.0.action.hits.length"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([undefined, undefined, [1]]);
+  });
 });
