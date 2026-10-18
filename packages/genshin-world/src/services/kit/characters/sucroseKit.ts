@@ -8,10 +8,14 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
@@ -47,13 +51,23 @@ const ABSORBED_ELEMENT_SOURCE = "sucrose-absorbed-element";
 export const SUCROSE_CHARACTER_ID = 10_000_043;
 
 const CONSTELLATION_1 = 1;
+// Measured: gcsim v2.47.2 (MIT) sucrose/cons.go, Alchemania: every seventh normal or charged attack that strikes an enemy
+// Cuts Astable's cooldown by 1 to 7 seconds, as the wiki and gcsim's comment say. gcsim's code draws whole seconds from 1
+// To 6, which this does not follow: the cut is drawn from the world's random source as a fraction of a second, as gcsim's
+// Comment says a change can be. The kit counts an attack at its first hit's hitmark whether or not it struck anything,
+// Which is the kit's NormalAttackLanded and ChargedAttackLanded, where gcsim counts only the attacks that strike
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/cons.go
+const CONSTELLATION_4 = 4;
+const ALCHEMANIA_ATTACKS = 7;
+const ALCHEMANIA_MIN_CUT_SECONDS = 1;
+const ALCHEMANIA_CUT_RANGE_SECONDS = 6;
+const ALCHEMANIA_STATUS_ID = "sucrose-alchemania";
 
 // Sucrose's behaviour: Forbidden Creation-Isomer 75 / Type II sets its field ahead of her, whose Anemo tick lands from a
 // Summon while it lasts, and whose absorb check takes the first aura an enemy within its reach carries, the absorbed
-// Element's hit then landing on every tick. Her passives and Constellations 1, 2 and 6 are built. The skill's pull is not,
-// As no enemy moves on a kit's terms, and Constellation 4 is not, as the kit has no cooldown to shorten. Her Hexerei team
-// Bonus is not built, as the party does not count the Hexerei it needs
-// Constellation 4 needs the Astable cooldown to shorten on every seventh attack, which the kit does not track
+// Element's hit then landing on every tick. Her passives and Constellations 1, 2, 4 and 6 are built. The skill's pull is
+// Not, as no enemy moves on a kit's terms, and her Hexerei team bonus is not built, as the party does not count the Hexerei
+// It needs
 export const createSucroseKitBehaviour = ({
   kit,
   readArea,
@@ -118,7 +132,7 @@ export const createSucroseKitBehaviour = ({
     // Element's hit on every tick once an enemy's aura is taken, and which takes one only once
     // Clustered Vacuum Field, from Constellation 1, gives Astable Anemohypostasis Creation one more charge
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
-    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
+    onKitEvent: (event, { activeCombatant, characterIdCombatantMap, kitEffectState, party, random }, combatant) => {
       const members = getDeployedCharacterIds(party);
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (combatant.ascension < SWIRL_ASCENSION || event.striker.characterId !== combatant.characterId) return;
@@ -150,6 +164,22 @@ export const createSucroseKitBehaviour = ({
               secondsRemaining: SKILL_BURST_SECONDS,
               source: SKILL_BURST_SOURCE,
             });
+      } else if (event.kind === KitEventKind.NormalAttackLanded || event.kind === KitEventKind.ChargedAttackLanded) {
+        if (combatant.constellationCount < CONSTELLATION_4 || activeCombatant.characterId !== combatant.characterId)
+          return;
+        const { characterId } = combatant;
+        const previousStacks = checkIsKitStatusActive(kitEffectState.effects, characterId, ALCHEMANIA_STATUS_ID)
+          ? (findKitStatus(kitEffectState.effects, characterId, ALCHEMANIA_STATUS_ID)?.stacks ?? 0)
+          : 0;
+        // The count is the status's stacks, which do not run out, so the seventh attack is the one that finds six
+        const stacks = (previousStacks + 1) % ALCHEMANIA_ATTACKS;
+        addKitStatus(kitEffectState, characterId, { id: ALCHEMANIA_STATUS_ID, secondsRemaining: Infinity, stacks });
+        if (stacks === 0)
+          changeKitSkillCooldown(
+            party,
+            characterId,
+            -(ALCHEMANIA_MIN_CUT_SECONDS + random() * ALCHEMANIA_CUT_RANGE_SECONDS),
+          );
       }
     },
   };

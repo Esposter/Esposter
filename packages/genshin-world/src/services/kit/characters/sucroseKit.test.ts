@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
@@ -18,6 +19,7 @@ import { createSucroseKitBehaviour, SUCROSE_CHARACTER_ID } from "#src/services/k
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -45,6 +47,16 @@ const castEffects = (combatant: Combatant): KitEffect[] => {
   SUCROSE_KIT.elementalBurst.onStart?.(context);
   return context.kitEffectState.effects;
 };
+
+// Sucrose's normal and charged attacks landing, as the step sends them for the character on the field
+const createNormalAttackLandedEvent = (): KitEvent => ({
+  action: takeOne(SUCROSE_KIT.normalAttacks),
+  kind: KitEventKind.NormalAttackLanded,
+});
+const createChargedAttackLandedEvent = (): KitEvent => ({
+  action: SUCROSE_KIT.chargedAttack,
+  kind: KitEventKind.ChargedAttackLanded,
+});
 
 describe(createSucroseKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -150,5 +162,99 @@ describe(createSucroseKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(SUCROSE_KIT.getSkillChargeBonus?.(createSucroseCombatant(0, 0))).toBe(0);
+  });
+
+  test("constellation 4 cuts the skill's cooldown by a random 1 to 7 seconds on each seventh attack", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    for (let attack = 0; attack < 7; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(6);
+  });
+
+  test("constellation 4 cuts nothing before the seventh attack", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    for (let attack = 0; attack < 6; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBe(10);
+  });
+
+  test("constellation 4 counts its next seven attacks again after each cut", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    for (let attack = 0; attack < 14; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(8);
+  });
+
+  test("constellation 4 counts charged attacks along with normal attacks", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    for (let attack = 0; attack < 3; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+    for (let attack = 0; attack < 4; attack++)
+      SUCROSE_KIT.onKitEvent?.(createChargedAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(6);
+  });
+
+  test("constellation 4 counts no attack while another character is on the field", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    const offFieldContext = { ...context, activeCombatant: { ...combatant, characterId: MONA_CHARACTER_ID } };
+    for (let attack = 0; attack < 7; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), offFieldContext, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBe(10);
+  });
+
+  test("constellation 4 counts no attack below its constellation", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 3);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 10;
+    for (let attack = 0; attack < 7; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBe(10);
+  });
+
+  test("constellation 4's cut leaves a skill that is already ready at zero", () => {
+    expect.hasAssertions();
+    const combatant = createSucroseCombatant(0, 4);
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 0.5 });
+    const partyMember = getPartyMember(context.party, SUCROSE_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 0;
+    for (let attack = 0; attack < 7; attack++)
+      SUCROSE_KIT.onKitEvent?.(createNormalAttackLandedEvent(), context, combatant);
+
+    expect(partyMember.skillCooldownSeconds).toBe(0);
   });
 });
