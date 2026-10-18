@@ -7,6 +7,7 @@ import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits
 import { addGcsimGravityRippleCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimGravityRippleCandidates";
 import { addGcsimPairidazaDreamsCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPairidazaDreamsCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
+import { addGcsimShieldRegenerationCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShieldRegenerationCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
 
 // The per-character builder mappings, by a character's gcsim folder: the values a folder holds beyond the shapes every
@@ -15,6 +16,7 @@ export const GcsimCharacterMappingMap: Partial<
   Record<string, (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter) => void>
 > = {
   chasca: addGcsimShellCandidates,
+  dahlia: addGcsimShieldRegenerationCandidates,
   kaveh: addGcsimPairidazaDreamsCandidates,
   columbina: addGcsimGravityRippleCandidates,
   kinich: addGcsimLoopShotCandidates,
