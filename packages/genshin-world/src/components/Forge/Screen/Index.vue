@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
@@ -9,6 +10,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { ForgeQueueCell, ForgeRecipeCell, ForgeTab } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipeOpen";
 import { computeForgeQueueSlots } from "#src/services/forging/computeForgeQueueSlots";
@@ -18,7 +20,7 @@ import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { startForge } from "#src/services/forging/startForge";
 import { takeOne } from "@esposter/shared";
-import { ForgeQueueState, ForgeScreen, GameScreen } from "genshin-interface";
+import { ForgeQueueState, ForgeScreen, GameScreen, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -63,7 +65,7 @@ const {
   recipes,
   weapons,
 } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
 // A duration in the game's own shape: seconds under a minute, then whole minutes
 const formatForgeTime = (seconds: number) =>
   seconds < SECONDS_PER_MINUTE ? `${seconds}s` : `${Math.floor(seconds / SECONDS_PER_MINUTE)}m`;
@@ -169,6 +171,20 @@ const obtain = (queueId: number) => {
     wallet: wallet.value,
     weapons,
   });
+  // The weapons the order took in are the bag's entries past its next id that are weapons, each one a forged weapon
+  // Counted at its rarity
+  const forgedWeapons = obtained.inventory.items.filter(
+    ({ definition, id }) => id >= inventory.value.nextId && definition.category === ItemCategory.Weapon,
+  );
+  if (forgedWeapons.length > 0)
+    emit(
+      "achievementEvents",
+      forgedWeapons.map(({ definition }) => ({
+        kind: AchievementEventKind.WeaponForged,
+        quantity: 1,
+        targetId: String(definition.rarity),
+      })),
+    );
   inventory.value = obtained.inventory;
   adventureExp.value = obtained.adventureExp;
   wallet.value = obtained.wallet;

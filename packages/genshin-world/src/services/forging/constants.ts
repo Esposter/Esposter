@@ -33,3 +33,9 @@ export const AvatarIdForgeTalentMap: Record<number, ForgeTalent> = {
 export const MONDSTADT_BLACKSMITH_POINT_ID = "65";
 // The seconds in a minute, which a forge's remaining time is shown in once it passes a minute
 export const SECONDS_PER_MINUTE = 60;
+// The blacksmith's interactable id, the row the forge screen opens from beside its place
+export const FORGE_INTERACTABLE_ID = "blacksmith";
+// The recipe the forge opens on, the first enhancement ore's
+export const FIRST_FORGE_RECIPE_ID = 11_001;
+// The milliseconds between each reading of the clock while the forge screen is open, so its queues' time left moves
+export const FORGE_CLOCK_INTERVAL_MS = 1000;
