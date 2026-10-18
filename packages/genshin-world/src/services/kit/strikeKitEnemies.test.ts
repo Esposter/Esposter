@@ -460,7 +460,7 @@ describe(strikeKitEnemies, () => {
     const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
     const member = createMember(getPartyStrikeBonus);
     takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
-    const characterIdCombatantMap = getPartyStrikeBonus.mock.calls[0][5];
+    const characterIdCombatantMap = takeOne(getPartyStrikeBonus.mock.calls, 0)[5];
 
     expect(characterIdCombatantMap.get(OTHER_CHARACTER_ID)).toBe(member);
   });
