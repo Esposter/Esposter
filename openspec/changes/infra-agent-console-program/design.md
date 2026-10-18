@@ -71,8 +71,6 @@ sequenceDiagram
 | [Element ambience](../infra-agent-console-element-ambience/design.md)                   | Genshin theme — a backdrop in the element, moved by the spoken line           |
 | [Spatial chat](../infra-agent-console-spatial-chat/design.md)                           | a theme option — the conversation placed in the scene                         |
 
-                  |
-
 ## Scope and order
 
 1. **One day's work in the console alone**, with every return to the terminal written into the [workflow comparison](../../specs/infra/claude-interface/agent-console/workflow-comparison/design.md) and closed where it recurs. [Anthropic-hosted sessions](../infra-agent-console-anthropic-hosted-sessions/design.md) come after the connecting pages of the [console](../../specs/infra/claude-interface/agent-console/README.md). The Code tab's lean core closes the returns the comparison predicts: [repository files](../../specs/infra/claude-interface/agent-console/repository-files/design.md) are shipped; [side chat](../infra-agent-console-side-chat/design.md) comes next, with [effort level](../infra-agent-console-effort-level/design.md) and [session titles](../infra-agent-console-session-titles/design.md) as small changes to the composer and the sessions tab.
