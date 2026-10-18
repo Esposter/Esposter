@@ -46,11 +46,14 @@ const ABSORBED_ELEMENT_SOURCE = "sucrose-absorbed-element";
 
 export const SUCROSE_CHARACTER_ID = 10_000_043;
 
+const CONSTELLATION_1 = 1;
+
 // Sucrose's behaviour: Forbidden Creation-Isomer 75 / Type II sets its field ahead of her, whose Anemo tick lands from a
 // Summon while it lasts, and whose absorb check takes the first aura an enemy within its reach carries, the absorbed
-// Element's hit then landing on every tick. Her passives and Constellations 2 and 6 are built. The skill's pull is not,
+// Element's hit then landing on every tick. Her passives and Constellations 1, 2 and 6 are built. The skill's pull is not,
 // As no enemy moves on a kit's terms, and Constellation 4 is not, as the kit has no cooldown to shorten. Her Hexerei team
 // Bonus is not built, as the party does not count the Hexerei it needs
+// Constellation 4 needs the Astable cooldown to shorten on every seventh attack, which the kit does not track
 export const createSucroseKitBehaviour = ({
   kit,
   readArea,
@@ -72,6 +75,8 @@ export const createSucroseKitBehaviour = ({
   return {
     // The burst's two fields are set as it is cast: the Anemo tick's, and the absorb check's, which lands the absorbed
     // Element's hit on every tick once an enemy's aura is taken, and which takes one only once
+    // Clustered Vacuum Field, from Constellation 1, gives Astable Anemohypostasis Creation one more charge
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
