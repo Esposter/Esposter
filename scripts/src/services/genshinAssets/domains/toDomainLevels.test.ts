@@ -68,6 +68,7 @@ describe(toDomainLevels, () => {
     expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {}, materials)).toStrictEqual(
       {
         10: {
+          artifactSetIds: [],
           kind: DomainKind.Mastery,
           levels: [
             {
@@ -93,6 +94,7 @@ describe(toDomainLevels, () => {
     expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101])], {}, materials)).toStrictEqual(
       {
         10: {
+          artifactSetIds: [],
           kind: DomainKind.Mastery,
           levels: [
             {
@@ -121,6 +123,7 @@ describe(toDomainLevels, () => {
     const dungeon = createDungeon({ id: 2001, passRewardPreviewID: 21, subType: "DUNGEON_SUB_WEAPON" });
     expect(toDomainLevels([entry], [dungeon], [createPreview(21, [203])], {}, materials)).toStrictEqual({
       2: {
+        artifactSetIds: [],
         kind: DomainKind.Forgery,
         levels: [
           {
@@ -163,6 +166,7 @@ describe(toDomainLevels, () => {
       toDomainLevels([blessingEntry], [dungeon], [createPreview(20, [])], { 48: blessingPoint }, materials),
     ).toStrictEqual({
       1: {
+        artifactSetIds: [],
         kind: DomainKind.Blessing,
         levels: [
           {
@@ -189,6 +193,7 @@ describe(toDomainLevels, () => {
     const dungeon = createDungeon({ statueCostCount: 40 });
     expect(toDomainLevels([blessingEntry], [dungeon], [preview], { 48: blessingPoint }, materials)).toStrictEqual({
       1: {
+        artifactSetIds: [],
         kind: DomainKind.Blessing,
         levels: [
           {
@@ -219,6 +224,7 @@ describe(toDomainLevels, () => {
       toDomainLevels([blessingEntry], [createDungeon({})], [preview], { 48: blessingPoint }, materials),
     ).toStrictEqual({
       1: {
+        artifactSetIds: [],
         kind: DomainKind.Blessing,
         levels: [
           {
@@ -252,6 +258,7 @@ describe(toDomainLevels, () => {
       toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101, 102, 103])], {}, materials),
     ).toStrictEqual({
       10: {
+        artifactSetIds: [],
         kind: DomainKind.Mastery,
         levels: [
           {

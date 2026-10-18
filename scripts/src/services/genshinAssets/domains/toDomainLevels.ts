@@ -16,6 +16,7 @@ import {
 } from "#src/services/genshinAssets/domains/constants";
 import {
   BLESSING_TREE_ARTIFACT_ROWS,
+  BLESSING_ARTIFACT_SET_IDS,
   DOMAIN_TREE_COUNT_ROWS,
   findTreeRow,
 } from "#src/services/genshinAssets/domains/treeRewardCounts";
@@ -110,7 +111,11 @@ export const toDomainLevels = (
   const rarities = new Map(materials.map(({ id, rankLevel }) => [id, rankLevel]));
   const schedules = new Map<number, DomainSchedule>();
   const addLevel = (entryId: number, kind: DomainKind, level: DomainLevel): void => {
-    const schedule = schedules.get(entryId) ?? { kind, levels: [] };
+    const schedule = schedules.get(entryId) ?? {
+      artifactSetIds: kind === DomainKind.Blessing ? (BLESSING_ARTIFACT_SET_IDS[entryId] ?? []) : [],
+      kind,
+      levels: [],
+    };
     schedule.levels.push(level);
     schedules.set(entryId, schedule);
   };
@@ -169,9 +174,13 @@ export const toDomainLevels = (
   }
 
   return Object.fromEntries(
-    Array.from(schedules, ([entryId, { kind, levels }]): [string, DomainSchedule] => [
+    Array.from(schedules, ([entryId, { artifactSetIds, kind, levels }]): [string, DomainSchedule] => [
       String(entryId),
-      { kind, levels: levels.toSorted((firstLevel, secondLevel) => firstLevel.dungeonId - secondLevel.dungeonId) },
+      {
+        artifactSetIds,
+        kind,
+        levels: levels.toSorted((firstLevel, secondLevel) => firstLevel.dungeonId - secondLevel.dungeonId),
+      },
     ]),
   );
 };
