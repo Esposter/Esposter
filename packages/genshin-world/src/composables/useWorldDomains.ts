@@ -86,7 +86,7 @@ interface DomainChallengeRun {
   defeats: number;
   defeatsInWave: number;
   elapsedMilliseconds: number;
-  // The poise breaks the arena's enemy took since the last step, which Stormterror's fight counts as shield breaks
+  // The shield breaks the arena's enemy took since the last step, which Stormterror's fight counts
   pendingShieldBreaks: number;
   // Stormterror's fight, held only by a run whose arena holds Stormterror
   stormterrorFight?: StormterrorFight;
@@ -222,9 +222,8 @@ export const useWorldDomains = ({
       waveIndex,
     };
   });
-  // A poise break on the arena's enemy counts toward Stormterror's shield breaks, which the next step takes in. The break
-  // Stands in for the shield, a non-elemental pool the hit does not yet carry an element to count against (PROVISIONAL)
-  events.on("poiseBreak", (enemy) => {
+  // A shield break on the arena's enemy counts toward Stormterror's shield breaks, which the next step takes in
+  events.on("shieldBreak", (enemy) => {
     const challenge = domainChallenge.value;
     if (!challenge?.stormterrorFight || enemy.campId !== challenge.camp.id) return;
     domainChallenge.value = { ...challenge, pendingShieldBreaks: challenge.pendingShieldBreaks + 1 };
