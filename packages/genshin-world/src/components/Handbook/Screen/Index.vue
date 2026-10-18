@@ -131,7 +131,11 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
           </li>
         </ol>
       </template>
-      <ol v-else class="commissions" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Commissions]]">
+      <ol
+        v-else-if="tab === HandbookTab.Commissions"
+        class="commissions"
+        :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Commissions]]"
+      >
         <li
           v-for="(commission, index) of dayCommissions"
           :key="index"
@@ -145,6 +149,11 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
           <p v-if="commission.regionTextKey" class="commission-region">{{ gameText[commission.regionTextKey] }}</p>
         </li>
       </ol>
+      <ol
+        v-else-if="tab === HandbookTab.Domains"
+        class="domains"
+        :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Domains]]"
+      ></ol>
       <div class="ribbon">
         <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">
           <svg viewBox="0 0 67 67" aria-hidden="true">
