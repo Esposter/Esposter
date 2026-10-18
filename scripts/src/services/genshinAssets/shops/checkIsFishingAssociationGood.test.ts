@@ -32,7 +32,7 @@ describe(checkIsFishingAssociationGood, () => {
     expect(checkIsFishingAssociationGood(createRow({}))).toBe(true);
   });
 
-  test("leaves out a good of a fishing shop that several fish price", () => {
+  test("takes a good of a fishing shop that several fish price", () => {
     expect.hasAssertions();
 
     const row = createRow({
@@ -41,7 +41,7 @@ describe(checkIsFishingAssociationGood, () => {
         { count: 1, id: OTHER_FISH_ID },
       ],
     });
-    expect(checkIsFishingAssociationGood(row)).toBe(false);
+    expect(checkIsFishingAssociationGood(row)).toBe(true);
   });
 
   test("leaves out a good of a shop that is no fishing shop", () => {

@@ -6,7 +6,6 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
@@ -19,20 +18,26 @@ import { takeOne } from "@esposter/shared";
 // The skill's effect is one no module covers. The cards that hear the skill are those on each field when it is used, so a
 // Card the skill creates hears the next skill
 export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): boolean => {
-  const context: GcgEffectContext = { ...baseContext, skill };
+  const side = takeOne(baseContext.duel.sides, baseContext.sideIndex);
+  const user = side.characters.at(side.activeIndex);
+  // A Normal Attack by a character switched in this round is a Plunging Attack. The first skill she uses spends the
+  // Switch, so a later Normal Attack is no Plunging Attack
+  const isPlunge = skill.kind === GcgSkillKind.NormalAttack && user?.isSwitchedIn === true;
+  const context: GcgEffectContext = { ...baseContext, isPlunge, skill };
   const skillModule = GcgEffectNameSkillModuleMap.get(skill.effect);
   const damage = parseGcgDamageEffect(skill.effect) ?? skillModule?.getDamage?.(context);
   if (damage === undefined && !skillModule?.afterDamage) return false;
-  const side = takeOne(context.duel.sides, context.sideIndex);
+  if (user) user.isSwitchedIn = false;
   const fieldCards = listGcgFieldCards(side, side.activeIndex);
   const fieldOfEachSide = context.duel.sides.map((sideState) => ({
     sideState,
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
-  const user = side.characters.at(side.activeIndex);
-  const dealt: GcgDealtDamage[] = damage ? dealGcgSkillDamage(context, damage) : [];
+  const dealt: GcgDealtDamage[] = damage
+    ? applyGcgDamage(context.duel, context.sideIndex, damage, context.duel.rule, context)
+    : [];
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
-  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing));
+  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
   skillModule?.afterDamage?.(context);
   side.usedSkillIds.push(skill.id);
   for (const zoneCard of fieldCards) {
@@ -43,7 +48,13 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
       zoneCard,
       dealt,
     );
-    if (skillDamage) applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule);
+    // A card's damage on a skill is not the skill's own hit, so the Plunging Attack bonus does not bear on it
+    if (skillDamage)
+      applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule, {
+        ...context,
+        characterIndex,
+        isPlunge: false,
+      });
   }
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)

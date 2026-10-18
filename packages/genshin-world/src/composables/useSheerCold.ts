@@ -9,7 +9,7 @@ import { isHeatedBy } from "#src/services/sheerCold/isHeatedBy";
 import { isSheerColdArea } from "#src/services/sheerCold/isSheerColdArea";
 import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
 import { useLoop } from "@tresjs/core";
-import { LocomotionState } from "genshin-engine";
+import { LocomotionState, WeatherKind } from "genshin-engine";
 
 interface SheerColdCharacter {
   maxHealth: number;
@@ -18,7 +18,8 @@ interface SheerColdCharacter {
 }
 
 // The Sheer Cold gauge of the character, stepped each frame: the subzero climate of the area the character stands in
-// Fills it, a lit heat source near it drains it wherever it stands, and swimming fills it faster, and an anti-cold holds the fill down. Full, it hands each
+// Fills it, a lit heat source near it drains it wherever it stands, and swimming or a snowstorm fills it faster, and an anti-cold
+// Holds the fill down. Full, it hands each
 // Interval's damage to onDamage. The area is rechecked only once the character has moved a stretch, as an
 // Area's weather is. The gauge's value is returned
 export const useSheerCold = (
@@ -26,6 +27,7 @@ export const useSheerCold = (
   getCharacter: () => SheerColdCharacter | undefined,
   getHeatSources: () => readonly HeatSource[],
   getAntiColdRatio: () => number,
+  getWeather: () => WeatherKind,
   onDamage: (damage: number) => void,
 ) => {
   const { onBeforeRender } = useLoop();
@@ -55,6 +57,7 @@ export const useSheerCold = (
         antiColdRatio: getAntiColdRatio(),
         isHeated: isHeatedBy(x, z, getHeatSources()),
         isInCold,
+        isSnowstorm: getWeather() === WeatherKind.Snowstorm,
         isSwimming,
         maxHealth,
       },

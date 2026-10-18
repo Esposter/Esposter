@@ -1,0 +1,110 @@
+import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+
+import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
+import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
+import { CombatTalent, WeaponType } from "genshin-world";
+import { describe, expect, test } from "vitest";
+
+// Iansan's charge.go: a charge hitmark constant, the charged attack, and the Stormflight `swift` attack fired by a queue
+// Call in the same file
+const gcsim: GcsimCharacter = {
+  animationFrameNameMap: new Map(),
+  attacks: [
+    {
+      abil: "Charged Attack",
+      attackTag: "attacks.AttackTagExtra",
+      durability: 25,
+      element: "attributes.Physical",
+      fieldLineMap: { Durability: 53, Element: 52 },
+      file: "charge.go",
+      internalCooldownTag: "attacks.ICDTagExtraAttack",
+      line: 45,
+      siteLine: 45,
+      talentVariable: "charge",
+      variableName: "ai",
+    },
+    {
+      abil: "Swift Stormflight",
+      attackTag: "attacks.AttackTagExtra",
+      durability: 25,
+      element: "attributes.Electro",
+      fieldLineMap: { Durability: 92, Element: 91, PoiseDMG: 85 },
+      file: "charge.go",
+      internalCooldownTag: "attacks.ICDTagNone",
+      line: 81,
+      poiseDamage: 120,
+      siteLine: 81,
+      talentVariable: "swift",
+      variableName: "ai",
+    },
+  ],
+  config: {
+    abilityHitboxesMap: new Map(),
+    names: [],
+    talentVariables: [
+      {
+        leaves: [{ path: [], reference: { label: "Charged Attack DMG", selector: 0, type: GcsimTalentType.Attack } }],
+        line: 1,
+        name: "charge",
+      },
+      {
+        leaves: [
+          { path: [], reference: { label: "Swift Stormflight DMG", selector: 0, type: GcsimTalentType.Attack } },
+        ],
+        line: 2,
+        name: "swift",
+      },
+    ],
+  },
+  configFile: "config.yml",
+  constantMap: new Map([
+    ["chargeHitmarks", { elementLines: {}, file: "charge.go", line: 19, value: [21] }],
+    ["swiftFrames", { elementLines: {}, file: "charge.go", line: 31, value: { animationFrames: 33 } }],
+  ]),
+  filePaths: [],
+  folder: "iansan",
+  holdCooldowns: [],
+  queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+  talentFile: "iansan.go",
+  talentParameterMap: new Map([
+    ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
+    ["attack|Swift Stormflight DMG", { indexes: [4], line: 5 }],
+  ]),
+  travelMap: new Map(),
+};
+
+const tables: KitTables = {
+  characterId: 0,
+  labelMap: new Map(),
+  name: "Iansan",
+  talentGroupIdMap: {
+    [CombatTalent.ElementalBurst]: 0,
+    [CombatTalent.ElementalSkill]: 0,
+    [CombatTalent.NormalAttack]: 11031,
+  },
+  talentMultiplierMap: {},
+};
+
+describe(addGcsimChargedAttackCandidates, () => {
+  test("joins a charged attack variant's hit to the queue call that fires its attack, as a burst variant's kick joins", () => {
+    const candidateMap = new Map<string, KitCandidate[]>();
+
+    addGcsimChargedAttackCandidates(
+      createGcsimKitCandidateWriter(candidateMap, gcsim, tables),
+      gcsim,
+      WeaponType.Catalyst,
+    );
+
+    const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
+    expect(valueOf("chargedAttackVariant.hits.length")).toBe(1);
+    expect(valueOf("chargedAttackVariant.animationFrames")).toBe(33);
+    expect(valueOf("chargedAttackVariant.hits.0.hitmarkFrames")).toBe(25);
+    expect(valueOf("chargedAttackVariant.hits.0.element")).toBe("Electric");
+    expect(valueOf("chargedAttackVariant.hits.0.gauge")).toBe(1);
+    expect(valueOf("chargedAttackVariant.hits.0.poiseDamage")).toBe(120);
+    expect(valueOf("chargedAttackVariant.hits.0.multiplier")).toStrictEqual({ index: 4, proudSkillGroupId: 11031 });
+  });
+});

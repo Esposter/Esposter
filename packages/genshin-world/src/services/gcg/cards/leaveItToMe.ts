@@ -1,7 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 
 const LEAVE_IT_TO_ME_ID = 332_006;
 

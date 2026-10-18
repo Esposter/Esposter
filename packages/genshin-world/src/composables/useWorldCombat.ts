@@ -47,7 +47,7 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
-import { createSeededRandom } from "genshin-engine";
+import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -202,6 +202,8 @@ export const useWorldCombat = ({
   // The world's combat state, which the character on the field steps into: it starts with the active character standing at
   // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
   // Seeded source, so a session's rolls repeat
+  // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps
+  const stamina = createStamina(STAMINA_MAX);
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -212,6 +214,9 @@ export const useWorldCombat = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    locomotionState: LocomotionState.Idle,
+    hexereiCount: 0,
+    stamina,
     oreStrikes: [],
     reactionTriggers: [],
     outbox: [],

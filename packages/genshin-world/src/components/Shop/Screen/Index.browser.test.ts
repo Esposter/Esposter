@@ -38,8 +38,7 @@ const good = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
   itemCount: 1,
   itemId,
   minPlayerLevel: 1,
-  priceCount: 1,
-  priceItemId: PRICE_ITEM_ID,
+  costs: [{ count: 1, itemId: PRICE_ITEM_ID }],
   refresh: ShopRefresh.None,
   tabId,
 });

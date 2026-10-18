@@ -15,6 +15,7 @@ export interface GcgDeckSliceCard {
   descriptionTextId: number;
   effects: string[];
   id: number;
+  isCompanion?: boolean;
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
@@ -30,6 +31,7 @@ export interface GcgDeckSliceCharacter {
   id: number;
   maxEnergy: number;
   nameTextId: number;
+  nation?: string;
   skills: GcgDeckSliceSkill[];
   weapon: string;
 }

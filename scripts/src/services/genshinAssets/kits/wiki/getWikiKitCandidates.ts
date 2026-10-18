@@ -20,6 +20,14 @@ const WikiTitlePathMap: Partial<Record<string, string>> = {
   "Plunging Attack Collision": "plungeCollision",
 };
 
+// The hit paths a talent's rows join to: the skill's own hits and the stances and holds it plays, whose labels the
+// Skill reads, and the burst's
+const SKILL_HIT_PATH_PREFIXES: readonly string[] = ["skill.", "stances.", "skillHolds."];
+const checkIsTalentHitPath = (hitPath: string, combatTalent: CombatTalent): boolean =>
+  combatTalent === CombatTalent.ElementalSkill
+    ? SKILL_HIT_PATH_PREFIXES.some((prefix) => hitPath.startsWith(prefix))
+    : hitPath.startsWith("burst.");
+
 // A row title or a table label as the words they share, `1-Hit Swing DMG` and `Swing DMG` both `swing`
 const toTitleWords = (title: string): string =>
   title
@@ -83,14 +91,12 @@ export const getWikiKitCandidates = (
         } else if (plungePath !== undefined)
           addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
       }
-    else {
-      const slot = page.combatTalent === CombatTalent.ElementalSkill ? "skill" : "burst";
+    else
       for (const [hitPath, label] of hitLabelMap) {
-        const property = hitPath.startsWith(`${slot}.`)
+        const property = checkIsTalentHitPath(hitPath, page.combatTalent)
           ? page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label))
           : undefined;
         if (property !== undefined) addRow(hitPath, property, page, true);
       }
-    }
   return candidateMap;
 };
