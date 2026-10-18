@@ -13,7 +13,8 @@ import { z } from "zod";
 
 const nodeIdPropsSchema = z.object({ id: z.string() });
 
-const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !("tag" in node);
+const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;
+const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsElement(node);
 
 // Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the published
 // Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the canvas only, so an
@@ -22,8 +23,7 @@ export const renderCanvasVNodes = (document: WebpageDocument, context: RenderCon
   const nodeIds = new WeakMap<HtmlElement, string>();
   const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, definition, slots) => {
     const rendered = definition.render(node, slots, context);
-    if (typeof rendered !== "string" && "tag" in rendered)
-      nodeIds.set(rendered, nodeIdPropsSchema.parse(node.props).id);
+    if (checkIsElement(rendered)) nodeIds.set(rendered, nodeIdPropsSchema.parse(node.props).id);
     return rendered;
   });
 
@@ -33,7 +33,7 @@ export const renderCanvasVNodes = (document: WebpageDocument, context: RenderCon
 
     const nodeId = nodeIds.get(node);
     const attributes = nodeId === undefined ? node.attributes : { ...node.attributes, "data-node-id": nodeId };
-    if (node.children.some(checkIsRawNode))
+    if (node.children.some((child) => checkIsRawNode(child)))
       return h(node.tag, { ...attributes, innerHTML: serializeHtml(node.children) });
 
     return h(node.tag, attributes, node.children.map(toVNode));
