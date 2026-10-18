@@ -41,6 +41,9 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
+  // Whether the character may start a normal attack, a charged attack or a plunge as it stands, which a state it holds
+  // Can restrict, as gcsim's ActionReady does for Mizuki's Dreamdrifter; a kit without the hook may start all of them
+  checkCanStartAttack?: (context: KitContext) => boolean;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the

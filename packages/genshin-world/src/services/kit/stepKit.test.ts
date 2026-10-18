@@ -293,6 +293,42 @@ describe(stepKit, () => {
     expect(partyMember.burstCooldownSeconds).toBe(TRAVELER_KIT.burstCooldownSeconds);
   });
 
+  test("a kit that cannot start an attack starts no normal attack on a press, and no charged attack once a strike ends", () => {
+    expect.hasAssertions();
+
+    let canStartAttack = false;
+    const kit: Kit = { ...TRAVELER_KIT, checkCanStartAttack: () => canStartAttack };
+    const { step } = createFixture(kit);
+
+    expect(step({ isAttackPressed: true })).toBeUndefined();
+
+    canStartAttack = true;
+    expect(step({ isAttackHeld: true, isAttackPressed: true })).toBe(kit.normalAttacks[0]);
+
+    canStartAttack = false;
+    const started: (KitAction | undefined)[] = [];
+    for (let index = 0; index < 60; index++) started.push(step({ isAttackHeld: true }));
+
+    expect(started).not.toContain(kit.chargedAttack);
+  });
+
+  test("a kit that cannot start an attack strikes no plunge collision, and lands no plunge", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, checkCanStartAttack: () => false };
+    const { landedHits, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+    const plungeInput = { height: 5, locomotionState: LocomotionState.Plunge };
+
+    for (let index = 0; index < 3; index++) {
+      step(plungeInput);
+      landed.push(...landedHits);
+    }
+
+    expect(landed).toStrictEqual([]);
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBeUndefined();
+  });
+
   test("strikes its collision every 0.3 seconds of a plunge", () => {
     expect.hasAssertions();
 
