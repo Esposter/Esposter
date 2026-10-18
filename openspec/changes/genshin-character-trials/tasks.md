@@ -3,7 +3,7 @@
 ## 1. Trial party
 
 - [x] 1.1 Pick a trial's template as the highest one at or below its level. Verify: findTrialTemplate.test.ts, 'a trial takes its talent level and artifacts from the highest template at or below its level' and 'a trial below every template has none'.
-- [ ] 1.2 Build a trial's party member at its level with its template's talent level and artifacts, and no weapon until the trial weapon is mapped. Verify: tests named after 'A trial party member is at the trial's level with its artifacts'.
+- [x] 1.2 Build a trial's party member at its level with its template's talent level and artifacts, and the weapon its wiki build holds at level ninety; a character with no cited build has no party member. Verify: tests named after 'A trial party member is at the trial's level with its artifacts' in `createTrialCharacter.test.ts`.
 
 ## 2. Banners
 
