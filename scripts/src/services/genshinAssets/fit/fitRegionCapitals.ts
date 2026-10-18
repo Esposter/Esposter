@@ -32,7 +32,7 @@ import { join } from "node:path";
 // Turn and the plateau's reach among them. A capital with no waypoint is an error, and one set by hand writes its
 // Landmark alone. Both files stay written, as the sources people edit, and each ground rewritten is also its record
 // `ground/<region>`, with the paths written as the notes
-export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
+export const fitRegionCapitals = async ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
   const [transportPoints, [originX, originY, originZ], { base }] = await Promise.all([
     readSceneTransportPoints(),
     readWorldOrigin(DerivedAssetComponent.Windrise),
@@ -54,7 +54,7 @@ export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
           const landmarks = regionData.landmarks.map((landmark) =>
             landmark.id === landmarkId ? { ...landmark, position } : landmark,
           );
-          return writeWorldData(regionFile, { ...regionData, landmarks });
+          return writeWorldData(regionFile, { ...regionData, landmarks }, { isDryRun });
         };
         // A capital the dump holds no areas for stands at the place its entry sets, so only its landmark is written: its
         // Plateau's height is the region's own ground fit's, which no waypoint gives it
@@ -86,7 +86,7 @@ export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
         );
         const ground = { ...regionGround, features };
         return {
-          notes: [landmarkPath, await writeWorldData(groundFile, ground)],
+          notes: [landmarkPath, await writeWorldData(groundFile, ground, { isDryRun })],
           objects: { [`${GameDataset.Ground}/${region}`]: ground },
         };
       }),

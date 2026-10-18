@@ -15,8 +15,11 @@ const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 // Vertices turned into three's axes first and then carried into the world by its scale, turn and place. The layout's
 // Placements are already in three's axes round the origin, so nothing after the placement flips them again, and each
 // Mesh is read as one sheet. Written to the region's data file as its `waterfalls`, returning the file's path as the
-// Build's note
-export const fitWaterfallSheets = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
+// Build's note, with the count of sheets. A dry run writes nothing and says so
+export const fitWaterfallSheets = async (
+  component: DerivedAssetComponent,
+  { isDryRun }: { isDryRun: boolean },
+): Promise<GameDataBuild> => {
   const waterfalls = (await readWitnessWorldMeshes(component, (mesh) => mesh.startsWith(WATERFALL_MESH_PREFIX))).map(
     (vertices) => computeWaterfallSheet(vertices),
   );
@@ -24,5 +27,7 @@ export const fitWaterfallSheets = async (component: DerivedAssetComponent): Prom
   const regionData = parseMachineJson<Record<string, unknown>>(
     await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
   );
-  return { notes: [await writeWorldData(regionFile, { ...regionData, waterfalls })], objects: {} };
+  const path = await writeWorldData(regionFile, { ...regionData, waterfalls }, { isDryRun });
+  const written = isDryRun ? ", nothing written" : "";
+  return { notes: [`${path}: ${waterfalls.length} waterfall sheets${written}`], objects: {} };
 };
