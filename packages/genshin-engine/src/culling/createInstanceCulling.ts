@@ -6,6 +6,7 @@ import {
   CULLING_INDIRECT_ARGUMENT_COUNT,
   CULLING_INSTANCE_COUNT_INDEX,
 } from "#src/culling/constants";
+import { createSurvivorIndices } from "#src/culling/createSurvivorIndices";
 import { atomicAdd, atomicStore, float, Fn, If, instanceIndex, storage, uint } from "three/tsl";
 import { IndirectStorageBufferAttribute, StorageBufferAttribute } from "three/webgpu";
 
@@ -19,13 +20,14 @@ interface InstanceCullingOptions {
 }
 
 // A per-instance culling pass. Each frame it clears a count, tests every instance in a compute dispatch and appends each
-// visible one's index to a list, counting them in the indirect draw's own instance count, so the draw covers the
-// survivors and nothing more and never passes through the CPU
+// Visible one's index to a list, counting them in the indirect draw's own instance count, so the draw covers the
+// Survivors and nothing more and never passes through the CPU
 export const createInstanceCulling = ({ count, indexCount, isVisible }: InstanceCullingOptions): InstanceCulling => {
   const indirectArray = new Uint32Array(CULLING_INDIRECT_ARGUMENT_COUNT);
   indirectArray[CULLING_INDEX_COUNT_INDEX] = indexCount;
   const indirect = new IndirectStorageBufferAttribute(indirectArray, 1);
-  const survivorAttribute = new StorageBufferAttribute(count, 1, Uint32Array);
+  // Every instance in order until a pass culls, so a draw that never runs one, as on WebGL, takes them all
+  const survivorAttribute = new StorageBufferAttribute(createSurvivorIndices(count), 1);
   const counter = storage(indirect, "uint", CULLING_INDIRECT_ARGUMENT_COUNT).toAtomic();
   const survivors = storage(survivorAttribute, "uint", count);
   const resetCount = Fn(() => {
