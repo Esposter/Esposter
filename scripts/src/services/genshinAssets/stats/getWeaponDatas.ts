@@ -3,7 +3,12 @@ import type { ExcelWeaponPromoteRow } from "#src/models/genshinAssets/stats/Exce
 import type { ExcelWeaponRow } from "#src/models/genshinAssets/stats/ExcelWeaponRow";
 import type { WeaponData } from "genshin-world";
 
-import { DEFAULT_DESTROY_RULE, EMPTY_ITEM_ID, EMPTY_PROPERTY_TYPE } from "#src/services/genshinAssets/stats/constants";
+import {
+  DEFAULT_DESTROY_RULE,
+  EMPTY_ITEM_ID,
+  EMPTY_PROPERTY_TYPE,
+  WeaponTypeNameSet,
+} from "#src/services/genshinAssets/stats/constants";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { toWeaponPassive } from "#src/services/genshinAssets/stats/toWeaponPassive";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -23,6 +28,10 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
   return readExcelTable<ExcelWeaponRow>("WeaponExcelConfigData").flatMap((row) => {
     const promoteRows = promoteIdRowsMap.get(row.weaponPromoteId);
     if (!promoteRows) return [];
+    if (!WeaponTypeNameSet.has(row.weaponType)) {
+      notes.push(`weapon ${row.id} is a ${row.weaponType}, a kind the open world gives no one, so it is left out`);
+      return [];
+    }
     const passive = toWeaponPassive(affixIdRowsMap.get(takeOne(row.skillAffix, 0)) ?? []);
     return [
       weaponDataSchema.parse({

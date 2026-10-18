@@ -1,11 +1,9 @@
-import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { CharacterSkillKit } from "genshin-world";
 
-import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
+import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toSkillDepot } from "#src/services/genshinAssets/stats/toSkillDepot";
-import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { characterSkillKitSchema } from "genshin-world";
 
 // Every playable character's skill sets, its own form's first and then each element form's, as the game's tables give
@@ -13,8 +11,7 @@ import { characterSkillKitSchema } from "genshin-world";
 export const getCharacterSkillKits = (): CharacterSkillKit[] => {
   const skillDepotMap = readSkillDepotMap();
   const skillMap = readSkillMap();
-  return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
-    .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
+  return readPlayableAvatarRows()
     .map(({ candSkillDepotIds, id, skillDepotId }) => ({
       characterId: id,
       depots: [...new Set([skillDepotId, ...candSkillDepotIds])].flatMap((depotId) => {

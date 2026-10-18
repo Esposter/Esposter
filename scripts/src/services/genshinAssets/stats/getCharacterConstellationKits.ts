@@ -1,9 +1,8 @@
-import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { ExcelAvatarTalentRow } from "#src/models/genshinAssets/stats/ExcelAvatarTalentRow";
 import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSkillDepotRow";
 import type { CharacterConstellationKit, Constellation, ConstellationDepot } from "genshin-world";
 
-import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
+import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { readTalentActions } from "#src/services/genshinAssets/stats/readTalentActions";
@@ -99,14 +98,12 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
     return { constellations, depotId: depotRow.id };
   };
 
-  return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
-    .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
-    .flatMap(({ candSkillDepotIds, id, skillDepotId }) => {
-      const depots = [...new Set([skillDepotId, ...candSkillDepotIds])].flatMap((depotId) => {
-        const depotRow = skillDepotMap.get(depotId);
-        const constellationDepot = depotRow === undefined ? undefined : toConstellationDepot(depotRow);
-        return constellationDepot === undefined ? [] : [constellationDepot];
-      });
-      return depots.length === 0 ? [] : [characterConstellationKitSchema.parse({ characterId: id, depots })];
+  return readPlayableAvatarRows().flatMap(({ candSkillDepotIds, id, skillDepotId }) => {
+    const depots = [...new Set([skillDepotId, ...candSkillDepotIds])].flatMap((depotId) => {
+      const depotRow = skillDepotMap.get(depotId);
+      const constellationDepot = depotRow === undefined ? undefined : toConstellationDepot(depotRow);
+      return constellationDepot === undefined ? [] : [constellationDepot];
     });
+    return depots.length === 0 ? [] : [characterConstellationKitSchema.parse({ characterId: id, depots })];
+  });
 };

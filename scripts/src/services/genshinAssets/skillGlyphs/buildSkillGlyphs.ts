@@ -1,16 +1,14 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
-import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { SkillGlyphs } from "genshin-world";
 
 import { SkillGlyphTonesMap } from "#src/services/genshinAssets/skillGlyphs/constants";
 import { getSkillGlyphsLoaderMapSource } from "#src/services/genshinAssets/skillGlyphs/getSkillGlyphsLoaderMapSource";
 import { traceTalentIcon } from "#src/services/genshinAssets/skillGlyphs/traceTalentIcon";
-import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
+import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWikiFiles";
-import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema } from "genshin-world";
@@ -35,23 +33,21 @@ export const buildSkillGlyphs = async (): Promise<{
   const skillMap = readSkillMap();
   const englishTextMap = readTextMap(GameLanguage.English);
   const getSkillName = (skillId = 0) => englishTextMap.get(String(skillMap.get(skillId)?.nameTextMapHash));
-  const characterTalents = readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
-    .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
-    .flatMap((avatarRow) => {
-      for (const { energySkill, skills } of getCharacterSkillDepotRows(avatarRow, skillDepotMap, skillMap)) {
-        const skill = getSkillName(skills[1]);
-        const burst = getSkillName(energySkill);
-        if (skill && burst)
-          return [
-            {
-              characterId: avatarRow.id,
-              name: englishTextMap.get(String(avatarRow.nameTextMapHash)),
-              talentNameMap: { burst, skill },
-            },
-          ];
-      }
-      return [];
-    });
+  const characterTalents = readPlayableAvatarRows().flatMap((avatarRow) => {
+    for (const { energySkill, skills } of getCharacterSkillDepotRows(avatarRow, skillDepotMap, skillMap)) {
+      const skill = getSkillName(skills[1]);
+      const burst = getSkillName(energySkill);
+      if (skill && burst)
+        return [
+          {
+            characterId: avatarRow.id,
+            name: englishTextMap.get(String(avatarRow.nameTextMapHash)),
+            talentNameMap: { burst, skill },
+          },
+        ];
+    }
+    return [];
+  });
   const pathMap = await resolveWikiFiles([
     ...new Set(
       characterTalents.flatMap(({ talentNameMap }) =>

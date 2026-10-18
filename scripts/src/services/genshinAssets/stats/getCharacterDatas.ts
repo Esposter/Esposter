@@ -1,14 +1,13 @@
 import type { ExcelAvatarPromoteRow } from "#src/models/genshinAssets/stats/ExcelAvatarPromoteRow";
-import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { ExcelFetterInfoRow } from "#src/models/genshinAssets/stats/ExcelFetterInfoRow";
 import type { CharacterData } from "genshin-world";
 
 import {
   AssociationRegionIdMap,
   ElementNameSet,
-  PLAYABLE_AVATAR_USE_TYPE,
   QualityTypeRarityMap,
 } from "#src/services/genshinAssets/stats/constants";
+import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
@@ -30,43 +29,41 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
       avatarAssocType,
     ]),
   );
-  return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
-    .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
-    .map((row) => {
-      const energySkill = skillDepotMap.get(row.skillDepotId)?.energySkill ?? 0;
-      const costElemType = energySkill === 0 ? undefined : skillMap.get(energySkill)?.costElemType;
-      const association = avatarIdAssociationMap.get(row.id);
-      const promoteRows = (promoteIdRowsMap.get(row.avatarPromoteId) ?? []).toSorted(
-        (firstRow, secondRow) => firstRow.promoteLevel - secondRow.promoteLevel,
-      );
-      const baseMap: Record<string, number> = {
-        [Attribute.BaseAttack]: row.attackBase,
-        [Attribute.BaseDefense]: row.defenseBase,
-        [Attribute.BaseHealth]: row.hpBase,
-      };
-      return characterDataSchema.parse({
-        ascensionPhases: promoteRows.map(({ addProps, unlockMaxLevel }) => ({
-          attributeLines: toAttributeLines(addProps, notes),
-          maxLevel: unlockMaxLevel,
-        })),
-        attributeLines: [
-          { attribute: Attribute.CriticalRate, value: row.critical },
-          { attribute: Attribute.CriticalDamage, value: row.criticalHurt },
-          { attribute: Attribute.EnergyRecharge, value: row.chargeEfficiency },
-        ],
-        bodyType: row.bodyType,
-        element: costElemType && ElementNameSet.has(costElemType) ? costElemType : undefined,
-        growAttributes: row.propGrowCurves.map(({ growCurve, type }) => ({
-          attribute: type,
-          base: baseMap[type],
-          curve: growCurve,
-        })),
-        id: row.id,
-        initialWeaponId: row.initialWeapon,
-        nameTextId: String(row.nameTextMapHash),
-        rarity: QualityTypeRarityMap[row.qualityType],
-        regionId: association === undefined ? undefined : AssociationRegionIdMap[association],
-        weaponType: row.weaponType,
-      });
+  return readPlayableAvatarRows().map((row) => {
+    const energySkill = skillDepotMap.get(row.skillDepotId)?.energySkill ?? 0;
+    const costElemType = energySkill === 0 ? undefined : skillMap.get(energySkill)?.costElemType;
+    const association = avatarIdAssociationMap.get(row.id);
+    const promoteRows = (promoteIdRowsMap.get(row.avatarPromoteId) ?? []).toSorted(
+      (firstRow, secondRow) => firstRow.promoteLevel - secondRow.promoteLevel,
+    );
+    const baseMap: Record<string, number> = {
+      [Attribute.BaseAttack]: row.attackBase,
+      [Attribute.BaseDefense]: row.defenseBase,
+      [Attribute.BaseHealth]: row.hpBase,
+    };
+    return characterDataSchema.parse({
+      ascensionPhases: promoteRows.map(({ addProps, unlockMaxLevel }) => ({
+        attributeLines: toAttributeLines(addProps, notes),
+        maxLevel: unlockMaxLevel,
+      })),
+      attributeLines: [
+        { attribute: Attribute.CriticalRate, value: row.critical },
+        { attribute: Attribute.CriticalDamage, value: row.criticalHurt },
+        { attribute: Attribute.EnergyRecharge, value: row.chargeEfficiency },
+      ],
+      bodyType: row.bodyType,
+      element: costElemType && ElementNameSet.has(costElemType) ? costElemType : undefined,
+      growAttributes: row.propGrowCurves.map(({ growCurve, type }) => ({
+        attribute: type,
+        base: baseMap[type],
+        curve: growCurve,
+      })),
+      id: row.id,
+      initialWeaponId: row.initialWeapon,
+      nameTextId: String(row.nameTextMapHash),
+      rarity: QualityTypeRarityMap[row.qualityType],
+      regionId: association === undefined ? undefined : AssociationRegionIdMap[association],
+      weaponType: row.weaponType,
     });
+  });
 };
