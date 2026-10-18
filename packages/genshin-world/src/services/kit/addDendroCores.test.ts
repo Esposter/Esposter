@@ -20,6 +20,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -72,6 +73,60 @@ describe(addDendroCores, () => {
     addDendroCores(lunarBloomState, enemy, combatant, [{ reactionType: ReactionType.LunarBloom }], () => 0);
 
     expect(lunarBloomState.effects).toStrictEqual(bloomState.effects);
+  });
+
+  test("leaves a Bloom's core as a Bountiful Core, bursting 0.4 seconds on, under Golden Chalice's Bounty", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = {
+      effects: [
+        {
+          characterId: TRAVELER_CHARACTER_ID,
+          id: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+          kind: "status",
+          secondsRemaining: 30,
+        },
+      ],
+    };
+    addDendroCores(kitEffectState, enemy, combatant, [bloom], () => 0.25);
+
+    expect(kitEffectState.effects.filter(({ kind }) => kind === "dendroCore")).toStrictEqual([
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        coreKind: DendroCoreKind.Bountiful,
+        kind: "dendroCore",
+        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
+        reactionType: TransformativeReactionType.Bloom,
+        secondsRemaining: 0.4,
+      },
+    ]);
+  });
+
+  test("leaves a Bloom's core as a Bloom core once the Golden Chalice's Bounty has run out", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = {
+      effects: [
+        {
+          characterId: TRAVELER_CHARACTER_ID,
+          id: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+          kind: "status",
+          secondsRemaining: 0,
+        },
+      ],
+    };
+    addDendroCores(kitEffectState, enemy, combatant, [bloom], () => 0.25);
+
+    expect(kitEffectState.effects.filter(({ kind }) => kind === "dendroCore")).toStrictEqual([
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        coreKind: DendroCoreKind.Bloom,
+        kind: "dendroCore",
+        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
+        reactionType: TransformativeReactionType.Bloom,
+        secondsRemaining: DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
+      },
+    ]);
   });
 
   test("bursts every core past the newest five as the newest stands", () => {

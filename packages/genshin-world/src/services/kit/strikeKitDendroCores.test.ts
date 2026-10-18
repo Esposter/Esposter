@@ -77,6 +77,23 @@ describe(strikeKitDendroCores, () => {
     });
   });
 
+  test.each<Element>([Element.Electro, Element.Pyro])(
+    "leaves a Bountiful Core as it is under a %s strike, as no reaction sends it off",
+    (element) => {
+      expect.hasAssertions();
+
+      const core: KitDendroCore = { ...createCore(1), coreKind: DendroCoreKind.Bountiful, secondsRemaining: 0.4 };
+      strikeKitDendroCores(
+        { effects: [core] },
+        createParty([TRAVELER_CHARACTER_ID]),
+        createStrike(element, 1),
+        combatant,
+      );
+
+      expect(core).toStrictEqual({ ...createCore(1), coreKind: DendroCoreKind.Bountiful, secondsRemaining: 0.4 });
+    },
+  );
+
   test.each<[string, KitDendroCore, KitStrike]>([
     ["a core not yet standing", createCore(1, DENDRO_CORE_LIFETIME_SECONDS + 0.1), createStrike(Element.Electro, 1)],
     ["a core past the hit's area", createCore(2.5), createStrike(Element.Electro, 1)],

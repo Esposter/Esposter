@@ -1,22 +1,29 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { ALHAITHAM_CHARACTER_ID } from "#src/services/kit/characters/alhaithamKit";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createNilouKitBehaviour, NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
+import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -27,6 +34,9 @@ const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+// The statuses and buffs the team's effects hold, in the order they were added
+const findStatuses = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "status");
+const findBuffs = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "buff");
 
 describe(createNilouKitBehaviour, () => {
   // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
@@ -42,16 +52,42 @@ describe(createNilouKitBehaviour, () => {
     return kitEffectState;
   };
 
-  const createNilouCombatant = (constellationCount = 0): Combatant => ({
-    ascension: 0,
+  const createNilouCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
+    ascension,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
     characterId: NILOU_CHARACTER_ID,
     constellationCount,
+    element: Element.Hydro,
     elementalResonances: [],
     kit: NILOU_KIT,
     level: 90,
     weaponType: WeaponType.Sword,
   });
+
+  // A member of the team besides Nilou, of the element given, whose kit these tests never read, so Nilou's stands in
+  const createMember = (characterId: number, element: Element): Combatant => ({
+    ...createNilouCombatant(),
+    characterId,
+    element,
+  });
+
+  // The team Nilou leads on the field, its members in the order given, and the context its effects run in
+  const createTeamContext = (combatant: Combatant, members: Combatant[]): KitContext => {
+    const combatants = [combatant, ...members];
+    return createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map(combatants.map((member) => [member.characterId, member])),
+      kitEffectState: { effects: [] },
+      party: createParty(combatants.map(({ characterId }) => characterId)),
+    });
+  };
+
+  // Pirouette's third step lands: Nilou's cast, the sword dance's third step and the field that follows it ticks
+  const landThirdStep = (context: KitContext): void => {
+    NILOU_KIT.elementalSkill.onStart?.(context);
+    const thirdStep = takeOne((findStance(context.kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2));
+    thirdStep.onStart?.(context);
+    findField(context.kitEffectState)?.onTick(context, 0);
+  };
 
   const MAX_HEALTH = 10_000;
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
@@ -184,5 +220,124 @@ describe(createNilouKitBehaviour, () => {
     );
 
     expect(findField(kitEffectState)?.secondsRemaining).toBe(0);
+  });
+
+  test("the third dance step gives a Dendro and Hydro team the Bounty for 30 seconds, from Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(0, 1);
+    const context = createTeamContext(combatant, [
+      createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      createMember(YELAN_CHARACTER_ID, Element.Hydro),
+    ]);
+    landThirdStep(context);
+
+    expect(findStatuses(context.kitEffectState)).toStrictEqual(
+      [NILOU_CHARACTER_ID, ALHAITHAM_CHARACTER_ID, YELAN_CHARACTER_ID].map((characterId) => ({
+        characterId,
+        id: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+        kind: "status",
+        secondsRemaining: 30,
+      })),
+    );
+  });
+
+  test.each<[string, number, Combatant[]]>([
+    [
+      "a Pyro member stands in the team",
+      1,
+      [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro), createMember(DILUC_CHARACTER_ID, Element.Pyro)],
+    ],
+    ["no Dendro member stands in the team", 1, [createMember(YELAN_CHARACTER_ID, Element.Hydro)]],
+    [
+      "Nilou is below Ascension 1",
+      0,
+      [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro), createMember(YELAN_CHARACTER_ID, Element.Hydro)],
+    ],
+  ])("gives no member the Golden Chalice's Bounty while %s", (_description, ascension, members) => {
+    expect.hasAssertions();
+    const context = createTeamContext(createNilouCombatant(0, ascension), members);
+    landThirdStep(context);
+
+    expect(findStatuses(context.kitEffectState)).toStrictEqual([]);
+  });
+
+  test("a Dendro hit on a member under the Bounty gives every member 100 Elemental Mastery for 10 seconds", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(0, 1);
+    const context = createTeamContext(combatant, [
+      createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      createMember(YELAN_CHARACTER_ID, Element.Hydro),
+    ]);
+    landThirdStep(context);
+    NILOU_KIT.onKitEvent?.(
+      {
+        bondOfLifeShare: 0,
+        characterId: ALHAITHAM_CHARACTER_ID,
+        element: Element.Dendro,
+        healthShare: -0.1,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      context,
+      combatant,
+    );
+
+    expect(findBuffs(context.kitEffectState)).toStrictEqual(
+      [NILOU_CHARACTER_ID, ALHAITHAM_CHARACTER_ID, YELAN_CHARACTER_ID].map((characterId) => ({
+        amount: 100,
+        attribute: Attribute.ElementalMastery,
+        characterId,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+      })),
+    );
+  });
+
+  test("a Hydro hit or a drain gives no Elemental Mastery under the Golden Chalice's Bounty", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(0, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    landThirdStep(context);
+    const healthChanges: KitEvent[] = [
+      {
+        bondOfLifeShare: 0,
+        characterId: ALHAITHAM_CHARACTER_ID,
+        element: Element.Hydro,
+        healthShare: -0.1,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      {
+        bondOfLifeShare: 0,
+        characterId: ALHAITHAM_CHARACTER_ID,
+        healthShare: -0.1,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+    ];
+    for (const healthChange of healthChanges) NILOU_KIT.onKitEvent?.(healthChange, context, combatant);
+
+    expect(findBuffs(context.kitEffectState)).toStrictEqual([]);
+  });
+
+  test("a Dendro hit on a member without the Golden Chalice's Bounty gives no Elemental Mastery", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(0, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    NILOU_KIT.onKitEvent?.(
+      {
+        bondOfLifeShare: 0,
+        characterId: ALHAITHAM_CHARACTER_ID,
+        element: Element.Dendro,
+        healthShare: -0.1,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      context,
+      combatant,
+    );
+
+    expect(findBuffs(context.kitEffectState)).toStrictEqual([]);
   });
 });
