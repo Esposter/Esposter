@@ -4,6 +4,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { Stamina } from "genshin-engine";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -351,13 +352,13 @@ describe(stepKit, () => {
   });
 
   // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
-  const startChargedAttack = (kit: Kit, stamina: { value: number }) =>
+  const startChargedAttack = (kit: Kit, stamina: Stamina) =>
     startNextKitAction(
       { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
       kit,
       { ...IDLE_INPUT, isAttackHeld: true },
       createPartyMember(),
-      stamina as ReturnType<typeof createStamina>,
+      stamina,
       true,
       [],
       createKitTestContext(TRAVELER_COMBATANT),
