@@ -1,6 +1,6 @@
 ## Purpose
 
-Alhaitham's kit as built, with Universality's tap and hold, Particular Field's burst, the Mirrors they make with their Dendro infusion and Projection Attacks, and what is left to build.
+Alhaitham's kit as built, with Universality's tap and hold, Particular Field's burst, the Mirrors they make with their Dendro infusion and Projection Attacks, Constellations 1, 2, 4 and 6, and what is left to build.
 
 ## Requirements
 
@@ -93,3 +93,67 @@ At Ascension 4 Alhaitham's burst and Projection Attack hits SHALL gain a damage 
 - **GIVEN** Alhaitham is at Ascension 4 with Elemental Mastery
 - **WHEN** a Projection Attack strikes
 - **THEN** its damage includes the bonus per point of his Elemental Mastery
+
+### Requirement: Constellation 1 cuts Universality's cooldown on a Projection Attack's hit
+
+From Constellation 1, a hit of a Projection Attack SHALL cut Universality's running cooldown by 1.2 seconds, at most once a second.
+
+#### Scenario: A Projection Attack's hit cuts the cooldown
+
+- **GIVEN** Alhaitham is at Constellation 1 and Universality's cooldown is running
+- **WHEN** a Projection Attack's hit lands
+- **THEN** the cooldown is cut by 1.2 seconds
+
+#### Scenario: A second hit within a second cuts nothing
+
+- **GIVEN** a Projection Attack's hit cut Universality's cooldown less than a second ago
+- **WHEN** another Projection Attack's hit lands
+- **THEN** the cooldown is unchanged
+
+### Requirement: Constellation 2 gives Alhaitham Elemental Mastery for each Mirror made
+
+From Constellation 2, each Mirror made SHALL give Alhaitham 50 Elemental Mastery for 8 seconds, up to four of these at once.
+
+#### Scenario: A Mirror made gives Elemental Mastery
+
+- **GIVEN** Alhaitham is at Constellation 2
+- **WHEN** a Mirror is made
+- **THEN** Alhaitham gains 50 Elemental Mastery for 8 seconds
+
+#### Scenario: Four Mirrors give four at most
+
+- **GIVEN** four of Constellation 2's buffs are on Alhaitham
+- **WHEN** another Mirror is made
+- **THEN** no fifth buff is added
+
+### Requirement: Constellation 4 moves Elemental Mastery and Dendro DMG on the burst
+
+From Constellation 4, Particular Field's burst SHALL take 30 Elemental Mastery per Mirror it consumes from each member of the team other than Alhaitham, for 15 seconds. The Mirrors the regeneration makes afterwards SHALL give Alhaitham 10% Dendro DMG Bonus per Mirror made, for 15 seconds.
+
+#### Scenario: The burst takes Elemental Mastery from the team
+
+- **GIVEN** Alhaitham is at Constellation 4 and holds two Mirrors
+- **WHEN** Particular Field's burst is cast
+- **THEN** each other member of the team loses 60 Elemental Mastery for 15 seconds, the buff Alhaitham's Mirrors' consumption gives
+
+#### Scenario: Regenerated Mirrors give Dendro DMG
+
+- **GIVEN** Alhaitham is at Constellation 4
+- **WHEN** the burst's regeneration makes Mirrors
+- **THEN** Alhaitham gains 10% Dendro DMG Bonus per Mirror made for 15 seconds
+
+### Requirement: Constellation 6 makes three Mirrors and gives CRIT past three
+
+From Constellation 6, the burst SHALL make three Mirrors whatever it consumed. Each Mirror made past three SHALL give Alhaitham 10% CRIT Rate and 70% CRIT DMG for 6 seconds, and each further one SHALL extend that time by 6 seconds.
+
+#### Scenario: The burst makes three Mirrors
+
+- **GIVEN** Alhaitham is at Constellation 6
+- **WHEN** Particular Field's burst consumes all the Mirrors Alhaitham holds
+- **THEN** the regeneration makes three Mirrors
+
+#### Scenario: A Mirror past three gives CRIT
+
+- **GIVEN** Alhaitham is at Constellation 6 and holds three Mirrors
+- **WHEN** a fourth Mirror is made
+- **THEN** Alhaitham gains 10% CRIT Rate and 70% CRIT DMG for 6 seconds
