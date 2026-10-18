@@ -8,6 +8,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { countDeployedElements } from "#src/services/party/countDeployedElements";
 import { takeOne } from "@esposter/shared";
 
@@ -33,6 +34,15 @@ const ASCENSION_4 = 4;
 const ASCENSION_4_RES_SHREDS = [0, 0.05, 0.1, 0.15, 0.55];
 const ASCENSION_4_SECONDS = 12;
 const ASCENSION_4_STATUS_ID = "escoffier-ascension-4-res-shred";
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_CRITICAL_DAMAGE = 0.6;
+const CRYO_HYDRO_ELEMENTS: readonly Element[] = [Element.Cryo, Element.Hydro];
+
+// Whether the deployed team holds members of Cryo and Hydro alone, and at least one of them
+const checkIsCryoHydroTeam = (deployedElements: readonly (Element | undefined)[] | undefined): boolean =>
+  deployedElements !== undefined &&
+  deployedElements.length > 0 &&
+  countDeployedElements(deployedElements, CRYO_HYDRO_ELEMENTS) === deployedElements.length;
 
 // The RES shred a hit of hers applies to the enemy it strikes, as the team stands
 const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
@@ -52,7 +62,7 @@ export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
 // Parfait ticks and, outside the Aligned interval, its Surging Blade, and Scoring Cuts sets going its heal and, from
 // Ascension 1, Rehab Diet and the Cryo and Hydro RES shred of Ascension 4 are built. Her Constellations wait on the hooks the page names
-// Constellation 1 needs a crit damage that depends on the striking hit's element and the team's elements, which the framework does not hold
+// Constellation 1 is built on her own Cryo strikes, its CRIT DMG reaching a teammate's Cryo attacks once the party-scope strike hooks land
 // Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill does not build yet
 // Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which the kit does not roll
 // Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not built
@@ -74,6 +84,14 @@ export const createEscoffierKitBehaviour = ({
   const rehabDietIntervalSeconds = readSeconds("rehabDietInterval");
   const rehabDietLastTickSeconds = readSeconds("rehabDietLastTick");
   return {
+    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while the deployed team holds only Cryo and Hydro members. It
+    // Reaches only her own strikes, until the party-scope strike hooks reach a teammate's
+    getStrikeCriticalDamageBonus: ({ combatant, hit }) =>
+      combatant.constellationCount >= CONSTELLATION_1 &&
+      getKitHitElement(hit, combatant) === Element.Cryo &&
+      checkIsCryoHydroTeam(combatant.deployedElements)
+        ? CONSTELLATION_1_CRITICAL_DAMAGE
+        : 0,
     burst: {
       hits: [{ enemyStatus: getAscension4Status }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {

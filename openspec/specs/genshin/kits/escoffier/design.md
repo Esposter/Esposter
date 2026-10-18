@@ -4,9 +4,9 @@ Escoffier's kit is its record and one behaviour module, `createEscoffierKitBehav
 
 ## Not yet built
 
-A combatant holds the deployed team's elements, which a status and a hit read as the team stands. The framework holds no timed effect on another member's hit, and no crit damage that depends on the striking hit's element, so the parts that depend on those wait on the hooks named below.
+A combatant holds the deployed team's elements, which a status and a hit read as the team stands. The framework holds no timed effect on another member's hit, so the parts that depend on one wait on the hooks named below.
 
-- **Constellation 1 waits on a crit-damage hook.** It adds 60% Crit DMG to every member's Cryo attacks, and to the stellar reactions, while the party holds only Cryo and Hydro members. The framework's crit damage is one attribute of a combatant, not one per hit's element, so a member's Cryo hit cannot take it alone.
+- **Constellation 1 is built on her own Cryo strikes.** While the party holds only Cryo and Hydro members, her Cryo strikes get 60% Crit DMG through `getStrikeCriticalDamageBonus`, read beside the element's crit damage as each hit is priced. A teammate's Cryo attacks and the stellar reactions are not built: they wait on the party-scope strike hooks, which a deployed member's strike hooks reach once they land.
 - **Constellation 2 waits on the party-hit hook.** Cold Dishes adds 240% of her ATK to each Cryo normal, charged, plunge, Elemental Skill or Burst hit of another member while Frosty Parfait holds, for five hits. A hit reading another member's buff is not built.
 - **Constellation 4 waits on the seeded-roll hook.** Its six extra Rehab Diet ticks and their 1.0-share heal roll on the character's Crit Rate, which the framework does not roll.
 - **Constellation 6 waits on the party-hit hook.** Special-Grade Frozen Parfait strikes the target once every half second, when the active character's normal, charged or plunge hit lands while Frosty Parfait holds. A hit reading the skill's status on another member is not built.
