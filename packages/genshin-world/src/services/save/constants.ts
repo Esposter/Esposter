@@ -11,6 +11,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
+import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
@@ -207,6 +208,8 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   shopPurchases: [],
   spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
+  mails: [],
+  travelerBirthday: { day: MAX_SAVE_NUMBER, month: MAX_SAVE_NUMBER },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
   wallet: {
@@ -233,6 +236,8 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   ),
   worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
+// The longest mail a save holds, its flags at their longer value of false
+const LONGEST_MAIL_SAVE = { deliveredAt: MAX_SAVE_INSTANT, id: MAX_SAVE_NUMBER, isClaimed: false, isRead: false };
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each
 // Collection at its cap times its longest entry. Each id is counted at its bound's length, since the game's ids are
 // Plain characters, so an id that escapes to a longer serialization is refused by the same ceiling
@@ -254,6 +259,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_ABYSS_CYCLE_COUNT * getRecordEntryLength(LONGEST_ABYSS_CYCLE_SAVE) +
+  MAX_MAIL_COUNT * getListEntryLength(LONGEST_MAIL_SAVE) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
       objectiveCounts: Array.from({ length: MAX_OBJECTIVE_COUNT }, () => MAX_SAVE_NUMBER),
@@ -312,6 +318,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   enemyRespawns: {},
   homePlacements: [],
   inventory: EMPTY_INVENTORY_SAVE,
+  mails: [],
   offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },
   openedChests: [],
   party: EMPTY_PARTY_SAVE,

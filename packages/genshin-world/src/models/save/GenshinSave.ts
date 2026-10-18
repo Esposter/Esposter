@@ -14,6 +14,7 @@ import { companionshipExpSaveSchema } from "#src/models/friendship/Companionship
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
+import { mailSaveSchema } from "#src/models/mail/MailSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
 import { partySaveSchema } from "#src/models/party/PartySave";
@@ -25,6 +26,8 @@ import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
+import { travelerBirthdaySaveSchema } from "#src/models/save/TravelerBirthdaySave";
+import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import {
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
@@ -61,6 +64,8 @@ export const genshinSaveSchema = z
     enemyRespawns: enemyRespawnSaveSchema,
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
+    // The mails the player holds, each once by its id, with when it was delivered and whether it was claimed and read
+    mails: createUniqueArraySchema(mailSaveSchema, "id").max(MAX_MAIL_COUNT),
     inventory: inventorySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
@@ -77,6 +82,8 @@ export const genshinSaveSchema = z
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
+    // The Traveler's birthday once the profile sets it, absent until then
+    travelerBirthday: travelerBirthdaySaveSchema.optional(),
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,
