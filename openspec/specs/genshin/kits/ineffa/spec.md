@@ -1,6 +1,6 @@
 ## Purpose
 
-Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Ascension 4 passive, her Electro particles and Constellation 4's energy are built; her Ascension 1 passive and Constellations 1, 2 and 6 are not built yet.
+Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Ascension 4 passive, her Electro particles, Constellation 2's shield and Punishment Edit, and Constellation 4's energy are built; her Ascension 1 passive and Constellations 1 and 6 are not built yet.
 
 ## Requirements
 
