@@ -123,7 +123,7 @@ describe(startQuests, () => {
     expect.hasAssertions();
 
     const parentQuest = { ...createQuest("8"), kind: QuestKind.World };
-    const childQuest = { ...createQuest("9"), kind: QuestKind.World, parentQuestIds: ["8", "uncarried"] };
+    const childQuest = { ...createQuest("9"), kind: QuestKind.World, parentQuestIds: ["8", "-1"] };
 
     expect(
       startQuests([parentQuest, childQuest], new Map([["8", { objectiveCounts: [], stepIndex: 1 }]])),
