@@ -12,6 +12,7 @@ import {
   TEST_TEXT_ID,
   TEST_WRAPPER_ID,
 } from "#src/services/constants.test";
+import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createBlockDocumentSchema, getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
@@ -20,7 +21,10 @@ const getIssuePaths = (document: BlockDocument): PropertyKey[][] =>
     .safeParse(document)
     .error?.issues.map((issue) => issue.path) ?? [];
 
-describe("createMjmlRegistry", () => {
+describe(createMjmlRegistry, () => {
+  const TEST_ALT_TEXT = "a";
+  const TEST_IMAGE_SOURCE = "https://example.com/a.png";
+
   test("a section accepts only columns and groups", () => {
     expect.hasAssertions();
 
@@ -28,7 +32,7 @@ describe("createMjmlRegistry", () => {
       getIssuePaths({
         content: [
           {
-            props: { children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }], id: TEST_SECTION_ID },
+            props: { children: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], id: TEST_SECTION_ID },
             type: "mj-section",
           },
         ],
@@ -40,10 +44,7 @@ describe("createMjmlRegistry", () => {
     expect.hasAssertions();
 
     expect(
-      getIssuePaths({
-        content: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
-        root: { props: {} },
-      }),
+      getIssuePaths({ content: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], root: { props: {} } }),
     ).toStrictEqual([["content", 0]]);
   });
   test("an attribute value MJML's type refuses", () => {
@@ -58,10 +59,7 @@ describe("createMjmlRegistry", () => {
                 {
                   props: {
                     children: [
-                      {
-                        props: { content: "Go", id: TEST_BUTTON_ID, padding: "1px 2px 3px 4px 5px" },
-                        type: "mj-button",
-                      },
+                      { props: { content: "", id: TEST_BUTTON_ID, padding: "1px 2px 3px 4px 5px" }, type: "mj-button" },
                     ],
                     id: TEST_COLUMN_ID,
                   },
@@ -88,7 +86,7 @@ describe("createMjmlRegistry", () => {
               children: [
                 {
                   props: {
-                    children: [{ props: { id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" }],
+                    children: [{ props: { id: TEST_IMAGE_ID, src: TEST_IMAGE_SOURCE }, type: "mj-image" }],
                     id: TEST_COLUMN_ID,
                   },
                   type: "mj-column",
@@ -116,11 +114,11 @@ describe("createMjmlRegistry", () => {
                   props: {
                     children: [
                       {
-                        props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png", width: "50%" },
+                        props: { alt: TEST_ALT_TEXT, id: TEST_IMAGE_ID, src: TEST_IMAGE_SOURCE, width: "50%" },
                         type: "mj-image",
                       },
                       {
-                        props: { alt: "A cat", id: TEST_BUTTON_ID, src: "https://example.com/a.png", width: "auto" },
+                        props: { alt: TEST_ALT_TEXT, id: TEST_BUTTON_ID, src: TEST_IMAGE_SOURCE, width: "auto" },
                         type: "mj-image",
                       },
                     ],
@@ -158,7 +156,7 @@ describe("createMjmlRegistry", () => {
                           children: [
                             {
                               props: {
-                                children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                                children: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }],
                                 id: TEST_COLUMN_ID,
                               },
                               type: "mj-column",
@@ -180,7 +178,7 @@ describe("createMjmlRegistry", () => {
           },
           {
             props: {
-              children: [{ props: { content: "Hi", id: crypto.randomUUID() }, type: "mj-text" }],
+              children: [{ props: { content: "", id: crypto.randomUUID() }, type: "mj-text" }],
               id: TEST_HERO_ID,
             },
             type: "mj-hero",
