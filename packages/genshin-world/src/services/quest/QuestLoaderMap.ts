@@ -22,10 +22,6 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
     readGameData(gameDataBaseUrl, "quests/20743", z.unknown()),
   [QuestIdValues.ReputationParent384]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/384", z.unknown()),
   [QuestIdValues.ReputationParent396]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/396", z.unknown()),
-  [QuestIdValues.ReputationParent70061]: (gameDataBaseUrl) =>
-    readGameData(gameDataBaseUrl, "quests/70061", z.unknown()),
-  [QuestIdValues.ReputationParent70078]: (gameDataBaseUrl) =>
-    readGameData(gameDataBaseUrl, "quests/70078", z.unknown()),
   [QuestIdValues.ReputationParent70102]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/70102", z.unknown()),
   [QuestIdValues.ReputationParent70104]: (gameDataBaseUrl) =>
@@ -56,8 +52,6 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
     readGameData(gameDataBaseUrl, "quests/70825", z.unknown()),
   [QuestIdValues.ReputationParent71012]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/71012", z.unknown()),
-  [QuestIdValues.ReputationParent76096]: (gameDataBaseUrl) =>
-    readGameData(gameDataBaseUrl, "quests/76096", z.unknown()),
   [QuestIdValues.ReputationRequest7070001]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/7070001", z.unknown()),
   [QuestIdValues.ReputationRequest7070101]: (gameDataBaseUrl) =>
