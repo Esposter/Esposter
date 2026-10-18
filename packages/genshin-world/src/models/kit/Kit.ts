@@ -3,6 +3,7 @@ import type { TransformativeReactionType } from "#src/models/combat/Transformati
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -81,6 +82,10 @@ export interface Kit {
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
+  // The share of a Dendro Core's burst that a deployed member's kit adds to its reaction damage, given the member whose
+  // Kit it is, the core's kind and the context it bursts in. A Bountiful Core's burst takes every deployed kit's share,
+  // and a Bloom's takes none of them
+  getPartyDendroCoreDamageBonus?: (member: Combatant, coreKind: DendroCoreKind, context: KitContext) => number;
   // The flat base damage, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
   // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
   // It. A member's own strikes are priced by its own hooks, not this one

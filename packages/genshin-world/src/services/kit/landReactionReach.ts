@@ -41,7 +41,7 @@ export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reachRadius, reactionType, spreadGauge }: TransformativeReaction,
+  { element, reachRadius, reactionBonus: teamReactionBonus = 0, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
@@ -53,7 +53,7 @@ export const landReactionReach = (
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
-  const reactionBonus = combatant.kit.getReactionDamageBonus?.(combatant, reactionType) ?? 0;
+  const reactionBonus = (combatant.kit.getReactionDamageBonus?.(combatant, reactionType) ?? 0) + teamReactionBonus;
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
     distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),

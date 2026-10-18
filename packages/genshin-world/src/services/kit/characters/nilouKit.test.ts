@@ -10,6 +10,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -52,9 +53,9 @@ describe(createNilouKitBehaviour, () => {
     return kitEffectState;
   };
 
-  const createNilouCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
+  const createNilouCombatant = (constellationCount = 0, ascension = 0, maxHealth = MAX_HEALTH): Combatant => ({
     ascension,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: maxHealth }]),
     characterId: NILOU_CHARACTER_ID,
     constellationCount,
     element: Element.Hydro,
@@ -339,5 +340,23 @@ describe(createNilouKitBehaviour, () => {
     );
 
     expect(findBuffs(context.kitEffectState)).toStrictEqual([]);
+  });
+
+  test("Ascension 4 raises a Bountiful Core's DMG by 9% per 1,000 Max HP above 30,000, up to 400%", () => {
+    expect.hasAssertions();
+    const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
+      const combatant = createNilouCombatant(0, ascension, maxHealth);
+      const bonus =
+        NILOU_KIT.getPartyDendroCoreDamageBonus?.(combatant, coreKind, createTeamContext(combatant, [])) ?? 0;
+      return Math.round(bonus * 1000) / 1000;
+    };
+
+    expect({
+      atAscension3: getBonus(3, 40_000, DendroCoreKind.Bountiful),
+      atThreshold: getBonus(4, 30_000, DendroCoreKind.Bountiful),
+      bloomCore: getBonus(4, 40_000, DendroCoreKind.Bloom),
+      capped: getBonus(4, 100_000, DendroCoreKind.Bountiful),
+      atFortyThousand: getBonus(4, 40_000, DendroCoreKind.Bountiful),
+    }).toStrictEqual({ atAscension3: 0, atFortyThousand: 0.9, atThreshold: 0, bloomCore: 0, capped: 4 });
   });
 });
