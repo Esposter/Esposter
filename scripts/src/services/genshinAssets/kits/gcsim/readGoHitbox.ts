@@ -19,6 +19,9 @@ interface HitboxConstructor {
   shape: GcsimHitboxShape;
 }
 
+// The constructor of a hit gcsim gives its target alone, `combat.NewSingleTargetHit(e.Key())`, with no reach beyond it
+const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
+
 const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewBoxHit", { fanAngle: false, onTarget: false, shape: GcsimHitboxShape.Box }],
   ["NewBoxHitOnTarget", { fanAngle: false, onTarget: true, shape: GcsimHitboxShape.Box }],
@@ -92,9 +95,20 @@ export const readGoHitbox = (
   while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
     position += 2;
   const constructorToken = tokens[position];
+  const call = parseGoExpression(tokens, start).expression;
+  if (constructorToken?.text === SINGLE_TARGET_HIT_CONSTRUCTOR)
+    return call.kind === GoExpressionKind.Call && call.parameterStarts.length === 1
+      ? {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file,
+          line: constructorToken.line,
+          name: constructorToken.text,
+          radius: 0,
+          shape: GcsimHitboxShape.Circle,
+        }
+      : undefined;
   const hitboxConstructor = HITBOX_CONSTRUCTORS.get(constructorToken?.text ?? "");
   if (constructorToken === undefined || hitboxConstructor === undefined) return undefined;
-  const call = parseGoExpression(tokens, start).expression;
   if (call.kind !== GoExpressionKind.Call) return undefined;
   const argumentStarts = call.parameterStarts;
   const { fanAngle: hasFanAngle, onTarget, shape } = hitboxConstructor;

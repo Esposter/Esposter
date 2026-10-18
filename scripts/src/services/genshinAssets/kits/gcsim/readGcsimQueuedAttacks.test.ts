@@ -66,6 +66,43 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads a queue call's single-target hit as a circle of no radius on its primary target", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package jean",
+          "",
+          "func (c *char) burst() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalSkill}",
+          "\tc.Core.QueueAttackWithSnap(ai, snap, combat.NewSingleTargetHit(e.Key()), 3)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: undefined,
+        attackName: "ai",
+        delay: 3,
+        delayLine: 5,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file: "burst.go",
+          line: 5,
+          name: "NewSingleTargetHit",
+          radius: 0,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 5,
+      },
+    ]);
+  });
+
   test("reads no delay from a local a branch may change, `windup := 0` then `windup = 14` in the branch", () => {
     expect.hasAssertions();
 
