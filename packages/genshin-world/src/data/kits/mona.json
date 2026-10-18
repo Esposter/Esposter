@@ -1,6 +1,6 @@
 {
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 } },
-  "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": 0 },
   "burst.hits.0.bubble.explosion.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
@@ -86,5 +86,7 @@
   "hits.sprintPhantom.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.sprintPhantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 120 },
   "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
-  "hits.sprintPhantom.0.poiseDamage": { "cause": "Unclassified", "value": 0 }
+  "hits.sprintPhantom.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.mirrorReflectionPhantom.4.gauge": { "cause": "Unsourced", "value": 1 }
 }
