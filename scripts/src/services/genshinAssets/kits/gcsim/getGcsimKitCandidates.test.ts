@@ -11,6 +11,7 @@ import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
@@ -643,6 +644,62 @@ describe(getGcsimKitCandidates, () => {
     ]);
     expect(candidateMap.get("stances.blessing.normalAttacks.1.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
       createBoxReach(-0.5, 5, 3.7),
+    ]);
+  });
+
+  test("gives a loop shot's two actions to the blessing stance, each striking twice on the player's circle from its hitmarks, the skill's multiplier and its attack", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("kinich", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArt",
+          durability: 25,
+          element: "attributes.Dendro",
+          fieldLineMap: {},
+          file: "attack.go",
+          internalCooldownTag: "attacks.ICDTagKinichLoopShot",
+          line: 115,
+          talentVariable: "loopShot",
+          variableName: "ai",
+        },
+      ],
+      constants: [
+        ["skillHitNum", attackConstant(2, 35)],
+        [
+          "skillAttackHitmarks",
+          attackConstant(
+            [
+              [30, 38],
+              [31, 38],
+            ],
+            29,
+          ),
+        ],
+      ],
+      talentParameters: [["skill|Loop Shot DMG", { indexes: [0], line: 161 }]],
+      talentVariables: [
+        {
+          leaves: [{ path: [0], reference: { label: "Loop Shot DMG", selector: 0, type: GcsimTalentType.Skill } }],
+          name: "loopShot",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect(valuesAt("stances.blessing.normalAttacks.length")).toStrictEqual([2]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.animationFrames")).toStrictEqual([53]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.hits.0.hitmarkFrames")).toStrictEqual([30]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.hitmarkFrames")).toStrictEqual([31]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.1.hitmarkFrames")).toStrictEqual([38]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.area")).toStrictEqual([createCircleReach(0, 0.5)]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.multiplier")).toStrictEqual([
+      { index: 0, proudSkillGroupId: 2 },
+    ]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.element")).toStrictEqual([Element.Dendro]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.internalCooldownTag")).toStrictEqual([
+      InternalCooldownTag.KinichLoopShot,
     ]);
   });
 
