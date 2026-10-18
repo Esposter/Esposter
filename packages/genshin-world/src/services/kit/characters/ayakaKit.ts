@@ -118,10 +118,10 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        castKitSummon(kitEffectState, body, combatant, frostflakeHits);
+        castKitSummon(kitEffectState, body, combatant, frostflakeHits, { attackTag: AttackTag.ElementalBurst });
         if (combatant.constellationCount < BLIZZARD_BLADE_SEKI_NO_TO_CONSTELLATION) return;
-        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
-        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
+        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits, { attackTag: AttackTag.ElementalBurst });
+        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits, { attackTag: AttackTag.ElementalBurst });
       },
     },
     chargedAttack: { hits: kit.chargedAttack.hits.map(() => chargedAttackHit) },

@@ -1,6 +1,7 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -35,7 +36,7 @@ export const createDoriKitBehaviour = ({ readHit, readSeconds }: KitRecordReader
         castKitField(kitEffectState, combatant.characterId, spot.position, {
           nextTickSeconds: connectorFirstTickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            castKitSummon(tickEffectState, spot, combatant, [connector]);
+            castKitSummon(tickEffectState, spot, combatant, [connector], { attackTag: AttackTag.ElementalBurst });
           },
           radius: CONNECTOR_FIELD_RADIUS,
           secondsRemaining: connectorSeconds,

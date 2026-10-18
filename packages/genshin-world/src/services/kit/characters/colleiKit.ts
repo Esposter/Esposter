@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -54,7 +55,9 @@ export const createColleiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: leapFirstTickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [leap]);
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [leap], {
+              attackTag: AttackTag.ElementalBurst,
+            });
           },
           radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: explosionHitmarkSeconds + trumpCardKittySeconds,

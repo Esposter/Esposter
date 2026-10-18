@@ -97,7 +97,11 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
         hitmarkSeconds: spawnSeconds + firstTickSeconds + ozAttack.hitmarkSeconds + ozTickIntervalSeconds * index,
       }),
     );
-    castKitSummon(kitEffectState, body, combatant, [...hits, ...ozAttacks], { id: OZ_SUMMON_ID, spawnSeconds });
+    castKitSummon(kitEffectState, body, combatant, [...hits, ...ozAttacks], {
+      attackTag: AttackTag.ElementalSkill,
+      id: OZ_SUMMON_ID,
+      spawnSeconds,
+    });
   };
   return {
     // Oz spawns from the burst's start and attacks from there. From four constellations its extra hit lands round the
@@ -110,7 +114,7 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
           spawnSeconds: burstOzSpawnSeconds,
         });
         if (combatant.constellationCount < HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION) return;
-        castKitSummon(kitEffectState, body, combatant, [herPilgrimageOfBleak]);
+        castKitSummon(kitEffectState, body, combatant, [herPilgrimageOfBleak], { attackTag: AttackTag.ElementalBurst });
         scheduleKitTask(kitEffectState, combatant.characterId, herPilgrimageOfBleakHealSeconds, (tick) =>
           changeKitMemberHealth(
             tick,
@@ -173,15 +177,19 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
         const [normalAttackHit] = event.action.hits;
         // Evernight Raven's attack is Oz's own, reaching as far as the normal attack it follows
         if (oz && normalAttackHit && constellationCount >= EVERNIGHT_RAVEN_CONSTELLATION)
-          castKitSummon(kitEffectState, body, oz.combatant, [
-            { ...ozAttack, ...evernightRavenFields, hitArea: normalAttackHit.hitArea },
-          ]);
+          castKitSummon(
+            kitEffectState,
+            body,
+            oz.combatant,
+            [{ ...ozAttack, ...evernightRavenFields, hitArea: normalAttackHit.hitArea }],
+            { attackTag: AttackTag.ElementalSkill },
+          );
         else if (
           !oz &&
           activeCombatant.characterId === characterId &&
           constellationCount >= GAZE_OF_THE_DEEP_CONSTELLATION
         )
-          castKitSummon(kitEffectState, body, combatant, [gazeOfTheDeep]);
+          castKitSummon(kitEffectState, body, combatant, [gazeOfTheDeep], { attackTag: AttackTag.NormalAttack });
       }
     },
     // Oz spawns from the press, lands its summon's hit and attacks from its first tick

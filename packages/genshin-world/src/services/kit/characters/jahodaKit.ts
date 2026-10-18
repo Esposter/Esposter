@@ -9,6 +9,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
@@ -252,7 +253,9 @@ export const createJahodaKitBehaviour = ({
             source: CONSTELLATION_6_SOURCE,
           });
         }
-    castKitSummon(kitEffectState, body, combatant, [isFilled ? filledHit : unfilledHit]);
+    castKitSummon(kitEffectState, body, combatant, [isFilled ? filledHit : unfilledHit], {
+      attackTag: AttackTag.ElementalSkill,
+    });
     if (isFilled && isAscendantGleam && absorbedElement !== undefined)
       startMeowballs(context, combatant, absorbedElement);
   };

@@ -343,9 +343,13 @@ export const createColumbinaKitBehaviour = ({
         if (getTotalGravity(gravity) >= GRAVITY_MAX) fireGravityRipple(context, combatant, gravity, true);
       },
       onTick: (tickContext) =>
-        castKitSummon(tickContext.kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [
-          getSkillDotHit(tickContext),
-        ]),
+        castKitSummon(
+          tickContext.kitEffectState,
+          { facing: 0, height: 0, position: field.centre },
+          combatant,
+          [getSkillDotHit(tickContext)],
+          { attackTag: AttackTag.ElementalSkill },
+        ),
       secondsRemaining: skillDurationSeconds,
       tickIntervalSeconds: skillDotIntervalSeconds,
     });

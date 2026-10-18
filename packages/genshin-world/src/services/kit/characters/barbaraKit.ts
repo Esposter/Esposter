@@ -7,6 +7,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -213,7 +214,9 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
         kitEffectState,
         party,
       }) => {
-        castKitSummon(kitEffectState, { facing, height, position }, combatant, droplets);
+        castKitSummon(kitEffectState, { facing, height, position }, combatant, droplets, {
+          attackTag: AttackTag.ElementalSkill,
+        });
         if (combatant.ascension >= ASCENSION_4)
           addKitStatus(kitEffectState, combatant.characterId, {
             id: ENCORE_STATUS_ID,

@@ -7,6 +7,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -227,7 +228,7 @@ export const createHuTaoKitBehaviour = ({
         { facing: 0, height: 0, position: event.enemy.position },
         combatant,
         [bloodBlossomHit],
-        { target: event.enemy },
+        { attackTag: AttackTag.ElementalSkill, target: event.enemy },
       );
     },
     skill: {

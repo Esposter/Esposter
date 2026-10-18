@@ -12,6 +12,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -310,7 +311,9 @@ export const createAlhaithamKitBehaviour = ({
       !startKitCooldown(kitEffectState, characterId, PROJECTION_ICD_STATUS_ID, projectionCooldownSeconds)
     )
       return;
-    castKitSummon(kitEffectState, body, combatant, takeOne(projectionAttacks, count - 1));
+    castKitSummon(kitEffectState, body, combatant, takeOne(projectionAttacks, count - 1), {
+      attackTag: AttackTag.ElementalSkill,
+    });
   };
   const strikeHitBehaviour: KitHitBehaviour = {
     onStrike: (context, strike) => triggerProjection(context, strike, false),
@@ -344,6 +347,7 @@ export const createAlhaithamKitBehaviour = ({
           body,
           combatant,
           particularFieldHits.slice(0, burstBaseHitCount + burstHitCountPerMirror * consumed),
+          { attackTag: AttackTag.ElementalBurst },
         );
         setMirrorCount(kitEffectState, characterId, 0);
         // Constellation 4's loss is the team's Elemental Mastery for each Mirror consumed, to every member but Alhaitham
