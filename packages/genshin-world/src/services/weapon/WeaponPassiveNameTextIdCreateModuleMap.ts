@@ -59,6 +59,7 @@ import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/pass
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
+import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
@@ -308,4 +309,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2229628147": createTimelessDreamEternalStovePassiveModule,
   // Bathhouses, Hawks, and Narukami (Sunny Morning Sleep-In)
   "2260847683": createBathhousesHawksAndNarukamiPassiveModule,
+  // Seasoned Symphony (Symphonist of Scents)
+  "2664303051": createSeasonedSymphonyPassiveModule,
 };
