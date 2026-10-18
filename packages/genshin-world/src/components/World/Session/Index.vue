@@ -59,6 +59,7 @@ import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#s
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
+import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -478,6 +479,12 @@ const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
 const pointedLandmark = shallowRef<Landmark>();
 watch([mapCamera, lockedJumpLandmarks], ([{ x, z }, lockedLandmarks]) => {
   pointedLandmark.value = findPointedLandmark(lockedLandmarks, { x, z }, pointedLandmark.value?.id);
+});
+// A quest's go-to step is reached once the character steps into its place's radius, so each place it steps into is a go-to
+watch(mapCamera, (newCamera, oldCamera) => {
+  if (!windrise.value) return;
+  for (const questEvent of getEnteredGoToEvents([...windrise.value.regionDataMap.values()], oldCamera, newCamera))
+    events.emit("questEvent", questEvent);
 });
 const cameraEuler = new Euler();
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
