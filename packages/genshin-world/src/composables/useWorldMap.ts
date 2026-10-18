@@ -25,6 +25,7 @@ import { computeReputationExploresReached } from "#src/services/reputation/compu
 import { getFinishedReputationRewards } from "#src/services/reputation/getFinishedReputationRewards";
 import { getReputationRequestBindings } from "#src/services/reputation/getReputationRequestBindings";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
+import { recordWeeklyReputationClaim } from "#src/services/reputation/recordWeeklyReputationClaim";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHiddenTransPointIds";
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
@@ -47,6 +48,7 @@ export const useWorldMap = ({
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
+  savedRequestClaimedAts,
   setReputation,
   setWallet,
   unlockedLandmarkIds: savedUnlockedLandmarkIds,
@@ -65,6 +67,9 @@ export const useWorldMap = ({
   recordedDoingIds: Readonly<Ref<ReadonlySet<string>>>;
   regionDataBaseUrl: string;
   reputation: Ref<ReputationProgress>;
+  // The request claims the week holds, the newest the limit's size: the keeper offers no request past the limit, and a
+  // Request taken before it still pays when it finishes
+  savedRequestClaimedAts: readonly Temporal.Instant[];
   setReputation: (nextReputation: ReputationProgress) => void;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
@@ -187,15 +192,24 @@ export const useWorldMap = ({
     [mondstadtReputation, placedExplorationAreas, isJumpLandmarksLoaded, recordedDoingIds],
     settleExplorationThresholds,
   );
+  // A request's reward pays once it finishes, past the week's limit too: the limit is held at the keeper's offer, so a
+  // Request taken before the limit is not withheld, and its claim is recorded with the week's
+  const requestClaimedAts = shallowRef<readonly Temporal.Instant[]>(savedRequestClaimedAts);
+  const payRequestReward = (reward: ReputationReward) => {
+    requestClaimedAts.value = recordWeeklyReputationClaim(requestClaimedAts.value, Temporal.Now.instant());
+    payReputationReward(reward);
+  };
   // A finished quest pays the Reputation request or Reputation quest it is, once: the event is emitted on the move
   // That finishes it, and each request binds its quest once, so a quest the groups repeat pays its first row's
   // Reward. A quest finished before the Reputation has loaded is paid once it has, as the event is not emitted again
   let unpaidQuestFinishes: ((reputationCity: ReputationCity) => void)[] = [];
   events.on("finishQuest", (quest, progress, nextProgress) => {
     const payQuestFinish = (reputationCity: ReputationCity) => {
-      const bindings = [...getReputationRequestBindings(reputationCity.requests), ...reputationCity.quests];
-      for (const reward of getFinishedReputationRewards(quest, progress, nextProgress, bindings))
+      for (const reward of getFinishedReputationRewards(quest, progress, nextProgress, reputationCity.quests))
         payReputationReward(reward);
+      const requestBindings = getReputationRequestBindings(reputationCity.requests);
+      for (const reward of getFinishedReputationRewards(quest, progress, nextProgress, requestBindings))
+        payRequestReward(reward);
     };
     if (mondstadtReputation.value) payQuestFinish(mondstadtReputation.value);
     else unpaidQuestFinishes.push(payQuestFinish);
@@ -241,6 +255,8 @@ export const useWorldMap = ({
     jumpPose,
     jumpTo,
     lockedJumpLandmarks,
+    payReputationReward,
+    requestClaimedAts,
     unlockedLandmarkIds,
     unlockedLandmarks,
   };

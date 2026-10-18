@@ -62,7 +62,7 @@ export const AYAKA_CHARACTER_ID = 10_000_002;
 // Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and charged
 // Hits. Senho's Cryo application and movement, and A4's effect, are not built. Constellations 4 and 6 are built: 4's DEF
 // Reduction is an enemy status on the storm hits, and 6's charged attack bonus runs on its own clear and recharge
-// Constellation 4's DEF cut, on each storm hit that strikes an enemy
+// Constellation 4's DEF cut, on each storm hit that deals an enemy damage, applied once that damage lands as gcsim's callback is
 const getFrostflakeDefenceReduction = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
   constellationCount >= CONSTELLATION_4
     ? {
@@ -73,7 +73,7 @@ const getFrostflakeDefenceReduction = ({ constellationCount }: Combatant): Enemy
       }
     : undefined;
 const withFrostflakeDefenceReduction = (hits: KitHit[]): KitHit[] =>
-  hits.map((hit) => ({ ...hit, enemyStatus: getFrostflakeDefenceReduction }));
+  hits.map((hit) => ({ ...hit, enemyStatusAfterDamage: getFrostflakeDefenceReduction }));
 // Usurahi Butou stays on until a Charged Attack's first hit starts its status, and through the 0.5 seconds the status's
 // Clear takes, so the status's time left above the recharge is when the bonus still applies
 const checkIsUsurahiButouOn = (effects: readonly KitEffect[], characterId: number): boolean => {
@@ -100,8 +100,8 @@ const snowsweptSakuraHit: KitHitBehaviour = {
 
 // Constellation 6's start on a Charged Attack hit, as the hit strikes an enemy; Constellation 1's roll rides with it
 const chargedAttackHit: KitHitBehaviour = {
-  onStrike: (context, strike) => {
-    snowsweptSakuraHit.onStrike?.(context, strike);
+  onStrike: (context, strike, enemy) => {
+    snowsweptSakuraHit.onStrike?.(context, strike, enemy);
     const { combatant } = strike;
     if (combatant.constellationCount < CONSTELLATION_6) return;
     if (findKitStatus(context.kitEffectState.effects, combatant.characterId, USURAHI_BUTOU_STATUS_ID)) return;

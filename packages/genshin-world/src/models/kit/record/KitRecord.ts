@@ -37,6 +37,7 @@ export interface KitRecord {
   burstVariant?: KitActionRecord;
   chargedAttack: KitActionRecord;
   chargedAttackStamina: KitParameter;
+  chargedAttackVariant?: KitActionRecord;
   frames?: Record<string, number | number[]>;
   hitFields?: Record<string, Partial<KitHitRecord>>;
   hits?: Record<string, KitHitRecord | KitHitRecord[]>;
@@ -66,6 +67,7 @@ export const kitRecordSchema = z.strictObject({
   burstVariant: kitActionRecordSchema.optional(),
   chargedAttack: kitActionRecordSchema,
   chargedAttackStamina: kitParameterSchema,
+  chargedAttackVariant: kitActionRecordSchema.optional(),
   frames: createNamedSchema(z.number().nonnegative()).optional(),
   hitFields: z.record(z.string(), kitHitRecordSchema.partial()).optional(),
   hits: createNamedSchema(kitHitRecordSchema).optional(),

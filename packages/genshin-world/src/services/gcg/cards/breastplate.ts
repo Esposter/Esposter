@@ -4,6 +4,7 @@ import { Element } from "#src/models/Element";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const BREASTPLATE_DAMAGE = 1;

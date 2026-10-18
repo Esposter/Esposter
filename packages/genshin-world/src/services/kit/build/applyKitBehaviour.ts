@@ -36,9 +36,11 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burst,
     burstVariant,
     chargedAttack,
+    chargedAttackVariant,
     getChargedAttackStaminaMultiplier,
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
+    getPartyStrikeBonus,
     getPassiveBonuses,
     getReactionDamageBonus,
     getSkillChargeBonus,
@@ -63,6 +65,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
+  if (getPartyStrikeBonus) kit.getPartyStrikeBonus = getPartyStrikeBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
   if (getReactionDamageBonus) kit.getReactionDamageBonus = getReactionDamageBonus;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
@@ -83,6 +86,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   applyKitActionBehaviour(kit.elementalBurst, burst, "burst");
   applyKitVariantBehaviour(kit.elementalBurstVariant, burstVariant, "burstVariant");
   applyKitActionBehaviour(kit.chargedAttack, chargedAttack, "chargedAttack");
+  applyKitVariantBehaviour(kit.chargedAttackVariant, chargedAttackVariant, "chargedAttackVariant");
   checkHasCount("normalAttacks", normalAttacks.length, kit.normalAttacks.length);
   for (const [index, action] of kit.normalAttacks.entries())
     applyKitActionBehaviour(action, normalAttacks[index], `normalAttacks.${index}`);

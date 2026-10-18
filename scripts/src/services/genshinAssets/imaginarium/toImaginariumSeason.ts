@@ -14,20 +14,22 @@ export const toImaginariumSeason = (
   avatarConfigRow: ExcelRoleCombatAvatarConfigRow,
 ): ImaginariumSeason => ({
   beginsAt: row.beginTimeStr.replace(" ", "T"),
-  difficultyIds: row.LNCBPPGCCOA,
-  elements: avatarConfigRow.FMNCKJDCADH.filter((code) => code !== 0).map((code) => {
-    const element = ElementCodeElementMap.get(code);
-    if (element === undefined)
-      throw new InvalidOperationError(
-        Operation.Read,
-        String(row.scheduleId),
-        `names element code ${code}, which the map lacks`,
-      );
-    return element;
-  }),
-  endsAt: row.IENPIBICGCC.replace(" ", "T"),
+  difficultyIds: row.difficultyIds,
+  elements: avatarConfigRow.elementCodes
+    .filter((code) => code !== 0)
+    .map((code) => {
+      const element = ElementCodeElementMap.get(code);
+      if (element === undefined)
+        throw new InvalidOperationError(
+          Operation.Read,
+          String(row.scheduleId),
+          `names element code ${code}, which the map lacks`,
+        );
+      return element;
+    }),
+  endsAt: row.endTimeStr.replace(" ", "T"),
   id: row.scheduleId,
-  openingCharacterIds: avatarConfigRow.MFNFDFPOAMC,
+  openingCharacterIds: avatarConfigRow.openingCharacterIds,
   rewardGroup: row.rewardGroupId,
-  specialGuestIds: avatarConfigRow.FKFHFHFGMEM,
+  specialGuestIds: avatarConfigRow.specialGuestIds,
 });

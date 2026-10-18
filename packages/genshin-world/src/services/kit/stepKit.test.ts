@@ -129,6 +129,40 @@ describe(stepKit, () => {
     expect(lowStaminaFixture.stamina.value).toBe(19);
   });
 
+  test("starts a charged attack variant in place of the charged attack while its check holds", () => {
+    expect.hasAssertions();
+
+    const variant: KitAction = { ...TRAVELER_KIT.chargedAttack };
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttackVariant: { action: variant, checkIsActive: () => true } };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    step(heldInput);
+    step(heldInput);
+    step(heldInput);
+
+    expect(step(heldInput)).toBe(variant);
+  });
+
+  test("keeps the charged attack while a charged attack variant's check fails", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      chargedAttackVariant: { action: { ...TRAVELER_KIT.chargedAttack }, checkIsActive: () => false },
+    };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    step(heldInput);
+    step(heldInput);
+    step(heldInput);
+
+    expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
+  });
+
   test("holds a charged attack at its stamina times the kit's multiplier, so none starts it on an empty pool", () => {
     expect.hasAssertions();
 

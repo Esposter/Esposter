@@ -1,4 +1,5 @@
 import type { Element } from "#src/models/Element";
+import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCostReduction } from "#src/models/gcg/GcgCostReduction";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
@@ -40,6 +41,9 @@ export interface GcgCardModule {
   // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and the
   // Skill's user is named by the hits it dealt, not by the context
   onAnySkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]) => void;
+  // A card is played by this card's side, for a card on that side's field: the played card is on the field and its own play has
+  // resolved, so a card that draws on the play reads the field as it now stands
+  onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   // A character of the opposing side is defeated, for a card on this side's field: the context names the character the card is

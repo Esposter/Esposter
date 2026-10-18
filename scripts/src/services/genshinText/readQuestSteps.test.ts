@@ -221,4 +221,33 @@ describe(readQuestSteps, () => {
       ],
     });
   });
+
+  test("a step whose guide names an NPC carries the NPC's id", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          D: TEXT_HASH,
+          E: [{ F: "QUEST_CONTENT_TRIGGER_FIRE", G: ["7"] }],
+          H: { I: "QUEST_GUIDE_NPC", J: ["42"] },
+        },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      offerTalkIds: [],
+      steps: [
+        {
+          guideNpcId: "42",
+          id: "100",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["7"] }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
 });

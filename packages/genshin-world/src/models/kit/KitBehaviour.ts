@@ -16,6 +16,7 @@ export interface KitBehaviour extends Partial<
     | "getChargedAttackStaminaMultiplier"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
+    | "getPartyStrikeBonus"
     | "getPassiveBonuses"
     | "getReactionDamageBonus"
     | "getSkillChargeBonus"
@@ -33,6 +34,7 @@ export interface KitBehaviour extends Partial<
   burst?: KitActionBehaviour;
   burstVariant?: KitVariantBehaviour;
   chargedAttack?: KitActionBehaviour;
+  chargedAttackVariant?: KitVariantBehaviour;
   moonsignBenediction?: Pick<KitMoonsignBenediction, "getBaseDamageBonus">;
   normalAttacks?: KitActionBehaviour[];
   plungeCollision?: KitHitBehaviour;

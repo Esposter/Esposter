@@ -22,6 +22,7 @@ export const gcgDeckSchema = z.object({
       descriptionTextId: z.int().positive(),
       effects: z.array(z.string()),
       id: z.int().positive(),
+      isCompanion: z.boolean().optional(),
       isLocation: z.boolean(),
       kind: z.enum(GcgCardKind),
       nameTextId: z.int().positive(),
@@ -37,6 +38,7 @@ export const gcgDeckSchema = z.object({
       id: z.int().positive(),
       maxEnergy: z.int().nonnegative(),
       nameTextId: z.int().positive(),
+      nation: z.string().optional(),
       skills: z.array(
         z.object({
           costs: z.array(gcgDeckCostSchema),

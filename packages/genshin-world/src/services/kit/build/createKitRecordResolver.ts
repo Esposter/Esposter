@@ -142,6 +142,9 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       record.burstEnergyCost === undefined ? Number.POSITIVE_INFINITY : toParameter(record.burstEnergyCost),
     chargedAttack: toAction(record.chargedAttack),
     chargedAttackStamina: toParameter(record.chargedAttackStamina),
+    ...(record.chargedAttackVariant && {
+      chargedAttackVariant: { action: toAction(record.chargedAttackVariant), checkIsActive: missingKitBehaviour },
+    }),
     elementalBurst: toAction(record.burst),
     ...(record.burstVariant && {
       elementalBurstVariant: { action: toAction(record.burstVariant), checkIsActive: missingKitBehaviour },

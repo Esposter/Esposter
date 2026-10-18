@@ -19,7 +19,10 @@ const tagActionHits = (actions: readonly KitAction[], attackTag: AttackTag): voi
 // Order, so a hit two actions share is the first's
 export const tagKitHits = (kit: Kit): Kit => {
   tagActionHits(kit.normalAttacks, AttackTag.NormalAttack);
-  tagActionHits([kit.chargedAttack], AttackTag.ChargedAttack);
+  tagActionHits(
+    kit.chargedAttackVariant ? [kit.chargedAttack, kit.chargedAttackVariant.action] : [kit.chargedAttack],
+    AttackTag.ChargedAttack,
+  );
   tagHit(kit.plungeCollision, AttackTag.PlungingAttack);
   tagActionHits(
     [kit.lowPlunge, kit.highPlunge, ...(kit.plungeVariants ?? []).map(({ action }) => action)],

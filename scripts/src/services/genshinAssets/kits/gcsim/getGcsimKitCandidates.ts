@@ -12,6 +12,7 @@ import { addGcsimSkillAndBurstCandidates } from "#src/services/genshinAssets/kit
 import { addGcsimSkillHoldCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates";
 import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
+import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
 
 // Every value gcsim gives a character's kit at one ref, by its path in the record, read where gcsim's character folders
 // Are regular: the normal attack's `attackHitmarks` and `attackFrames`, the charged attack's, plunges' and skill's and
@@ -29,6 +30,8 @@ export const getGcsimKitCandidates = (
   const candidateMap = new Map<string, KitCandidate[]>();
   const writer = createGcsimKitCandidateWriter(candidateMap, gcsim, tables);
   addGcsimNormalAttackCandidates(writer, gcsim);
+  const stance = findGcsimStanceNormalAttack(gcsim.folder);
+  if (stance !== undefined) addGcsimNormalAttackCandidates(writer, gcsim, stance);
   addGcsimChargedAttackCandidates(writer, gcsim, tables.weaponType);
   const plungeFallbackWriter = createGcsimKitCandidateWriter(
     candidateMap,

@@ -31,8 +31,7 @@ describe(buyHomeDepotGood, () => {
     itemCount: 1,
     itemId: FURNISHING_ID,
     minPlayerLevel: ADVENTURE_RANK,
-    priceCount: PRICE_COUNT,
-    priceItemId: 204,
+    costs: [{ count: PRICE_COUNT, itemId: 204 }],
     refresh: ShopRefresh.None,
   };
 

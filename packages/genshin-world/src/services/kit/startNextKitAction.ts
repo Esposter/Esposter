@@ -43,13 +43,16 @@ export const startNextKitAction = (
     if (stamina.checkCanSpend(chargedAttackStamina)) {
       // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
       if (chargedAttackStamina > 0) stamina.spend(chargedAttackStamina);
+      const chargedAttackAction = kit.chargedAttackVariant?.checkIsActive(context)
+        ? kit.chargedAttackVariant.action
+        : kit.chargedAttack;
       // A charge skip the kit holds starts the shot past its charge, and is spent by it
-      const { chargeSeconds } = kit.chargedAttack;
+      const { chargeSeconds } = chargedAttackAction;
       const startSeconds =
         chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
           ? chargeSeconds
           : 0;
-      return startKitAction(kitState, kit.chargedAttack, landedHits, startSeconds);
+      return startKitAction(kitState, chargedAttackAction, landedHits, startSeconds);
     }
   }
 

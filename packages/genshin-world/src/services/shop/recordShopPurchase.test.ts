@@ -16,8 +16,7 @@ describe(recordShopPurchase, () => {
     itemCount: 1,
     itemId: 1,
     minPlayerLevel: 1,
-    priceCount: 2,
-    priceItemId: 202,
+    costs: [{ count: 2, itemId: 202 }],
     refresh: ShopRefresh.Daily,
   };
 

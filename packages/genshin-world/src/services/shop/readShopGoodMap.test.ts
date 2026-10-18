@@ -20,8 +20,7 @@ const createGood = (goodsId: number): ShopGood => ({
   itemCount: 1,
   itemId: 1,
   minPlayerLevel: 1,
-  priceCount: 1,
-  priceItemId: 1,
+  costs: [{ count: 1, itemId: 1 }],
   refresh: ShopRefresh.None,
 });
 
