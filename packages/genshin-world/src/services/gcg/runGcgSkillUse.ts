@@ -6,9 +6,8 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
-import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
-import { runGcgOnSkillUsed } from "#src/services/gcg/effects/runGcgOnSkillUsed";
-import { runGcgSkillEffect } from "#src/services/gcg/effects/runGcgSkillEffect";
+import { resolveGcgSkillDamage } from "#src/services/gcg/effects/resolveGcgSkillDamage";
+import { runGcgSkillEffectAndOnUse } from "#src/services/gcg/effects/runGcgSkillEffectAndOnUse";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -25,16 +24,14 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   const isPlunge = skill.kind === GcgSkillKind.NormalAttack && user?.isSwitchedIn === true;
   const context: GcgEffectContext = { ...baseContext, isPlunge, skill };
   const skillModule = GcgEffectNameSkillModuleMap.get(skill.effect);
-  const damage = parseGcgDamageEffect(skill.effect) ?? skillModule?.getDamage?.(context);
+  const damage = resolveGcgSkillDamage(context, skill);
   if (damage === undefined && !skillModule?.afterDamage) return false;
   if (user) user.isSwitchedIn = false;
-  const fieldCards = listGcgFieldCards(side, side.activeIndex);
   const fieldOfEachSide = context.duel.sides.map((sideState) => ({
     sideState,
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
-  const dealt = runGcgSkillEffect(context, skill, damage);
-  runGcgOnSkillUsed(context, fieldCards, skill, dealt);
+  const dealt = runGcgSkillEffectAndOnUse(context, side.activeIndex, skill, damage);
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
