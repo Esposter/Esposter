@@ -5,15 +5,14 @@ import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
 import { describe, expect, test } from "vitest";
 
 describe(deliverBirthdayMail, () => {
-  const DAY_MS = 86_400_000;
   const BIRTHDAY = { day: 1, month: 1 };
   const BIRTHDAY_NOON = Temporal.PlainDate.from({ day: 1, month: 1, year: 1971 })
     .toZonedDateTime(GAME_TIME_ZONE)
     .add({ hours: 12 })
     .toInstant();
   const BIRTHDAY_ROWS = [
-    { effectiveAt: new Date(0).toISOString(), mailId: 9 },
-    { effectiveAt: Temporal.Instant.fromEpochMilliseconds(DAY_MS * 100).toString(), mailId: 35 },
+    { effectiveDate: "1970-01-01 08:00:00", mailId: 9 },
+    { effectiveDate: "1970-04-11 08:00:00", mailId: 35 },
   ];
 
   // The birthday mail in force on the birthday is delivered on it, the latest row taking effect by then
