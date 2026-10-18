@@ -10,8 +10,8 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { genshinRouter } from "#server/trpc/routers/genshin";
 import { AzureContainer, storageLedgerInStorage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { eq } from "drizzle-orm";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { createHash } from "node:crypto";
 import { zstdCompressSync } from "node:zlib";
@@ -143,9 +143,11 @@ describe("genshinRouter character packs", () => {
   let mockContext: Context;
   let genshinCaller: DecorateRouterRecord<TRPCRouter["genshin"]>;
   const characterId = 1;
+  const secondCharacterId = 2;
   const bytes = new TextEncoder().encode("model");
   const sha256 = createHash("sha256").update(bytes).digest("hex");
-  const stagingBlobName = getAccountCharacterPackStagingBlobName(authMocks.user.id, sha256);
+  const stagingId = "11111111-1111-4111-8111-111111111111";
+  const stagingBlobName = getAccountCharacterPackStagingBlobName(authMocks.user.id, stagingId);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -160,15 +162,18 @@ describe("genshinRouter character packs", () => {
   test("grants each file's upload against the player's quota for its declared size", async () => {
     expect.hasAssertions();
 
-    const sasUrls = await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ sha256, size: bytes.length }] });
+    const grants = await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ size: bytes.length }] });
 
-    expect(sasUrls).toHaveLength(1);
     await expect(
       mockContext.db
         .select({ blobName: storageLedgerInStorage.blobName, declaredBytes: storageLedgerInStorage.declaredBytes })
-        .from(storageLedgerInStorage)
-        .where(eq(storageLedgerInStorage.blobName, stagingBlobName)),
-    ).resolves.toStrictEqual([{ blobName: stagingBlobName, declaredBytes: bytes.length }]);
+        .from(storageLedgerInStorage),
+    ).resolves.toStrictEqual([
+      {
+        blobName: getAccountCharacterPackStagingBlobName(authMocks.user.id, takeOne(grants, 0).stagingId),
+        declaredBytes: bytes.length,
+      },
+    ]);
   });
 
   test("refuses a pack whose staged file differs in size from the one it declares, and deletes the staged file", async () => {
@@ -180,7 +185,7 @@ describe("genshinRouter character packs", () => {
     await expect(
       genshinCaller.keepCharacterPack({
         characterId,
-        files: [{ path: "model.pmx", sha256, size: bytes.length + 1 }],
+        files: [{ path: "model.pmx", sha256, size: bytes.length + 1, stagingId }],
         modelName: "a",
         packHash: sha256,
       }),
@@ -196,12 +201,10 @@ describe("genshinRouter character packs", () => {
 
     const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
     const userId = authMocks.user.id;
-    await containerClient
-      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, sha256))
-      .upload(bytes, bytes.length);
+    await containerClient.getBlockBlobClient(stagingBlobName).upload(bytes, bytes.length);
     await genshinCaller.keepCharacterPack({
       characterId,
-      files: [{ path: "model.pmx", sha256, size: bytes.length }],
+      files: [{ path: "model.pmx", sha256, size: bytes.length, stagingId }],
       modelName: "a",
       packHash: sha256,
     });
@@ -219,15 +222,12 @@ describe("genshinRouter character packs", () => {
     expect.hasAssertions();
 
     const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
-    const userId = authMocks.user.id;
-    await containerClient
-      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, sha256))
-      .upload(new TextEncoder().encode("other"), 5);
+    await containerClient.getBlockBlobClient(stagingBlobName).upload(new TextEncoder().encode("other"), 5);
 
     await expect(
       genshinCaller.keepCharacterPack({
         characterId,
-        files: [{ path: "model.pmx", sha256, size: 5 }],
+        files: [{ path: "model.pmx", sha256, size: 5, stagingId }],
         modelName: "a",
         packHash: sha256,
       }),
@@ -235,5 +235,57 @@ describe("genshinRouter character packs", () => {
       `[TRPCError: Invalid operation: Create, name: 1, holds a file not uploaded as 9372c470eeadd5ecd9c3c74c2b3cb633f8e2f2fad799250a0f70d652b6b825e4]`,
     );
     await expect(genshinCaller.readCharacterPacks()).resolves.toStrictEqual([]);
+  });
+
+  test("a keep's cleanup leaves another keep's staged file and hold, when both keep the same bytes", async () => {
+    expect.hasAssertions();
+
+    const userId = authMocks.user.id;
+    const firstGrant = takeOne(
+      await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ size: bytes.length }] }),
+      0,
+    );
+    const secondGrant = takeOne(
+      await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ size: bytes.length }] }),
+      0,
+    );
+    const firstBlobName = getAccountCharacterPackStagingBlobName(userId, firstGrant.stagingId);
+    const secondBlobName = getAccountCharacterPackStagingBlobName(userId, secondGrant.stagingId);
+    const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+    await containerClient.getBlockBlobClient(firstBlobName).upload(bytes, bytes.length);
+    await containerClient.getBlockBlobClient(secondBlobName).upload(bytes, bytes.length);
+
+    await genshinCaller.keepCharacterPack({
+      characterId,
+      files: [{ path: "model.pmx", sha256, size: bytes.length, stagingId: firstGrant.stagingId }],
+      modelName: "a",
+      packHash: sha256,
+    });
+
+    expect(MockContainerDatabase.get(AzureContainer.GenshinAssets)?.has(firstBlobName)).toBe(false);
+    expect(MockContainerDatabase.get(AzureContainer.GenshinAssets)?.has(secondBlobName)).toBe(true);
+    await expect(
+      mockContext.db
+        .select({ blobName: storageLedgerInStorage.blobName, declaredBytes: storageLedgerInStorage.declaredBytes })
+        .from(storageLedgerInStorage),
+    ).resolves.toStrictEqual([{ blobName: secondBlobName, declaredBytes: bytes.length }]);
+
+    await genshinCaller.keepCharacterPack({
+      characterId: secondCharacterId,
+      files: [{ path: "model.pmx", sha256, size: bytes.length, stagingId: secondGrant.stagingId }],
+      modelName: "a",
+      packHash: sha256,
+    });
+
+    await expect(genshinCaller.readCharacterPacks()).resolves.toStrictEqual([
+      { characterId, files: [{ path: "model.pmx", sha256, size: bytes.length }], modelName: "a", packHash: sha256 },
+      {
+        characterId: secondCharacterId,
+        files: [{ path: "model.pmx", sha256, size: bytes.length }],
+        modelName: "a",
+        packHash: sha256,
+      },
+    ]);
+    expect(MockContainerDatabase.get(AzureContainer.GenshinAssets)?.has(secondBlobName)).toBe(false);
   });
 });

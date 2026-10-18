@@ -61,9 +61,9 @@ An index that cannot be read or no longer parses is logged and rebuilt from the 
 
 A signed-in player's accepted pack is also kept with their account, in the `genshin-assets` container, which is private and never changes its access level. The upload runs in three steps, all through the caller's own session:
 
-1. **Hash and grant.** Each file is hashed in the browser (SHA-256). `genshin.generateCharacterPackUploadSasUrls` grants a write URL per file to a staging name under the caller's id and the hash, each held against the caller's storage quota for the file's declared size, as a resource's staged save is. A grant over the quota is refused. A grant is always issued, even for bytes the account already keeps, so the server only ever refers to bytes the caller has just uploaded.
+1. **Hash and grant.** Each file is hashed in the browser (SHA-256). `genshin.generateCharacterPackUploadSasUrls` grants a write URL per file, each to a staging name of its own: the server mints a staging id for the file, names its upload `character-packs/staging/{userId}/{stagingId}`, and returns the grant's URL with that id. Each grant is held against the caller's storage quota for the file's declared size, as a resource's staged save is. A grant over the quota is refused. A grant is always issued, even for bytes the account already keeps, so the server only ever refers to bytes the caller has just uploaded.
 2. **Upload.** The browser writes each file to its grant.
-3. **Keep.** `genshin.keepCharacterPack` checks each staged file's length against its declared size before reading it, so a file of the wrong size is never downloaded, then reads it back conditioned on the etag that check read, so a file replaced since is refused rather than read, and checks its hash against what the caller claimed, and stores it once under its hash. A file already stored is not written again, so one stored copy serves every account that keeps the same bytes. Only then is the account's list rewritten, with the character's pack replaced. The staged uploads are deleted through the storage ledger's own deletion, which gives back their holds, whether the keep lands or is refused. The list is written with its etag, so two devices keeping at once cannot drop each other's packs.
+3. **Keep.** `genshin.keepCharacterPack` takes each file with the staging id its grant returned, and the server builds the staging name from the caller's id and that id, so a keep reaches only the caller's own uploads. It checks each staged file's length against its declared size before reading it, so a file of the wrong size is never downloaded, then reads it back conditioned on the etag that check read, so a file replaced since is refused rather than read, and checks its hash against what the caller claimed, and stores it once under its hash. A file already stored is not written again, so one stored copy serves every account that keeps the same bytes. Only then is the account's list rewritten, with the character's pack replaced. The staged uploads are deleted through the storage ledger's own deletion, which gives back their holds, whether the keep lands or is refused. A keep deletes only the uploads its own grants named, so a second keep of the same bytes keeps its upload and its hold. The list is written with its etag, so two devices keeping at once cannot drop each other's packs.
 
 `genshin.removeCharacterPack` drops the character's entry from the list. The stored files stay, since another account may keep the same bytes; nothing collects them yet.
 
@@ -78,10 +78,10 @@ sequenceDiagram
   participant B as Browser
   participant S as Server
   participant C as genshin-assets (private)
-  B->>S: generateCharacterPackUploadSasUrls(files: sha256, size)
-  S-->>B: a write grant per file, to character-packs/staging/{userId}/{sha256}
+  B->>S: generateCharacterPackUploadSasUrls(files: size)
+  S-->>B: a write grant per file: its URL and the staging id that names its upload
   B->>C: upload each file to its grant
-  B->>S: keepCharacterPack(pack: files, packHash)
+  B->>S: keepCharacterPack(pack: files with their staging ids, packHash)
   S->>C: read each staged file, check size and hash
   S->>C: store under files/{sha256} unless already stored
   S->>C: rewrite {userId}/character-packs.json, with its etag
@@ -132,7 +132,7 @@ sequenceDiagram
 | `packages/genshin-world/src/components/Character/PackLoader/Index.vue`                               | Loads a character's release on the character screen, its terms accepted first, removes a kept one, and shows a drawn model's terms |
 | `packages/genshin-world/src/components/Character/Terms/Index.vue`                                    | Shows the terms verbatim, or that they could not be loaded                                                                         |
 | `apps/web/server/services/genshin/accountCharacterPack/keepAccountCharacterPack.ts`                  | Reads each staged file, stores it under its hash, then names the pack in the account's list                                        |
-| `apps/web/server/services/genshin/accountCharacterPack/generateAccountCharacterPackUploadSasUrls.ts` | A write grant per file to the caller's staging name                                                                                |
+| `apps/web/server/services/genshin/accountCharacterPack/generateAccountCharacterPackUploadSasUrls.ts` | A write grant per file, to a staging name of its own                                                                               |
 | `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts`              | A file's bytes, only where the caller's own list names its hash                                                                    |
 | `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackManifest.ts`          | The account's list of kept packs, read with its etag                                                                               |
 | `apps/web/server/trpc/routers/genshin.ts`                                                            | The account's character pack procedures: grant, keep, list and remove                                                              |

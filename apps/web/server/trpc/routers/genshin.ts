@@ -1,4 +1,5 @@
 import type { AccountCharacterPackRecord } from "#server/models/genshin/AccountCharacterPackRecord";
+import type { CharacterPackUploadGrant } from "#server/models/genshin/CharacterPackUploadGrant";
 import type { SaveGenshinResult } from "#server/services/genshin/saveGenshin";
 import type { StartGenshinResult } from "#server/services/genshin/startGenshin";
 
@@ -21,7 +22,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 export const genshinRouter = router({
   generateCharacterPackUploadSasUrls: standardAuthedProcedure
     .input(generateCharacterPackUploadSasUrlsInputSchema)
-    .mutation<string[]>(({ ctx, input }) =>
+    .mutation<CharacterPackUploadGrant[]>(({ ctx, input }) =>
       generateAccountCharacterPackUploadSasUrls(ctx.db, ctx.getSessionPayload.user.id, input),
     ),
   keepCharacterPack: standardAuthedProcedure

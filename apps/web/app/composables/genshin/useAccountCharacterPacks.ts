@@ -17,7 +17,7 @@ const takeMutationResult = <TResult>(outcome: MutationOutcome<TResult>): TResult
 };
 
 // The packs the player's account keeps, read while the player is signed in, and kept or removed on it. A kept pack's files
-// Are each uploaded under their own hashes first, and the account names the pack only once every one of them has landed
+// Are each uploaded to a staging name of their own first, and the account names the pack only once every one of them has landed
 export const useAccountCharacterPacks = () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
@@ -38,22 +38,27 @@ export const useAccountCharacterPacks = () => {
         size: blob.size,
       })),
     );
-    const sasUrls = takeMutationResult(
+    const grants = takeMutationResult(
       await executeMutation(
         () =>
           $trpc.genshin.generateCharacterPackUploadSasUrls.mutate({
-            files: uploadedFiles.map(({ sha256, size }) => ({ sha256, size })),
+            files: uploadedFiles.map(({ size }) => ({ size })),
           }),
         { key: "generateCharacterPackUploadSasUrls" },
       ),
     );
-    await Promise.all(uploadedFiles.map(({ blob }, index) => uploadBlocks(blob, takeOne(sasUrls, index))));
+    await Promise.all(uploadedFiles.map(({ blob }, index) => uploadBlocks(blob, takeOne(grants, index).sasUrl)));
     takeMutationResult(
       await executeMutation(
         () =>
           $trpc.genshin.keepCharacterPack.mutate({
             characterId,
-            files: uploadedFiles.map(({ path, sha256, size }) => ({ path, sha256, size })),
+            files: uploadedFiles.map(({ path, sha256, size }, index) => ({
+              path,
+              sha256,
+              size,
+              stagingId: takeOne(grants, index).stagingId,
+            })),
             modelName,
             packHash,
           }),

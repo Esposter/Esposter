@@ -38,7 +38,8 @@ const storeFileIfAbsent = (containerClient: ContainerClient, sha256: string, byt
     if (!checkIsAlreadyStored(error)) throw error;
   });
 
-// The staged uploads are deleted through deleteStorageBlobs, which gives back the hold each one took at its grant. Best-effort,
+// The staged uploads are deleted through deleteStorageBlobs, which gives back the hold each one took at its grant. Only the
+// Uploads this keep's own grants named are released, so another keep of the same bytes keeps its upload and its hold. Best-effort,
 // As deleteStagingContentBlob is: the keep has already landed or been refused, and a failure here only leaves a meter stale
 const releaseStagingBlobs = (db: Context["db"], containerClient: ContainerClient, stagingBlobNames: string[]) =>
   getResultAsync(() =>
@@ -47,7 +48,7 @@ const releaseStagingBlobs = (db: Context["db"], containerClient: ContainerClient
     }),
   ).match(noop, console.error);
 
-// Keeps a pack for the account: each of its files must already be uploaded under its own hash, and is read and hashed here before it is stored, so a file is only ever referenced by a caller holding its bytes. The account's list names the pack only once every file is stored. The staged uploads are released whether the keep lands or is refused
+// Keeps a pack for the account: each of its files must already be uploaded under the staging id its own grant minted, and is read and hashed here before it is stored, so a file is only ever referenced by a caller holding its bytes. The account's list names the pack only once every file is stored. The staged uploads are released whether the keep lands or is refused
 export const keepAccountCharacterPack = async (
   db: Context["db"],
   userId: string,
@@ -55,11 +56,16 @@ export const keepAccountCharacterPack = async (
 ): Promise<void> => {
   const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
   const uniqueFiles = [...new Map(files.map((file) => [file.sha256, file])).values()];
-  const stagingBlobNames = uniqueFiles.map(({ sha256 }) => getAccountCharacterPackStagingBlobName(userId, sha256));
+  const stagingBlobNames = files.map(({ stagingId }) => getAccountCharacterPackStagingBlobName(userId, stagingId));
   return withFinalizerAsync(
     async () => {
       const { etag, packs } = await readAccountCharacterPackManifest(containerClient, userId);
-      const pack = { characterId, files, modelName, packHash };
+      const pack = {
+        characterId,
+        files: files.map(({ path, sha256, size }) => ({ path, sha256, size })),
+        modelName,
+        packHash,
+      };
       const nextPacks = [...packs.filter((otherPack) => otherPack.characterId !== characterId), pack];
       if (getTotalSize([pack]) > MAX_CHARACTER_PACK_SIZE)
         throw getInvalidOperationError(
@@ -75,8 +81,8 @@ export const keepAccountCharacterPack = async (
         );
 
       await Promise.all(
-        uniqueFiles.map(async ({ sha256, size }) => {
-          const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, sha256);
+        uniqueFiles.map(async ({ sha256, size, stagingId }) => {
+          const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, stagingId);
           // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
           // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
           const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);
