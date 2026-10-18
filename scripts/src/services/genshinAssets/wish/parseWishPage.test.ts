@@ -24,6 +24,7 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
     });
   });
@@ -36,6 +37,7 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
     });
   });
@@ -48,6 +50,7 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
     });
   });
@@ -62,6 +65,7 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
     });
   });
@@ -74,6 +78,24 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
+      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+    });
+  });
+
+  test("a page naming a second type of its kind is read as the second banner of that kind", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseWishPage(
+        createWishPage("GMT+8").replace("|type = Weapon Event\n", "|type = Weapon Event\n|type2 = Weapon Event-2\n"),
+      ),
+    ).toStrictEqual({
+      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+      fiveStarNames: ["a", "b"],
+      fourStarNames: ["c", "d", "e"],
+      kind: WishEventKind.WeaponEvent,
+      kindNumber: 2,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
     });
   });
@@ -86,6 +108,7 @@ describe(parseWishPage, () => {
       fiveStarNames: ["a", "b"],
       fourStarNames: ["c", "d", "e"],
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 12 }).epochMilliseconds,
     });
   });

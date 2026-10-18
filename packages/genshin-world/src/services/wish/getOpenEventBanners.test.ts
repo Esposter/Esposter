@@ -14,6 +14,7 @@ const createEvent = (id: string, kind: BannerKind, startHour: number, endHour: n
   fourStarIds: [],
   id,
   kind,
+  kindNumber: 1,
   startTime: atHour(startHour),
 });
 
