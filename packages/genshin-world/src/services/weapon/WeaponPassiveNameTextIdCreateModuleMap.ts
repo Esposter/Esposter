@@ -70,6 +70,7 @@ import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/p
 import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
 import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives/createSongOfTheVigilPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
+import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/createStaffOfHomaPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
@@ -314,4 +315,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2664303051": createSeasonedSymphonyPassiveModule,
   // Essence of Falsity (Reliquary of Truth)
   "2787405899": createEssenceOfFalsityPassiveModule,
+  // Reckless Cinnabar (Staff of Homa)
+  "3284643059": createStaffOfHomaPassiveModule,
 };
