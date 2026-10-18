@@ -1,6 +1,6 @@
 ## Purpose
 
-Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, with the burst's heal on off-field members, the loop's Wet, and her other passives and her other constellations left unbuilt, with her Ascension 4 Encore built.
+Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, with the burst's heal on off-field members, the loop's Wet, her Ascension 4 Encore and Constellation 6's revive built, and her other passives and Constellations 1 and 4 left unbuilt.
 
 ## Requirements
 
@@ -93,3 +93,14 @@ From two constellations, the Melody Loop's first tick SHALL give every other dep
 - **GIVEN** Barbara has two constellations
 - **WHEN** the Melody Loop's first tick occurs
 - **THEN** Barbara gains no Hydro damage bonus from it
+
+### Requirement: Dedicating Everything to You revives a fallen member from six constellations
+
+From six constellations, a fallen member of the deployed team SHALL be revived to all of its HP while Barbara is in the party but not on the field, once every fifteen minutes.
+
+#### Scenario: A fall revives the member once
+
+- **GIVEN** Barbara has six constellations and is off the field
+- **WHEN** a deployed member falls
+- **THEN** the member is revived to all of its HP
+- **AND** a second fall within fifteen minutes is not revived
