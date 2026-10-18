@@ -11,6 +11,7 @@ import {
   CRAFTING_BENCH_NPC_ID_MAP,
   REPUTATION_KEEPER_NPC_ID_MAP,
   RESIDENT_DUEL_GAME_ID_MAP,
+  RESIDENT_WEEK_GAME_MAP,
 } from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
@@ -86,6 +87,7 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
           (residentJoin.regions.get(region) ?? []).map((resident) =>
             Object.assign(resident, {
               duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id),
+              weekGame: RESIDENT_WEEK_GAME_MAP.get(resident.id),
               keepsReputation: reputationKeeperIds.has(resident.id) ? true : undefined,
             }),
           ),
