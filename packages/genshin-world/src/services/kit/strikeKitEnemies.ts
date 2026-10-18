@@ -22,6 +22,7 @@ import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
+import { selectKitHitTarget } from "#src/services/kit/selectKitHitTarget";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
@@ -57,7 +58,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const strike of strikes) {
-    const { attackTag, body, combatant, hit, target } = strike;
+    const { attackTag, body, combatant, hit } = strike;
+    const target = strike.target ?? selectKitHitTarget(hit, body, enemyMap.values());
     const pricedCombatant = getBuffedCombatant(
       combatant,
       kitEffectState.effects,
@@ -70,7 +72,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     let isPartyHealed = false;
     // The reactions that landed with a reach, each with the enemy it landed on, reached once the strike has landed
     const reaches: [Enemy, TransformativeReaction][] = [];
-    strikeKitDendroCores(kitEffectState, party, strike, pricedCombatant);
+    strikeKitDendroCores(kitEffectState, party, { ...strike, target }, pricedCombatant);
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
@@ -162,7 +164,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       if (enemy.state === EnemyState.Dead)
         emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
     }
-    if (target === undefined)
+    if (target === undefined && hit.targetIndex === undefined)
       for (const wildlife of strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops))
         emitKitEvent({ kind: KitEventKind.WildlifeStruck, striker: combatant, wildlife }, context);
 

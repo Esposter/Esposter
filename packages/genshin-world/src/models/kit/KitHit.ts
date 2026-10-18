@@ -56,6 +56,9 @@ export interface KitHit {
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;
   talentMultiplier: number;
+  // The index of the one enemy the hit strikes among those its area reaches, wrapped to their count, instead of each of
+  // Them, as a shell's hit takes its enemies in turn. None for a hit that strikes every enemy its area reaches
+  targetIndex?: number;
   // Whether the hit lands on an enemy's weak point, read as it lands: the strike sets it on an aimed hit to an enemy with weak points
   weakPoint?: boolean;
 }
