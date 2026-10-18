@@ -1,13 +1,19 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { takeOne } from "@esposter/shared";
 
@@ -25,9 +31,44 @@ const BIRGITTA_ID = "birgitta";
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
+// Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa and
+// The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim (MIT, main) ineffa/asc.go gives it.
+// The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/asc.go
+const ASCENSION_4 = 4;
+const PERMUTATION_ELEMENTAL_MASTERY_SHARE = 0.06;
+const PERMUTATION_SECONDS = 20;
+const PERMUTATION_SOURCE = "ineffa-permutation";
+
+// Moves the Parameter Permutation buff off the member who left the field and onto the one who came on, for the seconds
+// It has left. Ineffa keeps her own, which is what the buff is kept on while she is in the party
+const movePermutation = (event: KitEvent, kitEffectState: KitEffectState, combatant: Combatant): void => {
+  if (event.kind !== KitEventKind.CharacterSwapped) return;
+  const permutation = kitEffectState.effects.find(
+    (effect): effect is KitBuff =>
+      effect.kind === "buff" && effect.characterId === combatant.characterId && effect.source === PERMUTATION_SOURCE,
+  );
+  if (!permutation) return;
+  if (event.previousCharacterId !== combatant.characterId)
+    removeKitEffects(
+      kitEffectState,
+      (effect) =>
+        effect.kind === "buff" &&
+        effect.source === PERMUTATION_SOURCE &&
+        effect.characterId === event.previousCharacterId,
+    );
+  if (event.characterId !== combatant.characterId)
+    buffKitMember(kitEffectState, event.characterId, {
+      amount: permutation.amount,
+      attribute: Attribute.ElementalMastery,
+      secondsRemaining: permutation.secondsRemaining,
+      source: PERMUTATION_SOURCE,
+    });
+};
+
 // Ineffa's behaviour: Cleaning Mode places its shield by a task and summons Birgitta after its hit, and Cyclonic
 // Exterminator summons her again at its hit, ending the one on the field. Her Moonsign Benediction adds its Base DMG
-// Bonus by her ATK
+// Bonus by her ATK, and from Ascension 4 her burst gives her and the active member Elemental Mastery by her ATK
 export const createIneffaKitBehaviour = ({
   kit,
   readArea,
@@ -74,9 +115,18 @@ export const createIneffaKitBehaviour = ({
   };
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        summonBirgitta(kitEffectState, body, combatant, burstBirgittaSpawnSeconds, burstBirgittaDischarges),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        summonBirgitta(kitEffectState, body, combatant, burstBirgittaSpawnSeconds, burstBirgittaDischarges);
+        if (combatant.ascension >= ASCENSION_4)
+          buffKitMember(kitEffectState, combatant.characterId, {
+            amount: PERMUTATION_ELEMENTAL_MASTERY_SHARE * combatant.attributes.attack,
+            attribute: Attribute.ElementalMastery,
+            secondsRemaining: PERMUTATION_SECONDS,
+            source: PERMUTATION_SOURCE,
+          });
+      },
     },
+    onKitEvent: (event, { kitEffectState }, combatant) => movePermutation(event, kitEffectState, combatant),
     moonsignBenediction: {
       getBaseDamageBonus: ({ attributes }) =>
         Math.min(attributes.attack * BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK, BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS),

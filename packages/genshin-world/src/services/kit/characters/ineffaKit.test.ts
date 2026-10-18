@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -9,6 +10,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
@@ -135,5 +137,74 @@ describe(createIneffaKitBehaviour, () => {
       baseDamageBonuses: [expect.closeTo(0.07), 0.14],
       lunarReactionTypes: [LunarReactionType.LunarCharged],
     });
+  });
+});
+
+describe("panoramic Permutation Protocol", () => {
+  const PERMUTATION_SOURCE = "ineffa-permutation";
+  const OTHER_CHARACTER_ID = 10_000_001;
+
+  // Supreme Instruction: Cyclonic Exterminator with Ineffa at the given ascension and attack, and the buffs it leaves
+  const castBurstBuffs = (ascension: number, attack: number): KitBuff[] => {
+    const combatant = {
+      ...createIneffaCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: attack }]),
+    };
+    const kitEffectState: KitEffectState = { effects: [] };
+    INEFFA_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    return kitEffectState.effects.filter(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.source === PERMUTATION_SOURCE,
+    );
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castBurstBuffs(4, 1000)).toStrictEqual([
+      {
+        amount: 0.06 * 1000,
+        attribute: Attribute.ElementalMastery,
+        characterId: INEFFA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 20,
+        source: PERMUTATION_SOURCE,
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castBurstBuffs(3, 1000)).toStrictEqual([]);
+  });
+
+  test("the permutation moves to the active member on a swap and leaves the one it left", () => {
+    expect.hasAssertions();
+
+    const combatant = {
+      ...createIneffaCombatant(),
+      ascension: 4,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: 1000 }]),
+    };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    INEFFA_KIT.elementalBurst.onStart?.(context);
+    const swapTo = (characterId: number, previousCharacterId: number) =>
+      INEFFA_KIT.onKitEvent?.(
+        { characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId },
+        context,
+        combatant,
+      );
+    const holders = (): number[] =>
+      kitEffectState.effects
+        .filter((effect) => effect.kind === "buff" && effect.source === PERMUTATION_SOURCE)
+        .map((effect) => effect.characterId);
+
+    swapTo(OTHER_CHARACTER_ID, INEFFA_CHARACTER_ID);
+    expect(holders()).toStrictEqual([INEFFA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    swapTo(INEFFA_CHARACTER_ID, OTHER_CHARACTER_ID);
+    expect(holders()).toStrictEqual([INEFFA_CHARACTER_ID]);
   });
 });
