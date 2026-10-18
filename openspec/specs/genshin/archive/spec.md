@@ -68,34 +68,6 @@ An Archive entry SHALL show a question mark until the player first meets its thi
 - **WHEN** it is shown
 - **THEN** only its name is shown, not a description
 
-### Requirement: An artifact set opens once its pieces are held
-
-An artifact set's Equipment entry SHALL open once the artifacts the player holds cover every piece of that set.
-
-#### Scenario: Holding every piece opens the set
-
-- **GIVEN** the artifacts held cover every piece of a set that has an Equipment entry
-- **WHEN** the set is checked
-- **THEN** its Equipment entry opens
-
-#### Scenario: A set without an entry opens nothing
-
-- **GIVEN** the artifacts held cover every piece of a set that has no Equipment entry
-- **WHEN** the set is checked
-- **THEN** no entry opens
-
-#### Scenario: An opened set stays open
-
-- **GIVEN** a set's Equipment entry is open
-- **WHEN** its pieces are later no longer held
-- **THEN** the entry stays open
-
-#### Scenario: No artifact in the bag yet opens no set
-
-- **GIVEN** no artifact drop has reached the bag yet
-- **WHEN** the Equipment section is listed
-- **THEN** no artifact set entry is open
-
 ### Requirement: A collected volume goes into the Archive rather than the bag
 
 A volume's material picked up SHALL open the volume's Books entry instead of entering the bag, and the volume's text SHALL be readable in the reader in the player's game language.

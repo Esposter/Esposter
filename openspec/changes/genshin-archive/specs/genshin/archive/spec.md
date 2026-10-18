@@ -63,3 +63,31 @@ The game SHALL keep each opened entry and each Living Beings defeat count with t
 - **GIVEN** a player with open entries and defeat counts
 - **WHEN** the player reloads the game
 - **THEN** the same entries are open and the same counts are shown
+
+### Requirement: An artifact set opens once its pieces are held
+
+An artifact set's Equipment entry SHALL open once the artifacts the player holds cover every piece of that set.
+
+#### Scenario: Holding every piece opens the set
+
+- **GIVEN** the artifacts held cover every piece of a set that has an Equipment entry
+- **WHEN** the set is checked
+- **THEN** its Equipment entry opens
+
+#### Scenario: A set without an entry opens nothing
+
+- **GIVEN** the artifacts held cover every piece of a set that has no Equipment entry
+- **WHEN** the set is checked
+- **THEN** no entry opens
+
+#### Scenario: An opened set stays open
+
+- **GIVEN** a set's Equipment entry is open
+- **WHEN** its pieces are later no longer held
+- **THEN** the entry stays open
+
+#### Scenario: No artifact in the bag yet opens no set
+
+- **GIVEN** no artifact drop has reached the bag yet
+- **WHEN** the Equipment section is listed
+- **THEN** no artifact set entry is open

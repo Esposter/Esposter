@@ -14,3 +14,7 @@
 ## 4. Progress
 
 - [ ] 4.1 Keep opened entries and defeat counts with the player's progress. Verify: a test named after the scenario 'opened entries and counts survive a reload', seen failing first.
+
+## 5. Artifact sets
+
+- [ ] 5.1 Call `openArchiveArtifactSets` from the Archive's composable with the artifacts the bag holds, once the first artifact drop reaches the bag. Verify: a test named after the scenario 'Holding every piece opens the set', seen failing first.
