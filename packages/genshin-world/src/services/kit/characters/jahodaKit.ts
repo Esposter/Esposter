@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -91,10 +92,10 @@ const findLowestHealthCharacterId = (party: Party): number | undefined => {
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above 70%
 // Health the member with the lowest share of health is healed as well. Her burst's two robots are built at Ascendant
-// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, without the
-// Internal cooldown gcsim gives them, as the engine has no tag for it. Ascension 1 and Constellation 4 adjust them and
-// her heals, from jahodaAscension. Her Meowball, Constellations 1 and 2, and Ascension 4 are not built yet, as the record
-// does not carry them. Her Moonsign Benediction, Rooftop Dash
+// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, under the
+// Internal cooldown gcsim gives their strikes. Ascension 1 and Constellation 4 adjust them and
+// Her heals, from jahodaAscension. Her Meowball, Constellations 1 and 2, and Ascension 4 are not built yet, as the record
+// Does not carry them. Her Moonsign Benediction, Rooftop Dash
 // (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its record carries no lunar
 // Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
@@ -285,6 +286,7 @@ export const createJahodaKitBehaviour = ({
             strikeHit: {
               ...robotStrikeHitFields,
               hitmarkSeconds: 0,
+              internalCooldownTag: InternalCooldownTag.JahodaRobotStrike,
               talentMultiplier: robotStrikeMultiplier * ascensionOne.damageMultiplier,
             },
             strikeIntervalSeconds: robotStrikeIntervalSeconds * ascensionOne.intervalMultiplier,

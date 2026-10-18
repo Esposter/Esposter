@@ -1,9 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -15,6 +15,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -104,6 +105,31 @@ const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: n
       [partner.characterId, partner],
     ]),
     party,
+  });
+  JAHODA_KIT.elementalBurst?.onStart?.(context);
+  return context;
+};
+
+// Jahoda's burst cast at Ascendant Gleam, with an enemy holding an aura at the origin for the robots to absorb and strike
+const createRobotBurstContext = () => {
+  const combatant: Combatant = {
+    ...createJahodaCombatant(),
+    kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
+  };
+  const partner: Combatant = {
+    ...createJahodaCombatant(),
+    characterId: MOONSIGN_PARTNER_CHARACTER_ID,
+    kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
+  };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  applyElement(enemy.elementalState, Element.Pyro, 1);
+  const context = createKitTestContext(combatant, {
+    characterIdCombatantMap: new Map([
+      [combatant.characterId, combatant],
+      [partner.characterId, partner],
+    ]),
+    enemyMap: new Map([[enemy.id, enemy]]),
+    party: createParty([combatant.characterId, partner.characterId]),
   });
   JAHODA_KIT.elementalBurst?.onStart?.(context);
   return context;
@@ -211,18 +237,33 @@ describe(createJahodaKitBehaviour, () => {
     fillFlaskUntilDrained(pursuit, context);
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
-  test("Hidden Aces heals the active character on each of its nine ticks, from the 12th frame every 87 frames", () => {
+
+  test("her Hidden Aces heals the active character on each of its nine ticks, from the 12th frame every 87 frames", () => {
+    expect.hasAssertions();
     const context = createBurstHealContext(0.1, 1);
     expect(readHealedFrames(context, JAHODA_CHARACTER_ID)).toStrictEqual([12, 99, 186, 273, 360, 447, 534, 621, 708]);
   });
 
   test("above 70% of her health, Hidden Aces heals the lowest member as well, on its first tick", () => {
+    expect.hasAssertions();
     const context = createBurstHealContext(0.9, 0.4);
     expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toContain(12);
   });
 
   test("at 70% of her health or below, Hidden Aces heals no member but the active one", () => {
+    expect.hasAssertions();
     const context = createBurstHealContext(0.5, 0.4);
     expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toStrictEqual([]);
+  });
+
+  test("at Ascendant Gleam, each robot strike counts Hidden Aces' robot internal cooldown", () => {
+    expect.hasAssertions();
+    const context = createRobotBurstContext();
+    const strikes = [];
+    for (let frame = 0; frame < 300; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
+    expect(strikes.length).toBeGreaterThan(0);
+    expect(new Set(strikes.map(({ hit }) => hit.internalCooldownTag))).toStrictEqual(
+      new Set([InternalCooldownTag.JahodaRobotStrike]),
+    );
   });
 });

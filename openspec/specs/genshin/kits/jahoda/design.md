@@ -17,7 +17,7 @@ Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Meowball, and the internal cooldown her robots' strikes carry.** Her record holds no Meowball hits yet, so it waits on them. The robots' strikes carry no internal cooldown: gcsim gives them a special group of 15 seconds and four hits, and the engine has no tag for that group.
+- **Her Meowball.** Her record holds no Meowball hits yet, so it waits on them. Her robots' strikes carry the internal cooldown gcsim gives them, a group of 15 seconds and four hits, under the `JahodaRobotStrike` tag.
 - **Ascension 1 and Constellation 4 read the team and the robots.** Ascension 1 takes the party's most common element of Pyro, Hydro, Electro and Cryo, the first in gcsim's order on a tie: Pyro scales the robots' damage by 1.3, Hydro the heals by 1.2, Electro adds a robot, and Cryo shortens the robots' intervals by 0.9. Constellation 4 gives her 4 energy on each absorb. The constants are gcsim's, cited in `jahodaAscension.ts`. The absorb check's 46 frames scale to 41.4 where gcsim truncates 126 / 3 to 42, a 0.6 frame difference the record cannot carry.
 - **Ascension 4, and Constellations 1 and 2.** Ascension 4 adds Elemental Mastery while she heals above 70% HP, Constellation 1 bounces Meowball, and Constellation 2 reads the party's elements and the robots' absorbs. They wait on the robots and Meowball, which wait on her record.
 
