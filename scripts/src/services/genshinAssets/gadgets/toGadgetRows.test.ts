@@ -9,7 +9,7 @@ describe(toGadgetRows, () => {
 
     const widgets: Record<string, ConfigWidgetRow> = {
       "101516": { $type: "ConfigWidgetTakePhoto" },
-      "220004": { $type: "ConfigWidgetClientCollector", coolDown: 100, isEquipable: true },
+      "220004": { $type: "ConfigWidgetClientCollector", coolDown: 100, isEquipable: true, maxPoints: 5 },
     };
 
     expect(toGadgetRows(widgets, new Map())).toStrictEqual([
@@ -21,6 +21,7 @@ describe(toGadgetRows, () => {
         id: 220004,
         isEquipable: true,
         kind: "Collector",
+        maxPoints: 5,
         region: "",
       },
     ]);

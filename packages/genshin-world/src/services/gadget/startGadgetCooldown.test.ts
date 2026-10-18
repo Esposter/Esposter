@@ -14,6 +14,7 @@ describe(startGadgetCooldown, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    maxPoints: 0,
     region: "",
   };
 

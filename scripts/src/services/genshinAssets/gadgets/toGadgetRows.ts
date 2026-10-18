@@ -44,6 +44,7 @@ export const toGadgetRows = (
               id: Number(id),
               isEquipable: widget.isEquipable ?? false,
               kind,
+              maxPoints: widget.maxPoints ?? 0,
               region: cityRegion ?? "",
             },
           ];
