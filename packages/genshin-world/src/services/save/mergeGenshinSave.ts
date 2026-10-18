@@ -14,8 +14,6 @@ import type { TipSave } from "#src/models/tip/TipSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
-import { appendWishHistory } from "#src/services/wish/appendWishHistory";
-import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished
@@ -153,7 +151,7 @@ const mergeTips = (account: TipSave, guest: TipSave): TipSave => {
 // Commissions are the copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's
 // While the account has chosen none. The characters both copies hold are the copy further on, and a character only the
 // Guest holds is kept. The learned dishes union.
-export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: Temporal.Instant): GenshinSave => {
+export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const minedOutcrops = mergeMinedOutcrops(account.minedOutcrops ?? [], guest.minedOutcrops ?? []);
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
@@ -166,10 +164,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: 
   const companionshipExp = { ...account.companionshipExp };
   for (const [characterId, guestExp] of Object.entries(guest.companionshipExp))
     companionshipExp[characterId] = Math.max(companionshipExp[characterId] ?? 0, guestExp);
-  const wishPity = { ...account.wishPity };
-  for (const bannerKind of Object.values(BannerKind))
-    if (guest.wishPity[bannerKind].wishCount > account.wishPity[bannerKind].wishCount)
-      wishPity[bannerKind] = guest.wishPity[bannerKind];
   // A mail is kept once per delivery, and a read or pinned mail stays so whichever save it was read or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find((mail) => isSameHeldMail(mail, accountMail));
@@ -246,8 +240,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: 
         ? Math.max(account.wallet.primogemResinRefillCount, guest.wallet.primogemResinRefillCount)
         : account.wallet.primogemResinRefillCount,
     },
-    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, now),
-    wishPity,
+    wishHistory: account.wishHistory,
+    wishPity: account.wishPity,
     worldLevelAdjustment: checkIsLaterWorldLevelAdjustment(guest.worldLevelAdjustment, account.worldLevelAdjustment)
       ? guest.worldLevelAdjustment
       : account.worldLevelAdjustment,

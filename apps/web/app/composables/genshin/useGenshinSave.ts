@@ -12,7 +12,6 @@ import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 import { useAlertStore } from "@/store/alert";
 import { checkIsServer, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { StorageSerializers } from "@vueuse/core";
-import { getServerNow } from "genshin-world";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 import { z } from "zod";
 
@@ -196,13 +195,7 @@ export const useGenshinSave = async () => {
     if (journal && !adoptedJournal) journalJson.value = null;
 
     const baseSave = adoptedJournal?.save ?? start.save;
-    // The merge reads the wish history's window at the server's moment, as the world's clock does
-    const serverNow = getServerNow(serverClockOffsetMs.value);
-    const loadedSave = guestSave
-      ? start.isNew
-        ? guestSave
-        : mergeGenshinSave(baseSave, guestSave, serverNow)
-      : baseSave;
+    const loadedSave = guestSave ? (start.isNew ? guestSave : mergeGenshinSave(baseSave, guestSave)) : baseSave;
     initialSave.value = loadedSave;
     latestSave = loadedSave;
     persistedJson = JSON.stringify(start.save);
