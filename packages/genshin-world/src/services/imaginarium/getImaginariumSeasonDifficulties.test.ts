@@ -1,6 +1,7 @@
 import type { ImaginariumDifficulty } from "#src/models/imaginarium/ImaginariumDifficulty";
 import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeason";
 
+import { Element } from "#src/models/Element";
 import { getImaginariumSeasonDifficulties } from "#src/services/imaginarium/getImaginariumSeasonDifficulties";
 import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 import { describe, expect, test } from "vitest";
@@ -14,9 +15,12 @@ describe(getImaginariumSeasonDifficulties, () => {
   const season: ImaginariumSeason = {
     beginsAt: SEASON_START,
     difficultyIds: [3, 1],
+    elements: [Element.Pyro, Element.Electro, Element.Cryo],
     endsAt: SEASON_START,
     id: 1,
+    openingCharacterIds: [1],
     rewardGroup: 1,
+    specialGuestIds: [2],
   };
   const difficulties: ImaginariumDifficulty[] = [
     { id: 1, level: 1, levelFloor: 60 },
