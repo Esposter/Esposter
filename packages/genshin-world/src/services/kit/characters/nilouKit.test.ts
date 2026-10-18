@@ -41,9 +41,9 @@ const findStatuses = (kitEffectState: KitEffectState) => kitEffectState.effects.
 const findBuffs = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "buff");
 
 describe(createNilouKitBehaviour, () => {
-  // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
-  const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
-    (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1, [], []) ?? []).map(
+  // The conversion bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
+  const getConversionBonusPairs = (constellationCount: number): [Attribute, number][] =>
+    (NILOU_KIT.getConversionBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(
       ({ amount, attribute }) => [attribute, Math.round(amount * 1000) / 1000],
     );
 
@@ -200,7 +200,7 @@ describe(createNilouKitBehaviour, () => {
 
   test("constellation 6 gives CRIT Rate and CRIT DMG for each 1,000 Max HP, capped at 30% and 60%", () => {
     expect.hasAssertions();
-    expect({ constellation5: getPassiveBonusPairs(5), constellation6: getPassiveBonusPairs(6) }).toStrictEqual({
+    expect({ constellation5: getConversionBonusPairs(5), constellation6: getConversionBonusPairs(6) }).toStrictEqual({
       constellation5: [],
       constellation6: [
         [Attribute.CriticalRate, 0.06],

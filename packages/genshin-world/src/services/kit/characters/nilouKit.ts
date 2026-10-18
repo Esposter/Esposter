@@ -41,7 +41,8 @@ const CONSTELLATION_6_CRIT_RATE_MAX = 0.3;
 const CONSTELLATION_6_CRIT_DAMAGE_PER_MAX_HEALTH = 0.012 / 1000;
 const CONSTELLATION_6_CRIT_DAMAGE_MAX = 0.6;
 
-const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
+// Constellation 6 is a stat converted from her Max HP, read from the buffed Max HP in the conversion phase
+const getConversionBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
   combatant.constellationCount < CONSTELLATION_6
     ? []
     : [
@@ -156,6 +157,7 @@ export const createNilouKitBehaviour = ({
   });
 
   return {
+    getConversionBonuses,
     // Ascension 4 raises the DMG of each Bountiful Core reaction a deployed member makes by Nilou's Max HP above
     // 30,000, and leaves a Bloom's alone
     getPartyReactionBonus: (member, reaction, { characterIdCombatantMap, kitEffectState, party }) => {
@@ -169,7 +171,6 @@ export const createNilouKitBehaviour = ({
         ),
       };
     },
-    getPassiveBonuses,
     // Constellation 1 raises Luminous Illusion's DMG, the one hit of the sword dance it is set on
     getStrikeDamageBonus: (strike: KitStrike) =>
       strike.combatant.constellationCount >= CONSTELLATION_1 && strike.hit === luminousIllusionHit
