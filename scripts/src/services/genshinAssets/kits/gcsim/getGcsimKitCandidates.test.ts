@@ -8,7 +8,7 @@ import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalen
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
-import { CombatTalent, Element, WeaponType } from "genshin-world";
+import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
@@ -239,6 +239,146 @@ describe(getGcsimKitCandidates, () => {
       { file: "internal/characters/jean/burst.go", line: 7, source: KitSource.Gcsim },
       { file: "internal/characters/jean/burst.go", line: 9, source: KitSource.Gcsim },
     ]);
+  });
+
+  test("reads a single-hit burst's area from the one queue call firing the hit's talent variable, where the hitmark has no hitbox of its own", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 51,
+          siteLine: 51,
+          talentVariable: "kick",
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
+      filePaths: [],
+      folder: "varesa",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 77,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 74,
+        },
+      ],
+      talentFile: "zz_varesa.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Varesa",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      candidateMap.get("burst.hits.0.area")?.map(({ value }) => (value as { radius: number }).radius),
+    ).toStrictEqual([SKILL_TARGETING_AREA.radius + 8.5]);
+  });
+
+  test("reads no single-hit burst's area where two queue calls fire the hit's talent variable, one hit's alternatives", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 51,
+          siteLine: 51,
+          talentVariable: "kick",
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
+      filePaths: [],
+      folder: "varesa",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 77,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 74,
+        },
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 79,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 78,
+        },
+      ],
+      talentFile: "zz_varesa.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Varesa",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("burst.hits.0.area")).toBeUndefined();
   });
 
   test("joins a burst's hit to the talent variable of the attack its queue call fires at its hitmark, where a second attack under the burst tag has its own", () => {

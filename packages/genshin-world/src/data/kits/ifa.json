@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11339 } },
   "plunges.high.animationFrames": { "cause": "Unsourced", "value": 71 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
