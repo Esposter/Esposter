@@ -1,3 +1,4 @@
+import type { GameDataKey } from "#src/models/data/GameDataKey";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
@@ -32,10 +33,10 @@ describe(readShopGoodMap, () => {
   test("the Realm Depot's goods, split across its tabs' keys, are one list in the tabs' order", async () => {
     expect.hasAssertions();
 
-    const goodsByKey = new Map(REALM_DEPOT_GOODS_KEYS.map((key, index) => [key, [createGood(index + 1)]]));
-    vi.mocked(readGameData).mockImplementation((_, key) =>
-      Promise.resolve(goodsByKey.get(key as (typeof REALM_DEPOT_GOODS_KEYS)[number]) ?? []),
+    const goodsByKey = new Map<GameDataKey, ShopGood[]>(
+      REALM_DEPOT_GOODS_KEYS.map((key, index) => [key, [createGood(index + 1)]]),
     );
+    vi.mocked(readGameData).mockImplementation((_, key) => Promise.resolve(goodsByKey.get(key) ?? []));
 
     const goodMap = await readShopGoodMap(GAME_DATA_BASE_URL);
 
