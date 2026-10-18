@@ -7,7 +7,6 @@ export const OfferingIdKindMap: Partial<Record<number, OfferingKind>> = {
   1: OfferingKind.FrostbearingTree,
   2: OfferingKind.SacredSakura,
   3: OfferingKind.LumenstoneAdjuvant,
-  4: OfferingKind.MichiaeCasket,
   5: OfferingKind.TreeOfDreams,
   6: OfferingKind.AmritaPool,
   7: OfferingKind.FountainOfLucine,

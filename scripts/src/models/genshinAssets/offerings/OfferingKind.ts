@@ -7,7 +7,6 @@ export enum OfferingKind {
   FrostbearingTree = "frostbearingTree",
   LumenstoneAdjuvant = "lumenstoneAdjuvant",
   MemoryCore = "memoryCore",
-  MichiaeCasket = "michiaeCasket",
   NordkalaiOffering01 = "nordkalaiOffering01",
   NordkalaiOffering02 = "nordkalaiOffering02",
   NordkalaiOffering03 = "nordkalaiOffering03",
