@@ -115,6 +115,21 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Flins's avatar id, as his kit module names it. Cometh the Night's initial, middle and final hits read their multipliers
+  // From its skill labels, the middle label once for each of its four hits
+  [
+    10_000_120,
+    {
+      values: {
+        "burst.hits.0.multiplier": { combatTalent: BURST, label: "Initial Skill DMG" },
+        "burst.hits.1.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.2.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.3.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.4.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.5.multiplier": { combatTalent: BURST, label: "Final Phase Lunar-Charged DMG" },
+      },
+    },
+  ],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
   // From her skill's labels, the share of Max HP first and the flat amount after
   [

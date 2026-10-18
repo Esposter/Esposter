@@ -1,11 +1,10 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { isAscendantGleam } from "#src/services/kit/isAscendantGleam";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -13,7 +12,6 @@ import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
 export const ZIBAI_CHARACTER_ID = 10_000_126;
 // The Phase Shift Radiance the shift accrues and Spirit Steed's Stride spends, the cooldowns that let each gain come once a
@@ -45,11 +43,6 @@ const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
 // Constellation 2 needs the Lunar Phase Shift's effects, which the kit does not build
 // Constellation 4 needs the Lunar Phase Shift's effects, which the kit does not build
 // Constellation 6 needs the Lunar Phase Shift's effects, which the kit does not build
-// Whether the team is at Ascendant Gleam, the level its Moonsign benedictions make, which the fourth normal attack's
-// Extra instance and the Lunar-Crystallize Radiance both read
-const isAscendantGleam = ({ characterIdCombatantMap, party }: KitContext): boolean =>
-  getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam;
-
 export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const lunarPhaseShiftSeconds = readParameter("lunarPhaseShiftSeconds");
   const spiritSteedStride: KitActionBehaviour = {
