@@ -29,6 +29,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **A card on either side hears a skill of either side.** `onAnySkillUsed` runs for each card on each side's field, after the using side's `onSkillUsed` hooks, with the card's own side in the context, so a card that answers the opposing side's skills (Chang the Ninth) hears them. The cards that hear a skill are those on the field when it is used, as before, and both sides' zone cards are pruned after it, so a card an opposing skill spends leaves its field then.
 - **Chang the Ninth counts a skill once.** Its Inspiration is one per skill that dealt Physical or Piercing DMG or triggered a reaction, however many hits it landed; at three it is discarded and its side draws two.
 - **Mushroom Pizza holds two statuses.** Its event gives the target a one-round food status (333007, in the food list, so one food a Round) and the dump's Mushroom Pizza (In Effect) status (303305). The In Effect status heals its owner at each End Phase and is spent after two; it is not a food, so it does not bar food in later Rounds.
+- **Lightning Stiletto is a combat action.** `GcgCardModule.isCombatAction` marks a card whose play passes the turn, as a combat skill or switch does; `playGcgCard` passes it once the card resolves. Every other card stays a fast action. The dump gives the Stiletto a Combat Action token, so it is the first card flagged.
 
 ## Scope and order
 

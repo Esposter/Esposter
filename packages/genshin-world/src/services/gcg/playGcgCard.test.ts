@@ -88,4 +88,23 @@ describe(playGcgCard, () => {
     expect(playGcgCard(duel, 0, 0, undefined, [], choice)).toBe(GcgActionResult.Done);
     expect(play.mock.calls).toStrictEqual([[{ duel, sideIndex: 0 }, undefined, choice]]);
   });
+
+  test("should pass the turn after a combat action is played", () => {
+    expect.hasAssertions();
+    vi.spyOn(GcgCardIdModuleMap, "get").mockReturnValue({
+      isCombatAction: true,
+      play: vi.fn<NonNullable<GcgCardModule["play"]>>(),
+    });
+    const duel = createDuel();
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(duel.actingSideIndex).toBe(1);
+  });
+
+  test("should keep the turn after a fast action is played", () => {
+    expect.hasAssertions();
+    vi.spyOn(GcgCardIdModuleMap, "get").mockReturnValue({ play: vi.fn<NonNullable<GcgCardModule["play"]>>() });
+    const duel = createDuel();
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(duel.actingSideIndex).toBe(0);
+  });
 });
