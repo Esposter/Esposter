@@ -1,7 +1,7 @@
 ## 1. Refusal rule
 
-- [ ] 1.1 Name why a combat talent cannot rise now, and none when every requirement is met. Verify: getTalentUpgradeRefusal.test.ts, written first and seen failing, named after 'A talent at its last level cannot be upgraded', 'A talent past the character's phase shows the phase it needs', 'A talent short of Mora shows the Mora it needs', 'A talent missing materials shows the materials it needs' and 'A talent that meets every requirement can be upgraded'.
-- [ ] 1.2 Make the upgrade throw on the same answer the tab shows. Verify: upgradeTalent.test.ts, unchanged, passes in full.
+- [x] 1.1 Name why a combat talent cannot rise now, and none when every requirement is met. Verify: getTalentUpgradeRefusal.test.ts, written first and seen failing, named after 'A talent at its last level cannot be upgraded', 'A talent past the character's phase shows the phase it needs', 'A talent short of Mora shows the Mora it needs', 'A talent missing materials shows the materials it needs' and 'A talent that meets every requirement can be upgraded'.
+- [x] 1.2 Make the upgrade throw on the same answer the tab shows. Verify: upgradeTalent.test.ts, unchanged, passes in full.
 
 ## 2. Talents tab
 

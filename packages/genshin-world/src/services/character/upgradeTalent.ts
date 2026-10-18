@@ -4,13 +4,15 @@ import type { TalentUpgrade } from "#src/models/character/TalentUpgrade";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
+import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
 import { Currency } from "#src/models/inventory/Currency";
+import { getTalentUpgradeRefusal } from "#src/services/character/getTalentUpgradeRefusal";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A combat talent raised one level, as the game raises it: the level above its own is looked up among its upgrades, and
-// Refused where there is none, where the character's ascension phase has not reached the level's, or where the wallet or
-// The bag lacks what the level costs. A refusal throws before anything is returned, so no part of the cost is ever taken
+// Refused, by the answer of getTalentUpgradeRefusal, where there is none or where the level is not yet met. A refusal
+// Throws before anything is returned, so no part of the cost is ever taken
 export const upgradeTalent = (
   character: Character,
   talent: CombatTalent,
@@ -20,10 +22,13 @@ export const upgradeTalent = (
   const level = character.talentLevels[talent] + 1;
   const upgrade = upgrades.find((candidate) => candidate.level === level);
   if (!upgrade) throw new InvalidOperationError(Operation.Update, upgradeTalent.name, `${talent} at its last level`);
-  if (character.ascension < upgrade.phase)
+  const refusal = getTalentUpgradeRefusal(character, talent, upgrades, { inventory, wallet });
+  if (refusal === TalentUpgradeRefusal.Phase)
     throw new InvalidOperationError(Operation.Update, upgradeTalent.name, `ascension ${upgrade.phase} for ${talent}`);
-  if (wallet[Currency.Mora] < upgrade.coinCost)
+  else if (refusal === TalentUpgradeRefusal.Mora)
     throw new InvalidOperationError(Operation.Update, upgradeTalent.name, `${upgrade.coinCost} Mora`);
+  else if (refusal === TalentUpgradeRefusal.Materials)
+    throw new InvalidOperationError(Operation.Update, upgradeTalent.name, `materials for ${talent}`);
   const items = upgrade.costItems.reduce(
     (bagItems, { count, id }) => takeInventoryItems(bagItems, id, count),
     inventory.items,
