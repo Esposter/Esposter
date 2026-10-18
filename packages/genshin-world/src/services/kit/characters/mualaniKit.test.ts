@@ -1,8 +1,8 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitNightsoulBurstEvent } from "#src/models/kit/KitNightsoulBurstEvent";
 import type { KitStrike } from "#src/models/kit/KitStrike";
-import type { Enemy } from "#src/models/enemy/Enemy";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
