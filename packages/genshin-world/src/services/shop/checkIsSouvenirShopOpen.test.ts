@@ -11,4 +11,9 @@ describe(checkIsSouvenirShopOpen, () => {
     expect(checkIsSouvenirShopOpen({ heldCount: 0, level: 2, levels })).toBe(false);
     expect(checkIsSouvenirShopOpen({ heldCount: 0, level: 3, levels })).toBe(true);
   });
+
+  test("a Souvenir Shop stays closed until the offering's levels are read", () => {
+    expect.hasAssertions();
+    expect(checkIsSouvenirShopOpen({ heldCount: 0, level: 0, levels: [] })).toBe(false);
+  });
 });
