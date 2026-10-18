@@ -20,12 +20,13 @@ const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 
 // A region's waterfalls, each sheet read off its fall's mesh as the witness lays it out: every placement of one, its
 // Vertices carried into the world by its scale, turn and place in that order and turned into three's axes last, as a
-// Lathe's are, and each mesh read as one sheet. Written to the region's data file as its `waterfalls`, returning the
+// Lathe's are, and each mesh read as one sheet, or none where its lip has no width. Written to the region's data file as its
+// `waterfalls`, returning the
 // File's path as the build's note
 export const fitWaterfallSheets = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
   const { assets, root } = getComponentDirectory(component);
   const layout = parseMachineJson<SceneLayout>(await readFile(join(root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
-  const waterfalls = await Promise.all(
+  const sheets = await Promise.all(
     layout.placements
       .filter(({ mesh }) => mesh.startsWith(WATERFALL_MESH_PREFIX))
       .map(async (placement) => {
@@ -34,6 +35,7 @@ export const fitWaterfallSheets = async (component: DerivedAssetComponent): Prom
         return computeWaterfallSheet(world.map((vertex) => new Vector3(...vertex)));
       }),
   );
+  const waterfalls = sheets.filter((sheet) => sheet !== undefined);
   const regionFile = join("regions", `${component}.json`);
   const regionData = parseMachineJson<Record<string, unknown>>(
     await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),

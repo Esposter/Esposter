@@ -15,8 +15,8 @@ const toPoint = ({ x, y, z }: Vector3): WaterfallSheetRecord["lip"] => ({
 });
 // A waterfall's sheet read off its mesh's points in the world's axes: the centre of its highest edge as the lip, the unit
 // Direction across that edge on the ground, turned to face +x or else +z, the edge's length as its width and the mesh's
-// Height as its drop
-export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord => {
+// Height as its drop. A lip with no width has no direction across it, so it has no sheet
+export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord | undefined => {
   const highest = Math.max(...points.map(({ y }) => y));
   const lowest = Math.min(...points.map(({ y }) => y));
   const lipPoints = points.filter(({ y }) => y >= highest - LIP_EDGE_TOLERANCE);
@@ -33,6 +33,9 @@ export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord =
       }
     }
 
+  const width = roundFitted(edgeLength);
+  if (width === 0) return undefined;
+
   const across = new Vector3(end.x - start.x, 0, end.z - start.z).normalize();
   const acrossX = roundFitted(across.x);
   if (acrossX < 0 || (acrossX === 0 && roundFitted(across.z) < 0)) across.negate();
@@ -40,6 +43,6 @@ export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord =
     across: toPoint(across),
     drop: roundFitted(highest - lowest),
     lip: toPoint(new Vector3((start.x + end.x) / 2, highest, (start.z + end.z) / 2)),
-    width: roundFitted(edgeLength),
+    width,
   };
 };
