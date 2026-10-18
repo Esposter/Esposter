@@ -6,6 +6,9 @@ The [forging](../../specs/genshin/forging/design.md) page holds the recipes, que
 
 - **The forge screen's layout is measured like the other screens.** Its layout and its queues' look are re-measured off a recording of the game's blacksmith, through the [recreation passes](../genshin-recreation-passes/design.md). Its words come from the refusal keys the [forging](../../specs/genshin/forging/design.md) page names, and it changes no number the rules set.
 - **The blacksmith's place is the scene's own mark.** The official map has no blacksmith label, and the dump's births hold no Wagner, so the forge stands at the `Blacksmith` building point of the [scene group record](../../specs/genshin/scene-groups/design.md), the scene's mark of the city's forge (`Blacksmith_liyue` and the like for the others). Every blacksmith is one forge, so the place is a screen's concern only.
+- **The refusal is the ore's own line.** An order past the day's forge points shows, in place of Start, the refusal line of the enhancement ore its recipe yields: `104011` the Normal, `104012` the Fine and `104013` the Mystic, mapped in `ForgeRefusalGameTextKeyMap` to the three refusal keys `genshin-text` holds. The Mystic's recipe rows name their own refusal text, which repeats the same English.
+- **A queue is the order in its place.** Queue `n` holds the `n`th order of the forge state, since `startForge` appends each order. An obtained order is taken out of the list, so the orders behind it move forward a queue; the state keeps no queue number, so a queue that keeps its place through an obtain is open.
+- **A finished queue keeps the cooking screen's Obtain.** `UI_FORGE_PAGE_ITEM_GET` reads "Obtained", the status once the item is taken, not the button that takes it, so the button keeps `UI_COOKING_FETCH_BUTTON`, as the genshin-text key already records.
 
 ## Scope and order
 
@@ -20,11 +23,15 @@ The [forging](../../specs/genshin/forging/design.md) page holds the recipes, que
 
 ## Key files
 
-| File                                                                     | Role after the change                                          |
-| :----------------------------------------------------------------------- | :------------------------------------------------------------- |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | Gains the forge's screen                                       |
-| `packages/genshin-interface/src/components/ForgeScreen/Index.vue`        | The forge screen, its two tabs                                 |
-| `packages/genshin-interface/src/components/ForgeScreen/Index.fixture.ts` | The screen's fixture, the Materials tab and the queues variant |
+| File                                                                      | Role after the change                                                                             |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                  | Gains the forge's screen                                                                          |
+| `packages/genshin-interface/src/components/ForgeScreen/Index.vue`         | The forge screen, its two tabs                                                                    |
+| `packages/genshin-interface/src/components/ForgeScreen/Index.fixture.ts`  | The screen's fixture, the Materials tab and the queues variant                                    |
+| `packages/genshin-world/src/components/Forge/Screen/Index.vue`            | The forge container: recipes and queues from the forge state, Start, Obtain and the refusal words |
+| `packages/genshin-world/src/services/forging/getBlacksmithPlace.ts`       | Mondstadt's blacksmith's place, from the scene group record's Blacksmith point                    |
+| `packages/genshin-world/src/services/forging/computeForgeQueueSlots.ts`   | Each queue's order from the forge state at a moment                                               |
+| `packages/genshin-world/src/services/forging/computeForgeRefusalLabel.ts` | The refusal words of an order past the day's forge points                                         |
 
 ## Sources
 
