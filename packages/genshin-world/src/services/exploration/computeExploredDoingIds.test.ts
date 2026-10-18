@@ -3,6 +3,7 @@ import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { describe, expect, test } from "vitest";
 
@@ -19,6 +20,14 @@ describe(computeExploredDoingIds, () => {
     reputationRatio: 0,
     total: 146,
   };
+  const statue: StatueLandmark = {
+    areaId: AREA_ID,
+    heightOffset: 0,
+    id: "",
+    kind: LandmarkKind.StatueOfTheSeven,
+    position: { x: 0, z: 0 },
+    rotation: 0,
+  };
 
   test("should name no doing while the area's statue is locked", () => {
     expect.hasAssertions();
@@ -29,15 +38,16 @@ describe(computeExploredDoingIds, () => {
   test("should name the area's waypoint once its statue is unlocked, and no chest", () => {
     expect.hasAssertions();
 
-    const statue: StatueLandmark = {
-      areaId: AREA_ID,
-      heightOffset: 0,
-      id: "",
-      kind: LandmarkKind.StatueOfTheSeven,
-      position: { x: 0, z: 0 },
-      rotation: 0,
-    };
-
     expect(computeExploredDoingIds(area, [statue])).toStrictEqual(new Set([WAYPOINT_ID]));
+  });
+
+  test("a doing repeated adds its weight only once", () => {
+    expect.hasAssertions();
+
+    // The waypoint's ten of the area's 146 reads six percent, however many times its statue is counted
+    expect([
+      computeExplorationProgress(area, computeExploredDoingIds(area, [statue])),
+      computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue])),
+    ]).toStrictEqual([6, 6]);
   });
 });
