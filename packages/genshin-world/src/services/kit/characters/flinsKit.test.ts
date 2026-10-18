@@ -1,9 +1,26 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createFlinsKitBehaviour, FLINS_CHARACTER_ID } from "#src/services/kit/characters/flinsKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const FLINS_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FLINS_CHARACTER_ID);
+
+// Flins with his ATK at 1000, at the ascension, as the passive bonus reads him
+const getPassiveBonuses = (ascension: number) =>
+  FLINS_KIT.getPassiveBonuses?.(
+    {
+      ascension,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: 1000 }]),
+      characterId: FLINS_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: FLINS_KIT,
+      level: 90,
+    },
+    1,
+  );
 
 describe(createFlinsKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
@@ -65,6 +82,20 @@ describe(createFlinsKitBehaviour, () => {
     expect({ pressHits: FLINS_KIT.elementalSkill.hits, skillHolds: FLINS_KIT.elementalSkillHolds }).toStrictEqual({
       pressHits: [],
       skillHolds: undefined,
+    });
+  });
+
+  describe("the Ascension 4 passive, Whispering Flame", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getPassiveBonuses(4)).toStrictEqual([{ amount: 80, attribute: Attribute.ElementalMastery }]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getPassiveBonuses(3)).toStrictEqual([]);
     });
   });
 });
