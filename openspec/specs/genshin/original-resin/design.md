@@ -36,7 +36,7 @@ flowchart TD
 
 - **The blossoms.** No challenge leaves a blossom, so no F prompt offers a claim. The prices are ready for the [ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md), [domains](../../../changes/genshin-domains/design.md) and [bosses](../../../changes/genshin-bosses/design.md) to call.
 - **The claims' rewards.** Not read yet: a ley line blossom's are its refresh row's reward previews, one a World Level ([ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md)), and a normal boss's the wiki's world boss rewards ([bosses](../../../changes/genshin-bosses/design.md)).
-- **Fragile Resin's refill.** `refillOriginalResinWithFragileResin` restores the sixty it gives and takes one from the bag, and the bag's Use reaches it through `useInventoryEntry`, routed by the item's id. The published material table (`items/materials`) does not yet carry item 107009, so no bag holds one until the table does; the refill's test holds it in the meantime.
+- **Fragile Resin's refill.** `refillOriginalResinWithFragileResin` restores the sixty it gives and takes one from the bag, and the bag's Use reaches it through `useInventoryEntry`, routed by the item's id. The published material table (`items/materials`) carries item 107009 once `genshin:assets items` publishes the consumable source the builder now reads, so a bag holds one only after that publish; the refill's test holds it in the meantime.
 - **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](../crafting/design.md) bench's.
 - **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.
 

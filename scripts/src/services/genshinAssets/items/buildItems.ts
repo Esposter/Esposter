@@ -4,7 +4,11 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import {
+  ADD_ITEM_USE_OP,
+  BAG_TAB_BY_TABLE_TYPE,
+  MATERIAL_TABLE_NAME,
+} from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
@@ -14,11 +18,21 @@ import {
   forgeRecipeSchema,
   gadgetRowSchema,
   GameDataset,
+  MaterialType,
   offeringLevelSchema,
   reputationCitySchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
 import { z } from "zod";
+
+const BAG_MATERIAL_TYPES: string[] = Object.values(MaterialType);
+// The type a table type is shown under in the bag, a batch-use consumable filed with the consume tab
+const toBagMaterialType = (materialType: string): string => BAG_TAB_BY_TABLE_TYPE[materialType] ?? materialType;
+// A consumable whose use adds an item to the bag, where the bag has a tab for its type
+const isAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
+  materialType !== undefined &&
+  itemUse.some(({ useOp }) => useOp === ADD_ITEM_USE_OP) &&
+  BAG_MATERIAL_TYPES.includes(toBagMaterialType(materialType));
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields, every gadget of the gadgets slice, every offering the Frostbearing
@@ -63,6 +77,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...frostbearingTreeLevels.flatMap(({ rewards }) => rewards.map(({ itemId }) => itemId)),
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
+      ...materialRows.filter((row) => isAddItemConsumable(row)).map(({ id }) => id),
     ]),
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
@@ -80,7 +95,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     return [
       {
         id: materialRow.id,
-        materialType,
+        materialType: toBagMaterialType(materialType),
         nameTextId: String(materialRow.nameTextMapHash),
         rank: materialRow.rank,
         rarity: materialRow.rankLevel,
