@@ -183,7 +183,7 @@ export const createLaylaKitBehaviour = ({
       ...shootingStarStrike,
       hitmarkSeconds: toKitSeconds(travelFrames),
       ...(combatant.ascension >= ASCENSION_4 && {
-        additiveBaseDamageBonus: ({ attributes: { maxHealth } }: Combatant) => ASCENSION_4_MAX_HEALTH_SHARE * maxHealth,
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(ASCENSION_4_MAX_HEALTH_SHARE),
       }),
       onStrike: ({ party }) => {
         if (isStruck) return;
