@@ -12,6 +12,7 @@ import { calxsArts } from "#src/services/gcg/cards/calxsArts";
 import { capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
 import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
+import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
 import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
@@ -185,6 +186,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
   [123_022, fieryRebirth],
+  [124_013, chainsOfWardingThunder],
   [124_014, electroCrystalCore],
   [125011, shadowswordLoneGale],
   [125012, shadowswordGallopingFrost],

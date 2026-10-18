@@ -30,6 +30,7 @@ import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoS
 import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
 import { kurageOath } from "#src/services/gcg/cards/kurageOath";
 import { lightningFang } from "#src/services/gcg/cards/lightningFang";
+import { lightningLockdown } from "#src/services/gcg/cards/lightningLockdown";
 import { masatsuZetsugi } from "#src/services/gcg/cards/masatsuZetsugi";
 import { midnightPhantasmagoria } from "#src/services/gcg/cards/midnightPhantasmagoria";
 import { mirrorReflectionOfDoom } from "#src/services/gcg/cards/mirrorReflectionOfDoom";
@@ -106,6 +107,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22014", tideAndTorrent],
   ["Char_Skill_23024", fieryRebirthSkill],
   ["Char_Skill_24012", rockPaperScissorsCombo],
+  ["Char_Skill_24013", lightningLockdown],
   ["Char_Skill_24014", electroCrystalCoreSkill],
   ["Char_Skill_24015", rockPaperScissorsScissors],
   ["Char_Skill_25012", blusteringBlade],

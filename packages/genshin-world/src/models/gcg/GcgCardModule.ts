@@ -87,6 +87,8 @@ export interface GcgCardModule {
   // The HP a character is restored to, instead of being defeated, by a card attached to it that answers a defeat, or none
   replaceDefeat?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => number | undefined;
   skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
+  // The dice an opposing card adds to a cost the other side pays (its context is the card's own side), or none
+  surchargeCost?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => number | undefined;
   // The index of the character a card switches in when it is played, through the switch path (no die, no turn, the field's
   // Switch hooks), which the duel does after play and before the card's skill; undefined for no switch
   switchOnPlay?: (context: GcgEffectContext) => number | undefined;

@@ -7,14 +7,18 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
+import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
@@ -35,11 +39,11 @@ const createCharacterState = (id: number, element: Element): GcgCharacterState =
   shield: 0,
   statuses: [],
 });
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
+const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["dice"] = []): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice: [],
+  dice,
   deckCardIds: [],
   drawPile: [],
   hand: [],
@@ -74,6 +78,7 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
 });
 const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
 const ROCK_PAPER_SCISSORS_COMBO = createSkill(24_012, "Char_Skill_24012", GcgSkillKind.ElementalSkill);
+const LIGHTNING_LOCKDOWN = createSkill(24_013, "Char_Skill_24013", GcgSkillKind.ElementalBurst);
 
 describe("fiery Rebirth", () => {
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
@@ -190,5 +195,75 @@ describe("rock-Paper-Scissors Combo", () => {
     runGcgPreparedSkills(duel, 0);
 
     expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(18);
+  });
+});
+
+describe("chains of Warding Thunder", () => {
+  test("while it is on the field, the opposing side's first switch of a round spends 1 more die, and a later switch that round does not", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState(
+        [createCharacterState(KUJOU_SARA_ID, Element.Electro), createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)],
+        [Element.Pyro, Element.Hydro, Element.Cryo],
+      ),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
+    const switchCost = [{ count: 1, kind: GcgCostKind.Unaligned }];
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { switchTo: 1 }, switchCost, [0])).toBe(false);
+    expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { switchTo: 1 }, switchCost, [0, 1])).toBe(true);
+    expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { switchTo: 1 }, switchCost, [0])).toBe(true);
+  });
+
+  test("a skill's cost is not surcharged", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)], [Element.Pyro]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
+    const skillCost = [{ count: 1, kind: GcgCostKind.Unaligned }];
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { skill: ELEMENTAL_SKILL }, skillCost, [0])).toBe(true);
+  });
+
+  test("at each End Phase it deals 1 Electro to the opposing active character, and is spent after two End Phases", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(9);
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
+  });
+});
+
+describe("lightning Lockdown", () => {
+  test("deals 2 Electro and summons Chains of Warding Thunder for its two usages", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, LIGHTNING_LOCKDOWN);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([
+      { cardId: CHAINS_OF_WARDING_THUNDER_ID, counter: 0, rounds: 0, usages: 2 },
+    ]);
   });
 });

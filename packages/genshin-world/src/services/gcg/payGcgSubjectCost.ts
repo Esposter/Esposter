@@ -9,6 +9,7 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { reduceGcgCosts } from "#src/services/gcg/effects/reduceGcgCosts";
+import { surchargeGcgCosts } from "#src/services/gcg/effects/surchargeGcgCosts";
 import { payGcgCost } from "#src/services/gcg/payGcgCost";
 import { takeOne } from "@esposter/shared";
 
@@ -40,6 +41,19 @@ export const payGcgSubjectCost = (
     reducedCosts = reduceGcgCosts(reducedCosts, reduction, character.character.element);
     appliedReductions.push(zoneCard);
   }
+  // A card on the other side may surcharge the cost, in the dice it adds, and hears the payment only once it is paid
+  const otherSideIndex = 1 - context.sideIndex;
+  const surchargeCards: GcgZoneCard[] = [];
+  for (const zoneCard of listGcgFieldCards(takeOne(context.duel.sides, otherSideIndex), undefined)) {
+    const count = GcgCardIdModuleMap.get(zoneCard.cardId)?.surchargeCost?.(
+      { duel: context.duel, sideIndex: otherSideIndex },
+      { ...subject, costs: reducedCosts, element: character.character.element },
+      zoneCard,
+    );
+    if (!count) continue;
+    reducedCosts = surchargeGcgCosts(reducedCosts, count);
+    surchargeCards.push(zoneCard);
+  }
   if (!payGcgCost(side, character.character.element, reducedCosts, paidDiceIndices)) return false;
   character.energy -= energyCost;
   for (const zoneCard of appliedReductions) {
@@ -50,6 +64,12 @@ export const payGcgSubjectCost = (
       zoneCard,
     );
   }
+  for (const zoneCard of surchargeCards)
+    GcgCardIdModuleMap.get(zoneCard.cardId)?.onCostPaid?.(
+      { duel: context.duel, sideIndex: otherSideIndex },
+      { ...subject, costs: reducedCosts, element: character.character.element },
+      zoneCard,
+    );
   return true;
 };
 
