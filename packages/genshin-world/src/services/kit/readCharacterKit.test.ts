@@ -2,6 +2,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
+import type { Kit } from "#src/models/kit/Kit";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
@@ -18,6 +19,10 @@ vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"
   return { CharacterIdCreateKitBehaviourMap: { [neferCharacterId]: () => Promise.resolve(createNeferKitBehaviour) } };
 });
 
+// A kit's hooks are closures a build makes anew, so two kits never hold the same function. The comparison is of the
+// Record's own fields, which the JSON of a kit keeps while it drops every function
+const toRecordFields = (kit: Kit): unknown => JSON.parse(JSON.stringify(kit));
+
 describe(readCharacterKit, () => {
   // Its own record and multipliers hold none of the Traveler's values, so a kit built from them would differ
   test("a character without a kit of its own fights by the Traveler's kit", async () => {
@@ -29,7 +34,9 @@ describe(readCharacterKit, () => {
     ]);
 
     // Each carries its own character's icons, which the comparison leaves out
-    expect({ ...kit, skillGlyphs: undefined }).toStrictEqual({ ...travelerKit, skillGlyphs: undefined });
+    expect(toRecordFields({ ...kit, skillGlyphs: undefined })).toStrictEqual(
+      toRecordFields({ ...travelerKit, skillGlyphs: undefined }),
+    );
   });
 
   test("reads each talent's parameters at the level given for it", async () => {
