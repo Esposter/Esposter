@@ -1,3 +1,4 @@
+import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
@@ -6,17 +7,37 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
+import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
+import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
+import { liuSu } from "#src/services/gcg/cards/liuSu";
+import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
+import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
 import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
 import { ICY_QUILL_ID, icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { rana } from "#src/services/gcg/cards/rana";
+import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
 import { MYSTICAL_ABANDON_ID, mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
+import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
+import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 import { TALISMAN_SPIRIT_ID, talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
+import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
+import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
+import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -96,6 +117,57 @@ const SPRING_SPIRIT_SUMMONING: GcgSkill = {
   energyGain: 1,
   id: 11_072,
   kind: GcgSkillKind.ElementalSkill,
+};
+
+const XIAO_ID = 1_504;
+const CONQUEROR_OF_EVIL_ID = 215_041;
+const BANE_OF_ALL_EVIL: GcgSkill = {
+  costs: [],
+  effect: "Char_Skill_15043",
+  energyGain: 2,
+  id: 15_043,
+  kind: GcgSkillKind.ElementalBurst,
+};
+const LEMNISCATIC_WIND_CYCLING: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Wind_3",
+  energyGain: 1,
+  id: 15_042,
+  kind: GcgSkillKind.ElementalSkill,
+};
+
+const LIU_SU_ID = 322_012;
+const DUNYARZAD_ID = 322_016;
+const RANA_ID = 322_017;
+const PLAIN_SUPPORT_ID = 321_001;
+const LITHIC_SPEAR_ID = 311_402;
+const VERMILLION_HEREAFTER_ID = 312_012;
+const STONE_AND_CONTRACTS_ID = 331_802;
+const DRAWN_CARD_ID = 213_011;
+const TALENT_CARD: GcgCard = {
+  costs: [],
+  descriptionTextId: 1,
+  effects: [],
+  id: 211_031,
+  isLocation: false,
+  kind: GcgCardKind.Talent,
+  nameTextId: 1,
+};
+const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Event };
+
+// A companion Support Card, with no cost of its own
+const createCompanion = (id: number): GcgCard => ({ ...TALENT_CARD, id, isCompanion: true, kind: GcgCardKind.Support });
+
+// A character of the element named
+const createElementCharacter = (id: number, element: Element): GcgCharacterState => {
+  const state = createCharacterState(id);
+  return { ...state, character: { ...state.character, element } };
+};
+
+// A Liyue character who wields the weapon kind named
+const createLiyueCharacter = (id: number, weapon: string): GcgCharacterState => {
+  const state = createCharacterState(id);
+  return { ...state, character: { ...state.character, nation: "LIYUE", weapon } };
 };
 
 describe("spring Spirit Summoning", () => {
@@ -251,5 +323,441 @@ describe("mystical Abandon", () => {
 
     expect(mysticalAbandon.canPlay?.(context, 0)).toBe(true);
     expect(mysticalAbandon.skillOnPlay?.(context, 0)).toStrictEqual(SPRING_SPIRIT_SUMMONING);
+  });
+});
+
+describe("bane of All Evil", () => {
+  test("it deals 4 Anemo DMG, then Xiao gains Yaksha's Mask for two Rounds", () => {
+    expect.hasAssertions();
+
+    const xiao = createCharacterState(XIAO_ID);
+    const duel = createDuel([createSideState([xiao]), createSideState([])]);
+    const context = { duel, sideIndex: 0 };
+
+    expect(baneOfAllEvil.getDamage?.(context)).toStrictEqual({ damageType: Element.Anemo, value: 4 });
+    baneOfAllEvil.afterDamage?.(context);
+    expect(xiao.statuses).toStrictEqual([createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)]);
+    expect(takeOne(xiao.statuses, 0)).toMatchObject({ rounds: 2, usages: 2 });
+  });
+
+  test("a Yaksha's Mask already on Xiao is refreshed rather than doubled", () => {
+    expect.hasAssertions();
+
+    const xiao = {
+      ...createCharacterState(XIAO_ID),
+      statuses: [{ ...createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask), rounds: 1, usages: 0 }],
+    };
+    const duel = createDuel([createSideState([xiao]), createSideState([])]);
+
+    baneOfAllEvil.afterDamage?.({ duel, sideIndex: 0 });
+    expect(xiao.statuses).toStrictEqual([createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)]);
+  });
+});
+
+describe("yaksha's Mask", () => {
+  test.each([
+    [GcgDamageKind.Physical, Element.Anemo, 3],
+    [Element.Anemo, Element.Anemo, 3],
+    [Element.Pyro, Element.Pyro, 2],
+  ])("it deals a %s hit as %s, and an Anemo hit 1 more", (damageType, dealtAs, value) => {
+    expect.hasAssertions();
+
+    const duel = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
+
+    expect(yakshasMask.modifyDamageDealt?.({ duel, sideIndex: 0 }, { damageType, value: 2 }, zoneCard)).toStrictEqual({
+      damageType: dealtAs,
+      value,
+    });
+  });
+});
+
+describe("yaksha's Mask's switch clause", () => {
+  // Xiao is active, with the mask, and three Cryo dice to pay a switch with
+  const createSwitchDuel = (): GcgDuel => {
+    const duel = createDuel([
+      createSideState([
+        { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] },
+        createCharacterState(1_104),
+      ]),
+      createSideState([createCharacterState(1_107)]),
+    ]);
+    takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
+    return duel;
+  };
+
+  test("while Xiao is active, a switch away from her spends one die less", () => {
+    expect.hasAssertions();
+
+    const duel = createSwitchDuel();
+
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ activeIndex: 1, dice: [Element.Cryo, Element.Cryo, Element.Cryo] });
+  });
+
+  test("a switch to Xiao while another character is active gets no reduction", () => {
+    expect.hasAssertions();
+
+    const duel = createSwitchDuel();
+    takeOne(duel.sides, 0).activeIndex = 1;
+
+    expect(switchGcgCharacter(duel, 0, 0, [])).toBe(GcgActionResult.Unpayable);
+    expect(switchGcgCharacter(duel, 0, 0, [0])).toBe(GcgActionResult.Done);
+  });
+
+  test("the reduction is taken once per Round", () => {
+    expect.hasAssertions();
+
+    const duel = createSwitchDuel();
+
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
+    duel.actingSideIndex = 0;
+    expect(switchGcgCharacter(duel, 0, 0, [0])).toBe(GcgActionResult.Done);
+    duel.actingSideIndex = 0;
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Unpayable);
+    expect(switchGcgCharacter(duel, 0, 1, [0])).toBe(GcgActionResult.Done);
+  });
+});
+
+describe("conqueror of Evil: Guardian Yaksha", () => {
+  test("it equips to Xiao while she is active, and has her use Bane of All Evil at once", () => {
+    expect.hasAssertions();
+
+    const xiao = createCharacterState(XIAO_ID);
+    xiao.character.skills = [BANE_OF_ALL_EVIL];
+    const context = { duel: createDuel([createSideState([xiao]), createSideState([])]), sideIndex: 0 };
+
+    expect(conquerorOfEvilGuardianYaksha.canPlay?.(context, 0)).toBe(true);
+    expect(conquerorOfEvilGuardianYaksha.skillOnPlay?.(context, 0)).toStrictEqual(BANE_OF_ALL_EVIL);
+  });
+
+  test("while Xiao has Yaksha's Mask, Lemniscatic Wind Cycling costs one Anemo die less, twice per attachment", () => {
+    expect.hasAssertions();
+
+    const xiao = { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] };
+    const duel = createDuel([createSideState([xiao]), createSideState([])]);
+    const context = { characterIndex: 0, duel, sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
+    const subject = { costs: [], element: Element.Anemo, skill: LEMNISCATIC_WIND_CYCLING };
+    const reduction = { count: 1, element: Element.Anemo };
+
+    expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toStrictEqual(reduction);
+    conquerorOfEvilGuardianYaksha.onCostPaid?.(context, subject, zoneCard);
+    expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toStrictEqual(reduction);
+    conquerorOfEvilGuardianYaksha.onCostPaid?.(context, subject, zoneCard);
+    expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
+  });
+
+  test("without Yaksha's Mask, or for any other skill, nothing is reduced", () => {
+    expect.hasAssertions();
+
+    const bare = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
+    expect(
+      conquerorOfEvilGuardianYaksha.reduceCost?.(
+        { characterIndex: 0, duel: bare, sideIndex: 0 },
+        { costs: [], element: Element.Anemo, skill: LEMNISCATIC_WIND_CYCLING },
+        zoneCard,
+      ),
+    ).toBeUndefined();
+
+    const xiao = { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] };
+    const masked = createDuel([createSideState([xiao]), createSideState([])]);
+    expect(
+      conquerorOfEvilGuardianYaksha.reduceCost?.(
+        { characterIndex: 0, duel: masked, sideIndex: 0 },
+        { costs: [], element: Element.Anemo, skill: BANE_OF_ALL_EVIL },
+        zoneCard,
+      ),
+    ).toBeUndefined();
+  });
+});
+
+describe("lithic Spear", () => {
+  test("it deals 1 more DMG to its pole user", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([createSideState([createLiyueCharacter(SHENHE_ID, "POLE")]), createSideState([])]);
+    const zoneCard = createGcgZoneCard(LITHIC_SPEAR_ID, lithicSpear);
+
+    expect(
+      lithicSpear.modifyDamageDealt?.(
+        { duel, sideIndex: 0 },
+        { damageType: GcgDamageKind.Physical, value: 2 },
+        zoneCard,
+      ),
+    ).toStrictEqual({ damageType: GcgDamageKind.Physical, value: 3 });
+  });
+
+  test("when played, it grants its wielder a Shield point for each Liyue party member", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([
+        createLiyueCharacter(SHENHE_ID, "POLE"),
+        createLiyueCharacter(1_104, "CLAYMORE"),
+        createCharacterState(1_202),
+      ]),
+      createSideState([]),
+    ]);
+
+    lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
+    expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2, 0, 0]);
+  });
+
+  test("the shield it grants stops at the shield limit", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([
+        createLiyueCharacter(SHENHE_ID, "POLE"),
+        createLiyueCharacter(1_104, "CLAYMORE"),
+        createLiyueCharacter(1_504, "POLE"),
+      ]),
+      createSideState([]),
+    ]);
+
+    lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
+    expect(takeOne(takeOne(duel.sides, 0).characters, 0).shield).toBe(GCG_SHIELD_LIMIT);
+  });
+});
+
+describe("vermillion Hereafter", () => {
+  test("a Normal Attack spends one die less, once per Round", () => {
+    expect.hasAssertions();
+
+    const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
+    const duel = createDuel([
+      createSideState([{ ...createCharacterState(1_104), equipments: [zoneCard] }]),
+      createSideState([]),
+    ]);
+    const context = { characterIndex: 0, duel, sideIndex: 0 };
+    const subject = { costs: [], element: Element.Cryo, skill: KABUKI };
+
+    expect(vermillionHereafter.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1 });
+    vermillionHereafter.onCostPaid?.(context, subject, zoneCard);
+    expect(vermillionHereafter.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
+  });
+
+  test("a Talent card spends one die less, while an Elemental Skill and other cards do not", () => {
+    expect.hasAssertions();
+
+    const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
+    const duel = createDuel([createSideState([createCharacterState(1_104)]), createSideState([])]);
+    const context = { characterIndex: 0, duel, sideIndex: 0 };
+
+    expect(
+      vermillionHereafter.reduceCost?.(context, { card: TALENT_CARD, costs: [], element: Element.Cryo }, zoneCard),
+    ).toStrictEqual({ count: 1 });
+    expect(
+      vermillionHereafter.reduceCost?.(context, { costs: [], element: Element.Cryo, skill: HYOUKA }, zoneCard),
+    ).toBeUndefined();
+    expect(
+      vermillionHereafter.reduceCost?.(context, { card: EVENT_CARD, costs: [], element: Element.Cryo }, zoneCard),
+    ).toBeUndefined();
+  });
+
+  test("after a character is switched to, she deals 1 more Normal Attack DMG this Round", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([
+        {
+          ...createCharacterState(1_104),
+          equipments: [createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter)],
+        },
+        createCharacterState(1_504),
+      ]),
+      createSideState([createCharacterState(1_202)]),
+    ]);
+
+    switchGcgActiveCharacter(duel, 0, 1);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
+  });
+});
+
+describe("stone and Contracts", () => {
+  test("when the next Action Phase begins, it creates 3 Omni dice and draws a card", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(1_104)]);
+    side.drawPile = [DRAWN_CARD_ID];
+    const duel = createDuel([side, createSideState([])]);
+
+    stoneAndContracts.play?.({ duel, sideIndex: 0 }, undefined);
+    expect(side.onstages).toStrictEqual([createGcgZoneCard(STONE_AND_CONTRACTS_ID, stoneAndContracts)]);
+    runGcgActionPhase(duel);
+    expect(side).toMatchObject({
+      dice: [GcgDieFace.Omni, GcgDieFace.Omni, GcgDieFace.Omni],
+      hand: [DRAWN_CARD_ID],
+      onstages: [],
+    });
+  });
+});
+
+describe("elemental Resonance: Shattering Ice", () => {
+  test("it can be played only with two Cryo characters on its side", () => {
+    expect.hasAssertions();
+
+    const one = createDuel([createSideState([createCharacterState(1_202)]), createSideState([])]);
+    const two = createDuel([
+      createSideState([createCharacterState(1_202), createCharacterState(1_104)]),
+      createSideState([]),
+    ]);
+
+    expect(shatteringIce.canPlay?.({ duel: one, sideIndex: 0 }, undefined)).toBe(false);
+    expect(shatteringIce.canPlay?.({ duel: two, sideIndex: 0 }, undefined)).toBe(true);
+  });
+
+  test("the active character deals 2 more DMG to her next instance, and no more", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(1_202), createCharacterState(1_104)]),
+      createSideState([createCharacterState(1_202)]),
+    ]);
+
+    shatteringIce.play?.({ duel, sideIndex: 0 }, undefined);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([4]);
+  });
+});
+
+describe("liu Su", () => {
+  test("after a switch to a character with no Energy, she gives that character 1 Energy, once per Round", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID), createCharacterState(1_104)]);
+    side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
+    const duel = createDuel([side, createSideState([])]);
+
+    switchGcgActiveCharacter(duel, 0, 1);
+    expect(side.characters.map(({ energy }) => energy)).toStrictEqual([0, 1]);
+    switchGcgActiveCharacter(duel, 0, 0);
+    expect(side.characters.map(({ energy }) => energy)).toStrictEqual([0, 1]);
+    expect(takeOne(side.supports, 0).usages).toBe(1);
+  });
+
+  test("a character who has Energy keeps it, and the use is not spent", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID), createCharacterState(1_104)]);
+    takeOne(side.characters, 1).energy = 2;
+    side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
+    const duel = createDuel([side, createSideState([])]);
+
+    switchGcgActiveCharacter(duel, 0, 1);
+    expect({
+      energies: side.characters.map(({ energy }) => energy),
+      usages: takeOne(side.supports, 0).usages,
+    }).toStrictEqual({ energies: [0, 2], usages: 2 });
+  });
+});
+
+describe("dunyarzad", () => {
+  test("a companion played spends one die less, once per Round, and a card that is not a companion spends none less", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
+    const zoneCard = takeOne(side.supports, 0);
+    const context = { duel: createDuel([side, createSideState([])]), sideIndex: 0 };
+    const companionSubject = { card: createCompanion(LIU_SU_ID), costs: [], element: Element.Cryo };
+
+    expect(dunyarzad.reduceCost?.(context, companionSubject, zoneCard)).toStrictEqual({ count: 1 });
+    dunyarzad.onCostPaid?.(context, companionSubject, zoneCard);
+    expect(dunyarzad.reduceCost?.(context, companionSubject, zoneCard)).toBeUndefined();
+    expect(
+      dunyarzad.reduceCost?.(
+        context,
+        { card: { ...TALENT_CARD, kind: GcgCardKind.Support }, costs: [], element: Element.Cryo },
+        zoneCard,
+      ),
+    ).toBeUndefined();
+  });
+
+  test("a companion played through the hand is paid for at one die less", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
+    side.cards.push({ ...createCompanion(LIU_SU_ID), costs: [{ count: 1, kind: GcgCostKind.Unaligned }] });
+    side.hand.push(LIU_SU_ID);
+    const duel = createDuel([side, createSideState([])]);
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(side.supports.map(({ cardId }) => cardId)).toStrictEqual([DUNYARZAD_ID, LIU_SU_ID]);
+  });
+
+  test("after a companion is played, it draws a random companion from the pile, once per match", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
+    side.cards.push({ ...TALENT_CARD, id: PLAIN_SUPPORT_ID, kind: GcgCardKind.Support }, createCompanion(RANA_ID), {
+      ...createCompanion(LIU_SU_ID),
+      costs: [{ count: 1, kind: GcgCostKind.Unaligned }],
+    });
+    side.drawPile.push(PLAIN_SUPPORT_ID, RANA_ID, LIU_SU_ID);
+    side.hand.push(LIU_SU_ID, LIU_SU_ID);
+    side.dice.push(Element.Cryo, Element.Cryo);
+    const duel = createDuel([side, createSideState([])]);
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
+      drawPile: [PLAIN_SUPPORT_ID, LIU_SU_ID],
+      hand: [LIU_SU_ID, RANA_ID],
+    });
+    expect(playGcgCard(duel, 0, 0, undefined, [0])).toBe(GcgActionResult.Done);
+    expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
+      drawPile: [PLAIN_SUPPORT_ID, LIU_SU_ID],
+      hand: [RANA_ID],
+    });
+  });
+});
+
+describe("rana", () => {
+  test("after an Elemental Skill, it creates a die of the next off-field character's element, once per Round", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID), createElementCharacter(XIAO_ID, Element.Anemo)]);
+    side.supports.push(createGcgZoneCard(RANA_ID, rana));
+    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+    expect(side.dice).toStrictEqual([Element.Anemo]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+    expect(side.dice).toStrictEqual([Element.Anemo]);
+  });
+
+  test("it skips a defeated character when it finds the next off-field one", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([
+      createCharacterState(SHENHE_ID),
+      { ...createCharacterState(1_104), hp: 0 },
+      createElementCharacter(XIAO_ID, Element.Anemo),
+    ]);
+    side.supports.push(createGcgZoneCard(RANA_ID, rana));
+    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+    expect(side.dice).toStrictEqual([Element.Anemo]);
+  });
+
+  test("a Normal Attack, or an opponent's Elemental Skill, creates no die", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID), createElementCharacter(XIAO_ID, Element.Anemo)]);
+    side.supports.push(createGcgZoneCard(RANA_ID, rana));
+    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    expect(side.dice).toStrictEqual([]);
+    duel.actingSideIndex = 1;
+    runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+    expect(side.dice).toStrictEqual([]);
   });
 });
