@@ -37,7 +37,6 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burstVariant,
     chargedAttack,
     chargedAttackVariant,
-    checkCanStartAttack,
     getChargedAttackStaminaMultiplier,
     getConversionBonuses,
     getNormalAttackExtraHit,
@@ -69,7 +68,6 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     skillHolds = [],
     stellarJubilee,
   } = behaviour;
-  if (checkCanStartAttack) kit.checkCanStartAttack = checkCanStartAttack;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getConversionBonuses) kit.getConversionBonuses = getConversionBonuses;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
