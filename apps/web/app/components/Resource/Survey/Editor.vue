@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { registerSurveyCreatorPlugin } from "@/services/survey/registerSurveyCreatorPlugin";
+import { checkIsServer } from "@esposter/shared";
+
+// The creator renders only once mounted, so its components register on the client alone
+if (!checkIsServer()) registerSurveyCreatorPlugin(useNuxtApp().vueApp);
+
 const { creator } = useSurveyCreator();
 </script>
 
