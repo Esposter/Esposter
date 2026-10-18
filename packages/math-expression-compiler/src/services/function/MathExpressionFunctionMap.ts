@@ -19,7 +19,6 @@ import { computeDistance } from "#src/services/function/computeDistance";
 import { computeDotProduct } from "#src/services/function/computeDotProduct";
 import { computeErf } from "#src/services/function/computeErf";
 import { computeErfInverse } from "#src/services/function/computeErfInverse";
-import { computeExtreme } from "#src/services/function/computeExtreme";
 import { computeFactorial } from "#src/services/function/computeFactorial";
 import { computeGamma } from "#src/services/function/computeGamma";
 import { computeHypotenuse } from "#src/services/function/computeHypotenuse";
