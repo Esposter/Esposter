@@ -12,7 +12,6 @@
   "burst.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 15039 } },
   "burst.hits.length": { "cause": "Unsourced", "value": 4 },
   "frames.stellarVortex": { "cause": "Unsourced", "value": 181 },
-  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 15032 } },
   "stellarJubilee.stellarReactionTypes.length": { "cause": "Unsourced", "value": 2 },
   "stellarJubilee.stellarReactionTypes.0": { "cause": "Unsourced", "value": "StellarConduct" },
