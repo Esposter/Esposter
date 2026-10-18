@@ -61,6 +61,7 @@ import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createKaguraDanceOfTheSacredSakuraPassiveModule } from "#src/services/weapon/passives/createKaguraDanceOfTheSacredSakuraPassiveModule";
+import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
@@ -437,4 +438,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "407790963": createWithoutHeedForDayNorNightPassiveModule,
   // Fangs Flying To and Fro (Waveriding Whirl)
   "2004975019": createFangsFlyingToAndFroPassiveModule,
+  // Labyrinth Lord's Instruction (King's Squire)
+  "2741602795": createLabyrinthLordsInstructionPassiveModule,
 };
