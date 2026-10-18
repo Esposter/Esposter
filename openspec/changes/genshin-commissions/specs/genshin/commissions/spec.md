@@ -122,3 +122,19 @@ A finished Archon quest or Story quest SHALL earn four Encounter Points, held up
 - **GIVEN** Encounter Points held from before the latest daily reset
 - **WHEN** the player reads them after that reset
 - **THEN** none are held
+
+### Requirement: Claim Spends A Point From The Points Held
+
+An unfinished commission's claim SHALL spend one Encounter Point from the whole points within the half points held, and a claim that routing refuses SHALL spend none.
+
+#### Scenario: an unfinished claim spends a point and keeps the half
+
+- **GIVEN** three half points held and an unfinished commission
+- **WHEN** the commission is claimed
+- **THEN** one Encounter Point is spent, leaving one half point held
+
+#### Scenario: a claim the bag cannot take spends no point
+
+- **GIVEN** two half points held, an unfinished commission and a bag with no room for its item
+- **WHEN** the commission is claimed
+- **THEN** the claim is refused and both half points stay held
