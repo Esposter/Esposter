@@ -2,6 +2,7 @@ import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
+import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { z } from "zod";
 
@@ -32,7 +33,7 @@ const checkBlockNodes = (
     }
 
     const { data: node } = result;
-    const definition = registry.find(({ type }) => type === node.type);
+    const definition = getBlockTypeDefinition(registry, node.type);
     if (!definition) {
       addIssue(context, `"${node.type}" is not in the registry`, childSegments);
       continue;

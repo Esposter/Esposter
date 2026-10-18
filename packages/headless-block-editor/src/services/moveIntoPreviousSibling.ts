@@ -3,6 +3,7 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { getBlockNode } from "#src/services/getBlockNode";
+import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
@@ -21,7 +22,7 @@ export const moveIntoPreviousSibling = (
   const previous = getBlockNode(document, previousPointer);
   if (!previous) return [];
 
-  const slotEntry = Object.entries(registry.find(({ type }) => type === previous.type)?.slots ?? {}).find(([, types]) =>
+  const slotEntry = Object.entries(getBlockTypeDefinition(registry, previous.type)?.slots ?? {}).find(([, types]) =>
     types.includes(node.type),
   );
   if (!slotEntry) return [];

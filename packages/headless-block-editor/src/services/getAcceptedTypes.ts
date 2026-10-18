@@ -2,6 +2,7 @@ import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { getBlockNode } from "#src/services/getBlockNode";
+import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
@@ -15,6 +16,6 @@ export const getAcceptedTypes = (document: BlockDocument, registry: BlockRegistr
   const slot = segments.at(-1);
   if (!owner || slot === undefined) return [];
 
-  const slots = registry.find(({ type }) => type === owner.type)?.slots;
+  const slots = getBlockTypeDefinition(registry, owner.type)?.slots;
   return slots && Object.hasOwn(slots, slot) ? (slots[slot] ?? []) : [];
 };
