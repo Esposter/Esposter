@@ -23,6 +23,7 @@ import { assert, describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const bonusOf = (pieceCount: number) => {
   const bonus = statTables.artifactSetDataMap
@@ -116,7 +117,7 @@ describe(createLongNightsOathSetModule, () => {
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.3);
   });
 
-  test("the stacks cap at five, and each runs its own six seconds", () => {
+  test("the stacks cap at five, and a stack past the cap replaces the one that runs out first", () => {
     expect.hasAssertions();
 
     const wearer = createWearer();
@@ -126,14 +127,29 @@ describe(createLongNightsOathSetModule, () => {
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
     stepKitSeconds(context, 1.05);
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.6);
-
     stepKitSeconds(context, 1.05);
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.75);
 
-    // The first two stacks ran out at six seconds, and the two after them still stand
+    // The first stack the cap replaced ran out at six seconds, and the other first stack is the one that runs out next
     stepKitSeconds(context, 4.1);
-    expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.45);
+    expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.6);
+
+    stepKitSeconds(context, 1);
+    expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.3);
+  });
+
+  test("a hit the wearer strikes while another character stands on the field adds no stack", () => {
+    expect.hasAssertions();
+
+    const wearer = createWearer();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      kitEffectState,
+      party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+    });
+
+    hitEnemy(wearer, AttackTag.PlungingAttack, context);
+    expect(getPlungeBonus(wearer, kitEffectState)).toBe(0);
   });
 });
