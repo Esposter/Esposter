@@ -1,16 +1,20 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 
 export const KAVEH_CHARACTER_ID = 10_000_081;
 
+// Constellation 4 raises each Bloom its character triggers by 60%, as gcsim (MIT) kaveh/cons.go's c4 does on AttackTagBloom
+const CONSTELLATION_4 = 4;
+const BLOOM_DAMAGE_BONUS = 0.6;
+
 // Kaveh's behaviour: Painted Dome's stance widens his strikes for its twelve seconds, which the kit starts with the
 // Animation rather than at the hit, and plays the rest of his kit as it stands. The Dendro Cores his skill and burst
 // Rupture, Painted Dome's Bloom DMG Bonus and his passives are not built yet
 // Constellation 1 needs Artistic Ingenuity's three seconds of Dendro RES and Incoming Healing Bonus, not built
-// Constellation 4 needs the Dendro Cores from Bloom and Lunar-Bloom he triggers, which the kit does not build
 // Constellation 6 needs Pairidaeza's Light on each strike during Painted Dome, which the kit does not build
 export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordReader): KitBehaviour => {
   // The widened strikes stay Normal Attack DMG, gcsim's AttackTagNormal in kaveh/attack.go's Attack
@@ -25,6 +29,10 @@ export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
       activeCombatant.constellationCount >= 2 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
         ? 0.15
+        : 0,
+    getReactionDamageBonus: ({ constellationCount }, reactionType) =>
+      constellationCount >= CONSTELLATION_4 && reactionType === TransformativeReactionType.Bloom
+        ? BLOOM_DAMAGE_BONUS
         : 0,
   };
 };

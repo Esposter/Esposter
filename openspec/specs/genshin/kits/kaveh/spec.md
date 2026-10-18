@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives.
+Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives but Constellations 2 and 4.
 
 ## Requirements
 
@@ -98,3 +98,25 @@ From constellation 2, Kaveh's Normal Attack SPD SHALL be raised by 15% while Pai
 - **GIVEN** Kaveh is at constellation 1 and Painted Dome holds him
 - **WHEN** his Normal Attack SPD bonus is read
 - **THEN** it is zero
+
+### Requirement: Fourth constellation raises the Bloom DMG of his cores
+
+From constellation 4, the Bloom reaction DMG of each Dendro Core Kaveh's Bloom left SHALL be raised by 60%, and no other reaction's.
+
+#### Scenario: A Kaveh at constellation 4 gets the Bloom bonus
+
+- **GIVEN** Kaveh is at constellation 4
+- **WHEN** the Bloom reaction DMG of his core is priced
+- **THEN** it is raised by 60%
+
+#### Scenario: A Kaveh below constellation 4 gets no Bloom bonus
+
+- **GIVEN** Kaveh is at constellation 3
+- **WHEN** the Bloom reaction DMG of his core is priced
+- **THEN** it is raised by nothing
+
+#### Scenario: The bonus is Bloom's alone
+
+- **GIVEN** Kaveh is at constellation 4
+- **WHEN** an Overloaded's damage is priced for him
+- **THEN** it is raised by nothing

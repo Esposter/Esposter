@@ -75,6 +75,21 @@ describe(landReactionReach, () => {
     expect([origin.health, far.health]).toStrictEqual([STURDY_HEALTH, STURDY_HEALTH]);
   });
 
+  test("deals a Bloom's damage with the reaction DMG bonus the kit of the combatant that burst it gives", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const near = createSturdyEnemy(3);
+    const blooming: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getReactionDamageBonus: () => 0.6 } };
+    const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
+
+    landReactionReach(enemyTables, origin, [origin, near], bloom, blooming);
+
+    expect(near.maxHealth - near.health).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, kind.elementResistances[Element.Dendro], 0.6),
+    );
+  });
+
   test("strikes each enemy an Overloaded reaches with the explosion's poise as a blunt hit, which shatters a Freeze", () => {
     expect.hasAssertions();
 
