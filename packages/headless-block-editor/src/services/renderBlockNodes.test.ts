@@ -7,7 +7,6 @@ import { describe, expect, test } from "vitest";
 
 describe(renderBlockNodes, () => {
   const TEST_HEADING_OTHER_ID: string = crypto.randomUUID();
-  const TEST_IMAGE_ID: string = crypto.randomUUID();
   const render = (node: BlockNode, _definition: BlockTypeDefinition, slots: Record<string, unknown[]>) => ({
     children: Object.values(slots).flat(),
     id: node.props.id,
@@ -44,7 +43,7 @@ describe(renderBlockNodes, () => {
     expect.hasAssertions();
 
     const nodes: BlockNode[] = [
-      { props: { id: TEST_IMAGE_ID }, type: "image" },
+      { props: { id: crypto.randomUUID() }, type: "image" },
       { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },
     ];
 
