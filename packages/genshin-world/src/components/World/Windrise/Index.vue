@@ -131,6 +131,7 @@ interface Props {
   characterLocomotion?: Locomotion;
   // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
   getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
+  getAntiColdRatio: () => number;
   // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
   // Capsule where it has none or its model fails to load
   characterPackReader?: CharacterPackReader;
@@ -213,6 +214,7 @@ const {
   enemyTables,
   frostbearingTreePlaces,
   gameDataBaseUrl,
+  getAntiColdRatio,
   getCharacter,
   getGroundHeight,
   getWorldNow,
@@ -405,6 +407,7 @@ const sheerCold = useSheerCold(
     return characterBody && character ? { ...character, position: characterBody.position } : undefined;
   },
   () => [],
+  getAntiColdRatio,
   (damage) => emit("coldDamage", damage),
 );
 watch(sheerCold, (value) => emit("sheerCold", value));

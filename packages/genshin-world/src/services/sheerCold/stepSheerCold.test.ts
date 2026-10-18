@@ -16,9 +16,9 @@ import { describe, expect, test } from "vitest";
 
 const maxHealth = 1000;
 const empty: SheerCold = { damageSeconds: 0, value: 0 };
-const inCold: SheerColdStep = { isHeated: false, isInCold: true, isSwimming: false, maxHealth };
-const outOfCold: SheerColdStep = { isHeated: false, isInCold: false, isSwimming: false, maxHealth };
-const heated: SheerColdStep = { isHeated: true, isInCold: true, isSwimming: false, maxHealth };
+const inCold: SheerColdStep = { antiColdRatio: 0, isHeated: false, isInCold: true, isSwimming: false, maxHealth };
+const outOfCold: SheerColdStep = { antiColdRatio: 0, isHeated: false, isInCold: false, isSwimming: false, maxHealth };
+const heated: SheerColdStep = { antiColdRatio: 0, isHeated: true, isInCold: true, isSwimming: false, maxHealth };
 // The damage one interval costs a character with the test's max HP
 const intervalDamage = SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT;
 
@@ -34,6 +34,17 @@ describe(stepSheerCold, () => {
 
     expect(stepSheerCold(empty, { ...inCold, isSwimming: true }, 2).sheerCold.value).toBeCloseTo(
       2 * SHEER_COLD_GAIN_PER_SECOND * (1 + SHEER_COLD_SWIM_MODIFIER),
+    );
+  });
+
+  test("should suppress the fill with an anti-cold dish", () => {
+    expect.hasAssertions();
+
+    expect(stepSheerCold(empty, { ...inCold, antiColdRatio: -0.5 }, 2).sheerCold.value).toBeCloseTo(
+      2 * SHEER_COLD_GAIN_PER_SECOND * 0.5,
+    );
+    expect(stepSheerCold({ damageSeconds: 0, value: 40 }, { ...inCold, antiColdRatio: -1 }, 2).sheerCold.value).toBe(
+      40,
     );
   });
 
