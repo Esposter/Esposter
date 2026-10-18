@@ -18,6 +18,7 @@ import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/cr
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
+import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
@@ -237,4 +238,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2012979451": createWanderingCloudsPassiveModule,
   // Boundless Blessing (Lost Prayer to the Sacred Winds)
   "483941803": createBoundlessBlessingPassiveModule,
+  // Eagle Spear of Justice (Primordial Jade Winged-Spear)
+  "3835416843": createEagleSpearOfJusticePassiveModule,
 };
