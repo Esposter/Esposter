@@ -1,6 +1,6 @@
 # Mining outcrops
 
-The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 in the game's time zone, the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Nothing places them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the places and the draw.
+The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 in the game's time zone, the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are published per region by `genshin:assets mining-outcrops`, the Magical Crystal Chunk points the fit places, but nothing draws them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the draw.
 
 ## How it works
 
@@ -21,12 +21,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                          | Role                                                    |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-world/src/services/leyLine/constants.ts`                    | The opening rank                                        |
-| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`     | Whether the outcrops are drawn at a rank                |
-| `packages/genshin-world/src/services/leyLine/computeMiningOutcropRespawn.ts`  | The next 04:00 after a mining, in the game's time zone  |
-| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts` | Whether a mined or unmined outcrop stands at an instant |
+| File                                                                            | Role                                                                        |
+| :------------------------------------------------------------------------------ | :-------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/leyLine/constants.ts`                      | The opening rank                                                            |
+| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`       | Whether the outcrops are drawn at a rank                                    |
+| `packages/genshin-world/src/services/leyLine/computeMiningOutcropRespawn.ts`    | The next 04:00 after a mining, in the game's time zone                      |
+| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`   | Whether a mined or unmined outcrop stands at an instant                     |
+| `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts` | Each region's Magical Crystal Chunk points, fitted, as the outcrops' places |
+| `packages/genshin-world/src/services/gathering/readMiningOutcropPlaces.ts`      | A region's places, fetched by its key once a publish has written it         |
 
 ## Notes
 

@@ -35,6 +35,7 @@ export enum GameDataset {
   LeyLine = "leyLine",
   Login = "login",
   MaterialSources = "materialSources",
+  MiningOutcrops = "miningOutcrops",
   NameText = "nameText",
   Oculi = "oculi",
   OfferingPlaces = "offeringPlaces",
