@@ -1,4 +1,5 @@
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitState } from "#src/models/kit/KitState";
 
@@ -10,12 +11,13 @@ export const startKitAction = (
   kitState: KitState,
   action: KitAction,
   landedHits: KitHit[],
+  context: KitContext,
   startSeconds = 0,
 ): KitAction => {
   kitState.action = action;
   kitState.actionLengthSeconds = action.seconds;
   kitState.actionSeconds = startSeconds;
   kitState.isAttackQueued = false;
-  kitState.nextHitIndex = landKitHits(action.hits, 0, startSeconds, landedHits);
+  kitState.nextHitIndex = landKitHits(action.hits, 0, startSeconds, landedHits, context);
   return action;
 };

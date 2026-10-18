@@ -612,7 +612,7 @@ describe(stepKit, () => {
       decideLength: { atSeconds: 0.45, decide: () => 1.7 },
       seconds: 0.7,
     };
-    startKitAction(kitState, action, []);
+    startKitAction(kitState, action, [], createKitTestContext(TRAVELER_COMBATANT));
     const stepFor = (stepCount: number) => {
       for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) step();
     };

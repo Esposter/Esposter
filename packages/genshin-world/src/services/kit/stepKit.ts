@@ -84,7 +84,7 @@ export const stepKit = (
     // The first plunge variant whose check holds on the landing plays in place of the standard plunge
     const plungeVariant = kit.plungeVariants?.find((variant) => variant.checkIsActive(context));
     const standardPlunge = drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge;
-    return startKitAction(kitState, plungeVariant?.action ?? standardPlunge, landedHits);
+    return startKitAction(kitState, plungeVariant?.action ?? standardPlunge, landedHits, context);
   }
 
   let isStrikeEnded = false;
@@ -118,7 +118,13 @@ export const stepKit = (
         kitState.actionLengthSeconds = decideLength.decide(context);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
       const landedCount = landedHits.length;
-      kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
+      kitState.nextHitIndex = landKitHits(
+        action.hits,
+        kitState.nextHitIndex,
+        kitState.actionSeconds,
+        landedHits,
+        context,
+      );
       // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's follow-up
       const chainIndex = kit.normalAttacks.indexOf(action);
       if (kit.getNormalAttackExtraHit && chainIndex !== -1)

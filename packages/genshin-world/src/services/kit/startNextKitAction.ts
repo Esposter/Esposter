@@ -55,7 +55,7 @@ export const startNextKitAction = (
         chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
           ? chargeSeconds
           : 0;
-      return startKitAction(kitState, chargedAttackAction, landedHits, startSeconds);
+      return startKitAction(kitState, chargedAttackAction, landedHits, context, startSeconds);
     }
   }
 
@@ -68,7 +68,7 @@ export const startNextKitAction = (
       partyMember.energy = 0;
       partyMember.burstCooldownSeconds =
         kit.burstCooldownSeconds * getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position);
-      return startKitAction(kitState, burstAction, landedHits);
+      return startKitAction(kitState, burstAction, landedHits, context);
     }
   }
 
@@ -83,7 +83,7 @@ export const startNextKitAction = (
       if (!checkCanStart(followUp, context)) return undefined;
       kitState.skillChainCount = kitState.skillChainCount < followUps.length ? kitState.skillChainCount + 1 : 0;
       kitState.skillChainSeconds = 0;
-      return startKitAction(kitState, followUp, landedHits);
+      return startKitAction(kitState, followUp, landedHits, context);
     }
     // The hold a release's seconds reach, if the skill has holds, and the cooldown its level or the skill adds to the
     // Seconds until every charge is back
@@ -104,7 +104,7 @@ export const startNextKitAction = (
         getImpetuousWindsSkillCooldownMultiplier(context.activeCombatant.elementalResonances);
       kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
       kitState.skillChainSeconds = 0;
-      return startKitAction(kitState, skillAction, landedHits);
+      return startKitAction(kitState, skillAction, landedHits, context);
     }
   }
 
@@ -113,7 +113,7 @@ export const startNextKitAction = (
     const normalAttack = takeOne(kit.normalAttacks, comboIndex);
     if (!checkCanStart(normalAttack, context)) return undefined;
     kitState.comboIndex = (comboIndex + 1) % kit.normalAttacks.length;
-    return startKitAction(kitState, normalAttack, landedHits);
+    return startKitAction(kitState, normalAttack, landedHits, context);
   }
 
   return undefined;
