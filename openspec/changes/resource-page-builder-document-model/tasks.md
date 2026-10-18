@@ -15,7 +15,7 @@
 ## 4. Rendering
 
 - [ ] 4.1 Render a webpage document to one HTML document, as a pure function the browser can also run. Verify: a test named after the scenario 'A webpage document renders as one HTML document'.
-- [ ] 4.2 Compile an email document on the server with MJML's Node package, refusing markup that fails strict validation. Verify: tests named after the scenarios 'An email document with invalid markup is refused by the compile' and 'A valid email document compiles to email HTML'.
+- [ ] 4.2 Add `mjml` at its version in the catalog and `apps/web/package.json`, the server's compile dependency, then compile an email document on the server with its Node package, refusing markup that fails strict validation. Verify: tests named after the scenarios 'An email document with invalid markup is refused by the compile' and 'A valid email document compiles to email HTML'.
 
 ## 5. The record
 
