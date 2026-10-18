@@ -17,6 +17,7 @@ import { createCouragePassiveModule } from "#src/services/weapon/passives/create
 import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/createCritEnergyPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
+import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
@@ -323,4 +324,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3257922883": createTheFirstGreatMagicPassiveModule,
   // Turquoise Hunt (Fang of the Mountain King)
   "3276718187": createTurquoiseHuntPassiveModule,
+  // Daylight's Augury (Polar Star)
+  "303626691": createDaylightsAuguryPassiveModule,
 };

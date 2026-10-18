@@ -2,11 +2,8 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { getStackShare } from "#src/services/weapon/passives/getStackShare";
 import { takeOne } from "@esposter/shared";
-
-// The share a count of stacks reaches on the ladder of shares, the first for one stack and the last for that many or more
-const getStackShare = (shares: number[], stacks: number): number =>
-  stacks === 0 ? 0 : takeOne(shares, Math.min(stacks, shares.length) - 1);
 
 // The First Great Magic at its rank: its wielder's Charged Attack DMG rises by the rank's amount. Each deployed member of the
 // Wielder's Elemental Type, the wielder included, is a Gimmick stack, and each of another Elemental Type a Theatrics stack:
