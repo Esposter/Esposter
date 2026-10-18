@@ -106,9 +106,10 @@ export const stepKit = (
       const landedCount = landedHits.length;
       kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
       // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's follow-up
-      if (kit.getNormalAttackExtraHit && kit.normalAttacks.includes(action))
+      const chainIndex = kit.normalAttacks.indexOf(action);
+      if (kit.getNormalAttackExtraHit && chainIndex !== -1)
         for (const hit of landedHits.slice(landedCount)) {
-          const extraHit = kit.getNormalAttackExtraHit(context, hit);
+          const extraHit = kit.getNormalAttackExtraHit(context, hit, chainIndex);
           if (extraHit) landedHits.push(extraHit);
         }
       if (kitState.actionSeconds < action.seconds) {
