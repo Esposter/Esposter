@@ -167,6 +167,17 @@ describe("defect fixes", () => {
     expect(evaluateFormula("erf(erfinv(0.25))")).toBeCloseTo(0.25, 14);
     expect(evaluateFormula("erfinv(erf(0.3))")).toBeCloseTo(0.3, 14);
   });
+
+  test.each([
+    ["round(1e300, 9)", 1e300],
+    ["ceil(1e300, 9)", 1e300],
+    ["floor(-1e300, 9)", -1e300],
+    ["fix(1e294, 15)", 1e294],
+  ])("a rounding of a number past the shift's range keeps the number, as mathjs rounds: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
 });
 
 describe("counting and primality", () => {
