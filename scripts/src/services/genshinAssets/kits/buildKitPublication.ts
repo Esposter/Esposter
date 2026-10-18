@@ -1,4 +1,5 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
@@ -28,13 +29,23 @@ export const buildKitPublication = (
     sourceCandidateMap,
     tables,
   } of inputs) {
-    const { record, sources } = buildKitRecord(
-      sourceCandidateMap,
-      readKitOverlay(overlayName),
-      namedHitCandidateMap,
-      tables,
-      gcsimFolder !== undefined,
-    );
+    let built: BuiltKit;
+    try {
+      built = buildKitRecord(
+        sourceCandidateMap,
+        readKitOverlay(overlayName),
+        namedHitCandidateMap,
+        tables,
+        gcsimFolder !== undefined,
+      );
+    } catch (error) {
+      throw new InvalidOperationError(
+        Operation.Create,
+        name,
+        `its record cannot be built: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    const { record, sources } = built;
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;

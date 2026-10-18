@@ -81,4 +81,14 @@ describe(buildKitPublication, () => {
       2: has no published kit]
     `);
   });
+  test("names the kit and the record path of a talent reference its sources do not read", () => {
+    expect.hasAssertions();
+
+    // Amber's first overlay entry sourced from gcsim is a reference to a talent group none of the sources give
+    expect(() =>
+      buildKitPublication([{ ...createInput(1, false), name: "Amber", overlayName: "amber" }]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.multiplier, has no Gcsim value for the overlay to choose]`,
+    );
+  });
 });
