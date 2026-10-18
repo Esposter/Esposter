@@ -131,6 +131,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           (enemyHit.damageBonus ?? 0) +
           (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
           deployedBonuses.damageBonus,
+        defenseIgnored:
+          (enemyHit.defenseIgnored ?? 0) +
+          (combatant.kit.getStrikeDefenceIgnored?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.defenseIgnored,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,

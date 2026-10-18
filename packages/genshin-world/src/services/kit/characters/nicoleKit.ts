@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
@@ -116,6 +117,20 @@ const C2_STATUS_SECONDS = 1;
 const C2_TICKER_ID = "nicole-c2-ticker";
 const C2_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: C2_RADIUS } };
 
+// Her sixth constellation ignores 40% of the defence of each hit an upgraded character lands, its own and the team's,
+// As gcsim's c6Init does, and its upgrades last for as long as her skill's buff stands, her own and each one she gives the
+// Team, as gcsim's c6SelfBuffDur and c6OnUpgrade do
+const C6_DEFENCE_IGNORED = 0.4;
+
+// Whether a character holds an ascension upgrade, which her second constellation's RES reduction and her sixth's defence
+// Ignored read
+const checkIsUpgraded = (effects: readonly KitEffect[], characterId: number): boolean =>
+  effects.some((effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE);
+
+// The share of its enemy's defence a hit ignores under her sixth constellation, when its striker holds her upgrade
+const getC6DefenceIgnored = (constellationCount: number, striker: Combatant, effects: readonly KitEffect[]): number =>
+  constellationCount >= CONSTELLATION_6 && checkIsUpgraded(effects, striker.characterId) ? C6_DEFENCE_IGNORED : 0;
+
 // Her fourth constellation gives an upgraded character 0.7 of her attack in flat base damage on each of its hits that is a
 // Normal, charged, plunging, skill or burst attack, for eight stacks spent one each on the hits it lands. An upgrade gives
 // Them again only once the character's 16-second cooldown has run out, as gcsim's c4OnUpgrade does. A projection carries no
@@ -206,10 +221,7 @@ const startC2Ticker = (
       nextTickSeconds: 0,
       onTick: (tick) => {
         const element = tick.characterIdCombatantMap.get(characterId)?.element;
-        const isUpgraded = tick.kitEffectState.effects.some(
-          (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE,
-        );
-        if (element === undefined || !isUpgraded) return;
+        if (element === undefined || !checkIsUpgraded(tick.kitEffectState.effects, characterId)) return;
         for (const enemy of tick.enemyMap.values())
           if (checkIsInKitHitbox(C2_HITBOX, tick.body.position, enemy.position))
             addEnemyStatus(enemy, {
@@ -229,11 +241,12 @@ const startC2Ticker = (
 // Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking it, as
 // Gcsim's mod with the same key does
 const upgradeAscensionBuff = (
-  kitEffectState: KitEffectState,
+  context: KitContext,
   nicole: Combatant,
   characterId: number,
   seconds = Infinity,
 ): void => {
+  const { kitEffectState, party } = context;
   const skillBuff = kitEffectState.effects.find(
     (effect): effect is KitBuff =>
       effect.kind === "buff" && effect.characterId === characterId && effect.source === SKILL_BUFF_SOURCE,
@@ -257,10 +270,14 @@ const upgradeAscensionBuff = (
     startKitCooldown(kitEffectState, characterId, C4_ICD_ID, C4_ICD_SECONDS)
   )
     addKitStatus(kitEffectState, characterId, { id: C4_ID, secondsRemaining: C4_SECONDS, stacks: C4_STACKS });
+  // Her sixth constellation upgrades each other deployed member with her own upgrade, as gcsim's c6OnUpgrade does
+  if (characterId === nicole.characterId && nicole.constellationCount >= CONSTELLATION_6)
+    for (const memberId of getDeployedCharacterIds(party))
+      if (memberId !== nicole.characterId) upgradeAscensionBuff(context, nicole, memberId);
 };
 
-// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first, second and
-// Fourth constellations. Her sixth constellation waits on hooks the kit has not got yet. Her strikes, charged attack, plunges, and
+// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first, second,
+// Fourth and sixth constellations. Her strikes, charged attack, plunges, and
 // Her skill's and burst's own hits are her record's alone
 export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const burstProjection = readParameter("burstProjection");
@@ -302,7 +319,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           context.kitEffectState,
           combatant.characterId,
           checkIsKitHexerei(characterId) ? 0 : A1_SWAP_SECONDS,
-          (tick) => upgradeAscensionBuff(tick.kitEffectState, combatant, characterId),
+          (tick) => upgradeAscensionBuff(tick, combatant, characterId),
           { id: A1_SWAP_ID },
         );
         return;
@@ -311,7 +328,12 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         return;
       // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init does
       if (combatant.ascension >= ASCENSION_4 && event.element !== undefined)
-        upgradeAscensionBuff(context.kitEffectState, combatant, combatant.characterId, A4_SECONDS);
+        upgradeAscensionBuff(
+          context,
+          combatant,
+          combatant.characterId,
+          combatant.constellationCount >= CONSTELLATION_6 ? Infinity : A4_SECONDS,
+        );
       // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's status needed
       if (
         combatant.constellationCount >= CONSTELLATION_1 &&
@@ -337,11 +359,14 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
           ? C4_RATIO * member.attributes.attack
           : 0,
+      defenseIgnored: getC6DefenceIgnored(member.constellationCount, strike.combatant, effects),
     }),
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
       getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
         ? C4_RATIO * strike.combatant.attributes.attack
         : 0,
+    getStrikeDefenceIgnored: (strike, _enemy, _party, effects) =>
+      getC6DefenceIgnored(strike.combatant.constellationCount, strike.combatant, effects),
     skill: {
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
       // ATK buff scaled by her attack, capped at the skill's maximum

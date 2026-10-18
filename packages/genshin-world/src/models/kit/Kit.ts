@@ -89,16 +89,19 @@ export interface Kit {
     party: Party,
     effects: readonly KitEffect[],
   ) => number;
+  // The share of its enemy's defence a strike of the kit's own ignores as it lands on an enemy, if a constellation gives one,
+  // Given the enemy as it stands, the deployed team and the effects on it
+  getStrikeDefenceIgnored?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
   // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
-  // It. A member's own strikes are priced by its own hooks, not this one
+  // It. A member's own strikes are priced by its own hooks, not this one. The defence it ignores joins the hit's
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
-  ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number };
+  ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number; defenseIgnored?: number };
   highPlunge: KitAction;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it
