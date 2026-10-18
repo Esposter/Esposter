@@ -407,6 +407,9 @@ export const ORIGIN_TOLERANCE_METRES = 0.001;
 // How near a placed point's nearest official map point must lie, in game units, for the point to be filed in that map
 // Point's region: about nine in ten placed NPCs and domain entrances lie within about twenty of it
 export const REGION_MAX_DISTANCE = 100;
+// The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
+// Each one's map fit is checked
+export const WAYPOINT_REGIONS: readonly string[] = ["mondstadt"];
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does

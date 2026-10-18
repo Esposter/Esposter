@@ -4,7 +4,7 @@ The world is explored today through its [map](../../specs/genshin/map/design.md)
 
 ## Decisions
 
-- **Waypoints are a landmark kind of their own.** The game's Teleport Waypoints are placed in its streaming records like any landmark, so `fitRegionLandmarks` fits them into each region's data as a `LandmarkKind` of their own, and they join `JUMP_LANDMARK_KINDS`. The map, the minimap and the jump list draw them with no change of their own, a waypoint named by its area as a statue is.
+- **Waypoints are a landmark kind of their own.** The game's Teleport Waypoints are placed in its streaming records like any landmark, so `fitRegionWaypoints` writes them into each region's data as a `LandmarkKind` of their own, and they join `JUMP_LANDMARK_KINDS`. It is a writer of its own, as `writeDomainEntrances` is rather than a `DerivedAssetFitMap` fit: a fit writes its region files whether or not the run is a dry run, and this one must not write in a dry run. The map, the minimap and the jump list draw them with no change of their own, a waypoint named by its area as a statue is.
 - **A waypoint is told from a statue by the official map's label.** The dump files both as one kind of transport point, but the official map labels each, and `genshin:assets points-fit` has already carried its statues and waypoints onto the scene's transport points by one similarity (`references/interactive-map/fit.json`, [spawned places](../../specs/genshin/spawned-places/design.md)). So a transport point is a waypoint where the map's ground waypoint (`INTERACTIVE_MAP_WAYPOINT_LABEL_ID`, layer zero) pairs with it under `matchPairs` within `INTERACTIVE_MAP_FIT_BAR`. Its landmark id is `<region>-waypoint-<pointId>`, the point's own id, which the first-unlock rewards (the `transPoints/scene3` record) are keyed by too. Its area is the catalogue area whose outline holds it, and `""` where none does. The world draws no waypoint mesh until a kit for it is built; the map, the minimap and the jump list need none.
 - **A jump lands at the game's own transport point.** The game sets a transport place and turn for every statue and waypoint in its scene points (`BinOutput/Scene/Point/scene3_point.json` in the text dump), under obfuscated field names. Each field is named by matching a statue's entry against its fitted place, and the fit then writes each landmark's arrival into its region's data, in place of `JUMP_STANDOFF_DISTANCE`'s provisional stand-off.
 
@@ -12,7 +12,7 @@ The world is explored today through its [map](../../specs/genshin/map/design.md)
 
 ```mermaid
 flowchart TD
-  PLACE["The game's streaming records"] --> FIT["fitRegionLandmarks: waypoints as a landmark kind"]
+  PLACE["The game's streaming records"] --> FIT["fitRegionWaypoints: waypoints as a landmark kind"]
   POINT["The dump's scene points, their fields named against the fitted statues"] --> ARRIVE["Each landmark's arrival: its transport place and turn"]
   FIT --> DATA["The region's data"]
   ARRIVE --> DATA
@@ -33,7 +33,7 @@ scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts
 1. **Mondstadt's Teleport Waypoints, next.**
    - `LandmarkKind` gains `TeleportWaypoint`, with a `WaypointLandmark.ts` and schema beside `StatueLandmark.ts` in `packages/genshin-world/src/models/world/` joining `Landmark`'s union, and `JUMP_LANDMARK_KINDS` gains it.
    - `readSceneTransportPoints` carries each point's id, its key in the dump's category.
-   - A new `fitRegionWaypoints.ts`, a `waypoints` fit in `DerivedAssetFitMap`, reads `readFittedMapPoints()` and `readSceneTransportPoints()`, keeps the map's ground waypoints in the region's map area (`InteractiveMapRegionMap`), pairs them as the Decisions say, and writes each paired point as a landmark round the world's origin, carried as `fitRegionCapitals` carries the waypoints' median, into `packages/genshin-world/src/data/regions/<region>.json` beside its other landmarks, replacing the waypoints it wrote before. It runs for Mondstadt first.
+   - A new `fitRegionWaypoints.ts`, a `waypoints` command (`genshin:assets waypoints`) beside `domains`, honouring `--dry-run` as `writeDomainEntrances` does, reads `readFittedMapPoints()` and `readSceneTransportPoints()`, keeps the map's ground waypoints in the region's map area (`InteractiveMapRegionMap`), pairs them as the Decisions say, and writes each paired point as a landmark round the world's origin, carried as `fitRegionCapitals` carries the waypoints' median, into `packages/genshin-world/src/data/regions/<region>.json` beside its other landmarks, replacing the waypoints it wrote before. It runs for Mondstadt first.
    - The pure step from pairs to landmarks is `toWaypointLandmarks.ts`, and its test, `toWaypointLandmarks.test.ts`, carries one map waypoint by a known transform onto a transport point and reads back one landmark with that point's id, while a statue's label and a waypoint past the bar give none.
 2. **The game's arrival points**, read from the scene points.
 
@@ -41,7 +41,8 @@ scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts
 
 | File                                                           | Role after the change                                |
 | :------------------------------------------------------------- | :--------------------------------------------------- |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts` | Fits waypoints and every landmark's arrival          |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts` | Fits every statue's arrival                          |
+| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts` | Writes each region's waypoints, dry-run aware        |
 | `packages/genshin-world/src/models/world/LandmarkKind.ts`      | Gains the waypoint                                   |
 | `packages/genshin-world/src/services/map/constants.ts`         | `JUMP_LANDMARK_KINDS` gains the waypoint             |
 | `packages/genshin-world/src/services/map/computeJumpPose.ts`   | Reads a landmark's arrival in place of the stand-off |
