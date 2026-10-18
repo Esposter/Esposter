@@ -59,6 +59,7 @@ import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY }
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { MINING_OUTCROP_STAND_IN_COLOR, MINING_OUTCROP_STAND_IN_RADIUS } from "#src/services/gathering/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { createMondstadtWindUniforms } from "#src/services/mondstadt/createMondstadtWindUniforms";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { LEAF_SHADER, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -82,11 +83,6 @@ import {
   WATER_DEEP_DEPTH,
   WATER_FOAM_DEPTH,
   WATER_SHALLOW_COLOR,
-  WIND_DIRECTION,
-  WIND_GUST_SPEED,
-  WIND_GUST_STRENGTH,
-  WIND_GUST_WIDTH,
-  WIND_STRENGTH,
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SCENE_EXPORT_COMPONENT,
@@ -116,7 +112,6 @@ import {
   createTerrainSelection,
   createToonMaterial,
   createWaterUniforms,
-  createWindUniforms,
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { HemisphereLight, Scene } from "three";
@@ -283,12 +278,7 @@ const pavingMaterial = createToonMaterial({
   rampTexture,
 });
 
-const windUniforms = createWindUniforms();
-windUniforms.direction.value.copy(WIND_DIRECTION);
-windUniforms.gustSpeed.value = WIND_GUST_SPEED;
-windUniforms.gustStrength.value = WIND_GUST_STRENGTH;
-windUniforms.gustWidth.value = WIND_GUST_WIDTH;
-windUniforms.strength.value = WIND_STRENGTH;
+const windUniforms = createMondstadtWindUniforms();
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
 const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
 const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
