@@ -28,7 +28,7 @@ describe(createNeferKitBehaviour, () => {
     expect(NEFER_KIT.skillCooldownSeconds).toBe(9);
   });
 
-  test("Nefer's elemental skill uses her own hits", () => {
+  test("nefer's elemental skill uses her own hits", () => {
     expect.hasAssertions();
     expect(NEFER_KIT.elementalSkill.hits).not.toStrictEqual(TRAVELER_KIT.elementalSkill.hits);
   });
