@@ -115,6 +115,20 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger quotas
+  // Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and hold positions
+  [
+    10_000_063,
+    {
+      values: {
+        "parameters.icyQuillAttackRatio": { combatTalent: SKILL, label: "DMG Bonus" },
+        "parameters.icyQuillHoldSeconds": { combatTalent: SKILL, label: "Press/Hold Duration", position: 1 },
+        "parameters.icyQuillHoldTriggers": { combatTalent: SKILL, label: "Press/Hold Trigger Quota", position: 1 },
+        "parameters.icyQuillPressSeconds": { combatTalent: SKILL, label: "Press/Hold Duration", position: 0 },
+        "parameters.icyQuillPressTriggers": { combatTalent: SKILL, label: "Press/Hold Trigger Quota", position: 0 },
+      },
+    },
+  ],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
   // From her skill's labels, the share of Max HP first and the flat amount after
   [
