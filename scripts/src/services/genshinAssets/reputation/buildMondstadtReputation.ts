@@ -3,15 +3,17 @@ import type { ExcelHuntingRegionRow } from "#src/models/genshinAssets/reputation
 import type { ExcelReputationCityRow } from "#src/models/genshinAssets/reputation/ExcelReputationCityRow";
 import type { ExcelReputationExploreRow } from "#src/models/genshinAssets/reputation/ExcelReputationExploreRow";
 import type { ExcelReputationLevelRow } from "#src/models/genshinAssets/reputation/ExcelReputationLevelRow";
+import type { ExcelReputationQuestRow } from "#src/models/genshinAssets/reputation/ExcelReputationQuestRow";
 import type { ExcelReputationRequestRow } from "#src/models/genshinAssets/reputation/ExcelReputationRequestRow";
-import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
 import {
   DEFAULT_HUNTING_DIFFICULTY,
   MONDSTADT_BOUNTY_TARGET_NAMES,
 } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
+import { readReward } from "#src/services/genshinAssets/reputation/readReward";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
+import { toReputationQuests } from "#src/services/genshinAssets/reputation/toReputationQuests";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
@@ -19,21 +21,9 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
-// The reward a row names, read from the reward table, an unlisted one being an error since a level, request or bounty
-// Without its reward would pay silently wrong
-const readReward = (rewardMap: Map<number, ExcelRewardRow>, rewardId: number, owner: string): ExcelRewardRow => {
-  const reward = rewardMap.get(rewardId);
-  if (!reward)
-    throw new InvalidOperationError(
-      Operation.Read,
-      "reputation reward",
-      `${owner} names reward ${rewardId}, which the reward table does not hold`,
-    );
-  return reward;
-};
 // Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels name,
 // Its exploration thresholds, its weekly bounties with each difficulty's possible targets and the regions they spawn in,
-// And each reward split into the Reputation EXP and the items it also gives.
+// Its Reputation quests, and each reward split into the Reputation EXP and the items it also gives.
 // Published as one record of the reputation dataset, keyed by Mondstadt
 export const buildMondstadtReputation = (): Record<string, unknown> => {
   const city = readExcelTable<ExcelReputationCityRow>("ReputationCityExcelConfigData").find(
@@ -54,6 +44,13 @@ export const buildMondstadtReputation = (): Record<string, unknown> => {
     requestGroupId: levelRow.requestGroupId,
     reward: toReputationReward(readReward(rewardMap, levelRow.rewardId, `level ${levelRow.level}`), city.virtualItemId),
   }));
+  const quests = toReputationQuests(
+    readExcelTable<ExcelReputationQuestRow>("ReputationQuestExcelConfigData").filter(
+      ({ cityId }) => cityId === MONDSTADT_CITY_ID,
+    ),
+    rewardMap,
+    city.virtualItemId,
+  );
   const requests = readExcelTable<ExcelReputationRequestRow>("ReputationRequestExcelConfigData")
     .filter(({ groupId }) => requestGroupIds.has(groupId))
     .toSorted((firstRequest, secondRequest) => firstRequest.requestId - secondRequest.requestId)
@@ -103,6 +100,14 @@ export const buildMondstadtReputation = (): Record<string, unknown> => {
       ),
     }));
   return {
-    [`${GameDataset.Reputation}/mondstadt`]: { bounties, bountyTargets, explores, huntingRegions, levels, requests },
+    [`${GameDataset.Reputation}/mondstadt`]: {
+      bounties,
+      bountyTargets,
+      explores,
+      huntingRegions,
+      levels,
+      quests,
+      requests,
+    },
   };
 };

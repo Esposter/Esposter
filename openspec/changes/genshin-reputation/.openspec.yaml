@@ -9,4 +9,7 @@ x-touches:
     "packages/genshin-interface/src/components/ReputationScreen/**",
     "packages/genshin-world/src/components/Reputation/**",
     "packages/genshin-world/src/models/screen/**",
+    "scripts/src/models/genshinAssets/reputation/**",
+    "scripts/src/services/genshinAssets/reputation/**",
+    "scripts/src/services/genshinAssets/commands/reputationCommand.ts",
   ]
