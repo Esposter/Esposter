@@ -89,7 +89,6 @@ export const readGcsimAttacks = (
         poiseDamage,
         poiseDamageVariable:
           poiseDamage === undefined && poiseField !== undefined ? getGoRootName(poiseField.expression) : undefined,
-        strikeType: getName(fieldMap.get("StrikeType")?.expression),
         talentVariable:
           multiplierField === undefined
             ? undefined
