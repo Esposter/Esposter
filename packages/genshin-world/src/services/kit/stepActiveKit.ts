@@ -5,6 +5,7 @@ import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsEnemyStanding } from "#src/services/enemy/checkIsEnemyStanding";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
@@ -44,7 +45,8 @@ import { takeOne } from "@esposter/shared";
 // The body are picked up, the ticks the enemies' elements brought since, the party's Lunar-Charged cloud and the
 // Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
 // As its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that
-// Starts turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands
+// Starts turns the body to the enemy it targets, which it makes the primary target, or to the camera's aim for an aimed
+// Shot, and every hit the step lands
 // Strikes the Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy
 // Rolling for its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are
 // Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
@@ -82,6 +84,9 @@ export const stepActiveKit = (
     random,
     strikes,
   } = context;
+  // A primary target that has died or left the world since is let go, so no kit places a hit on it
+  if (context.primaryTarget && !checkIsEnemyStanding(enemyMap, context.primaryTarget))
+    context.primaryTarget = undefined;
   const characterId = getActiveCharacterId(party);
   const fieldCombatant = characterIdCombatantMap.get(characterId);
   if (!fieldCombatant) return;
@@ -130,6 +135,7 @@ export const stepActiveKit = (
     body.facing = characterController.facing;
   } else if (action) {
     target = selectAttackTarget(action.targetingArea, body, enemyMap.values());
+    context.primaryTarget = target;
     if (target) {
       const dx = target.position.x - position.x;
       const dz = target.position.z - position.z;

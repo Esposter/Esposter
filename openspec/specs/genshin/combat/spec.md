@@ -81,6 +81,22 @@ An enemy's resistance SHALL cut damage by its share, up to three quarters, and b
 - **WHEN** a hit of that element lands
 - **THEN** the damage is cut to one over four times the resistance plus one
 
+### Requirement: The primary target
+
+The enemy an action turns to as it starts SHALL be the primary target until another action targets, and a primary target that dies or leaves the world SHALL be let go.
+
+#### Scenario: An action that starts makes the enemy it turns to the primary target, which outlasts the action
+
+- **GIVEN** an enemy inside the targeting area of a normal attack
+- **WHEN** the attack starts and plays out
+- **THEN** the enemy is the primary target, during the attack and after it
+
+#### Scenario: A primary target that dies, or leaves the world, is let go
+
+- **GIVEN** an enemy is the primary target
+- **WHEN** it dies or leaves the world
+- **THEN** the next step holds no primary target
+
 ### Requirement: A hit
 
 A hit SHALL apply its element only on the hits its internal cooldown group lets through.

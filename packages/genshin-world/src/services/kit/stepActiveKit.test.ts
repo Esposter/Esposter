@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { ActiveKitControls } from "#src/models/kit/ActiveKitControls";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -15,12 +16,14 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
@@ -468,5 +471,32 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, { ...createControls(), landedHits: [hit], strikePuzzle });
 
     expect(strikePuzzle.mock.calls).toStrictEqual([[context.body, readPuzzleHit(combatant, hit)]]);
+  });
+
+  test("an action that starts makes the enemy it turns to the primary target, which outlasts the action", () => {
+    expect.hasAssertions();
+    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    const kitState = createKitState();
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context, controls);
+    const startedTarget = context.primaryTarget;
+    for (let step = 0; step < 30; step++) stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
+
+    expect([startedTarget, context.primaryTarget]).toStrictEqual([enemy, enemy]);
+  });
+
+  test.each<[string, (context: KitContext, enemy: Enemy) => void]>([
+    ["dies", (_context, enemy) => setEnemyState(enemy, EnemyState.Dead)],
+    ["leaves the world", (context) => context.enemyMap.clear()],
+  ])("a primary target that %s is let go", (_title, leave) => {
+    expect.hasAssertions();
+    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    context.primaryTarget = enemy;
+    leave(context, enemy);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(context.primaryTarget).toBeUndefined();
   });
 });

@@ -40,6 +40,8 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 An action turns the body to the enemy it targets as it starts. That is the living enemy inside the action's targeting area scoring highest, where an enemy's score is 0.7 times its nearness to the body within the area's radius, plus 0.3 times its nearness to straight ahead, the angle from the body's facing over a half-turn. An enemy more than 2 metres above or below the body scores a fifth of that. Enemies outside the area, and the dead, are not targeted. The view, current-target and priority coefficients are not built.
 
+The enemy an action turns to is the primary target (`KitContext.primaryTarget`), as gcsim's `PrimaryTarget` is the one its on-target hits are placed on (`pkg/core/combat/enemy.go:50`). It outlasts the action and a swap, so a hit no action of its own targets, such as a summon's discharge as a reaction lands, is placed on it. An action that finds no enemy leaves none, and the step lets it go once it dies or its camp leaves the world. An aimed shot targets the camera's aim, so it leaves the primary target as it stood.
+
 ## Shared effects
 
 Each effect is on the party, in the list a `KitEffectState` holds, so a switch leaves it running, and a drown or a jump clears it. Each one is ticked each step.
