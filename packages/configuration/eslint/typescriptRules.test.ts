@@ -354,6 +354,48 @@ describe("typescriptRules", () => {
         violations: 1,
       },
       {
+        filePath: "isFunctionDeclaration.ts",
+        name: "isFunctionDeclaration",
+        source: "export function isA(): boolean {\n  return true;\n}",
+        violations: 1,
+      },
+      {
+        filePath: "isObjectMethod.ts",
+        name: "isObjectMethod",
+        source: "export const a = { isB: (): boolean => true };",
+        violations: 1,
+      },
+      {
+        filePath: "isClassMethod.ts",
+        name: "isClassMethod",
+        source: "export class A {\n  isB(): boolean {\n    return true;\n  }\n}",
+        violations: 1,
+      },
+      {
+        filePath: "isFunctionProperty.ts",
+        name: "isFunctionProperty",
+        source: "export interface A {\n  isB?: (c: string) => boolean;\n}",
+        violations: 1,
+      },
+      {
+        filePath: "isMethodSignature.ts",
+        name: "isMethodSignature",
+        source: "export interface A {\n  isB(c: string): boolean;\n}",
+        violations: 1,
+      },
+      {
+        filePath: "checkIsFunctionProperty.ts",
+        name: "checkIsFunctionProperty",
+        source: "export interface A {\n  checkIsB?: (c: string) => boolean;\n}",
+        violations: 0,
+      },
+      {
+        filePath: "isBooleanProperty.ts",
+        name: "isBooleanProperty",
+        source: "export interface A {\n  isB?: boolean;\n}",
+        violations: 0,
+      },
+      {
         filePath: "isCallbackParameter.ts",
         name: "isCallbackParameter",
         source: "export const a = (isB: (c: string) => boolean) => isB;",

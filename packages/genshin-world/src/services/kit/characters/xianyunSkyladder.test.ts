@@ -90,12 +90,12 @@ describe(createXianyunKitBehaviour, () => {
 
     const context = createKitTestContext(createCombatant(6));
     const behaviour = createXianyunKitBehaviour();
-    expect(behaviour.isSkillCooldownWaived?.(context)).toBe(false);
+    expect(behaviour.checkIsSkillCooldownWaived?.(context)).toBe(false);
     expect(behaviour.getSkillCooldownMultiplier?.(context)).toBe(1);
 
     behaviour.burst?.onStart?.(context);
 
-    expect(behaviour.isSkillCooldownWaived?.(context)).toBe(true);
+    expect(behaviour.checkIsSkillCooldownWaived?.(context)).toBe(true);
     expect(behaviour.getSkillCooldownMultiplier?.(context)).toBe(0);
   });
 

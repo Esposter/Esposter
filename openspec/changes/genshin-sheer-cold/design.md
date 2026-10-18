@@ -35,8 +35,8 @@ flowchart TD
 | Path                                                                    | Role                                                                      |
 | :---------------------------------------------------------------------- | :------------------------------------------------------------------------ |
 | `packages/genshin-world/src/services/sheerCold/constants.ts`            | The climate's area list and the rates and damage, with their sources      |
-| `packages/genshin-world/src/services/sheerCold/isSheerColdArea.ts`      | Whether the area the character stands in holds the climate                |
-| `packages/genshin-world/src/services/sheerCold/isHeatedBy.ts`           | Whether a lit heat source is within reach of the character                |
+| `packages/genshin-world/src/services/sheerCold/checkIsSheerColdArea.ts` | Whether the area the character stands in holds the climate                |
+| `packages/genshin-world/src/services/sheerCold/checkIsHeatedBy.ts`      | Whether a lit heat source is within reach of the character                |
 | `packages/genshin-world/src/services/sheerCold/stepSheerCold.ts`        | One step of the gauge: drain, fill, the leaving drain, and the damage     |
 | `packages/genshin-world/src/composables/useSheerCold.ts`                | Steps the gauge each frame and hands its damage on                        |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Mounts the gauge beside the area weather and emits its value and damage   |

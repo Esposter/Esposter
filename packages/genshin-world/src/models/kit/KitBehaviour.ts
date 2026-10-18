@@ -14,6 +14,7 @@ import type { KitPlunge } from "#src/models/kit/record/KitPlunge";
 export interface KitBehaviour extends Partial<
   Pick<
     Kit,
+    | "checkIsSkillCooldownWaived"
     | "getChargedAttackStaminaMultiplier"
     | "getConversionBonuses"
     | "getNormalAttackExtraHit"
@@ -28,7 +29,6 @@ export interface KitBehaviour extends Partial<
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
     | "getStrikeDefenceIgnored"
-    | "isSkillCooldownWaived"
     | "jumpsSkillHoldToTop"
     | "keepsNormalAttackCombo"
     | "onKitEvent"

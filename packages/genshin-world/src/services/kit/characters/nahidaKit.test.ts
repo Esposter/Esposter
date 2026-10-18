@@ -92,7 +92,7 @@ const createCombatant = (characterId: number, element: Element, elementMastery =
 });
 const createEnemyAt = (id: string) =>
   createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id, position: { x: 0, z: 0 } }, "");
-const hasSeeds = (enemy: { statuses: { id: string }[] }) =>
+const checkHasSeeds = (enemy: { statuses: { id: string }[] }) =>
   enemy.statuses.some(({ id }) => id === SEEDS_OF_SKANDHA_STATUS_ID);
 const getField = (effects: readonly { kind: string }[]) =>
   effects.find((effect): effect is KitField => effect.kind === "field");
@@ -168,7 +168,7 @@ describe("seeds of Skandha", () => {
       KIT.elementalSkill.hits[0].onStrike?.(context, strike, enemy);
     }
 
-    expect(enemies.map((enemy) => hasSeeds(enemy))).toStrictEqual([true, true]);
+    expect(enemies.map((enemy) => checkHasSeeds(enemy))).toStrictEqual([true, true]);
   });
 
   test("a cast marks at most eight enemies, and the next cast marks again", () => {
@@ -184,14 +184,14 @@ describe("seeds of Skandha", () => {
     };
     KIT.elementalSkill.onStart?.(context);
     strikeEach(enemies);
-    const markedInFirstCast = enemies.filter((enemy) => hasSeeds(enemy)).length;
+    const markedInFirstCast = enemies.filter((enemy) => checkHasSeeds(enemy)).length;
     KIT.elementalSkill.onStart?.(context);
     strikeEach(enemies.slice(8));
 
-    expect({ markedInFirstCast, markedInSecondCast: enemies.filter((enemy) => hasSeeds(enemy)).length }).toStrictEqual({
-      markedInFirstCast: 8,
-      markedInSecondCast: 9,
-    });
+    expect({
+      markedInFirstCast,
+      markedInSecondCast: enemies.filter((enemy) => checkHasSeeds(enemy)).length,
+    }).toStrictEqual({ markedInFirstCast: 8, markedInSecondCast: 9 });
   });
 });
 

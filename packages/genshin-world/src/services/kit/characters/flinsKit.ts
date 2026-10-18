@@ -2,8 +2,8 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { checkIsAscendantGleam } from "#src/services/kit/checkIsAscendantGleam";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
-import { isAscendantGleam } from "#src/services/kit/isAscendantGleam";
 
 export const FLINS_CHARACTER_ID = 10_000_120;
 
@@ -46,7 +46,7 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
     ],
     // Cometh the Night's middle hits: two land always, and two more at Ascendant Gleam, as gcsim's burst reads the Moonsign
     // Level when its initial hit lands, the team's composition not changing within the burst
-    burst: { hits: [{}, {}, {}, { landsWhen: isAscendantGleam }, { landsWhen: isAscendantGleam }, {}] },
+    burst: { hits: [{}, {}, {}, { landsWhen: checkIsAscendantGleam }, { landsWhen: checkIsAscendantGleam }, {}] },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),

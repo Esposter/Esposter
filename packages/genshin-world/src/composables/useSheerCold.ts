@@ -5,8 +5,8 @@ import type { LocomotionPhase } from "genshin-engine";
 
 import { REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
-import { isHeatedBy } from "#src/services/sheerCold/isHeatedBy";
-import { isSheerColdArea } from "#src/services/sheerCold/isSheerColdArea";
+import { checkIsHeatedBy } from "#src/services/sheerCold/checkIsHeatedBy";
+import { checkIsSheerColdArea } from "#src/services/sheerCold/checkIsSheerColdArea";
 import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
 import { useLoop } from "@tresjs/core";
 import { LocomotionState, WeatherKind } from "genshin-engine";
@@ -48,14 +48,14 @@ export const useSheerCold = (
     if (Math.hypot(x - checkedX, z - checkedZ) >= REGION_RECHECK_DISTANCE) {
       checkedX = x;
       checkedZ = z;
-      isInCold = isSheerColdArea(findAreaAt(catalogue, x, z));
+      isInCold = checkIsSheerColdArea(findAreaAt(catalogue, x, z));
     }
     const isSwimming = phase.state === LocomotionState.Swim || phase.state === LocomotionState.SwimDash;
     const step = stepSheerCold(
       sheerCold,
       {
         antiColdRatio: getAntiColdRatio(),
-        isHeated: isHeatedBy(x, z, getHeatSources()),
+        isHeated: checkIsHeatedBy(x, z, getHeatSources()),
         isInCold,
         isSnowstorm: getWeather() === WeatherKind.Snowstorm,
         isSwimming,

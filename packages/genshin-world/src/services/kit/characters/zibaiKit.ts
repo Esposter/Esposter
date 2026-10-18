@@ -4,7 +4,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { isAscendantGleam } from "#src/services/kit/isAscendantGleam";
+import { checkIsAscendantGleam } from "#src/services/kit/checkIsAscendantGleam";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -74,7 +74,7 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
     },
   };
   const lunarPhaseShift = readStance("lunarPhaseShift", {
-    normalAttacks: [{}, {}, {}, { hits: [{}, { landsWhen: isAscendantGleam }] }],
+    normalAttacks: [{}, {}, {}, { hits: [{}, { landsWhen: checkIsAscendantGleam }] }],
     skill: spiritSteedStride,
   });
   const heavenAndEarthMadeManifest: KitActionBehaviour = {
@@ -110,7 +110,7 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
         event.kind === KitEventKind.ReactionTriggered &&
         event.striker.characterId !== characterId &&
         event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarCrystallize) &&
-        isAscendantGleam(context) &&
+        checkIsAscendantGleam(context) &&
         startKitCooldown(kitEffectState, characterId, MOONSIGN_RADIANCE_STATUS_ID, MOONSIGN_RADIANCE_COOLDOWN_SECONDS)
       )
         gainKitResource(

@@ -1,8 +1,8 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
 
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
 
 // The id of the camp a bounty spawns, which the defeat of its target is read against
 export const getReputationBountyCampId = (bountyId: number): string => `reputation-bounty-${bountyId}`;
@@ -11,7 +11,7 @@ export const getReputationBountyCampId = (bountyId: number): string => `reputati
 // Level the caller reads. A target kind the world does not place is an Error, since the bounty could never spawn it.
 // PROVISIONAL: the region's id stands in for the camp's area, which nothing compares a camp's area against yet
 export const createReputationBountyCamp = (hunt: ReputationBountyHunt, enemyLevel: number): EnemyCamp => {
-  if (!isEnemyKindId(hunt.targetEnemyKindId))
+  if (!checkIsEnemyKindId(hunt.targetEnemyKindId))
     throw new InvalidOperationError(
       Operation.Read,
       String(hunt.targetEnemyKindId),

@@ -7,6 +7,10 @@ import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxe
 const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";
 const BY_MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*By[A-Z]/";
 const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
+// The callable-name selector matches a named function in each shape a function takes, so its name and the return type
+// That makes it a boolean-returning one are each written once.
+const CALLABLE_NAME_REGEX = "/^(is|has)[A-Z]/";
+const BOOLEAN_RETURN_TYPE = ":matches(TSBooleanKeyword, TSTypePredicate)";
 // Only `no-restricted-syntax` lives on the ESLint side: oxlint enforces the rest natively but has no
 // Selector-based rule, so these AST-selector bans have nowhere else to go
 // (see openspec/specs/architecture/lint-toolchain/design.md).
@@ -101,11 +105,19 @@ export default {
       // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
       // Reads as a value at every call site. The annotation is what makes it decidable without types — a
       // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
-      // Is a parameter typed as one: a callback handed in is called at every site that reads it.
+      // Is a parameter typed as one: a callback handed in is called at every site that reads it. Each shape a
+      // Named function takes is matched: a declaration, a variable, a method, an object or class member, and a
+      // Member typed as a function (`isB?: (c) => boolean`), which an interface declares without a body
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
-      selector:
-        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate), Identifier[name=/^(is|has)[A-Z]/] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
+      selector: [
+        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > :matches(ArrowFunctionExpression, FunctionExpression, TSEmptyBodyFunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `TSMethodSignature[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `:matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition)[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `Identifier[name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+      ].join(", "),
     },
     {
       // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)

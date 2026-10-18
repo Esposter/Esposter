@@ -1,7 +1,7 @@
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 
-import { isGiftBoxed } from "#src/services/mail/isGiftBoxed";
+import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 
 // The held mails left by Delete Read, which takes every read mail whose attachments are claimed or absent, except a mail
 // In the Gift Mail Box and a pinned mail, since the game does not delete either quickly (the wiki's Mail page) A mail with no row is kept, since
@@ -17,7 +17,7 @@ export const deleteReadMails = (
     return (
       !mail.isRead ||
       mail.isPinned ||
-      isGiftBoxed(mail, row, birthdayMailIds) ||
+      checkIsGiftBoxed(mail, row, birthdayMailIds) ||
       (row.items.length > 0 && !mail.isClaimed)
     );
   });

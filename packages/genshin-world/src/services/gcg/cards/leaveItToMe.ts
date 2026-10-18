@@ -7,8 +7,8 @@ import { LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 
 // Leave It to Me!: the next time its side switches characters, the switch is a fast action, for one usage
 export const leaveItToMe: GcgCardModule = {
+  checkIsSwitchFast: () => true,
   initialUsages: 1,
-  isSwitchFast: () => true,
   onSwitch: (_context, zoneCard) => {
     zoneCard.usages = 0;
   },

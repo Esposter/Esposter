@@ -12,7 +12,7 @@ export const pruneGcgZoneCards = (duel: GcgDuel, sideIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   const summonsBefore = [...side.summons];
   filterGcgSideCards(side, (zoneCard) => !checkIsGcgZoneCardSpent(zoneCard, duel.cardModules));
-  filterGcgSideCards(side, (zoneCard) => !duel.cardModules.get(zoneCard.cardId)?.isSpent?.(side, zoneCard));
+  filterGcgSideCards(side, (zoneCard) => !duel.cardModules.get(zoneCard.cardId)?.checkIsSpent?.(side, zoneCard));
   notifyGcgSummonsDisappeared(duel, sideIndex, summonsBefore);
 };
 

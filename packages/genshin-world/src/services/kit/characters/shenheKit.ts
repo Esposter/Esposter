@@ -61,7 +61,7 @@ const ICY_QUILL_ATTACK_TAGS = new Set<AttackTag>([
 const CONSTELLATION_6_UNCOUNTED_ATTACK_TAGS = new Set<AttackTag>([AttackTag.ChargedAttack, AttackTag.NormalAttack]);
 
 // Whether a hit is dealt as an attack kind the Icy Quill names, a hit with none, such as a reaction or a field's tick, not
-const isIcyQuillAttack = (attackTag: AttackTag | undefined): attackTag is AttackTag =>
+const checkIsIcyQuillAttack = (attackTag: AttackTag | undefined): attackTag is AttackTag =>
   attackTag !== undefined && ICY_QUILL_ATTACK_TAGS.has(attackTag);
 
 // Gives each party member other than the one casting the Icy Quill, restarting one it already holds, for its seconds and
@@ -190,7 +190,7 @@ export const createShenheKitBehaviour = ({
     getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (
         getKitHitElement(strike.hit, strike.combatant) !== Element.Cryo ||
-        !isIcyQuillAttack(strike.attackTag) ||
+        !checkIsIcyQuillAttack(strike.attackTag) ||
         !findKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
       )
         return {};
@@ -201,7 +201,11 @@ export const createShenheKitBehaviour = ({
     // Triggers unless Constellation 6 exempts a normal or charged attack, and gives Shenhe a Skyfrost Mantra stack from
     // Constellation 4
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.EnemyHit || event.element !== Element.Cryo || !isIcyQuillAttack(event.attackTag))
+      if (
+        event.kind !== KitEventKind.EnemyHit ||
+        event.element !== Element.Cryo ||
+        !checkIsIcyQuillAttack(event.attackTag)
+      )
         return;
       const { characterId } = event.striker;
       if (findKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID) === undefined) return;

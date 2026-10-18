@@ -4,8 +4,8 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { createEnemy } from "#src/services/enemy/createEnemy";
-import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
@@ -23,7 +23,7 @@ describe(useWorldTrounceBlossoms, () => {
   test("a defeat of a kind outside the enum reaches the listeners after the trounce blossom's", () => {
     expect.hasAssertions();
 
-    const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !isEnemyKindId(id)));
+    const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !checkIsEnemyKindId(id)));
     const events = createWorldEvents();
     useWorldTrounceBlossoms({
       adventureExp: shallowRef(0),

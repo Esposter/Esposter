@@ -27,7 +27,7 @@ const pickGcgBasicDice = (count: number, random: () => number): Element[] => {
 // Parametric Transformer, an item: after either side uses a Skill that deals Elemental DMG, it gains 1 Qualitative Progress.
 // At three it is discarded, and its side creates three different basic Elemental Dice (the wiki's Parametric Transformer)
 export const parametricTransformer: GcgCardModule = {
-  isSpent: (_side, zoneCard) => zoneCard.counter >= PARAMETRIC_TRANSFORMER_PROGRESS,
+  checkIsSpent: (_side, zoneCard) => zoneCard.counter >= PARAMETRIC_TRANSFORMER_PROGRESS,
   onAnySkillUsed: ({ duel, sideIndex }, _skill, zoneCard, dealt) => {
     if (!dealt.some((hit) => checkIsGcgElementalHit(hit))) return;
     zoneCard.counter += 1;

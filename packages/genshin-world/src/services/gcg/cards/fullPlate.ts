@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 // Wiki's "this Shield" is the shield the card gave, which the side's one shield pool does not track, so another card's shield
 // On the side keeps the card standing
 export const fullPlate: GcgCardModule = {
-  isSpent: (side) => side.characters.every(({ shield }) => shield <= 0),
+  checkIsSpent: (side) => side.characters.every(({ shield }) => shield <= 0),
   modifyDamageReceived: ({ duel, sideIndex }, value, _zoneCard, damageType) => {
     const side = takeOne(duel.sides, sideIndex);
     const active = side.characters.at(side.activeIndex);

@@ -27,6 +27,8 @@ export interface Kit {
   chargedAttack: KitAction;
   chargedAttackStamina: number;
   chargedAttackVariant?: KitVariant;
+  // Whether a skill starts whatever its cooldown is, while the kit's effects waive it, as a constellation's status does
+  checkIsSkillCooldownWaived?: (context: KitContext) => boolean;
   // The action the body plays as it enters a dash, if the kit has one, which a stance may give in place of its own
   dash?: KitAction;
   elementalBurst: KitAction;
@@ -87,8 +89,6 @@ export interface Kit {
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
-  // Whether a skill starts whatever its cooldown is, while the kit's effects waive it, as a constellation's status does
-  isSkillCooldownWaived?: (context: KitContext) => boolean;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
   // Reads for a bonus its kit's actions set going

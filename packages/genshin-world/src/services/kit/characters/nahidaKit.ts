@@ -47,7 +47,7 @@ const ILLUSORY_HEART_OFFSET_METRES = 1;
 // Each element's count in the team is clamped to two, as gcsim clamps its tallies
 const MAX_ELEMENT_COUNT = 2;
 
-const hasSeeds = (enemy: Enemy): boolean => enemy.statuses.some(({ id }) => id === SEEDS_OF_SKANDHA_STATUS_ID);
+const checkHasSeeds = (enemy: Enemy): boolean => enemy.statuses.some(({ id }) => id === SEEDS_OF_SKANDHA_STATUS_ID);
 
 // The count of an element among the deployed team, clamped to two
 const countTeamElement = ({ characterIdCombatantMap, party }: KitContext, element: Element): number =>
@@ -130,7 +130,7 @@ export const createNahidaKitBehaviour = ({
     skill: { hits: [markHitBehaviour], onStart: startSkillCast },
     skillHolds: [{ hits: [markHitBehaviour], onStart: startSkillCast }],
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || !hasSeeds(event.enemy)) return;
+      if (event.kind !== KitEventKind.ReactionTriggered || !checkHasSeeds(event.enemy)) return;
       const { characterId } = combatant;
       const { kitEffectState } = context;
       if (checkHasKitStatus(kitEffectState.effects, characterId, TRI_KARMA_CLOCK_STATUS_ID)) return;
@@ -144,7 +144,7 @@ export const createNahidaKitBehaviour = ({
       });
       const damageBonus = isInWindow && pyroCount > 0 ? takeOne(pyroBonuses, pyroCount - 1) : 0;
       for (const enemy of context.enemyMap.values())
-        if (hasSeeds(enemy)) queueKitPassiveHit(context, combatant, { ...triKarmaHit, damageBonus }, enemy);
+        if (checkHasSeeds(enemy)) queueKitPassiveHit(context, combatant, { ...triKarmaHit, damageBonus }, enemy);
       if (!checkHasKitStatus(kitEffectState.effects, characterId, TRI_KARMA_PARTICLE_STATUS_ID)) {
         addKitStatus(kitEffectState, characterId, {
           id: TRI_KARMA_PARTICLE_STATUS_ID,

@@ -16,6 +16,10 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 // The additive hooks, then the multiplying ones, so a doubling is taken after every bonus
 export interface GcgCardModule {
   canPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => boolean;
+  // Whether a card on a side's field is spent by what the side holds now, for a card that lasts while another card or a shield
+  // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
+  checkIsSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
+  checkIsSwitchFast?: (context: GcgEffectContext) => boolean;
   // The Piercing DMG a card deals to each opposing character on standby at the end phase, before its onEndPhase damage
   endPhaseStandbyPiercing?: number;
   immuneElement?: Element;
@@ -24,10 +28,6 @@ export interface GcgCardModule {
   initialUsages?: number;
   // Whether playing the card is a combat action, which passes the turn once it resolves, rather than a fast action, which does not
   isCombatAction?: boolean;
-  // Whether a card on a side's field is spent by what the side holds now, for a card that lasts while another card or a shield
-  // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
-  isSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
-  isSwitchFast?: (context: GcgEffectContext) => boolean;
   // The most usages a card that can stack holds: placed again, it adds its starting usages up to this many, rather than
   // Refreshing to them
   maxUsages?: number;

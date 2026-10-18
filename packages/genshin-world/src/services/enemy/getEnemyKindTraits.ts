@@ -3,9 +3,9 @@ import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
 
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { PoiseType } from "#src/models/enemy/PoiseType";
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
 import { takeOne } from "@esposter/shared";
 
 // The poise a kind takes when no kind of its type in its family has one, the most common poise of its type
@@ -22,10 +22,10 @@ export const getEnemyKindTraits = (
   enemyKindMap: ReadonlyMap<number, EnemyKind>,
   enemyKindId: number,
 ): EnemyKindTraits => {
-  if (isEnemyKindId(enemyKindId)) return EnemyKindTraitsMap[enemyKindId];
+  if (checkIsEnemyKindId(enemyKindId)) return EnemyKindTraitsMap[enemyKindId];
   const { enemyFamily, enemyType } = getEnemyKind(enemyKindMap, enemyKindId);
   const familyTraits = [...enemyKindMap.values()].flatMap((enemyKind) =>
-    enemyKind.enemyFamily === enemyFamily && enemyKind.enemyType === enemyType && isEnemyKindId(enemyKind.id)
+    enemyKind.enemyFamily === enemyFamily && enemyKind.enemyType === enemyType && checkIsEnemyKindId(enemyKind.id)
       ? [EnemyKindTraitsMap[enemyKind.id]]
       : [],
   );
