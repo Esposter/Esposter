@@ -10,11 +10,11 @@ import type { ForgeQueueCell, ForgeRecipeCell, ForgeTab } from "genshin-interfac
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
-import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipeOpen";
 import { computeForgeQueueSlots } from "#src/services/forging/computeForgeQueueSlots";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
 import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
+import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { startForge } from "#src/services/forging/startForge";
 import { takeOne } from "@esposter/shared";
@@ -207,16 +207,16 @@ const obtain = (queueId: number) => {
         )
       "
       :recipes="recipeCells"
-      :refusal-label="refusalLabel"
-      :required-coins="requiredCoins"
+      :refusal-label
+      :required-coins
       :start-label="gameText[GameTextKey.ForgeStart]"
       :support-label="gameText[GameTextKey.ForgeSupportCharacter]"
-      :yield-count="yieldCount"
+      :yield-count
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
       @close="emit('close')"
-      @obtain="obtain"
-      @start="start"
+      @obtain="(...args) => obtain(...args)"
+      @start="(...args) => start(...args)"
     />
   </GameScreen>
 </template>

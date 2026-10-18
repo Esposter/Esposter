@@ -2,8 +2,8 @@ import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
-import { FORGE_DAILY_POINT_CAP, FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
+import { FORGE_DAILY_POINT_CAP, FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 

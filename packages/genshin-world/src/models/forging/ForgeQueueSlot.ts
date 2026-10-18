@@ -5,7 +5,7 @@ import type { ForgeQueueState } from "genshin-interface";
 export interface ForgeQueueSlot {
   forged: number;
   id: number;
-  recipeId: number | undefined;
+  recipeId?: number;
   remainingSeconds: number;
   state: ForgeQueueState;
   unlockRank: number;

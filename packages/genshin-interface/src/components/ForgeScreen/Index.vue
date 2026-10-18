@@ -27,10 +27,10 @@ interface Props {
   queuesLabel: string;
   // The Materials tab's recipe list, in the game's order
   recipes: ForgeRecipeCell[];
-  // The coins the selected recipe costs for its amount
-  requiredCoins: number;
   // The refusal words the game shows in place of Start for an order past the day's forge points, or none
   refusalLabel: string;
+  // The coins the selected recipe costs for its amount
+  requiredCoins: number;
   startLabel: string;
   supportLabel: string;
   // The title the game shows over the screen
@@ -55,8 +55,8 @@ const {
   queues,
   queuesLabel,
   recipes,
-  requiredCoins,
   refusalLabel,
+  requiredCoins,
   startLabel,
   supportLabel,
   title,
