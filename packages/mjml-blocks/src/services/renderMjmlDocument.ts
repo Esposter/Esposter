@@ -29,8 +29,10 @@ export const renderMjmlDocument = <TContext>(
   const content = renderBlockNodes<MjmlBlockTypeDefinition<TContext>, MjmlJson>(
     document.content,
     registry,
-    (node, definition, slots) =>
-      stampNode(definition.render(node, slots, options.context), node, options.isStampingIds),
+    (node, definition, slots) => {
+      const output = definition.render(node, slots, options.context);
+      return stampNode(output, node, options.isStampingIds);
+    },
   );
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};

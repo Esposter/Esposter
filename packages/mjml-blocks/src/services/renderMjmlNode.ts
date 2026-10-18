@@ -32,12 +32,16 @@ export const renderMjmlNode = <TContent>(
     if (specification.children.length > 0) return { ...element, children: slots.children ?? [] };
 
     switch (specification.contentKind) {
-      case MjmlContentKind.Label:
-        return { ...element, content: escapeText(z.string().parse(node.props.content)) };
+      case MjmlContentKind.Label: {
+        const parsedLabel = z.string().parse(node.props.content);
+        return { ...element, content: escapeText(parsedLabel) };
+      }
       case MjmlContentKind.Raw:
         return { ...element, content: z.string().parse(node.props.content) };
-      case MjmlContentKind.RichText:
-        return { ...element, content: richText.renderHtml(richText.schema.parse(node.props.content)) };
+      case MjmlContentKind.RichText: {
+        const parsedRichText = richText.schema.parse(node.props.content);
+        return { ...element, content: richText.renderHtml(parsedRichText) };
+      }
       case undefined:
         return element;
       default:
