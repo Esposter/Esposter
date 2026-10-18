@@ -49,7 +49,7 @@ export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], contex
     if (!target) continue;
     landKitReactionReaches(
       [[{ position: target.position }, { element: Element.Dendro, reactionType }]],
-      getBuffedCombatant(combatant, kitEffectState.effects, party, context.body.position),
+      getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap, context.body.position),
       context,
     );
   }

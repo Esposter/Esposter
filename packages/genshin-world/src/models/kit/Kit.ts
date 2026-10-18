@@ -1,4 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
+import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -51,6 +52,7 @@ export interface Kit {
     combatant: Combatant,
     healthShare: number,
     effects: readonly KitEffect[],
+    deployedElements: readonly Element[],
   ) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands

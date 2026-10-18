@@ -106,6 +106,8 @@ describe(createArlecchinoKitBehaviour, () => {
     const combatant = createArlecchinoCombatant(0);
     const { party } = createKitTestContext(combatant);
 
-    expect(getBuffedCombatant(combatant, [], party).attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBe(0.4);
+    expect(
+      getBuffedCombatant(combatant, [], party, new Map()).attributes.attributeTotalMap[Attribute.PyroDamageBonus],
+    ).toBe(0.4);
   });
 });

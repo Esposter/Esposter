@@ -30,8 +30,10 @@ export const getArtifactSetKit = (
   const passives = [kit, ...artifactSetModules];
   return {
     ...kit,
-    getPassiveBonuses: (combatant, healthShare, effects) =>
-      passives.flatMap(({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, effects) ?? []),
+    getPassiveBonuses: (combatant, healthShare, effects, deployedElements) =>
+      passives.flatMap(
+        ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, effects, deployedElements) ?? [],
+      ),
     onKitEvent: (event, context, combatant) => {
       for (const { onKitEvent } of passives) onKitEvent?.(event, context, combatant);
     },

@@ -154,9 +154,8 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   const isSkillPressed = heldPresses.has(InputAction.ElementalSkill);
   const activeCombatant = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party));
   const movementSpeed = activeCombatant
-    ? getBuffedCombatant(activeCombatant, kitContext.kitEffectState.effects, party).attributes.attributeTotalMap[
-        Attribute.MovementSpeed
-      ]
+    ? getBuffedCombatant(activeCombatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap)
+        .attributes.attributeTotalMap[Attribute.MovementSpeed]
     : 0;
   // Impetuous Winds raises the speeds the controller moves the body by, read from the character on the field before the
   // Controller steps

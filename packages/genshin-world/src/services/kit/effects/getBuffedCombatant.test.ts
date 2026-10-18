@@ -45,10 +45,10 @@ describe(getBuffedCombatant, () => {
       },
       { amount: 0.5, attribute: Attribute.PyroDamageBonus, characterId: 2, kind: "buff", secondsRemaining: 1 },
     ];
-    const buffed = getBuffedCombatant(combatant, effects, party);
+    const buffed = getBuffedCombatant(combatant, effects, party, new Map());
     expect(buffed.attributes.attack).toBe(combatant.attributes.attack + 30);
     expect(buffed.attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBeCloseTo(0.2);
-    expect(getBuffedCombatant(combatant, [], party)).toBe(combatant);
+    expect(getBuffedCombatant(combatant, [], party, new Map())).toBe(combatant);
   });
 
   test("raises the attack and defense its hits are priced from by a percentage buff on each", () => {
@@ -75,7 +75,7 @@ describe(getBuffedCombatant, () => {
         secondsRemaining: 1,
       },
     ];
-    const buffed = getBuffedCombatant(combatant, effects, party);
+    const buffed = getBuffedCombatant(combatant, effects, party, new Map());
     expect(buffed.attributes.attack).toBeCloseTo(150);
     expect(buffed.attributes.defense).toBeCloseTo(250);
   });
@@ -104,10 +104,10 @@ describe(getBuffedCombatant, () => {
       return enemy.maxHealth - enemy.health;
     };
 
-    const shielded = getBuffedCombatant(combatant, [shield], party);
+    const shielded = getBuffedCombatant(combatant, [shield], party, new Map());
 
     expect(shielded.attributes.attributeTotalMap[Attribute.GeoDamageBonus]).toBeCloseTo(0.15);
-    expect(damageOf(shielded) / damageOf(getBuffedCombatant(combatant, [], party))).toBeCloseTo(1.15);
+    expect(damageOf(shielded) / damageOf(getBuffedCombatant(combatant, [], party, new Map()))).toBeCloseTo(1.15);
   });
 
   test("hands a passive its character's HP as a share of its Max HP in the party", () => {
@@ -129,7 +129,7 @@ describe(getBuffedCombatant, () => {
     };
 
     expect(
-      getBuffedCombatant(combatant, [], healthParty).attributes.attributeTotalMap[Attribute.CriticalRate],
+      getBuffedCombatant(combatant, [], healthParty, new Map()).attributes.attributeTotalMap[Attribute.CriticalRate],
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.5);
   });
 
@@ -155,7 +155,7 @@ describe(getBuffedCombatant, () => {
     ];
 
     expect(
-      getBuffedCombatant(combatant, statusEffects, createParty([CHARACTER_ID])).attributes.attributeTotalMap[
+      getBuffedCombatant(combatant, statusEffects, createParty([CHARACTER_ID]), new Map()).attributes.attributeTotalMap[
         Attribute.CriticalRate
       ],
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.1);

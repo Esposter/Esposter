@@ -98,8 +98,12 @@ export const stepKit = (
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
             ?.normalAttackSpeedBonus ?? 0) +
           (kit.getNormalAttackSpeedBonus?.(context) ?? 0) +
-          getBuffedCombatant(context.activeCombatant, context.kitEffectState.effects, context.party).attributes
-            .attributeTotalMap[Attribute.NormalAttackSpeed]
+          getBuffedCombatant(
+            context.activeCombatant,
+            context.kitEffectState.effects,
+            context.party,
+            context.characterIdCombatantMap,
+          ).attributes.attributeTotalMap[Attribute.NormalAttackSpeed]
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);

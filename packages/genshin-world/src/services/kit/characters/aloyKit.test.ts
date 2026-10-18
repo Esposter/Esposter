@@ -103,9 +103,8 @@ describe(createAloyKitBehaviour, () => {
     { context }: ReturnType<typeof startRushingIce>,
     attribute: Attribute,
   ) =>
-    getBuffedCombatant(combatant, context.kitEffectState.effects, context.party).attributes.attributeTotalMap[
-      attribute
-    ];
+    getBuffedCombatant(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
+      .attributes.attributeTotalMap[attribute];
 
   test("the Ascension 1 passive, which raises ATK while Rushing Ice holds, takes effect at its ascension phase", () => {
     expect.hasAssertions();
