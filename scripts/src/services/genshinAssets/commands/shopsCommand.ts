@@ -2,7 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { buildMondstadtFishingGoods } from "#src/services/genshinAssets/shops/buildMondstadtFishingGoods";
+import { buildFishingAssociationGoods } from "#src/services/genshinAssets/shops/buildFishingAssociationGoods";
 import { buildMondstadtGeneralGoods } from "#src/services/genshinAssets/shops/buildMondstadtGeneralGoods";
 import { buildMondstadtVendorGoods } from "#src/services/genshinAssets/shops/buildMondstadtVendorGoods";
 import { buildPaimonsBargainsGoods } from "#src/services/genshinAssets/shops/buildPaimonsBargainsGoods";
@@ -16,7 +16,7 @@ export const shopsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust, its rotation of characters and weapons, the Mondstadt grocery's general goods, the seven Mondstadt vendors' goods, the Mondstadt Fishing Association's goods, the Realm Depot's goods and the Souvenir Shops' goods from the dump to the game data",
+      "Publish Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust, its rotation of characters and weapons, the Mondstadt grocery's general goods, the seven Mondstadt vendors' goods, the Fishing Associations' goods, the Realm Depot's goods and the Souvenir Shops' goods from the dump to the game data",
     name: "shops",
   },
   run: async ({ args }) => {
@@ -24,7 +24,7 @@ export const shopsCommand: SubCommandsDef[string] = defineCommand({
       ...buildPaimonsBargainsGoods(),
       ...buildPaimonsBargainsRotation(),
       ...buildMondstadtGeneralGoods(),
-      ...buildMondstadtFishingGoods(),
+      ...buildFishingAssociationGoods(),
       ...buildMondstadtVendorGoods(),
       ...buildRealmDepotGoods(),
       ...buildSouvenirGoods(),

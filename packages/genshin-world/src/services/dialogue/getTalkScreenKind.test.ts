@@ -33,4 +33,10 @@ describe("a vendor's talk", () => {
     const VENDOR: Resident = { areaId: "areaId", id: "vendorId", nameTextId: "nameTextId", talkId: "vendorTalkId" };
     expect(getTalkScreenKind("vendorTalkId", [VENDOR], { vendorId: 1 })).toBe(ScreenKind.Shop);
   });
+
+  test("talking to a Fishing Association member opens its shop", () => {
+    expect.hasAssertions();
+    const NANTUCK: Resident = { areaId: "areaId", id: "1673", nameTextId: "nameTextId", talkId: "nantuckTalkId" };
+    expect(getTalkScreenKind("nantuckTalkId", [NANTUCK])).toBe(ScreenKind.Shop);
+  });
 });

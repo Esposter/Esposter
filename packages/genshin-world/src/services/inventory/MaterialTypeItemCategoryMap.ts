@@ -14,6 +14,9 @@ export const MaterialTypeItemCategoryMap = {
   [MaterialType.FishBait]: ItemCategory.Material,
   [MaterialType.Flycloak]: ItemCategory.PreciousItem,
   [MaterialType.Food]: ItemCategory.Food,
+  // A furniture formula is the blueprint of a furnishing, filed with the furnishings. The wiki gives the furnishing's
+  // Category rather than the formula's tab, so this filing is provisional until a recording confirms it
+  [MaterialType.FurnitureFormula]: ItemCategory.Furnishing,
   [MaterialType.Namecard]: ItemCategory.PreciousItem,
   [MaterialType.NoticeAddHp]: ItemCategory.Food,
   [MaterialType.WeaponExpStone]: ItemCategory.Material,

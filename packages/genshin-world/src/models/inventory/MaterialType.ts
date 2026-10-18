@@ -10,6 +10,7 @@ export enum MaterialType {
   FishBait = "MATERIAL_FISH_BAIT",
   Flycloak = "MATERIAL_FLYCLOAK",
   Food = "MATERIAL_FOOD",
+  FurnitureFormula = "MATERIAL_FURNITURE_FORMULA",
   Namecard = "MATERIAL_NAMECARD",
   NoticeAddHp = "MATERIAL_NOTICE_ADD_HP",
   WeaponExpStone = "MATERIAL_WEAPON_EXP_STONE",
