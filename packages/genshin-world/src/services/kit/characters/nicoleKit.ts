@@ -1,3 +1,4 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -8,13 +9,16 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { ALBEDO_CHARACTER_ID } from "#src/services/kit/characters/albedoKit";
 import { KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
 import { SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
+import { checkIsInKitHitbox } from "#src/services/kit/checkIsInKitHitbox";
 import { checkIsKitHexerei } from "#src/services/kit/countKitHexereiMembers";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
@@ -97,6 +101,19 @@ const C1_ICD_SECONDS = 6;
 const C1_ICD_ID = "nicole-c1-icd";
 const C1_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: PROJECTION_RADIUS } };
 
+// Her second constellation gives each deployed member ATK 300 with her skill, and while an upgraded character's buff stands,
+// Lowers the RES of that character's element by a quarter on each enemy within 10 metres of the team, every 0.3 seconds for
+// A second, as gcsim's cons.go does
+const CONSTELLATION_2 = 2;
+const C2_AMOUNT = 300;
+const C2_SOURCE = "nicole-c2";
+const C2_RADIUS = 10;
+const C2_RES_REDUCTION = 0.25;
+const C2_TICK_SECONDS = 0.3;
+const C2_STATUS_SECONDS = 1;
+const C2_TICKER_ID = "nicole-c2-ticker";
+const C2_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: C2_RADIUS } };
+
 // Schedules a projection of a hit onto the enemy it struck, landing 30 frames on as gcsim's projectionHitmark does. It deals
 // The striker's element and prices the Hexerei bonus at its tick
 const scheduleProjection = (
@@ -134,10 +151,54 @@ const scheduleProjection = (
     );
   });
 
+// Starts the ticker of the second constellation for an upgraded character, which each 0.3 seconds lowers its element's RES by a
+// Quarter on each enemy within 10 metres of the team, gcsim's c2Ticker. A newer upgrade of the character replaces its ticker,
+// And the ticker stops with the upgrade's own seconds
+const startC2Ticker = (
+  kitEffectState: KitEffectState,
+  nicoleCharacterId: number,
+  characterId: number,
+  seconds: number,
+): void => {
+  const id = `${C2_TICKER_ID}-${characterId}`;
+  removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === id);
+  castKitField(
+    kitEffectState,
+    nicoleCharacterId,
+    { x: 0, z: 0 },
+    {
+      id,
+      nextTickSeconds: 0,
+      onTick: (tick) => {
+        const element = tick.characterIdCombatantMap.get(characterId)?.element;
+        const isUpgraded = tick.kitEffectState.effects.some(
+          (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE,
+        );
+        if (element === undefined || !isUpgraded) return;
+        for (const enemy of tick.enemyMap.values())
+          if (checkIsInKitHitbox(C2_HITBOX, tick.body.position, enemy.position))
+            addEnemyStatus(enemy, {
+              damageTakenBonus: 0,
+              id: `${C2_SOURCE}-${element}`,
+              resistanceReduction: { [element]: C2_RES_REDUCTION },
+              secondsRemaining: C2_STATUS_SECONDS,
+            });
+      },
+      secondsRemaining: seconds,
+      tickIntervalSeconds: C2_TICK_SECONDS,
+    },
+  );
+};
+
 // Upgrades a member's ascension buff for the seconds given, or, when none is given, for as long as her skill's buff on the
 // Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking it, as
 // Gcsim's mod with the same key does
-const upgradeAscensionBuff = (kitEffectState: KitEffectState, characterId: number, seconds = Infinity): void => {
+const upgradeAscensionBuff = (
+  kitEffectState: KitEffectState,
+  nicole: Combatant,
+  characterId: number,
+  seconds = Infinity,
+): void => {
   const skillBuff = kitEffectState.effects.find(
     (effect): effect is KitBuff =>
       effect.kind === "buff" && effect.characterId === characterId && effect.source === SKILL_BUFF_SOURCE,
@@ -154,11 +215,13 @@ const upgradeAscensionBuff = (kitEffectState: KitEffectState, characterId: numbe
     secondsRemaining: buffSeconds,
     source: A1_SOURCE,
   });
+  if (nicole.constellationCount >= CONSTELLATION_2)
+    startC2Ticker(kitEffectState, nicole.characterId, characterId, buffSeconds);
 };
 
-// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, and her first and fourth ascensions.
-// Her constellations wait on hooks the kit has not got yet. Her strikes, charged attack, plunges, skill's hit and burst's
-// Own two hits are her record's alone
+// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first and second
+// Constellations. Her later constellations wait on hooks the kit has not got yet. Her strikes, charged attack, plunges, and
+// Her skill's and burst's own hits are her record's alone
 export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const burstProjection = readParameter("burstProjection");
   const skillShieldAtk = readParameter("skillShieldAtk");
@@ -198,7 +261,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           context.kitEffectState,
           combatant.characterId,
           checkIsKitHexerei(characterId) ? 0 : A1_SWAP_SECONDS,
-          (tick) => upgradeAscensionBuff(tick.kitEffectState, characterId),
+          (tick) => upgradeAscensionBuff(tick.kitEffectState, combatant, characterId),
           { id: A1_SWAP_ID },
         );
         return;
@@ -207,7 +270,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         return;
       // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init does
       if (combatant.ascension >= ASCENSION_4 && event.element !== undefined)
-        upgradeAscensionBuff(context.kitEffectState, combatant.characterId, A4_SECONDS);
+        upgradeAscensionBuff(context.kitEffectState, combatant, combatant.characterId, A4_SECONDS);
       // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's status needed
       if (
         combatant.constellationCount >= CONSTELLATION_1 &&
@@ -231,10 +294,12 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
       // ATK buff scaled by her attack, capped at the skill's maximum
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        // Her skill takes off the buff it gave the team before and every ascension buff, as gcsim's cast does
+        // Her skill takes off the buff it gave the team before and every ascension and second-constellation buff, as gcsim's cast does
         removeKitEffects(
           kitEffectState,
-          (effect) => effect.kind === "buff" && (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE),
+          (effect) =>
+            effect.kind === "buff" &&
+            (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE || effect.source === C2_SOURCE),
         );
         scheduleKitTask(kitEffectState, combatant.characterId, SKILL_SNAPSHOT_SECONDS, (tick) => {
           castKitShield(tick.kitEffectState, combatant.characterId, {
@@ -243,13 +308,21 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             secondsRemaining: SKILL_SECONDS,
           });
           const amount = Math.min(combatant.attributes.attack * skillBuffRatio, skillBuffMax);
-          for (const characterId of getDeployedCharacterIds(tick.party))
+          for (const characterId of getDeployedCharacterIds(tick.party)) {
             buffKitMember(tick.kitEffectState, characterId, {
               amount,
               attribute: Attribute.Attack,
               secondsRemaining: SKILL_SECONDS,
               source: SKILL_BUFF_SOURCE,
             });
+            if (combatant.constellationCount >= CONSTELLATION_2)
+              buffKitMember(tick.kitEffectState, characterId, {
+                amount: C2_AMOUNT,
+                attribute: Attribute.Attack,
+                secondsRemaining: SKILL_SECONDS,
+                source: C2_SOURCE,
+              });
+          }
         });
       },
     },

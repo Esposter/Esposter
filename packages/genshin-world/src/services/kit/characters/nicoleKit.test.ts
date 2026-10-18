@@ -421,4 +421,82 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 1);
     expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([]);
   });
+
+  test("her second constellation gives each deployed member ATK 300 from her skill's snapshot", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { constellationCount: 2 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+
+    const [, constellation] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    expect({
+      amount: constellation.amount,
+      attribute: constellation.attribute,
+      secondsRemaining: constellation.secondsRemaining,
+    }).toStrictEqual({ amount: 300, attribute: Attribute.Attack, secondsRemaining: 20 });
+  });
+
+  test("her second constellation gives nothing below it", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { constellationCount: 1 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
+  });
+
+  test("her next skill's cast takes off the team's second-constellation buff", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), { constellationCount: 2 });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(2);
+
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(0);
+  });
+
+  test("her second constellation lowers an enemy's Hydro RES by a quarter within 10 metres while an upgraded buff stands", () => {
+    expect.hasAssertions();
+    const { context, enemy } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 2,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+
+    stepKitSeconds(context, 3.5);
+    expect(enemy.statuses.map(({ resistanceReduction }) => resistanceReduction)).toStrictEqual([
+      { [Element.Hydro]: 0.25 },
+    ]);
+  });
+
+  test("her second constellation's RES reduction reaches no enemy beyond 10 metres of the team", () => {
+    expect.hasAssertions();
+    const { context, enemy } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 2,
+    });
+    enemy.position = { x: 12, z: 0 };
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+
+    stepKitSeconds(context, 3.5);
+    expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("her second constellation lowers no RES without an upgraded character", () => {
+    expect.hasAssertions();
+    const { context, enemy } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 2,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+
+    stepKitSeconds(context, 3.5);
+    expect(enemy.statuses).toStrictEqual([]);
+  });
 });

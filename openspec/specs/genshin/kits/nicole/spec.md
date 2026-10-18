@@ -1,6 +1,6 @@
 ## Purpose
 
-Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs, and her first constellation's projection. Her later constellations wait on their hooks.
+Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs, her first and second constellations. Her fourth and sixth constellations wait on their hooks.
 
 ## Requirements
 
@@ -184,12 +184,52 @@ Her first constellation SHALL project each hit of the active character at six ti
 - **WHEN** the active character lands a hit
 - **THEN** no projection lands
 
-### Requirement: Nicole's second and later constellations not yet built
+### Requirement: Nicole's second constellation
 
-Nicole's second and later constellations SHALL NOT take effect yet.
+Her second constellation SHALL give each deployed member ATK 300 with her skill, and, while an upgraded character's buff stands, SHALL lower the RES of that character's element by a quarter on each enemy within 10 metres of the team.
+
+#### Scenario: Her skill gives the team ATK 300 with it
+
+- **GIVEN** Nicole is at least constellation 2
+- **WHEN** she casts her skill
+- **THEN** each deployed member gains ATK 300 for 20 seconds from the skill's snapshot
+
+#### Scenario: Her next cast takes the team buff off
+
+- **GIVEN** the team holds the second constellation's ATK 300 buff
+- **WHEN** she casts her skill again
+- **THEN** that buff is removed before her skill's own buffs land
+
+#### Scenario: An upgraded character lowers RES within 10 metres
+
+- **GIVEN** a character holds her first ascension's buff
+- **WHEN** an enemy stands within 10 metres of the team
+- **THEN** that enemy's RES for the upgraded character's element is lowered by a quarter, for as long as the upgrade lasts
+
+#### Scenario: An enemy beyond 10 metres is left alone
+
+- **GIVEN** a character holds her first ascension's buff
+- **WHEN** an enemy stands beyond 10 metres of the team
+- **THEN** that enemy's RES is not lowered
+
+#### Scenario: Without an upgraded buff nothing lowers RES
+
+- **GIVEN** Nicole is at least constellation 2 and no character holds her first ascension's buff
+- **WHEN** an enemy stands within 10 metres of the team
+- **THEN** no RES is lowered
+
+#### Scenario: Below the second constellation nothing applies
+
+- **GIVEN** Nicole is constellation 1
+- **WHEN** she casts her skill
+- **THEN** no ATK 300 constellation buff applies
+
+### Requirement: Nicole's later constellations not yet built
+
+Nicole's fourth and sixth constellations SHALL NOT take effect yet.
 
 #### Scenario: Later constellations do nothing for now
 
-- **GIVEN** Nicole has constellation 2 or later unlocked
+- **GIVEN** Nicole has constellation 4 or 6 unlocked
 - **WHEN** the player fights with Nicole
-- **THEN** no constellation effect beyond the first applies
+- **THEN** no constellation effect beyond the second applies
