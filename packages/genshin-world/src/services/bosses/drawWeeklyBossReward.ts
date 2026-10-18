@@ -11,13 +11,9 @@ import {
   WEEKLY_BOSS_TALENT_DROPS,
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
+import { computeWeeklyBossRow } from "#src/services/bosses/computeWeeklyBossRow";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { takeOne } from "@esposter/shared";
-
-// The row of a World Level: World Level 0 and 1 read Domain Level I, and each World Level above reads the next row, up to VI.
-// Provisional, the wiki's rows being by Domain Level
-const computeWeeklyBossRow = (worldLevel: number): number =>
-  Math.min(Math.max(worldLevel, 1), WEEKLY_BOSS_MORA.length) - 1;
 
 // The item a draw of a list picks, one of its entries at random
 const pickItemId = (itemIds: number[], random: () => number): number =>
