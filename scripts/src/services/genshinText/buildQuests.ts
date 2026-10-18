@@ -21,6 +21,7 @@ import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQu
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readOpeningParentQuestIds } from "#src/services/genshinText/readOpeningParentQuestIds";
 import { readParentQuestIds } from "#src/services/genshinText/readParentQuestIds";
+import { readQuestMaps } from "#src/services/genshinText/readQuestMaps";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
 import { readTalk } from "#src/services/genshinText/readTalk";
