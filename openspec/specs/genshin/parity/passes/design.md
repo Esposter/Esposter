@@ -40,7 +40,7 @@ flowchart TD
 - **Atmosphere.** The sky above the horizon that neither the exports nor the scene covers, compared by statistics blind to where the clouds stand (`readSkyComparison`): the cover band by band of height, the clouds' brightness over the clear sky, their edges' sharpness and spread, and the clear sky's and the clouds' mean colours.
 - **Sound.** Each sound effect `DerivedAssetSoundEffectMap` names, rendered against the game's sound it was fitted from, both channels every 5 milliseconds, gated on a second take of its own noise.
 
-`--pass <name>` runs one measure alone, rewriting only that pass's rows of the component's report, for a pass taken up ahead of one before it that still fails. Each gate is the noise of the data it reads: a pixel or two of a recording's softness, the colour difference two patches side by side are just told apart at, the surface's structure what the exports' own family reads between two chequerboard halves of its blocks, and a family too thin to meet itself reads no gate.
+`--pass <name>` runs the passes up to and including that one, refusing it while an earlier pass still fails, and rewrites only the rows of the passes it ran. Each gate is the noise of the data it reads: a pixel or two of a recording's softness, the colour difference two patches side by side are just told apart at, the surface's structure what the exports' own family reads between two chequerboard halves of its blocks, and a family too thin to meet itself reads no gate.
 
 - **Every derived value cites its source.** A rect, a curve, a fitted shape or a constant names the key of the reference source it is taken from.
 
