@@ -64,6 +64,27 @@ describe(countGameDataPathChanges, () => {
     );
   });
 
+  test("matches a kit's rows by the character they are of when they hold no id", () => {
+    expect.hasAssertions();
+
+    const countMap = new Map<string, number>();
+    countGameDataPathChanges(
+      countMap,
+      "",
+      [
+        { characterId: 1, value: 2 },
+        { characterId: 3, value: 4 },
+      ],
+      [
+        { characterId: 1, value: 2 },
+        { characterId: 2, value: 5 },
+        { characterId: 3, value: 4 },
+      ],
+    );
+
+    expect(countMap).toStrictEqual(new Map([["[] added", 1]]));
+  });
+
   test("counts the entries of a record keyed by id as one path", () => {
     expect.hasAssertions();
 
