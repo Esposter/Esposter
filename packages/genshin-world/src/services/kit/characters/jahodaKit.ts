@@ -148,8 +148,9 @@ export const createJahodaKitBehaviour = ({
   const robotStrikeMultiplier = readParameter("robotStrikeTalentMultiplier");
   const robotStrikeHitFields = readHitFields("robotStrike", ["hitmarkSeconds", "talentMultiplier"]);
   const meowballArea = readArea("meowballCircle");
-  const meowballFirstSeconds = readSeconds("meowballFirst");
-  const meowballIntervalSeconds = readSeconds("meowballInterval");
+  // Named as gcsim names its constants, so the builder reads each from its declaration in skill.go
+  const meowballFirstSeconds = readSeconds("firstMeowballFirstHitmark");
+  const meowballIntervalSeconds = readSeconds("meowballHitmarkInterval");
   const meowballTalentMultiplier = readParameter("meowballTalentMultiplier");
   const meowballHitFields = readHitFields("meowball", ["element", "hitmarkSeconds", "talentMultiplier"]);
   // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary target does
