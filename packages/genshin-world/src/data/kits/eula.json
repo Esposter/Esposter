@@ -52,7 +52,7 @@
   "parameters.shredResistance": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 5132 } },
   "parameters.shredSecondsPerStack": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5132 } },
   "parameters.icewhirlMultiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5132 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5132 } },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "DiffersFromSource",
@@ -64,5 +64,9 @@
   "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.4.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "burst.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "burst.hits.0.gauge": { "cause": "DiffersFromSource", "value": 2 },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5139 } },
+  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
 }
