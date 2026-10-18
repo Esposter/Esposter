@@ -173,10 +173,12 @@ export const getTableKitCandidates = ({
       addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
       const listLengthPath = NAMED_HIT_LIST_LENGTH_PATHS.get(tableLabel.label);
       if (listLengthPath !== undefined) addLength(listLengthPath, CombatTalent.ElementalSkill, tableLabel);
-    } else if (parameterNames === undefined)
-      for (const [position, parameterName] of (characterSkillParameterNameMap[tableLabel.label] ?? []).entries())
-        addLabel(`parameters.${parameterName}`, CombatTalent.ElementalSkill, tableLabel, position);
-    else addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
+    } else
+      addParameterLabel(
+        parameterNames ?? characterSkillParameterNameMap[tableLabel.label] ?? [],
+        CombatTalent.ElementalSkill,
+        tableLabel,
+      );
   }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? []) {
     const parameterNames = BURST_PARAMETER_NAMES.get(tableLabel.label);
