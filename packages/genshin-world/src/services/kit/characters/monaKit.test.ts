@@ -338,7 +338,11 @@ describe("mona kit", () => {
       party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });
     const readBonus = (reactionType: ReactionType) =>
-      MONA_KIT.getPartyReactionBonus?.(mona, { combatant: other, reactionType }, context)?.damageBonus ?? 0;
+      MONA_KIT.getPartyReactionBonus?.(
+        mona,
+        { combatant: other, element: Element.Electro, enemy: createSturdyEnemy(), reactionType },
+        context,
+      )?.damageBonus ?? 0;
     const before = readBonus(TransformativeReactionType.ElectroCharged);
     MONA_KIT.onKitEvent?.(
       { element: Element.Electro, enemy: createOmenedEnemy(), kind: KitEventKind.EnemyHit, striker: other },
@@ -381,7 +385,12 @@ describe("mona kit", () => {
       return (
         MONA_KIT.getPartyReactionBonus?.(
           mona,
-          { combatant: other, reactionType: TransformativeReactionType.ElectroCharged },
+          {
+            combatant: other,
+            element: Element.Electro,
+            enemy: createSturdyEnemy(),
+            reactionType: TransformativeReactionType.ElectroCharged,
+          },
           context,
         )?.damageBonus ?? 0
       );
@@ -415,7 +424,12 @@ describe("mona kit", () => {
       return (
         MONA_KIT.getPartyReactionBonus?.(
           mona,
-          { combatant: other, reactionType: TransformativeReactionType.ElectroCharged },
+          {
+            combatant: other,
+            element: Element.Electro,
+            enemy: createSturdyEnemy(),
+            reactionType: TransformativeReactionType.ElectroCharged,
+          },
           context,
         )?.damageBonus ?? 0
       );
@@ -440,6 +454,7 @@ describe("mona kit", () => {
         enemy,
         party,
         [],
+        new Map(),
       )?.criticalRateBonus ?? 0;
 
     expect({
@@ -475,7 +490,7 @@ describe("mona kit", () => {
     const hexereiParty = createParty([MONA_CHARACTER_ID, HEXEREI_CHARACTER_ID]);
     const plainParty = createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const readPartyDamage = (party: ReturnType<typeof createParty>, striker: Combatant) =>
-      MONA_KIT.getPartyStrikeBonus?.(mona, { body: kitBody, combatant: striker, hit }, omened, party, [])
+      MONA_KIT.getPartyStrikeBonus?.(mona, { body: kitBody, combatant: striker, hit }, omened, party, [], new Map())
         ?.criticalDamageBonus ?? 0;
 
     expect({

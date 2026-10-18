@@ -209,10 +209,9 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     // Constellation 1: a struck member's Hydro-related reactions gain 15% DMG while its bonus holds, 160% of that for an off-field
     // Member when Mona is Hexerei with a second Hexerei member
     getPartyReactionBonus: (member, { combatant, reactionType }, context) => {
-      if (member.constellationCount < CONSTELLATION_1 || !CONSTELLATION_1_REACTION_TYPES.has(reactionType))
-        return undefined;
+      if (member.constellationCount < CONSTELLATION_1 || !CONSTELLATION_1_REACTION_TYPES.has(reactionType)) return {};
       if (!checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, CONSTELLATION_1_STATUS_ID))
-        return undefined;
+        return {};
       const isEnhanced =
         checkIsKitHexerei(member.characterId) &&
         context.hexereiCount >= HEXEREI_TEAM_MINIMUM &&

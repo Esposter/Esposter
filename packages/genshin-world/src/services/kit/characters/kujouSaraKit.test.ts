@@ -238,6 +238,7 @@ describe("constellation 6", () => {
         enemy,
         party,
         markedEffects,
+        new Map(),
       )?.criticalDamageBonus,
       electroUnmarked: SARA_KIT.getPartyStrikeBonus?.(
         sara,
@@ -245,6 +246,7 @@ describe("constellation 6", () => {
         enemy,
         party,
         unmarkedEffects,
+        new Map(),
       )?.criticalDamageBonus,
       pyro: SARA_KIT.getPartyStrikeBonus?.(
         sara,
@@ -252,6 +254,7 @@ describe("constellation 6", () => {
         enemy,
         party,
         markedEffects,
+        new Map(),
       )?.criticalDamageBonus,
     }).toStrictEqual({ electro: 0.6, electroUnmarked: 0, pyro: 0 });
   });
@@ -279,7 +282,8 @@ describe("constellation 6", () => {
     const sara = createSaraCombatant(0, 6);
     const context = createKitTestContext(sara, { kitEffectState: markedOther() });
     const readBonus = (combatant: Combatant, reactionType: LunarReactionType | TransformativeReactionType) =>
-      SARA_KIT.getPartyReactionBonus?.(sara, { combatant, reactionType }, context)?.criticalDamageBonus ?? 0;
+      SARA_KIT.getPartyReactionBonus?.(sara, { combatant, element: Element.Electro, enemy, reactionType }, context)
+        ?.criticalDamageBonus ?? 0;
 
     expect({
       electroChargedByMarked: readBonus(other, TransformativeReactionType.ElectroCharged),

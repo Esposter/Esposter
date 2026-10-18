@@ -207,7 +207,12 @@ const applyConstellation2 = (context: KitContext, combatant: Combatant, reaction
   if (getMoonsignLevel(context.characterIdCombatantMap, context.party) !== MoonsignLevel.AscendantGleam) return;
   const { amountPerMaxHealth, attribute, source } = CONSTELLATION_2_TEAM_BUFFS[reactionType];
   for (const effect of context.kitEffectState.effects)
-    if (effect.kind === "buff" && effect.source !== source && CONSTELLATION_2_TEAM_SOURCES.has(effect.source))
+    if (
+      effect.kind === "buff" &&
+      effect.source !== undefined &&
+      effect.source !== source &&
+      CONSTELLATION_2_TEAM_SOURCES.has(effect.source)
+    )
       effect.secondsRemaining = 0;
   buffKitMember(context.kitEffectState, context.activeCombatant.characterId, {
     amount: amountPerMaxHealth * combatant.attributes.maxHealth,
@@ -280,9 +285,9 @@ export const createColumbinaKitBehaviour = ({
       id: COLUMBINA_SKILL_FIELD_ID,
       isFollowing: true,
       nextTickSeconds: skillDotFirstTickSeconds,
-      onEvent: ({ kind, reactions }) => {
-        if (kind !== KitEventKind.ReactionTriggered) return;
-        for (const { reactionType } of reactions)
+      onEvent: (event) => {
+        if (event.kind !== KitEventKind.ReactionTriggered) return;
+        for (const { reactionType } of event.reactions)
           if (checkIsLunarReactionType(reactionType)) {
             gravity.lastReactionType = reactionType;
             gravity.windowSeconds = GRAVITY_SECONDS;
