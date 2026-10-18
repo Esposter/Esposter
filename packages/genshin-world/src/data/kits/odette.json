@@ -1,5 +1,4 @@
 {
-  "areas.polestar": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 15 } },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 15039 } },
   "burst.hits.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
@@ -12,8 +11,6 @@
   "burst.hits.3.hitmarkFrames": { "cause": "Unclassified", "value": 144 },
   "burst.hits.3.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 15039 } },
   "burst.hits.length": { "cause": "Unclassified", "value": 4 },
-  "frames.polestar": { "cause": "Unclassified", "value": 420 },
-  "frames.polestarTick": { "cause": "Unclassified", "value": 240 },
   "frames.stellarVortex": { "cause": "Unclassified", "value": 181 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 15032 } },

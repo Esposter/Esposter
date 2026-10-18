@@ -10,6 +10,7 @@ import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
+import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
@@ -66,6 +67,7 @@ export const landKitReactionReaches = (
       addDendroCores(kitEffectState, enemy, combatant, reactions, random);
       startPartyLunarReactions(party, reactions);
       for (const reachingReaction of reachingReactions) reaches.push([enemy, reachingReaction]);
+      addPolestarField(kitEffectState, combatant.characterId, reactions, context.body.position);
       if (reactions.length > 0) {
         reactionTriggers.push({ enemy, reactions });
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);

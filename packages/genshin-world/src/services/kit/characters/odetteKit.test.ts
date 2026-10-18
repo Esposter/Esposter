@@ -42,12 +42,12 @@ describe(createOdetteKitBehaviour, () => {
     targeting: KitTargeting.Strike,
   });
   const RECORD: KitRecord = {
-    areas: { polestar: { angle: 2 * Math.PI, height: 2, radius: 15 } },
+    areas: {},
     burst: createActionRecord(),
     burstCooldownSeconds: 15,
     chargedAttack: createActionRecord(),
     chargedAttackStamina: 20,
-    frames: { polestar: 420, polestarTick: 240, stellarVortex: 181 },
+    frames: { stellarVortex: 181 },
     normalAttacks: [createActionRecord()],
     plungeCollision: HIT_RECORD,
     plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
@@ -77,49 +77,6 @@ describe(createOdetteKitBehaviour, () => {
     );
     return context.kitEffectState.effects;
   };
-
-  test("a Stellar-Conduct sustains its Polestar Field for 7 seconds", () => {
-    expect.hasAssertions();
-
-    const effects = triggerReactions([{ element: Element.Cryo, reactionType: ReactionType.StellarConduct }]);
-
-    expect(
-      effects.map((effect) =>
-        effect.kind === "field"
-          ? {
-              centre: effect.centre,
-              characterId: effect.characterId,
-              id: effect.id,
-              radius: effect.radius,
-              secondsRemaining: effect.secondsRemaining,
-            }
-          : effect.kind,
-      ),
-    ).toStrictEqual([
-      { centre: { x: 3, z: 4 }, characterId: ODETTE_CHARACTER_ID, id: "polestar", radius: 15, secondsRemaining: 7 },
-    ]);
-  });
-
-  test("refreshes a standing Polestar Field rather than placing a second one", () => {
-    expect.hasAssertions();
-    const context = createKitTestContext(combatant);
-    const superconduct: Reaction = { element: Element.Cryo, reactionType: ReactionType.StellarConduct };
-    kit.onKitEvent?.(
-      { enemy, kind: KitEventKind.ReactionTriggered, reactions: [superconduct], striker: combatant },
-      context,
-      combatant,
-    );
-    for (const effect of context.kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 1;
-    kit.onKitEvent?.(
-      { enemy, kind: KitEventKind.ReactionTriggered, reactions: [superconduct], striker: combatant },
-      context,
-      combatant,
-    );
-
-    expect(
-      context.kitEffectState.effects.map((effect) => (effect.kind === "field" ? effect.secondsRemaining : effect.kind)),
-    ).toStrictEqual([7]);
-  });
 
   test("places a Stellar Vortex where a Stellar Swirl is triggered, and places nothing for any other reaction", () => {
     expect.hasAssertions();

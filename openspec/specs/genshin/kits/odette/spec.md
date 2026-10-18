@@ -38,11 +38,11 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 
 ### Requirement: A Polestar Field on a Stellar-Conduct
 
-While Odette is deployed, a Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled.
+A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
-- **WHEN** a Stellar-Conduct is triggered while Odette is deployed and no Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
 - **THEN** a Polestar Field stands at the body for 7 seconds
 
 #### Scenario: Stellar-Conduct refreshes a standing field
