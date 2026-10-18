@@ -48,6 +48,7 @@ const toCharacter = (
   const element = elementTag ? toElement(`GCG_COST_DICE_${elementTag.slice("GCG_TAG_ELEMENT_".length)}`) : undefined;
   if (!element) throw invalidRead(`character ${characterRow.id} names no element`);
   const weaponTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
+  const nationTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_NATION_"));
   return {
     descriptionTextId: characterRow.descTextMapHash,
     element,
@@ -55,6 +56,7 @@ const toCharacter = (
     id: characterRow.id,
     maxEnergy: characterRow.maxEnergy,
     nameTextId: characterRow.nameTextMapHash,
+    ...(nationTag ? { nation: nationTag.slice("GCG_TAG_NATION_".length) } : {}),
     skills: characterRow.skillList.map((skillId) => toSkill(findRow(skillRows, skillId, "skill"), costTypes)),
     weapon: weaponTag ? weaponTag.slice("GCG_TAG_WEAPON_".length) : "",
   };
@@ -80,6 +82,7 @@ const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTyp
   kind: toCardKind(cardRow),
   nameTextId: cardRow.nameTextMapHash,
   ...toCardWeapon(cardRow),
+  ...toCardCompanion(cardRow),
 });
 
 // A weapon card names its weapon kind, the tag's suffix as a character's weapon is named, and any other card names none
@@ -87,6 +90,10 @@ const toCardWeapon = ({ tagList }: ExcelGcgCardRow): { weapon?: string } => {
   const weaponTag = tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
   return weaponTag ? { weapon: weaponTag.slice("GCG_TAG_WEAPON_".length) } : {};
 };
+
+// A companion support card carries the ally tag the dump marks the Companion Support Cards with, and any other card carries no mark
+const toCardCompanion = ({ tagList }: ExcelGcgCardRow): { isCompanion?: boolean } =>
+  tagList.includes("GCG_TAG_ALLY") ? { isCompanion: true } : {};
 
 // The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
 // Energy. The dump's empty slots, which hold the invalid cost at its default, are left out

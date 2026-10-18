@@ -107,6 +107,65 @@ describe(toGcgDeck, () => {
     ]);
   });
 
+  test("should name a character's nation from its tag", () => {
+    expect.hasAssertions();
+
+    const LIYUE_CHARACTER_ID = 1_107;
+    const deckRow: ExcelGcgDeckRow = { cardList: [], characterList: [LIYUE_CHARACTER_ID], id: DECK_ID };
+    const characterRow: ExcelGcgCharRow = {
+      descTextMapHash: CHARACTER_DESCRIPTION_TEXT_ID,
+      hp: 10,
+      id: LIYUE_CHARACTER_ID,
+      maxEnergy: 3,
+      nameTextMapHash: CHARACTER_NAME_TEXT_ID,
+      skillList: [],
+      tagList: ["GCG_TAG_ELEMENT_CRYO", "GCG_TAG_WEAPON_POLE", "GCG_TAG_NATION_LIYUE"],
+    };
+
+    expect(toGcgDeck(deckRow, [characterRow], [], [], [], []).characters).toStrictEqual([
+      {
+        descriptionTextId: CHARACTER_DESCRIPTION_TEXT_ID,
+        element: Element.Cryo,
+        hp: 10,
+        id: LIYUE_CHARACTER_ID,
+        maxEnergy: 3,
+        nameTextId: CHARACTER_NAME_TEXT_ID,
+        nation: "LIYUE",
+        skills: [],
+        weapon: "POLE",
+      },
+    ]);
+  });
+
+  test("should mark a companion support card from its ally tag", () => {
+    expect.hasAssertions();
+
+    const COMPANION_CARD_ID = 322_012;
+    const deckRow: ExcelGcgDeckRow = { cardList: [COMPANION_CARD_ID], characterList: [], id: DECK_ID };
+    const companionRow: ExcelGcgCardRow = {
+      cardType: "GCG_CARD_ASSIST",
+      costList: [],
+      descTextMapHash: CARD_DESCRIPTION_TEXT_ID,
+      id: COMPANION_CARD_ID,
+      nameTextMapHash: CARD_NAME_TEXT_ID,
+      skillList: [],
+      tagList: ["GCG_TAG_ALLY"],
+    };
+
+    expect(toGcgDeck(deckRow, [], [], [companionRow], [], []).cards).toStrictEqual([
+      {
+        costs: [],
+        descriptionTextId: CARD_DESCRIPTION_TEXT_ID,
+        effects: [],
+        id: COMPANION_CARD_ID,
+        isCompanion: true,
+        isLocation: false,
+        kind: GcgCardKind.Support,
+        nameTextId: CARD_NAME_TEXT_ID,
+      },
+    ]);
+  });
+
   test("should leave out an empty cost slot, which the dump writes with no cost type", () => {
     expect.hasAssertions();
 
