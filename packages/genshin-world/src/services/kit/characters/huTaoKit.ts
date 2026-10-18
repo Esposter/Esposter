@@ -2,6 +2,7 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -67,10 +68,9 @@ export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
 // Under. Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By, Sanguine Rouge and the CRIT
-// Rate of Constellations 4 and 6 are built.
+// Rate of Constellations 4 and 6 are built, and Constellation 6 refuses a fall to none once a minute.
 // Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her
 // Constellation 2 needs Blood Blossom's DMG by 10% of her Max HP, and Spirit Soother applying it, not built
-// Constellation 6's revive to 1 HP from a lethal drain needs the drain to stop at 1 HP, which the party's drain does not, not built
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
@@ -120,6 +120,14 @@ export const createHuTaoKitBehaviour = ({
       resourceId: SPIRIT_SOOTHER_HEAL_RESOURCE,
     });
   };
+  // Constellation 6's CRIT Rate on Hu Tao, for 10 seconds
+  const buffConstellation6CriticalRate = (kitEffectState: KitEffectState, characterId: number): void =>
+    buffKitMember(kitEffectState, characterId, {
+      amount: CONSTELLATION_6_CRITICAL_RATE,
+      attribute: Attribute.CriticalRate,
+      secondsRemaining: CONSTELLATION_6_SECONDS,
+      source: CONSTELLATION_6_SOURCE,
+    });
   return {
     burst: { hits: [{ onStrike: healOnSpiritSootherStrike }], onStart: resetSpiritSootherHeals },
     burstVariant: {
@@ -134,6 +142,16 @@ export const createHuTaoKitBehaviour = ({
         ? 0
         : 1,
     getPassiveBonuses,
+    // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim v2.47.2
+    // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
+    refusesFall: (combatant, kitEffectState) =>
+      combatant.constellationCount >= CONSTELLATION_6 &&
+      startKitCooldown(
+        kitEffectState,
+        combatant.characterId,
+        CONSTELLATION_6_COOLDOWN_STATUS_ID,
+        CONSTELLATION_6_COOLDOWN_SECONDS,
+      ),
     // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind === KitEventKind.EffectExpired) {
@@ -187,12 +205,13 @@ export const createHuTaoKitBehaviour = ({
           )
         )
           return;
-        buffKitMember(kitEffectState, combatant.characterId, {
-          amount: CONSTELLATION_6_CRITICAL_RATE,
-          attribute: Attribute.CriticalRate,
-          secondsRemaining: CONSTELLATION_6_SECONDS,
-          source: CONSTELLATION_6_SOURCE,
-        });
+        buffConstellation6CriticalRate(kitEffectState, combatant.characterId);
+        return;
+      }
+      // Constellation 6: a fall she refused gives her the same CRIT Rate, its cooldown started by the refusal
+      if (event.kind === KitEventKind.FallRefused) {
+        if (combatant.constellationCount >= CONSTELLATION_6 && event.characterId === combatant.characterId)
+          buffConstellation6CriticalRate(kitEffectState, combatant.characterId);
         return;
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
