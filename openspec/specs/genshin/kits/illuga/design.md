@@ -4,7 +4,7 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 
 ## Decisions
 
-- **Illuga borrows Xiao's, Keqing's and Xiangling's hitmarks and areas, provisional.** His strikes take Xiao's, his Press Keqing's, and his burst Xiangling's.
+- **Illuga borrows Xiao's, Keqing's, Xiangling's and Bennett's hitmarks and areas, provisional.** His strikes and charged attack take Xiao's, his Press Keqing's, and his burst Xiangling's. His plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.
 - **Illuga's Press reads its "Press DMG" label for two hits, and his burst its "Skill DMG" label for two.**
 
 ## Not built
