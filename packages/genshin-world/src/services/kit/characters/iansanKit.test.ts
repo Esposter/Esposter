@@ -1,5 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -85,6 +87,28 @@ describe(createIansanKitBehaviour, () => {
     expect(IANSAN_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
     stepKitSeconds(context, 17);
     expect(IANSAN_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+  });
+
+  test("a passive takes effect at its ascension phase: the Stormflight's strike gives Iansan 20% ATK for 15 seconds from Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = { ...createIansanCombatant(), ascension: 1 };
+    const context = createKitTestContext(combatant);
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.AttackPercent },
+    ]);
+    stepKitSeconds(context, 14);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toHaveLength(1);
+    stepKitSeconds(context, 2);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([]);
+  });
+
+  test("does not take effect below its ascension phase: the Stormflight's strike gives Iansan no ATK below Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = createIansanCombatant();
+    const context = createKitTestContext(combatant);
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([]);
   });
 
   test("a Constellation 1 blessing gives Iansan 15 energy for each 6 points consumed, then waits 18 seconds for the next", () => {
