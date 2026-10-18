@@ -37,6 +37,16 @@ describe(readGenshinSave, () => {
   const COMPANIONSHIP_EXP = 300;
   const RECIPE_ID = 22_007;
   const CRAFTED_COUNT = 4;
+  // A dish learned and brought to proficiency three, and a processing with two units queued from its first start
+  const COOKING_RECIPE_ID = 2;
+  const COOKING_PROFICIENCY = 3;
+  const PROCESSING_RECIPE_ID = 4;
+  const PROCESSING_STARTED_AT = Temporal.Instant.fromEpochMilliseconds(0).toString();
+  const COOKING_SAVE: GenshinSave["cooking"] = {
+    learnedRecipeIds: [COOKING_RECIPE_ID],
+    processingJobs: { [PROCESSING_RECIPE_ID]: { count: 2, startedAt: PROCESSING_STARTED_AT } },
+    proficiencies: { [COOKING_RECIPE_ID]: COOKING_PROFICIENCY },
+  };
   const REPUTATION = { exp: 150, level: 2 };
   // The Frostbearing Tree offered to: the count held of each item toward its next level, by the item's id, and the level
   // It has reached
@@ -168,6 +178,7 @@ describe(readGenshinSave, () => {
     adventureExp: ADVENTURE_EXP,
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
+    cooking: COOKING_SAVE,
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     homePlacements: [PLACEMENT],
     inventory: {
@@ -233,6 +244,24 @@ describe(readGenshinSave, () => {
     expect({ activeIndex: party.activeIndex, deployedTeamIndex: party.deployedTeamIndex }).toStrictEqual({
       activeIndex: 1,
       deployedTeamIndex: 1,
+    });
+  });
+
+  test("a save's cooking reads back as the progress and queues it holds", () => {
+    expect.hasAssertions();
+    const { cookingProgress, processingJobs } = readGenshinSave(
+      { ...EMPTY_GENSHIN_SAVE, cooking: COOKING_SAVE },
+      NAMES,
+      WEAPON_DATA_MAP,
+      new Map(),
+    );
+
+    expect(cookingProgress).toStrictEqual({
+      learnedRecipeIds: [COOKING_RECIPE_ID],
+      proficiencies: { [COOKING_RECIPE_ID]: COOKING_PROFICIENCY },
+    });
+    expect(processingJobs).toStrictEqual({
+      [PROCESSING_RECIPE_ID]: { count: 2, startedAt: Temporal.Instant.from(PROCESSING_STARTED_AT) },
     });
   });
 

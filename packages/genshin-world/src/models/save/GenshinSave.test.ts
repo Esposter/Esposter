@@ -21,6 +21,7 @@ import {
   MAX_ARCHIVE_KILL_COUNT,
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
+  MAX_COOKING_RECIPE_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_ENEMY_RESPAWN_COUNT,
   MAX_FOUND_OCULUS_COUNT,
@@ -141,6 +142,18 @@ describe("genshinSaveSchema", () => {
           Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
+      },
+      cooking: {
+        learnedRecipeIds: Array.from({ length: MAX_COOKING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
+        processingJobs: Object.fromEntries(
+          Array.from({ length: MAX_COOKING_RECIPE_COUNT }, (_value, index) => [
+            String(maxNumber - index),
+            { count: maxNumber, startedAt: maxInstant },
+          ]),
+        ),
+        proficiencies: Object.fromEntries(
+          Array.from({ length: MAX_COOKING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
+        ),
       },
       enemyRespawns: Object.fromEntries(
         Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
@@ -301,6 +314,17 @@ describe("genshinSaveSchema", () => {
 
   // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
   // Next write
+  test("the save keeps the learned dishes, the proficiencies and the processing queues", () => {
+    expect.hasAssertions();
+    const cooking = {
+      learnedRecipeIds: [1, 2],
+      processingJobs: { 3: { count: 2, startedAt: Temporal.Instant.fromEpochMilliseconds(0).toString() } },
+      proficiencies: { 1: 3 },
+    };
+
+    expect(genshinSaveSchema.parse({ ...EMPTY_GENSHIN_SAVE, cooking }).cooking).toStrictEqual(cooking);
+  });
+
   test("refuses an id key that is not its number's own decimal", () => {
     expect.hasAssertions();
     const save = {

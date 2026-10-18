@@ -1,6 +1,8 @@
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -31,6 +33,7 @@ export const useWorldSave = ({
     | "archiveProgressMap"
     | "clearedCamps"
     | "clearedDomainIds"
+    | "cookingProgress"
     | "craftedCountMap"
     | "craftingProgress"
     | "enemyRespawnMap"
@@ -38,6 +41,7 @@ export const useWorldSave = ({
     | "frostbearingTreeProgress"
     | "inventory"
     | "openedChestIds"
+    | "processingJobs"
     | "regionStatueProgressMap"
     | "wallet"
     | "wishHistory"
@@ -56,6 +60,8 @@ export const useWorldSave = ({
   // The camps cleared, each once: a camp whose last enemy falls is kept, and one cleared again is not added twice
   const clearedCamps = shallowRef<readonly ClearedCamp[]>(savedState.clearedCamps);
   const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
+  const cookingProgress = shallowRef<CookingProgress>(savedState.cookingProgress);
+  const processingJobs = shallowRef<Record<number, ProcessingJob>>(savedState.processingJobs);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
@@ -75,12 +81,14 @@ export const useWorldSave = ({
       archiveProgressMap,
       clearedCamps,
       clearedDomainIds,
+      cookingProgress,
       craftedCountMap,
       craftingProgress,
       enemyRespawnMap,
       foundOculusIds,
       frostbearingTreeProgress,
       openedChestIds,
+      processingJobs,
       regionStatueProgressMap,
     ],
     () => {
@@ -110,6 +118,7 @@ export const useWorldSave = ({
     archiveProgressMap,
     clearedCamps,
     clearedDomainIds,
+    cookingProgress,
     craftedCountMap,
     craftingProgress,
     enemyRespawnMap,
@@ -117,6 +126,7 @@ export const useWorldSave = ({
     frostbearingTreeProgress,
     inventory,
     openedChestIds,
+    processingJobs,
     regionStatueProgressMap,
     setEnemyRespawnAt,
     setInventory,

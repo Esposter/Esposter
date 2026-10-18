@@ -52,6 +52,22 @@ describe(useWorldSave, () => {
     events.emit("campCleared", camp);
 
     expect(worldSave.clearedCamps.value).toStrictEqual([camp]);
+  });
+
+  test("the cooking progress and queues load from the save", () => {
+    expect.hasAssertions();
+    const cookingSavedState = readGenshinSave(
+      { ...EMPTY_GENSHIN_SAVE, cooking: { learnedRecipeIds: [1], processingJobs: {}, proficiencies: { 1: 2 } } },
+      {},
+      new Map(),
+      new Map(),
+    );
+    const scope = effectScope();
+    const worldSave = scope.run(() =>
+      useWorldSave({ emitGrant: vi.fn<() => void>(), events: createWorldEvents(), savedState: cookingSavedState }),
+    );
+
+    expect(worldSave?.cookingProgress.value).toStrictEqual({ learnedRecipeIds: [1], proficiencies: { 1: 2 } });
     scope.stop();
   });
 

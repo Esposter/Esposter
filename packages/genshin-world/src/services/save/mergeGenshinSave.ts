@@ -5,6 +5,7 @@ import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
+import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -122,6 +123,22 @@ const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave
   }
   return [...purchaseMap.values()];
 };
+// Whether a processing's queue was started later than another
+const checkIsLaterJob = (job: ProcessingJobSave, than: ProcessingJobSave): boolean =>
+  Temporal.Instant.compare(Temporal.Instant.from(job.startedAt), Temporal.Instant.from(than.startedAt)) > 0;
+// A processing both copies hold a queue of keeps the copy started later, as a queue is one copy's whole, and a processing
+// Only one copy holds is kept. Each processing is listed once, by its id
+const mergeProcessingJobs = (
+  account: Record<string, ProcessingJobSave>,
+  guest: Record<string, ProcessingJobSave>,
+): Record<string, ProcessingJobSave> => {
+  const jobs = { ...account };
+  for (const [recipeId, guestJob] of Object.entries(guest)) {
+    const accountJob = jobs[recipeId];
+    if (!accountJob || checkIsLaterJob(guestJob, accountJob)) jobs[recipeId] = guestJob;
+  }
+  return jobs;
+};
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
   adjustment: WorldLevelAdjustmentSave,
@@ -168,7 +185,8 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // Has chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is
 // Kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing Tree's is.
 // The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
-// Bought in both copies keeps the purchase made later
+// Bought in both copies keeps the purchase made later. Each dish keeps the higher proficiency of its two copies, the
+// Learned dishes union, and each processing's queue keeps the copy started later
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -180,6 +198,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   const companionshipExp = { ...account.companionshipExp };
   for (const [characterId, guestExp] of Object.entries(guest.companionshipExp))
     companionshipExp[characterId] = Math.max(companionshipExp[characterId] ?? 0, guestExp);
+  const proficiencies = { ...account.cooking.proficiencies };
+  for (const [recipeId, guestProficiency] of Object.entries(guest.cooking.proficiencies))
+    proficiencies[recipeId] = Math.max(proficiencies[recipeId] ?? 0, guestProficiency);
   const craftedCounts = { ...account.crafting.craftedCounts };
   for (const [recipeId, guestCount] of Object.entries(guest.crafting.craftedCounts))
     craftedCounts[recipeId] = Math.max(craftedCounts[recipeId] ?? 0, guestCount);
@@ -204,6 +225,11 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ? guest.commissionDay
       : account.commissionDay,
     companionshipExp,
+    cooking: {
+      learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],
+      processingJobs: mergeProcessingJobs(account.cooking.processingJobs, guest.cooking.processingJobs),
+      proficiencies,
+    },
     crafting: {
       craftedCounts,
       learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],

@@ -9,6 +9,12 @@ import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
 describe(mergeGenshinSave, () => {
+  const COOKING_DISH_ID = 1;
+  const OTHER_COOKING_DISH_ID = 2;
+  const PROCESSING_ID = 3;
+  const OTHER_PROCESSING_ID = 4;
+  const EARLIER_START = Temporal.Instant.fromEpochMilliseconds(0).toString();
+  const LATER_START = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const LANDMARK_ID = "1";
   const OTHER_LANDMARK_ID = "2";
   const QUEST_ID = "3";
@@ -488,6 +494,63 @@ describe(mergeGenshinSave, () => {
       ...INITIAL_WISH_PITY,
       fatePoints: FATE_POINTS,
       wishCount: GUEST_COUNT,
+    });
+  });
+
+  test("a dish keeps the higher proficiency of the two copies", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: { ...EMPTY_GENSHIN_SAVE.cooking, proficiencies: { [COOKING_DISH_ID]: 3 } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: { ...EMPTY_GENSHIN_SAVE.cooking, proficiencies: { [COOKING_DISH_ID]: 5 } },
+    };
+
+    expect(mergeGenshinSave(account, guest).cooking.proficiencies).toStrictEqual({ [COOKING_DISH_ID]: 5 });
+  });
+
+  test("the learned dishes of both copies union", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: { ...EMPTY_GENSHIN_SAVE.cooking, learnedRecipeIds: [COOKING_DISH_ID] },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: { ...EMPTY_GENSHIN_SAVE.cooking, learnedRecipeIds: [OTHER_COOKING_DISH_ID] },
+    };
+
+    expect(mergeGenshinSave(account, guest).cooking.learnedRecipeIds).toStrictEqual([
+      COOKING_DISH_ID,
+      OTHER_COOKING_DISH_ID,
+    ]);
+  });
+
+  test("a processing queue keeps the copy started later", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: {
+        ...EMPTY_GENSHIN_SAVE.cooking,
+        processingJobs: {
+          [PROCESSING_ID]: { count: 1, startedAt: EARLIER_START },
+          [OTHER_PROCESSING_ID]: { count: 2, startedAt: EARLIER_START },
+        },
+      },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      cooking: {
+        ...EMPTY_GENSHIN_SAVE.cooking,
+        processingJobs: { [PROCESSING_ID]: { count: 3, startedAt: LATER_START } },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).cooking.processingJobs).toStrictEqual({
+      [PROCESSING_ID]: { count: 3, startedAt: LATER_START },
+      [OTHER_PROCESSING_ID]: { count: 2, startedAt: EARLIER_START },
     });
   });
 

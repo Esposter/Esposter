@@ -2,7 +2,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { Constellation } from "#src/models/character/Constellation";
-import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
@@ -230,6 +229,7 @@ const {
   archiveProgressMap,
   clearedCamps,
   clearedDomainIds,
+  cookingProgress,
   craftedCountMap,
   craftingProgress,
   enemyRespawnMap,
@@ -237,6 +237,7 @@ const {
   frostbearingTreeProgress,
   inventory,
   openedChestIds,
+  processingJobs,
   regionStatueProgressMap,
   setEnemyRespawnAt,
   setInventory,
@@ -551,9 +552,6 @@ const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 // Is held here while the screen is open
 const { cookingRecipes, cookingStovePlace, cookingTalents, processingRecipes } = useWorldCooking(gameDataBaseUrl);
 const cookingRecipe = shallowRef<CookingRecipe>();
-// What the player has learned to cook, and the processing queues, held for the session: neither is in the save yet
-const cookingProgress = shallowRef<CookingProgress>({ learnedRecipeIds: [], proficiencies: {} });
-const processingJobs = shallowRef<Record<number, ProcessingJob>>({});
 const useBagEntry = (entryId: number) => {
   const use = useInventoryEntry(inventory.value, entryId, {
     dishUseMap: dishUseMap.value,
@@ -726,6 +724,7 @@ useWorldSaveSync({
     commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
     clearedDomainIds: clearedDomainIds.value,
+    cookingProgress: cookingProgress.value,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
     enemyRespawnMap: enemyRespawnMap.value,
@@ -735,6 +734,7 @@ useWorldSaveSync({
     inventory: inventory.value,
     openedChestIds: openedChestIds.value,
     party,
+    processingJobs: processingJobs.value,
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,

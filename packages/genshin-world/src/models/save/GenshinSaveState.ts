@@ -4,6 +4,8 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
@@ -26,8 +28,8 @@ import type { BannerKind } from "genshin-interface/save";
 // Wish history, the Bench's learned recipes and each recipe's Crafted count by its id, the Archive's opened entries by
 // Section and its defeat counts by entry id, the Frostbearing Tree's offering Progress, the furnishings placed in the
 // Realm, each Region's Statues of The Seven progress by the Region's id, the ids of the Oculi found, the ids of the
-// Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party and
-// The purchases of each limited good that still count against its limit.
+// Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party, the
+// Cooking progress and processing queues, and the purchases of each limited good that still count against its limit.
 // Each defeated enemy's moment of coming back by its spawn key, in the camps with no boss among them, the save's slices
 // Convert to and from these
 export interface GenshinSaveState {
@@ -41,6 +43,7 @@ export interface GenshinSaveState {
   clearedDomainIds: ReadonlySet<string>;
   commissionDay: CommissionDay;
   companionshipExpMap: ReadonlyMap<number, number>;
+  cookingProgress: CookingProgress;
   craftedCountMap: ReadonlyMap<number, number>;
   craftingProgress: CraftingProgress;
   enemyRespawnMap: ReadonlyMap<string, string>;
@@ -50,6 +53,7 @@ export interface GenshinSaveState {
   inventory: Inventory;
   openedChestIds: ReadonlySet<string>;
   party: Party;
+  processingJobs: Record<number, ProcessingJob>;
   quests: ReadonlyMap<string, QuestProgress>;
   regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
