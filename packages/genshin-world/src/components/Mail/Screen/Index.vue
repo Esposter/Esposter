@@ -19,6 +19,10 @@ import { sortMails } from "#src/services/mail/sortMails";
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
+// The line break in the game's text, written as a backslash and an n or as a real line break, and its size tags
+const LINE_BREAK_REGEX = /\\n|\n/u;
+const SIZE_TAG_REGEX = /<\/?size(?:=\d+)?>/gu;
+
 interface Props {
   // The held mails that are the Traveler's birthday mails, which the Gift Mail Box keeps once claimed
   birthdayMailIds: ReadonlySet<number>;
@@ -61,6 +65,8 @@ const sortedEntries = computed<MailEntry[]>(() =>
   }),
 );
 const selectedMailId = ref<number>();
+// Delete Read asks first, and the screen's owner hears of it only once the player confirms
+const isConfirmingDeleteRead = ref(false);
 // The Mailbox tab lists the mails outside the Gift Mail Box, and the Gift Mail Box tab the mails inside it
 const isGiftBoxTab = ref(false);
 const visibleEntries = computed(() =>
@@ -75,6 +81,14 @@ const hasClaimable = computed(() =>
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
+// The confirm's question and its note: the game writes the line break as a backslash and an n, and sets the note in a size tag
+const deleteReadConfirmLines = computed(() =>
+  gameText[GameTextKey.MailDeleteReadConfirm].split(LINE_BREAK_REGEX).map((line) => line.replace(SIZE_TAG_REGEX, "")),
+);
+const confirmDeleteRead = () => {
+  isConfirmingDeleteRead.value = false;
+  emit("deleteRead");
+};
 const selectMail = (mailId: number) => {
   selectedMailId.value = mailId;
   emit("read", mailId);
@@ -97,7 +111,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 <template>
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
-       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. A pin
+       every mail's items the bag can take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. A pin
        keeps a mail at the top of the list, and the Gift Mail Box, the tab beside the Mailbox, lists the birthday mail kept there. Its date is the date it was received. Not yet built:
        the look the English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
@@ -125,7 +139,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         class="delete-read"
         :disabled="!hasDeletableMail"
         :kind="GameButtonKind.Pill"
-        @click="emit('deleteRead')"
+        @click="isConfirmingDeleteRead = true"
       >
         {{ gameText[GameTextKey.MailDeleteRead] }}
       </GameButton>
@@ -150,6 +164,22 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <p class="title">{{ gameText[GameTextKey.MailNoMail] }}</p>
         <p>{{ gameText[GameTextKey.MailNoMailDescription] }}</p>
       </div>
+      <section
+        v-if="isConfirmingDeleteRead"
+        class="confirm"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="gameText[GameTextKey.MailDeleteRead]"
+      >
+        <p class="confirm-title">{{ deleteReadConfirmLines[0] }}</p>
+        <p class="confirm-note">{{ deleteReadConfirmLines[1] }}</p>
+        <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
+          {{ gameText[GameTextKey.Cancel] }}
+        </GameButton>
+        <GameButton class="confirm-button" :kind="GameButtonKind.Pill" @click="confirmDeleteRead()">
+          {{ gameText[GameTextKey.Confirm] }}
+        </GameButton>
+      </section>
     </template>
     <template #detail>
       <MenuListScreenDetail v-if="selectedEntry" :aria-label="textMap[selectedEntry.row.titleTextId]">
@@ -189,6 +219,30 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 </template>
 
 <style scoped>
+.confirm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--unit) * 560);
+  padding: calc(var(--unit) * 32);
+  transform: translate(-50%, -50%);
+  border-radius: calc(var(--unit) * 12);
+  background: #2b2a3d;
+}
+
+.confirm-title,
+.confirm-note {
+  margin: 0 0 calc(var(--unit) * 12);
+}
+
+.confirm-title {
+  font-size: calc(var(--unit) * 24);
+}
+
+.confirm-note {
+  font-size: calc(var(--unit) * 22);
+}
+
 /* Provisional: the mail's marks are not yet traced off the game, so they take the list screen's unit and the quest
    screen's type sizes */
 .title {
