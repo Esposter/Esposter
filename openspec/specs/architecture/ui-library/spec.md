@@ -25,17 +25,6 @@ A library component SHALL take its colours, type and edges from the design token
 - **THEN** no component is edited
 - **AND** every component draws in the new look
 
-### Requirement: Each interface concern has exactly one owner
-
-Each interface concern SHALL be decided in exactly one place, covering the selected theme, the breakpoints, the hotkeys, the validation rules and the dates.
-
-#### Scenario: A change to a concern is made in its one owner
-
-- **GIVEN** a concern such as the selected theme
-- **WHEN** the concern's behaviour changes
-- **THEN** the change is made in its owner
-- **AND** no other part of the app answers that question separately
-
 ### Requirement: Icons are chosen by meaning
 
 An icon SHALL be chosen by what it says, and the icon set drawing each meaning SHALL change without any feature naming a set.
