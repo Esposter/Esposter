@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 6 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 93 },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 75 },
@@ -33,7 +33,7 @@
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 76.6 },
   "parameters.manifestFlameSeconds": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 12032 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.manifestFlame.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 60 },
   "stances.manifestFlame.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.manifestFlame.chargedAttack.hits.0.area": {
