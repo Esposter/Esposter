@@ -257,7 +257,7 @@ describe("mona kit", () => {
     const landChargedAttack = () =>
       MONA_KIT.chargedAttack.hits
         .at(-1)
-        ?.onStrike?.(context, { body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) });
+        ?.onStrike?.(context, { body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) }, enemy);
     return { getBonus, landChargedAttack, sprintFor, waitFor };
   };
 

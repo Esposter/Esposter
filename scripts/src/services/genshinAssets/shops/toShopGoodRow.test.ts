@@ -41,8 +41,7 @@ describe(toShopGoodRow, () => {
       itemCount: 1,
       itemId: FATE_ITEM_ID,
       minPlayerLevel: MIN_PLAYER_LEVEL,
-      priceCount: PRICE_COUNT,
-      priceItemId: STARDUST_ITEM_ID,
+      costs: [{ count: PRICE_COUNT, itemId: STARDUST_ITEM_ID }],
       refresh: ShopRefresh.Monthly,
     });
   });
@@ -68,10 +67,26 @@ describe(toShopGoodRow, () => {
       itemCount: 1,
       itemId: FATE_ITEM_ID,
       minPlayerLevel: MIN_PLAYER_LEVEL,
-      priceCount: MORA_COST,
-      priceItemId: MORA_ITEM_ID,
+      costs: [{ count: MORA_COST, itemId: MORA_ITEM_ID }],
       refresh: ShopRefresh.Daily,
     });
+  });
+
+  test("should keep every cost of a good the table prices in several items", () => {
+    expect.hasAssertions();
+
+    const FIRST_FISH_ITEM_ID = 9001;
+    const SECOND_FISH_ITEM_ID = 9002;
+
+    expect(
+      toShopGoodRow({
+        ...row,
+        costItems: [{ count: 2, id: FIRST_FISH_ITEM_ID }, { count: 1, id: SECOND_FISH_ITEM_ID }, {}],
+      }).costs,
+    ).toStrictEqual([
+      { count: 2, itemId: FIRST_FISH_ITEM_ID },
+      { count: 1, itemId: SECOND_FISH_ITEM_ID },
+    ]);
   });
 
   test("a good the table gives no refresh for never restocks", () => {

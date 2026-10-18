@@ -31,6 +31,21 @@ interface KitSlotLabels {
 // Stride while it holds, each stance read from its skill's labels. Illuga's Hold is his skill's hold, read from its Hold
 // DMG label. Vesna's skill tag is the wiki's, so her skill reads its label here like her burst
 export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
+  // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
+  [
+    10_000_098,
+    {
+      values: {
+        "hits.swiftHuntNormalShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntNormalShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntNormalShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntPiercingShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "hits.swiftHuntPiercingShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "hits.swiftHuntPiercingShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+      },
+    },
+  ],
   // Nefer
   [
     10_000_122,

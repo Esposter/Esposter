@@ -99,4 +99,17 @@ describe(getRuleKitCandidates, () => {
       KitTargeting.Skill,
     ]);
   });
+
+  test("gives a stance's charged attack the strike targeting a kit's own charged attack takes", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([["stances.blessing.chargedAttack.hits.length", 1]]),
+      undefined,
+    );
+
+    expect(candidateMap.get("stances.blessing.chargedAttack.targeting")?.map(({ value }) => value)).toStrictEqual([
+      KitTargeting.Strike,
+    ]);
+  });
 });

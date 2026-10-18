@@ -27,6 +27,21 @@ describe(stepKitNightsoul, () => {
     expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBeUndefined();
   });
 
+  test("a blessing's gain raises a generation event for the points it added, and none once they are full", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, {
+      nightsoulRate: { maximum: 20, perSecond: 2 },
+      points: 18,
+      secondsRemaining: 10,
+    });
+    expect(stepKitNightsoul(1, kitEffectState)).toStrictEqual([
+      { characterId: CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 2 },
+    ]);
+    expect(stepKitNightsoul(1, kitEffectState)).toStrictEqual([]);
+  });
+
   test("gains a blessing's points by its rate up to its maximum, and keeps the blessing", () => {
     expect.hasAssertions();
 
@@ -57,7 +72,7 @@ describe(stepKitNightsoul, () => {
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 
-  test("reports the points a blessing drains over a step as consumed, and none for a blessing that gains", () => {
+  test("reports the points a blessing drains over a step as consumed", () => {
     expect.hasAssertions();
 
     const drainingState: KitEffectState = { effects: [] };
@@ -69,13 +84,5 @@ describe(stepKitNightsoul, () => {
     expect(stepKitNightsoul(1, drainingState)).toStrictEqual([
       { characterId: CHARACTER_ID, kind: KitEventKind.NightsoulPointsConsumed, points: 8 },
     ]);
-
-    const gainingState: KitEffectState = { effects: [] };
-    enterKitNightsoulBlessing(gainingState, CHARACTER_ID, {
-      nightsoulRate: { maximum: 20, perSecond: 2 },
-      points: 0,
-      secondsRemaining: 10,
-    });
-    expect(stepKitNightsoul(1, gainingState)).toStrictEqual([]);
   });
 });

@@ -125,6 +125,7 @@ describe(createLyneyKitBehaviour, () => {
           },
           enemy,
           createParty([LYNEY_CHARACTER_ID]),
+          [],
         ) ?? 0
       );
     };

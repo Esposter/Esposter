@@ -39,6 +39,8 @@ export interface KitHit {
   element?: Element;
   // The status it gives each enemy it strikes, given its striker, before its damage is taken
   enemyStatus?: (combatant: Combatant) => EnemyStatus | undefined;
+  // The status it gives each enemy it strikes once its damage lands, given its striker, if the hit deals that enemy damage
+  enemyStatusAfterDamage?: (combatant: Combatant) => EnemyStatus | undefined;
   gauge?: number;
   // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the striker
   healAttackShare?: (combatant: Combatant) => number;
