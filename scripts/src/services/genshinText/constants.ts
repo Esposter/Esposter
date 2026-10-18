@@ -19,6 +19,9 @@ export const FETTERS_TABLE_NAME = "FettersExcelConfigData";
 // The quest, dialog and character tables a quest's steps and talks are read from, and the binary output holding each
 // Quest's steps under its id
 export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
+// The quest type of an Archon quest, the table's enum's first value: 7.1 leaves a row at its default out, so a row
+// With no type is an Archon quest
+export const MAIN_QUEST_DEFAULT_TYPE = "AQ";
 export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
 // Numbered parts
