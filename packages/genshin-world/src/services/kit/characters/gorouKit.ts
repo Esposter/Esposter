@@ -50,6 +50,7 @@ const CONSTELLATION_6 = 6;
 // Constellation 6's CRIT DMG on Geo lasts 12 seconds from each skill or burst, at the level the team's Geo count sets then
 const CONSTELLATION_6_SECONDS = 12;
 const CONSTELLATION_6_SOURCE = "gorou-c6";
+const CONSTELLATION_6_GEO_COUNT = 3;
 const CONSTELLATION_4 = 4;
 // Constellation 4 heals the active character half his DEF at the cast, every 1.5 seconds from the burst's hit, while General's Glory stands
 const CONSTELLATION_4_DEFENCE_SHARE = 0.5;
@@ -64,7 +65,7 @@ const countGeoCharacters = (characterIdCombatantMap: KitContext["characterIdComb
 
 // Constellation 6's CRIT DMG on Geo for a Geo count at the cast: one Geo character gives 10%, two 20%, three or more 40%
 const getConstellation6CriticalDamage = (geoCount: number): number => {
-  if (geoCount >= CRUNCH_GEO_COUNT) return 0.4;
+  if (geoCount >= CONSTELLATION_6_GEO_COUNT) return 0.4;
   return geoCount === 2 ? 0.2 : 0.1;
 };
 
