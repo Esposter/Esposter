@@ -132,7 +132,7 @@ describe(createLongNightsOathSetModule, () => {
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.75);
 
-    // The first stack the cap replaced ran out at six seconds, and the other first stack is the one that runs out next
+    // The replacing stack lasts six seconds from its hit, so the other first stack is the one that runs out at six
     stepKitSeconds(context, 4.1);
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.6);
 
