@@ -19,6 +19,7 @@ export enum GameTextKey {
   AjilenakhNut = "4280106100",
   AmakumoFruit = "3862594948",
   AmethystLump = "2485846164",
+  AnemoSigil = "4197855388",
   Apple = "2483588484",
   Archive = "UI_CODEX_HOME_TITLE",
   // The titles of the Archive's seven sections, each the codex's own
@@ -110,6 +111,7 @@ export enum GameTextKey {
   CraftingMaterials = "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE",
   CraftingRequired = "UI_COMMON_ITEM_NEED",
   CraftingTitle = "UI_SYNTHESIS_RECONFIRM_PAGE_TITLE",
+  CryoSigil = "821438660",
   CrystalChunk = "1448077684",
   CrystalCore = "2435040556",
   CrystalMarrow = "307506436",
@@ -118,14 +120,18 @@ export enum GameTextKey {
   DamagedMask = "461826100",
   DandelionSeed = "2071890124",
   Dendrobium = "354894236",
+  DendroSigil = "2628812996",
   // Party Setup's button that deploys the team shown
   Deploy = "UI_BUTTON_ENABLE_TEAM",
+  // A domain's entrance, as its map pin and its entry screen title it
+  DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
   Dracolite = "2859410932",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
+  ElectroSigil = "1061302548",
   // The HUD's skill and burst buttons, named as the controls name their keys
   ElementalBurst = "CONTROL_SKILL5",
   ElementalSkill = "CONTROL_SKILL2",
@@ -145,6 +151,8 @@ export enum GameTextKey {
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   FineEnhancementOre = "377860124",
+  // The prompt a fishing point offers on its entrance button, as the game names it
+  Fishing = "UI_FISH_ENTRANCE_BUTTON",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
   // The Amount line over the forge slider, "Amount: {0}"
@@ -195,6 +203,7 @@ export enum GameTextKey {
   GcgVictory = "UI_GCG_RESULT_WIN",
   GcgYourTurn = "UI_GCG_TURN_YOU",
   GenesisCrystal = "2722599324",
+  GeoSigil = "3999941044",
   GlazeLily = "4012901404",
   GlowingHornshroom = "1496527260",
   Grainfruit = "1334780260",
@@ -223,6 +232,7 @@ export enum GameTextKey {
   HealthNoticeTitle = "1737243758",
   HennaBerry = "3448878388",
   Horsetail = "1247603844",
+  HydroSigil = "33541556",
   IcyPebble = "2856476780",
   IntertwinedFate = "4203128180",
   Inventory = "UI_STC_BAGPAGE_BAG",
@@ -296,6 +306,7 @@ export enum GameTextKey {
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
+  LunaSigil = "3814931852",
   MagicalCrystalChunk = "2057452708",
 
   Mail = "UI_PLAYER_PROFILE_MAIL",
@@ -344,6 +355,7 @@ export enum GameTextKey {
   PreciousChest = "3576739246",
   PressToOpen = "1860729186",
   Primogem = "2696654964",
+  PyroSigil = "4277114300",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",
   // The quest screen's button on the quest being navigated to
@@ -494,6 +506,8 @@ export enum GameTextKey {
   TalentPhaseShort = "SKILL_UPGRADE_AVATAR_BREAK_NEED",
   // The map's way to a place, as its button says
   Teleport = "UI_BUTTON_GOTO",
+  // A Teleport Waypoint, as the map titles its mark
+  TeleportWaypoint = "UI_MAPMARK_MarkTransPoint_TITLE",
   Tidalga = "225224916",
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
