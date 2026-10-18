@@ -1,17 +1,10 @@
-import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoLocalSlice } from "#src/models/genshinAssets/kits/gcsim/GoLocalSlice";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-
-// A local slice declared in a function, `ele := []attributes.Element{c.conversionElem, attributes.Anemo}`: its entries as
-// Written, and the line its name is declared on
-export interface GoLocalSlice {
-  elements: GoExpression[];
-  line: number;
-}
 
 // The local slice a name is declared as before a position in the same function, the nearest declaration above it, else
 // Undefined. A declaration of a slice that is not a composite literal gives none

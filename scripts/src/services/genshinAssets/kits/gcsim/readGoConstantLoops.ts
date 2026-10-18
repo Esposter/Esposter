@@ -1,4 +1,5 @@
-import type { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
+import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
+import type { GoScope } from "#src/models/genshinAssets/kits/gcsim/GoScope";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
@@ -12,16 +13,6 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 const MAX_LOOP_ITERATIONS = 100;
 // The blank identifier, which a loop's variable may be and which names no value an iteration carries
 const GO_BLANK_IDENTIFIER = "_";
-
-export type GoScope = ReturnType<typeof createGoScope>;
-
-// A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, or over a constant
-// Slice, `for i, delay := range burstHitmarks {`, its iterations' variable values and the braces of its body
-export interface ConstantLoop {
-  bodyEnd: number;
-  bodyStart: number;
-  iterations: Map<string, number>[];
-}
 
 // The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2 {`,
 // Its values the counts from zero, and its body's braces, else Undefined
