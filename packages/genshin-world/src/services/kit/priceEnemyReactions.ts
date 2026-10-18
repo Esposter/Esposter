@@ -25,10 +25,11 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 
 // The reactions an element of the combatant's triggered on an enemy, priced from the combatant, written into the enemy
-// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them,
-// Aggravate and Spread add to its base, and each transformative reaction that lands deals its own damage at the share
-// Its source's internal cooldown on the enemy deals, with the deployed team's party reaction bonuses to it, against the
-// Enemy's RES as its statuses leave it, and its own hit's
+// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them, and
+// Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its Elemental
+// Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each transformative reaction
+// That lands deals its own damage at the share its source's internal cooldown on the enemy deals, with the deployed team's
+// Party reaction bonuses to it, against the enemy's RES as its statuses leave it, and its own hit's
 // Poise damage, an Overloaded's explosion's
 export const priceEnemyReactions = (
   kind: EnemyKind,
@@ -54,13 +55,17 @@ export const priceEnemyReactions = (
   const pendingReactions = [...reactions];
   for (const reaction of pendingReactions) {
     const { element: reactionElement, reactionType } = reaction;
+    const partyBonus = getDeployedReactionBonuses(
+      { combatant, element: reactionElement, enemy, reactionType },
+      context,
+    );
     if (
       (reactionType === AmplifyingReactionType.Melt || reactionType === AmplifyingReactionType.Vaporize) &&
       element !== undefined
     )
-      amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery);
+      amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery, partyBonus.damageBonus);
     else if (reactionType === CatalyzeReactionType.Aggravate || reactionType === CatalyzeReactionType.Spread)
-      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, level, elementalMastery);
+      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, level, elementalMastery, partyBonus.damageBonus);
     else if (
       (reactionType === TransformativeReactionType.Overloaded ||
         reactionType === TransformativeReactionType.Superconduct ||
@@ -76,10 +81,6 @@ export const priceEnemyReactions = (
       if (reactionType === TransformativeReactionType.Overloaded)
         pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoiseDamage));
       const resistance = getEnemyResistance(kind, enemy, reactionElement);
-      const partyBonus = getDeployedReactionBonuses(
-        { combatant, element: reactionElement, enemy, reactionType },
-        context,
-      );
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
         (getTransformativeDamage(reactionType, level, elementalMastery, resistance, partyBonus.damageBonus) +
