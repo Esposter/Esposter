@@ -448,6 +448,35 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads no default from a closure's `ok` local, which a same-named local of the function does not share", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package noelle",
+          "",
+          "func (c *char) burst() {",
+          "\tgetExt := func() int {",
+          '\t\text, ok := p["extend"]',
+          "\t\tif !ok {",
+          "\t\t\text = 0",
+          "\t\t}",
+          "\t\treturn ext",
+          "\t}",
+          "\text := getExt()",
+          "\tc.Core.QueueAttack(ai, ap, 0, ext*60)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+
   test("reads a queue call's delay written in terms of a local its declaration gives no number, from the constant it is defaulted to", () => {
     expect.hasAssertions();
 

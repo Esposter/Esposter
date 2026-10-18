@@ -127,6 +127,29 @@ const findBlock = (tokens: readonly GoToken[], position: number): GoBlock => {
   return { end: tokens.length, start: -1 };
 };
 
+// The braces of each closure in a function's body that a position is not in, `func(...) {` ... `}`: a closure's locals
+// And assignments are its own, so a reference outside it never reads them
+const readOtherClosures = (tokens: readonly GoToken[], scope: GoFunctionScope, position: number): GoBlock[] => {
+  const blocks: GoBlock[] = [];
+  for (let position = scope.bodyStart + 1; position < scope.bodyEnd; position++) {
+    if (
+      tokens[position]?.kind !== GoTokenKind.Identifier ||
+      tokens[position]?.text !== "func" ||
+      !checkIsGoPunctuation(tokens[position + 1], "(")
+    )
+      continue;
+    let start = findClosing(tokens, position + 1, "(", ")") + 1;
+    while (start < tokens.length && !checkIsGoPunctuation(tokens[start], "{")) start++;
+    const end = findClosing(tokens, start, "{", "}");
+    if (!(start < position && position < end)) blocks.push({ end, start });
+  }
+  return blocks;
+};
+
+// Whether a token position sits in one of the blocks
+const checkIsInBlocks = (blocks: readonly GoBlock[], index: number): boolean =>
+  blocks.some(({ end, start }) => start < index && index < end);
+
 // The default of a local declared with its ok flag, `travel, ok := p["travel"]`: the first constant its own assignments
 // Give, `travel = 5` in the branch that defaults it, since the player's parameter is absent in the default run
 const findOkDefault = (
@@ -136,6 +159,7 @@ const findOkDefault = (
   position: number,
   constantMap: ReadonlyMap<string, GoConstant>,
 ): number | undefined => {
+  const otherClosures = readOtherClosures(tokens, scope, position);
   let isOkDeclared = false;
   let defaultStart: number | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
@@ -143,7 +167,8 @@ const findOkDefault = (
     if (
       tokens[previous]?.kind !== GoTokenKind.Identifier ||
       tokens[previous]?.text !== name ||
-      checkIsGoPunctuation(tokens[previous - 1], ".")
+      checkIsGoPunctuation(tokens[previous - 1], ".") ||
+      checkIsInBlocks(otherClosures, previous)
     )
       continue;
     if (checkIsGoPunctuation(tokens[previous + 1], ",") && checkIsGoPunctuation(tokens[previous + 3], ":="))
@@ -184,12 +209,14 @@ const findAssignment = (
 ): GoAssignment => {
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
+  const otherClosures = readOtherClosures(tokens, scope, position);
   let latest: { kind: "update" | "value"; position: number } | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
     const kind =
       tokens[previous]?.kind === GoTokenKind.Identifier &&
       tokens[previous]?.text === name &&
-      !checkIsGoPunctuation(tokens[previous - 1], ".")
+      !checkIsGoPunctuation(tokens[previous - 1], ".") &&
+      !checkIsInBlocks(otherClosures, previous)
         ? readAssignmentKind(tokens, previous)
         : undefined;
     if (kind !== undefined) latest = { kind, position: previous };
