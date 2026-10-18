@@ -53,7 +53,7 @@ The Court of Fontaine from the aquabus, the Fountain of Lucine, Palais Mermonia,
 | :-------------------------------------------------------- | :------------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise of the plate and the seabed |
 
-New files:
+New files, in the existing `services/fontaine/` folder:
 
 ```text
 packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and machinery generators
