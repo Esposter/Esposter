@@ -90,7 +90,7 @@ A dataset starts as a `GameDataset` member, which is both the scope a publish re
 ```mermaid
 flowchart TD
   Member["a GameDataset member: the scope, and the first segment of its keys"] --> Builder["a builder returns its records by key"]
-  Builder --> Dry["--dry-run: the records that would publish and the paths they change, no credential, no write"]
+  Builder --> Dry["--dry-run: the records that would publish and their paths, no write"]
   Dry --> Publish["publish to both accounts: hash, store what each lacks, create-only"]
   Publish --> Held{"both accounts hold every object?"}
   Held -->|no| Abort["throws: the lock is untouched, a rerun converges"]
