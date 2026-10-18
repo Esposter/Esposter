@@ -4,14 +4,35 @@ A failed upgrade is logged twice. `openDatabase` logs the error the upgrade call
 
 The two logs are not redundant in every case. A failure that is not a throw, such as a request error inside the upgrade, aborts the transaction without any thrown error for `openDatabase` to log, so `done`'s log is then the only one. The fix has to keep that case logged.
 
-## Options
+## The fix
 
-- **The open logs, the transaction does not.** `openDatabase` logs the thrown error, and `wrapUpgradeTransaction` attaches a handler that stays silent for the abort it caused. A request error that aborts with no throw then goes unlogged, unless the open logs the transaction's error as well, which is the second log again.
-- **The transaction logs, the open does not.** `wrapUpgradeTransaction` logs every failed `done`, and `openDatabase` stops logging the thrown error. The log then names only the `AbortError`, losing the message the callback threw, which is the one a reader needs.
-- **The open records the abort's cause.** `openDatabase` keeps the thrown error as the abort's cause and `wrapUpgradeTransaction` logs `done` only when no cause is recorded. This keeps one log per failure and the thrown message, at the cost of a shared cause the two functions must agree on.
+`wrapUpgradeTransaction` logs a failed `done` only when the transaction carries an error of its own. The platform already separates the two aborts. An `abort()` call leaves the transaction's `error` null, and the wrapper offers no `abort`, so the open's own abort after a throw is the only abort of an upgrade with no error, and the open has logged that throw already. A request that fails without its error being prevented aborts the transaction with that request's error, so `transaction.error` is set, and `done`'s log is the only one. `openDatabase` is unchanged.
 
-The indexed-db page's rationale says a failure nobody reads is logged because the open request already carries it. The third option keeps that wording true and changes only what the transaction's handler checks before it logs.
+```mermaid
+flowchart TD
+  upgrade["the upgrade callback runs"] -->|"throws"| open["openDatabase logs the thrown error, then aborts"]
+  upgrade -->|"a request fails"| request["the transaction aborts with the request's error"]
+  open --> done{"done rejects: does the transaction carry an error?"}
+  request --> done
+  done -->|"no: the open's abort, already logged"| silent["handled, nothing logged"]
+  done -->|"yes"| log["logged once, naming the request's error"]
+```
 
-## Decision needed
+## Decisions
 
-Choose one option, then change the code and the indexed-db page's `done` bullet in the same commit.
+- **The platform's own `transaction.error` over a cause the two functions share.** Recording the thrown error as the abort's cause, and logging `done` only when none was recorded, keeps one log per failure too, but it adds state both functions must agree on to say what the transaction already says. Rejected.
+- **Keeping the open's log of the thrown error.** Leaving the transaction to log every failed `done`, with the open logging nothing, was rejected: the transaction's log would name only the `AbortError` and lose the message the callback threw, which is the one a reader needs.
+- **Keeping the transaction's handler.** Making `done`'s handler silent for every abort was rejected: a request error that aborts with no throw would go unlogged, and an unread `done` with no handler at all is an unhandled rejection.
+
+## Key files
+
+| File                                                               | Role after the change                                                |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `packages/shared/src/services/indexedDb/wrapUpgradeTransaction.ts` | logs a failed `done` only when the transaction carries its own error |
+| `packages/shared/src/services/indexedDb/openDatabase.test.ts`      | the three scenarios, against `fake-indexeddb`                        |
+| `openspec/specs/shared/indexed-db/design.md`                       | the `done` bullet names which failure each of the two functions logs |
+
+## Sources
+
+- [IndexedDB 3.0 — aborting a transaction](https://www.w3.org/TR/IndexedDB/#abort-a-transaction) (W3C) — an `abort()` call aborts with a null error, and a request's unprevented error aborts with that error.
+- [IDBTransaction: error property](https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction/error) (MDN) — `null` for a transaction aborted by `abort()`.

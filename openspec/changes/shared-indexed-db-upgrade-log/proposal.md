@@ -6,7 +6,7 @@ A failed upgrade is logged twice. The open logs the error the upgrade callback t
 
 ## What Changes
 
-Log each failed IndexedDB upgrade once, naming the message the upgrade callback threw, without leaving a failure that throws nothing unlogged. Which of three logging options is built is not yet decided (see tasks).
+Each failed IndexedDB upgrade is logged once, naming the message the upgrade callback threw, and a failure that throws nothing is still logged. The transaction logs a failed upgrade only when the transaction carries an error of its own.
 
 - A thrown upgrade failure writes one console error instead of two.
 - The logged error names the message the upgrade callback threw.
