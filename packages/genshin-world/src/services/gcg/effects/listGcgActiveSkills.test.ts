@@ -45,7 +45,7 @@ const createCharacter = (skills: GcgSkill[], equipments: GcgCharacterState["equi
   statuses: [],
 });
 
-describe("listGcgActiveSkills", () => {
+describe(listGcgActiveSkills, () => {
   test("should list the character's skills without its Passive ones, then the Technique its equipment gives it", () => {
     expect.hasAssertions();
 

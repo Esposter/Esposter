@@ -69,7 +69,7 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
   winnerSideIndex: undefined,
 });
 
-describe("takeGcgScriptedAction", () => {
+describe(takeGcgScriptedAction, () => {
   test("should use its active character's Technique when no card is in hand and no skill is listed", () => {
     expect.hasAssertions();
 

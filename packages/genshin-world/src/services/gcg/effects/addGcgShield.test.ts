@@ -26,7 +26,7 @@ const createCharacter = (shield: number): GcgCharacterState => ({
   statuses: [],
 });
 
-describe("addGcgShield", () => {
+describe(addGcgShield, () => {
   test("should add its points to the character's shield", () => {
     expect.hasAssertions();
 

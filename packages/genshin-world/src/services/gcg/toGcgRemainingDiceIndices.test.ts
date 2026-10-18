@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
 
-describe("toGcgRemainingDiceIndices", () => {
+describe(toGcgRemainingDiceIndices, () => {
   test("should number each group's dice among the dice left once the payment is taken", () => {
     expect.hasAssertions();
 

@@ -27,7 +27,7 @@ const createCharacterState = (hp: number): GcgCharacterState => ({
   statuses: [],
 });
 
-describe("revive a character", () => {
+describe(reviveGcgCharacter, () => {
   test("a defeated character comes back with the HP given, up to its maximum, and a standing one is left as it was", () => {
     expect.hasAssertions();
     const lowRevival = createCharacterState(0);
