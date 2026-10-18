@@ -10,6 +10,12 @@ export const getPassiveKit = (
   answersEvent: (event: KitEvent) => boolean = () => true,
 ): Kit => ({
   ...kit,
+  getChargedAttackStaminaMultiplier: (context) =>
+    (kit.getChargedAttackStaminaMultiplier?.(context) ?? 1) *
+    passiveModules.reduce(
+      (product, passive) => product * (passive.getChargedAttackStaminaMultiplier?.(context) ?? 1),
+      1,
+    ),
   getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) =>
     [kit, ...passiveModules].flatMap(
       ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],

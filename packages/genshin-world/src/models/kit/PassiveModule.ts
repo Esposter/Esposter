@@ -5,6 +5,7 @@ import type { Kit } from "#src/models/kit/Kit";
 // of combat it answers, each read as its own kit reads them
 export type PassiveModule = Pick<
   Kit,
+  | "getChargedAttackStaminaMultiplier"
   | "getPassiveBonuses"
   | "getStrikeAdditiveBaseDamageBonus"
   | "getStrikeCriticalRateBonus"

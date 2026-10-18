@@ -37,7 +37,7 @@ flowchart TD
 
 ## Set bonuses in combat
 
-A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, a `PassiveModule` (the type a weapon's passive shares), which adds bonuses to its wearer's pricing and answers the events of combat as a kit's passive does, read as its wearer's own.
+A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, a `PassiveModule` (the type a weapon's passive shares), which adds bonuses to its wearer's pricing, multiplies its wearer's charged attack stamina by its factor, and answers the events of combat as a kit's passive does, read as its wearer's own. `getPassiveKit` composes each factor by product, so two passives that each lower a stamina cost multiply, and a kit with none keeps a factor of one. A bonus that is only attributes is never a module, even where its params repeat its value (the eleven two-piece bonuses that carry both): the attribute pipeline counts it alone.
 
 ```mermaid
 flowchart TD
