@@ -13,6 +13,7 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import {
+  findClosingParenthesis,
   readGoEnclosingFunction,
   readGoMethodCallSites,
   readGoNamedFunctions,
@@ -155,6 +156,28 @@ const readTaskArgumentDelayStart = (tokens: readonly GoToken[], site: number): n
   return checkIsGoPunctuation(tokens[callEnd], ",") ? callEnd + 1 : undefined;
 };
 
+// A closure a function returns, `return func(a info.AttackCB) {` ... `}`, runs where the value it returns is called, so a
+// Queue call in it takes the delay of the call that schedules that value, or none where no call schedules it
+interface ReturnedClosure {
+  bodyEnd: number;
+  bodyStart: number;
+}
+
+// Each closure a function returns in a file, read at its `return` token
+const readReturnedClosures = (tokens: readonly GoToken[]): ReturnedClosure[] =>
+  tokens.flatMap((token, position) => {
+    if (
+      token.text !== "return" ||
+      tokens[position + 1]?.text !== "func" ||
+      !checkIsGoPunctuation(tokens[position + 2], "(")
+    )
+      return [];
+    const parametersEnd = findClosingParenthesis(tokens, position + 2);
+    if (parametersEnd === undefined || !checkIsGoPunctuation(tokens[parametersEnd + 1], "{")) return [];
+    const bodyEnd = findClosingBrace(tokens, parametersEnd + 1);
+    return bodyEnd === undefined ? [] : [{ bodyEnd, bodyStart: parametersEnd + 1 }];
+  });
+
 // The delay one call of a method adds, from the `Tasks.Add` or `QueueCharTask` closures around the call, once per
 // Iteration of the constant loops and parameter values it is in. A call in no closure adds none
 const readCallSiteDelays = (
@@ -163,9 +186,12 @@ const readCallSiteDelays = (
   loops: readonly ConstantLoop[],
   taskClosures: readonly TaskClosure[],
   site: number,
+  isReturned: boolean,
 ): CallTiming[] => {
   const siteTasks = taskClosures.filter(({ bodyEnd, bodyStart }) => bodyStart < site && site < bodyEnd);
   const argumentDelayStart = readTaskArgumentDelayStart(tokens, site);
+  // A returned closure runs only where its value is scheduled, so a call that schedules none, as a callback does, has none
+  if (isReturned && argumentDelayStart === undefined) return [{ delay: undefined }];
   if (siteTasks.length === 0 && argumentDelayStart === undefined) return [{ delay: 0 }];
   const closureDelayExpressions = siteTasks.map(({ delayStart }) => parseGoExpression(tokens, delayStart).expression);
   const argumentDelayExpression =
@@ -192,7 +218,10 @@ const readCallSiteDelays = (
           delay: closureDelay === undefined ? undefined : closureDelay + argumentDelay,
           line: tokens[argumentDelayStart ?? site]?.line,
         };
-      return { delay: closureDelay, line: firstTask === undefined ? undefined : tokens[firstTask.delayStart]?.line };
+      return {
+        delay: isReturned ? undefined : closureDelay,
+        line: firstTask === undefined ? undefined : tokens[firstTask.delayStart]?.line,
+      };
     });
 };
 
@@ -205,11 +234,12 @@ const readCallVariants = (
   taskClosures: readonly TaskClosure[],
   sites: readonly number[],
   parameters: readonly string[],
+  isReturned: boolean,
 ): CallVariant[] => {
   const variants = new Map<string, CallVariant>();
   for (const site of sites) {
     const callParameterSets = readCallParameters(tokens, scope, site, parameters);
-    for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site))
+    for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site, isReturned))
       for (const callParameters of callParameterSets)
         variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
   }
@@ -230,6 +260,7 @@ export const readGcsimQueuedAttacks = (
     const scope = createGoScope(tokens, constantMap);
     const loops = readConstantLoops(tokens, scope);
     const taskClosures = readTaskClosures(tokens);
+    const returnedClosures = readReturnedClosures(tokens);
     const namedFunctions = readGoNamedFunctions(tokens);
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
@@ -271,10 +302,11 @@ export const readGcsimQueuedAttacks = (
           : readGoMethodCallSites(tokens, enclosingFunction.name).filter(
               (site) => !(enclosingFunction.bodyStart < site && site < enclosingFunction.bodyEnd),
             );
+      const isReturned = returnedClosures.some(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd);
       const callVariants: CallVariant[] =
         enclosingFunction === undefined || sites.length === 0
-          ? parameterIterations.map((parameters) => ({ delay: 0, parameters }))
-          : readCallVariants(tokens, scope, loops, taskClosures, sites, enclosingFunction.parameters);
+          ? parameterIterations.map((parameters) => ({ delay: isReturned ? undefined : 0, parameters }))
+          : readCallVariants(tokens, scope, loops, taskClosures, sites, enclosingFunction.parameters, isReturned);
       for (const callVariant of callVariants)
         for (const loopIteration of readIterations(loops, position)) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
