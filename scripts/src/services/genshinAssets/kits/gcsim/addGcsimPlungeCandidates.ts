@@ -1,13 +1,17 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
-import { GCSIM_PLUNGE_FILE } from "#src/services/genshinAssets/kits/constants";
+import {
+  GCSIM_PLUNGE_COLLISION_HITBOX_NAME,
+  GCSIM_PLUNGE_FILE,
+  GCSIM_PLUNGE_LANDINGS,
+} from "#src/services/genshinAssets/kits/constants";
 import { addFallbackPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addFallbackPlungeCandidates";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readHitmarkSpread } from "#src/services/genshinAssets/kits/gcsim/readHitmarkSpread";
-import { KitPlunge, STRIKE_TARGETING_AREA } from "genshin-world";
+import { STRIKE_TARGETING_AREA } from "genshin-world";
 import { posix } from "node:path";
 
 // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
@@ -25,10 +29,7 @@ export const addGcsimPlungeCandidates = (
     addFallbackPlungeCandidates(donorWriter, plungeFallback);
     return;
   }
-  for (const [plunge, prefix, hitboxName] of [
-    [KitPlunge.Low, "low", "Low_Plunge"],
-    [KitPlunge.High, "high", "High_Plunge"],
-  ] as const) {
+  for (const [plunge, prefix, hitboxName] of GCSIM_PLUNGE_LANDINGS) {
     const path = `plunges.${plunge}`;
     const hitbox = findGcsimHitbox(config, "plunge", hitboxName);
     const hitmark = findGcsimConstant(constantMap, `${prefix}PlungeHitmark`);
@@ -45,7 +46,7 @@ export const addGcsimPlungeCandidates = (
       STRIKE_TARGETING_AREA,
     );
   }
-  const collisionHitbox = findGcsimHitbox(config, "plunge", "Plunge");
+  const collisionHitbox = findGcsimHitbox(config, "plunge", GCSIM_PLUNGE_COLLISION_HITBOX_NAME);
   const collisionHitmark = findGcsimConstant(constantMap, "collisionHitmark");
   addHit(
     "plungeCollision",

@@ -2,6 +2,7 @@ import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcs
 
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
+import { KitPlunge } from "genshin-world";
 import { join } from "node:path";
 
 // The one gcsim tag the builder reads, its last MIT release. Every later tag is under gcsim's own licence, so its
@@ -59,6 +60,12 @@ export const GCSIM_SKILL_HOLD_HITBOX_NAME = "E-Hold";
 export const GCSIM_SKILL_PRESS_HITBOX_NAMES: readonly string[] = ["E-Tap", "E-Press"];
 // The file a gcsim character's own plunges are in
 export const GCSIM_PLUNGE_FILE = "plunge.go";
+// The two landings: each one's plunge, its frames and hitmark named by its prefix, and its area's hitbox by name
+export const GCSIM_PLUNGE_LANDINGS = [
+  [KitPlunge.Low, "low", "Low_Plunge"],
+  [KitPlunge.High, "high", "High_Plunge"],
+] as const;
+export const GCSIM_PLUNGE_COLLISION_HITBOX_NAME = "Plunge";
 // A claymore's charged attack gcsim has no file for lands its spin and its final blow at these frames and ends at the
 // Next, as the kits without one share Diluc's
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];
