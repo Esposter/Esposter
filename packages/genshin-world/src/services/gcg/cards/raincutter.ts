@@ -15,7 +15,7 @@ export const raincutter: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
-    if (user) applyGcgApplication(user, Element.Hydro);
+    if (user) applyGcgApplication(duel, sideIndex, user, Element.Hydro);
     side.onstages.push(createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework));
   },
   getDamage: () => ({ damageType: Element.Hydro, value: RAINCUTTER_DAMAGE }),

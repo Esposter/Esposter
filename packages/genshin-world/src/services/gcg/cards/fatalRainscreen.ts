@@ -15,7 +15,7 @@ export const fatalRainscreen: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
-    if (user) applyGcgApplication(user, Element.Hydro);
+    if (user) applyGcgApplication(duel, sideIndex, user, Element.Hydro);
     side.onstages.push(createGcgZoneCard(RAIN_SWORD_ID, rainSword));
   },
   getDamage: () => ({ damageType: Element.Hydro, value: FATAL_RAINSCREEN_DAMAGE }),
