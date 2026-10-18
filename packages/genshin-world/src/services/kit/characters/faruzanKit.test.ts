@@ -27,6 +27,16 @@ const createFaruzanCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
+// The Dazzling Polyhedron's field lifetime, in seconds, for a Faruzan at the given constellation
+const getDazzlingPolyhedronSeconds = (constellationCount: number): number => {
+  const field = castKitAction(FARUZAN_KIT.elementalBurst, {
+    ...createFaruzanCombatant(),
+    constellationCount,
+  }).effects.find((effect): effect is KitField => effect.kind === "field");
+
+  return field?.secondsRemaining ?? 0;
+};
+
 describe(createFaruzanKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -70,6 +80,18 @@ describe(createFaruzanKitBehaviour, () => {
     expect(field?.nextTickSeconds).toBe(3);
     expect(field?.tickIntervalSeconds).toBe(2);
     expect(field?.secondsRemaining).toBeCloseTo((43 + 745) / 60 + 0.1);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(getDazzlingPolyhedronSeconds(2) - getDazzlingPolyhedronSeconds(0)).toBeCloseTo(6);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(getDazzlingPolyhedronSeconds(1)).toBe(getDazzlingPolyhedronSeconds(0));
   });
 
   test("a Whirlwind Pulse casts from its gadget's place, and the party gains Prayerful Wind's Anemo DMG Bonus", () => {
