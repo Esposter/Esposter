@@ -25,17 +25,21 @@ The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a cha
 
 ## Key files
 
-| File                                                                   | Role                                                                              |
-| :--------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/wish/createBanners.ts`            | Builds each banner with its featured five-stars, which a trial is matched against |
-| `packages/genshin-world/src/components/Wish/Screen/Index.vue`          | Shows the trial button on a banner whose featured character has a trial           |
-| `packages/genshin-world/src/services/domains/createDomainArenaCamp.ts` | The arena camp a trial's enemies stand in                                         |
+| File                                                                   | Role                                                                                        |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/wish/createBanners.ts`            | Builds each banner with its featured five-stars, which a trial is matched against           |
+| `packages/genshin-world/src/components/Wish/Screen/Index.vue`          | Shows the trial button on a banner whose featured character has a trial                     |
+| `packages/genshin-world/src/services/trial/createTrialCharacter.ts`    | Builds a trial's party member: its level, talents, artifacts and the weapon its build holds |
+| `packages/genshin-world/src/services/domains/createDomainArenaCamp.ts` | The arena camp a trial's enemies stand in                                                   |
 
 ## Notes
 
 - The trial weapon is not in the trial rows: a bare-value search of every trial table finds no weapon id, and the `TrialTpsWeapon` rows carry ids that are not weapon ids. The weapon is the wiki's, cited per character in `scripts/src/services/genshinAssets/trials/wikiTrialBuilds.ts`: the newest level-90 build by page date, joined by character name, so provisional. 30 characters have level-80 builds only and no cited weapon.
 - A trial's enemies are not in the dungeon rows, so the wiki's Trial Challenge wave lists stand in. They join to a chosen build by its page for 11 of 80, so the arena stays blocked until the lists are joined by group.
 - The claimed first-clear stages are saved as `characterTrials: { claimedStageIds }` beside the abyss, a required field. Its absent value on an existing save is `{ claimedStageIds: [] }`, which a backfill writes into each `{userId}/save.json`; no backfill has run. The merge unions both copies' claims, so a stage cleared on either copy pays once.
+- A trial whose character has no cited build has no party member: `createTrialCharacter` returns none, since a `Character` holds a weapon and the 30 characters with level-80 builds only have none to hold. PROVISIONAL until the wiki cites a level-90 build for them.
+- A trial's artifacts are a reliquary's level counted from zero, with the experience its level has cost in the rarity's table, so the artifact is at its level and not an unlevelled one. A reliquary no set names is left out of the record, so a template that names one (the level-1 template names two) gives its trial fewer artifacts.
+- The party is the trial character alone, as the spec says. The wiki's Character Trial page says the trial character joins the player's party as a fifth character. The spec is followed; the difference is not decided here.
 - Constellations are not in the trial rows. Every level-90 wiki block reads 0 and an absent field is C0, so a trial party is C0 (cited).
 - The first-clear reward is claimed once and saved with the save, so the save gains a key and the stored saves owe a backfill when it lands.
 
