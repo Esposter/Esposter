@@ -35,6 +35,21 @@ describe(fillDumpDefaults, () => {
     ]);
   });
 
+  test("leaves the entries of a map keyed by id as each row holds them", () => {
+    expect.hasAssertions();
+
+    const rows: unknown[] = [
+      { fishWeight: { "1": 30 }, id: 1 },
+      { fishWeight: { "2": 40 }, id: 2 },
+    ];
+    fillDumpDefaults(rows);
+
+    expect(rows).toStrictEqual([
+      { fishWeight: { "1": 30 }, id: 1 },
+      { fishWeight: { "2": 40 }, id: 2 },
+    ]);
+  });
+
   test("leaves a string out, since an enum's default is a name no other row holds", () => {
     expect.hasAssertions();
 

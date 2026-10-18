@@ -14,6 +14,6 @@ export const toForgeResults = (row: ExcelForgeRow, randomRows: ExcelForgeRandomR
   if (randomRow === undefined)
     throw new InvalidOperationError(Operation.Read, String(row.id), "draws from a drop id with no random table");
   return randomRow.mainRandomItems.flatMap(({ count, itemId, weight }) =>
-    count === undefined || itemId === undefined || weight === undefined ? [] : [{ count, itemId, weight }],
+    itemId === 0 ? [] : [{ count, itemId, weight }],
   );
 };

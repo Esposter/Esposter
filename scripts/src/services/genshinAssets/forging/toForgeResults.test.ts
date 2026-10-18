@@ -25,7 +25,13 @@ describe(toForgeResults, () => {
   const ORE_ID = 104_013;
   const randomRows: ExcelForgeRandomRow[] = [
     { forgeRandomId: 10_001, mainRandomItems: [{ count: 1, itemId: 11_403, weight: 500 }] },
-    { forgeRandomId: MYSTIC_RANDOM_ID, mainRandomItems: [{ count: 6, itemId: ORE_ID, weight: 10_000 }, {}] },
+    {
+      forgeRandomId: MYSTIC_RANDOM_ID,
+      mainRandomItems: [
+        { count: 6, itemId: ORE_ID, weight: 10_000 },
+        { count: 0, itemId: 0, weight: 0 },
+      ],
+    },
   ];
 
   test("should yield a row's fixed result as its only result", () => {
