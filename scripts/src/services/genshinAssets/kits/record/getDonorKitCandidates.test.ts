@@ -12,17 +12,28 @@ const XINGQIU_CHARACTER_ID = 10_000_025;
 const strike = (hitmarkFrames: number) => ({ hits: [{ hitmarkFrames }] });
 
 describe(getDonorKitCandidates, () => {
-  test("gives Vesna's sixth strike the hitmark of Xingqiu's fifth, the sixth strike remapped to the donor's fifth", () => {
+  test("gives Vesna's sixth strike the second hit of Xingqiu's fifth strike, the sixth strike remapped to the donor's fifth", () => {
     expect.hasAssertions();
 
     const overlay: KitOverlay = {
       "normalAttacks.5.hits.0.hitmarkFrames": {
         cause: KitProvisionalCause.BorrowedFromDonor,
-        donor: { characterId: XINGQIU_CHARACTER_ID, path: "normalAttacks.4.hits.0.hitmarkFrames" },
+        donor: { characterId: XINGQIU_CHARACTER_ID, path: "normalAttacks.4.hits.1.hitmarkFrames" },
       },
     };
     const donorRecordMap = new Map<number, unknown>([
-      [XINGQIU_CHARACTER_ID, { normalAttacks: [strike(21), strike(22), strike(23), strike(24), strike(33)] }],
+      [
+        XINGQIU_CHARACTER_ID,
+        {
+          normalAttacks: [
+            strike(21),
+            strike(22),
+            strike(23),
+            strike(24),
+            { hits: [{ hitmarkFrames: 33 }, { hitmarkFrames: 34 }] },
+          ],
+        },
+      ],
     ]);
 
     expect(getDonorKitCandidates(overlay, donorRecordMap).get("normalAttacks.5.hits.0.hitmarkFrames")).toStrictEqual([
@@ -33,7 +44,7 @@ describe(getDonorKitCandidates, () => {
           rule: KitRule.BorrowedFromDonor,
           source: KitSource.Rule,
         },
-        value: 33,
+        value: 34,
       },
     ]);
   });
