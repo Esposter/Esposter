@@ -9,7 +9,7 @@ describe(readReputationRequestQuest, () => {
     expect(
       readReputationRequestQuest({
         giving: { exactItems: [{ count: 3, id: 9001 }, {}], id: 900101 },
-        mainQuest: { descTextMapHash: 2, id: 9001, titleTextMapHash: 1 },
+        mainQuest: { chapterId: 0, descTextMapHash: 2, id: 9001, titleTextMapHash: 1 },
         subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
       }),
     ).toStrictEqual({

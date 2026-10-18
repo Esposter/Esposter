@@ -28,6 +28,7 @@ const rewards = new Map([
   [9103, { rewardId: 9103, rewardItemList: [{ itemCount: 500, itemId: 9002 }] }],
 ]);
 const createQuest = (id: number, rewardIdList?: number[]): DumpedMainQuest => ({
+  chapterId: 0,
   descTextMapHash: 0,
   id,
   rewardIdList,

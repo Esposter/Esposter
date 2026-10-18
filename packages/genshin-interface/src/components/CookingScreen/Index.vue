@@ -30,7 +30,7 @@ const toArcPoint = (fraction: number) => {
 const toBarPath = ([start, end]: [number, number]) => {
   const from = toArcPoint(start);
   const to = toArcPoint(end);
-  return `M ${from.x} ${from.y} A ${ARC_RADIUS_X} ${ARC_RADIUS_Y} 0 0 1 ${to.x} ${to.y}`;
+  return `M ${from.x} ${from.y} A ${COOKING_ARC_RADIUS_X} ${COOKING_ARC_RADIUS_Y} 0 0 1 ${to.x} ${to.y}`;
 };
 </script>
 
