@@ -86,13 +86,13 @@ A region's commissions SHALL join the deal once that region's quest is done.
 
 ### Requirement: Claim Routing
 
-A commission claim SHALL send its Mora and items to the player's wallet and bag, and its Companionship EXP to the friendship grant.
+A commission claim SHALL send its Mora to the player's wallet, its items to the bag, its Adventure EXP to the Adventure Rank, and its Companionship EXP to the friendship grant.
 
 #### Scenario: a claim sends its Mora, items and Companionship EXP where they are kept
 
 - **GIVEN** a commission whose reward is ready to claim
 - **WHEN** the player claims the commission
-- **THEN** the Mora is added to the wallet, the items go to the bag, and the Companionship EXP is granted through the friendship grant
+- **THEN** the Mora is added to the wallet, the items go to the bag, the Adventure EXP goes to the Adventure Rank, and the Companionship EXP is granted through the friendship grant
 
 #### Scenario: a claim past the day's four is refused
 
