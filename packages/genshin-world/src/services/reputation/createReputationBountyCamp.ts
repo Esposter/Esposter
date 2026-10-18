@@ -3,9 +3,7 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
-
-// The id of the camp a bounty spawns, which the defeat of its target is read against
-export const getReputationBountyCampId = (bountyId: number): string => `reputation-bounty-${bountyId}`;
+import { getReputationBountyCampId } from "#src/services/reputation/getReputationBountyCampId";
 
 // The camp a taken bounty spawns: its one target standing at the hunt's spawn point, in the region the hunt names, at the
 // Level the caller reads. A target kind the world does not place is an Error, since the bounty could never spawn it.
