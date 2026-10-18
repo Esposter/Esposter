@@ -48,7 +48,8 @@ export const NOELLE_CHARACTER_ID = 10_000_034;
 // Noelle's behaviour: Breastplate's heal on a hit of her attacks and her press while the shield stands rolls at the
 // Table's chance, certain from one constellation under Sweeping Time. Breastplate shields her from her DEF for the
 // Table's seconds, exploding as it ends from four constellations, and Sweeping Time adds a share of her DEF to her ATK
-// Constellation 6 needs an enemy-defeated event for Sweeping Time's extra seconds, which the kit does not read
+// Constellation 6's extra seconds for each enemy Noelle defeats wait on the enemy-defeated event no kit event reports yet,
+// And its ATK half waits with them
 // And converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and Ascension 4's
 // Skill cooldown cut are built. The charged attack is one cycle of its spin and its final slash
 // The count an attack adds to Ascension 4's, which a fourth one spends on the skill's cooldown

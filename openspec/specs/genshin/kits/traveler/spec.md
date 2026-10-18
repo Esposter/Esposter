@@ -1,6 +1,6 @@
 ## Purpose
 
-The Traveler's first kit as built, its Anemo hits read from the loaded multipliers, with its poise provisional and its element unset until a statue gives one.
+The Traveler's first kit as built, its Anemo hits read from the loaded multipliers, with its poise provisional and its element unset until a statue gives one, and the Anemo set's Constellations 2 and 6 built. Her other constellations are not built.
 
 ## Requirements
 
@@ -52,3 +52,33 @@ The Traveler's skill and burst SHALL deal no poise damage, and her strikes, char
 
 - **WHEN** the Traveler's skill or burst hits an enemy
 - **THEN** the enemy's poise is not reduced
+
+### Requirement: The Anemo set's Constellations 2 and 6
+
+While the Traveler's statue is Anemo, Constellation 2 SHALL raise her Energy Recharge by 16%, and Constellation 6 SHALL lower the Anemo RES of an enemy her burst strikes by 20% for 10 seconds. Both SHALL apply to the Traveler only.
+
+#### Scenario: Constellation 2 raises Energy Recharge
+
+- **GIVEN** the Traveler has Constellation 2 with an Anemo statue
+- **THEN** her Energy Recharge is raised by 16%
+
+#### Scenario: Constellation 6 lowers Anemo RES on the burst's enemies
+
+- **GIVEN** the Traveler has Constellation 6 with an Anemo statue
+- **WHEN** her burst strikes an enemy
+- **THEN** that enemy's Anemo RES is lowered by 20% for 10 seconds
+
+#### Scenario: Another element, another character or a lower constellation changes nothing
+
+- **GIVEN** the statue is not Anemo, or the character is not the Traveler, or she has fewer constellations than the one named
+- **THEN** no Anemo constellation effect applies
+
+### Requirement: Unbuilt Traveler effects
+
+The Anemo set's Constellations 1 and 4, the Anemo set's Constellation 6 clause on the absorbed element, and the other sets' constellations SHALL NOT take effect.
+
+#### Scenario: Unbuilt effects do nothing
+
+- **GIVEN** the Traveler has an unbuilt constellation of any set
+- **WHEN** the player fights with her
+- **THEN** that effect has no effect

@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, and Glacial Waltz's thirteen icicles, with Frostgnaw's damage against Water and the activation knockback not built.
+Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, and Constellations 1 and 4, with Frostgnaw's damage against Water, the activation knockback, and Constellations 2 and 6 not built.
 
 ## Requirements
 
@@ -63,3 +63,51 @@ Glacial Waltz SHALL summon thirteen icicles that strike enemies on their ticks.
 - **WHEN** the player casts Glacial Waltz
 - **THEN** thirteen icicles are summoned
 - **AND** each icicle strikes enemies on its ticks
+
+### Requirement: Constellation 1 CRIT Rate against Cryo-affected enemies
+
+From Constellation 1, Kaeya's normal and charged attacks SHALL have 15% more CRIT Rate against an enemy under Cryo or Frozen.
+
+#### Scenario: Constellation 1 raises CRIT Rate against a Cryo-affected enemy
+
+- **GIVEN** Kaeya has Constellation 1
+- **WHEN** his normal or charged attack strikes an enemy under Cryo or Frozen
+- **THEN** that strike's CRIT Rate is 15% higher
+
+#### Scenario: Other strikes or enemies change nothing
+
+- **GIVEN** Kaeya has Constellation 0, or the enemy is not under Cryo or Frozen, or the strike is his skill
+- **WHEN** his attack strikes that enemy
+- **THEN** no CRIT Rate is added
+
+### Requirement: Constellation 4 Cryo shield below 20% HP
+
+From Constellation 4, a drain that takes Kaeya under 20% HP SHALL shield him for 30% of his Max HP as Cryo, for 20 seconds, once every 60 seconds.
+
+#### Scenario: Constellation 4 shields Kaeya when a drain takes him under 20% HP
+
+- **GIVEN** Kaeya has Constellation 4
+- **WHEN** a drain takes him under 20% HP
+- **THEN** he is shielded for 30% of his Max HP as Cryo for 20 seconds
+
+#### Scenario: A drain within 60 seconds of the last shield is not shielded
+
+- **GIVEN** a shield from Constellation 4 was made less than 60 seconds ago
+- **WHEN** another drain takes him under 20% HP
+- **THEN** no shield is made
+
+#### Scenario: A drain above 20% HP or below Constellation 4 changes nothing
+
+- **GIVEN** Kaeya has Constellation 3, or the drain leaves him at 20% HP or above
+- **WHEN** the drain lands
+- **THEN** no shield is made
+
+### Requirement: Unbuilt Kaeya effects
+
+Kaeya's Constellations 2 and 6 SHALL NOT take effect.
+
+#### Scenario: Unbuilt effects do nothing
+
+- **GIVEN** Kaeya has Constellation 2 or 6
+- **WHEN** the player fights with Kaeya
+- **THEN** that effect has no effect

@@ -1,17 +1,20 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
@@ -33,6 +36,17 @@ const createLisaCombatant = (): Combatant => ({
   kit: LISA_KIT,
   level: 90,
 });
+const OTHER_CHARACTER_ID = 10_000_999;
+
+const createLisaEnemy = (x: number, z: number): Enemy => ({
+  ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  position: { x, z },
+});
+const countConductiveStacks = (enemy: Enemy): number =>
+  enemy.statuses.find(({ id }) => id === "conductive")?.stacks ?? 0;
+// A character taking the field over another, as the party's swap reports it to Lisa's kit
+const swapCharacter = (combatant: Combatant, context: KitContext, characterId: number, previousCharacterId: number) =>
+  LISA_KIT.onKitEvent?.({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context, combatant);
 
 describe("lisa kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -121,5 +135,62 @@ describe("lisa kit", () => {
     }
 
     expect(startedSteps).toStrictEqual([15]);
+  });
+
+  test("constellation 6 gives each opponent within 5 metres of her three stacks of Conductive when she takes the field", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 6 };
+    const near = createLisaEnemy(4, 0);
+    const far = createLisaEnemy(0, 6);
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map([
+        ["near", near],
+        ["far", far],
+      ]),
+    });
+
+    swapCharacter(combatant, context, LISA_CHARACTER_ID, OTHER_CHARACTER_ID);
+
+    expect([countConductiveStacks(near), countConductiveStacks(far)]).toStrictEqual([3, 0]);
+  });
+
+  test("constellation 6 gives its stacks once every 5 seconds, so a swap within them gives none", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 6 };
+    const enemy = createLisaEnemy(1, 0);
+    const context = createKitTestContext(combatant, { enemyMap: new Map([["enemy", enemy]]) });
+    const stackCounts: number[] = [];
+
+    swapCharacter(combatant, context, LISA_CHARACTER_ID, OTHER_CHARACTER_ID);
+    stackCounts.push(countConductiveStacks(enemy));
+    enemy.statuses = [];
+    swapCharacter(combatant, context, LISA_CHARACTER_ID, OTHER_CHARACTER_ID);
+    stackCounts.push(countConductiveStacks(enemy));
+    stepKitSeconds(context, 6);
+    swapCharacter(combatant, context, LISA_CHARACTER_ID, OTHER_CHARACTER_ID);
+    stackCounts.push(countConductiveStacks(enemy));
+
+    expect(stackCounts).toStrictEqual([3, 0, 3]);
+  });
+
+  test("constellation 6 gives no stacks when another character takes the field, or below Constellation 6", () => {
+    expect.hasAssertions();
+    const combatantAtConstellation6: Combatant = { ...createLisaCombatant(), constellationCount: 6 };
+    const combatantAtConstellation5: Combatant = { ...createLisaCombatant(), constellationCount: 5 };
+    const enemyAtConstellation6 = createLisaEnemy(1, 0);
+    const enemyAtConstellation5 = createLisaEnemy(1, 0);
+    const contextAtConstellation6 = createKitTestContext(combatantAtConstellation6, {
+      enemyMap: new Map([["enemy", enemyAtConstellation6]]),
+    });
+    const contextAtConstellation5 = createKitTestContext(combatantAtConstellation5, {
+      enemyMap: new Map([["enemy", enemyAtConstellation5]]),
+    });
+
+    swapCharacter(combatantAtConstellation6, contextAtConstellation6, OTHER_CHARACTER_ID, LISA_CHARACTER_ID);
+    swapCharacter(combatantAtConstellation5, contextAtConstellation5, LISA_CHARACTER_ID, OTHER_CHARACTER_ID);
+
+    expect([countConductiveStacks(enemyAtConstellation6), countConductiveStacks(enemyAtConstellation5)]).toStrictEqual([
+      0, 0,
+    ]);
   });
 });
