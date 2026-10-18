@@ -11,6 +11,7 @@ import {
   IANSAN_CHARACTER_ID,
   IANSAN_WARMING_UP_ID,
 } from "#src/services/kit/characters/iansanKit";
+import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -49,6 +50,19 @@ const landIansanBurst = (combatant: Combatant, points = 20) => {
   IANSAN_KIT.elementalBurst.onStart?.(context);
   return context;
 };
+
+// Puts a character on the field of a kit context, for the Kinetic Energy Scale to log its movement
+const withFieldCharacter = (context: KitContext, characterId: number) => {
+  context.kitEffectState.fieldCharacterId = characterId;
+  return context;
+};
+// Another character on the field, whose movement the Kinetic Energy Scale logs, and the Extreme Force buffs it gets
+const OTHER_CHARACTER_ID = 10_000_002;
+const extremeForceBuffs = (context: KitContext) =>
+  context.kitEffectState.effects.filter(
+    (effect) =>
+      effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === "iansan-constellation-6",
+  );
 
 const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
 
@@ -325,5 +339,60 @@ describe(createIansanKitBehaviour, () => {
     stepKitSeconds(context, 1.2);
     // Past the 5-second tick, which with the restore would give 4 points armed by the drain: only the drain shows
     expect(countIansanPoints(context)).toBeCloseTo(54 - 6 * 1.2);
+  });
+
+  test("the Kinetic Energy Scale logs the field character's movement, and the next second's restore gives a point per two metres", () => {
+    expect.hasAssertions();
+    const moved = withFieldCharacter(landIansanBurst(createIansanCombatant()), OTHER_CHARACTER_ID);
+    const still = withFieldCharacter(landIansanBurst(createIansanCombatant()), OTHER_CHARACTER_ID);
+    IANSAN_KIT.onStep?.(moved, createIansanCombatant(), 1, 4);
+    stepKitSeconds(moved, 1);
+    stepKitSeconds(still, 1);
+
+    expect(countIansanPoints(moved) - countIansanPoints(still)).toBeCloseTo(2);
+  });
+
+  test("the Kinetic Energy Scale logs none of Iansan's own movement", () => {
+    expect.hasAssertions();
+    const ownMovement = withFieldCharacter(landIansanBurst(createIansanCombatant()), IANSAN_CHARACTER_ID);
+    IANSAN_KIT.onStep?.(ownMovement, createIansanCombatant(), 1, 4);
+    stepKitSeconds(ownMovement, 1);
+    const reference = withFieldCharacter(landIansanBurst(createIansanCombatant()), IANSAN_CHARACTER_ID);
+    stepKitSeconds(reference, 1);
+
+    expect(countIansanPoints(ownMovement) - countIansanPoints(reference)).toBeCloseTo(0);
+  });
+
+  test("a Constellation 6 Kinetic Energy Scale lasts three seconds longer, so its restore runs to 15 seconds", () => {
+    expect.hasAssertions();
+    const scaled = withFieldCharacter(landIansanBurst(createIansanCombatant(6)), OTHER_CHARACTER_ID);
+    const plain = withFieldCharacter(landIansanBurst(createIansanCombatant(0)), OTHER_CHARACTER_ID);
+    for (let second = 0; second < 14; second++) {
+      IANSAN_KIT.onStep?.(scaled, createIansanCombatant(6), 1, 2);
+      IANSAN_KIT.onStep?.(plain, createIansanCombatant(0), 1, 2);
+      stepKitSeconds(scaled, 1);
+      stepKitSeconds(plain, 1);
+    }
+
+    expect(countIansanPoints(scaled) - countIansanPoints(plain)).toBeCloseTo(3);
+  });
+
+  test("a Constellation 6 restore that overflows Iansan's 54 points gives the field character 25% DMG, and one that does not gives none", () => {
+    expect.hasAssertions();
+    const overflowing = withFieldCharacter(landIansanBurst(createIansanCombatant(6), 54), OTHER_CHARACTER_ID);
+    IANSAN_KIT.onStep?.(overflowing, createIansanCombatant(6), 1, 30);
+    stepKitSeconds(overflowing, 1);
+    const underCap = withFieldCharacter(landIansanBurst(createIansanCombatant(6), 20), OTHER_CHARACTER_ID);
+    IANSAN_KIT.onStep?.(underCap, createIansanCombatant(6), 1, 2);
+    stepKitSeconds(underCap, 1);
+    const constellation0 = withFieldCharacter(landIansanBurst(createIansanCombatant(0), 54), OTHER_CHARACTER_ID);
+    IANSAN_KIT.onStep?.(constellation0, createIansanCombatant(0), 1, 30);
+    stepKitSeconds(constellation0, 1);
+
+    expect([
+      extremeForceBuffs(overflowing).map(({ amount, secondsRemaining }) => [amount, secondsRemaining]),
+      extremeForceBuffs(underCap).length,
+      extremeForceBuffs(constellation0).length,
+    ]).toStrictEqual([DAMAGE_BONUS_ATTRIBUTES.map(() => [0.25, 3]), 0, 0]);
   });
 });

@@ -1,3 +1,5 @@
+import type { GroundPoint } from "genshin-engine";
+
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
 // The effects on the deployed team, held on one owner so each write a kit makes reassigns the list rather than changing
@@ -8,4 +10,6 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 export interface KitEffectState {
   effects: KitEffect[];
   fieldCharacterId?: number;
+  // The field character's body on the ground at the last step, which the step's movement is measured from
+  fieldPosition?: GroundPoint;
 }

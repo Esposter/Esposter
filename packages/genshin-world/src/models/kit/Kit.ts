@@ -167,9 +167,10 @@ export interface Kit {
   // Run on each step the character on the field sprints, given the step's seconds, to spend the sprint's seconds from
   // Kit's state, or to drain a sprint's points on the step it starts
   onSprint?: ((context: KitContext, kitState: KitState, stepSeconds: number) => void) | undefined;
-  // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant and
-  // The step's seconds, for a clock a constellation or a weapon's passive keeps while its character stands in the team
-  onStep?: ((context: KitContext, combatant: Combatant, stepSeconds: number) => void) | undefined;
+  // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant, the
+  // step's seconds and the field body's movement across it, which is none across a swap, for a clock a constellation or a
+  // Weapon's passive keeps while its character stands in the team, or a scale that logs movement
+  onStep?: ((context: KitContext, combatant: Combatant, stepSeconds: number, movement?: number) => void) | undefined;
   plungeCollision: KitHit;
   // The plunges a character's skill state turns its plunge into while each one's check holds, the first holding one playing
   // In place of the standard plunge when the body lands, as Xianyun's Driftcloud Wave does at each Skyladder press

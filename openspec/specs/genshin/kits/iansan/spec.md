@@ -1,6 +1,6 @@
 ## Purpose
 
-Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's and Ascension 4's, her Stormflight variant, and her constellations 1, 2, 4 and 6.
+Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's and Ascension 4's, her Kinetic Energy Scale, her Stormflight variant, and her constellations 1, 2, 4 and 6.
 
 ## Requirements
 
@@ -134,6 +134,28 @@ Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, enterin
 - **AND** she enters a new blessing within the burst's 12 seconds and Precise Movement is up again
 - **WHEN** another second passes
 - **THEN** the burst's restore gives her no points
+
+### Requirement: Kinetic Energy Scale
+
+Iansan's burst SHALL start a Kinetic Energy Scale for as long as its restore runs, 12 seconds or 15 from Constellation 6. While the Scale is up it SHALL log each 2 metres the field character moves, and each second the restore SHALL give one point for each 2 metres the Scale logged over the last second. Her own movement SHALL log nothing.
+
+#### Scenario: The field character's movement gives points
+
+- **GIVEN** Iansan's burst is up and another character is on the field
+- **WHEN** that character moves 4 metres and the next second's restore falls
+- **THEN** the restore gives her 2 points
+
+#### Scenario: Her own movement gives nothing
+
+- **GIVEN** Iansan is on the field during her burst
+- **WHEN** she moves 4 metres and the next second's restore falls
+- **THEN** the restore gives her no movement points
+
+#### Scenario: Constellation 6 lengthens the Scale
+
+- **GIVEN** Iansan is at Constellation 6 and has just cast her burst
+- **WHEN** 14 seconds pass
+- **THEN** the Scale is still up
 
 ### Requirement: Ascension 1's points
 
