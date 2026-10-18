@@ -1,7 +1,6 @@
 import { app } from "./configuration/app.ts";
 import { build } from "./configuration/build.ts";
 import { compatibilityDate } from "./configuration/compatibilityDate.ts";
-import { content } from "./configuration/content.ts";
 import { css } from "./configuration/css.ts";
 import { devtools } from "./configuration/devtools.ts";
 import { experimental } from "./configuration/experimental.ts";
@@ -13,7 +12,6 @@ import { imports } from "./configuration/imports.ts";
 import { modules } from "./configuration/modules.ts";
 import { nitro } from "./configuration/nitro.ts";
 import { ogImage } from "./configuration/ogImage.ts";
-import { prerender } from "./configuration/prerender.ts";
 import { pwa } from "./configuration/pwa.ts";
 import { router } from "./configuration/router.ts";
 import { routeRules } from "./configuration/routeRules.ts";
@@ -27,7 +25,6 @@ export default defineNuxtConfig({
   app,
   build,
   compatibilityDate,
-  content,
   css,
   devtools,
   experimental,
@@ -39,7 +36,6 @@ export default defineNuxtConfig({
   modules,
   nitro,
   ogImage,
-  prerender,
   pwa,
   router,
   routeRules,

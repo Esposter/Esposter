@@ -1,29 +1,19 @@
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
-import { DOCS_DIRECTORY } from "@esposter/configuration";
-import { RoutePath } from "@esposter/shared";
 
 export const PACKAGES_DIRECTORY = "packages";
-// Lowercase words joined by single hyphens: the name is a directory, an npm name and a docs slug at once
+// Lowercase words joined by single hyphens: the name is a directory and an npm name at once
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PACKAGE_NAME_REGEX: RegExp = /^[a-z]+(?:-[a-z\d]+)*$/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const DOCS_SECTION_DIRECTORY: string = `apps/web/content/${DOCS_DIRECTORY}`;
-// The icon a new docs section takes until its author picks one. It is an icon name the UnoCSS preset resolves
-export const DEFAULT_DOCS_ICON = "i-mdi:package-variant";
 export const LERNA_FILE = "lerna.json";
 export const AGENTS_FILE = "AGENTS.md";
 export const README_FILE = "README.md";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const ROOT_DOCS_INDEX_FILE: string = `${DOCS_SECTION_DIRECTORY}/index.md`;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const QUALITY_LEDGER_FILE: string = `${LEDGER_DIRECTORY}/quality/packages.md`;
-export const DOCS_CATEGORY_SECTIONS_FILE = "apps/web/app/services/docs/DocsCategorySectionsMap.ts";
-export const DOCS_SECTION_ICON_FILE = "apps/web/app/services/docs/DocsSectionIconMap.ts";
 export const APP_MODULES_FILE = "apps/web/configuration/modules.ts";
 export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
-// The docs site, which the generated README links for package documentation
+// The specs, which the generated README links for documentation until the package has a capability of its own
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const DOCS_URL_PREFIX: string = `https://esposter.com${RoutePath.Docs}`;
+export const SPECS_URL: string = `${GITHUB_REPOSITORY_URL}/tree/main/openspec/specs`;
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
 export const PLUGIN_SCOPE = "@esposter";
 // The two configuration files every member carries are identical across kinds.

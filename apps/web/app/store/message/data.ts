@@ -109,7 +109,7 @@ export const useDataStore = defineStore("message/data", () => {
         // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
         // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
         // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
-        // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
+        // It) and invites the duplicate resend openspec/specs/architecture/persist-then-notify/design.md exists to prevent. The
         // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
         // So it holds its loading state and the alert says what happened.
         // The composer's attachments come back, held rather than discarded since the bubble — so the user retries

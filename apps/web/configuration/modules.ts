@@ -10,7 +10,7 @@ const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/modul
 const TRESJS_NUXT_MODULE_PATH = "../../packages/tresjs-nuxt/src/module.ts";
 // The tRPC module's options are the router and context the generated handlers import, the endpoints they are
 // Registered at, and the keep-alive the WebSocket handler pings its connections with
-const trpcModule: [string, ModuleOptions] = [
+const trpcNuxtModule: [string, ModuleOptions] = [
   "../../packages/trpc-nuxt-module/src/module.ts",
   {
     createContext: { from: "~~/server/trpc/context", name: "createContext" },
@@ -25,7 +25,6 @@ const trpcModule: [string, ModuleOptions] = [
 // Down even pure-node tests) and builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP nothing asserts.
 export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
-  "@nuxt/content",
   "@nuxt/eslint",
   "@nuxt/fonts",
   "@nuxt/image",
@@ -38,9 +37,9 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@vueuse/nuxt",
   NUXT_SECURITY_MODULE_PATH,
   TRESJS_NUXT_MODULE_PATH,
-  trpcModule,
+  trpcNuxtModule,
 ];
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST
-  ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", trpcModule]
+  ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", trpcNuxtModule]
   : nonVitestModules;

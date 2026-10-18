@@ -29,7 +29,7 @@ const isDeleteOpen = ref(false);
 // What the delete confirmation asks about, for the warning of what it leaves dangling
 const ids = computed(() => [resource.id]);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
-// No editor at all — the header is the one surface every type has. See /docs/resource/resource-snapshots
+// No editor at all — the header is the one surface every type has. See openspec/specs/resource/resource-snapshots/design.md
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // A dataset a portable export already covers keeps that export, so the CSV command is for the rest

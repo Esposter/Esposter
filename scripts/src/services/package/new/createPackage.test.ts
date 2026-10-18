@@ -2,12 +2,9 @@ import { PackageKind } from "#src/models/package/PackageKind";
 import {
   AGENTS_FILE,
   APP_MODULES_FILE,
-  DOCS_CATEGORY_SECTIONS_FILE,
-  DOCS_SECTION_ICON_FILE,
   LERNA_FILE,
   QUALITY_LEDGER_FILE,
   README_FILE,
-  ROOT_DOCS_INDEX_FILE,
 } from "#src/services/package/new/constants";
 import { createPackage } from "#src/services/package/new/createPackage";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -25,16 +22,7 @@ const readManifest = (root: string, packageDirectory: string): Record<string, un
 // Each test generates into a copy of the real files the edits anchor to, so the anchors are the repository's own.
 // The checkout is never written, and the copies are removed when the test ends
 describe(createPackage, () => {
-  const FIXTURE_PATHS = [
-    AGENTS_FILE,
-    APP_MODULES_FILE,
-    DOCS_CATEGORY_SECTIONS_FILE,
-    DOCS_SECTION_ICON_FILE,
-    LERNA_FILE,
-    QUALITY_LEDGER_FILE,
-    README_FILE,
-    ROOT_DOCS_INDEX_FILE,
-  ];
+  const FIXTURE_PATHS = [AGENTS_FILE, APP_MODULES_FILE, LERNA_FILE, QUALITY_LEDGER_FILE, README_FILE];
   const createFixtureRoot = (): string => {
     const root = mkdtempSync(join(tmpdir(), "package-new-"));
     onTestFinished(() => rmSync(root, { force: true, recursive: true }));
@@ -65,14 +53,10 @@ describe(createPackage, () => {
         "packages/demo-library/eslint.config.js",
         "packages/demo-library/README.md",
         "packages/demo-library/src/demoLibrary.ts",
-        "apps/web/content/docs/demo-library/index.md",
         "packages/demo-library/tsdown.config.ts",
         AGENTS_FILE,
         README_FILE,
         QUALITY_LEDGER_FILE,
-        DOCS_CATEGORY_SECTIONS_FILE,
-        DOCS_SECTION_ICON_FILE,
-        ROOT_DOCS_INDEX_FILE,
       ].toSorted(),
     );
     expect(manifest.version).toBe(version);
@@ -114,22 +98,6 @@ describe(createPackage, () => {
         "A demo library.",
       ],
     ]);
-  });
-
-  test("names the section in its docs map and its icon map, and the root index links it", () => {
-    expect.hasAssertions();
-
-    const root = createFixtureRoot();
-    createPackage(
-      { description: "A demo library.", kind: PackageKind.Library, name: "demo-library", register: false },
-      root,
-    );
-
-    expect(readRepositoryLines(root, DOCS_CATEGORY_SECTIONS_FILE)).toContain('    "demo-library",');
-    expect(readRepositoryLines(root, DOCS_SECTION_ICON_FILE)).toContain('  "demo-library": "i-mdi:package-variant",');
-    expect(readRepositoryLines(root, ROOT_DOCS_INDEX_FILE)).toContain(
-      "- **[demo-library](/docs/demo-library)** — A demo library.",
-    );
   });
 
   test("gives a nuxt-module the shared Nuxt module tsconfig, a module entry and its registration in the app's module list", () => {
@@ -181,7 +149,7 @@ describe(createPackage, () => {
         root,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: package, demo-library already has a package or a docs section]`,
+      `[InvalidOperationError: Invalid operation: Create, name: package, demo-library already has a package]`,
     );
   });
 

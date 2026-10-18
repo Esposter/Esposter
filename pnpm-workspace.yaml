@@ -12,7 +12,6 @@ bail: false
 
 allowBuilds:
   "@parcel/watcher": true
-  better-sqlite3: true
   core-js: true
   esbuild: true
   # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
@@ -75,7 +74,6 @@ catalog:
   "@lezer/highlight": ^1.2.5
   "@livekit/track-processors": ^0.8.2
   "@modelcontextprotocol/sdk": ^1.32.1
-  "@nuxt/content": ^3.16.2
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.0.1
   "@nuxt/image": ^2.1.0
@@ -198,9 +196,7 @@ catalog:
   lru-cache: ^11.5.3
   marked: ^18.1.1
   mathjs: ^15.2.0
-  mermaid: ^12.2.0
   mime-db: ^1.54.0
-  minimark: ^1.0.0
   minisearch: ^7.2.0
   mlly: ^1.8.2
   # @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
@@ -230,9 +226,6 @@ catalog:
   rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.2
   read-excel-file: ^9.3.12
-  # @TODO: no upstream issue — `@nuxtjs/mdc`'s generated plugin imports reach `remark-emoji`, its own dependency, which
-  # Nitro 3 resolves from the app rather than from the module (nuxt-content/mdc)
-  remark-emoji: ^5.0.2
   rolldown: ^1.2.14
   rollup-plugin-visualizer: ^7.1.1
   rxjs: ^7.8.2

@@ -8,7 +8,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   // Respondent progress is tracked per browser, and scoped by participant token so a shared device cannot
-  // Resume someone else's answers — see /docs/architecture/browser-execution
+  // Resume someone else's answers — see openspec/specs/architecture/browser-execution/design.md
   const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(id, participantToken), "");
   let surveyResponse: SurveyResponseEntity | undefined;
   const { executeMutation } = useMutation();

@@ -23,7 +23,7 @@ const execFileAsync = promisify(execFile);
 const readSourceFiles = async (directory: string) =>
   (await readdir(directory)).filter((name) => name.endsWith(".c")).map((name) => join(directory, name));
 // Builds the browser's zstd encoder from pinned upstream source. Run only to move the zstd version: the output is
-// Committed, so nothing else ever needs a compiler (/docs/resource/delta-content-saves)
+// Committed, so nothing else ever needs a compiler (openspec/specs/resource/delta-content-saves/design.md)
 const workDirectory = await mkdtemp(join(tmpdir(), "zstd-"));
 await withFinalizerAsync(
   async () => {

@@ -6,7 +6,7 @@ import type { RouteLocationRaw } from "vue-router";
 // Palette offers what it can reach or run, and the shortcuts dialog lists what has a shortcut. Every row leads with a
 // Mark: what its icon says, drawn in the nearest style's glyph, a whole class for a glyph no meaning names, or a picture
 export type UiCommand = {
-  // A line after the title saying more: a docs page's headings, a resource's type
+  // A line after the title saying more: a resource's type
   description?: string;
   // What it is listed under, in the palette and in the shortcuts dialog: the surface that registered it
   group: string;

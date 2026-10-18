@@ -236,7 +236,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         // oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- a socket ignores what its listener returns, and the listener logs its own failure
         socket.addEventListener("message", async (event) => {
           await getResultAsync(async () => {
-            // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair /docs/architecture/serialization names
+            // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair openspec/specs/architecture/serialization/README.md names
             const serverMessage = serverMessageSchema.parse(JSON.parse(String(event.data)));
             if (isAdmitted) {
               receive(connectionId, serverMessage);

@@ -5,7 +5,6 @@ import { getBareSkillCitationFindings } from "#src/services/sweeps/skillDocs/get
 import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
 import { getDanglingLeadInFindings } from "#src/services/sweeps/skillDocs/getDanglingLeadInFindings";
 import { getDescriptionFindings } from "#src/services/sweeps/skillDocs/getDescriptionFindings";
-import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
 import { getPositionalPointerFindings } from "#src/services/sweeps/skillDocs/getPositionalPointerFindings";
 import { getSelfCitationFindings } from "#src/services/sweeps/skillDocs/getSelfCitationFindings";
 import { getSettledOrderFindings } from "#src/services/sweeps/skillDocs/getSettledOrderFindings";
@@ -31,7 +30,6 @@ export const readSkillDocsFindings = (): SkillDocsFinding[] => {
     ...getSettledOrderFindings(skills, pages),
     ...getTriggerlessFindings(pages),
     ...getUnindexedFindings(skills, pages),
-    ...getDocsRouteFindings(files),
     ...getPositionalPointerFindings(files),
     ...getUnresolvedFindings(files, paths),
   ];

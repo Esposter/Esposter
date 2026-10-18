@@ -43,7 +43,6 @@ const LucideIconMap = {
   [UiIconMeaning.Deploy]: "i-lucide:rocket",
   [UiIconMeaning.Device]: "i-lucide:monitor",
   [UiIconMeaning.Disclosure]: "i-lucide:chevron-right",
-  [UiIconMeaning.Docs]: "i-lucide:book-open",
   [UiIconMeaning.DoNotDisturb]: "i-lucide:bell-off",
   [UiIconMeaning.Download]: "i-lucide:download",
   [UiIconMeaning.Downvote]: "i-lucide:arrow-big-down",
@@ -121,7 +120,6 @@ const LucideIconMap = {
   [UiIconMeaning.Saving]: "i-lucide:cloud-upload",
   [UiIconMeaning.Schedule]: "i-lucide:calendar-clock",
   [UiIconMeaning.ScreenShare]: "i-lucide:screen-share",
-  [UiIconMeaning.ScrollToTop]: "i-lucide:arrow-up-to-line",
   [UiIconMeaning.Search]: "i-lucide:search",
   [UiIconMeaning.Section]: "i-lucide:hash",
   [UiIconMeaning.SelectAll]: "i-lucide:square-dashed",
@@ -168,8 +166,6 @@ const LucideIconMap = {
   [UiIconMeaning.VoxelStyle]: "i-lucide:box",
   [UiIconMeaning.Warning]: "i-lucide:triangle-alert",
   [UiIconMeaning.Webhook]: "i-lucide:webhook",
-  [UiIconMeaning.ZoomIn]: "i-lucide:zoom-in",
-  [UiIconMeaning.ZoomOut]: "i-lucide:zoom-out",
 } as const satisfies Record<UiIconMeaning, string>;
 // Each style's class for every meaning, written whole so the icons preset sees it: Lucide for standard and Genshin, and
 // For voxel the pixel set first, and a Material Design Icons class where it has no glyph
@@ -215,7 +211,6 @@ export const UiIconMap = {
     [UiIconMeaning.Deploy]: "i-mdi:rocket-launch",
     [UiIconMeaning.Device]: "i-pixelarticons:monitor",
     [UiIconMeaning.Disclosure]: "i-pixelarticons:chevron-right",
-    [UiIconMeaning.Docs]: "i-pixelarticons:book-open",
     [UiIconMeaning.DoNotDisturb]: "i-pixelarticons:notification-off",
     [UiIconMeaning.Download]: "i-pixelarticons:download",
     [UiIconMeaning.Downvote]: "i-pixelarticons:arrow-big-down",
@@ -293,7 +288,6 @@ export const UiIconMap = {
     [UiIconMeaning.Saving]: "i-pixelarticons:cloud-upload",
     [UiIconMeaning.Schedule]: "i-mdi:clock-plus-outline",
     [UiIconMeaning.ScreenShare]: "i-pixelarticons:cast",
-    [UiIconMeaning.ScrollToTop]: "i-pixelarticons:arrow-up",
     [UiIconMeaning.Search]: "i-pixelarticons:search",
     [UiIconMeaning.Section]: "i-pixelarticons:hash",
     [UiIconMeaning.SelectAll]: "i-pixelarticons:grid",
@@ -340,7 +334,5 @@ export const UiIconMap = {
     [UiIconMeaning.VoxelStyle]: "i-pixelarticons:box",
     [UiIconMeaning.Warning]: "i-pixelarticons:warning-box",
     [UiIconMeaning.Webhook]: "i-mdi:webhook",
-    [UiIconMeaning.ZoomIn]: "i-pixelarticons:zoom-in",
-    [UiIconMeaning.ZoomOut]: "i-pixelarticons:zoom-out",
   },
 } as const satisfies Record<UiStyle, Record<UiIconMeaning, string>>;

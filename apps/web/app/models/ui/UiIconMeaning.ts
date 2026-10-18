@@ -38,7 +38,6 @@ export enum UiIconMeaning {
   Deploy = "Deploy",
   Device = "Device",
   Disclosure = "Disclosure",
-  Docs = "Docs",
   DoNotDisturb = "DoNotDisturb",
   Download = "Download",
   Downvote = "Downvote",
@@ -116,7 +115,6 @@ export enum UiIconMeaning {
   Saving = "Saving",
   Schedule = "Schedule",
   ScreenShare = "ScreenShare",
-  ScrollToTop = "ScrollToTop",
   Search = "Search",
   Section = "Section",
   SelectAll = "SelectAll",
@@ -163,6 +161,4 @@ export enum UiIconMeaning {
   VoxelStyle = "VoxelStyle",
   Warning = "Warning",
   Webhook = "Webhook",
-  ZoomIn = "ZoomIn",
-  ZoomOut = "ZoomOut",
 }

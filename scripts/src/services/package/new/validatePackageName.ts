@@ -1,4 +1,4 @@
-import { DOCS_SECTION_DIRECTORY, PACKAGE_NAME_REGEX, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
+import { PACKAGE_NAME_REGEX, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -12,6 +12,6 @@ export const validatePackageName = (name: string, root: string): void => {
       "package",
       "the name is lowercase words joined by single hyphens, such as nuxt-security-module",
     );
-  if (existsSync(join(root, PACKAGES_DIRECTORY, name)) || existsSync(join(root, DOCS_SECTION_DIRECTORY, name)))
-    throw new InvalidOperationError(Operation.Create, "package", `${name} already has a package or a docs section`);
+  if (existsSync(join(root, PACKAGES_DIRECTORY, name)))
+    throw new InvalidOperationError(Operation.Create, "package", `${name} already has a package`);
 };

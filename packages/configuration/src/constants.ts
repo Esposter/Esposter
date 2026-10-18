@@ -19,26 +19,9 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // `scripts/src/workspace/agentDirectories.test.ts`.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
-// The docs site's one path segment. `apps/web/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
-// The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
-// Collection and docs suites all build their paths from here rather than repeating it.
-// Three consumers cannot import it, and none needs a pin: a Nuxt route is its own directory name, a markdown link
-// Is authored text, and `content.config.ts` is loaded by `nuxt prepare` from the app's `postinstall` — which runs
-// Before any workspace package is built, so importing this there fails the install itself on a fresh clone. All
-// Three are covered by the docs suite, which lives inside the directory and resolves every link to a real page, so
-// A rename that missed one of them fails loudly rather than silently.
-export const DOCS_DIRECTORY = "docs";
 // Path prefixes a hand-written citation may use relative to `apps/web` instead of the repository root — the
-// Docs' Key Files tables write them, so the docs suite resolves them and the citation sync rewrites them.
-export const APP_RELATIVE_PREFIXES = [
-  "app/",
-  "configuration/",
-  "content/",
-  "public/",
-  "scripts/",
-  "server/",
-  "shared/",
-] as const;
+// Design pages' Key Files tables write them, so the citations suite resolves them and the citation sync rewrites them.
+export const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "public/", "scripts/", "server/", "shared/"] as const;
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;

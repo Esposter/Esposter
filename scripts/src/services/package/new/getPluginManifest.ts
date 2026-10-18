@@ -1,5 +1,6 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
+import { GITHUB_REPOSITORY_URL, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { SITE_NAME } from "@esposter/shared";
 
 // The Claude Code plugin manifest. Its `userConfig` is empty.
@@ -12,9 +13,9 @@ export const getPluginManifest = ({ description, name }: CreatePackageOptions): 
     .split("-")
     .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
     .join(" "),
-  homepage: `https://esposter.com/docs/${name}`,
+  homepage: `${GITHUB_REPOSITORY_URL}/tree/main/${PACKAGES_DIRECTORY}/${name}`,
   keywords: ["claude-code", "claude-code-plugin"],
   license: "Apache-2.0",
   name,
-  repository: "https://github.com/Esposter/Esposter",
+  repository: GITHUB_REPOSITORY_URL,
 });

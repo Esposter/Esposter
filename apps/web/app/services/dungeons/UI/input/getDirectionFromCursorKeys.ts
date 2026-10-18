@@ -4,7 +4,7 @@ import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 
-// Four directions and no diagonals, on purpose (/docs/dungeons/rejected/diagonal-movement): one key per direction
+// Four directions and no diagonals, on purpose (openspec/rejected/dungeons/diagonal-movement/design.md): one key per direction
 const getDirectionCursorKeyMap = (cursorKeys: BaseCursorKeys): Record<InteractableDirection, Input.Keyboard.Key> => ({
   [Direction.DOWN]: cursorKeys.down,
   [Direction.LEFT]: cursorKeys.left,

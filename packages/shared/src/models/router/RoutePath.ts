@@ -8,7 +8,6 @@ export const RoutePath: {
   readonly Calls: (id: string) => string;
   readonly CallsIndex: "/calls";
   readonly Clicker: "/clicker";
-  readonly Docs: "/docs";
   readonly Dungeons: "/dungeons";
   readonly FluidSimulator: "/fluid-simulator";
   readonly Genshin: "/genshin";
@@ -46,7 +45,6 @@ export const RoutePath: {
   Calls: (id: string) => `/calls/${id}`,
   CallsIndex: "/calls",
   Clicker: "/clicker",
-  Docs: "/docs",
   Dungeons: "/dungeons",
   FluidSimulator: "/fluid-simulator",
   Genshin: "/genshin",

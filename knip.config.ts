@@ -20,7 +20,7 @@ const knipConfiguration: KnipConfig = {
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {
       // A development route is registered by its path from a module under `nuxt dev` alone, so nothing imports it
-      entry: ["app/App.vue", "app/components/**/*.vue", "content.config.ts", "server/development/*.ts"],
+      entry: ["app/App.vue", "app/components/**/*.vue", "server/development/*.ts"],
       ignore: ["public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
@@ -33,18 +33,12 @@ const knipConfiguration: KnipConfig = {
         // Driver, which loads `lru-cache` without declaring it, so the app declares it and nothing in the app imports
         // It; without it `nuxt prepare` installs it itself and rewrites the catalog under CI's install (nuxt/scripts)
         "lru-cache",
-        // @TODO: no upstream issue — `nuxt-ai-ready`'s virtual `content-lookup` module imports `minimark/stringify` without
-        // Declaring it, so the app declares it and nothing in the app imports it (harlan-zw/nuxt-ai-ready)
-        "minimark",
         // @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
         // Remove this ignore entry when Nitro resolves the alias from Nuxt (nuxt/nuxt)
         "mocked-exports",
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again
         "nuxt-nightly",
-        // @TODO: no upstream issue — `@nuxtjs/mdc`'s generated plugin imports reach `remark-emoji`, which Nitro 3
-        // Resolves from the app, so nothing in the app imports it (nuxt-content/mdc)
-        "remark-emoji",
         // Nuxt loads it by name when `nuxt analyze` turns `build.analyze` on, for the dependency score's bundle column, so
         // Nothing in the app imports it
         "rollup-plugin-visualizer",

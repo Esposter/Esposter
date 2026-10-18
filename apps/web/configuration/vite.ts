@@ -17,13 +17,11 @@ export const vite: NuxtConfig["vite"] = {
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
       "three/examples/jsm/inspector/Inspector.js",
     ],
-    // Mermaid is imported lazily after mount, so without this it is discovered mid-session and the
-    // Re-optimize rewrites the chunks it shares with the app out from under the loaded module graph. JSON Forms'
-    // Ajv is CommonJS the schema forms only load in a dialog, so it is named through its importer, whose own copy it is
+    // JSON Forms' Ajv is CommonJS the schema forms only load in a dialog, so it is named through its importer, whose own
+    // Copy it is
     include: [
       "@jsonforms/core > ajv",
       "@jsonforms/core > ajv-formats",
-      "mermaid",
       "pdfjs-dist",
       // The world's and the login's imports, which Vite finds only as their components mount. Left out, each is found
       // Mid-session and the optimiser re-runs, so the chunks the loaded modules name answer 504 until a reload

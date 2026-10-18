@@ -11,8 +11,7 @@ await runCommand(
     args: {
       description: {
         default: "",
-        description:
-          "What the package does, as its README and docs section open with; defaults to a placeholder naming it",
+        description: "What the package does, as its README opens with; defaults to a placeholder naming it",
         type: "string",
       },
       kind: {
@@ -34,7 +33,7 @@ await runCommand(
       },
     },
     meta: {
-      description: "Create a workspace package and the inventory, ledger and docs entries that list it",
+      description: "Create a workspace package and the inventory and ledger entries that list it",
       name: "ai:package:new",
     },
     run: ({ args }) => {
@@ -45,7 +44,7 @@ await runCommand(
         register: args.register,
       };
       for (const path of createPackage(options)) console.info(path);
-      console.info("next: run `pnpm i` to link the package, then write its purpose and docs prose");
+      console.info("next: run `pnpm i` to link the package, then write its purpose");
     },
   }),
 );

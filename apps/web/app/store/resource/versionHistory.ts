@@ -9,7 +9,7 @@ import { NotificationSeverity, SnapshotChannel } from "@esposter/db-schema";
 
 // The version history panel's own state: one merged timeline over both channels, and the two writes its rows
 // Issue. Blade-scoped — the store is app-lifetime and this state is the open resource's, so the panel clears
-// It on unmount. See /docs/resource/resource-snapshots
+// It on unmount. See openspec/specs/resource/resource-snapshots/design.md
 export const useVersionHistoryStore = defineStore("resource/versionHistory", () => {
   const { $trpc } = useNuxtApp();
   const notificationStore = useNotificationStore();

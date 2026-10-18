@@ -107,7 +107,7 @@ export const useResourceStore = defineStore("resource", () => {
   const hasUnwrittenContent = ref(false);
   // Every type's edits land through saveContent, so the state every type shows is derived here rather than
   // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
-  // Save are the same write. See /docs/resource/resource-save-state
+  // Save are the same write. See openspec/specs/resource/resource-save-state/design.md
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
     // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
@@ -173,7 +173,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale.
   // The two stages are sequential because the second reads what the first landed: a registry runs its own
   // Hooks together, so a third-party editor adopting the store's content cannot be a peer of the re-read
-  // That fills it (/docs/architecture/third-party-document-adapters)
+  // That fills it (openspec/specs/architecture/third-party-document-adapters/design.md)
   const reloadResourceContent = async () => {
     await readResource();
     if (!resource.value) return;
@@ -199,7 +199,7 @@ export const useResourceStore = defineStore("resource", () => {
     latestContentRead = contentRead;
     const resourceRouter = getResourceRouter(type);
     // A read crosses the way a save of the same document would: through the server while one body carries it,
-    // Straight from Blob Storage above that (/docs/architecture/large-documents). The stored bytes are then the
+    // Straight from Blob Storage above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the
     // Delta baseline as well, so a session's first large save can already be a delta
     let storedContent: ContentBaseline | undefined;
     let content: unknown;
@@ -244,7 +244,7 @@ export const useResourceStore = defineStore("resource", () => {
     if (!resourceValue || isContentStale.value || !checkIsContentRead()) return false;
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
-    // Saved (/docs/resource/resource-save-state). The unchanged-content path below is a save all the same: it
+    // Saved (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same: it
     // Wrote nothing because there was nothing left to write
     hasUnwrittenContent.value = false;
     const contentJson = JSON.stringify(content);
@@ -264,7 +264,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
-    // Failed for the owner either way (/docs/resource/resource-save-state)
+    // Failed for the owner either way (openspec/specs/resource/resource-save-state/design.md)
     const outcome = await executeSaveContentMutation(
       async () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must

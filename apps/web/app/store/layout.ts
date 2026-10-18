@@ -6,7 +6,7 @@ export const useLayoutStore = defineStore("layout", () => {
   const isLeftDrawerOpen = ref(isDesktop.value);
   const isRightDrawerOpen = ref(isDesktop.value);
   // A touch screen types on a keyboard drawn over the page, which a narrow window on a desktop never does: the input
-  // Question, never the width one (`responsive` docs page, "Viewport is not device")
+  // Question, never the width one (`openspec/specs/architecture/responsive/design.md`, "Viewport is not device")
   const isTouchScreen = useMediaQuery("(pointer: coarse)");
   // While a composer's text has focus on a touch screen the dock steps aside for the keyboard drawn over it. Read off
   // Where focus is rather than written by the composer, so a composer that unmounts with focus leaves nothing behind to

@@ -4,7 +4,6 @@ import { RoutePath } from "@esposter/shared";
 
 // Marks a page's composer, so the dock can step aside on a narrow screen while focus is inside one
 export const COMPOSER_ATTRIBUTE = "data-composer";
-export const SCROLL_TO_TOP_VISIBLE_OFFSET = 200;
 // Firefox's address bar ranking: a visit counts for less the longer ago the last one was, so a page visited often
 // Last month ranks below one visited a few times this week. Past the last bucket a visit keeps the oldest weight
 export const FRECENCY_BUCKETS: readonly FrecencyBucket[] = [

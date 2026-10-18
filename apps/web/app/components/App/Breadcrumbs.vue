@@ -31,7 +31,7 @@ const items = computed<UiBreadcrumb[]>(() => {
 
 <!-- Where the visitor came from, not where the url sits in the route tree — the page they are on is the
      header's title, never a crumb, and the hub above it is always reachable.
-     See /docs/resource/breadcrumb-trail -->
+     See openspec/specs/resource/breadcrumb-trail/design.md -->
 <template>
   <UiBreadcrumbs v-if="items.length > 0" :items />
 </template>
