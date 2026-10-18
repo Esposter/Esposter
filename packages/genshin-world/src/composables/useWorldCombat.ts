@@ -45,7 +45,7 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
-import { createSeededRandom, LocomotionState } from "genshin-engine";
+import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -213,6 +213,8 @@ export const useWorldCombat = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
+    // The first step writes the character controller's pool over this one, before any kit reads it
+    stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
     reactionTriggers: [],
     outbox: [],

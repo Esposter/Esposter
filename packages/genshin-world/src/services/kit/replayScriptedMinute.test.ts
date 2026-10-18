@@ -26,6 +26,7 @@ import {
   createGroundQuery,
   createLandmarkCollider,
   createSeededRandom,
+  createStamina,
   LocomotionState,
   STAMINA_MAX,
 } from "genshin-engine";
@@ -118,6 +119,7 @@ export const replayScriptedMinute = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
+    stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
     outbox: [],
     party,

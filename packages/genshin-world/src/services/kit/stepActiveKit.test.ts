@@ -117,6 +117,15 @@ describe(stepActiveKit, () => {
     expect(kitState).toStrictEqual(createKitState());
   });
 
+  test("gives the context the stamina pool the character controller holds", () => {
+    expect.hasAssertions();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const controls = createControls();
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+
+    expect(context.stamina).toBe(controls.characterController.stamina);
+  });
+
   test("gives the context the locomotion state the input steps in", () => {
     expect.hasAssertions();
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);

@@ -6,7 +6,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
-import { LocomotionState } from "genshin-engine";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe } from "vitest";
 
 // The combat state a kit's suite runs it in: the combatant on the field, alone in the deployed team, standing at the
@@ -21,6 +21,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   expiredEffects: [],
   kitEffectState: { effects: [] },
   locomotionState: LocomotionState.Idle,
+  stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],
   reactionTriggers: [],
   outbox: [],

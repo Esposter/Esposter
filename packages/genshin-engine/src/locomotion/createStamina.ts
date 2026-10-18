@@ -52,6 +52,9 @@ export const createStamina = (maximum: number, getStaminaConsumptionMultiplier: 
     refill: () => {
       stamina.value = stamina.maximum;
     },
+    restore: (amount) => {
+      stamina.value = Math.min(stamina.maximum, stamina.value + amount);
+    },
     spend: (amount) => {
       stamina.value = Math.max(0, stamina.value - getCost(amount));
       restSeconds = 0;

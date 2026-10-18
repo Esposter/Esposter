@@ -103,6 +103,21 @@ describe(createStamina, () => {
     expect(stamina.value).toBe(STAMINA_MAX - SWIM_STROKE_STAMINA_COST * 2);
   });
 
+  test.each([
+    [15, 40, 55],
+    [15, 95, 100],
+  ])(
+    "restores %i stamina to a pool holding %i, never above its maximum, and without the multiplier",
+    (amount, value, expected) => {
+      expect.hasAssertions();
+      const stamina = createStamina(STAMINA_MAX, () => 2);
+      stamina.value = value;
+      stamina.restore(amount);
+
+      expect(stamina.value).toBe(expected);
+    },
+  );
+
   test("never spends below none", () => {
     expect.hasAssertions();
 
