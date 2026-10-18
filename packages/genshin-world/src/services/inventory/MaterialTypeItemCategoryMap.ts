@@ -12,6 +12,8 @@ export const MaterialTypeItemCategoryMap = {
   [MaterialType.Exchange]: ItemCategory.Material,
   [MaterialType.ExpFruit]: ItemCategory.CharacterDevelopmentItem,
   [MaterialType.FishBait]: ItemCategory.Material,
+  // A fishing rod is filed among the gadgets, as the wiki gives Wilderness Rod (200900), its neighbour in the table; this rod has no page of its own in the wiki search, so the filing is provisional
+  [MaterialType.FishRod]: ItemCategory.Gadget,
   [MaterialType.Flycloak]: ItemCategory.PreciousItem,
   [MaterialType.Food]: ItemCategory.Food,
   // A furniture formula is the blueprint of a furnishing, filed with the furnishings. The wiki gives the furnishing's
