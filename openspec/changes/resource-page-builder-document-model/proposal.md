@@ -23,7 +23,6 @@ A webpage and an email gain a document of typed nodes, with the renderers that t
 
 ## Waiting on
 
-- `headless-block-editor-root-and-render`, whose declared root each registry needs and whose fold the webpage renderer goes through.
 - `resource-page-builder-mjml-blocks`, whose types the email registry is.
 
 ## Impact

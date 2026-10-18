@@ -35,7 +35,7 @@ interface SurveyQuestionProps {
 ```
 
 - **The registry** has one type per question type the Creator's toolbox offers today, enumerated from `survey-core`'s serializer when the change is written so none is missed. Each type's props schema holds its own fields: choices, rate values, the rows and columns of a matrix, the template of a dynamic panel. A matrix's rows and columns are props, not slots, because they are values a question answers by, not elements an author drags between.
-- **The root's content takes pages only**, and a page's and a panel's slot take panels and every question type. This is the declared root the [registry root](../../../changes/headless-block-editor-root-and-render/design.md) change gives the core.
+- **The root's content takes pages only**, and a page's and a panel's slot take panels and every question type. This is the declared root the [editor core](../../../specs/headless-block-editor/editor-core/design.md) declares for a registry.
 - **A question's name is its answer's key.** Responses are stored keyed by question name, so names are unique across the document as ids are. The survey's schema refines the core's document schema with that check, and the core needs nothing new for it.
 
 ## Logic

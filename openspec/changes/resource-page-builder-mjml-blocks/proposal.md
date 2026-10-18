@@ -19,7 +19,7 @@ The email editor's types are MJML's components, and everything that makes them r
 
 ## Waiting on
 
-- `headless-block-editor-root-and-render`, whose declared root narrows the body's content and whose fold every render goes through.
+None.
 
 ## Impact
 
