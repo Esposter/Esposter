@@ -3,11 +3,14 @@ import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
+import { ANIMAL_CODEX_TYPE } from "#src/services/genshinAssets/archive/constants";
 import {
   ANIMAL_CODEX_TABLE_NAME,
   BASE_ATTACK_PROPERTY,
   BASE_DEFENSE_PROPERTY,
   BASE_HEALTH_PROPERTY,
+  DEFAULT_CODEX_SUBTYPE,
+  DEFAULT_SECURITY_LEVEL,
   MONSTER_CODEX_TYPE,
   MONSTER_CURVE_TABLE_NAME,
   MONSTER_DESCRIBE_TABLE_NAME,
@@ -56,7 +59,8 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
       const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
       if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
       const codexRow = animalCodexRows.find(
-        ({ describeId, type }) => type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
+        ({ describeId, type = ANIMAL_CODEX_TYPE }) =>
+          type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
       );
       if (!codexRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no archive entry");
       const monsterDescribeRow = monsterDescribeRows.find(({ id }) => id === monsterRow.describeId);
@@ -78,8 +82,8 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
           Water: monsterRow.waterSubHurt,
           Wind: monsterRow.windSubHurt,
         },
-        enemyFamily: codexRow.subType,
-        enemyType: monsterRow.securityLevel,
+        enemyFamily: codexRow.subType ?? DEFAULT_CODEX_SUBTYPE,
+        enemyType: monsterRow.securityLevel ?? DEFAULT_SECURITY_LEVEL,
         healthCurve: getGrowCurve(monsterRow, BASE_HEALTH_PROPERTY),
         id: enemyKindId,
         nameTextId: String(monsterDescribeRow.nameTextMapHash),
@@ -94,7 +98,7 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
     [...curves].toSorted().map((curve) => [
       curve,
       levelRows.map(({ curveInfos, level }) => {
-        const value = curveInfos.find(({ type }) => type === curve)?.value;
+        const value = curveInfos.find(({ type }) => type === curve)?.GGKIEIJLCJJ;
         if (value === undefined) throw new InvalidOperationError(Operation.Read, curve, `has no level ${level}`);
         return value;
       }),
