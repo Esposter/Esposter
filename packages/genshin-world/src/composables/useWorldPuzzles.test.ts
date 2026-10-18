@@ -156,4 +156,23 @@ describe(useWorldPuzzles, () => {
 
     expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[false]]);
   });
+
+  test("finishing every target in time spawns the chest", () => {
+    expect.hasAssertions();
+
+    const { puzzleChestPlaces, stepWorldPuzzles, strikeWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
+      monumentPlaces: [],
+      savedSettledSeelieIds: new Set(),
+      savedSolvedPuzzleIds: new Set(),
+      seelies: [],
+      timeTrialPlaces: [timeTrialPlace],
+    });
+    stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE, z: 0 });
+    strikeWorldPuzzles(STRIKING_BODY, PYRO_HIT);
+
+    expect({ chests: puzzleChestPlaces.value.length, state: timeTrialMarkers[0]?.challenge.state }).toStrictEqual({
+      chests: 1,
+      state: TimeTrialChallengeState.Solved,
+    });
+  });
 });
