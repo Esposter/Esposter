@@ -72,8 +72,8 @@ export const SHIM_EXEMPT_REASONS: string[] = CORE_EXEMPT_REASONS;
 export const APP_DIRECTORY = "apps/web";
 // How many of the largest bundle costs the report ends on
 export const TOP_BUNDLE_COUNT = 25;
-// The package the app's own code is attributed to in the client bundle report, and the report `nuxt analyze` writes
-// Beside the app's build output, which the bundle column reads
+// The package the app's own code is attributed to in the client bundle report, and the report the score's `nuxt analyze`
+// Run writes beside the app's build output, against the app, which the bundle column reads
 export const APP_PACKAGE_NAME = "@esposter/web";
 export const CLIENT_BUNDLE_REPORT_PATH = ".nuxt/analyze/client.json";
 // The reason a catalog package the client build does not contain is given, in place of its bundle bytes
