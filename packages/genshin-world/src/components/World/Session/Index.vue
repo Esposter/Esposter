@@ -4,6 +4,7 @@ import type { CharacterConstellationKit } from "#src/models/character/CharacterC
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
+import type { Expedition } from "#src/models/expedition/Expedition";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -37,6 +38,8 @@ import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
+import GameOverScreen from "#src/components/GameOver/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
@@ -118,6 +121,7 @@ import { computeProfileNamecardItemIds } from "#src/services/profile/computeProf
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
@@ -140,8 +144,10 @@ import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/con
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
+import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
 import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
+import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -772,6 +778,8 @@ const {
   setWallet,
   wallet,
 });
+// The expeditions out from the Adventurers' Guild, held for the session, so a reload empties them
+const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -892,6 +900,17 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
+// The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
+// Whom no expedition is sent with
+const expeditionCharacters = computed(() =>
+  characters.value.map(({ id }) => ({
+    id,
+    name: nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
+  })),
+);
+const downCharacterIds = computed(
+  () => new Set(characters.value.filter(({ id }) => checkIsCharacterDown(party, id)).map(({ id }) => id)),
+);
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
   computeCraftingCrafters(
@@ -1426,6 +1445,8 @@ defineExpose({ jumpTo, readCameraPosition });
               talk = talkMap.get(interactable.id);
               talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = getTalkScreenKind(interactable.id, getResidents());
+              // Katheryne's talk opens the expedition screen in place of the talk, once she stands in the world
+              if (checkIsExpeditionTalk(interactable.id, getResidents())) screenKind = ScreenKind.Expedition;
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
               // And no shop opens before the world's clock is read, so its talk is a dialogue until then
@@ -2015,6 +2036,26 @@ defineExpose({ jumpTo, readCameraPosition });
       :material-data-map
       :name-text
       :reputation-level="reputation.level"
+      :wallet
+      @close="screenKind = ScreenKind.World"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
+    />
+    <ExpeditionLoader
+      v-if="screenKind === ScreenKind.Expedition"
+      v-model:expeditions="expeditions"
+      :adventure-rank="rank"
+      :characters="expeditionCharacters"
+      :completed-quest-ids="completedMainQuestIds"
+      :down-character-ids="downCharacterIds"
+      :game-data-base-url="gameDataBaseUrl"
+      :game-text
+      :inventory
+      :material-data-map
+      :name-text
+      :now="getWorldNow()"
+      :random="kitContext.random"
+      :region-statue-progress-map="regionStatueProgressMap"
       :wallet
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
