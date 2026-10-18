@@ -1,9 +1,10 @@
-// Why a value of a kit's record is not yet read from a source. `BoxAsCircle`, `NamedHitList`, `NoActionFile`,
-// `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder applies by rule,
-// So a kit's overlay names only the ones that are its own
+// Why a value of a kit's record is not yet read from a source. `BorrowedFromDonor`, `BoxAsCircle`, `NamedHitList`,
+// `NoActionFile`, `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder
+// Applies by rule. A kit's overlay names the others that are its own, and names `BorrowedFromDonor` with the donor each
+// Borrowed path takes its value from
 export enum KitProvisionalCause {
-  // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its module names, until a source
-  // Gives its own
+  // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its overlay names per path,
+  // Until a source gives its own
   BorrowedFromDonor = "BorrowedFromDonor",
   // A box is priced as the circle to its farthest corner, until an area holds a box
   BoxAsCircle = "BoxAsCircle",

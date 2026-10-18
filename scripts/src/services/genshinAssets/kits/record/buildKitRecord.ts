@@ -8,16 +8,19 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 import { kitSourcesSchema } from "#src/models/genshinAssets/kits/KitSources";
 import { GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
+import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/getDonorKitCandidates";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { kitRecordSchema } from "genshin-world";
 
 // A kit's record from its sources' candidates and its overlay, with how each of its values is known, both checked
-// Against their schemas as both are published. A value no source, rule or overlay entry accounts for fails the build
+// Against their schemas as both are published. A value no source, rule or overlay entry accounts for fails the build.
+// A value the overlay borrows is read from its donor's record in `donorRecordMap`, the donors resolved before it
 export const buildKitRecord = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
+  donorRecordMap: ReadonlyMap<number, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,
   tables: KitTables,
   isGcsimModelled: boolean,
@@ -25,6 +28,7 @@ export const buildKitRecord = (
   const { provenanceMap, valueMap } = resolveKitValues(
     sourceCandidateMap,
     overlay,
+    getDonorKitCandidates(overlay, donorRecordMap),
     namedHitCandidateMap,
     tables,
     isGcsimModelled,
