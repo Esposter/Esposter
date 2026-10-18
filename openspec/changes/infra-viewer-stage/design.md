@@ -78,22 +78,23 @@ packages/genshin-persona/
 
 ## Key files
 
-| File                                                           | Role                                                                                                   |
-| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `packages/genshin-persona/scripts/voice.ts`                    | The resident synthesizer: the per-line loop the viewer sink joins, and the supersede signal            |
-| `packages/genshin-persona/src/services/createAudioPlayer.ts`   | The stock player, which stays the fallback; it takes the caption the viewer shows and ignores it       |
-| `packages/genshin-persona/src/services/createReadingPlayer.ts` | The reading's player where a viewer is on file: the viewer while open, the stock player after a drop   |
-| `packages/genshin-persona/src/services/createViewerPlayer.ts`  | The sink on the model: a bubble and a sound per clip, paced by the clip, the last clip kept for a tap  |
-| `packages/genshin-persona/scripts/react.ts`                    | The notification and stop hooks: the moment's motion or the expression clear, sent over one connection |
-| `packages/genshin-persona/src/services/cli/commands/`          | The verbs; `viewer` is added here and `teardown` extended                                              |
-| `packages/genshin-persona/hooks/hooks.json`                    | The plugin's hooks; the notification and stop hooks are registered here                                |
-| `packages/genshin-persona/src/services/constants.ts`           | The state directory's paths; the viewer's file is one more                                             |
+| File                                                           | Role                                                                                                                                                               |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-persona/scripts/voice.ts`                    | The resident synthesizer: the per-line loop the viewer sink joins, and the supersede signal                                                                        |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`   | The stock player, which stays the fallback; it takes the caption the viewer shows and ignores it                                                                   |
+| `packages/genshin-persona/src/services/createReadingPlayer.ts` | The reading's player where a viewer is on file: the viewer while open, the stock player after a drop, and the sound on the stock player for a compressed-only form |
+| `packages/genshin-persona/src/services/createViewerPlayer.ts`  | The sink on the model: a bubble and a sound per clip, or a bubble alone, paced by the clip; the last clip kept for a tap                                           |
+| `packages/genshin-persona/scripts/react.ts`                    | The notification and stop hooks: the moment's motion or the expression clear, sent over one connection                                                             |
+| `packages/genshin-persona/src/services/cli/commands/`          | The verbs; `viewer` is added here and `teardown` extended                                                                                                          |
+| `packages/genshin-persona/hooks/hooks.json`                    | The plugin's hooks; the notification and stop hooks are registered here                                                                                            |
+| `packages/genshin-persona/src/services/constants.ts`           | The state directory's paths, the viewer's file among them, and the sound form the probe sets                                                                       |
 
 ## Notes
 
 - ExAPI names each message by number, and the sink uses the seven the API list documents with their parameters: register, the model event for a tap, bubble, motion, expression clear, sound and sound stop. A viewer update that renumbers one of them is seen first on the probe in task 1.1, not in a reply.
 - The API list gives no WebSocket address or port, so the verb takes the address the person's viewer shows, and nothing in the plugin assumes one.
-- Two parts of the first probe are still open, so the sink is built and tested but not yet seen on a person's install: whether the model lip-syncs from a WAV path (the fallback to the stock player for the sound is not built), and whether a tap reaches the synthesizer. The bubble that clears a superseded line is sent with a duration of zero, which the probe confirms clears it.
+- Two parts of the first probe are still open, so the sink is built and tested but not yet seen on a person's install: whether the model lip-syncs from a WAV path, and whether a tap reaches the synthesizer. The sound-on-the-stock-player fallback for a compressed-only path is built behind `VIEWER_SOUND_FORM`, which the probe sets; until it does, the WAV path is the form that runs. The bubble that clears a superseded line is sent with a duration of zero, which the probe confirms clears it.
+- In the compressed-only fallback a newer turn does not stop the sound: the stock player cannot be stopped without ending its process, so the clips it already holds finish and only the bubble is cleared. The stop reaches the sound only on the WAV path.
 - The viewer runs on Windows and on phones, not on every desktop the plugin does; the sink is loopback JSON, so a viewer elsewhere that speaks the same messages is the same sink, and a machine with none is the machine today.
 - The interface language decides the bubble's text as it decides the reply's, and the bubble's colours are the character's own from the nameplate's palette — the one place outside the terminal the element colour shows.
 

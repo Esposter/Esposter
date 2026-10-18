@@ -3,6 +3,7 @@ import type { VoiceDeviceLadder } from "#src/models/VoiceDeviceLadder";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
+import { ViewerSoundForm } from "#src/models/ViewerSoundForm";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -233,6 +234,10 @@ export const VIEWER_OPEN_READY_STATE = 1;
 export const VIEWER_MESSAGE_ID_START = 1;
 export const VIEWER_SOUND_CHANNEL = 0;
 export const VIEWER_SOUND_VOLUME = 1;
+// The form the viewer takes a clip's sound in. The probe on the reader's install (infra-viewer-stage task 1.1)
+// decides it; until then a WAV path is the form the sink is built for, and a compressed-only form keeps the sound on
+// The stock player
+export const VIEWER_SOUND_FORM: ViewerSoundForm = ViewerSoundForm.WavPath;
 // How long the proof bubble the `viewer` verb shows stays on the model
 export const VIEWER_PROOF_DURATION_MS: number = Temporal.Duration.from({ seconds: 6 }).total("milliseconds");
 // A bubble outlasts its clip by this much, so the last words are still read when the sound ends

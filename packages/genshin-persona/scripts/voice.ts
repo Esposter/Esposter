@@ -11,6 +11,7 @@ import {
   MESSAGE_DISPLAY_HOOK_TIMEOUT_MS,
   MODELS_DIRECTORY,
   RUNTIME_MANIFEST_PATH,
+  VIEWER_SOUND_FORM,
   VOICE_IDLE_TIMEOUT_MS,
   VOICE_STATUS_SEPARATOR,
 } from "#src/services/constants";
@@ -151,7 +152,8 @@ const queue = createReplyQueue(async (request: SpeechRequest, checkIsSuperseded:
   // A viewer on file carries the reading, with the stock player behind it; with none, the reading is the stock player's
   const viewer = isSpoken ? await viewerOpener.open() : undefined;
   let player: AudioPlayer | undefined;
-  if (isSpoken) player = viewer ? createReadingPlayer(viewer, createAudioPlayer) : createAudioPlayer();
+  if (isSpoken)
+    player = viewer ? createReadingPlayer(viewer, createAudioPlayer, VIEWER_SOUND_FORM) : createAudioPlayer();
   const [outcome] = await Promise.allSettled([speak(request, player, checkIsSuperseded)]);
   if (outcome?.status === "fulfilled" && outcome.value === VoiceStatus.Superseded) player?.stop?.();
   await player?.close();

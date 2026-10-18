@@ -11,6 +11,14 @@ The persona voice SHALL show each spoken line as a bubble on the viewer's model 
 - **THEN** the viewer shows the line as a bubble on the model
 - **AND** the line's sound plays on the model
 
+#### Scenario: A compressed-only path keeps the sound on the stock player
+
+- **GIVEN** a viewer is on file and listening
+- **AND** the viewer's sound form needs a compressed clip
+- **WHEN** a reply's spoken line is spoken
+- **THEN** the viewer shows the line as a bubble on the model
+- **AND** the line's sound plays on the stock player, not on the model
+
 #### Scenario: The next line waits for the clip's own length
 
 - **GIVEN** a reply has two spoken lines and a viewer is listening
