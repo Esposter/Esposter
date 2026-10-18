@@ -119,6 +119,7 @@ export enum GameTextKey {
   CombineTypeEnhancement = "COMBINE_TYPE_NAME1",
   CombineTypeFood = "COMBINE_TYPE_NAME12",
   CombineTypePotion = "COMBINE_TYPE_NAME4",
+  CombineTypeTransfiguredDreams = "COMBINE_TYPE_NAME9",
   CombineTypeWeaponAscension = "COMBINE_TYPE_NAME2",
   // The Common Chest, the most common kind, as the game names it
   CommonChest = "3953934758",

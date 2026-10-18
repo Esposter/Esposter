@@ -8,6 +8,7 @@ export const CombineTypeGameTextKeyMap: Record<number, GameTextKey> = {
   4: GameTextKey.CombineTypePotion,
   5: GameTextKey.CombineTypeCharacterAscension,
   6: GameTextKey.CombineTypeConsumable,
+  9: GameTextKey.CombineTypeTransfiguredDreams,
   10: GameTextKey.CombineTypeBait,
   12: GameTextKey.CombineTypeFood,
 };

@@ -11,3 +11,6 @@ export const COMBINE_TYPE_CHARACTER_TALENT_MATERIAL = 3;
 export const COMBINE_TYPE_POTION: readonly number[] = [4, 12];
 // The id of the bench's row in the prompts, which holds the one bench the world offers
 export const CRAFTING_BENCH_INTERACTABLE_ID = "craftingBench";
+// The bench's conversions are listed under tabs of their own, each the id of its combine type past this offset: the craft
+// Tabs run to the highest combine type the bench names, twelve, so the two sections never share a tab
+export const CONVERSION_TAB_ID_OFFSET = 100;
