@@ -20,10 +20,12 @@ export const offerBagItems = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): OfferingOffer => {
-  const offeringItemIds = new Set(progress.levels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId));
+  const offeringItemIds = new Set(
+    progress.levels.flatMap((offeringLevel) => offeringLevel.items.map(({ itemId }) => itemId)),
+  );
   const itemCounts: ItemCount[] = Array.from(offeringItemIds, (id) => ({ count: countInventoryItem(items, id), id }));
-  const offeredCount = itemCounts.reduce((total, { count }) => total + count, 0);
-  const { gainedLevels, progress: offeredProgress } = offerItems(progress, offeredCount);
+  const offeredItems = itemCounts.map(({ count, id }) => ({ itemCount: count, itemId: id }));
+  const { gainedLevels, progress: offeredProgress } = offerItems(progress, offeredItems);
   const paid = payOfferingLevels(
     gainedLevels,
     { items: takeItemCounts(items, itemCounts, 1), nextId },

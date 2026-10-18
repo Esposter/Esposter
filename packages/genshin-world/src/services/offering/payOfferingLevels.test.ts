@@ -47,8 +47,7 @@ describe(payOfferingLevels, () => {
     expect.hasAssertions();
     const gainedLevels: OfferingLevel[] = [
       {
-        itemCount: 1,
-        itemId: SIGIL_ITEM_ID,
+        items: [{ itemCount: 1, itemId: SIGIL_ITEM_ID }],
         level: 2,
         rewards: [
           { itemCount: ADVENTURE_EXP_COUNT, itemId: ADVENTURE_EXP_ITEM_ID },
@@ -72,7 +71,11 @@ describe(payOfferingLevels, () => {
   test("liyue's level also pays its Stones of Remembrance", () => {
     expect.hasAssertions();
     const gainedLevels: OfferingLevel[] = [
-      { itemCount: 1, itemId: SIGIL_ITEM_ID, level: 3, rewards: [{ itemCount: 1, itemId: STONE_ITEM_ID }] },
+      {
+        items: [{ itemCount: 1, itemId: SIGIL_ITEM_ID }],
+        level: 3,
+        rewards: [{ itemCount: 1, itemId: STONE_ITEM_ID }],
+      },
     ];
 
     expect(payOfferingLevels(gainedLevels, emptyInventory, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({

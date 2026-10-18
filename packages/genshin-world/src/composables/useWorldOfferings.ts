@@ -16,7 +16,7 @@ import { getResultAsync } from "@esposter/shared";
 
 // The Frostbearing Tree's offering: every offering item the bag holds is offered to it at once, its levels reached, their
 // Adventure EXP gained at the Adventure Rank and their other rewards paid in, what the bag has no room for dropped at the
-// Tree as a pick up, and the held count and level it keeps are
+// Tree as a pick up, and the held counts and level it keeps are
 // The progress the save holds. Its levels are read from the game's table as an offer is made rather than with the world,
 // And the bag is read once they have arrived, so an offer made while another's levels are still arriving offers the bag
 // That one left
@@ -61,7 +61,7 @@ export const useWorldOfferings = ({
         setWallet(offer.wallet);
         gainWorldAdventureExp(offer.adventureExp);
         placeWorldDrops(frostbearingTreePlace, offer.overflowItems);
-        frostbearingTreeProgress.value = { heldCount: offer.progress.heldCount, level: offer.progress.level };
+        frostbearingTreeProgress.value = { heldCounts: offer.progress.heldCounts, level: offer.progress.level };
         // The tree's level reached is one doing, its quantity the level, which a level trigger reads against its own
         if (offer.progress.level > previousLevel)
           events.emit("achievementEvents", [

@@ -6,6 +6,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
+import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { ref, shallowRef, watch } from "vue";
@@ -53,7 +54,7 @@ export const useWorldSave = ({
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
   const openedChestIds = shallowRef<ReadonlySet<string>>(savedState.openedChestIds);
-  const regionStatueProgressMap = shallowRef<ReadonlyMap<string, OfferingProgressSave>>(
+  const regionStatueProgressMap = shallowRef<ReadonlyMap<string, StatueRegionProgressSave>>(
     savedState.regionStatueProgressMap,
   );
   watch(
