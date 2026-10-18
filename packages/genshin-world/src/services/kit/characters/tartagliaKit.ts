@@ -174,7 +174,13 @@ export const createTartagliaKitBehaviour = ({
       if (event.kind === KitEventKind.StatusTicked) {
         const { enemy, status } = event;
         if (status.id === RIPTIDE_STATUS_ID && constellationCount >= HYDROSPOUT_CONSTELLATION)
-          strikeRiptide(kitEffectState, enemy, combatant, meleeStance ? [riptideSlashHit] : hydrospoutFlashHits);
+          strikeRiptide(
+            kitEffectState,
+            enemy,
+            combatant,
+            meleeStance ? [riptideSlashHit] : hydrospoutFlashHits,
+            meleeStance ? AttackTag.ElementalSkill : AttackTag.NormalAttack,
+          );
         return;
       }
 

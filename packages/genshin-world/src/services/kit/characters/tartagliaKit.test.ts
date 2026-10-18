@@ -234,6 +234,26 @@ describe(createTartagliaKitBehaviour, () => {
 
     expect(riptide?.tickIntervalSeconds).toBe(3.9);
     expect(flash?.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([15, 15, 15]);
+    expect(flash?.attackTag).toBe(AttackTag.NormalAttack);
+  });
+
+  test("a Hydrospout tick in the Melee Stance strikes as Elemental Skill DMG, as its Riptide Slash does", () => {
+    expect.hasAssertions();
+    const combatant = createTartagliaCombatant(0, 4);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    TARTAGLIA_KIT.onKitEvent?.(
+      createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }),
+      createKitTestContext(combatant),
+      combatant,
+    );
+    const [riptide] = enemy.statuses;
+    const { kitEffectState } = enterMeleeStance(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    if (riptide)
+      TARTAGLIA_KIT.onKitEvent?.({ enemy, kind: KitEventKind.StatusTicked, status: riptide }, context, combatant);
+    const slash = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(slash?.attackTag).toBe(AttackTag.ElementalSkill);
   });
 
   test("the ranged burst lands Flash of Havoc on the enemy turned to and gives 20 energy back 4 frames on", () => {
