@@ -24,5 +24,9 @@ x-touches:
     "packages/genshin-world/src/services/party/applyPartyMemberElement.ts",
     "packages/genshin-world/src/services/party/getReactionParticleDrops.ts",
     "packages/genshin-world/src/services/party/stepPartyElementalStates.ts",
+    "packages/genshin-world/src/models/enemy/EnemyKindTraits.ts",
+    "packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts",
+    "packages/genshin-world/src/services/kit/constants.ts",
+    "packages/genshin-world/src/services/kit/strikePartyMember.ts",
     "packages/genshin-text/src/models/GameTextKey.ts",
   ]
