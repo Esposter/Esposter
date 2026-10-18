@@ -22,6 +22,7 @@ import { stepMonumentPuzzle } from "#src/services/puzzle/stepMonumentPuzzle";
 import { stepSeelie } from "#src/services/puzzle/stepSeelie";
 import { stepTimeTrialChallenge } from "#src/services/puzzle/stepTimeTrialChallenge";
 import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMonument";
+import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { computed, reactive } from "vue";
 
 // The world's puzzles, the Seelies and the Time Trial Challenges held reactive so the sight's trails, the Seelies' states
@@ -97,12 +98,15 @@ export const useWorldPuzzles = ({
     }
   };
   // A hit a step lands strikes each monument its area reaches with the hit's element and gauge, and a hit with no element
-  // Lights none
+  // Lights none. It also strikes the target of each time trial marker its area reaches, a stand-in for the rings, objects
+  // And enemies a target is struck by, since those are not in the world yet
   const strikeWorldPuzzles = (body: KitBody, hit: PuzzleHit): void => {
     for (const { position, puzzle } of monumentMarkers) {
       if (hit.element === undefined || !checkIsInAttackArea(hit.hitArea, body, { position })) continue;
       for (const monument of puzzle.monuments) strikeElementalMonument(monument, hit.element, hit.gauge);
     }
+    for (const { challenge, position } of timeTrialMarkers)
+      if (checkIsInAttackArea(hit.hitArea, body, { position })) strikeTimeTrialTarget(challenge);
   };
   return {
     monumentMarkers,
