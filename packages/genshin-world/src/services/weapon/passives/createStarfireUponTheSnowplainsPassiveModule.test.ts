@@ -6,28 +6,18 @@ import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant();
 // Starfire Upon the Snowplains at its first rank: sixteen per cent ATK for twelve seconds after a reaction, and sixteen per cent
 // Stellar Glimmer reaction DMG for twelve seconds after a Stellar Glimmer reaction
 const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.16, 12, 0.16, 12]);

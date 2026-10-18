@@ -6,13 +6,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -25,15 +25,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
   // To the Normal Attack and Elemental Skill DMG it is obtained with, ending after 28 DMG instances or 12 seconds, once every
   // 12 seconds
   const whitemoonBristlePassiveModule = createWhitemoonBristlePassiveModule([0.04, 1.2, 28, 12, 12]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: 100 }]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.ElementalMastery, value: 100 }]);
   const elementalHit = { ...TRAVELER_KIT.plungeCollision, element: Element.Pyro };
   const createDamageTaken = (attackTag: AttackTag, hit = TRAVELER_KIT.plungeCollision) => ({
     attackTag,

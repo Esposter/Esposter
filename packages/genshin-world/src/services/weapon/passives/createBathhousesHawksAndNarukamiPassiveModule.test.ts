@@ -6,7 +6,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -15,6 +14,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createBathhousesHawksAndNarukamiPassiveModule } from "#src/services/weapon/passives/createBathhousesHawksAndNarukamiPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -30,15 +30,7 @@ describe(createBathhousesHawksAndNarukamiPassiveModule, () => {
     120, 96, 32, 6, 9, 30, 0, 0,
   ]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const createReactionTriggered = (reactionType: ReactionType, striker: Combatant) => ({
     enemy,
     kind: KitEventKind.ReactionTriggered as const,

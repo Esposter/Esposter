@@ -2,24 +2,16 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant();
 // Heavy at its first rank: the multiplier and the cooldown in seconds
 const heavyPassiveModule = createHeavyPassiveModule([1.6, 10]);
 const createNormalAttackLanded = () => ({

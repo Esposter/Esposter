@@ -5,7 +5,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -14,21 +13,14 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 1000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
 // Sky-Piercing Fang at its first rank: a burst gives Movement SPD and Normal Attack SPD of ten per cent each, and Normal and
 // Charged hits deal twenty per cent of ATK more for twelve seconds
 const skywardBladePassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);

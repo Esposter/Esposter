@@ -4,13 +4,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createTurquoiseHuntPassiveModule } from "#src/services/weapon/passives/createTurquoiseHuntPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -22,15 +22,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
   // Burgeon a nearby party member triggers every two seconds, and 10% Elemental Skill and Burst DMG per stack for six seconds
   const turquoiseHuntPassiveModule = createTurquoiseHuntPassiveModule([0.5, 2, 0.1, 6, 6]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,

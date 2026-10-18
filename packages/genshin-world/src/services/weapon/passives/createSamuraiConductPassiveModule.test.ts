@@ -4,7 +4,6 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -13,6 +12,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -24,15 +24,7 @@ describe(createSamuraiConductPassiveModule, () => {
   // Two-second tick for six seconds, and a ten-second cooldown
   const samuraiConductPassiveModule = createSamuraiConductPassiveModule([0.12, 3, 5, 6, 10]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const createStrike = (attackTag: AttackTag): KitStrike => ({
     attackTag,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },

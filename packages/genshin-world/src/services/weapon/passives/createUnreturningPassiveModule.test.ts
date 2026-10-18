@@ -1,33 +1,24 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant();
 // Unreturning at its first rank: its Movement SPD, ATK and seconds, read from the affix row's three numbers
 const unreturningPassiveModule = createUnreturningPassiveModule([0.1, 0.36, 10]);
 const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
@@ -39,9 +30,6 @@ const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
   kind: KitEventKind.DamageTaken as const,
   striker: wielder,
 });
-const getBuff = (kitEffectState: KitEffectState, attribute: Attribute): KitBuff | undefined =>
-  kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === attribute);
-
 describe(createUnreturningPassiveModule, () => {
   test("a charged attack hit on a weak point raises movement speed and ATK for ten seconds", () => {
     expect.hasAssertions();

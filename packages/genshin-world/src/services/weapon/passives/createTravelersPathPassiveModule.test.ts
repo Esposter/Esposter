@@ -5,7 +5,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -13,6 +12,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createTravelersPathPassiveModule } from "#src/services/weapon/passives/createTravelersPathPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -28,15 +28,7 @@ describe(createTravelersPathPassiveModule, () => {
   // Traveler's Path at its first rank, on the Traveler: a hit raises ATK by 16% for 8 seconds, and
   // It regenerates 3 Energy, once every 5 seconds
   const travelersPathPassiveModule = createTravelersPathPassiveModule([0.16, 8, 0, 3, 5]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const damageTaken = {
     attackTag: AttackTag.NormalAttack,
     enemy,

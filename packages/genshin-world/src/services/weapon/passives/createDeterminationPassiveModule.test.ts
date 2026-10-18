@@ -1,33 +1,18 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
+import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 10_000_066;
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant();
 // Determination at its first rank: its percentage and its seconds
 const determinationPassiveModule = createDeterminationPassiveModule([0.12, 15]);
-const getBuff = (kitEffectState: KitEffectState, attribute: Attribute): KitBuff | undefined =>
-  kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === attribute);
-
 describe(createDeterminationPassiveModule, () => {
   test("a burst the wielder uses raises its ATK and Movement SPD by the rank's percentage for its seconds", () => {
     expect.hasAssertions();

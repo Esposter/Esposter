@@ -5,7 +5,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -14,6 +13,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createThePartingRefrainPassiveModule } from "#src/services/weapon/passives/createThePartingRefrainPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -29,15 +29,7 @@ describe(createThePartingRefrainPassiveModule, () => {
   // And no Sigil is gained for 20 seconds after it
   const thePartingRefrainPassiveModule = createThePartingRefrainPassiveModule([60, 0.2, 12, 100, 0.2, 20]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,

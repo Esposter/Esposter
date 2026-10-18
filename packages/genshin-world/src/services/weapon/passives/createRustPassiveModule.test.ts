@@ -3,28 +3,20 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant();
 // Rust at its first rank: forty per cent more normal attack DMG and ten per cent less charged attack DMG
 const rustPassiveModule = createRustPassiveModule([0.4, 0.1]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({

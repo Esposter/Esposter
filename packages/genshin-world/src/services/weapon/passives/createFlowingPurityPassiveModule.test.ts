@@ -2,28 +2,17 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
 // Flowing Purity at its first rank: eight per cent All Elemental DMG Bonus for fifteen seconds after an Elemental Skill, with a
 // Bond of Life worth a quarter of Max HP once every ten seconds, and two per cent All Elemental DMG Bonus for every 1,000 HP
 // The bond cleared, at most twelve per cent, for fifteen seconds

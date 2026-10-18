@@ -1,19 +1,16 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const readAttackPercent = (context: KitContext, combatant: Combatant): number =>
   getBuffedCombatant(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
     .attributes.attributeTotalMap[Attribute.AttackPercent];
@@ -22,15 +19,7 @@ describe(createSeasonedSymphonyPassiveModule, () => {
   // Seasoned Symphony at its first rank: 12% ATK, 12% more off-field, and 32% for three seconds to the wielder and each
   // Character it heals
   const seasonedSymphonyPassiveModule = createSeasonedSymphonyPassiveModule([0.12, 0.12, 0.32, 3]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const healedCharacterId = 1;
   const createHealthChanged = (sourceCharacterId: number) => ({
     bondOfLifeShare: 0,

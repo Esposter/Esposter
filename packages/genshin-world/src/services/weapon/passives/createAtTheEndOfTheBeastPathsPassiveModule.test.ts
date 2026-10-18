@@ -6,7 +6,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -15,6 +14,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createAtTheEndOfTheBeastPathsPassiveModule } from "#src/services/weapon/passives/createAtTheEndOfTheBeastPathsPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -26,15 +26,7 @@ describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
   // Tireless Hunt, adding 160% of Elemental Mastery to the Charged Attack DMG it is obtained with, ending after 12 Charged
   // Attacks or 10 seconds, and it is obtained once every 12 seconds
   const atTheEndOfTheBeastPathsPassiveModule = createAtTheEndOfTheBeastPathsPassiveModule([0.12, 1.6, 12, 10, 12]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: 100 }]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.ElementalMastery, value: 100 }]);
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
