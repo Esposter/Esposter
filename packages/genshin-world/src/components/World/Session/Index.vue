@@ -127,6 +127,8 @@ import { computeForgeInteractables } from "#src/services/forging/computeForgeInt
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
+import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
+import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -341,6 +343,9 @@ const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: Inve
 };
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
+// The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
+const cardGameExp = ref(savedState.cardGameExp);
+const cardGameRewardedGameIds = ref(savedState.cardGameRewardedGameIds);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
   acceptQuest,
@@ -800,6 +805,28 @@ const {
 });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
+// A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
+// the way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
+const payCardGameReward = (gameId: number | undefined, won: boolean) => {
+  const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
+  if (!won || !weekGame) return;
+  const granted = grantGcgGameReward(
+    {
+      cardGameExp: cardGameExp.value,
+      inventory: inventory.value,
+      rewardedGameIds: cardGameRewardedGameIds.value,
+      wallet: wallet.value,
+    },
+    weekGame.gameId,
+    toGcgWeekGameRewards(weekGame),
+    nameText,
+    materialDataMap,
+  );
+  cardGameExp.value = granted.cardGameExp;
+  cardGameRewardedGameIds.value = granted.rewardedGameIds;
+  setInventory(granted.inventory);
+  setWallet(granted.wallet);
+};
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
@@ -958,8 +985,8 @@ useWorldSaveSync({
     adventureRankRewardsClaimed: adventureRankRewardsClaimed.value,
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
-    cardGameExp: savedState.cardGameExp,
-    cardGameRewardedGameIds: savedState.cardGameRewardedGameIds,
+    cardGameExp: cardGameExp.value,
+    cardGameRewardedGameIds: cardGameRewardedGameIds.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
     characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
@@ -2094,8 +2121,11 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :language
       @leave="
-        gcgGameId = undefined;
-        screenKind = ScreenKind.World;
+        (won) => {
+          payCardGameReward(gcgGameId, won);
+          gcgGameId = undefined;
+          screenKind = ScreenKind.World;
+        }
       "
     />
     <StatueScreen

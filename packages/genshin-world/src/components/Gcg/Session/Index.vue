@@ -32,7 +32,7 @@ interface Props {
 }
 
 const { gameDataBaseUrl, gameId, gameText, language } = defineProps<Props>();
-const emit = defineEmits<{ leave: [] }>();
+const emit = defineEmits<{ leave: [won: boolean] }>();
 const duel = ref<GcgDuel>();
 const textMap = shallowRef<Readonly<Record<string, string>>>({});
 
@@ -57,7 +57,7 @@ getResultAsync(createSessionDuel).match(
   },
   (error) => {
     console.error(error);
-    emit("leave");
+    emit("leave", false);
   },
 );
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -92,7 +92,7 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
     @declare-round-end="
       playerAction((currentDuel) => declareGcgRoundEnd(currentDuel, GCG_PLAYER_SIDE_INDEX, currentDuel.rule))
     "
-    @leave="emit('leave')"
+    @leave="(won) => emit('leave', won)"
     @play-card="
       (handIndex, targetIndex, dieIndices, choice) =>
         playerAction((currentDuel) =>
