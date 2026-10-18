@@ -173,8 +173,8 @@ export enum GameTextKey {
   Fishing = "UI_FISH_ENTRANCE_BUTTON",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
-  // The Amount line over the forge slider, "Amount: {0}"
   Fontaine = "Fontaine",
+  // The Amount line over the forge slider, "Amount: {0}"
   ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
@@ -505,8 +505,8 @@ export enum GameTextKey {
   SkysplitGembloom = "801054964",
   SmallLampGrass = "144892988",
   Snapdragon = "3558597948",
-  // The weapons' and artifacts' sort, by level or quality, ascending or descending
   Snezhnaya = "Snezhnaya",
+  // The weapons' and artifacts' sort, by level or quality, ascending or descending
   SortAscending = "UI_RelicIterations_Ordering_Ascending",
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
