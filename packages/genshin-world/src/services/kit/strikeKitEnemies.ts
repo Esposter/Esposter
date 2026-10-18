@@ -22,6 +22,7 @@ import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
+import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each
 // Priced by its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro
@@ -32,7 +33,16 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 // Has landed on every enemy it reaches, each reaction that landed with a reach reaches the enemies round its own, whose
 // Energy and reactions follow in turn. The strikes given keep only those that struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
-  const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, party, random } = context;
+  const {
+    characterIdCombatantMap,
+    enemyMap,
+    enemyTables,
+    kitEffectState,
+    party,
+    placeWildlifeDrops,
+    random,
+    wildlifeList,
+  } = context;
   let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
   for (const strike of strikes) {
@@ -88,6 +98,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         context,
       );
     }
+    if (target === undefined) strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops);
 
     landKitReactionReaches(reaches, pricedCombatant, context);
     if (isStruck) strikes[struckCount++] = strike;

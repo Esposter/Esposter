@@ -10,7 +10,7 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
-import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
+import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
@@ -167,8 +167,8 @@ interface Props {
   sceneExportBaseUrl?: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
-  // The Mondstadt animals the official map marks, each stood at its place
-  wildlifePlaces: WildlifePlace[];
+  // The animals in the world, each stood at its place or fallen, which the session holds
+  wildlifeList: Wildlife[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
   windriseData: WindriseData;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
@@ -204,7 +204,7 @@ const {
   regionDataBaseUrl,
   sceneExportBaseUrl,
   seelies,
-  wildlifePlaces,
+  wildlifeList,
   windriseData,
   worldLevel,
   worldLevelRows,
@@ -547,9 +547,9 @@ onUnmounted(() => {
       :get-ground-height
       :is-held
       :light-uniforms
-      :places="wildlifePlaces"
       :ramp-texture
       :target="characterBody?.position"
+      :wildlife-list
     />
     <!-- The Frostbearing Trees are stood in as well, which a witness render draws none of -->
     <WorldFrostbearingTree

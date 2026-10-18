@@ -10,6 +10,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { Party } from "#src/models/party/Party";
+import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
@@ -32,6 +33,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
+import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
@@ -51,6 +53,7 @@ export const useWorldCombat = ({
   savedParty,
   startingCharacterIdKitMap,
   statTables,
+  wildlifePlaces,
 }: {
   enemyTables: EnemyTables;
   events: WorldEvents;
@@ -61,6 +64,7 @@ export const useWorldCombat = ({
   savedParty: Party;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
+  wildlifePlaces: readonly WildlifePlace[];
 }) => {
   // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party
   const characters = shallowRef<Character[]>(
@@ -170,8 +174,11 @@ export const useWorldCombat = ({
     oreStrikes: [],
     outbox: [],
     party,
+    placeWildlifeDrops: (wildlife, droppedItems) =>
+      placeWorldDrops({ id: wildlife.id, position: wildlife.position }, droppedItems),
     random: createSeededRandom(WORLD_RANDOM_SEED),
     strikes: [],
+    wildlifeList: wildlifePlaces.map((wildlifePlace) => createWildlife(wildlifePlace)),
   };
   // Mora the character on the field picks up is an event of combat for the next step, which an artifact set answers
   events.on("pickUpMora", () => {
