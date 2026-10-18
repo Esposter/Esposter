@@ -11,15 +11,15 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { gainKitNightsoulPoints } from "#src/services/kit/effects/gainKitNightsoulPoints";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 
+// The events a step raises for the points a blessing gains or drains
+type NightsoulPointsEvent = KitNightsoulPointsConsumedEvent | KitNightsoulPointsGainedEvent;
+
 // The points each blessing gains or drains over a step, a blessing that drains to none ending with it, and then the points
 // A character holds with no blessing left, which a blessing that ran out on the step took with it. Each walk reads the
 // List it starts with, and the step runs this after its own walks, so its writes land on the list they left. The points a
 // Blessing drains or gains are the places points are consumed or generated, so the step returns them as events for its caller to raise
-export const stepKitNightsoul = (
-  stepSeconds: number,
-  kitEffectState: KitEffectState,
-): (KitNightsoulPointsConsumedEvent | KitNightsoulPointsGainedEvent)[] => {
-  const events: (KitNightsoulPointsConsumedEvent | KitNightsoulPointsGainedEvent)[] = [];
+export const stepKitNightsoul = (stepSeconds: number, kitEffectState: KitEffectState): NightsoulPointsEvent[] => {
+  const events: NightsoulPointsEvent[] = [];
   for (const effect of kitEffectState.effects) {
     if (effect.kind !== "status" || effect.id !== NIGHTSOUL_BLESSING_STATUS_ID || !effect.nightsoulRate) continue;
     const { characterId, nightsoulRate } = effect;
