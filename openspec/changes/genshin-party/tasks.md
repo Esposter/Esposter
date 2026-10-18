@@ -23,3 +23,7 @@
 ## 5. Enemy attack elements
 
 - [ ] 5.1 Author each enemy kind's attack element from its wiki Attacks section, once a placed kind has an elemental attack, so a landed strike applies it to the struck member. No kind in EnemyKindTraitsMap sets `attackElement` yet (the branch in `strikePartyMember` runs only under a test's override), and Hilichurl Fighter's attacks are all Physical. Verify: a test named after the scenario 'An enemy kind with an elemental attack applies it to the struck member' passes against the authored kind, not an override.
+
+## 6. Application's aura decay scale
+
+- [ ] 6.1 Settle the shape of `auraDecayRateScale`: a required number on the four `applyElement` callers, or left out of `ElementApplication` where every application is 1 or above. Today an omitted scale and a scale of 1 mean the same thing, which `applyElement` defaults to 1 and the absent-values rule does not allow. Verify: the `applyElement` aura decay tests pin the chosen shape, and no optional field keeps the identity default.
