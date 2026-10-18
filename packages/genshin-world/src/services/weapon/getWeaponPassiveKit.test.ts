@@ -16,7 +16,20 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+// Adds a passive whose strike damage bonus is gated on the team's effects being passed, keeping the real passives as they are
+vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (importOriginal) => {
+  const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal<{
+    WeaponPassiveNameTextIdCreateModuleMap: Record<string, unknown>;
+  }>();
+  return {
+    WeaponPassiveNameTextIdCreateModuleMap: {
+      ...WeaponPassiveNameTextIdCreateModuleMap,
+      GATED: () => ({ getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects ? 0.1 : 0) }),
+    },
+  };
+});
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -112,5 +125,36 @@ describe(getWeaponPassiveKit, () => {
         createParty([TRAVELER_CHARACTER_ID]),
       ),
     ).toBe(0.12);
+  });
+
+  test("forwards the team's effects to a weapon passive's strike damage bonus, as the kit's own bonus reads them", () => {
+    expect.hasAssertions();
+    const weaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      { ...WEAPON_DATA, passiveNameTextId: "GATED", passiveRankParams: [[]] },
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+
+    expect(
+      weaponKit.getStrikeDamageBonus?.(
+        {
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant,
+          hit: takeOne(takeOne(KIT.normalAttacks).hits),
+        },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        createParty([TRAVELER_CHARACTER_ID]),
+        [],
+      ),
+    ).toBe(0.1);
   });
 });

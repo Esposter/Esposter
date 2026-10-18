@@ -20,7 +20,7 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
     ],
     getStrikeDamageBonus: (strike, enemy, party, effects) =>
       (kit.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0) +
-      (passive.getStrikeDamageBonus?.(strike, enemy, party) ?? 0),
+      (passive.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0),
     getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
       (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +
       (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0),
