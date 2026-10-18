@@ -175,8 +175,8 @@ export const createAlbedoKitBehaviour = ({
       const member = getPartyMember(party, characterId);
       member.energy = Math.min(combatant.kit.burstEnergyCost, member.energy + TRANSIENT_BLOSSOM_ENERGY);
     },
-    // Constellation 4: the active member's plunges, while it stands in the standing Solar Isotoma's field, checked as each
-    // 0.3 seconds from the cast runs out
+    // Constellation 4: the active member's plunges, while it stands in the standing Solar Isotoma's field, checked every
+    // 0.3 seconds from the Solar Isotoma's spawn
     onStep: ({ activeCombatant, body, kitEffectState }, combatant) => {
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_4) return;
       if (
