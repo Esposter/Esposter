@@ -7,15 +7,18 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 
 // The progress with the Equipment entry of every set opened once the artifacts held cover as many distinct slots as the
-// Set has pieces. A set with no Equipment entry, which is not among the ids given, opens nothing, and the progress
-// It is left as it was when no set opens
+// Set has slots. A set holds a piece for each slot at each rarity and starting count, so its slots are counted once each.
+// A set with no Equipment entry, which is not among the ids given, opens nothing, and the progress it is left as it was
+// When no set opens
 export const openArchiveArtifactSets = (
   progress: ArchiveProgress,
   artifacts: readonly Pick<Artifact, "setId" | "slot">[],
   equipmentEntryIds: ReadonlySet<number>,
   reliquarySets: readonly ReliquarySetData[],
 ): ArchiveProgress => {
-  const setPieceCountMap = new Map(reliquarySets.map(({ id, pieces }) => [id, pieces.length]));
+  const setSlotCountMap = new Map(
+    reliquarySets.map(({ id, pieces }) => [id, new Set(pieces.map(({ slot }) => slot)).size]),
+  );
   const slotsSetMap = new Map<number, Set<ArtifactSlot>>();
   for (const { setId, slot } of artifacts) {
     const slots = slotsSetMap.get(setId) ?? new Set<ArtifactSlot>();
@@ -25,8 +28,8 @@ export const openArchiveArtifactSets = (
 
   let nextProgress = progress;
   for (const [setId, slots] of slotsSetMap) {
-    const pieceCount = setPieceCountMap.get(setId);
-    if (pieceCount === undefined || !equipmentEntryIds.has(setId) || slots.size < pieceCount) continue;
+    const slotCount = setSlotCountMap.get(setId);
+    if (slotCount === undefined || !equipmentEntryIds.has(setId) || slots.size < slotCount) continue;
     nextProgress = openArchiveEntry(nextProgress, ArchiveSection.Equipment, setId);
   }
 

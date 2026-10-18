@@ -1,4 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
+import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
@@ -55,6 +57,10 @@ export interface WorldTables {
   paimonsBargainsRotation: PaimonsBargainsRotation;
   // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  // The main affix pool of each artifact slot, which an artifact a chest drops rolls its main affix from
+  artifactMainAffixPools: ArtifactMainAffixPool[];
+  // The rarity data of each star count of artifact, which an artifact a chest drops rolls its stats from
+  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from
   reliquarySets: readonly ReliquarySetData[];
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests

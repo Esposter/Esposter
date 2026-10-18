@@ -1,6 +1,6 @@
+import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { Currency } from "#src/models/inventory/Currency";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import { openChest } from "#src/services/chest/openChest";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
@@ -9,7 +9,11 @@ describe(openChest, () => {
   const CHEST_ID = "chest-1";
   const commonChest = { id: CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } };
   const NO_OPENED_CHESTS: ReadonlySet<string> = new Set();
-  const NO_RELIQUARY_SETS: readonly ReliquarySetData[] = [];
+  const NO_ARTIFACT_DROP_TABLES: ArtifactDropTables = {
+    artifactMainAffixPools: [],
+    artifactRarityDataMap: new Map(),
+    reliquarySets: [],
+  };
   const COMMON_DROPS = [
     { count: 1, itemId: 11_101 },
     { count: 4, itemId: 104_001 },
@@ -26,7 +30,7 @@ describe(openChest, () => {
       () => 0,
       Currency.AnemoSigil,
       false,
-      NO_RELIQUARY_SETS,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(lowest.drops).toStrictEqual(COMMON_DROPS);
     expect(lowest.openedChestIds).toStrictEqual(new Set([CHEST_ID]));
@@ -44,7 +48,7 @@ describe(openChest, () => {
       () => 0.999,
       Currency.AnemoSigil,
       false,
-      NO_RELIQUARY_SETS,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(highest.wallet).toStrictEqual({
       ...EMPTY_WALLET,
@@ -64,7 +68,7 @@ describe(openChest, () => {
       () => 0,
       Currency.AnemoSigil,
       false,
-      NO_RELIQUARY_SETS,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(opening.adventureExp).toBe(30);
     expect(opening.wallet[Currency.AnemoSigil]).toBe(1);
@@ -82,7 +86,7 @@ describe(openChest, () => {
         () => 0.999,
         Currency.AnemoSigil,
         false,
-        NO_RELIQUARY_SETS,
+        NO_ARTIFACT_DROP_TABLES,
       ),
     ).toStrictEqual({
       adventureExp: 30,
@@ -105,7 +109,7 @@ describe(openChest, () => {
         () => 0.999,
         Currency.AnemoSigil,
         false,
-        NO_RELIQUARY_SETS,
+        NO_ARTIFACT_DROP_TABLES,
       ),
     ).toStrictEqual({
       adventureExp: 30,
@@ -126,7 +130,7 @@ describe(openChest, () => {
       () => 0,
       Currency.AnemoSigil,
       false,
-      NO_RELIQUARY_SETS,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(opening.drops).toStrictEqual(COMMON_DROPS);
     expect(opening.bagDrops).toStrictEqual([]);
@@ -142,7 +146,7 @@ describe(openChest, () => {
       () => 0,
       Currency.AnemoSigil,
       true,
-      NO_RELIQUARY_SETS,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(opening.drops).toStrictEqual([]);
     expect(opening.bagDrops).toStrictEqual(COMMON_DROPS);
@@ -153,7 +157,7 @@ describe(openChest, () => {
 
     const opened = new Set([CHEST_ID]);
     expect(
-      openChest(commonChest, opened, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false, NO_RELIQUARY_SETS),
+      openChest(commonChest, opened, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false, NO_ARTIFACT_DROP_TABLES),
     ).toStrictEqual({ adventureExp: 0, bagDrops: [], drops: [], openedChestIds: opened, wallet: EMPTY_WALLET });
   });
 
@@ -162,7 +166,7 @@ describe(openChest, () => {
 
     const dugChest = { ...commonChest, kind: ChestKind.Buried };
     expect(
-      openChest(dugChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false, NO_RELIQUARY_SETS),
+      openChest(dugChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false, NO_ARTIFACT_DROP_TABLES),
     ).toStrictEqual({
       adventureExp: 0,
       bagDrops: [],
@@ -177,7 +181,15 @@ describe(openChest, () => {
 
     const sealedChest = { ...commonChest, kind: ChestKind.Sealed };
     expect(
-      openChest(sealedChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false, NO_RELIQUARY_SETS),
+      openChest(
+        sealedChest,
+        NO_OPENED_CHESTS,
+        EMPTY_WALLET,
+        () => 0,
+        Currency.AnemoSigil,
+        false,
+        NO_ARTIFACT_DROP_TABLES,
+      ),
     ).toStrictEqual({
       adventureExp: 0,
       bagDrops: [],

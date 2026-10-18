@@ -155,6 +155,8 @@ const {
   accountName,
   adventureRankTables,
   cameraPose,
+  artifactMainAffixPools,
+  artifactRarityDataMap,
   catalogue,
   characterPackBaseUrl,
   characterTalentKits,
@@ -448,6 +450,8 @@ const chestLockSources = computed<ChestLockSource[]>(() => [
 ]);
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
+  artifactMainAffixPools,
+  artifactRarityDataMap,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,

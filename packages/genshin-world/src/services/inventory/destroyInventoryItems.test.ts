@@ -2,6 +2,8 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -83,6 +85,16 @@ describe(destroyInventoryItems, () => {
     expect.hasAssertions();
 
     const artifact: InventoryItem = {
+      artifact: {
+        experience: 0,
+        isLocked: false,
+        level: 0,
+        mainAffix: Attribute.Health,
+        minorAffixes: [],
+        rarity: 1,
+        setId: 10_010,
+        slot: ArtifactSlot.FlowerOfLife,
+      },
       definition: {
         category: ItemCategory.Artifact,
         destroyReturnMaterial: MORA_ID,
@@ -95,7 +107,6 @@ describe(destroyInventoryItems, () => {
         stackLimit: 1,
       },
       id: 0,
-      level: 0,
       quantity: 1,
     };
 

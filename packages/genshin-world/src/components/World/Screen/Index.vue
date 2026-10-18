@@ -8,6 +8,9 @@ import type { WorldTables } from "#src/models/world/WorldTables";
 import WorldSession from "#src/components/World/Session/Index.vue";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
+import { createArtifactRarityDataMap } from "#src/services/artifact/createArtifactRarityDataMap";
+import { readArtifactMainAffixPools } from "#src/services/artifact/readArtifactMainAffixPools";
+import { readArtifactRarities } from "#src/services/artifact/readArtifactRarities";
 import { TALENT_START_LEVELS } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
@@ -95,6 +98,8 @@ getResultAsync(() =>
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
       measureLoadStep("reliquary-sets", readReliquarySets(props.gameDataBaseUrl)),
+      measureLoadStep("artifact-main-affix-pools", readArtifactMainAffixPools(props.gameDataBaseUrl)),
+      measureLoadStep("artifact-rarities", readArtifactRarities(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -120,9 +125,13 @@ getResultAsync(() =>
     paimonsBargainsRotation,
     frostbearingTreeLevels,
     reliquarySets,
+    artifactMainAffixPools,
+    artifactRarities,
   ]) => {
     tables.value = {
       adventureRankTables,
+      artifactMainAffixPools,
+      artifactRarityDataMap: createArtifactRarityDataMap(artifactRarities),
       catalogue,
       characterTalentKits: talentTables.characterTalentKits,
       craftingBenchPlace,
