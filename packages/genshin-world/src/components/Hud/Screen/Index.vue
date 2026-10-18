@@ -22,6 +22,7 @@ import HudMinimap from "#src/components/Hud/Minimap/Index.vue";
 import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
 import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
+import HudQuickSwap from "#src/components/Hud/QuickSwap/Index.vue";
 import HudShortcuts from "#src/components/Hud/Shortcuts/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
@@ -66,6 +67,8 @@ interface Props {
   questProgress?: QuestProgress;
   // The quests' own words in the reader's language, by the game's text id
   questTextMap: Readonly<Record<string, string>>;
+  // Whether Z is held long enough to open the quick swap, which the menu is drawn for over the world's centre
+  quickSwapOpen?: boolean;
   // The quest on the tracker under the minimap, none while no quest is tracked
   trackedQuest?: Quest;
   // The name the player chose for the Traveler, which the party shows in place of the game's own, empty while none is
@@ -97,6 +100,7 @@ const {
   questMark,
   questProgress,
   questTextMap,
+  quickSwapOpen,
   trackedQuest,
   travelerName,
 } = defineProps<Props>();
@@ -184,6 +188,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
     </GameRect>
     <!-- The stamina meter stands on the screen itself rather than in its rect of the tree, which sits at the screen's
          Middle, since the recordings show it beside the character wherever the character stands -->
+    <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <HudStamina :frame :game-text :max-stamina />
     <slot name="prompts" />
   </GameScreen>
