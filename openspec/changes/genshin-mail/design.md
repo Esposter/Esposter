@@ -11,7 +11,7 @@ flowchart TD
   LIST --> OPEN["Opening a mail shows its text and attachments"]
   OPEN --> CLAIM{"Attachments claimed?"}
   CLAIM -->|"not yet"| GRANT["Items to the bag and wallet, once"]
-  CLAIM -->|"already"| KEEP["Kept as read"]
+  CLAIM -->|"already"| KEEP["Kept, marked claimed"]
   SAVE --> EXPIRE["A mail past its expiry is removed"]
 ```
 
@@ -26,7 +26,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The save holds the mails a player has, as a required list.** A save without it is refused, with no default, as the quick swap's slots were, and the backfill for existing saves is the main session's.
 - **A mail's text is its game text, not a translated string.** The title, sender and content are referenced by text id through `genshin-text`, so the main session writes them and no string is typed here.
 - **Only the Traveler's birthday mail is delivered, until the rules are read.** Every other mail waits on the export, so the mailbox holds no mail the rules have not yet placed. The birthday mail is the one the wiki states.
-- **Claiming gives the items once.** A claimed mail stays in the list as read, so a reload cannot grant its items twice.
+- **Claiming gives the items once.** A claimed mail stays in the list marked claimed, so a reload cannot grant its items twice.
 - **The dump's birthday letters are the Traveler's, not a character's.** Seven untyped rows name a birthday, all "Best Wishes on Your Birthday" from the Mailing System and addressed to the Traveler; three are dated by `BirthdayMailExcelConfigData`, which keys them by mail id. No mail is dated to a character's birthday, though `FetterInfoExcelConfigData` dates all 120 characters. So delivery on a held character's birthday has no letter to deliver: it waits on a source for that letter, and until then no mail is delivered on a character's birthday.
 - **The save's mail list is backfilled with an empty list, and the Traveler's birthday is optional.** `mails` is required, so a save written before it is refused until the backfill sets it to `[]`; the main session adds that to its one backfill script and runs it on dev, and prod waits on the user. `travelerBirthday` is optional, since the profile sets it once and an unset birthday is a real state, so existing saves need no backfill.
 - **The Traveler's birthday is set once in the profile.** The wiki says the birth date is the player's choice in profile customization and cannot be changed once set, so the save holds it once and nothing after.

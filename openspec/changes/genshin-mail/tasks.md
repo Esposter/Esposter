@@ -7,7 +7,7 @@
 
 ## 2. The mails in the save
 
-- [x] 2.1 Keep the mails a player holds in the save, required, with the claim and read state. Verify: tests named after the scenarios 'A save without its mails is refused' and 'A mail's claim is kept across a reload' written first and seen failing. The backfill for existing saves is the main session's, owed at 2.1's commit.
+- [x] 2.1 Keep the mails a player holds in the save, required, with the claim state. Verify: tests named after the scenarios 'A save without its mails is refused' and 'A mail's claim is kept across a reload' written first and seen failing. The backfill for existing saves is the main session's, owed at 2.1's commit.
 - [x] 2.2 Claim a mail's items once into the bag and wallet. Verify: tests named after the scenarios 'Claiming a mail gives its items once' and 'A claimed mail cannot be claimed again' written first and seen failing.
 
 ## 3. The Mail screen

@@ -19,19 +19,19 @@ describe(claimMail, () => {
   };
   const STATE: MailboxState = {
     inventory: EMPTY_INVENTORY,
-    mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false, isRead: false }],
+    mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false }],
     wallet: EMPTY_WALLET,
   };
   const NAMES = {};
   const MATERIAL_DATA_MAP = new Map();
 
-  // A held mail's items reach the wallet once, and the mail is marked claimed and read
+  // A held mail's items reach the wallet once, and the mail is marked claimed
   test("claiming a mail gives its items once", () => {
     expect.hasAssertions();
 
     expect(claimMail(STATE, ROW, NAMES, MATERIAL_DATA_MAP)).toStrictEqual({
       inventory: EMPTY_INVENTORY,
-      mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: true, isRead: true }],
+      mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: true }],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
     });
   });

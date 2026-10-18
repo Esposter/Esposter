@@ -13,7 +13,6 @@ const mail = (id: number, deliveredAt: number): MailSave => ({
   deliveredAt: new Date(deliveredAt).toISOString(),
   id,
   isClaimed: false,
-  isRead: false,
 });
 
 describe(sortMails, () => {
