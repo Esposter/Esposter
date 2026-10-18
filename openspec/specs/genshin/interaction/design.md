@@ -24,7 +24,7 @@ flowchart TD
   P["A row pressed: a tap, or a click with the cursor shown"] -->|"selects its thing, taps Interact"| F
 ```
 
-- **Five kinds.** `InteractionKind` is what acting on a thing does, and so its row's icon: `PickUp` takes an item into the [inventory](../inventory/design.md), `Open` opens a chest, `Talk` starts a character's dialogue, `Read` shows a book, a notice or a sign, and `Activate` unlocks a waypoint for the map. A row's words are the thing's own name in the reader's language. The kind lives in `genshin-interface` beside the prompt list that draws it, and an `Interactable` in the world is an `InteractionPrompt` with a place.
+- **Six kinds.** `InteractionKind` is what acting on a thing does, and so its row's icon: `PickUp` takes an item into the [inventory](../inventory/design.md), `Open` opens a chest, `Talk` starts a character's dialogue, `Read` shows a book, a notice or a sign, `Activate` unlocks a waypoint for the map, and `Use` opens the screen an object of its own stands for, as the [crafting](../crafting/design.md) bench's does. A row's words are the thing's own name in the reader's language. The kind lives in `genshin-interface` beside the prompt list that draws it, and an `Interactable` in the world is an `InteractionPrompt` with a place.
 - **In reach is a distance from the body.** `computeInteractionPrompts` keeps every thing within `INTERACTION_REACH` of the body's position, the same reach for every kind.
 - **Nearest first, and still from frame to frame.** The rows run from the nearest thing to the farthest, two at one distance ordered by id, so the list never swaps two rows between frames.
 - **The selection follows its thing.** The selection is the selected thing's id, never a row's index, so it stays on the same chest as rows come and go around it. When that thing leaves reach, the first row is selected.
@@ -58,7 +58,7 @@ Scored over the clean plate, with its name's place, its width and the icon's ins
 - **The item icons.** Three icons of 34 across are the game's own item art, which nothing ships, so a disc stands in. They are the largest term in the difference grid.
 - **The pill's fill and rim.** The plate fills the game's pill from its surroundings, so the fill and the rim are scored against the scene where the game's pill was, and the rim sits a pixel off.
 
-Provisional and unmeasured: the pill's right end (290 units, since the rock behind it is not separable on the frame), its fill, the kinds' icons (Talk, Open, Read and Activate have no reference), and the selection's move, which the list does not animate: in the clip's stretch at 13 seconds the cap changes row within a frame or two. The clip is a captioned tutorial with a camera inset, so it gives the first row's state but no clean scroll; the clean clips are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list. No visual-suite image is approved, since the compare is over its bar.
+Provisional and unmeasured: the pill's right end (290 units, since the rock behind it is not separable on the frame), its fill, the kinds' icons (Talk, Open, Read, Activate and Use have no reference), and the selection's move, which the list does not animate: in the clip's stretch at 13 seconds the cap changes row within a frame or two. The clip is a captioned tutorial with a camera inset, so it gives the first row's state but no clean scroll; the clean clips are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list. No visual-suite image is approved, since the compare is over its bar.
 
 ## Key files
 
@@ -78,7 +78,7 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                                             |
 | `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 139 units right of the centre                   |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                                             |
-| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The five kinds of interaction                                                       |
+| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The six kinds of interaction                                                        |
 | `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The rows as buttons, F's cap on the selected one, and none on touch                 |
 
 ## Notes
