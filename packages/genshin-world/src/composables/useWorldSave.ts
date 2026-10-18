@@ -9,10 +9,12 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
+import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { ref, shallowRef, watch } from "vue";
 
 // The bag, the wallet, the wish counters, the achievements' progress, the bench's crafting and the Archive's entries and
@@ -46,6 +48,7 @@ export const useWorldSave = ({
     | "processingJobs"
     | "regionStatueProgressMap"
     | "shownTipIds"
+    | "travelerBirthday"
     | "wallet"
     | "wishHistory"
     | "wishPityMap"
@@ -54,6 +57,8 @@ export const useWorldSave = ({
   const inventory = ref<Inventory>(savedState.inventory);
   const wallet = ref<Wallet>(savedState.wallet);
   const namecardItemId = ref(savedState.namecardItemId);
+  // The Traveler's birthday, set once from the profile and kept with the save once it is set
+  const travelerBirthday = shallowRef<TravelerBirthdaySave | undefined>(savedState.travelerBirthday);
   const wishHistory = ref(savedState.wishHistory);
   const wishPityMap = ref(savedState.wishPityMap);
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(
@@ -96,6 +101,7 @@ export const useWorldSave = ({
       openedChestIds,
       processingJobs,
       regionStatueProgressMap,
+      travelerBirthday,
     ],
     () => {
       emitGrant();
@@ -124,10 +130,15 @@ export const useWorldSave = ({
   const setNamecardItemId = (nextItemId: number) => {
     namecardItemId.value = nextItemId;
   };
+  // The birthday the profile's dialog confirms is set once: a held one is kept, and a date its month does not hold is refused
+  const chooseTravelerBirthday = (chosen: TravelerBirthdaySave) => {
+    travelerBirthday.value = setTravelerBirthday(travelerBirthday.value, chosen);
+  };
   return {
     achievementProgressMap,
     archiveKillsMap,
     archiveProgressMap,
+    chooseTravelerBirthday,
     clearedCamps,
     clearedDomainIds,
     cookingProgress,
@@ -146,6 +157,7 @@ export const useWorldSave = ({
     setNamecardItemId,
     setWallet,
     shownTipIds,
+    travelerBirthday,
     wallet,
     wishHistory,
     wishPityMap,
