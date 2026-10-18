@@ -23,6 +23,7 @@ describe(buildItems, () => {
   const REPUTATION_REWARD_ITEM_ID = 140004;
 
   const GADGET_ITEM_ID = 1001;
+  const GROCERY_ITEM_ID = 3000;
 
   const ADVENTURE_EXP_ID = 102;
 
@@ -77,6 +78,16 @@ describe(buildItems, () => {
       rankLevel: 1,
       stackLimit: 1,
     },
+    {
+      foodQuality: "",
+      id: GROCERY_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_ADSORBATE",
+      nameTextMapHash: 5,
+      rank: 1,
+      rankLevel: 1,
+      stackLimit: 99,
+    },
   ] satisfies MaterialRow[];
 
   beforeEach(() => {
@@ -101,6 +112,7 @@ describe(buildItems, () => {
             kind: GadgetKind.Detector,
           },
         ]);
+      if (key === "shops/mondstadtGeneralGoods") return Promise.resolve([{ itemId: GROCERY_ITEM_ID }]);
       if (key === "reputation/mondstadt")
         return Promise.resolve({
           bounties: [],
@@ -152,6 +164,16 @@ describe(buildItems, () => {
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
     expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
+  });
+
+  test("publishes every item the Mondstadt grocery sells", async () => {
+    expect.hasAssertions();
+
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).toContain(GROCERY_ITEM_ID);
   });
 
   test("leaves out an item the material table gives no type, as the dump leaves out MATERIAL_NONE", async () => {
