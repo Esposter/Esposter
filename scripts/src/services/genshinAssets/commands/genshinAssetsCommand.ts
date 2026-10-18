@@ -29,6 +29,7 @@ import { gatheringCommand } from "#src/services/genshinAssets/commands/gathering
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
 import { imaginariumCommand } from "#src/services/genshinAssets/commands/imaginariumCommand";
+import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -132,6 +133,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
+    "mining-outcrops": miningOutcropsCommand,
     gcg: gcgCommand,
     gadgets: gadgetsCommand,
     shops: shopsCommand,
