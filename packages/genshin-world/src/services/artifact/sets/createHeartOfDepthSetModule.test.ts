@@ -4,8 +4,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { ARTIFACT_SET_15016_ID } from "#src/services/artifact/constants";
-import { createArtifactSet15016Module } from "#src/services/artifact/sets/createArtifactSet15016Module";
+import { HEART_OF_DEPTH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createHeartOfDepthSetModule } from "#src/services/artifact/sets/createHeartOfDepthSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -25,14 +25,16 @@ const wearer: Combatant = {
   level: 1,
 };
 
-describe(createArtifactSet15016Module, () => {
+describe(createHeartOfDepthSetModule, () => {
   test("gives its wearer 30% more Normal and Charged Attack DMG for 15 seconds after its Elemental Skill from four pieces", () => {
     expect.hasAssertions();
 
-    const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_15016_ID)?.bonuses.find((b) => b.pieceCount === 4);
+    const bonus = statTables.artifactSetDataMap
+      .get(HEART_OF_DEPTH_ARTIFACT_SET_ID)
+      ?.bonuses.find((b) => b.pieceCount === 4);
     assert.exists(bonus);
     const kitEffectState: KitEffectState = { effects: [] };
-    createArtifactSet15016Module(bonus).onKitEvent?.(
+    createHeartOfDepthSetModule(bonus).onKitEvent?.(
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed },
       createKitTestContext(wearer, { kitEffectState }),
       wearer,

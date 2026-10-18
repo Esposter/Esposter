@@ -4,8 +4,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { ARTIFACT_SET_14004_ID } from "#src/services/artifact/constants";
-import { createArtifactSet14004Module } from "#src/services/artifact/sets/createArtifactSet14004Module";
+import { MAIDEN_BELOVED_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/createMaidenBelovedSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -27,10 +27,12 @@ const wearer: Combatant = {
   level: 1,
 };
 
-describe(createArtifactSet14004Module, () => {
-  const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_14004_ID)?.bonuses.find((b) => b.pieceCount === 4);
+describe(createMaidenBelovedSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(MAIDEN_BELOVED_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === 4);
   assert.exists(bonus);
-  const module = createArtifactSet14004Module(bonus);
+  const module = createMaidenBelovedSetModule(bonus);
   const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
   test.each([

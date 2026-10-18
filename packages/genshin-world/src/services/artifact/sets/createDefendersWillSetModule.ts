@@ -15,9 +15,9 @@ const ELEMENT_RESISTANCE_ATTRIBUTE_MAP: Readonly<Record<Element, Attribute>> = {
   [Element.Pyro]: Attribute.PyroResistance,
 };
 
-// The set table's id 10003's four-piece bonus: the Elemental RES its wearer gains to each different element its team holds,
+// Defender's Will's four-piece bonus: the Elemental RES its wearer gains to each different element its team holds,
 // At the amount in the table's only param, so one element counts once however many members draw in it
-export const createArtifactSet10003Module = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
+export const createDefendersWillSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
   const amount = takeOne(params, 0);
   return {
     getPassiveBonuses: (combatant) =>

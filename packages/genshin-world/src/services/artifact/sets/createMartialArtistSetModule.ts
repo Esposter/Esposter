@@ -6,10 +6,10 @@ import { createAfterSkillAttackDamageSetModule } from "#src/services/artifact/se
 import { createAttributePassiveSetModule } from "#src/services/artifact/sets/createAttributePassiveSetModule";
 import { takeOne } from "@esposter/shared";
 
-// The set table's id 10006's two-piece bonus, its amount of Normal and Charged Attack DMG in the table's first param, and
+// Martial Artist's two-piece bonus, its amount of Normal and Charged Attack DMG in the table's first param, and
 // Its four-piece bonus, which gives the same two for the seconds in the table's first param after the Elemental Skill, at
 // The amount in its third. The second param, 1, is left unread, as a use restarts the buff rather than stacking it
-export const createArtifactSet10006Module = (bonus: ArtifactSetBonus): ArtifactSetModule => {
+export const createMartialArtistSetModule = (bonus: ArtifactSetBonus): ArtifactSetModule => {
   const { params } = bonus;
   if (bonus.pieceCount === 2)
     return createAttributePassiveSetModule(
@@ -19,6 +19,6 @@ export const createArtifactSet10006Module = (bonus: ArtifactSetBonus): ArtifactS
   return createAfterSkillAttackDamageSetModule({
     amount: takeOne(params, 2),
     seconds: takeOne(params, 0),
-    source: "Set 10006",
+    source: "Martial Artist",
   });
 };
