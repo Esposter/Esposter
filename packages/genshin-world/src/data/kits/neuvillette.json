@@ -20,7 +20,6 @@
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8732 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8732 } },
-  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 436 },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "hits.judgement.length": { "cause": "Unsourced", "value": 8 },
   "hits.judgement.0.area": {

@@ -1,7 +1,6 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 38 },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -52,7 +51,6 @@
   "skillHolds.0.action.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
   "skillHolds.0.action.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 6132 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": 8.2 },
-  "skillHolds.1.action.animationFrames": { "cause": "DiffersFromSource", "value": 128 },
   "skillHolds.1.action.hits.length": { "cause": "Unsourced", "value": 3 },
   "skillHolds.1.action.hits.0.area": {
     "cause": "Unsourced",
