@@ -15,7 +15,7 @@ describe(autoRecoverParty, () => {
   const THRESHOLD_HEALTH_SHARE = 0.5;
   const getMaxHealth = (): number => MAX_HEALTH;
 
-  test("the fallen revive at the revive's share for nothing, and the hurt are healed to the threshold from the pool", () => {
+  test("members under the threshold are healed when the pool holds enough", () => {
     expect.hasAssertions();
 
     const party = createParty([FALLEN_CHARACTER_ID, HURT_CHARACTER_ID]);
@@ -30,7 +30,7 @@ describe(autoRecoverParty, () => {
     expect(getPartyMember(party, HURT_CHARACTER_ID).healthShare).toBeCloseTo(THRESHOLD_HEALTH_SHARE);
   });
 
-  test("a pool that runs short heals the first slots first and leaves the rest where they stand", () => {
+  test("a pool short of the threshold heals the first slots first", () => {
     expect.hasAssertions();
 
     const party = createParty([FALLEN_CHARACTER_ID, HURT_CHARACTER_ID]);
@@ -41,5 +41,16 @@ describe(autoRecoverParty, () => {
     expect(autoRecoverParty(party, power, THRESHOLD_HEALTH_SHARE, getMaxHealth)).toStrictEqual({ ...power, amount: 0 });
     expect(getPartyMember(party, FALLEN_CHARACTER_ID).healthShare).toBeCloseTo(REVIVE_HEALTH_SHARE + 0.1);
     expect(getPartyMember(party, HURT_CHARACTER_ID).healthShare).toBeCloseTo(0.2);
+  });
+
+  test("standing by a statue for two seconds revives the fallen", () => {
+    expect.hasAssertions();
+
+    const party = createParty([FALLEN_CHARACTER_ID]);
+    damagePartyMember(party, FALLEN_CHARACTER_ID, 1);
+    const power: RestorativePower = { amount: 0, changedAt: epoch };
+
+    expect(autoRecoverParty(party, power, THRESHOLD_HEALTH_SHARE, getMaxHealth)).toStrictEqual(power);
+    expect(getPartyMember(party, FALLEN_CHARACTER_ID).healthShare).toBeCloseTo(REVIVE_HEALTH_SHARE);
   });
 });
