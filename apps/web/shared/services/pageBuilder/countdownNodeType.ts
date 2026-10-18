@@ -18,7 +18,10 @@ const checkIsRealEndsAt = (endsAt: string): boolean => {
   const day = Number(groups.day);
   const hour = Number(groups.hour ?? 0);
   const minute = Number(groups.minute ?? 0);
-  const moment = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  // Date.UTC reads a year from 0 to 99 as 1900 to 1999, so the year is set on its own
+  const moment = new Date(0);
+  moment.setUTCFullYear(year, month - 1, day);
+  moment.setUTCHours(hour, minute);
   return (
     moment.getUTCFullYear() === year &&
     moment.getUTCMonth() === month - 1 &&

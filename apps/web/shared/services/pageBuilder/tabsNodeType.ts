@@ -3,9 +3,9 @@ import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { z } from "zod";
 
-const tabsPropsSchema = z.strictObject({ children: z.array(z.unknown()), id: z.string() });
 // Each child is a Tab node, of which the tab button needs only its id and its label
 const tabLabelsSchema = z.array(z.object({ props: z.object({ id: z.string(), label: z.string() }) }));
 
@@ -57,9 +57,9 @@ export const tabsNodeType = {
 .tabs [role="tab"] { padding: 0.5rem 1rem; border: 0; background: none; cursor: pointer; }
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
   formSchema: z.strictObject({}),
-  propsSchema: tabsPropsSchema,
+  propsSchema: containerPropsSchema,
   render: (node, slots) => {
-    const tabs = tabLabelsSchema.parse(tabsPropsSchema.parse(node.props).children).map(({ props }) => props);
+    const tabs = tabLabelsSchema.parse(containerPropsSchema.parse(node.props).children).map(({ props }) => props);
     const buttons = tabs.map(({ id, label }, index): HtmlElement => ({
       attributes: {
         "aria-controls": `${id}-panel`,

@@ -16,6 +16,13 @@ const localDayFromEpoch = (days: number) => {
 const toDateInput = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
+// Date reads a year from 0 to 99 as 1900 to 1999, so the year is set on the epoch rather than given to it
+const endsAtOf = (year: number, month: number, day: number) => {
+  const date = new Date(0);
+  date.setUTCFullYear(year, month, day);
+  return date.toISOString().slice(0, 10);
+};
+
 const createCountdown = (endsAt: string, endText = TEST_LABEL) => ({
   props: { endsAt, endText, id: TEST_ID },
   type: WebpageNodeType.Countdown,
@@ -61,6 +68,15 @@ describe("countdownNodeType", () => {
       false,
     ]);
     expect(isAcceptedEndsAt("1970-02-28T23:59")).toBe(true);
+  });
+
+  test("a countdown accepts a real date in a year before 100", () => {
+    expect.hasAssertions();
+
+    expect([endsAtOf(50, 0, 1), endsAtOf(0, 1, 29)].map((endsAt) => isAcceptedEndsAt(endsAt))).toStrictEqual([
+      true,
+      true,
+    ]);
   });
 
   test("a countdown reads a date-only value as local midnight", () => {
