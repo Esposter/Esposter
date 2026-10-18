@@ -3,12 +3,13 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
@@ -31,7 +32,7 @@ const OPAL_FIRE_POINTS = 50;
 const OPAL_FIRE_DRAIN_POINTS = 0.8;
 const OPAL_FIRE_DRAIN_FRAMES = 6;
 const FROSTFALL_STORM_FRAMES = 59;
-const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
+export const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
@@ -75,8 +76,15 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
         id: OPAL_FIRE_FIELD_ID,
         nextTickSeconds: toKitSeconds(1),
         onTick: (tickContext, tickIndex) => {
-          // A step ticks each tick due after a removal too, so a field no longer on the team ticks no more
+          // A step ticks each tick due after a removal too, so a field no longer on the team ticks no more. Its Blessing ends
+          // With it in the step it runs out, since the step runs the seconds down before the fields tick, leaving it at none,
+          // As gcsim's exitNightsoul ends the Opal Fire (citlali/skill.go lines 93 to 98), rather than at a later drain
           if (!tickContext.kitEffectState.effects.includes(opalFire)) return;
+          const blessing = findKitStatus(tickContext.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID);
+          if (!blessing || blessing.secondsRemaining <= 0) {
+            removeKitEffects(tickContext.kitEffectState, (effect) => effect === opalFire);
+            return;
+          }
           const frame = tickIndex + 1;
           if (frame % FROSTFALL_STORM_FRAMES === 0) strikeFrostfallStorm(tickContext, activeCombatant);
           if (frame % OPAL_FIRE_DRAIN_FRAMES !== 0) return;

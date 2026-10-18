@@ -10,12 +10,17 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { CITLALI_CHARACTER_ID, createCitlaliKitBehaviour } from "#src/services/kit/characters/citlaliKit";
+import {
+  CITLALI_CHARACTER_ID,
+  createCitlaliKitBehaviour,
+  OPAL_FIRE_FIELD_ID,
+} from "#src/services/kit/characters/citlaliKit";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -192,6 +197,26 @@ describe(createCitlaliKitBehaviour, () => {
     stepFrames(context, 540);
     expect(countPoints(context)).toBe(0);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(true);
+  });
+
+  test("Opal Fire ends in the step its Blessing runs out, even with points left to drain", () => {
+    expect.hasAssertions();
+    const context = createOpalFireContext([]);
+    const hasOpalFire = () =>
+      context.kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === OPAL_FIRE_FIELD_ID);
+    // The Blessing has half a second left, while its 72 points would last nine seconds of Opal Fire
+    const blessing = findKitStatus(context.kitEffectState.effects, CITLALI_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID);
+    expect(blessing).toBeDefined();
+    if (blessing) blessing.secondsRemaining = toKitSeconds(30);
+    expect(hasOpalFire()).toBe(true);
+    for (
+      let frame = 0;
+      hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID) && frame < 120;
+      frame++
+    )
+      stepFrames(context, 1);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(false);
+    expect(hasOpalFire()).toBe(false);
   });
 
   test("Itzpapa's Frostfall Storm strikes the enemies within 6 metres every 59 frames, the first 59 frames after Opal Fire takes effect", () => {

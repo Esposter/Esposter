@@ -93,7 +93,7 @@ Citlali's skill press SHALL enter the Nightsoul Blessing for 20 seconds with its
 
 ### Requirement: Opal Fire and Itzpapa's Frostfall Storm
 
-The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points or more and SHALL drain eight points a second until none is left. While it is on, Itzpapa SHALL strike every enemy within 6 metres of the active character every 59 frames, from the first 59 frames after it takes effect.
+The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points or more, SHALL drain eight points a second until none is left, and SHALL end in the step its Blessing runs out. While it is on, Itzpapa SHALL strike every enemy within 6 metres of the active character every 59 frames, from the first 59 frames after it takes effect.
 
 #### Scenario: The Opal Fire takes effect at 50 points in the Blessing, not below
 
@@ -113,6 +113,12 @@ The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points
 - **WHEN** one second passes
 - **THEN** she holds 64 points
 - **AND** when her points run out the Opal Fire ends while the Blessing lasts on
+
+#### Scenario: The Opal Fire ends with its Blessing
+
+- **GIVEN** the Opal Fire is on with 72 points, and the Blessing has half a second left
+- **WHEN** the Blessing runs out, with points still left to drain
+- **THEN** the Opal Fire ends in that same step
 
 #### Scenario: Frostfall Storm strikes every 59 frames within 6 metres
 
