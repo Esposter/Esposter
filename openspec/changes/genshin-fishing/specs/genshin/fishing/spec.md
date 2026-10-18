@@ -62,7 +62,7 @@ The reel SHALL break the line when the tension stays out of the zone for too lon
 
 - **GIVEN** the reel is under way
 - **WHEN** the fish's health is worn to none
-- **THEN** the fish is caught into the bag with its reward and proficiency
+- **THEN** the items its reward row gives go into the bag, the fish's own item only where that row names it, and no proficiency is counted
 
 ### Requirement: A point draws fish from its region's pools
 

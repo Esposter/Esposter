@@ -12,7 +12,7 @@ A player casts at a fishing point, waits for a fish to nibble and bite, strikes,
 - A fish nibbles for a time within its range and bites, and a strike that comes too early scares it off.
 - A strike on a biting fish starts the reel, and a fish left unstruck lapses.
 - A line that stays out of the reel's zone too long breaks.
-- A catch puts the fish in the bag, with its reward and proficiency.
+- A catch puts the items its reward row gives in the bag, with no proficiency counted.
 - Each bait draws only its own fish, and each point draws from its region's pools.
 - Proficiency is exchanged at the region's Fishing Association for its rewards.
 

@@ -12,7 +12,7 @@ Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line 
 - **The tension moves at the gear's rates.** `FishProficient.gear`'s `inSpeed` moves the tension while it lies inside the zone and its `outSpeed` while it lies outside, rising while the reel is held and falling while it is not. The reel takes the gear row it is given, and which row a player holds is read by no table here, so the caller picks it. The bar is read as one hundred units (`REEL_BAR_MAX`), the scale the table's widths and speeds fit; the rates are cited as the table's and held provisional until the recording sets them.
 - **The skills are not applied yet.** Each fish's skills from `FishSkillExcelConfigData` are read, but no field of a skill row has a plain meaning from the table. Its `bonusWidth`, `bonusOffset`, `bonusSpeed` and `bonusDuration` (the skill's own ranges, beside the fish's), `param`, `forceFactor`, `duration` and `strength` stay unapplied and are named here until the recording shows what each does. The reel moves on the fish's own zone fields and the gear alone.
 - **The stock limits stay unread.** Each pool's two limit numbers have scrambled names, and their meaning is not settled by any table here, so they wait on a reading.
-- **What a catch gives.** The fish itself into the bag, its reward row, and proficiency toward the Fishing Association's rewards, exchanged at its shop ([shops](../genshin-shops/design.md)).
+- **What a catch gives.** The items its fish's reward row gives go into the bag, the fish's own item only where that row names it: the two fish sharing row 242045 give item 131044 and not their own. No table gives proficiency per catch, so none is counted, and the Fishing Association's exchange of proficiency for rewards at its shop ([shops](../genshin-shops/design.md)) waits on a source for it.
 - **Opened as the game opens it**, once the Serenitea Pot is owned and its quest is done, as the wiki gives the unlock. The realm's Adventure Rank 28 (`checkIsHomeRealmOpen`) opens the pot's realm and does not gate fishing; `checkIsFishingOpen` holds this rule.
 
 ## How it works
@@ -58,12 +58,13 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                                           | Role after the change              |
-| :----------------------------------------------------------------------------- | :--------------------------------- |
-| `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | Offers fishing at a point in reach |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts`                   | The cast, strike and reel          |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The fish caught, into the bag      |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                       | Gains the fishing view             |
+| File                                                                           | Role after the change                |
+| :----------------------------------------------------------------------------- | :----------------------------------- |
+| `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | Offers fishing at a point in reach   |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts`                   | The cast, strike and reel            |
+| `packages/genshin-world/src/services/fishing/addFishingCatch.ts`               | The catch's reward row, into the bag |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | Each reward item, into the bag       |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                       | Gains the fishing view               |
 
 ## Sources
 
