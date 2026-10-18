@@ -6,6 +6,7 @@ Gorou's kit is its record and one behaviour module, `createGorouKitBehaviour`, a
 
 - **Juuga's field follows the body, so its centre is the body's ground point on each step.** The field moves with the active character, as gcsim's field does, and its radius is unbounded, so its buffs reach the character on the field wherever it goes. A following field takes the same step as a following summon, and no other field moves.
 - **Crystal Collapse is one following summon with its six ticks set out at the cast.** A field's tick has no body to strike from, and a summon that follows the body holds every tick, which ends where the field does, 9 seconds from the hit, as gcsim's collapse stops there.
+- **The first Crystal Collapse hit lands 91 frames after the cast, its collapse task's 90 and its own 1.** gcsim starts the collapse in `Tasks.Add(c.gorouCrystalCollapse(c.Core.F), 90)` at `burst.go:64`, and the collapse's `QueueAttack` at `burst.go:129` adds a delay of 1, so `hits.crystalCollapse.hitmarkFrames` reads 91. It read 1 before the reader added the delay of the task that runs the method to the method's queue call.
 
 ## Key files
 
