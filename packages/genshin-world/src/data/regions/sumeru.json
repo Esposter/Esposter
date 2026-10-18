@@ -25134,8 +25134,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -1984.29, "z": -4288.22 },
       "rotation": -3.105,
+      "areaId": "lokapala-jungle",
       "arrival": { "heightOffset": 5, "position": { "x": -1984.29, "z": -4288.22 }, "rotation": -3.105 },
-      "areaId": "avidya-forest",
       "heightOffset": 5
     },
     {
@@ -25145,8 +25145,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -2453.68, "z": -3484.25 },
       "rotation": 3.0297,
-      "arrival": { "heightOffset": 109.05, "position": { "x": -2453.68, "z": -3484.25 }, "rotation": 3.0297 },
       "areaId": "avidya-forest",
+      "arrival": { "heightOffset": 109.05, "position": { "x": -2453.68, "z": -3484.25 }, "rotation": 3.0297 },
       "heightOffset": 109.05
     },
     {
@@ -25156,8 +25156,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -3636.39, "z": -4734 },
       "rotation": 0.274,
+      "areaId": "ashavan-realm",
       "arrival": { "heightOffset": -1.08, "position": { "x": -3636.39, "z": -4734 }, "rotation": 0.274 },
-      "areaId": "avidya-forest",
       "heightOffset": -1.08
     },
     {
@@ -25167,8 +25167,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -3299.58, "z": -5563.37 },
       "rotation": -2.6822,
+      "areaId": "land-of-lower-setekh",
       "arrival": { "heightOffset": -200.12, "position": { "x": -3299.58, "z": -5563.37 }, "rotation": -2.6822 },
-      "areaId": "avidya-forest",
       "heightOffset": -200.12
     },
     {
@@ -25178,8 +25178,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -1969.11, "z": -7325.2 },
       "rotation": -2.2744,
+      "areaId": "gavireh-lajavard",
       "arrival": { "heightOffset": 4.32, "position": { "x": -1969.11, "z": -7325.2 }, "rotation": -2.2744 },
-      "areaId": "avidya-forest",
       "heightOffset": 4.32
     }
   ],

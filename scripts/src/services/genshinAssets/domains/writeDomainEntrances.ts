@@ -2,38 +2,31 @@ import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/Exc
 import type { DomainEntranceLandmark } from "genshin-world";
 
 import { DUNGEON_ENTRY_TABLE_NAME, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
+import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
-import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
-import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
-import { OPEN_WORLD_SCENE_ID, REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
-import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
 import { LandmarkKind } from "genshin-world";
 
 // Each challenge domain's entrance of the open world written into the region its place is in, as a landmark of its own
-// Kind. Each entry is placed from its scene point round the Windrise origin, and filed under the fitted region of the
-// Official map point nearest it within reach, and under the landmark nearest it in that region. A region's other landmarks
-// Stay as its file holds them, and its entrances from an earlier run are replaced. An entry with no point, or in no
-// Fitted region, is counted and left out. A dry run counts the entrances and writes nothing
+// Kind. Each entry is placed from its scene point round the Windrise origin, and filed under the catalogue area of the
+// Game area its point stands in, in the region holding that area. A region's other landmarks stay as its file holds them,
+// And its entrances from an earlier run are replaced. An entry with no point, or in an area no fitted region holds, is
+// Counted and left out. A dry run counts the entrances and writes nothing
 export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
-  const [{ origin, regionFiles, regionMapPoints }, getWorldHeight, scenePoints] = await Promise.all([
+  const [{ origin, regionFiles }, getWorldHeight, scenePoints, catalogueAreaPlaceMap] = await Promise.all([
     readFittedRegions(),
     readWorldGroundHeight(),
     readDomainEntrancePoints(),
+    readCatalogueAreaPlaceMap(),
   ]);
   const [, originY] = origin;
-  // The map points carried into the region's axes, which the place is too: a mirror and a shift keep every distance.
-  // Stay unrounded, since a rounding could tip a near tie between two regions
-  const axesMapPoints = regionMapPoints.map(({ position, region }) => ({
-    position: toRegionAxesPosition(position, origin),
-    region,
-  }));
   const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME).filter(
     ({ sceneId, type }) => sceneId === OPEN_WORLD_SCENE_ID && DungeonEntryTypeDomainKindMap[type] !== undefined,
   );
@@ -52,18 +45,17 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
       noPointCount++;
       continue;
     }
-    const region = classifyPlacementRegion(place.position, axesMapPoints, REGION_MAX_DISTANCE);
-    if (region === undefined) {
+    const { gameAreaId, height, ...landmark } = place;
+    const area = catalogueAreaPlaceMap.get(gameAreaId);
+    if (area === undefined || !otherLandmarksMap.has(area.region)) {
       noRegionCount++;
       continue;
     }
-    const { height, ...landmark } = place;
-    const areaId = findNearestLandmarkAreaId(region, otherLandmarksMap.get(region) ?? [], place.position);
     const heightOffset = toHeightOffset(height, originY, place.position, getWorldHeight);
     // The arrival is provisionally the entrance's own place, until the domain's scene export gives its transfer point
-    getOrCreate(placedMap, region, () => []).push({
+    getOrCreate(placedMap, area.region, () => []).push({
       ...landmark,
-      areaId,
+      areaId: area.areaId,
       arrival: { heightOffset, position: landmark.position, rotation: landmark.rotation },
       heightOffset,
     });

@@ -14,6 +14,9 @@ export const DOMAIN_ENTRANCE_POINT: ScenePointExemplar = {
   position: "tranPos",
   rotation: "tranRot",
 };
+// The field an entrance's point files the area it stands in under: the game's area table's level-one id, which names the
+// Catalogue area the entrance is filed under. The dump leaves it out of a point at its default, 0, which names no area
+export const DOMAIN_ENTRANCE_AREA_FIELD = "areaId";
 // The entry types that name a challenge domain's kind. The other entry types are one-time, trounce and event entrances,
 // Which their own pages own
 export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> = {
