@@ -203,7 +203,9 @@ catalog:
   neverthrow: ^8.2.0
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
-  nitro: npm:nitro-nightly@latest
+  # @TODO: https://github.com/nitrojs/nitro/pull/4827 — back to `@latest` once a `5x` Nuxt nightly hands Nitro its
+  # Services under `vite`: every build since reads them there, so Nuxt's renderer is dropped and every page answers 404
+  nitro: npm:nitro-nightly@3.0.1-20261018-005730-bb9894fe
   node-html-parser: ^9.0.4
   node-pty: ^1.1.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
@@ -275,7 +277,9 @@ nodeOptions: --max-old-space-size=8192
 overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
-  nitro: npm:nitro-nightly@latest
+  # @TODO: https://github.com/nitrojs/nitro/pull/4827 — back to `@latest` once a `5x` Nuxt nightly hands Nitro its
+  # Services under `vite`: every build since reads them there, so Nuxt's renderer is dropped and every page answers 404
+  nitro: npm:nitro-nightly@3.0.1-20261018-005730-bb9894fe
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
   vite: ^8.3.4
   # TODO: Remove once phaser4-rex-plugins updates to a fixed backend version (GHSA-xvq9-wjp8-hwqf).
