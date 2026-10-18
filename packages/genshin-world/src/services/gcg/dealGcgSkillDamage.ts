@@ -3,22 +3,9 @@ import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
-import { takeOne } from "@esposter/shared";
+import { modifyGcgDamageDealt } from "#src/services/gcg/effects/modifyGcgDamageDealt";
 
-// A skill's damage to the opposing active character, with the field of its user's side bearing on it: every additive
-// Bonus and conversion first, then every doubling, so a doubling takes in all the bonuses
-export const dealGcgSkillDamage = (context: GcgEffectContext, damage: GcgDamage): GcgDealtDamage[] => {
-  const { duel, sideIndex } = context;
-  const side = takeOne(duel.sides, sideIndex);
-  const zoneCards = listGcgFieldCards(side, side.activeIndex);
-  let dealtDamage = damage;
-  for (const zoneCard of zoneCards)
-    dealtDamage =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.modifyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
-  for (const zoneCard of zoneCards)
-    dealtDamage =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.multiplyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
-  return applyGcgDamage(duel, sideIndex, dealtDamage, duel.rule);
-};
+// A skill's damage to the opposing active character, after its user's field has borne on it. A Swirl the hit triggers
+// spreads through the same context, so the field bears on the spread too
+export const dealGcgSkillDamage = (context: GcgEffectContext, damage: GcgDamage): GcgDealtDamage[] =>
+  applyGcgDamage(context.duel, context.sideIndex, modifyGcgDamageDealt(context, damage), context.duel.rule, context);

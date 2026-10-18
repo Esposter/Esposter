@@ -2,6 +2,7 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { Element } from "#src/models/Element";
@@ -23,6 +24,7 @@ import { applyGcgNonDamageReactionEffects } from "#src/services/gcg/effects/appl
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
+import { modifyGcgDamageDealt } from "#src/services/gcg/effects/modifyGcgDamageDealt";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
@@ -37,13 +39,22 @@ export const applyGcgDamage = (
   sourceSideIndex: number,
   damage: GcgDamage,
   rule: GcgRule,
+  context: GcgEffectContext = { duel, sideIndex: sourceSideIndex },
 ): GcgDealtDamage[] => {
   const targetSideIndex = 1 - sourceSideIndex;
   const standingBefore = listGcgStandingCharacters(duel);
   const dealt: GcgDealtDamage[] = [];
   const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
   if (hit)
-    hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule, dealt);
+    hitGcgCharacter(
+      duel,
+      sourceSideIndex,
+      hit,
+      reduceGcgReceivedDamage(duel, targetSideIndex, damage),
+      rule,
+      dealt,
+      context,
+    );
   settleGcgDefeats(duel, standingBefore);
   for (const side of duel.sides) pruneGcgZoneCards(side);
   return dealt;
@@ -56,6 +67,7 @@ const hitGcgCharacter = (
   damage: GcgDamage,
   rule: GcgRule,
   dealt: GcgDealtDamage[],
+  context: GcgEffectContext,
 ): void => {
   if (damage.damageType === GcgDamageKind.Piercing) {
     recordGcgHit(dealt, hit, damage.damageType);
@@ -64,7 +76,7 @@ const hitGcgCharacter = (
     recordGcgHit(dealt, hit, damage.damageType);
     hurtGcgCharacter(hit, damage.value + takeGcgFrozenBonus(hit, damage.damageType), false);
   } else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
-    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule, dealt);
+    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule, dealt, context);
     const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses]);
     if (permanentAura !== undefined) hit.aura = permanentAura;
   }
@@ -81,6 +93,7 @@ const applyGcgElementalDamage = (
   value: number,
   rule: GcgRule,
   dealt: GcgDealtDamage[],
+  context: GcgEffectContext,
 ): void => {
   const aura = hit.aura;
   const reaction = aura === GcgAura.None ? undefined : getGcgReactionKind(rule, aura, element);
@@ -95,7 +108,7 @@ const applyGcgElementalDamage = (
   damageValue += GcgReactionKindBonusMap[reaction];
   hit.aura = GcgAura.None;
   hurtGcgCharacter(hit, damageValue, false);
-  applyGcgReactionEffects(duel, sourceSideIndex, hit, reaction, aura, dealt);
+  applyGcgReactionEffects(duel, sourceSideIndex, hit, reaction, aura, dealt, context);
 };
 
 // The effects a reaction leaves after its hit: the piercing and the spread it sends to the other opposing characters, and,
@@ -107,6 +120,7 @@ const applyGcgReactionEffects = (
   reaction: GcgReactionKind,
   aura: Element,
   dealt: GcgDealtDamage[],
+  context: GcgEffectContext,
 ): void => {
   const sourceSide = takeOne(duel.sides, sourceSideIndex);
   const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
@@ -117,9 +131,15 @@ const applyGcgReactionEffects = (
       hurtGcgCharacter(other, GCG_PIERCING_DAMAGE, true);
     }
   else if (reaction === GcgReactionKind.Swirl) {
+    // Each spread hit is a damage its side deals, so the modifiers bear on it. It carries the skill's context, but not the
+    // Plunging Attack bonus, which is the skill's own hit's
     for (const other of otherTargets) {
-      recordGcgHit(dealt, other, aura);
-      hurtGcgCharacter(other, GCG_SPREAD_DAMAGE + takeGcgFrozenBonus(other, aura), false);
+      const spread = modifyGcgDamageDealt(
+        { duel, sideIndex: sourceSideIndex, skill: context.skill },
+        { damageType: aura, value: GCG_SPREAD_DAMAGE },
+      );
+      recordGcgHit(dealt, other, spread.damageType);
+      hurtGcgCharacter(other, spread.value + takeGcgFrozenBonus(other, spread.damageType), false);
     }
     for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
