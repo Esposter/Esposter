@@ -8,9 +8,9 @@ The editor and the published view both render through one component, `apps/web/a
 
 ```mermaid
 flowchart TD
-  A["Pointer down on a tile or its corner handle"] -->|"pointerdown, not inside a nested action"| B["Gesture recorded and pointer captured"]
+  A["Pointer down on a tile or its corner handle"] -->|"pointerdown, not inside a nested action"| B["Gesture recorded, pointer not yet captured"]
   B -->|"pointerup before the start distance"| C["A click: nothing is written"]
-  B -->|"pointermove past the start distance"| D["Gesture started"]
+  B -->|"pointermove past the start distance"| D["Gesture started and pointer captured"]
   D -->|"pointermove on the grid root"| E["getGestureCell turns the offset into whole cells"]
   E -->|"moveItem then compactLayout"| F["Preview layout held in the component"]
   F --> G["Placeholder drawn at the origin's preview cell"]
