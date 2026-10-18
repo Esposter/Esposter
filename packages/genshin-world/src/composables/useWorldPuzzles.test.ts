@@ -1,13 +1,29 @@
+import type { KitBody } from "#src/models/kit/KitBody";
+import type { PuzzleHit } from "#src/models/puzzle/PuzzleHit";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
+import { Element } from "#src/models/Element";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeState";
 import { SEELIE_FOLLOW_DISTANCE, TIME_TRIAL_MARKER_REACH_DISTANCE } from "#src/services/puzzle/constants";
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { describe, expect, test } from "vitest";
+
+const MONUMENT_ID = "monument";
+const MONUMENT_PLACE: PuzzlePlace = {
+  id: MONUMENT_ID,
+  kind: PuzzleKind.ElementalMonument,
+  monument: { element: Element.Pyro, isProvisional: true, isTimed: false },
+  position: { x: 0, z: 0 },
+};
+// A body two metres from the monument, and a hit whose area is a full circle of ten metres about its feet
+const STRIKING_BODY: KitBody = { facing: 0, height: 0, position: { x: 2, z: 0 } };
+const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 10, radius: 10 };
+const PYRO_HIT: PuzzleHit = { element: Element.Pyro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
+const HYDRO_HIT: PuzzleHit = { element: Element.Hydro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
 
 const createSeelie = (id: string): Seelie => ({
   court: { x: 10, z: 0 },
@@ -32,6 +48,7 @@ describe(useWorldPuzzles, () => {
     expect.hasAssertions();
 
     const { settledSeelieIds } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set([SETTLED_SEELIE_ID]),
       savedSolvedPuzzleIds: new Set(),
       seelies: [createSeelie(SETTLED_SEELIE_ID), createSeelie(RESTING_SEELIE_ID)],
@@ -45,6 +62,7 @@ describe(useWorldPuzzles, () => {
     expect.hasAssertions();
 
     const { puzzleSeelies, stepWorldPuzzles } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [createSeelie(RESTING_SEELIE_ID)],
@@ -59,6 +77,7 @@ describe(useWorldPuzzles, () => {
     expect.hasAssertions();
 
     const { stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
@@ -78,6 +97,7 @@ describe(useWorldPuzzles, () => {
     expect.hasAssertions();
 
     const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
@@ -93,6 +113,7 @@ describe(useWorldPuzzles, () => {
     expect.hasAssertions();
 
     const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
+      monumentPlaces: [],
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set([TIME_TRIAL_ID]),
       seelies: [],
@@ -104,5 +125,35 @@ describe(useWorldPuzzles, () => {
       solvedPuzzleIds: [TIME_TRIAL_ID],
       state: TimeTrialChallengeState.Solved,
     });
+  });
+
+  test("a strike of its element lights a monument", () => {
+    expect.hasAssertions();
+
+    const { monumentMarkers, strikeWorldPuzzles } = useWorldPuzzles({
+      monumentPlaces: [MONUMENT_PLACE],
+      savedSettledSeelieIds: new Set(),
+      savedSolvedPuzzleIds: new Set(),
+      seelies: [],
+      timeTrialPlaces: [],
+    });
+    strikeWorldPuzzles(STRIKING_BODY, PYRO_HIT);
+
+    expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[true]]);
+  });
+
+  test("a strike of another element does not light a monument", () => {
+    expect.hasAssertions();
+
+    const { monumentMarkers, strikeWorldPuzzles } = useWorldPuzzles({
+      monumentPlaces: [MONUMENT_PLACE],
+      savedSettledSeelieIds: new Set(),
+      savedSolvedPuzzleIds: new Set(),
+      seelies: [],
+      timeTrialPlaces: [],
+    });
+    strikeWorldPuzzles(STRIKING_BODY, HYDRO_HIT);
+
+    expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[false]]);
   });
 });

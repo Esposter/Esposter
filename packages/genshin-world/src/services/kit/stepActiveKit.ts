@@ -31,6 +31,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
 import { stepMoondrifts } from "#src/services/party/stepMoondrifts";
 import { stepVerdantDew } from "#src/services/party/stepVerdantDew";
+import { readPuzzleHit } from "#src/services/puzzle/readPuzzleHit";
 import { takeOne } from "@esposter/shared";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place on the world's
@@ -51,7 +52,7 @@ export const stepActiveKit = (
   input: KitInput,
   stepSeconds: number,
   context: KitContext,
-  { aimYaw, characterController, isAimHeld, landedHits, strikeOre }: ActiveKitControls,
+  { aimYaw, characterController, isAimHeld, landedHits, strikeOre, strikePuzzle }: ActiveKitControls,
 ): void => {
   const {
     body,
@@ -132,6 +133,7 @@ export const stepActiveKit = (
   if (action) coordinateKitSummons(action, context);
   // The ores are struck by the hits as the kit gives them, before an infusion copies them
   for (const hit of landedHits) strikeOre(body, readOreHit(combatant, hit));
+  for (const hit of landedHits) strikePuzzle(body, readPuzzleHit(combatant, hit));
   // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
   if (landedHits.length > 0 || strikes.length > 0)
     for (const normalAttack of kit.normalAttacks) {

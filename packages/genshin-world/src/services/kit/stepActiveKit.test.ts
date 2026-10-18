@@ -31,6 +31,7 @@ import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { readPuzzleHit } from "#src/services/puzzle/readPuzzleHit";
 import { noop, takeOne } from "@esposter/shared";
 import {
   createCharacterController,
@@ -82,6 +83,7 @@ const createControls = (): ActiveKitControls => ({
   isAimHeld: false,
   landedHits: [],
   strikeOre: noop,
+  strikePuzzle: noop,
 });
 
 describe(stepActiveKit, () => {
@@ -335,5 +337,16 @@ describe(stepActiveKit, () => {
       [{ facing: 0, height: 0, position: enemy.position }, readReactionOreHit(TransformativeReactionType.Overloaded)],
     ]);
     expect(context.oreStrikes).toStrictEqual([]);
+  });
+
+  test("strikes the puzzles a landed hit reaches from the body it lands from", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const context = createStrikeContext([combatant]);
+    const hit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
+    const strikePuzzle = vi.fn<ActiveKitControls["strikePuzzle"]>();
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, { ...createControls(), landedHits: [hit], strikePuzzle });
+
+    expect(strikePuzzle.mock.calls).toStrictEqual([[context.body, readPuzzleHit(combatant, hit)]]);
   });
 });

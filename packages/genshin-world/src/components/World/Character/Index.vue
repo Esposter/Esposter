@@ -3,6 +3,7 @@ import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { PuzzleHit } from "#src/models/puzzle/PuzzleHit";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type {
   CharacterPoser,
@@ -92,7 +93,12 @@ const {
 } = defineProps<Props>();
 const { party } = kitContext;
 // The party went down through a drown, which the world screen answers with the respawn
-const emit = defineEmits<{ clearKitEffects: []; drown: []; strikeOre: [body: KitBody, hit: OreHit] }>();
+const emit = defineEmits<{
+  clearKitEffects: [];
+  drown: [];
+  strikeOre: [body: KitBody, hit: OreHit];
+  strikePuzzle: [body: KitBody, hit: PuzzleHit];
+}>();
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating
@@ -187,6 +193,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       isAimHeld: inputState.heldActions.has(InputAction.Aim),
       landedHits,
       strikeOre: (kitBody, oreHit) => emit("strikeOre", kitBody, oreHit),
+      strikePuzzle: (kitBody, puzzleHit) => emit("strikePuzzle", kitBody, puzzleHit),
     },
   );
 });
