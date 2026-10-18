@@ -35,10 +35,19 @@ import { writeVoiceDevice } from "#src/services/writeVoiceDevice";
 import { writeVoiceLog } from "#src/services/writeVoiceLog";
 import { createServer } from "node:net";
 
+// The viewer a reading is shown on, when a `viewer` address is on file: connected at a reading's start and held until
+// The synthesizer exits, since a tap on the model plays the last line again over the same connection
+const viewerOpener = createViewerOpener({
+  connect: connectViewer,
+  createPlayer: createViewerPlayer,
+  readConfiguration: readViewerConfiguration,
+});
 // The address is bound before the engine loads, so a second hook finds it taken rather than loading a second engine;
-// Every failure is logged, since the hooks stay silent on its behalf
+// Every failure is logged, since the hooks stay silent on its behalf. The viewer is disposed too, so its last clip
+// Does not outlive the process
 const exit = (message: string) => {
   writeVoiceLog(message);
+  viewerOpener.dispose();
   process.exit(1);
 };
 process.on("uncaughtException", (error) => {
@@ -58,13 +67,6 @@ const idleTimer = setTimeout(() => {
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
 const decoderLoad = createClipDecoder();
-// The viewer a reading is shown on, when a `viewer` address is on file: connected at a reading's start and held until
-// The synthesizer exits, since a tap on the model plays the last line again over the same connection
-const viewerOpener = createViewerOpener({
-  connect: connectViewer,
-  createPlayer: createViewerPlayer,
-  readConfiguration: readViewerConfiguration,
-});
 // The rung is written once the engine has spoken on it, since a load alone proves nothing about the sound
 let settledDevice = readVoiceDevice();
 const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
