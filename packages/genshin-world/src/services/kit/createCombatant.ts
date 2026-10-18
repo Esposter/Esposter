@@ -40,6 +40,7 @@ export const createCombatant = (
       statTables.weaponDataMap.get(character.weapon.id),
     ),
     level: character.level,
+    regionId: characterData?.regionId,
     weaponType: characterData?.weaponType,
   };
 };

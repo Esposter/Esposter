@@ -5,6 +5,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -17,6 +18,12 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { takeOne } from "@esposter/shared";
 
 export const CHARLOTTE_CHARACTER_ID = 10_000_088;
+
+// Ascension 4's bonus per other member, Healing Bonus for each from Fontaine and Cryo DMG Bonus for each from outside it, as
+// gcsim (MIT) charlotte/asc.go gives it. The region a member is from is the catalogue region its association names
+const ASCENSION_4 = 4;
+const ASCENSION_4_BONUS_PER_MEMBER = 0.05;
+const FONTAINE_REGION_ID = "fontaine";
 
 // Spiritbreath Thorn's cooldown starts when it strikes, as gcsim (MIT) charlotte/charge.go gives it
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/charlotte
@@ -134,6 +141,18 @@ export const createCharlotteKitBehaviour = ({
     // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not built
     // Yet, as its hit falls a held duration later, which a skill's fixed hold levels cannot give (see the character's
     // Page)
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+      if (combatant.ascension < ASCENSION_4) return [];
+      const otherMembers = deployedCombatants.filter(({ characterId }) => characterId !== combatant.characterId);
+      const fontaineCount = otherMembers.filter(({ regionId }) => regionId === FONTAINE_REGION_ID).length;
+      return [
+        { amount: ASCENSION_4_BONUS_PER_MEMBER * fontaineCount, attribute: Attribute.HealingBonus },
+        {
+          amount: ASCENSION_4_BONUS_PER_MEMBER * (otherMembers.length - fontaineCount),
+          attribute: Attribute.CryoDamageBonus,
+        },
+      ];
+    },
     skill: {
       hits: [
         {

@@ -19,7 +19,7 @@ Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, o
 - **The Crystal Shrapnel lasts the 300 seconds the skill table gives**, and a gain restarts it.
 - **Navia's charged attack is provisional.** gcsim gives her none, so `naviaKit.ts` takes Razor's charge timing: two hits at half a second and a second with the table's index 4 and 5, ending at 1.2 seconds, in a circle of 2.5 metres round her, her first strike's reach. A recording's hitmarks, length or reach would replace them.
 
-- **Ascension 4 reads the deployed team's elements as the passive's third argument.** `getPassiveBonuses` receives the elements of the deployed members that have one, from `getDeployedElements`, and Navia counts the Pyro, Electro, Cryo and Hydro among them, two at most, at 20% ATK each. gcsim v2.47.2 counts them once at init and this counts them each time the attack is priced, which agree while the deployed team is fixed.
+- **Ascension 4 reads the deployed team's built combatants as the passive's third argument.** `getPassiveBonuses` receives the combatants of the deployed members, from `getDeployedCombatants`, and Navia counts the Pyro, Electro, Cryo and Hydro among them, two at most, at 20% ATK each. gcsim v2.47.2 counts them once at init and this counts them each time the attack is priced, which agree while the deployed team is fixed.
 
 ## Key files
 

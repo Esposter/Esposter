@@ -29,6 +29,7 @@ describe(createCombatant, () => {
       elementalResonances: [],
       kit: TRAVELER_KIT,
       level: 1,
+      regionId: "mondstadt",
       weaponType: WeaponType.Bow,
     });
   });

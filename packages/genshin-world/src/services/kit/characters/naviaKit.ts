@@ -131,10 +131,10 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, cannonHits),
     },
-    getPassiveBonuses: (combatant, _healthShare, _effects, deployedElements) => {
+    getPassiveBonuses: (combatant, _healthShare, _effects, deployedCombatants) => {
       const stacks = Math.min(
         ASCENSION_4_MAXIMUM_STACKS,
-        deployedElements.filter((element) => ASCENSION_4_ELEMENTS.has(element)).length,
+        deployedCombatants.filter(({ element }) => element !== undefined && ASCENSION_4_ELEMENTS.has(element)).length,
       );
       return combatant.ascension >= ASCENSION_4 && stacks > 0
         ? [{ amount: ASCENSION_4_ATK_PER_MEMBER * stacks, attribute: Attribute.AttackPercent }]

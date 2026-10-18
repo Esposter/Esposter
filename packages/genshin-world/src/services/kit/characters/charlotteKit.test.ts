@@ -82,4 +82,20 @@ describe(createCharlotteKitBehaviour, () => {
     expect(beforeStrike).toBe(0.5);
     expect(member.healthShare).toBeCloseTo(0.5 + (1608.4863 + 2.565734 * ATTACK) / MAX_HEALTH);
   });
+
+  test("the Ascension 4 Healing Bonus and Cryo DMG Bonus count each other member by region, at 5% apiece", () => {
+    expect.hasAssertions();
+    const charlotte = { ...createCharlotteCombatant(), ascension: 4 };
+    const team = [
+      charlotte,
+      { ...charlotte, characterId: 2, regionId: "fontaine" },
+      { ...charlotte, characterId: 3, regionId: "mondstadt" },
+      { ...charlotte, characterId: 4 },
+    ];
+    expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, team)).toStrictEqual([
+      { amount: 0.05, attribute: Attribute.HealingBonus },
+      { amount: 0.1, attribute: Attribute.CryoDamageBonus },
+    ]);
+    expect(CHARLOTTE_KIT.getPassiveBonuses?.(createCharlotteCombatant(), 1, team)).toStrictEqual([]);
+  });
 });
