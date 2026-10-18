@@ -15,6 +15,7 @@ export interface KitBehaviour extends Partial<
     Kit,
     | "getChargedAttackStaminaMultiplier"
     | "getPassiveBonuses"
+    | "getSkillChargeBonus"
     | "getSkillCooldownMultiplier"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
