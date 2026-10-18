@@ -95,15 +95,20 @@ describe(burstKitDendroCores, () => {
   test("bursts a Bountiful Core on every enemy within 6.5 metres of its edge, and none past them", () => {
     expect.hasAssertions();
 
+    // The farther reached enemy is listed first, so a reach that stops at its first enemy misses the nearer one
     const near = createSturdyEnemy(6.8);
+    const inner = createSturdyEnemy(6);
     const far = createSturdyEnemy(7);
 
     burstKitDendroCores(
       [{ ...createCore(TransformativeReactionType.Bloom), coreKind: DendroCoreKind.Bountiful }],
-      createContext([near, far]),
+      createContext([near, inner, far]),
     );
 
     expect(getDamage(near)).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance),
+    );
+    expect(getDamage(inner)).toBeCloseTo(
       getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance),
     );
     expect(far.health).toBe(STURDY_HEALTH);
