@@ -34,6 +34,7 @@ import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMas
 import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
+import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -308,6 +309,18 @@ describe("talisman Spirit", () => {
     expect(zoneCard.usages).toBe(1);
     expect(talismanSpirit.onEndPhase?.(context, zoneCard)).toStrictEqual({ damageType: Element.Cryo, value: 1 });
     expect(zoneCard.usages).toBe(0);
+  });
+
+  test("its End Phase DMG is raised by its own 1 more Cryo DMG", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      { ...createSideState([]), summons: [createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit)] },
+      createSideState([createCharacterState(1_202)]),
+    ]);
+
+    runGcgEndPhase(duel);
+    expect(takeOne(takeOne(duel.sides, 1).characters, 0).hp).toBe(8);
   });
 
   test.each([
