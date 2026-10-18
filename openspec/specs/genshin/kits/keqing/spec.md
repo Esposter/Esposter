@@ -1,6 +1,6 @@
 ## Purpose
 
-Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with both her passives built, and her constellations not built.
+Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her Ascension 4 passive and Constellations 1, 4 and 6 built, and her other passives and Constellation 2 not built.
 
 ## Requirements
 
@@ -63,6 +63,38 @@ Starward Sword SHALL strike an initial hit, eight slashes and a final strike, al
 - **GIVEN** the burst is cooling down
 - **WHEN** the player casts Starward Sword again
 - **THEN** nothing happens
+
+### Requirement: Keqing's Constellations 1, 4 and 6
+
+Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark. Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands. Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own.
+
+#### Scenario: Recast adds Electro hits at Constellation 1
+
+- **GIVEN** Keqing has Constellation 1
+- **WHEN** the player recasts Stellar Restoration
+- **THEN** an Electro hit of 50% of ATK lands 3 frames in, and another at the recast's hitmark
+
+#### Scenario: Electro reaction raises ATK at Constellation 4
+
+- **GIVEN** Keqing has Constellation 4
+- **WHEN** she triggers an Electro-related reaction
+- **THEN** she gains 25% ATK for 10 seconds
+
+#### Scenario: Each kind of action gives Electro DMG Bonus at Constellation 6
+
+- **GIVEN** Keqing has Constellation 6
+- **WHEN** she starts a Normal Attack, Charged Attack, Elemental Skill and Burst
+- **THEN** each gives 6% Electro DMG Bonus for 8 seconds, and a repeat of the same kind restarts its own
+
+### Requirement: Unbuilt Keqing effects
+
+Constellation 2 and her other passives SHALL NOT take effect.
+
+#### Scenario: Unbuilt effects do nothing
+
+- **GIVEN** Keqing has Constellation 2 or an unbuilt passive
+- **WHEN** the player fights with Keqing
+- **THEN** that effect has no effect
 
 ### Requirement: Provisional plunges
 
