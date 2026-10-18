@@ -144,7 +144,7 @@ describe(createKleeKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = { ...createKleeCombatant(0), ascension: 1 };
     const rollBombHit = (random: number): KitEffect[] => {
-      const kitEffectState = castKitAction(KLEE_KIT.normalAttacks[0], combatant);
+      const kitEffectState = castKitAction(takeOne(KLEE_KIT.normalAttacks, 0), combatant);
       const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
       const [bombHit] = summon?.hits ?? [];
       const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
