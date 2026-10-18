@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
@@ -75,7 +76,8 @@ const createEnemyGeoHit = (context: KitContext, striker: Combatant): KitEvent =>
 
 const findDefenseBuff = (context: KitContext, characterId: number) =>
   context.kitEffectState.effects.find(
-    (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.attribute === Attribute.Defense,
+    (effect): effect is KitBuff =>
+      effect.kind === "buff" && effect.characterId === characterId && effect.attribute === Attribute.Defense,
   );
 
 const priceStrike = (context: KitContext, illuga: Combatant, striker: Combatant, element: Element) =>
@@ -259,7 +261,7 @@ describe(createIllugaKitBehaviour, () => {
     });
     const elementalMastery = () =>
       context.kitEffectState.effects.find(
-        (effect) =>
+        (effect): effect is KitBuff =>
           effect.kind === "buff" &&
           effect.characterId === TRAVELER_CHARACTER_ID &&
           effect.attribute === Attribute.ElementalMastery,
