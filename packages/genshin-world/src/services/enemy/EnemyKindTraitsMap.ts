@@ -236,6 +236,7 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   },
   [EnemyKindId.SetekhWenut]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.SolitarySuanni]: { energyDrops: [], poiseType: PoiseType.Boss },
+  [EnemyKindId.StormterrorDvalin]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.ThunderManifestation]: { element: Element.Electro, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.TreasureHoarderScout]: {
     energyDrops: [

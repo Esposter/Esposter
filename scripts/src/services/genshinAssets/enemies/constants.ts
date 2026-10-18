@@ -14,3 +14,6 @@ export const BASE_HEALTH_PROPERTY = "FIGHT_PROP_BASE_HP";
 export const BASE_ATTACK_PROPERTY = "FIGHT_PROP_BASE_ATTACK";
 export const BASE_DEFENSE_PROPERTY = "FIGHT_PROP_BASE_DEFENSE";
 export const REGIONS_DIRECTORY = "regions";
+// The weekly bosses' kinds, which no camp places and which the enemies dataset publishes ahead of the weekly claim that reads
+// Them: Stormterror, by its monster id, whose row the monster table gives
+export const WEEKLY_BOSS_KIND_IDS: number[] = [29010104];

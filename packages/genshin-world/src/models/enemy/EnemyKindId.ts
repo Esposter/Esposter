@@ -52,4 +52,5 @@ export enum EnemyKindId {
   GoldflameQucusaurTyrant = 26230301,
   BitingColdWayobManifestation = 26260801,
   ErodingAvatarOfLava = 26270201,
+  StormterrorDvalin = 29010104,
 }
