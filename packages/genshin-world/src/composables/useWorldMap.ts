@@ -62,6 +62,10 @@ export const useWorldMap = ({
   );
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
   const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
+  // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
+  const lockedJumpLandmarks = computed(() =>
+    jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
+  );
 
   // The Primogems and Adventure EXP a statue pays on its first unlock, from the open world's transport points by its scene
   // Point. Only a locked landmark is offered to resonate with, so each is paid once
@@ -119,6 +123,7 @@ export const useWorldMap = ({
     jumpLandmarks,
     jumpPose,
     jumpTo,
+    lockedJumpLandmarks,
     unlockedLandmarkIds,
     unlockedLandmarks,
   };
