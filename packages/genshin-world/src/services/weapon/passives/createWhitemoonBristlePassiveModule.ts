@@ -12,18 +12,17 @@ import { takeOne } from "@esposter/shared";
 const FOLIAR_INCISION_ID = "foliarIncision";
 const FOLIAR_INCISION_COOLDOWN_ID = "foliarIncisionCooldown";
 
-// Whitemoon Bristle at its rank: CRIT Rate rises by the rank's percentage. After a Normal Attack deals Elemental DMG, the
-// Wielder obtains Foliar Incision, once every cooldown. It adds the rank's share of Elemental Mastery as base damage to the
-// Normal Attack and Elemental Skill hits the wielder deals, and ends after the rank's DMG instances or seconds, whichever
-// Comes first. The instances counted are the ones those two hits deal once it is obtained
+// Whitemoon Bristle at its rank: after a Normal Attack deals Elemental DMG, the wielder obtains Foliar Incision, once every
+// Cooldown. It adds the rank's share of Elemental Mastery as base damage to the Normal Attack and Elemental Skill hits the
+// Wielder deals, and ends after the rank's DMG instances or seconds, whichever comes first. The instances counted are the
+// Ones those two hits deal once it is obtained. The rank's CRIT Rate line is a table line the weapon carries whatever its
+// Conditions, so this passive does not repeat it
 export const createWhitemoonBristlePassiveModule = (params: number[]): WeaponPassiveModule => {
-  const criticalRate = takeOne(params, 0);
   const masteryShare = takeOne(params, 1);
   const maximumInstances = takeOne(params, 2);
   const seconds = takeOne(params, 3);
   const cooldownSeconds = takeOne(params, 4);
   return {
-    getPassiveBonuses: () => [{ amount: criticalRate, attribute: Attribute.CriticalRate }],
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (
         strike.attackTag === undefined ||
