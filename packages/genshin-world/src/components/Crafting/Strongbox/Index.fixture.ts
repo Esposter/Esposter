@@ -9,8 +9,10 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
+import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // Made-up set and strongbox: one five-star piece per slot, each with three starting minor affixes
@@ -87,6 +89,7 @@ export const props = {
   inventory: { items, nextId: 4 },
   materialDataMap: new Map(),
   names,
+  random: createSeededRandom(WORLD_RANDOM_SEED),
   reliquaryPieceEntryMap,
   strongboxes: [strongbox],
   wallet: EMPTY_WALLET,

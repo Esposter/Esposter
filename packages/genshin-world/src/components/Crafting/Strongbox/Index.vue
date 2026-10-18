@@ -26,6 +26,8 @@ interface Props {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the strongboxes and items in the reader's language, by their text ids
   names: Readonly<Record<string, string>>;
+  // The world's seeded random source, which the strongbox's artifact is rolled from
+  random: () => number;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The strongboxes the offering makes, one for each set the player may choose
   strongboxes: CraftingStrongboxData[];
@@ -65,7 +67,7 @@ const create = () => {
     artifactDropTables: props.artifactDropTables,
     materialDataMap: props.materialDataMap,
     names: props.names,
-    random: Math.random,
+    random: props.random,
     reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
     weaponDataMap: props.weaponDataMap,
   });

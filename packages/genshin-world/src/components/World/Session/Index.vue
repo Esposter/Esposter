@@ -234,6 +234,7 @@ const {
   characterTalentKits,
   craftingBenchPlace,
   craftingRecipes,
+  craftingStrongboxes,
   createTerrainWorker,
   enemyTables,
   frostbearingTreeLevels,
@@ -1036,6 +1037,8 @@ const characterPassiveGroupIdMap = computed(
 const downCharacterIds = computed(
   () => new Set(characters.value.filter(({ id }) => checkIsCharacterDown(party, id)).map(({ id }) => id)),
 );
+// The artifact tables the Mystic Offering rolls its strongbox's artifact from, the same ones the chests draw from
+const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
   computeCraftingCrafters(
@@ -2181,6 +2184,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-if="screenKind === ScreenKind.Crafting"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
+      :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
       :game-text
       :initial-crafter-id="crafting.crafterId"
@@ -2190,7 +2194,10 @@ defineExpose({ jumpTo, readCameraPosition });
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
+      :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+      :strongboxes="craftingStrongboxes"
       :wallet
+      :weapon-data-map="statTables.weaponDataMap"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

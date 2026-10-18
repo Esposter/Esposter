@@ -6,6 +6,7 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -41,6 +42,8 @@ export interface WorldTables {
   craftingBenchPlace: CraftingBenchPlace;
   // The bench's recipes in the game's order, which the crafting screen offers the learned ones of
   craftingRecipes: CraftingRecipe[];
+  // The Mystic Offering's strongboxes, one for each set the offering may choose, which the bench offers from its Adventure Rank
+  craftingStrongboxes: CraftingStrongboxData[];
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
   // The Frostbearing Tree's offering levels the game's table holds, the last of which opens Mondstadt's Souvenir Shop
