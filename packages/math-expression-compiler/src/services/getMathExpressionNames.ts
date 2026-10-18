@@ -23,7 +23,6 @@ const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string
       return;
     }
     case MathExpressionNodeType.Call:
-    case MathExpressionNodeType.Comparison:
     case MathExpressionNodeType.Group:
     case MathExpressionNodeType.List:
     case MathExpressionNodeType.Number:
@@ -31,6 +30,15 @@ const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string
     case MathExpressionNodeType.Unary:
       for (const child of getMathExpressionChildren(node)) walkNode(child, bound, free);
       return;
+    case MathExpressionNodeType.Comparison: {
+      // A chain always reads its first pair, and each operand after it only while every pair before it holds
+      let chainBound = bound;
+      for (const [index, operand] of node.operands.entries()) {
+        if (index === 2) chainBound = new Set(bound);
+        walkNode(operand, chainBound, free);
+      }
+      return;
+    }
     case MathExpressionNodeType.Conditional: {
       walkNode(node.condition, bound, free);
       const whenTrueBound = new Set(bound);

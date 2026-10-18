@@ -13,6 +13,8 @@ describe(getMathExpressionNames, () => {
     ["A name only one branch assigns stays free", "(c ? (y = 1) : 0) + y", ["c", "y"]],
     ["A name assigned on the lazy right side of and stays free", "(c and (x = 2)) + x", ["c", "x"]],
     ["A name assigned on the lazy right side of a bitwise and stays free", "(c & (x = 2)) + x", ["c", "x"]],
+    ["A name assigned past a chain's first pair stays free", "(1 > c > (x = 2)) + x", ["c", "x"]],
+    ["A name assigned in a chain's first pair is bound", "(c > (x = 2) > 1) + x", ["c"]],
   ])("%s", (_title, formula, names) => {
     expect.hasAssertions();
 
