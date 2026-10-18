@@ -19,6 +19,7 @@ import type { Object3D, SkinnedMesh } from "three";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { createSkinnedMeshFinder } from "#src/services/character/createSkinnedMeshFinder";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -46,7 +47,6 @@ import {
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
-  findSkinnedMesh,
   FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
@@ -133,6 +133,7 @@ let followCamera: FollowCamera | undefined;
 // The poser of the body's model, which is found again once the model arrives or is taken away, as a pack switch does
 let poser: CharacterPoser | undefined;
 let posedMesh: SkinnedMesh | undefined;
+const skinnedMeshFinder = createSkinnedMeshFinder(body);
 // The kit of the character on the field, which starts over when a switch brings another on
 let kitState = createKitState();
 let kitCharacterId: number | undefined;
@@ -221,7 +222,7 @@ const pivot = new Vector3();
 // Move the body, and the body is drawn and the camera follows it at its place between its last two steps, by how far
 // The frame has come into the next. A held body stays drawn where it stands, and only an orbit turns its camera
 onBeforeRender(({ delta }) => {
-  const skinnedMesh = findSkinnedMesh(body);
+  const skinnedMesh = skinnedMeshFinder.find();
   if (skinnedMesh !== posedMesh) {
     posedMesh = skinnedMesh;
     poser = skinnedMesh && createCharacterPoser(skinnedMesh);
@@ -258,6 +259,7 @@ onBeforeRender(({ delta }) => {
 // The effects are the screen's, and they stop with the character that steps them, so none outlives its unmount
 onBeforeUnmount(() => {
   emit("clearKitEffects");
+  skinnedMeshFinder.dispose();
 });
 // A click on the canvas takes the pointer, which the look reads while it is locked
 useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
