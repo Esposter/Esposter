@@ -38,10 +38,11 @@ const checkIsMatching = (expected: number, actual: number, isTolerant: boolean):
   return checkIsNearlyEqual(expected, actual);
 };
 
-const evaluateFormula = (formula: string, scope: Record<string, number>): number =>
+// Null where the parser refuses the formula, which is not a NaN answer
+const evaluateFormula = (formula: string, scope: Record<string, number>): null | number =>
   parseMathExpression(formula).match(
     (node) => compileMathExpression(node, Object.keys(scope))(Object.values(scope)),
-    () => Number.NaN,
+    () => null,
   );
 
 const { entries, mathjs }: Snapshot = jsonDateParse(readFileSync(SNAPSHOT_PATH, "utf8"));
@@ -52,8 +53,12 @@ describe(compileMathExpression, () => {
     expect(mathjs).toBe("15.2.0");
 
     const mismatches = entries.flatMap((entry) => {
-      const expected = entry.fix === undefined ? decodeValue(entry.value) : decodeValue(entry.fix.value);
+      const recorded = entry.fix === undefined ? entry.value : entry.fix.value;
+      const expected = decodeValue(recorded);
       const actual = evaluateFormula(entry.formula, entry.scope);
+      // Only a recorded null, where mathjs had no number, may be a formula the parser refuses
+      if (actual === null) return recorded === null ? [] : [{ actual, entry, expected }];
+
       const isTolerant = entry.tolerance === true;
       return checkIsMatching(expected, actual, isTolerant) ? [] : [{ actual, entry, expected }];
     });
