@@ -26,3 +26,7 @@ export const CombineTypeCraftingRecipeKindMap: Record<number, CraftingRecipeKind
   10: CraftingRecipeKind.Bait,
   12: CraftingRecipeKind.Potion,
 };
+// The scene group holding Mondstadt's crafting bench, and the bench's NPC member in it: the birth the dump places as an NPC
+// Of its own, invisible and named Craft, so the bench is its interaction and no person
+export const MONDSTADT_CRAFTING_BENCH_GROUP_ID = 133_004_082;
+export const MONDSTADT_CRAFTING_BENCH_NPC_ID = 10_256;
