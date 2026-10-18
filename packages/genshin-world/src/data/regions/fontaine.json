@@ -6211,6 +6211,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 1101.6, "z": -5454.77 },
       "rotation": 1.5973,
+      "titleTextKey": "UI_DUNGEON_ENTRY_865",
       "areaId": "court-of-fontaine-region",
       "arrival": { "heightOffset": -14.3, "position": { "x": 1101.6, "z": -5454.77 }, "rotation": 1.5973 },
       "heightOffset": -14.3
@@ -6222,6 +6223,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 2069.39, "z": -5968.53 },
       "rotation": 1.2741,
+      "titleTextKey": "UI_DUNGEON_ENTRY_859",
       "areaId": "court-of-fontaine-region",
       "arrival": { "heightOffset": 47.05, "position": { "x": 2069.39, "z": -5968.53 }, "rotation": 1.2741 },
       "heightOffset": 47.05
@@ -6233,6 +6235,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -34.8, "z": -5989.29 },
       "rotation": 0.6161,
+      "titleTextKey": "UI_DUNGEON_ENTRY_982",
       "areaId": "belleau-region",
       "arrival": { "heightOffset": 213.1, "position": { "x": -34.8, "z": -5989.29 }, "rotation": 0.6161 },
       "heightOffset": 213.1
@@ -6244,6 +6247,7 @@
       "kind": "DomainEntrance",
       "position": { "x": 580.87, "z": -5207.56 },
       "rotation": 0.2218,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1142",
       "areaId": "morte-region",
       "arrival": { "heightOffset": 273.14, "position": { "x": 580.87, "z": -5207.56 }, "rotation": 0.2218 },
       "heightOffset": 273.14
@@ -6255,6 +6259,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -605.67, "z": -5467.51 },
       "rotation": -0.9095,
+      "titleTextKey": "UI_DUNGEON_ENTRY_1151",
       "areaId": "nostoi-region",
       "arrival": { "heightOffset": 59.54, "position": { "x": -605.67, "z": -5467.51 }, "rotation": -0.9095 },
       "heightOffset": 59.54
