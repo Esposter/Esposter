@@ -86,6 +86,24 @@ describe(readConstantLoops, () => {
     ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
   });
 
+  test("reads no loop whose step is a call, as the call has no constant value to step by", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package aino",
+      "",
+      "func (c *char) burst() {",
+      "\tfor i := 0; i < 14.2*60; i += c.a1BurstEnhance() {",
+      "\t\tc.Core.Tasks.Add(func() { c.Core.QueueAttack(ai, ap, 0, i) }, i+123)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
+  });
+
   test("reads no loop from a bound a branch that is no constellation branch reassigns", () => {
     expect.hasAssertions();
 
