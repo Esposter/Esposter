@@ -29,6 +29,12 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   ...context,
 });
 
+// The attribute, amount and seconds of each buff in a kit's effects
+export const readBuffTuples = (effects: KitEffectState["effects"]) =>
+  effects.flatMap((effect) =>
+    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
+  );
+
 // The given seconds stepped through the team's effects at the world's fixed step
 export const stepKitSeconds = (context: KitContext, seconds: number) => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)

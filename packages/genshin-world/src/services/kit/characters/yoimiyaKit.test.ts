@@ -15,7 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYoimiyaKitBehaviour, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, readBuffTuples } from "#src/services/kit/createKitTestContext.test";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -43,12 +43,6 @@ const createDamageTakenEvent = (
   isDefeated = false,
   isCritical = false,
 ): KitEvent => ({ attackTag, enemy, hit, isCritical, isDefeated, kind: KitEventKind.DamageTaken, striker });
-
-// The attribute, amount and seconds of each buff in a kit's effects
-const readBuffTuples = (effects: KitEffectState["effects"]) =>
-  effects.flatMap((effect) =>
-    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
-  );
 
 // The buffs a Pyro hit of Yoimiya's that is or is not a CRIT gives her, at a constellation count, as its kit reads them
 const readCriticalBuffs = (constellationCount: number, isCritical: boolean) => {
