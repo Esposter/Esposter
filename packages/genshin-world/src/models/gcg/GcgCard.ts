@@ -11,4 +11,6 @@ export interface GcgCard {
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
+  // The weapon kind a weapon card names, as a character's weapon is named (the tag's suffix), and no weapon for other cards
+  weapon?: string;
 }
