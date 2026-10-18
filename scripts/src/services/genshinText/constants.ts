@@ -26,6 +26,8 @@ export const MAIN_QUEST_DEFAULT_TYPE = "AQ";
 // For under the id its Reputation request names
 export const SUB_QUEST_TABLE_NAME = "QuestExcelConfigData";
 export const GIVING_TABLE_NAME = "GivingExcelConfigData";
+// The giving group table, each food group a delivery asks for any one item of, by the id its giving row names
+export const GIVING_GROUP_TABLE_NAME = "GivingGroupExcelConfigData";
 export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // The chapter table, each series of quests by its id with its title and number by text hash and the city it is in, the
 // City table naming each city by its id, and the material table giving each item its rarity in stars

@@ -1,5 +1,6 @@
 import type { DumpedChapter } from "#src/models/genshinText/DumpedChapter";
 import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
+import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest } from "genshin-world";
@@ -8,6 +9,7 @@ import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import {
   CHAPTER_TABLE_NAME,
+  GIVING_GROUP_TABLE_NAME,
   GIVING_TABLE_NAME,
   MAIN_QUEST_DEFAULT_TYPE,
   MAIN_QUEST_TABLE_NAME,
@@ -58,6 +60,9 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME).map((subQuest) => [subQuest.subId, subQuest]),
   );
   const givingMap = new Map(readExcelTable<DumpedGiving>(GIVING_TABLE_NAME).map((giving) => [giving.id, giving]));
+  const givingGroupMap = new Map(
+    readExcelTable<DumpedGivingGroup>(GIVING_GROUP_TABLE_NAME).map((givingGroup) => [givingGroup.id, givingGroup]),
+  );
   // A quest is named by its title, and a chapter by the quest its end quest is in, for the wiki's named prerequisites
   const titleQuestIds = readTitleQuestIds(
     englishTextMap,
@@ -78,7 +83,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       const mainQuest = subQuest && mainQuestMap.get(subQuest.mainId);
       if (!subQuest || !giving || !mainQuest)
         throw new InvalidOperationError(Operation.Read, questId, "has no sub quest, giving or world quest row");
-      return readReputationRequestQuest({ giving, mainQuest, rewards, subQuest });
+      return readReputationRequestQuest({ giving, givingGroupMap, mainQuest, rewards, subQuest });
     }
     // A city's opening quest is one sub quest of its world quest: titled by that world quest, read from its binary
     const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, mainIdBySubId);
