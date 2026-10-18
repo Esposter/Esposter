@@ -1,10 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createNeferKitBehaviour, NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NEFER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEFER_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createNeferKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -24,5 +26,10 @@ describe(createNeferKitBehaviour, () => {
     expect(NEFER_KIT.burstCooldownSeconds).toBe(15);
     expect(NEFER_KIT.chargedAttackStamina).toBe(50);
     expect(NEFER_KIT.skillCooldownSeconds).toBe(9);
+  });
+
+  test("Nefer's elemental skill uses her own hits", () => {
+    expect.hasAssertions();
+    expect(NEFER_KIT.elementalSkill.hits).not.toStrictEqual(TRAVELER_KIT.elementalSkill.hits);
   });
 });
