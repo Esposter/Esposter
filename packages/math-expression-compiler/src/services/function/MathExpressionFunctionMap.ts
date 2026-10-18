@@ -1,14 +1,15 @@
 import type { MathExpressionSignature } from "#src/models/function/MathExpressionSignature";
 
+import { MathExpressionFunctionName } from "#src/models/function/MathExpressionFunctionName";
 import { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 import { checkIsLarger } from "#src/services/function/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { checkIsPrime } from "#src/services/function/checkIsPrime";
 import { checkIsSmaller } from "#src/services/function/checkIsSmaller";
 import { computeBellNumber } from "#src/services/function/computeBellNumber";
+import { computeBernoulliNumber } from "#src/services/function/computeBernoulliNumber";
 import { computeBitwiseAnd } from "#src/services/function/computeBitwiseAnd";
 import { computeBitwiseOr } from "#src/services/function/computeBitwiseOr";
-import { computeBernoulliNumber } from "#src/services/function/computeBernoulliNumber";
 import { computeCatalan } from "#src/services/function/computeCatalan";
 import { computeCombinations } from "#src/services/function/computeCombinations";
 import { computeComparison } from "#src/services/function/computeComparison";
@@ -127,7 +128,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   count: [createListSignature((values) => values.length)],
   csc: createUnarySignatures((value) => 1 / Math.sin(value)),
   csch: createUnarySignatures((value) => 1 / Math.sinh(value)),
-  ctranspose: createUnarySignatures((value) => value),
   cube: createUnarySignatures((value) => value * value * value),
   deepEqual: [
     ...createBinarySignatures((left, right) => toNumber(checkIsNearlyEqual(left, right))),
@@ -159,7 +159,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   erfinv: createUnarySignatures(computeErfInverse),
   exp: createUnarySignatures(Math.exp),
   expm1: createUnarySignatures(Math.expm1),
-  factorial: createUnarySignatures(computeFactorial),
   fix: createDigitSignatures(Math.trunc),
   floor: createDigitSignatures(Math.floor),
   gamma: createUnarySignatures(computeGamma),
@@ -199,6 +198,10 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   log2: createUnarySignatures(Math.log2),
   log10: createUnarySignatures(Math.log10),
   mad: createSpreadSignatures(1, createNonEmptyCompute(computeMedianAbsoluteDeviation)),
+  [MathExpressionFunctionName.CTranspose]: createUnarySignatures((value) => value),
+  [MathExpressionFunctionName.Factorial]: createUnarySignatures(computeFactorial),
+  [MathExpressionFunctionName.UnaryMinus]: createUnarySignatures((value) => -value),
+  [MathExpressionFunctionName.UnaryPlus]: createUnarySignatures((value) => value),
   max: createExtremeSignatures(checkIsLarger),
   mean: createSpreadSignatures(1, createNonEmptyCompute(computeMean)),
   median: createSpreadSignatures(1, createNonEmptyCompute(computeMedian)),
@@ -295,8 +298,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   tanh: createUnarySignatures(Math.tanh),
   trace: createIdentitySignatures(),
   transpose: createIdentitySignatures(),
-  unaryMinus: createUnarySignatures((value) => -value),
-  unaryPlus: createUnarySignatures((value) => value),
   unequal: createBinarySignatures((left, right) => toNumber(!checkIsNearlyEqual(left, right))),
   variance: createSpreadSignatures(1, createNonEmptyCompute(computeVariance)),
   xor: createVariadicSignatures(
