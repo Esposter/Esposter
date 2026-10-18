@@ -1,7 +1,6 @@
 {
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 5439 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.skillFirstTick": { "cause": "Unsourced", "value": 24 },
   "frames.skillTickInterval": { "cause": "Unsourced", "value": 120 },
   "hits.bakeKurageRipples.length": { "cause": "Unsourced", "value": 7 },
@@ -54,9 +53,6 @@
   "hits.bakeKurageRipples.6.hitmarkFrames": { "cause": "Unsourced", "value": 750 },
   "hits.bakeKurageRipples.6.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
   "hits.bakeKurageRipples.6.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.bakeKurageHealMaxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 5432 }
@@ -71,14 +67,13 @@
     "value": { "index": 3, "proudSkillGroupId": 5439 }
   },
   "parameters.garmentSkillMaxHealthBonus": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 5439 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
+  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 76 },
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 }
   },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.flatHealth": {
@@ -100,8 +95,8 @@
   "stances.ceremonialGarment.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 30 },
   "stances.ceremonialGarment.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
   },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.flatHealth": {
@@ -123,8 +118,8 @@
   "stances.ceremonialGarment.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 34 },
   "stances.ceremonialGarment.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
   },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.flatHealth": {
@@ -146,8 +141,8 @@
   "stances.ceremonialGarment.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 65 },
   "stances.ceremonialGarment.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.7 }
   },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.flatHealth": {
