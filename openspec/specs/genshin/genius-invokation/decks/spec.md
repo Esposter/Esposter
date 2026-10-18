@@ -230,13 +230,19 @@ A character about to fall SHALL first be offered to the cards attached to it. A 
 
 ### Requirement: A skill prepared for a side runs as its turn begins
 
-A side's prepared skills SHALL run as its turn begins, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn.
+A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn. While the opponent has declared its round's end, the side keeps the turn without a new one beginning, so its prepared skills SHALL wait for the turn it next takes.
 
 #### Scenario: Rock-Paper-Scissors Combo's preparations run at the next turn
 
 - **GIVEN** Electro Hypostasis uses Rock-Paper-Scissors Combo, preparing Scissors and Paper
 - **WHEN** the turn passes to that side
 - **THEN** Scissors deals 2 Electro DMG and Paper deals 3 Electro DMG to the opposing active character before the side chooses, and Scissors' own preparation of Paper waits for the turn after
+
+#### Scenario: A prepared skill waits while the opponent has declared its end
+
+- **GIVEN** Electro Hypostasis prepared Paper in its own Combat Action, and the opposing side has declared its Round end
+- **WHEN** Electro Hypostasis keeps taking actions
+- **THEN** Paper deals nothing and stays prepared, and it deals its 3 Electro DMG when the turn next passes to that side
 
 ### Requirement: A card on one side surcharges the other side's switch once a round
 
