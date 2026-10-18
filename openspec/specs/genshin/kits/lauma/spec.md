@@ -94,6 +94,16 @@ Lauma's elemental burst SHALL deal no damage of its own.
 - **WHEN** the player casts the elemental burst
 - **THEN** no damage is dealt
 
+### Requirement: Elemental Mastery raises her Elemental Skill's DMG from Ascension 4
+
+From Ascension 4, Lauma's Elemental Skill, its press and the Frostgrove Sanctuary's ticks, SHALL deal 0.04% more DMG for each point of her Elemental Mastery, at most 32%.
+
+#### Scenario: A sanctuary tick takes Cleansing for the Spring
+
+- **GIVEN** Lauma has reached Ascension 4
+- **WHEN** a Frostgrove Sanctuary tick strikes
+- **THEN** it takes 0.04% DMG Bonus for each point of her Elemental Mastery, at most 32%
+
 ### Requirement: Pale Hymn, Spirit Envoy and her other passives not yet built
 
 Pale Hymn, the Spirit Envoy state and Lauma's other passives and constellations SHALL NOT take effect.
