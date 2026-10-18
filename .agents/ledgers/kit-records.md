@@ -96,7 +96,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `razor`              | 2026-10-18 · Haiku 5.5 |                                                                          |
 | `rosaria`            | —                      |                                                                          |
 | `sandrone`           | —                      |                                                                          |
-| `sangonomiya-kokomi` | —                      |                                                                          |
+| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sayu`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `sethos`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `shenhe`             | 2026-10-14 · Haiku 5.5 |                                                                          |
