@@ -1,6 +1,6 @@
 ## Purpose
 
-Kinich's kit as built, with his three strikes outside the Nightsoul Blessing, his charged attack, provisional plunges and the burst's hit with the Ajaw's lasers, and what is left waiting on the Nightsoul stance.
+Kinich's kit as built, with his three strikes outside the Nightsoul Blessing, his skill's press entering the blessing with its points,
 
 ## Requirements
 
@@ -40,9 +40,9 @@ Kinich's plunge attacks SHALL land a collision and two plunge hits on the enemie
 - **WHEN** the player starts a plunge attack
 - **THEN** the collision and the plunge hits land on the enemies within reach
 
-### Requirement: Kinich's skill without the blessing
+### Requirement: Kinich's skill press enters the blessing
 
-Kinich's elemental skill SHALL deal no damage and SHALL start an 18-second cooldown until the Nightsoul Blessing is built.
+Kinich's elemental skill press SHALL enter the Nightsoul Blessing with no points when he is not in it, SHALL deal no damage, and SHALL start an 18-second cooldown. In the blessing the press SHALL do nothing until the Scalespiker Cannon is built.
 
 #### Scenario: Skill press spends its cooldown
 
@@ -86,10 +86,21 @@ Kinich's burst SHALL summon the Ajaw, which fires six Dendro lasers at the prima
 
 ### Requirement: Nightsoul effects not yet built
 
-Kinich's Nightsoul Blessing and his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul state is built.
+Kinich's Loop Shots, Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
 
 #### Scenario: Nightsoul-dependent effects do nothing
 
 - **GIVEN** Kinich has Constellation 1 or any other Nightsoul-dependent Ascension or constellation
 - **WHEN** the player fights with Kinich
 - **THEN** no Nightsoul-based effect is applied
+
+### Requirement: Blessing gains points and lasts ten and a sixth seconds
+
+Kinich's blessing SHALL gain two Nightsoul points a second up to 20, and SHALL end ten and a sixth seconds after the press that entered it.
+
+#### Scenario: Points gain to the maximum and the blessing ends
+
+- **GIVEN** Kinich has just entered the Nightsoul Blessing with no points
+- **WHEN** five seconds pass
+- **THEN** he holds 10 points
+- **AND** after a further six seconds he is no longer in the blessing
