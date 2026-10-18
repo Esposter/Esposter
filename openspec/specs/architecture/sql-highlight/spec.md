@@ -75,17 +75,6 @@ Quoted text SHALL end at its closing quote, where a doubled quote is the only es
 - **THEN** the string ends at its closing quote
 - **AND** the text after it is not treated as part of the string
 
-### Requirement: Every reported issue of the upstream highlighter has a recorded verdict
-
-Every reported issue of the upstream SQL highlighter SHALL have a recorded verdict, and each in-scope defect SHALL have a regression check that fails against the upstream behaviour.
-
-#### Scenario: An in-scope defect is checked
-
-- **GIVEN** an upstream defect that this highlighter fixes
-- **WHEN** the test suite runs
-- **THEN** a regression check names that issue
-- **AND** the check fails when run against the upstream behaviour
-
 ### Requirement: Token colours are read from one map
 
 Token colours SHALL be defined in one map, so that tests check the kind of each token rather than its colour.
