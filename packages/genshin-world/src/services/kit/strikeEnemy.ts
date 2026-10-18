@@ -93,11 +93,13 @@ export const strikeEnemy = (
         amplifyingMultiplier,
         attackerLevel: combatant.level,
         criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
-        // A hit's own DMG Bonus and an enemy's statuses' DMG taken add to the bonus each hit on it reads
+        // The element's or the physical DMG Bonus, the all-damage bonus, a hit's own and an enemy's statuses' DMG taken
+        // Add to the bonus each hit on it reads
         damageBonus:
           attributeTotalMap[
             element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
           ] +
+          attributeTotalMap[Attribute.AllDamageBonus] +
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
         defense,

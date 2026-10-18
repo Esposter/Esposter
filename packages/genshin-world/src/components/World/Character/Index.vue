@@ -15,6 +15,7 @@ import type {
 } from "genshin-engine";
 import type { Object3D, SkinnedMesh } from "three";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
@@ -27,6 +28,7 @@ import {
 import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
+import { getMovementSpeedLocomotion } from "#src/services/party/getMovementSpeedLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
 import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
@@ -151,7 +153,12 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   characterController.step(
     kitState.action ? stillInput : inputState,
     followCamera?.yaw ?? 0,
-    checkIsImpetuousWinds() ? getImpetuousWindsLocomotion(locomotion) : locomotion,
+    getMovementSpeedLocomotion(
+      checkIsImpetuousWinds() ? getImpetuousWindsLocomotion(locomotion) : locomotion,
+      kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.attributeTotalMap[
+        Attribute.MovementSpeed
+      ] ?? 0,
+    ),
     FIXED_STEP_SECONDS,
   );
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);

@@ -14,6 +14,7 @@ import {
   ON_FOOT_LOCOMOTION_STATES,
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { endKitAction } from "#src/services/kit/endKitAction";
 import { landKitHits } from "#src/services/kit/landKitHits";
@@ -94,7 +95,8 @@ export const stepKit = (
     if (isAllowed) {
       const speedBonus = kit.normalAttacks.includes(action)
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
-            ?.normalAttackSpeedBonus ?? 0)
+            ?.normalAttackSpeedBonus ?? 0) +
+          context.activeCombatant.attributes.attributeTotalMap[Attribute.NormalAttackSpeed]
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
