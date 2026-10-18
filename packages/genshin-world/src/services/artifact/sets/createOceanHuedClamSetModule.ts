@@ -43,14 +43,13 @@ const findSeaDyedFoam = (effects: readonly KitEffect[]): KitField | undefined =>
 const createSeaDyedFoamBurst =
   (characterId: number, damageShare: number) =>
   (context: KitContext): void => {
-    const centre = { ...context.body.position };
     const gatheredHp = getGatheredHp(context.kitEffectState, characterId);
     setGatheredHp(context.kitEffectState, characterId, 0);
     const owner = context.characterIdCombatantMap.get(characterId);
     for (const enemy of context.enemyMap.values())
       if (
         ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
-        checkIsInKitField({ centre, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
+        checkIsInKitField({ centre: context.body.position, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
       )
         strikeReactionDamage(enemy, undefined, damageShare * gatheredHp, owner, context);
   };
@@ -82,8 +81,7 @@ export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveMo
       );
       if (foam || checkIsKitStatusActive(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID)) return;
       addKitStatus(kitEffectState, characterId, { id: OCEAN_HUED_CLAM_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
-      const centre = { ...body.position };
-      castKitField(kitEffectState, characterId, centre, {
+      castKitField(kitEffectState, characterId, body.position, {
         id: OCEAN_HUED_CLAM_FOAM_ID,
         nextTickSeconds: foamSeconds,
         onTick: createSeaDyedFoamBurst(characterId, damageShare),
