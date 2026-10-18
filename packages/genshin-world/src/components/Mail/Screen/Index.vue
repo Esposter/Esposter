@@ -64,7 +64,7 @@ const selectedMailId = ref<number>();
 // The Mailbox tab lists the mails outside the Gift Mail Box, and the Gift Mail Box tab the mails inside it
 const isGiftBoxTab = ref(false);
 const visibleEntries = computed(() =>
-  sortedEntries.value.filter(({ mail }) => isGiftBoxed(mail, birthdayMailIds) === isGiftBoxTab.value),
+  sortedEntries.value.filter(({ mail, row }) => isGiftBoxed(mail, row, birthdayMailIds) === isGiftBoxTab.value),
 );
 const selectedEntry = computed(
   () => visibleEntries.value.find(({ mail }) => mail.id === selectedMailId.value) ?? visibleEntries.value[0],
@@ -72,7 +72,7 @@ const selectedEntry = computed(
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
 );
-const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows).length < mails.length);
+const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
 const selectMail = (mailId: number) => {
@@ -88,7 +88,7 @@ const getItemName = (itemId: number): string => {
 };
 // A mail in the Gift Mail Box is kept there and says so; any other mail shows its time left
 const getStatusText = ({ mail, row }: MailEntry): string => {
-  if (isGiftBoxed(mail, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
+  if (isGiftBoxed(mail, row, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
   return fillGameTextValues(gameText[MailExpiryGameTextKeyMap[unit]], count);
 };

@@ -17,5 +17,5 @@ export const removeExpiredMails = (
     const row = mailRows.get(mail.id);
     if (row === undefined) return true;
     const expiresAt = Temporal.Instant.from(mail.deliveredAt).add({ hours: row.expireDays * HOURS_PER_DAY });
-    return isGiftBoxed(mail, birthdayMailIds) || Temporal.Instant.compare(expiresAt, now) > 0;
+    return isGiftBoxed(mail, row, birthdayMailIds) || Temporal.Instant.compare(expiresAt, now) > 0;
   });

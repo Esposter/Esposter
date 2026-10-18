@@ -15,6 +15,9 @@ export const deleteReadMails = (
     const row = mailRows.get(mail.id);
     if (row === undefined) return true;
     return (
-      !mail.isRead || mail.isPinned || isGiftBoxed(mail, birthdayMailIds) || (row.items.length > 0 && !mail.isClaimed)
+      !mail.isRead ||
+      mail.isPinned ||
+      isGiftBoxed(mail, row, birthdayMailIds) ||
+      (row.items.length > 0 && !mail.isClaimed)
     );
   });
