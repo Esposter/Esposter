@@ -7,6 +7,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameText } from "genshin-text";
@@ -29,6 +30,9 @@ import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { pickUpMaterialSource } from "#src/services/wildlife/pickUpMaterialSource";
+import { readMondstadtMaterialSourcePlaces } from "#src/services/wildlife/readMondstadtMaterialSourcePlaces";
+import { getResultAsync } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -73,6 +77,18 @@ export const useWorldPickups = ({
   const { gatheringItems, gatheringPlaces } = useGatheringPoints(gameDataBaseUrl);
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
   const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
+  // Mondstadt's material sources, the crystalflies picked up whole, fetched as the world opens. A load that fails is logged
+  // And left off, so no source is offered rather than a wrong one
+  const materialSources = shallowRef<MaterialSourcePlace[]>([]);
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(() => readMondstadtMaterialSourcePlaces(gameDataBaseUrl)).match(
+    (places) => {
+      materialSources.value = places;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
   // The broken share of each ore struck and not yet broken, by its point, which the ore breaking takes out
   const oreIdBrokenShareMap = shallowRef<ReadonlyMap<string, number>>(new Map());
   const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
@@ -107,7 +123,13 @@ export const useWorldPickups = ({
         },
       ];
     });
-    return [...drops, ...gatherings];
+    const sources = materialSources.value.map(({ id, kind, position: { x, z } }) => ({
+      id,
+      kind: InteractionKind.PickUp,
+      name: getItemDefinition(kind, nameText, materialDataMap).name,
+      position: { x, y: getGroundHeight(x, z), z },
+    }));
+    return [...drops, ...gatherings, ...sources];
   });
   // The items a source drops lie at its point, numbered on from the drops placed before them
   const placeWorldDrops = (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => {
@@ -151,6 +173,14 @@ export const useWorldPickups = ({
     if (addition.overflow === 0)
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
   };
+  // A material source is picked into the bag as its item and taken out of the world, which keeps it where it lies when the bag
+  // Has no room for it
+  const pickUpMaterialSourcePlace = (placeId: string) => {
+    const pickUp = pickUpMaterialSource(materialSources.value, placeId, inventory.value, nameText, materialDataMap);
+    setInventory(pickUp.inventory);
+    bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+    materialSources.value = pickUp.materialSources;
+  };
   // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one that
   // Breaks drops its pieces where it lies and is kept as picked at the instant it broke
   const strikeGatheringOres = (body: KitBody, hit: OreHit, random: () => number) => {
@@ -184,8 +214,10 @@ export const useWorldPickups = ({
   };
   return {
     bagFullHint,
+    materialSources,
     pickUpGatheringPlace,
     pickUpInteractables,
+    pickUpMaterialSourcePlace,
     pickUpWorldDrop,
     placeWorldDrops,
     strikeGatheringOres,
