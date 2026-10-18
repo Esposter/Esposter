@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, with no framework or DOM.
+A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, and navigation, with no framework or DOM. Its undo history is the bounded history of @esposter/shared.
 
 ## Table of Contents
 

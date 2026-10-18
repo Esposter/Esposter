@@ -1,0 +1,7 @@
+import type { History } from "#src/models/history/History";
+
+// The entry an undo or a redo moved, and the history after the move
+export interface HistoryStep<T> {
+  entry?: T;
+  history: History<T>;
+}
