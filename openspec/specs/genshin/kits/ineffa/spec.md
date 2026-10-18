@@ -174,3 +174,31 @@ From Constellation 2, Ineffa's burst SHALL place its Electro shield 37 frames in
 - **GIVEN** Ineffa's burst hits two enemies in turn
 - **WHEN** the first carries the mark
 - **THEN** the second carries none
+
+### Requirement: Birgitta's discharges queue a Lunar-Charged hit while a Lunar-Charged reaction holds
+
+From Ascension 1, each discharge of Birgitta SHALL queue a Lunar-Charged Electro hit 38 frames after it, of 0.65 of Ineffa's ATK and ignoring all of the enemy's DEF, on the primary target's circle of radius 4, when a Lunar-Charged reaction of the party has been triggered within the last 5.5 seconds.
+
+#### Scenario: A discharge in the window queues the hit 38 frames later
+
+- **GIVEN** Ineffa is at Ascension 1 and a Lunar-Charged reaction is triggered at the cast
+- **WHEN** a discharge of Birgitta falls due 110 frames in
+- **THEN** the Lunar-Charged hit is queued 148 frames in, on the primary target
+
+#### Scenario: A discharge after the window queues nothing
+
+- **GIVEN** a Lunar-Charged reaction is triggered at the cast
+- **WHEN** a discharge falls due 348 frames in, more than 5.5 seconds after the reaction
+- **THEN** no hit is queued
+
+#### Scenario: Below Ascension 1 nothing is queued
+
+- **GIVEN** Ineffa is below Ascension 1
+- **WHEN** a discharge falls due in a Lunar-Charged window
+- **THEN** no hit is queued
+
+#### Scenario: No primary target means no hit
+
+- **GIVEN** no enemy is the primary target
+- **WHEN** a discharge falls due in a Lunar-Charged window
+- **THEN** no hit is queued
