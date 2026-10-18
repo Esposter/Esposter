@@ -45,7 +45,8 @@ export const createTerrainMaterial = (
   toonMaterialOptions: Pick<ToonMaterialOptions, "detail" | "lightUniforms" | "rampTexture">,
   waterUniforms?: WaterUniforms,
 ): ToonNodeMaterial => {
-  const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
+  const { detail, ...toonOptions } = toonMaterialOptions;
+  const terrainMaterial = createToonMaterial({ ...toonOptions, isOutlined: false });
   const coarsePosition = attribute("coarsePosition", "vec4");
   const { finestRange, maxHeight, minHeight } = terrainOptions;
   const levelScale = exp2(coarsePosition.w);
@@ -59,7 +60,7 @@ export const createTerrainMaterial = (
     normalLocal.assign(mix(normalLocal, attribute("coarseNormal", "vec3"), morphAmount).normalize());
     return mix(positionGeometry, coarsePosition.xyz, morphAmount);
   })();
-  const { detail, lightUniforms } = toonMaterialOptions;
+  const { lightUniforms } = toonOptions;
   const detailNode = detail === undefined ? float(1) : createMaterialDetailNode(detail);
   terrainMaterial.colorNode = vec4(
     varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount))
