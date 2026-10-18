@@ -14,6 +14,7 @@ describe(checkIsGadgetReady, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    region: "",
   };
   const groupMate: GadgetRow = { ...gadget, id: 220009 };
   const readyAtMap: CooldownGroupReadyAtMap = new Map([[1, epoch.add({ seconds: 30 })]]);

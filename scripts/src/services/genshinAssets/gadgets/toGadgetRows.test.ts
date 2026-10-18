@@ -20,7 +20,22 @@ describe(toGadgetRows, () => {
         id: 220004,
         isEquipable: true,
         kind: "Collector",
+        region: "",
       },
+    ]);
+  });
+
+  test("a treasure compass names the region its city joins, and a widget naming no city has none", () => {
+    expect.hasAssertions();
+
+    const widgets: Record<string, ConfigWidgetRow> = {
+      "220003": { $type: "ConfigWidgetClientDetector", allowCityId: 2, coolDown: 30 },
+      "220013": { $type: "ConfigWidgetTreasureMapDetector", coolDown: 30 },
+    };
+
+    expect(toGadgetRows(widgets).map(({ id, region }) => ({ id, region }))).toStrictEqual([
+      { id: 220003, region: "liyue" },
+      { id: 220013, region: "" },
     ]);
   });
 });

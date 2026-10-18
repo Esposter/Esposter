@@ -3,6 +3,7 @@
 // Use, so each of those fields is absent for some kinds
 export interface ConfigWidgetRow {
   $type: string;
+  allowCityId?: number;
   coolDown?: number;
   coolDownGroup?: number;
   coolDownOnFail?: number;
