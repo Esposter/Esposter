@@ -41,7 +41,7 @@ description: Apply when writing or reviewing styles in .vue or .css files, or la
 
 ## The look is the app's, on every page
 
-An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill, `references/document-chrome.md`). The agent console stays in dusk through a theme scope rather than a palette of its own (`apps/web/content/docs/architecture/ui-library.md`). Every rule on this page holds inside an immersive page as on any other.
+An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill, `references/document-chrome.md`). The agent console stays in dusk through a theme scope rather than a palette of its own (`openspec/specs/architecture/ui-library/design.md`). Every rule on this page holds inside an immersive page as on any other.
 
 ## What stays in `class="..."`
 

@@ -1,6 +1,6 @@
 # `null` vs `undefined`
 
-Read when choosing between `undefined` and `null`, declaring an absent property, or consuming a boundary type that carries `null`. Why one sentinel, and the boundary list with its reasoning, is `apps/web/content/docs/architecture/null-vs-undefined.md`.
+Read when choosing between `undefined` and `null`, declaring an absent property, or consuming a boundary type that carries `null`. Why one sentinel, and the boundary list with its reasoning, is `openspec/specs/architecture/null-vs-undefined/design.md`.
 
 `undefined` is **banned in app-owned code unless it carries a meaning distinct from every real value** — including the `""` string sentinel and an absent optional property. Only reach for it when absence must be told apart from a valid value (e.g. a cache read where a stored `""` is real and `undefined` means "miss"). `null` is only permitted at the external system boundary — every `null` in the repo belongs to one of the shapes listed below, and a type keeping one names the boundary it came from.
 
@@ -16,7 +16,7 @@ Read when choosing between `undefined` and `null`, declaring an absent property,
 
 **External boundary — keep `null` where required:**
 
-- **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `apps/web/content/docs/architecture/null-vs-undefined.md`.
+- **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `openspec/specs/architecture/null-vs-undefined/design.md`.
 - **`ItemMetadata.deletedAt`** (`@esposter/shared`) — `Date | null`, the soft-delete column Drizzle's metadata columns and Azure Table entities share, so every row of either satisfies it. An item stored inside a content blob is removed rather than soft deleted, so `AItemEntity` carries the timestamps without `deletedAt`, and a content schema names none.
 - **Persisted JSON blobs** — `JSON.stringify` drops an `undefined` key outright, so a blob that must round-trip an empty slot stores `null`. `ColumnValue` is `boolean | null | number | string`: `null` is the empty spreadsheet cell, `""` a cell holding the empty string, and they sort, filter and count apart.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.

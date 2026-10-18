@@ -1,0 +1,48 @@
+# Claude Agent SDK driver
+
+The driver runs the [agent console](../README.md)'s sessions through `@anthropic-ai/claude-agent-sdk`. The page never learns it is talking to Claude Code. The driver lists and opens sessions, reports what happens in them as the console's events, and takes commands back through the `Driver` interface, which any other agent's driver would implement the same way. On Windows, a host on the loopback runs this driver once per session, each in a [window of its own](../session-windows/design.md) behind a window driver that implements the same interface, and elsewhere the host runs it itself.
+
+## How it works
+
+```mermaid
+flowchart TD
+  Open[Create, resume, fork or rewind] --> History{Resuming?}
+  History -->|yes| Replay[Read the transcript up to the message named, and map it as history]
+  History -->|no| Query
+  Replay --> Query[One query, fed by an input queue that stays open across turns]
+  Query --> Map[Every SDK message through the session's one mapper]
+  Map --> Events[Console events to the host]
+  Query -->|canUseTool| Card[A permission request event]
+  Card -->|verdict, or an interrupt that aborts it| Settle[Settled once: allow, always allow or deny]
+  Map -->|a turn ends| Side[Context usage and the session's title read again]
+```
+
+- **One query per open session.** The query takes a streaming input: an input queue that stays open for as long as the session does, so every turn goes through the one query. A prompt sent while the agent is busy waits in the queue until the SDK asks for the next one. It is opened with `settingSources` set to the user, project and local layers, so CLAUDE.md, skills, hooks, plugins and output styles apply as they do in the terminal. The system prompt is Claude Code's own preset. Hook events and partial messages are included, so a reply streams as it is written, and thinking is summarized rather than omitted, since the SDK's default streams every thinking block empty. Bypass is allowed but not taken, as the terminal's `--allow-dangerously-skip-permissions` does: the session starts in the mode its settings give, and the mode picker can switch to bypass later, which the SDK otherwise refuses. Files are checkpointed before every edit, and the terminal's task tools are switched on, which the SDK gives a session only when its environment asks.
+- **Sessions are the terminal's.** A new session takes an id the host chose, and the SDK writes its transcript where the terminal writes every other one. `claude --resume <id>` picks it up, and the session list is the SDK's own list of recent sessions across every project, with the ones open on the host marked live.
+- **One mapper.** Every SDK message becomes zero or more console events in one place, `createSdkMessageMapper`, so the page is insulated from the SDK's message types as they move between releases. Message content is parsed, not cast. A block or a message type the mapper does not know becomes an `Unknown` event carrying the whole message as JSON, which the page shows as a raw row, never dropped. The mapper keeps what later messages leave out: the model a mode change belongs beside, the checklist the todo tools edit a piece at a time (`TodoWrite` rewrites it whole, `TaskCreate` and `TaskUpdate` patch it), each file's text before the session first changed it, and the tokens the turn has written — each finished request's real count plus the SDK's estimate of the thinking under way. A stream's pieces and that running count are ephemeral: the host broadcasts them and never logs them, so a reconnect replays only what lasts. `command_lifecycle`, the SDK's bookkeeping of its prompt queue, is dropped by name.
+- **Permissions.** The SDK's `canUseTool` callback becomes a permission request event under the SDK's own request id, and waits on the page. Always-allow applies the rules the SDK offered with the prompt, as the terminal's "don't ask again" does. A deny carries what the person wrote, or the SDK's default wording. An interrupt aborts the request and settles it as a deny, so no request outlives its turn. A verdict for a request already settled, answered from another tab, does nothing.
+- **Resume, fork and rewind.** Each reopens a query with the SDK's own options. Resume keeps the session's id. Fork takes a new id, optionally ending at a message. Rewind reopens the same session at a message, replacing the query that held it; rewinding the files puts them back as they were when a prompt was sent, from the checkpoints, and counts what it changed with a dry run first, since the SDK counts only then. Before the query starts, the transcript up to that message is read with `getSessionMessages` and mapped exactly as live messages are, so the page shows the conversation it is continuing, as `claude --resume` does. `getSessionMessages` drops what each tool result recorded beside its content, an edit's file text from before it among it, so `readToolUseResultMap` reads that from the transcript file itself, found by the session's id across the terminal's projects, and a resumed session's changes merge from where each file started as a live one's do. The file checkpoints are not read for it: they are named by an internal hash and exist only where checkpointing was on, while the transcript is the record the live stream carries.
+- **Side reads.** When a session opens, and after every turn, the driver reads the palette's commands and models, the context usage, and the session's title. A failed side read is logged and the session carries on.
+
+## The recorded session
+
+The mapper is tested against one real session recorded through the SDK and checked in: a permission prompt, a file write, a Bash call, a subagent, and the persona plugin's hooks. Home-directory paths are rewritten to `/a` and the signatures on thinking blocks are cleared. The test maps it, checks every event against the wire schema, and writes the result into `recordedSession.events.snapshot.json` beside it. The app's store, component and visual tests replay that file through the same contract, so no test anywhere makes a live call.
+
+## Key files
+
+| File                                                                                              | Role                                                                 |
+| :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| `packages/agent-console-server/src/models/driver/Driver.ts`                                       | The interface every driver implements                                |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | Sessions, prompts, verdicts, mode and model, resume, fork and rewind |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts`        | The query options and the history replayed before it                 |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSdkMessageMapper.ts`     | The one place SDK messages become console events                     |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/readToolUseResultMap.ts`       | What each tool result recorded, read from the transcript on resume   |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createStreamTracker.ts`        | The reply as it is written, and the turn's running token count       |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createPermissionBridge.ts`     | `canUseTool` as a request the page answers, settled exactly once     |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/watchSession.ts`               | Reads a query until it ends, and closes the session however it ended |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/recordedSession.json`          | The recorded session every mapping and replay test runs on           |
+
+## Notes
+
+- Whether SDK use stays inside the subscription is the fact this driver's cost rests on, and the [terminal-mirror driver](../../../../../changes/infra-agent-console-terminal-mirror-driver/design.md) is the fallback that keeps the console free if it changes.
+- The conversation and the files rewind separately, as the terminal's rewind offers each on its own.

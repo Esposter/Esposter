@@ -45,7 +45,7 @@ has not been registered yet, this is due to a change of providers mixed with --t
 
 This is not drift to repair and no CLI upgrade fixes it. Run the update **untargeted** — plain `pnpm infra:up`, or `pulumi up --exclude <urn>` when specific resources must be held back, since `--exclude` still registers every provider. That run re-associates the resources onto the new provider, and `--target` works again until the next bump. `--exclude` accepts wildcards, so `--exclude "**::<resource-name>"` holds back one resource by name.
 
-Hold a resource back when its Azure-side create depends on something not yet deployed — an Event Grid subscription is validated against its function endpoint at create time, so a subscription for a function that only exists in an unreleased build fails until that release lands (`apps/web/content/docs/infra/eventgrid-dead-letter.md`).
+Hold a resource back when its Azure-side create depends on something not yet deployed — an Event Grid subscription is validated against its function endpoint at create time, so a subscription for a function that only exists in an unreleased build fails until that release lands (`openspec/specs/infra/eventgrid-dead-letter/design.md`).
 
 ## Diagnose a Function App from execution, not from configuration
 
@@ -80,5 +80,5 @@ at and diagnose.
 
 The trap is what happens meanwhile: the **old** subscription keeps delivering to a name the code no longer
 registers, and every event dead-letters silently, because nothing alerts off the deadletter container
-(observability is off — `apps/web/content/docs/infra/observability.md`). So when a rename touches a function an event subscription
+(observability is off — `openspec/specs/infra/observability/design.md`). So when a rename touches a function an event subscription
 names, check that container's recency — it is the only place the breakage shows.

@@ -1,4 +1,4 @@
-// Bit order is the wire format and is fixed by `apps/web/content/docs/esbabbler/rbac.md`; the sort is
+// Bit order is the wire format and is fixed by `openspec/specs/esbabbler/rbac/design.md`; the sort is
 // Disabled because that order, not the alphabet, is the contract. It runs category by category — text channel,
 // General, moderation, advanced — and what each bit grants is said once, on the screen that grants it, by
 // `apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.

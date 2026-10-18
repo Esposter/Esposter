@@ -42,7 +42,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
         // The ban, and no other delete path can reclaim them afterwards — `deleteMessage` rejects an entity that
         // Already carries `deletedAt`, and `deleteFile` needs a live message — so the blobs would be billed until
         // The room itself is deleted. Published per batch, behind the write, like every other delete
-        // (/docs/architecture/persist-then-notify)
+        // (openspec/specs/architecture/persist-then-notify/design.md)
         await publishBlobDeletion(
           roomId,
           AzureContainer.MessageAssets,

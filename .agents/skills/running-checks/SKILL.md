@@ -28,11 +28,11 @@ which checks a session runs and how it waits on them.
 
 The tests are one `Bash` call with `run_in_background: true`, redirecting their output to a log file and appending
 their own exit code (`echo "exit $?" >> log`), and the session moves to the next piece of work: the commit message,
-the docs sweep, the ledger row. The harness delivers a completion notification; read the log then. **This holds for
+the spec sweep, the ledger row. The harness delivers a completion notification; read the log then. **This holds for
 a one-file, "quick" suite too** — the habit that survives is the one applied without weighing it.
 
 Which paths, and from which directory, are the `package-scripts` skill's `references/check-suite.md`: the suites
-of the files touched, a bundle's size snapshot after a fresh `pnpm build`, and the docs suite for a docs edit.
+of the files touched, a bundle's size snapshot after a fresh `pnpm build`, and the workspace tests for a spec edit.
 
 ## Never poll a backgrounded check
 

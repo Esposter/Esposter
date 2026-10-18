@@ -1,0 +1,22 @@
+# Tartaglia
+
+Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehaviour`, on avatar 10000033: six arrows, a fully charged aimed shot, a collision and two plunges in his Ranged Stance, Foul Legacy: Raging Tide's change into his Melee Stance with its six Hydro strikes, the sixth of two hits, its charged attack of two hits and its press back, and Havoc: Obliteration in either stance. His multipliers are read from proud skill groups 3331, 3332 and 3339, and match the wiki's Cutting Torrent, Foul Legacy: Raging Tide and Havoc: Obliteration values to two decimal places; Riptide's seconds, the Melee Stance's charged attack stamina, its longest seconds and the cooldowns its end sets, and the burst's energy back, cooldown and cost are read from the same groups. The Melee Stance is a stance among the team's effects that ends on a press back, at its longest or as he leaves the field, and its end sets the skill's cooldown by the whole seconds it held. Riptide is a status on the enemy that a fully charged aimed shot, Flash of Havoc, Riptide Burst and Sword of Torrents give, and it sets off Riptide Flash, Riptide Slash, Riptide Blast and Riptide Burst, each on its own interval. Never Ending and Sword of Torrents from Ascension 1 and 4, and Tide Withholder, Understream, Hydrospout and Havoc: Annihilation from one, two, four and six constellations are built. Master of Weaponry, the particles and the Melee Stance's refusal of plunges are not built.
+
+## Decisions
+
+- **Tartaglia's ranged kit is his kit and his Melee Stance a stance.** The skill's cooldown is the 1 second before a press back may end the stance, and the stance's end sets it to the table's 6 seconds plus each whole second the stance held, or its 45 once it held its longest 30, as the wiki's in-game formula gives it; gcsim's 7, 8 and 9 seconds for a stance under 5 seconds are not taken. Tide Withholder and Impetuous Winds cut it, and Havoc: Annihilation ends it.
+- **Riptide goes on after the Riptide Flash it sets off is read**, as gcsim's order has it, so a shot sets off Flash only on Riptide the enemy held before it. An enemy a Riptide-giving hit defeats bursts too, as the wiki notes, and Riptide Burst gives Riptide to what it strikes, as its talent text reads where gcsim gives none.
+- **Riptide Blast lands 0.8 seconds after its hit**, the wiki's delay, clearing Riptide as the hit lands, and a Riptide Slash's interval holds it off, as gcsim checks.
+- **Hydrospout ticks on each enemy's own schedule**, every 3.9 seconds as gcsim measures the game's 4, from the first Riptide on that enemy; gcsim keeps one schedule, for the enemy last given Riptide.
+- **Tartaglia's gauges and poise are the wiki's**, Riptide Burst's 1U where gcsim gives 2U among them, his Melee Stance strikes count under their own Foul Legacy internal cooldown and Riptide Flash under its own Riptide one (`InternalCooldownTag`). His arrows are priced round his body, and his plunges are provisional.
+
+## Key files
+
+| File                                                                 | Role                                                                                                                 |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/tartagliaKit.ts` | `createTartagliaKitBehaviour`, Tartaglia's kit with his two stances, Riptide and its strikes, and his constellations |
+
+## Sources
+
+- [Cutting Torrent](https://genshin-impact.fandom.com/wiki/Cutting_Torrent), [Foul Legacy: Raging Tide](https://genshin-impact.fandom.com/wiki/Foul_Legacy:_Raging_Tide), [Havoc: Obliteration](https://genshin-impact.fandom.com/wiki/Havoc:_Obliteration), [Never Ending](https://genshin-impact.fandom.com/wiki/Never_Ending), [Sword of Torrents](https://genshin-impact.fandom.com/wiki/Sword_of_Torrents) and [Abyssal Mayhem: Hydrospout](https://genshin-impact.fandom.com/wiki/Abyssal_Mayhem:_Hydrospout), Genshin Impact Wiki: Tartaglia's gauges, poise and internal cooldowns, the stance's cooldown formula and its end on a swap, Riptide Blast's delay and the notes on what a defeated enemy's Riptide sets off.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/tartaglia), MIT: Tartaglia's hitmarks, animations and areas in both stances, Riptide's strikes, their intervals and order, and Hydrospout's 3.9 seconds.

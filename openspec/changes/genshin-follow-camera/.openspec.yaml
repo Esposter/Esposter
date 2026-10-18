@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports, media-engine]
+x-touches:
+  [
+    "packages/genshin-engine/src/models/camera/**",
+    "packages/genshin-world/src/components/World/Character/**",
+    "packages/genshin-world/src/components/Menu/Settings/**",
+  ]
+x-waiting: "the Settings Controls tab, which waits on the interface export"

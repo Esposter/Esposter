@@ -35,7 +35,7 @@ A third follows: the guard makes the wrong shape _survivable_, so the pressure t
 
 ## The ladder
 
-Take the highest rung that fits. Each rung down costs more forever. The decision flow, the worked example and why the order is what it is are `apps/web/content/docs/architecture/enforcement-ladder.md`.
+Take the highest rung that fits. Each rung down costs more forever. The decision flow, the worked example and why the order is what it is are `openspec/specs/architecture/enforcement-ladder/design.md`.
 
 | Rung                | What it means                                                                | Cost to get wrong                  |
 | ------------------- | ---------------------------------------------------------------------------- | ---------------------------------- |
@@ -43,7 +43,7 @@ Take the highest rung that fits. Each rung down costs more forever. The decision
 | **Structural**      | One primitive does it, and every caller goes through it                      | One review                         |
 | **Linted**          | A stock rule, a `no-restricted-syntax` selector or an oxlint plugin fails it | One CI run, and no upkeep          |
 | **Tested**          | A unit test on the primitive, or a sweep script, fails on the wrong version  | One CI run, and upkeep as it moves |
-| **Remembered**      | A rule in the owning skill and docs page, and a guard each caller writes     | Forever                            |
+| **Remembered**      | A rule in the owning skill and spec, and a guard each caller writes          | Forever                            |
 
 **Lint before a test.** A lint rule covers every file in the monorepo in one pass, including files that do not exist yet, and needs nothing when the repo changes; a test covers the paths someone wrote it for and moves with them. A test comes second, for what one file's syntax cannot show. Prose comes last, and every rung above it still keeps its why in prose.
 

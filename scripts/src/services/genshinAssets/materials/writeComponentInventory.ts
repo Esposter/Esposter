@@ -24,7 +24,7 @@ const readWorldTerrainSplats = async (component: DerivedAssetComponent): ReturnT
 // Values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it
 // With, each terrain tile's splat layers with the share of its cells each paints, and each shader the `shaders` step
 // Read. It is the scene derivation's first step: nothing is built before it is
-// Inventoried (apps/web/content/docs/genshin/scene-derivation.md)
+// Inventoried (openspec/specs/genshin/scene-derivation/design.md)
 export const writeComponentInventory = async (component: DerivedAssetComponent): Promise<string> => {
   const directory = getComponentDirectory(component);
   const [materials, { gameObjectDrawingMap }, terrainSplats] = await Promise.all([

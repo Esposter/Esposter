@@ -2,7 +2,7 @@ import { getCitingText } from "#src/services/citations/getCitingText";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
-// A page at the sizes the citing trees hold — a short reference page, a long skill, the widest docs page — with
+// A page at the sizes the citing trees hold — a short reference page, a long skill, the widest design — with
 // The shapes that drive the run walk differently: prose citing one path per line is one closer found per
 // Opener, a page of fences is spans skipped in blocks, and a page of double-backtick spans is the worst case,
 // Each opener's closer found by a scan across every run after it

@@ -69,7 +69,7 @@ The value is the line's file stem on the community wiki — the title after `VO_
 pnpm ai:voice-match --check
 ```
 
-The full reasoning — how a reference is chosen and what its likeness number is worth — is the [reference selection](https://esposter.com/docs/infra/claude-interface/reference-selection) page's. **The generated values are measured, not heard**; correcting one by ear is a welcome edit, and the card is where that correction goes — never the generated map, which the next run overwrites. A session tempted to re-derive a reference by taste runs the measurement instead.
+The full reasoning — how a reference is chosen and what its likeness number is worth — is the [reference selection](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/claude-interface/reference-selection/design.md) page's. **The generated values are measured, not heard**; correcting one by ear is a welcome edit, and the card is where that correction goes — never the generated map, which the next run overwrites. A session tempted to re-derive a reference by taste runs the measurement instead.
 
 ## The spinner verbs
 

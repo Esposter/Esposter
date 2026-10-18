@@ -9,7 +9,7 @@ description: Apply when fixing lint errors, editing oxlint.config.ts, configurin
 
 - **A plugin for the file-organization skill's models rule** (an `interface` or `type` outside `models/`). Every one of its exceptions is a roster — path globs for the trees whose files are the type, name suffixes for hook maps and a composable's own options, a directory test for composables — and a roster is the maintenance the decision tree in `references/custom-js-plugins.md` rejects. The rule stays a review and sweep rule.
 - **The tool names in `comments/no-capitalized-identifier`** (`Pnpm`, `Oxlint`, `Tinybench` — the tool-name alternation in `.agents/ledgers/comments.md`'s find recipe). The list grows with every tool the repo adopts, and nothing in one file says a word was ever lowercase, so the rule decides only the names a function prefix or the file's own bindings prove; the rest stays the ledger's grep.
-- **A list of the repo's own best-effort helpers in `persistThenNotify.ts`.** The terminal each call site already writes is the proof, so the list would be one every new helper has to join or be reported (`apps/web/content/docs/architecture/persist-then-notify.md`).
+- **A list of the repo's own best-effort helpers in `persistThenNotify.ts`.** The terminal each call site already writes is the proof, so the list would be one every new helper has to join or be reported (`openspec/specs/architecture/persist-then-notify/design.md`).
 
 ## Deep Dives
 

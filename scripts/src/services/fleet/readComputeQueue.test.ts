@@ -8,14 +8,15 @@ describe(readComputeQueue, () => {
   const PAGE_B =
     "## Queue\n\n- [ ] `[page]` {beta-run} needs parity-page — **Beta.**\n\n## Waiting\n\n- [ ] `[cpu]` {gamma-run} — **Gamma.**\n";
 
-  test("reads every page but the index, the runnable items of each in page-path order", () => {
+  test("reads every area's design but neither the index nor a spec, the runnable items of each in path order", () => {
     expect.hasAssertions();
 
     expect(
       readComputeQueue([
-        { path: "compute/index.md", text: "## Queue\n\n- [ ] `[cpu]` {index-run} — **Index.**\n" },
-        { path: "compute/b-page.md", text: PAGE_B },
-        { path: "compute/a-page.md", text: PAGE_A },
+        { path: "compute/README.md", text: "## Queue\n\n- [ ] `[cpu]` {index-run} — **Index.**\n" },
+        { path: "compute/b/spec.md", text: "## Queue\n\n- [ ] `[cpu]` {spec-run} — **Spec.**\n" },
+        { path: "compute/b/design.md", text: PAGE_B },
+        { path: "compute/a/design.md", text: PAGE_A },
       ]),
     ).toStrictEqual({
       entries: [
@@ -44,16 +45,16 @@ describe(readComputeQueue, () => {
     });
   });
 
-  test("throws on an id two pages share", () => {
+  test("throws on an id two designs share", () => {
     expect.hasAssertions();
 
     expect(() =>
       readComputeQueue([
-        { path: "compute/a-page.md", text: PAGE_A },
-        { path: "compute/c-page.md", text: PAGE_A },
+        { path: "compute/a/design.md", text: PAGE_A },
+        { path: "compute/c/design.md", text: PAGE_A },
       ]),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: alpha-run, more than one compute page holds this id]`,
+      `[InvalidOperationError: Invalid operation: Read, name: alpha-run, more than one compute design holds this id]`,
     );
   });
 });

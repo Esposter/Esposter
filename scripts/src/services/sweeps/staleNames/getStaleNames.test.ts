@@ -59,7 +59,7 @@ describe(getStaleNames, () => {
     expect(getStaleNames([{ path, text }], sourceNames)).toStrictEqual([]);
   });
 
-  test.each(["rejected", "deferred", "proposals"])("reports nothing on a page under %s", (folder) => {
+  test.each(["rejected", "deferred", "changes"])("reports nothing on a page under %s", (folder) => {
     expect.hasAssertions();
 
     expect(getStaleNames([{ path: `/${folder}/`, text: "`aC`" }], sourceNames)).toStrictEqual([]);

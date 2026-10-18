@@ -1,7 +1,7 @@
 name: 🏗️ Build Packages
 # Reusable workflow called by 🏗️ CI and 🏎️ Bench: builds every library once and publishes the `package-builds`
 # artifact to the caller's run, and fills the hosted game data's mirror the coverage shards restore. Why the build
-# runs under vp's traced cache is `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`.
+# runs under vp's traced cache is `openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape`.
 on:
   workflow_call:
 

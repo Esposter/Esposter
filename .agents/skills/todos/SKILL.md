@@ -9,7 +9,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 
 ## Settled — do not re-propose
 
-- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `docs` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
+- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `openspec` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
 - **A TODO linking one of our own issues.** Same thing with a URL on it: the issue is the record, and the code carries no marker for it.
 - **A condition in words in place of the link** — "once nuxt fixes its types", "in nitro v3". Nobody can check it, so it reads the same the day the condition is met as the day it was written; the link is what a later reader opens to find out.
 
@@ -18,7 +18,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 The marker is followed by the link and nothing else first — `scripts/src/workspace/todos.test.ts` fails any tracked file, prose aside, where it is not:
 
 - `// @TODO: <link>` in TypeScript and a `<script>` block, `<!-- @TODO: <link> -->` in a template, `# @TODO: <link>` in YAML.
-- `package.json` has no comments: the `scriptsComments` string is the `package-scripts` skill's (`references/scripts-comments.md`), in this same form.
+- `package.json` has no comments: the `"scriptsComments"` string is the `package-scripts` skill's (`references/scripts-comments.md`), in this same form.
 
 **The link is the thing whose resolution ends the workaround** — the upstream issue or pull request, the `webstatus.dev` feature, the release. A search result, a discussion that tracks nothing or a docs page does not end anything. When no issue exists yet, one is filed upstream before the marker is written, and a limitation upstream closes as won't-fix or documents as intended is no longer a TODO: the workaround is permanent, so it keeps a plain comment saying why, and that comment may cite the upstream record.
 
@@ -51,8 +51,6 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 - `apps/web/configuration/hooks.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt.server` has no `upgrade`, so `nuxt dev` drops every WebSocket upgrade"
 - `apps/web/modules/mountLegacyDevHandlers.ts` — nuxt/nuxt: "The Nitro 2 compatibility layer widens a routed dev handler only when it is middleware, though Nitro 2 mounted every dev handler as a prefix, so `@nuxt/fonts` serves no font in dev"
 - `apps/web/modules/servePublicDirectory.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt dev` runs Vite's transform on every script in `public/`, serving it as a module exporting its own URL"
-- `apps/web/configuration/prerender.ts` — nuxt/content: "The node preset's `sql_dump.txt` handler reads `build:` storage, which Nitro 3 does not provide, so the route it marks for prerender answers 503"
-- `apps/web/configuration/imports.ts` — nuxt/content: "The client API calls a global `$fetch`, which Nuxt 5 no longer sets on the client, so loading a collection's database in the browser throws `$fetch is not defined`"
-- `pnpm-workspace.yaml` — nuxt-content/mdc: "The generated plugin imports reach `remark-emoji`, which Nitro 3 resolves from the app"; nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"; nuxt/nuxt: "`@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, which Nitro 3 resolves from the app"
-- `knip.config.ts` — the same nuxt-content/mdc, nitrojs/nitro and nuxt/nuxt issues as `pnpm-workspace.yaml`'s row, on the app's `ignoreDependencies` entries for the packages they leave nothing in the app importing; harlan-zw/nuxt-ai-ready: "The virtual `content-lookup` module imports `minimark/stringify`, which the package does not declare"
+- `pnpm-workspace.yaml` — nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"; nuxt/nuxt: "`@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, which Nitro 3 resolves from the app"
+- `knip.config.ts` — the same nitrojs/nitro and nuxt/nuxt issues as `pnpm-workspace.yaml`'s row, on the app's `ignoreDependencies` entries for the packages they leave nothing in the app importing
 - `packages/genshin-world/src/components/World/Session/Index.vue` — tresjs/tres: "A canvas switched from `renderMode: 'manual'` to `'always'` after drawing its owed frame never draws again — always mode owes a frame only once it has drawn"

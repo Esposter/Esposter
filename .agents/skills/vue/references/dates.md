@@ -2,7 +2,7 @@
 
 Read when rendering a date or time in a `.vue` file.
 
-Every rendered date is a `<NuxtTime>`, except in the message list — "The one display exception" on this page. The ban itself is lint-enforced (`vue/no-restricted-syntax` and `vue/no-restricted-html-elements` in `packages/configuration/eslint/overrides/vueRules.js`), and the full standard is `apps/web/content/docs/architecture/date-time-display.md`.
+Every rendered date is a `<NuxtTime>`, except in the message list — "The one display exception" on this page. The ban itself is lint-enforced (`vue/no-restricted-syntax` and `vue/no-restricted-html-elements` in `packages/configuration/eslint/overrides/vueRules.js`), and the full standard is `openspec/specs/architecture/date-time-display/design.md`.
 
 The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration.
 
@@ -19,6 +19,6 @@ The component formats after the prehydrate rewrite, in the reader's locale and t
 
 ## The one display exception
 
-The **message list** is the one exception, argued in `apps/web/content/docs/architecture/date-time-display.md`: its labels stay `getMessageDateLabel`/`getShortTimeLabel` in `app/util/date/`.
+The **message list** is the one exception, argued in `openspec/specs/architecture/date-time-display/design.md`: its labels stay `getMessageDateLabel`/`getShortTimeLabel` in `app/util/date/`.
 
 It is safe only because `/messages/**` is client-rendered (`configuration/routeRules.ts`) — there is no server render to disagree with, and the labels format in the reader's locale and timezone because the browser is the only thing that formats them. Outside a `ssr: false` route the exception does not exist.

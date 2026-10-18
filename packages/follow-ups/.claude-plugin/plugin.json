@@ -4,7 +4,7 @@
   "displayName": "Follow-ups",
   "description": "Writes the follow-ups a session leaves unfinished into your Esposter TodoList, tagged with the repository and session that found them, and drains a repository's follow-ups one change at a time until none is left.",
   "author": { "name": "Esposter", "url": "https://github.com/Esposter" },
-  "homepage": "https://esposter.com/docs/resource/todolist-agent-follow-ups",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md",
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["follow-ups", "mcp", "todo-list"],

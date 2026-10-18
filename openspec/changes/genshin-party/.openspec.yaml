@@ -1,0 +1,10 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [media-engine]
+x-touches:
+  [
+    "packages/genshin-interface/src/components/PartySetupScreen/**",
+    "packages/genshin-world/src/components/Party/Screen/**",
+  ]

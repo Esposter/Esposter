@@ -23,7 +23,7 @@ A control nested inside the anchor cannot be rescued by `@click.stop`. The DOM f
 
 ## A container that opens on a click
 
-Something that opens on a click without being a link or a button — a table row, a dashboard tile, a folded block — asks `checkIsNestedInteraction(event)` before it opens, so a link, control, field, dialog or menu inside it, and a click that ends a text selection, act alone. A region that must keep its clicks without being a control carries `data-nested-interaction`. `UiDataTable` rows and `onClickExceptDrag` already ask it; a new container goes through one of them or asks it itself. A bare `@click.stop` wall around a control is banned by `restrictedEventSyntaxes.js`, since it only ever covers the controls someone remembered — never the links inside rendered HTML (`apps/web/content/docs/architecture/nested-interactions.md`).
+Something that opens on a click without being a link or a button — a table row, a dashboard tile, a folded block — asks `checkIsNestedInteraction(event)` before it opens, so a link, control, field, dialog or menu inside it, and a click that ends a text selection, act alone. A region that must keep its clicks without being a control carries `data-nested-interaction`. `UiDataTable` rows and `onClickExceptDrag` already ask it; a new container goes through one of them or asks it itself. A bare `@click.stop` wall around a control is banned by `restrictedEventSyntaxes.js`, since it only ever covers the controls someone remembered — never the links inside rendered HTML (`openspec/specs/architecture/nested-interactions/design.md`).
 
 ## Shell attrs passthrough
 

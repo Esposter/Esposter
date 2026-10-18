@@ -27,7 +27,7 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
         ? data.blobNames
         : await listBlobNames(containerClient, data.prefix, { createdBefore: data.createdBefore });
     // The delete and the release of the bytes it frees are one operation, waved and retried together — see
-    // `deleteStorageBlobs` and /docs/resource/storage-quotas
+    // `deleteStorageBlobs` and openspec/specs/resource/storage-quotas/design.md
     await deleteStorageBlobs(db, containerClient, data.containerName, blobNames, (releasedUserIds) =>
       broadcastStorageUsage(context, releasedUserIds),
     );

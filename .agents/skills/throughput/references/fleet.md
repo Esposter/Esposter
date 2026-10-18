@@ -2,7 +2,7 @@
 
 Read when more than one machine works the backlog: when a machine joins, when one goes idle, when work is claimed, synced or pushed, when game data has to reach a machine, and when the fleet's load is read.
 
-The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all follow the same rules. So no rule may cost the coordinator anything per machine: no assignment by message, no report read per machine, no machine named in a rule. The architecture page, with the diagram and the fleet's current machines, is `apps/web/content/docs/architecture/fleet.md`.
+The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all follow the same rules. So no rule may cost the coordinator anything per machine: no assignment by message, no report read per machine, no machine named in a rule. The architecture page, with the diagram and the fleet's current machines, is `openspec/specs/architecture/fleet/design.md`.
 
 ## A machine
 
@@ -18,11 +18,11 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## The queue is pulled, never pushed
 
-- **Work is an entry with an id and its needs:** a compute-queue item on its area page under `apps/web/content/docs/genshin/compute/`, or an open proposal unit. An entry names what it writes, which is also its touch set.
-- **A proposal unit carries the same three fields a queue item does, in its frontmatter** (the `docs` skill, `references/page-frontmatter.md`), each optional:
-  - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
-  - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
-  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses the sibling "ForgeScreen". A long list may wrap over the lines below its key, as the formatter writes it.
+- **Work is an entry with an id and its needs:** a compute-queue item on its area's design under `openspec/specs/genshin/compute/`, or an open change. An entry names what it writes, which is also its touch set.
+- **A change carries the same three fields a queue item does, in its `.openspec.yaml`** (the `openspec` skill, `references/change-metadata.md`), each optional:
+  - `x-needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
+  - `x-waiting: "<blocker>"`, set while the change cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
+  - `x-touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses the sibling "ForgeScreen". A long list may wrap over the lines below its key, as the formatter writes it.
 - **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
@@ -42,7 +42,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 - **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one worker wins. There is no lock service, and two different entries never contend.
 - **A claim belongs to one worker; a machine runs many.** A holder is `{ machine, worker }`. `pnpm ai:fleet:next` prints the worker id it claimed under (`claimed <id> as worker <worker>`), taken from `FLEET_WORKER` or a new short id when the environment gives none. `hold` and `release` take that id as `--worker`, or read it from `FLEET_WORKER`. A worker adopts only a claim that matches both fields, so another worker on the same machine counts as holding the entry, and `next` moves on. A release stops only its own worker's hold, whose file is `~/.esposter/holds/<id>.<worker>.pid`. A claim written before workers reads as worker `""`.
-- **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line. Every call to origin's fleet refs goes through `runFleetRefGit`, bounded as `apps/web/content/docs/architecture/fleet.md`'s Claims section sets out, so a stalled network fails a renewal rather than freezing the hold. A new call to a fleet ref takes the same runner, never a bare `runGit`.
+- **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line. Every call to origin's fleet refs goes through `runFleetRefGit`, bounded as `openspec/specs/architecture/fleet/design.md`'s Claims section sets out, so a stalled network fails a renewal rather than freezing the hold. A new call to a fleet ref takes the same runner, never a bare `runGit`.
 - **A claim unrenewed for thirty minutes is stale.** It is taken over the same way, leased from the stale sha.
 - **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.
 - **A claim never touches `ai/queue`**, so it starts no CI run. The old claim, a `— running` line committed and pushed, cost a commit, a push and a CI run each.
@@ -67,5 +67,5 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A machine gets the game itself.** It downloads the game from HoYoverse's official CDN (an open-source Sophon downloader where no launcher runs) and runs the `genshin:assets` extraction locally. That route needs no other machine, works on or off the LAN, and spreads the extraction, the heaviest CPU load, across the fleet. The `shaders` step needs Windows' `d3dcompiler_47`, so it stays on a Windows machine.
 - **`pnpm ai:fleet:data` is the faster copy between LAN machines whose owner allows SSH.** A peer's public key goes in the receiver's `authorized_keys`, which is the owner's call per machine, never assumed. It copies only what the local manifest lacks, as one tar stream over SSH.
 - **Each machine's `GENSHIN_PARITY_DIRECTORY` is `~/Esposter/genshin-parity`.** `frames` and `tmp` are rebuilt where they are used, never copied.
-- **`asset-index`, the community's asset path index, is copied with the rest** (`DATA_FOLDERS`, `apps/web/content/docs/genshin/game-data-formats.md`); a machine that lacks the current asset-index file fetches it from its source instead, so no copy is needed to extract.
+- **`asset-index`, the community's asset path index, is copied with the rest** (`DATA_FOLDERS`, `openspec/specs/genshin/game-data-formats/design.md`); a machine that lacks the current asset-index file fetches it from its source instead, so no copy is needed to extract.
 - **A machine holds `game-install` and `game-exports` only once it has them**, and takes only the entries its capabilities meet until then.

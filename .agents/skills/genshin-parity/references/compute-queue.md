@@ -2,11 +2,11 @@
 
 Read when a solve, fit, calibration, render, `compare` or any other long run is owed and no judgement is left in it, or when picking one up.
 
-A build writes the script; the run waits in the queue. A queue item is work whose every call is already made, so it is a `haiku` runner's: the main session decides what is owed and what a result means, never waits on the run itself. The flow around it is `apps/web/content/docs/architecture/agent-batches.md`.
+A build writes the script; the run waits in the queue. A queue item is work whose every call is already made, so it is a `haiku` runner's: the main session decides what is owed and what a result means, never waits on the run itself. The flow around it is `openspec/specs/architecture/agent-batches/design.md`.
 
 ## An item
 
-One line on its area's page in the compute queue (`apps/web/content/docs/genshin/compute/`, one page per area), carrying everything a runner needs and nothing it must decide:
+One line on its area's design in the compute queue (`openspec/specs/genshin/compute/`, one capability per area), carrying everything a runner needs and nothing it must decide:
 
 - its lane, `[page]` or `[cpu]` (see **The lanes** on this page), first;
 - its id in braces, a short kebab slug of what it does, which is the entry's name in the fleet's claims (`pnpm ai:fleet:hold <id>`);

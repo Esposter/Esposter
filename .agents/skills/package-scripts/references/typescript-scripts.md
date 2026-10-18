@@ -28,7 +28,7 @@ that does.
 
 **The same holds where no package script runs the file.** Where the tool runs a bare `node <path>` — a plugin's hooks
 and commands — the entry is a `.mjs` registering `tsx` ahead of its `.ts`, and `tsx` a runtime dependency; the
-persona plugin is the case, and `apps/web/content/docs/infra/claude-interface/persona-plugin/index.md` says why no flag
+persona plugin is the case, and `openspec/specs/infra/claude-interface/persona-plugin/README.md` says why no flag
 can carry it. Node 26 removed `--experimental-transform-types`, so there is no native route left for an `enum`.
 
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no

@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports, parity-page]
+x-touches: ["packages/genshin-world/src/services/fontaine/**"]
+x-waiting: "the Court's camera pose the generators are fitted at (court-of-fontaine-location), solved on the landmarks' meshes, which wait on the genshin-landmark-closure unit and its asset-map change on the PC, as the clock tower and the station have no OBJ exports yet"

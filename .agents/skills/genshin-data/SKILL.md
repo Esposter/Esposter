@@ -5,12 +5,12 @@ description: Apply when adding or changing a dataset genshin-world reads — a g
 
 # Genshin Data
 
-How it works, from a builder's publish to a reader's fetch, the full lifecycle and every dataset's reader, is `apps/web/content/docs/genshin/hosted-game-data.md`; this skill is the rules a change to a dataset follows.
+How it works, from a builder's publish to a reader's fetch, the full lifecycle and every dataset's reader, is `openspec/specs/genshin/hosted-game-data/design.md`; this skill is the rules a change to a dataset follows.
 
 ## Settled — do not re-propose
 
 - **Bundling or committing a dataset the browser reads**, however small, or importing one for a synchronous read. Every read crosses an async boundary instead; the two left in the bundle, the lock and the save schema's achievement bound, are the page's "What stays in the package" and why.
-- **Serving the data through the app**, a CDN in front of the account, or a Nitro mirror in development (`apps/web/content/docs/genshin/rejected/static-data-in-public-assets.md`, `apps/web/content/docs/infra/rejected/cdn-in-front-of-blob-storage.md`).
+- **Serving the data through the app**, a CDN in front of the account, or a Nitro mirror in development (`openspec/rejected/genshin/static-data-in-public-assets/design.md`, `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md`).
 - **Per-version folders, per-dataset manifests, git-style trees or a mutable pointer blob** in place of the lock (the page's Notes).
 - **A test fixture holding a copy of a record.** A suite reads the real record through the mirror; a stub stands in only where a test asserts a rule over a value no record holds.
 - **Deleting an authored file once it is published.** Its edits stay plain file edits with history; the page's Decisions.

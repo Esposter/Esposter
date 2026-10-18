@@ -1,0 +1,17 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [resource]
+x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/app/components/PageBuilder/**",
+    "apps/web/app/store/pageBuilder/**",
+    "apps/web/shared/models/pageBuilder/**",
+    "apps/web/shared/services/pageBuilder/**",
+    "apps/web/shared/services/jsonPatch/**",
+    "apps/web/shared/models/jsonPatch/**",
+    "apps/web/app/components/Ui/**",
+    "openspec/specs/resource/**",
+    "openspec/specs/architecture/**",
+    ".agents/skills/**",
+  ]

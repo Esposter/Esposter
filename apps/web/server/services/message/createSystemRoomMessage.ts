@@ -9,7 +9,7 @@ import { getResultAsync } from "@esposter/shared";
 // Every line the server writes into a room on a member's behalf. The action that prompted it has already landed,
 // So a failure costs the room one line and never the action — and the Result is handed back rather than logged
 // Here, so the caller terminates the chain where it knows what the line was announcing
-// (/docs/architecture/persist-then-notify).
+// (openspec/specs/architecture/persist-then-notify/design.md).
 export const createSystemRoomMessage = (
   roomId: string,
   userId: string,

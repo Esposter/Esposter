@@ -6,7 +6,7 @@ import type { Ref } from "vue";
 // Families is priced against the exports by handing it back. Alone, the scene draws neither its fog, its clouds nor
 // Its cloud sea, so a camera pose is matched on the exports' edges without ours. While a tool holds its clock, the
 // Scene's time stands still, so one view drawn twice draws the same frame
-// (apps/web/content/docs/proposals/genshin/scene-derivation.md)
+// (openspec/specs/genshin/scene-derivation/design.md)
 export interface SceneWitness {
   families: Ref<string[]>;
   isAlone: Ref<boolean>;

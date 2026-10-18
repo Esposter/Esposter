@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-waiting: "each weather area's outline, which only the client's scene holds, read on the PC from the install now that the user allows reading the scene's scripts"
+x-touches:
+  [
+    "packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts",
+    "packages/genshin-world/src/services/world/getNextAreaWeather.ts",
+    "scripts/src/services/genshinText/constants.ts",
+  ]

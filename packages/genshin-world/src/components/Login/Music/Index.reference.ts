@@ -5,7 +5,7 @@ import { GameSourceKind } from "genshin-interface";
 
 // The login's sounds beside its music: where the game keeps the sounds it plays, and its one topic, the door's
 // Sound, with what every investigation found and what is still open. The music's own sources and fit are the music
-// Page's (apps/web/content/docs/genshin/music/index.md)
+// Page's (openspec/specs/genshin/music/README.md)
 export const reference: ComponentReference = {
   sources: {
     doorRecording: {

@@ -1,10 +1,10 @@
 # Citations
 
-Read when citing a file, a docs page or another skill from a skill, a ledger or a README.
+Read when citing a file, a spec or another skill from a skill, a ledger or a README.
 
 Nothing resolves a link out of a skill: no renderer opens one, and a relative `../../../` hop or a
 `github.com/.../blob/main/...` url is a path the reader has to reconstruct or a network fetch they cannot make.
-So a citation is the **repo-relative path in backticks** — `apps/web/content/docs/architecture/agent-configuration.md` —
+So a citation is the **repo-relative path in backticks** — `openspec/specs/architecture/agent-configuration/design.md` —
 which is what a reader greps, opens and edits, and which stays right when the skill moves. The one other root is
 `apps/web`, for the prefixes `APP_RELATIVE_PREFIXES` in `packages/configuration/src/constants.ts` lists, since the
 docs' Key Files tables write app paths that way; a path relative to anything else (`docs/architecture/agent-configuration.md`)

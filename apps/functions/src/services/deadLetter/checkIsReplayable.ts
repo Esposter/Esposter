@@ -6,7 +6,7 @@ import { AzureFunctionIsIdempotentMap, azureFunctionSchema } from "@esposter/db-
 // Work, it duplicates it (a replayed ProcessWebhook writes a second message with a fresh rowKey). An eventType no
 // AzureFunction claims is unroutable, so nothing would consume a republish of it either — which is also what
 // Decides every dead letter raised by a system-topic subscription: those carry storage's own event type, and the
-// Republish would go to the custom topic, where no subscription matches it (/docs/infra/eventgrid-dead-letter).
+// Republish would go to the custom topic, where no subscription matches it (openspec/specs/infra/eventgrid-dead-letter/design.md).
 export const checkIsReplayable = (eventType: string, replayAttempts: number): boolean => {
   if (replayAttempts >= MAX_DEAD_LETTER_REPLAY_ATTEMPTS) return false;
   const { data, success } = azureFunctionSchema.safeParse(eventType);

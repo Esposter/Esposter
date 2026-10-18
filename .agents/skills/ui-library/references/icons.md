@@ -1,6 +1,6 @@
 # Icons
 
-Read when adding an icon, a meaning or an icon set's class, or when a test looks for an icon. The rule that a component and a menu's action name an icon by meaning is in `SKILL.md`; this page is how that is carried out. How icons reach the library is the architecture page's Icons section (`apps/web/content/docs/architecture/ui-library.md`).
+Read when adding an icon, a meaning or an icon set's class, or when a test looks for an icon. The rule that a component and a menu's action name an icon by meaning is in `SKILL.md`; this page is how that is carried out. How icons reach the library is the architecture page's Icons section (`openspec/specs/architecture/ui-library/design.md`).
 
 - **An icon class is written whole** — `i-mdi:`, `i-pixelarticons:` or `i-lucide:` and the name — in the file that uses it — a prop or a map entry. The preset generates only what its extractor sees, so a name assembled at runtime draws nothing, and so does one assembled from a prefix and a name.
 - **A `.ts` file that names an icon starts with `// @unocss-include`.** The pipeline does not scan TypeScript — widening it to every `.ts` file feeds the attributify extractor arbitrary code and breaks the stylesheet. `uno.config.test.ts` fails on a file that forgets.

@@ -1,7 +1,7 @@
 import { db } from "#src/services/shared/db";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
-// ([nicknames](/docs/esbabbler/nicknames)) is applied once and never on the request path a member is waiting on.
+// ([nicknames](openspec/specs/esbabbler/nicknames/design.md)) is applied once and never on the request path a member is waiting on.
 //
 // A webhook message has no author of its own — it is posted by an app user on the webhook's behalf — so the two
 // Author kinds resolve to one display and everything downstream stops caring which it was.

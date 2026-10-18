@@ -14,7 +14,7 @@ import { assert, beforeAll, describe, test } from "vitest";
 
 // The plugin's synthesizer timed through the runner's own copy of the engine's runtime, which is why the bench
 // Lives here rather than beside the unit: the plugin never declares the runtime, for the reason the reference
-// Selection lives in `scripts` (/docs/infra/claude-interface/reference-selection). What it measures is the host —
+// Selection lives in `scripts` (openspec/specs/infra/claude-interface/reference-selection/design.md). What it measures is the host —
 // The GPU's driver and the CPU's cores — over the engine's weights, so it is off once its numbers are committed and
 // Flipped on when the engine, its variants or the device ladder change: set `IS_ENABLED`, point
 // "VOICE_MATCH_MODELS_DIRECTORY" at weights already fetched, run `pnpm bench` in this package, commit the artifact,

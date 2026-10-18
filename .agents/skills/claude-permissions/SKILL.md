@@ -9,7 +9,7 @@ Generic harness semantics — rule format, `deny`/`ask`/`allow` evaluation order
 
 The repo's `settings.local.json` is **allow-only**: it has no `deny` or `ask` list. Keep it that way unless the user asks otherwise.
 
-Permissions are all it holds. The sibling `.agents/settings.json` is the checked-in half — the marketplace the checkout declares for itself and the plugin it enables (`apps/web/content/docs/architecture/agent-configuration.md`) — so a plugin or harness setting meant for everyone goes there, never here.
+Permissions are all it holds. The sibling `.agents/settings.json` is the checked-in half — the marketplace the checkout declares for itself and the plugin it enables (`openspec/specs/architecture/agent-configuration/design.md`) — so a plugin or harness setting meant for everyone goes there, never here.
 
 ## Settled — do not re-propose
 

@@ -63,7 +63,7 @@ import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCo
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
 
-// The derived assets' tool, one subcommand a step (apps/web/content/docs/genshin/derived-assets.md)
+// The derived assets' tool, one subcommand a step (openspec/specs/genshin/derived-assets/design.md)
 export const genshinAssetsCommand: CommandDef = defineCommand({
   meta: { description: "Map, export and fit the game's own assets as parameters of ours", name: "genshin:assets" },
   subCommands: {

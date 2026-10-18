@@ -16,7 +16,6 @@ composable and store layers no single feature claims.
 | `util/date`                                                               | 2026-10-05 · Opus 5.5 |                                                          |
 | `services/shared`                                                         | 2026-10-05 · Opus 5.5 |                                                          |
 | `services/{styled,entity,codemirror}`                                     | 2026-10-05 · Opus 5.5 |                                                          |
-| `services/docs`, `composables/docs`, `components/{Docs,content}`          | 2026-10-05 · Opus 5.5 |                                                          |
 | `composables` root files                                                  | 2026-10-05 · Opus 5.5 |                                                          |
 | `composables/{storage,file,notification,cache,azure}`                     | 2026-10-05 · Opus 5.5 |                                                          |
 | `store` root files, `store/{user,storage}`                                | 2026-10-05 · Opus 5.5 |                                                          |

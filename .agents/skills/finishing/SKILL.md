@@ -16,7 +16,7 @@ Working is not finished. This page answers one question: **what this change owes
 
 ## When it runs
 
-The order of the ritual, and the commit and push that close it, are `AGENTS.md`'s "Finishing a change". This is the audit inside its review, test and docs steps — the ones before the tests.
+The order of the ritual, and the commit and push that close it, are `AGENTS.md`'s "Finishing a change". This is the audit inside its review, test and specs steps — the ones before the tests.
 
 **It runs at any point, and it is a reminder before it is a gate.** Asked mid-change it reports what is owed so far and marks the rows the diff cannot answer yet as `not yet` — never a refusal to run, and never a demand that the change be finished first. Asked at the end it is the same table with every row answered. Run it unprompted at the end of a change; run it on request whenever.
 
@@ -30,7 +30,7 @@ The order of the ritual, and the commit and push that close it, are `AGENTS.md`'
 | **A regression test** — and the deletion of the ones it made redundant | what earns a test at all, and what no longer does                                                    | `testing`, `test-values`                        |
 | **A refactor the change exposed**                                      | the twin helper, the constant restated in two files, the special case that belonged in the mechanism | `code-review` quality lane, `file-organization` |
 | **Placement and cost**                                                 | where the work runs and how it is shaped, not how fast the unit is                                   | `runtime-efficiency`                            |
-| **Docs prose and its diagrams**                                        | the owning page, and every diagram whose edge or box the change made false                           | `docs`                                          |
+| **Spec prose and its diagrams**                                        | the owning spec and design, and every diagram whose edge or box the change made false                | `openspec`                                      |
 | **A README**                                                           | an inventory, a script table or a documentation link the change made incomplete                      | `readme-standards`                              |
 | **A skill**                                                            | a convention this change settled, or a skill claim it proved stale                                   | `skill-authoring`                               |
 | **A bench report**                                                     | whether a benched unit changed, so its committed report is stale until the bench reruns              | `bench`                                         |
@@ -39,10 +39,10 @@ The order of the ritual, and the commit and push that close it, are `AGENTS.md`'
 | **An enforcer instead of a repeated finding**                          | whether the same finding has now been written twice                                                  | `sweeps`, `oxlint`                              |
 | **An enforcer the change made unnecessary**                            | whether a lint rule or test now guards something deleted, or a shape that can no longer be written   | `invariants`                                    |
 | **An open proposal the change built, or moved the ground under**       | whether it shipped one, and whether it edited a file an open proposal's Key files table names        | `building-proposals`, `product-review`          |
-| **A decision the change made and left unwritten**                      | a larger part it knowingly left out, or an idea it declined, that the next pass would find as a gap  | `docs`, `building-proposals`                    |
+| **A decision the change made and left unwritten**                      | a larger part it knowingly left out, or an idea it declined, that the next pass would find as a gap  | `openspec`, `building-proposals`                |
 | **A finding the change did not fix**                                   | whether a review finding it declined or deferred has a home the next session will read               | `code-review`                                   |
 
-A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`AGENTS.md`, "Finishing a change", the docs step), and a diagram's edge labels are read by no sweep (the `docs` skill, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
+A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`AGENTS.md`, "Finishing a change", the specs step), and a diagram's edge labels are read by no sweep (the `openspec` skill, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
 
 ## Report every row, including the empty ones
 

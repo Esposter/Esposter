@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports, parity-page]
+x-touches: ["packages/genshin-world/src/services/liyue/**"]
+x-waiting: "exports holding the karst and the stone forests, which Liyue's extraction does not (Jueyun Karst lies past it, and no stone of Guyun Stone Forest is among its placements), and Liyue's passes reaching shape: its Inventory and base ground are done, its Layout waits on the camera its harbour landmarks solve, then the Camera"

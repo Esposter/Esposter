@@ -4,7 +4,7 @@
   "displayName": "Genshin Persona",
   "description": "Speaks as the Genshin Impact character whose birthday is nearest to today: an answer opens with one spoken line in the character's voice and the rest is plain, a joke or a hello is spoken whole, and every line is read aloud in the character's own cloned voice as the reply is written.",
   "author": { "name": "Esposter", "url": "https://github.com/Esposter" },
-  "homepage": "https://esposter.com/docs/infra/claude-interface/persona-plugin",
+  "homepage": "https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin",
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["genshin", "genshin-impact", "output-style", "persona", "text-to-speech", "voice-cloning"],

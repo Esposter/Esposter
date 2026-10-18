@@ -4,11 +4,11 @@ Read when laying out a new surface or a new product page, or when judging whethe
 
 ## Look it up first, every time
 
-The full list of sources, with what each gave the app and the order they are consulted in, is `apps/web/content/docs/architecture/design-sources.md`. The three below are the ones every layout starts from.
+The full list of sources, with what each gave the app and the order they are consulted in, is `openspec/specs/architecture/design-sources/design.md`. The three below are the ones every layout starts from.
 
-- **The reference product's own screen.** Before writing a template, find how the product the feature is modelled on arranges the same data, and match its hierarchy: what is large, what recedes, what sits in the margin. The messaging surfaces follow Discord and Slack (`SKILL.md`). The agent console is the exception: a game, its Genshin world under panels held in the Genshin style, so it is not held to the app's page layouts. Its panel column still keeps the Claude desktop app's Code tab and T3 Code hierarchy — one conversation column, the composer pinned under it — and the rest is its own game overlay (`apps/web/content/docs/infra/claude-interface/agent-console/console-overlay.md`).
-- **The design language.** `apps/web/content/docs/architecture/design-language.md` is how the app's own interface looks: the type scale, the spacing step, when a surface is lifted or raised, and how dense a list may get. A layout is composed from its surfaces and type rules, and what exists to compose it from is the components section of `apps/web/content/docs/architecture/ui-library.md`.
-- **The sources it draws on**, in `apps/web/content/docs/architecture/design-sources.md`, for the question the design language does not answer yet — and the answer found there is written back into it.
+- **The reference product's own screen.** Before writing a template, find how the product the feature is modelled on arranges the same data, and match its hierarchy: what is large, what recedes, what sits in the margin. The messaging surfaces follow Discord and Slack (`SKILL.md`). The agent console is the exception: a game, its Genshin world under panels held in the Genshin style, so it is not held to the app's page layouts. Its panel column still keeps the Claude desktop app's Code tab and T3 Code hierarchy — one conversation column, the composer pinned under it — and the rest is its own game overlay (`openspec/specs/infra/claude-interface/agent-console/console-overlay/design.md`).
+- **The design language.** `openspec/specs/architecture/design-language/design.md` is how the app's own interface looks: the type scale, the spacing step, when a surface is lifted or raised, and how dense a list may get. A layout is composed from its surfaces and type rules, and what exists to compose it from is the components section of `openspec/specs/architecture/ui-library/design.md`.
+- **The sources it draws on**, in `openspec/specs/architecture/design-sources/design.md`, for the question the design language does not answer yet — and the answer found there is written back into it.
 
 ## What a first draft gets wrong
 
@@ -16,7 +16,7 @@ Each of these is a finding in review, whatever the rules above say about the par
 
 - **Everything boxed.** Borders, cards, chips and expansion panels on every item flatten the hierarchy until nothing leads. Group with space and type roles first, and give a surface to the one region that needs it.
 - **Chips as labels.** A chip is a control or a count. A state or a figure beside a title is text in a lower-emphasis role.
-- **Full-width running prose.** Prose wider than about seventy characters is hard to read, so a document or a docs page holds its text to a readable measure in `rem`; a feed, a conversation or a form keeps the page's width (the `ui-library` skill, `references/design-pass.md`).
+- **Full-width running prose.** Prose wider than about seventy characters is hard to read, so a document or an article holds its text to a readable measure in `rem`; a feed, a conversation or a form keeps the page's width (the `ui-library` skill, `references/design-pass.md`).
 - **Controls competing with content.** Selects, buttons and gauges in the reading area's header push the thing being read down the page. Settings that change rarely belong in a menu or a compact trailing cluster.
 - **Raw data as the display.** JSON in a `pre`, an enum's value as its label, an id as a title. Each has a readable form: a key-value list, a title map, the name it stands for.
 

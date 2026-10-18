@@ -1,6 +1,6 @@
 # Embedded recipes
 
-Read when a skill page, a ledger or a docs page is about to embed a command — or when one it already embeds needs a fix.
+Read when a skill page, a ledger or a spec is about to embed a command — or when one it already embeds needs a fix.
 
 A recipe pasted into a fence is a program with none of a program's guarantees: nothing typechecks it, nothing lints or formats it, and nothing runs it. It rots in place and the rot is silent, because an unrunnable scan reports nothing and that is the same shape as a clean tree. A `python3` block on a Windows checkout prints a Microsoft Store notice and **exits 0**, and a `node -e` reader is repaired only by the agent whose run it failed.
 
@@ -27,7 +27,7 @@ The domain folder is named for **what the tooling is about**, never for who runs
 
 ## Naming: the `ai:` prefix
 
-A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by audience, not by what it does — the rule, and which plain-named scripts stay a person's, is `apps/web/content/docs/architecture/agent-configuration.md`. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> <same name>` (the `package-scripts` skill, `references/ai-scripts.md`).
+A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by audience, not by what it does — the rule, and which plain-named scripts stay a person's, is `openspec/specs/architecture/agent-configuration/design.md`. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> <same name>` (the `package-scripts` skill, `references/ai-scripts.md`).
 
 ## What the page keeps
 

@@ -101,6 +101,31 @@ describe(getDuplicateProse, () => {
     ).toStrictEqual([]);
   });
 
+  test("reports nothing for a capability's spec and the delta a change makes to it", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDuplicateProse([
+        { path: "openspec/specs/a/b/spec.md", text },
+        { path: "openspec/changes/a-c/specs/a/b/spec.md", text },
+      ]),
+    ).toStrictEqual([]);
+  });
+
+  test("reports a run two capabilities share", () => {
+    expect.hasAssertions();
+
+    const firstCapabilityPath = "openspec/specs/a/b/design.md";
+    const secondCapabilityPath = "openspec/specs/a/c/design.md";
+
+    expect(
+      getDuplicateProse([
+        { path: firstCapabilityPath, text },
+        { path: secondCapabilityPath, text },
+      ]),
+    ).toStrictEqual([{ paths: [firstCapabilityPath, secondCapabilityPath], words }]);
+  });
+
   test("reports a run two reference pages of one skill share", () => {
     expect.hasAssertions();
 

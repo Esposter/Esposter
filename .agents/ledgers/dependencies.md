@@ -1,6 +1,6 @@
 # Dependencies
 
-Every catalog entry, each with its verdict: kept, replaced by the platform or by something already installed, absorbed into our own code, or removed. The rubric and the score behind a verdict are `apps/web/content/docs/architecture/dependency-admission.md`, and `pnpm ai:dependencies:score` scores every entry out of 100. The catalog derives the rows (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), so a new dependency opens here at `—` until it is judged. A Keep row is swept once judged. Any other row is swept by the commit that carries out its verdict, which also deletes the catalog entry and its row.
+Every catalog entry, each with its verdict: kept, replaced by the platform or by something already installed, absorbed into our own code, or removed. The rubric and the score behind a verdict are `openspec/specs/architecture/dependency-admission/design.md`, and `pnpm ai:dependencies:score` scores every entry out of 100. The catalog derives the rows (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), so a new dependency opens here at `—` until it is judged. A Keep row is swept once judged. Any other row is swept by the commit that carries out its verdict, which also deletes the catalog entry and its row.
 
 | Package                                 | Swept                 | Verdict           | Reason                                                                                                 |
 | --------------------------------------- | --------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
@@ -45,7 +45,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@lezer/highlight`                      | —                     | Keep — engine     | the highlight tags the code viewer's theme maps, the engine's own vocabulary                           |
 | `@livekit/track-processors`             | —                     | Keep — SDK        | the call SDK's video processing                                                                        |
 | `@modelcontextprotocol/sdk`             | —                     | Keep — spec       | the MCP protocol                                                                                       |
-| `@nuxt/content`                         | —                     | Keep — framework  | the framework's own module                                                                             |
 | `@nuxt/eslint`                          | —                     | Keep — framework  | the framework's own module                                                                             |
 | `@nuxt/fonts`                           | —                     | Keep — framework  | the framework's own module                                                                             |
 | `@nuxt/image`                           | —                     | Keep — framework  | the framework's own module                                                                             |
@@ -164,9 +163,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `lru-cache`                             | —                     | Keep — framework  | `@nuxt/scripts` mounts its storage on unstorage's lru-cache driver; knip cannot see the runtime load   |
 | `marked`                                | —                     | Keep — engine     | the client's markdown parser                                                                           |
 | `mathjs`                                | —                     | Keep — engine     | the expression engine                                                                                  |
-| `mermaid`                               | —                     | Keep — engine     | the diagram engine                                                                                     |
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
-| `minimark`                              | —                     | Keep — framework  | `nuxt-ai-ready`'s content lookup imports `minimark/stringify`; knip cannot see the virtual module      |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
 | `mlly`                                  | —                     | Keep — tooling    | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
@@ -190,7 +187,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `publint`                               | —                     | Keep — tooling    | tsdown's publish check                                                                                 |
 | `rate-limiter-flexible`                 | —                     | Keep — security   | rate limiting on a Drizzle store; review against nuxt-security-module's limiter, which overlaps        |
 | `read-excel-file`                       | —                     | Keep — spec       | the spreadsheet format                                                                                 |
-| `remark-emoji`                          | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `rolldown`                              | —                     | Keep — tooling    | the bundler under tsdown and Vite                                                                      |
 | `rollup-plugin-visualizer`              | —                     | Keep — tooling    | the analyzer `nuxt analyze` reads the client bundle through                                            |
 | `rou3`                                  | —                     | Keep — free       | h3's own router, reused by nuxt-security-module                                                        |

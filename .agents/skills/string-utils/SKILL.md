@@ -56,7 +56,7 @@ foo: (schema) => createNormalizedStringSchema(FOO_MAX_LENGTH, schema),
 
 ## Matching a Token Inside Authored Content
 
-A token in authored content is matched on the delimiter that opened it, over the parsed value's string leaves, in one pass keyed by a `Map`, and a changed form widens the reader rather than backfilling (`references/content-tokens.md`, `apps/web/content/docs/architecture/content-token-rewriting.md`).
+A token in authored content is matched on the delimiter that opened it, over the parsed value's string leaves, in one pass keyed by a `Map`, and a changed form widens the reader rather than backfilling (`references/content-tokens.md`, `openspec/specs/architecture/content-token-rewriting/design.md`).
 
 ## HTML Sanitization at the Zod Boundary
 

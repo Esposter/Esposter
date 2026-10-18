@@ -12,7 +12,7 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 ## The opt-ins
 
-- **`isExclusive: true` on a read** — single-flight, for the fan-out read every instance of a surface issues on mount (the worked cases are `apps/web/content/docs/architecture/async-operations.md`'s). The second caller **joins** the in-flight call and resolves with its outcome, so the data is in the store by the time it returns — a read is never `Dropped`, which would leave that caller rendering empty. It joins only what is still in flight, so read-once-per-session stays a separate cache flag (`isLoaded`, a `loadedFooIds` set) checked at the call site first, and a re-read issued _because_ something changed omits the opt-in rather than joining the answer it just invalidated.
+- **`isExclusive: true` on a read** — single-flight, for the fan-out read every instance of a surface issues on mount (the worked cases are `openspec/specs/architecture/async-operations/design.md`'s). The second caller **joins** the in-flight call and resolves with its outcome, so the data is in the store by the time it returns — a read is never `Dropped`, which would leave that caller rendering empty. It joins only what is still in flight, so read-once-per-session stays a separate cache flag (`isLoaded`, a `loadedFooIds` set) checked at the call site first, and a re-read issued _because_ something changed omits the opt-in rather than joining the answer it just invalidated.
 - **`isSupersede: true` on a write** — latest-wins, for a control that fires per keystroke or drag frame. A superseded write still rolls back and still reports its failure.
 - **`isExclusive: true` on a write** — drops a duplicate outright, because its caller wanted an effect that is already happening.
 

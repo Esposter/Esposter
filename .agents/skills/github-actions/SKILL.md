@@ -5,7 +5,7 @@ description: Apply when writing or editing any workflow, composite action, job, 
 
 # GitHub Actions Authoring
 
-How a workflow file or composite action is written here. **What the CI does** — which jobs exist, the traced task cache, the `package-builds` artifact, the shard count, per-job permissions — is `apps/web/content/docs/architecture/monorepo-tooling.md`'s, under `## CI job shape` and `## CI security`. This skill is only the shape of a step.
+How a workflow file or composite action is written here. **What the CI does** — which jobs exist, the traced task cache, the `package-builds` artifact, the shard count, per-job permissions — is `openspec/specs/architecture/monorepo-tooling/design.md`'s, under `## CI job shape` and `## CI security`. This skill is only the shape of a step.
 
 ## Take the runner's affordance, not a shell reimplementation of it
 
@@ -49,12 +49,12 @@ The argument for a job's shape lives in the page that owns it ("Owned elsewhere"
 
 ## Owned elsewhere — pointers, not copies
 
-- **Whether a workflow parses at all** — `vp run lint:workflows`, actionlint as a leaf of the root `vp run lint` (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Workflow lint").
+- **Whether a workflow parses at all** — `vp run lint:workflows`, actionlint as a leaf of the root `vp run lint` (`openspec/specs/architecture/monorepo-tooling/design.md`, "Workflow lint").
 - **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts` ("Key Rules").
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates` (`references/github-actions.md`).
-- **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.
+- **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `openspec/specs/architecture/monorepo-tooling/design.md`.
 - **Adding a third-party action** — its `owner/repo@*` goes into `patternsAlloweds` in `apps/infra/src/github/actionsPermissions.ts` in the same change, or GitHub refuses the whole workflow at startup (`monorepo-tooling.md`, "Allowed actions").
-- **The review's own workflow**, `.github/workflows/Review.yaml` (`pnpm -C scripts ai:review`, and `ai:review:fix` in its fix matrix) — the `review-queue` skill, and `apps/web/content/docs/infra/review.md`.
+- **The review's own workflow**, `.github/workflows/Review.yaml` (`pnpm -C scripts ai:review`, and `ai:review:fix` in its fix matrix) — the `review-queue` skill, and `openspec/specs/infra/review/design.md`.
 
 ## Reference pages
 

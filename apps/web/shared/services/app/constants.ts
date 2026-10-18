@@ -12,7 +12,7 @@ export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;
 export const GIBIBYTE = MEGABYTE * KIBIBYTE;
 // The request body limit for a non-multipart request, which the request size limiter answers with a 413 before reading
-// The body. A body that can outgrow it — a large resource's content — is committed by reference instead (/docs/architecture/file-uploads)
+// The body. A body that can outgrow it — a large resource's content — is committed by reference instead (openspec/specs/architecture/file-uploads/design.md)
 export const MAX_REQUEST_SIZE = 2_000_000;
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 

@@ -19,7 +19,7 @@
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
 ### Frontend
 
@@ -319,7 +319,7 @@ pnpm preview
 
 ## <a name="architecture">🧱 Architecture</a>
 
-Esposter is a pnpm workspaces monorepo. See [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
+Esposter is a pnpm workspaces monorepo. See [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/openspec/specs/architecture/monorepo-tooling/design.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Workspace Graph
@@ -343,7 +343,7 @@ has headless Haiku reviewers read each window in batches of files they can read 
 window's last commit. Each window that passes opens an issue for its findings. A fixer session then fixes what it can and
 lands its commits on `ai/queue`, and a settler session settles what the fixer left open, so every finding ends fixed,
 refuted or recorded. The design and the figures live in
-[the review docs](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/infra/review.md).
+[the review docs](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/review/design.md).
 
 ```mermaid
 flowchart LR
@@ -405,7 +405,7 @@ claude plugin install genshin-mods@esposter
 | [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)       | Six mods: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and a delegation guard that nudges a run of lookups toward a haiku agent. |
 | [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply aloud, a sentence at a time, in the character's own cloned voice.                                                                                                                                                                                                                      |
 
-A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://esposter.com/docs/infra/claude-interface) page.
+A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface) page.
 
 ## <a name="community">🤝 Community</a>
 

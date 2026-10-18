@@ -6,4 +6,3 @@ The repo's own scripts and the app's config suites — what tests the toolchain 
 | --------------------- | --------------------- | ----- |
 | `scripts`             | 2026-10-05 · Opus 5.5 |       |
 | `apps/web/uno.config` | 2026-10-05 · Opus 5.5 |       |
-| `apps/web/content`    | 2026-10-05 · Opus 5.5 |       |

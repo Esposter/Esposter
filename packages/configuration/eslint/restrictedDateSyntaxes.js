@@ -11,7 +11,7 @@
 export default [
   {
     message:
-      "Don't format a date in a component. Use <NuxtTime :datetime> (add `relative` for a time-ago), which formats in the reader's locale and timezone without a hydration mismatch. See /docs/architecture/date-time-display.",
+      "Don't format a date in a component. Use <NuxtTime :datetime> (add `relative` for a time-ago), which formats in the reader's locale and timezone without a hydration mismatch. See openspec/specs/architecture/date-time-display/design.md.",
     selector:
       "CallExpression[callee.name=/^(useTimeAgo|useDateFormat)$/], CallExpression[callee.property.name=/^(fromNow|toNow|toLocaleDateString|toLocaleTimeString|toLocaleString)$/], CallExpression[callee.name='formatDate'], NewExpression[callee.object.name='Intl'][callee.property.name=/^(DateTimeFormat|RelativeTimeFormat)$/], CallExpression[callee.object.name='Intl'][callee.property.name=/^(DateTimeFormat|RelativeTimeFormat)$/]",
   },

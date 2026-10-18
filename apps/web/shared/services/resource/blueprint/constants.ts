@@ -8,6 +8,6 @@ export const MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH = 500;
 // `{{entry:<key>}}` — replaced with the created resource id of that entry (late-bound cross-resource link).
 // Both grammars share the `{{<kind>:<key>}}` shape, and both earn their bound from the delimiters that
 // Define the token: a lazy body between `{{` and `}}` stops at the first terminator without the key charset
-// Having to guess which characters end it ([content token rewriting](/docs/architecture/content-token-rewriting))
+// Having to guess which characters end it ([content token rewriting](openspec/specs/architecture/content-token-rewriting/design.md))
 export const BLUEPRINT_PARAMETER_TOKEN_REGEX = /\{\{parameter:(?<key>.+?)\}\}/gu;
 export const BLUEPRINT_ENTRY_TOKEN_REGEX = /\{\{entry:(?<key>.+?)\}\}/gu;

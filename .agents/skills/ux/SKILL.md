@@ -18,13 +18,13 @@ person actually do this thing, and is that where they were already looking?
   fall back on. What has no server-side undo confirms.
 - **An undoable delete acting on click**, the undo its only guard. A reader cannot tell which kind a Delete is until it
   has gone, and only "every delete asks" is a rule `restrictedDeleteSyntaxes` can hold
-  (`apps/web/content/docs/architecture/rejected/no-confirm-for-undoable-deletes.md`).
+  (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
 - **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
   dialog adds no second place a rejection can appear.
 
 ## Written for the least technical reader
 
-Every surface offers one way through, shows no plumbing, numbers its steps in the words on screen, and removes a step before explaining it; the expert's path lives in the docs (`apps/web/content/docs/architecture/simplest-reader.md`).
+Every surface offers one way through, shows no plumbing, numbers its steps in the words on screen, and removes a step before explaining it; the expert's path lives in the docs (`openspec/specs/architecture/simplest-reader/design.md`).
 
 ## Every feature has two surfaces, and shipping one is shipping half
 

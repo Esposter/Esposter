@@ -1,6 +1,6 @@
 # Sources
 
-Read when a risk has no owner in `references/owasp-top-10.md`, when a defence is being designed, or when a sweep unit raises a question the checklist does not ask. These are the pages to read before writing a rule. Cite the one read in the commit or the docs page that ships the rule, as the `docs` skill's sources convention asks of any design. Each entry says what to take from it for this repo.
+Read when a risk has no owner in `references/owasp-top-10.md`, when a defence is being designed, or when a sweep unit raises a question the checklist does not ask. These are the pages to read before writing a rule. Cite the one read in the commit or the design that ships the rule, as the `openspec` skill's sources convention asks of any design. Each entry says what to take from it for this repo.
 
 ## The lists
 
@@ -92,7 +92,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
 
 ## Vendor guides for this stack
 
-- nuxt-security-module — `apps/web/content/docs/nuxt-security-module/` — the module behind the CSP and headers, and the audit of the upstream it replaced.
+- nuxt-security-module — `openspec/specs/nuxt-security-module/` — the module behind the CSP and headers, and the audit of the upstream it replaced.
 - tRPC authorization — https://trpc.io/docs/server/authorization — middleware-based authorization, the pattern the procedure builders follow.
 - better-auth session management — https://www.better-auth.com/docs/concepts/session-management — cookie sessions and their expiry.
 - Drizzle `sql` operator — https://orm.drizzle.team/docs/sql — which interpolations parameterize and what `sql.raw` does not.

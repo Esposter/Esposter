@@ -12,7 +12,7 @@ export const MENTION_HERE_ID = "@here";
 export const MENTION_EVERYONE_ID = "@everyone";
 // A custom emoji in message content is a node carrying only what identifies it — the id it resolves by and the
 // Name its fallback reads as. The image url is never stored: it is a short-lived read SAS, resolved when the
-// Message is rendered. See /docs/esbabbler/emoji
+// Message is rendered. See openspec/specs/esbabbler/emoji/design.md
 export const CUSTOM_EMOJI_ID_ATTRIBUTE = "data-custom-emoji-id";
 export const CUSTOM_EMOJI_NAME_ATTRIBUTE = "data-custom-emoji-name";
 // A spoiler is a span the editor writes around text a reader must click to read. The attribute is what the

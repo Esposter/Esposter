@@ -61,7 +61,7 @@ Never `watch` an open boolean to reset a draft — `useCloned` re-clones wheneve
   if (status === MutationStatus.Failed) syncEditedFoo();
   ```
 
-  Without it the surface reopens on the rejected draft (`apps/web/content/docs/architecture/client-data.md`, the rollback rule).
+  Without it the surface reopens on the rejected draft (`openspec/specs/architecture/client-data/design.md`, the rollback rule).
 
 A draft cloned as one object over every field the write sends doubles as the write's input, so the submitted payload and the resynced draft cannot drift apart.
 

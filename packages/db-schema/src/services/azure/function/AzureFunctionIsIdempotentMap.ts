@@ -38,7 +38,7 @@ export const AzureFunctionIsIdempotentMap = {
   // This one: it is the only handler triggered by a *system* topic, so its dead letters carry a storage
   // `eventType` (`Microsoft.Storage.BlobCreated`) rather than an AzureFunction, and checkIsReplayable
   // Quarantines anything it cannot resolve to a function. The value is its honest answer, not a reachable path
-  // (/docs/resource/storage-quotas).
+  // (openspec/specs/resource/storage-quotas/design.md).
   [AzureFunction.ReconcileStorageLedgerEntry]: true,
   // Republishes a dead-letter blob it then deletes; a rerun of the same blob is a no-op, but it is never itself
   // Dead-lettered onto a topic, so the value is only here for exhaustiveness.

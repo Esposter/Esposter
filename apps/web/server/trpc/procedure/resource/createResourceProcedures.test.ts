@@ -702,7 +702,7 @@ describe(createResourceProcedures, () => {
     assert.exists(blobDeletionEvents);
 
     // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
-    // Removes it (/docs/architecture/blob-lifecycle)
+    // Removes it (openspec/specs/architecture/blob-lifecycle/design.md)
     expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName],
       containerName: AzureContainer.ResourceAssets,

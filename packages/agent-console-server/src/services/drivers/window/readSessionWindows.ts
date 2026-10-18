@@ -10,6 +10,6 @@ import { join } from "node:path";
 // Nothing here cannot rejoin, and a host that finds nothing takes no window back
 export const readSessionWindows = (stateDirectory: string): SessionWindows =>
   getResult(
-    // oxlint-disable-next-line no-restricted-properties -- the schema validates the file, the pair /docs/architecture/serialization names
+    // oxlint-disable-next-line no-restricted-properties -- the schema validates the file, the pair openspec/specs/architecture/serialization/README.md names
     () => sessionWindowsSchema.parse(JSON.parse(readFileSync(join(stateDirectory, SESSION_WINDOWS_FILENAME), "utf8"))),
   ).unwrapOr({ port: 0, secretHashes: [] });

@@ -5,7 +5,7 @@ import { XFrameOptions } from "#src/models/XFrameOptions";
 import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
 
 // Each reviewed default has its source in the defaults review page,
-// `apps/web/content/docs/nuxt-security-module/defaults-review.md`.
+// `openspec/specs/nuxt-security-module/defaults-review/design.md`.
 // The `Permissions-Policy` denials are OWASP's `ci/headers_add.json`, and the HSTS `max-age` is OWASP's two-year value
 export const getDefaultSecurityHeaders = (isDevelopment: boolean, isStrict: boolean): SecurityHeaders => ({
   contentSecurityPolicy: {

@@ -89,7 +89,7 @@ export default {
       // Vuetify's tags, which no package here provides: the UI library draws everything they did. Only the kebab-case
       // Spelling is decidable, since a PascalCase `V` prefix is also another library's own name
       message:
-        "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see /docs/architecture/ui-library. An image is <NuxtImg>.",
+        "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see openspec/specs/architecture/ui-library/design.md. An image is <NuxtImg>.",
       selector: "VElement[rawName=/^v-/]",
     },
     {

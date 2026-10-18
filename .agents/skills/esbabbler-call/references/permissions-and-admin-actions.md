@@ -4,11 +4,11 @@ Read when adding a `RoomPermission` bit or an `AdminActionType`, or wiring an ad
 
 ## `RoomPermission` bits
 
-The bits are `packages/db-schema/src/models/message/RoomPermission.ts`, in the order `apps/web/content/docs/esbabbler/rbac.md` fixes, and what each grants is said once on the screen that grants it (`apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`). `Administrator` is always the last bit: a new permission goes before it and moves it up, and no migration follows — stored values are read as the current shape.
+The bits are `packages/db-schema/src/models/message/RoomPermission.ts`, in the order `openspec/specs/esbabbler/rbac/design.md` fixes, and what each grants is said once on the screen that grants it (`apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`). `Administrator` is always the last bit: a new permission goes before it and moves it up, and no migration follows — stored values are read as the current shape.
 
 ## `AdminActionType`
 
-The enum is `packages/db-schema/src/models/message/AdminActionType.ts`, and every place an action touches is `apps/web/content/docs/esbabbler/moderation.md`.
+The enum is `packages/db-schema/src/models/message/AdminActionType.ts`, and every place an action touches is `openspec/specs/esbabbler/moderation/design.md`.
 
 ## Admin action hooks in the call stores
 

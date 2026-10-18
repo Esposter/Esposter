@@ -21,24 +21,24 @@ export const resourcesInResource = pgTable(
     // The hex SHA-256 of the content's JSON — what the blob's zstd frame decodes to — written in the transaction
     // That writes the blob. A save hands it back so a client can tell whether the bytes it sent are the bytes
     // Stored, which is what a delta save is computed against; empty until the first content write. See
-    // /docs/resource/resource-version-store
+    // openspec/specs/resource/resource-version-store/design.md
     contentHash: text().notNull().default(""),
     // The byte length of the content's JSON, written with its hash — not the compressed length the blob is stored
     // And charged at. A client picks how a read crosses by it the way a save picks by the body it would send: a
     // Document one request body carries comes through the server, a larger one straight from Blob Storage. See
-    // /docs/architecture/large-documents
+    // openspec/specs/architecture/large-documents/design.md
     contentSize: integer().notNull().default(0),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
     // When the last revision was taken, which is what throttles the automatic ones. The save clock cannot
     // Answer it: `updatedAt` moves on every autosave, so a continuously edited resource never looks idle and
-    // Leaves no recovery points at all. Null until the first revision lands. See /docs/resource/resource-snapshots
+    // Leaves no recovery points at all. Null until the first revision lands. See openspec/specs/resource/resource-snapshots/design.md
     revisionTakenAt: timestamp(),
     // The revision channel's counter: what the next revision is numbered. Never derived from the version rows,
     // Which answer which revisions exist — a number is claimed before its write, so a failed write leaves a
     // Number with no row, and the ring-buffer eviction makes the two disagree by design.
-    // See /docs/resource/resource-snapshots
+    // See openspec/specs/resource/resource-snapshots/design.md
     revisionVersion: integer().notNull().default(0),
     tags: jsonb().notNull().default({}).$type<ResourceTags>(),
     type: resourceTypeEnum().notNull(),

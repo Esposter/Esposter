@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "packages/genshin-world/src/components/Character/**",
+    "packages/genshin-interface/src/components/CharacterMenuTalents/**",
+    "packages/genshin-world/src/services/character/**",
+    "packages/genshin-world/src/models/character/**",
+    "packages/genshin-world/src/components/World/Session/**",
+  ]

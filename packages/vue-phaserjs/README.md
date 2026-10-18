@@ -30,7 +30,7 @@ Add the type declaration files so scene key types and custom plugins get proper 
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/vue-phaserjs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-phaserjs) to level up.
 
 ### Usage
 

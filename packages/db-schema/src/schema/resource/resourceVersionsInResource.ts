@@ -11,7 +11,7 @@ export const snapshotReasonEnum = resourceSchema.enum("snapshotReason", Snapshot
 // One retained version of a resource's content, keyed by the resource, the channel and the version number. The
 // Bytes live in the content-addressed object the hash names; the row is what makes a version visible, so a
 // Write that fails between the object and the row leaves no version, and an object no row names is adopted by
-// The next write of the same content rather than swept. See /docs/resource/resource-version-store
+// The next write of the same content rather than swept. See openspec/specs/resource/resource-version-store/design.md
 export const resourceVersionsInResource = pgTable(
   "resourceVersions",
   {

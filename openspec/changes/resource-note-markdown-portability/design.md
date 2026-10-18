@@ -1,0 +1,40 @@
+# Note Markdown Portability
+
+A Note can be read only inside the app or through its published page ([note resource](../../specs/resource/note-resource/design.md)); that page names Markdown export as "a natural follow-on, not bundled". Markdown is the format documents travel in — a README, a wiki, a pasted answer — and a Note that cannot leave as `.md` or arrive from one is a document you are locked into.
+
+## What it adds
+
+Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap`, so the resource page's overflow menu gains **Import Markdown** and **Export Markdown** beside every other portable type's commands ([resource explorer](../../specs/resource/explorer/design.md)).
+
+- **Export** serializes the working copy's Tiptap JSON to Markdown and downloads `<name>.md`. Headings, lists, task lists (as `- [ ]`), marks, links, blockquotes and code blocks all have Markdown forms, so nothing the writing kit holds is lost.
+- **Import** reads a `.md` file, parses it to Tiptap JSON with the same extension set, shows what it will replace, and saves it as the working copy through `saveResourceContent` — the Sheet's import-replaces-with-confirmation pattern — so the previous content stays in [version history](../../specs/resource/resource-snapshots/design.md). The import runs from the overflow menu, outside any component, so it opens its preview through a small `useNotePortableDialogStore`, and the Note gains a `ResourceNoteDialogs` entry in `ResourceDialogsComponentMap` to mount that preview, as the Sheet's import does through `useSheetPortableDialogStore` and `ResourceSheetDialogs`.
+- **The converter is Tiptap's own** `@tiptap/markdown`, whose `MarkdownManager` parses and serializes against the editor's schema, so a Note's extensions decide what round-trips rather than a second Markdown library's idea of the document. Tiptap marks it an early release; the change pins it to an exact version in the catalog and adds a round-trip test over every node the writing kit has, which is what fails if a release changes the output. It is a new dependency and goes through [dependency admission](../../specs/architecture/dependency-admission/design.md).
+
+## What is deliberately not in it
+
+- **No HTML or `.docx` export.** The published view already is the HTML form; `.docx` is a heavy dependency for a Word user who can paste the Markdown.
+- **No live Markdown editing mode.** The Note is a rich-text editor; Markdown is its file format, not a second editing surface.
+
+## Key files
+
+| File                                                            | Role after the change                           |
+| --------------------------------------------------------------- | ----------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                    |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | the extension set the converter parses against  |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`          |
+| `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
+| `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |
+
+The files it creates:
+
+```text
+apps/web/app/
+  components/Resource/Note/Dialogs.vue     ← the import preview and its confirm
+  store/resource/note/portableDialog.ts    ← the parsed document the preview shows
+```
+
+## Sources
+
+- [Tiptap — Markdown installation](https://tiptap.dev/docs/editor/markdown/getting-started/installation) — the `@tiptap/markdown` package and its `MarkdownManager` parse and serialize.
+- [Tiptap — Markdown](https://tiptap.dev/docs/editor/markdown) — bidirectional support, and its early-release caveat that motivates the round-trip test.

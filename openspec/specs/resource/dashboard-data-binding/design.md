@@ -1,0 +1,53 @@
+# Dashboard Data Binding
+
+A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet resource) instead of only embedding static chart data — the marquee cross-product integration, applying the [datasets standard](../../architecture/dataset/design.md) to the dashboard product. A bound visual resolves its chart data from `dataset.readDataset` at render time; static visuals work unchanged — binding is additive.
+
+## How it works
+
+```mermaid
+flowchart LR
+  ED["Dashboard Editor blade<br/>Bind-to-data form"] -->|"pick provider → resource →<br/>x column + series rows"| VIS["Visual.dataset<br/>{ reference, query }"]
+  VIS -->|render / per-visual refresh| READ["dataset.readDataset"]
+  READ --> PROV["DatasetProviderMap<br/>ProgramStatus · Sheet · SurveyResponses"]
+  PROV -->|rows| AGG["client aggregation<br/>count/sum/avg/min/max per series"]
+  AGG --> CHART["chart data"]
+  PUB["publishResource"] -->|bakes resolved data| SNAP["published snapshot<br/>(no live reads on /view)"]
+  VIS -.-> PUB
+```
+
+## Data model
+
+`Visual.dataset?: VisualDatasetBinding` — stored inside the dashboard content blob, no DB columns:
+
+```ts
+// apps/web/shared/models/dashboard/data/VisualDatasetBinding.ts
+interface VisualDatasetBinding {
+  reference: DatasetReference;
+  query: DatasetQuery; // { xColumn, series: { column, aggregation: DatasetAggregationType }[] }
+  snapshot?: Dataset; // baked in at publish time, so public viewers never resolve references
+}
+```
+
+## Behavior
+
+- **Bind-to-data form** (in the Dashboard Editor blade): pick a provider → pick a resource via the shared `DatasetReferencePicker` → pick the x column and edit multiple series rows (column + aggregation, add/remove).
+- **Which types bind**: a query gives one aggregated value per category, and `VisualTypeDatasetShapeMap` says how each visual type draws that — as axis categories with a series per aggregation, as a single series' labels (pie, polar area, radial bar), or as `{ x, y }` points (treemap, slope). A candlestick, box plot, range area, range bar or bubble draws several values per point, which no aggregation gives, so its edit form explains that in place of the binding form, switching a visual to one clears its binding, and it shows demo data.
+- **Render**: a resolver computes chart data from the fetched `Dataset` per bound visual, with loading and error states per visual and a manual refresh action.
+- **Publish**: published dashboards bake the resolved data into the snapshot ([publishing](../../architecture/publishing/design.md)) — the public view never issues live dataset reads. The snapshot is a public read, so `projectDatasetToQuery` keeps every row but only the columns the visual's query reads: a chart of one survey question publishes that question's answers and no other.
+
+## Key files
+
+| File                                                          | Role                                                                       |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `shared/models/dashboard/data/VisualDatasetBinding.ts`        | binding shape — reference + query, plus the optional publish-time snapshot |
+| `shared/models/dataset/DatasetQuery.ts`                       | x column + aggregated series                                               |
+| `app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | how each visual type draws a query's result, or that it cannot             |
+| `app/components/Resource/Dashboard/Editor.vue`                | canvas incl. bind-to-data flow                                             |
+| `app/components/Resource/Dashboard/View.vue`                  | published renderer over baked data                                         |
+| `app/components/Dataset/ReferencePicker.vue`                  | shared provider/resource picker                                            |
+
+## Notes
+
+- Aggregation runs client-side over the row-capped dataset — no server query language. Revisit only if the row cap becomes a real limit ([dataset row cap](../../../deferred/resource/dataset-row-cap-pagination/design.md)).
+- Fetch on dashboard load + manual refresh; live updates are deferred ([realtime dataset refresh](../../../deferred/resource/realtime-dataset-refresh/design.md)).
+- A bound visual whose source is deleted or unreadable renders an error state, never breaks the dashboard; a source that is gone says to pick another or restore it, there and under the binding form's Source picker ([datasets](../../architecture/dataset/design.md)).

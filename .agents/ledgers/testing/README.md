@@ -36,7 +36,7 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 | [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services               |
 | [shared](shared.md)       | `apps/web/shared` and `app/components/Styled` — what both halves of the app read   |
 | [packages](packages.md)   | every workspace package outside `apps/web`                                         |
-| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root config suites and `content/`                |
+| [tooling](tooling.md)     | `scripts/`, `.agents/` and the app's root config suites                            |
 
 The area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one
 set of names across both ledgers.

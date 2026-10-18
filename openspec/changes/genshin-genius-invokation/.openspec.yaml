@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports]
+x-waiting: "the Player Level's slice is published through the hosted game data, not yet built, and the seated challengers wait on the talks system's split"
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/gcg/**",
+    "scripts/src/models/genshinAssets/gcg/**",
+    "packages/genshin-world/src/models/gcg/**",
+    "packages/genshin-world/src/services/gcg/**",
+    "packages/genshin-world/src/services/friendship/**",
+    "packages/genshin-world/src/services/profile/readCharacterProfile.ts",
+    "scripts/src/services/genshinText/constants.ts",
+    "scripts/src/services/genshinText/fetchDump.ts",
+    "packages/genshin-world/src/services/shared/computeLevelReached.ts",
+  ]

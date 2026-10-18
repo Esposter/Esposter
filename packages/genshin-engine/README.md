@@ -71,7 +71,7 @@ A web worker generating the ground imports its generators from the `genshin-engi
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/genshin) to level up. The engine's design, from the order a frame runs in to each module's job, is its [architecture page](https://esposter.com/docs/genshin/engine-architecture), and the look it draws is its [rendering style](https://esposter.com/docs/genshin/rendering-style).
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin) to level up. The engine's design, from the order a frame runs in to each module's job, is its [architecture page](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/engine-architecture/design.md), and the look it draws is its [rendering style](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/rendering-style/design.md).
 
 ## <a name="license">⚖️ License</a>
 

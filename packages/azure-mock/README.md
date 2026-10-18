@@ -23,7 +23,7 @@ pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/da
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
 ### Available Mocks
 

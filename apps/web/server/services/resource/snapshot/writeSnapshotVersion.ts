@@ -18,7 +18,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Collection can free the object, or the anchor it decodes against, in the gap between them
 // (`lockSnapshotObjects`). What the write cost is handed back rather than charged here, because a publish
 // Takes its version inside a transaction and the charge locks the ledger row and then the user's, which a
-// Transaction must not be held open across (/docs/resource/storage-quotas)
+// Transaction must not be held open across (openspec/specs/resource/storage-quotas/design.md)
 export const writeSnapshotVersion = async (
   db: Context["db"] | Transaction,
   resource: Pick<ResourceInResource, "id" | "type">,

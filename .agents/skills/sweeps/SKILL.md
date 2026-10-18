@@ -5,7 +5,7 @@ description: Apply when running, resuming, ticking, adding or retiring a repo-wi
 
 # Sweeps
 
-A **sweep** carries one already-settled convention across a tree too large to finish in one commit. It decides nothing: the convention is owned by a skill or docs page, and the sweep only applies it to code that predates it, changing no behaviour.
+A **sweep** carries one already-settled convention across a tree too large to finish in one commit. It decides nothing: the convention is owned by a skill or spec, and the sweep only applies it to code that predates it, changing no behaviour.
 
 Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, each area file is a coverage table and nothing else, and everything else the ledger holds moves to the folder's own `README.md` (`references/ledger-files.md`). It grows the way source does: split when a unit earns its own home, never to hit a number.
 
@@ -13,7 +13,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 ## Settled — do not re-propose
 
-- **Filing a sweep under `apps/web/content/docs/proposals/`.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`apps/web/content/docs/proposals/index.md`).
+- **Filing a sweep as an OpenSpec change.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`openspec/changes/`).
 - **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf (`references/ledger-files.md`).
 - **Running a reading-decided sweep's units through delegated agents.** When the reading decides each edit, the first unit teaches every unit after it a carve-out, and a parallel pass throws that away. Such a sweep stays in the main session, one unit at a time (`references/one-pass.md`). A find-recipe sweep is the other case: its scan decides every edit, so it fans out to one `haiku` agent per leaf, which is sanctioned (`references/one-pass.md`, "Who decides the edit").
 - **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in (`references/one-pass.md`).

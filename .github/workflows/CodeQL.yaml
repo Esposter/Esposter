@@ -1,5 +1,5 @@
 name: 🔎 CodeQL
-# CI security: apps/web/content/docs/architecture/monorepo-tooling.md
+# CI security: openspec/specs/architecture/monorepo-tooling/design.md
 
 on:
   push:

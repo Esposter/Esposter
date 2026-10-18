@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "scripts/src/models/genshinAssets/leyLine/**",
+    "scripts/src/services/genshinAssets/leyLine/**",
+    "packages/genshin-world/src/models/leyLine/**",
+    "packages/genshin-world/src/services/leyLine/**",
+    "packages/genshin-world/src/data/leyLine/**",
+  ]

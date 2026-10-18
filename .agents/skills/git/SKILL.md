@@ -9,7 +9,7 @@ description: Apply when running git operations, merging a branch, resolving a lo
 
 Conventional-commits format and the type list are in `CONTRIBUTING.md` ("Commit Conventions").
 
-A count in a subject or body is written as its magnitude — "a handful of proposals", never the number — for the same reason a docs page does (the `docs` skill, `references/repo-owned-facts.md`).
+A count in a subject or body is written as its magnitude — "a handful of proposals", never the number — for the same reason a spec does (the `openspec` skill, `references/repo-owned-facts.md`).
 
 **Every commit ends with the `Co-Authored-By` trailer the session's attribution reminder gives**, written as the message's last line and never stripped: it is what names the model in a ledger's `Swept` cell (the `sweeps` skill, `references/ledger-files.md`).
 
@@ -31,7 +31,7 @@ An agent lands its commits on **`ai/queue`** from its own worktree by the `revie
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review and the nightly release move `main`; the review brings a diverged `main` back into the queue itself (`apps/web/content/docs/infra/review.md`, step 2). Otherwise `main` moves only by the owner's direct fast-forward to `ai/queue` after a review (`review-queue` skill). A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review and the nightly release move `main`; the review brings a diverged `main` back into the queue itself (`openspec/specs/infra/review/design.md`, step 2). Otherwise `main` moves only by the owner's direct fast-forward to `ai/queue` after a review (`review-queue` skill). A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's (`openspec/specs/infra/branch-namespaces/design.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 

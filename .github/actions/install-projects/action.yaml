@@ -16,7 +16,7 @@ runs:
   steps:
     # The root `{.}` rides along with any selector, because the toolchain (`vite-plus`, `vitest`, `oxlint`, `tsx`,
     # the `typescript` alias) is declared there —
-    # `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape` has why `includeWorkspaceRoot`
+    # `openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape` has why `includeWorkspaceRoot`
     # is refused.
     # `--fail-if-no-match` so a selector matching nothing fails here rather than as a missing module later.
     - name: 📦 Install the selected projects

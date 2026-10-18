@@ -2,7 +2,7 @@
 
 Read when a session is asked to settle the open `review` issues itself, rather than leaving them to the review's settle job or `pnpm ai:review:settle`, which launch separate `claude -p` sessions.
 
-This is the same job run from the session: the main session decides every verdict, and a haiku subagent makes the edits. The rules a settled finding must meet, and the outcomes they allow, are in `apps/web/content/docs/infra/review.md` under "### The settle job". The session checks each commit must pass are the `REVIEW_SESSION_CHECKS` list in the same page, under "### The fix job". Read them there; this page does not restate them.
+This is the same job run from the session: the main session decides every verdict, and a haiku subagent makes the edits. The rules a settled finding must meet, and the outcomes they allow, are in `openspec/specs/infra/review/design.md` under "### The settle job". The session checks each commit must pass are the `REVIEW_SESSION_CHECKS` list in the same page, under "### The fix job". Read them there; this page does not restate them.
 
 ## Steps
 

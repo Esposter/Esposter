@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "packages/genshin-world/src/services/chest/**",
+    "packages/genshin-world/src/models/chest/**",
+    "packages/genshin-world/src/composables/useWorldChests.ts",
+    "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/components/World/Interactables/**",
+    "packages/genshin-world/src/services/interaction/constants.ts",
+    "packages/genshin-world/src/models/save/**",
+    "packages/genshin-world/src/services/save/**",
+    "packages/genshin-text/src/**",
+    "packages/genshin-persona/src/generated/**",
+  ]

@@ -2,7 +2,7 @@ name: 🔍 Review
 
 # The review of what lands on `ai/queue`: haiku reviewers over every window owed, one review issue per chunk of a passed
 # window's findings, one fixer per issue, and a settle job that settles what the fixers left open. `main` moves only by the
-# review's fast-forward through the passed prefix (`services/review`, `apps/web/content/docs/infra/review.md`).
+# review's fast-forward through the passed prefix (`services/review`, `openspec/specs/infra/review/design.md`).
 on:
   push:
     branches: [ai/queue]

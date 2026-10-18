@@ -30,7 +30,7 @@ flowchart LR
 
 ## Rules
 
-- **`pnpm ai:resume` runs first**, before the backlog is read. It prints one row per check (tree, queue, worktrees, claims, holds, plugins), each `ok` or the leftovers with their action, and exits non-zero while any row needs one. A clean report is the gate to `pnpm ai:fleet:next` and to the engineering-loops page's "What runs next" (`apps/web/content/docs/architecture/engineering-loops.md`).
+- **`pnpm ai:resume` runs first**, before the backlog is read. It prints one row per check (tree, queue, worktrees, claims, holds, plugins), each `ok` or the leftovers with their action, and exits non-zero while any row needs one. A clean report is the gate to `pnpm ai:fleet:next` and to the engineering-loops page's "What runs next" (`openspec/specs/architecture/engineering-loops/design.md`).
 - **Rows are worked in the order printed.** A missing plugin is installed first, since its mods (the usage reserve, the collision guard) load only in a session started after the install. A dead hold or a worktree is cleared before the tree, so nothing still running holds a path being judged.
 - **An uncommitted path is read before it is judged.** Its handoff is, in order:
   - the item that names it on its area's roadmap or proposal page;
@@ -44,5 +44,5 @@ flowchart LR
 - **A stale claim of this machine's is resumed from its handoff or released.** Hold it again and carry on when the roadmap item says what is next. Otherwise release it with `--miss` naming what is left. A live claim whose hold died is held again or released, never left to go stale.
 - **A missed claim is a reminder, not a gate.** Its miss is the holder's final word on an entry, not a leftover in this machine's tree, so `pnpm ai:resume` lists it with no action and the session takes new work with it standing. Its paths stay held for other machines, and it is cleared (finished, or dropped with `pnpm ai:fleet:release`) when there is room to do so.
 - **The other machine gets one message, never a wait.** A peer "ListAgents" can reach is told this machine's state and asked to run its own resume. An unreachable one (Remote Control drops on `/login`) is left to its claims, which `pnpm ai:fleet:status` shows. The game data and the peer's exports still travel only as the `throughput` skill's `references/fleet.md` allows.
-- **A review stopped by the usage limit needs nothing.** Its window is still owed, and the next run starts from wherever `main` was left (`apps/web/content/docs/infra/review.md`).
+- **A review stopped by the usage limit needs nothing.** Its window is still owed, and the next run starts from wherever `main` was left (`openspec/specs/infra/review/design.md`).
 - **The report is re-run until it is clean**, and the session says what it finished, recorded and released before it takes anything new.

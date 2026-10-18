@@ -1,0 +1,72 @@
+# Wildlife
+
+The game's world is lived in by animals: birds that scatter, boars that charge, crystalflies to catch and cats on the roofs. They give the meat, fowl and materials cooking and crafting spend, and fill in the archive's living beings. They are a kind of [enemies](../../specs/genshin/enemies/design.md)' camp with an AI of their own, standing where the [spawned places](../genshin-spawned-places/design.md) fit them. The fleeing birds and beasts of Mondstadt are built, as the [as-built page](../../specs/genshin/wildlife/design.md) describes; what follows is what is still to come.
+
+## Decisions
+
+- **Three kinds, by what they give.** Pets, the cats and dogs, cannot be interacted with. Birds and beasts drop their items when struck down. Material sources, crystalflies, butterflies, lizards, frogs, crabs and the like, are picked up as an item through the [interaction](../../specs/genshin/interaction/design.md) prompts and vanish in a puff of smoke. A fish in shallow water can be struck or picked up.
+- **Each kind's numbers are the game's, where a table holds them.** `EnvAnimalGatherExcelConfigData` gives the material sources their escape radius and time, how long they live, the weathers they hide in (rain, thunderstorms and snow for some) and the items they give. `CaptureExcelConfigData` gives what each beast drops when caught, and the monster table its kind, which the enemies' run already reads.
+- **Birds and beasts are the archive's animals, and no table gives their flight.** The environment table holds the critters, fish and gadgets. The birds and beasts are monsters filed under the archive's aviary and animal groups, and no row of the table gives their escape radius or time. Until a recording times them, they stand on the closest values the table does hold, the gadget rows' radius of four metres and time of one second, marked provisional.
+- **They flee on the enemies' step.** A startled animal runs from the player once within its escape radius, as a stepped state beside the enemies' own, and most come into being only when the player is near. Boars charge and can hurt a player in their way; Sumeru's beasts fight back with health bars and draw the player into combat; Chenyu Vale's flee and vanish when struck.
+- **Struck down by a hit, as combat deals it.** A bird or beast falls to the hit [combat](../../specs/genshin/combat/design.md) prices, one hit for most. A hit on wildlife triggers a weapon's passive but never an artifact set's, as the wiki notes. The capture table's rows name drop ids (`21330001` and on) whose drop tables the community dump does not carry (`DropTreeExcelConfigData` and its kin return 404 on AnimeGameData), so what a bird or beast gives is the wiki's Wildlife page: a White Pigeon one Fowl (item 100064), a Squirrel one Raw Meat (100061), a Crimson Fox two Raw Meat. Both items are already in the `items/materials` record with their names, so they show as any material does.
+- **They come back on the game's refresh**, as gathering points do, by their kind's policy.
+
+## How it works
+
+```mermaid
+stateDiagram-v2
+  [*] --> Idle: spawned when the player is near
+  Idle --> Fleeing: the player within its escape radius
+  Fleeing --> Idle: escaped, after its escape time
+  Idle --> Fallen: struck down
+  Fleeing --> Fallen: struck down
+  Idle --> Picked: a material source picked up
+  Fallen --> [*]: its items dropped
+  Picked --> [*]: a puff of smoke
+```
+
+## Scope and order
+
+**Still to come, in order:**
+
+```text
+packages/genshin-world/src/services/wildlife/
+├── strikeWildlife.ts
+└── WildlifeKindDropMap.ts
+```
+
+1. **What a struck bird or beast gives.**
+   - `WildlifeKindDropMap.ts`: each `WildlifeKind` to its `DroppedItem`, as the Decisions give them.
+   - `WildlifeState` gains `Struck`, and `strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
+   - Tests: `strikeWildlife.test.ts` (a Crimson Fox gives two Raw Meat once, and nothing when struck again) and a case in `stepWildlife.test.ts` (a struck animal in reach does not flee).
+2. **The strike reaching the animals.** The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so `components/World/Character/Index.vue`'s strike loop tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component draws the list it is given and skips a struck one.
+3. **Material sources, picked up.**
+4. **Boars, and the wildlife that fights back.**
+5. **Pets**, and each region's own animals when its region lands.
+
+## Data and measures
+
+- **Read from the game's tables:** `EnvAnimalGatherExcelConfigData` for the material sources, `CaptureExcelConfigData` for the birds' and beasts' captures, and `AnimalCodexExcelConfigData` and the animals' monster rows.
+- **Placed by the spawned places:** where each kind lives, from the official map's marks.
+- **Measured:** how fast each bird and beast flees, and its escape radius and time, timed off recordings of each. Until a clip lands the flight stays provisional.
+
+## Key files
+
+| File                                                               | Role after the change                                 |
+| :----------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/genshin-world/src/services/enemy/stepEnemy.ts`           | Beside the animals' own fleeing step                  |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`             | Animals placed as camps                               |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`    | Steps and draws the animals in reach with the enemies |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`    | Builds the animals' rows beside the enemies'          |
+| `packages/genshin-world/src/services/interaction/getHeldPickUp.ts` | Picks up a material source                            |
+
+## Sources
+
+- [Wildlife](https://genshin-impact.fandom.com/wiki/Wildlife), Genshin Impact Wiki: fleeing when approached, boars' charge, Sumeru's that fight back and Chenyu Vale's that vanish, pets, item drops and material sources gone in smoke, fish struck or picked, weapon passives triggered but not artifact sets', and spawning near the player.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the capture table, whose drops the build does not yet read.
+
+## Reference
+
+- `wildlife-flee-white-pigeon.mkv` — a White Pigeon in Windrise's area approached from about ten metres until it runs, the flight followed to where it stands idle, 15 seconds at most; its escape radius, escape time and flight speed are read from it, to replace the provisional constants in `packages/genshin-world/src/services/wildlife/constants.ts`. On the wiki and YouTube, none found (searched 2026-10-11).
+- `wildlife-flee-squirrel.mkv` — the same flight from a Squirrel in Windrise's area, 15 seconds at most, read into the same constants. On the wiki and YouTube, none found (searched 2026-10-11).
+- `wildlife-flee-crimson-fox.mkv` — the same flight from a Crimson Fox in Windrise's area, 15 seconds at most, read into the same constants. On the wiki and YouTube, none found (searched 2026-10-11).

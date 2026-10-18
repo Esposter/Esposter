@@ -44,13 +44,12 @@ export const DETECTED_CAPABILITIES: readonly string[] = [
   "windows",
 ];
 export const MEDIA_ENGINE_ACCELERATION = "d3d11va";
-// The folder of the compute queue's area pages: each holds its runnable items under `## Queue` and its waiting ones under `## Waiting`
-export const COMPUTE_QUEUE_DIRECTORY = "apps/web/content/docs/genshin/compute";
-export const COMPUTE_QUEUE_INDEX_FILE = "index.md";
+// The folder of the compute queue's areas: each area's design holds its runnable items under `## Queue` and its waiting
+// Ones under `## Waiting`
+export const COMPUTE_QUEUE_DIRECTORY = "openspec/specs/genshin/compute";
+export const COMPUTE_QUEUE_PAGE_FILE = "design.md";
 export const COMPUTE_QUEUE_HEADING = "## Queue";
 export const COMPUTE_QUEUE_WAITING_HEADING = "## Waiting";
 // A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WORKER_NAME_REGEX: RegExp = /^[\w-]+$/u;
-// A proposal unit's id is its page's path under the proposals folder, its separators doubled
-export const UNIT_ID_SEPARATOR = "--";

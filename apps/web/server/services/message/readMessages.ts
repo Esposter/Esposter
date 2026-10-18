@@ -66,7 +66,7 @@ export const readMessages = async ({
     // Coming, and every caller advances only by `nextCursor` while `hasMore` is set, making a returned incoming
     // Cursor a hot loop rather than a wait. The write-side window is bounded instead: `createMessage` drops the
     // Index row when the entity write fails, so a hole outlives one in-flight write only when that compensating
-    // Delete also fails ([messaging](/docs/esbabbler/messaging))
+    // Delete also fails ([messaging](openspec/specs/esbabbler/messaging/design.md))
     const messageMap = new Map(messages.map((message) => [message.rowKey, message]));
     const ascendingMessages = items.flatMap((index) => {
       const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));

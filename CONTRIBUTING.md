@@ -94,7 +94,7 @@ A contribution is a pull request from an `external/*` branch against `ai/queue`.
 is — `external/` is the one prefix a collaborator may create, everything else is a maintainer's, the review
 pipeline's or Renovate's — and `ai/queue` is the pipeline's intake: never `main`, which moves only when the review
 fast-forwards it to a reviewed commit. Why the names are the rule, and how the pipeline reviews your work once it is on the
-queue: [branch namespaces](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/infra/branch-namespaces.md).
+queue: [branch namespaces](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/branch-namespaces/design.md).
 
 ```mermaid
 flowchart LR

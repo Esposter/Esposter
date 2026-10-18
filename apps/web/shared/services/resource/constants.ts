@@ -33,7 +33,7 @@ export const SNAPSHOT_INTERVAL_MS = Temporal.Duration.from({ minutes: 15 }).tota
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;
 // Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction —
-// The "token we control" case of /docs/architecture/content-token-rewriting: prefix-anchored, positive
+// The "token we control" case of openspec/specs/architecture/content-token-rewriting/design.md: prefix-anchored, positive
 // Charset, no opener analysis needed. Global flag — use only via matchAll/replaceAll.
 // The lookbehind is what makes the prefix a url rather than a substring of one: authored content can embed a
 // Foreign absolute url whose own path carries this prefix (`https://cdn.example.com/api/resource-assets/…`), and

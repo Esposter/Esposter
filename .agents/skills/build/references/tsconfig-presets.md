@@ -14,7 +14,7 @@ Under the tsgo-backed `typescript` fork, an export whose type `isolatedDeclarati
 
 An inferred type the declaration would have to name through a module the package does not depend on fails `TS2883` ("cannot be named without a reference to … This is likely not portable"). The common case is `getResultAsync` returning neverthrow's `ResultAsync` from a package that peers on `@esposter/shared` alone. The annotation names it through the dependency the package has, `ReturnType<typeof getResultAsync<string>>`, rather than adding the transitive package to the manifest. Plain `tsc` passes it; only a declaration pass reports it — `pnpm build`, CI's package build and the cached package task, which runs the same build, but not the dev watchers, which skip declarations — so a package's checks include its build.
 
-These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the docs page, not the file.
+These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the spec, not the file.
 
 ## The bootstrap package
 

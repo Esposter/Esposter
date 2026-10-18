@@ -47,9 +47,9 @@ Measure a script end to end first (`scripts/src/sweeps/commands.bench.md`): its 
 
 ## The server never carries what it does not interpret
 
-Past one request body (`MAX_REQUEST_SIZE`), a document moves between the browser and Blob Storage through a SAS the server signs, in both directions; the server holds it only to validate a write or to compute from it. And a write that changes nothing must serialize to the same bytes — an import or rebuild that mints fresh ids or timestamps carries the previous ones over, or every content-addressed copy pays for the document again. Both rules, and the pieces a new large blob composes, are `apps/web/content/docs/architecture/large-documents.md`.
+Past one request body (`MAX_REQUEST_SIZE`), a document moves between the browser and Blob Storage through a SAS the server signs, in both directions; the server holds it only to validate a write or to compute from it. And a write that changes nothing must serialize to the same bytes — an import or rebuild that mints fresh ids or timestamps carries the previous ones over, or every content-addressed copy pays for the document again. Both rules, and the pieces a new large blob composes, are `openspec/specs/architecture/large-documents/design.md`.
 
-A JSON document stored in Blob Storage is never a plain upload: it is written by `writeJsonBlob` and read by `readJsonBlob` (`@esposter/db`), a zstd frame served with `Content-Encoding: zstd`, so a change to that path reaches every document at once (`apps/web/content/docs/architecture/compressed-json-blobs.md`).
+A JSON document stored in Blob Storage is never a plain upload: it is written by `writeJsonBlob` and read by `readJsonBlob` (`@esposter/db`), a zstd frame served with `Content-Encoding: zstd`, so a change to that path reaches every document at once (`openspec/specs/architecture/compressed-json-blobs/design.md`).
 
 ## Bound growth where the keys already are
 

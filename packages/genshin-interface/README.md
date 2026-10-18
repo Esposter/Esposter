@@ -43,7 +43,7 @@ import "genshin-interface/style.css";
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/genshin/interface-library) to level up. It compares the library against the game.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/interface-library/design.md) to level up. It compares the library against the game.
 
 ## <a name="license">⚖️ License</a>
 

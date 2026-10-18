@@ -1,10 +1,10 @@
 # Kit records
 
-Each kit's overlay derives its row (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), and the rule a pass carries is the Framework decisions bullet on `Unsourced` and `Unclassified` in `apps/web/content/docs/genshin/kits/index.md`.
+Each kit's overlay derives its row (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), and the rule a pass carries is the Framework decisions bullet on `Unsourced` and `Unclassified` in `openspec/specs/genshin/kits/README.md`.
 
 ```bash
 grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
-grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
+grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 ```
 
 | Unit                 | Swept                  | Notes                                                                    |

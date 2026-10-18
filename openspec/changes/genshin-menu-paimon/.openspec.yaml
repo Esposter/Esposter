@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports, media-engine, parity-page]
+x-touches:
+  [
+    "packages/genshin-world/src/components/Menu/Paimon/**",
+    "packages/genshin-world/src/services/menu/**",
+    "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/components/World/Windrise/**",
+  ]

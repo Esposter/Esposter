@@ -17,12 +17,11 @@
 | the repository root — config and Markdown                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `apps/web/configuration`                                                                                                                                            | 2026-10-05 · Opus 5.5 |       |
 | the app's root config files                                                                                                                                         | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — the two suites                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — `resource`                                                                                                                                         | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — `esbabbler`                                                                                                                                        | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — `architecture`                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — the product areas                                                                                                                                  | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — the rest                                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
+| `openspec/specs` — `resource`                                                                                                                                       | —                     |       |
+| `openspec/specs` — `esbabbler`                                                                                                                                      | —                     |       |
+| `openspec/specs` — `architecture`                                                                                                                                   | —                     |       |
+| `openspec/specs` — the product and package areas                                                                                                                    | —                     |       |
+| `openspec` — the rest                                                                                                                                               | —                     |       |
 | `scripts/src/services/genshinParity/commands`, `scripts/src/genshinParity`                                                                                          | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinParity/shared`, `scripts/src/models/genshinParity/shared`                                                                              | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinParity/witness`                                                                                                                        | 2026-10-05 · Opus 5.5 |       |

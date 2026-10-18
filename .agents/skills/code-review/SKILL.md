@@ -23,7 +23,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 **Both lanes run by default.** "quality only" (the request `/simplify` maps to) or "correctness only" narrows to one. The lanes never merge: a quality finding is a preference with a cost, a correctness finding is a claim that something is wrong.
 
-**Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
+**Every file in the window is in scope, whatever its extension** — prose included. A spec, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
 **Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
@@ -57,7 +57,7 @@ This is the whole of verification, and skipping it fails one way: the finding is
 
 ## The written record wins — never re-litigate a settled decision
 
-**Grep `apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` before reporting a finding that argues with a decision.** Why that is the dominant false-positive class, what counts as the record — the deep dives and a comment beside the line included — when a settled decision is a finding again, and how one is overturned so the old direction does not stand beside the new one: `references/written-record.md`.
+**Grep `openspec/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` before reporting a finding that argues with a decision.** Why that is the dominant false-positive class, what counts as the record — the deep dives and a comment beside the line included — when a settled decision is a finding again, and how one is overturned so the old direction does not stand beside the new one: `references/written-record.md`.
 
 ## Reporting — `references/reporting.md`
 

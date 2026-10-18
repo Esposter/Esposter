@@ -3,7 +3,7 @@ import type { OxlintConfig } from "oxlint";
 import { defineConfig } from "oxlint";
 
 // The costliest type-aware rules, off in every run: switched to "error" for an occasional pass, the oxlint ledger's
-// Row, then back. See /docs/architecture/lint-toolchain#what-the-type-aware-pass-costs
+// Row, then back. See openspec/specs/architecture/lint-toolchain/design.md#what-the-type-aware-pass-costs
 const COSTLY_TYPE_AWARE_SEVERITY = "off";
 const BROWSER_GLOBAL_MESSAGE = "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.";
 const CONTEXT_MESSAGE =
@@ -15,7 +15,7 @@ const USE_ROUTER_PAGE_MESSAGE =
 const USE_ROUTE_MESSAGE =
   "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.";
 const VUETIFY_MESSAGE =
-  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.";
+  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See openspec/specs/architecture/ui-library/design.md.";
 // An override replaces a rule's options wholesale, so each scope's list is the root's entries with its own lifted or
 // Added by identity, and a ban added here reaches every scope that does not lift it
 const BROWSER_GLOBALS = [
@@ -31,7 +31,7 @@ const BROWSER_GLOBALS = [
 const USE_ROUTE_GLOBAL = { message: USE_ROUTE_MESSAGE, name: "useRoute" };
 const USE_UI_STYLE_GLOBAL = {
   message:
-    "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
+    "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See openspec/specs/architecture/design-language/design.md#design-styles.",
   name: "useUiStyle",
 };
 const FETCH_GLOBAL = {
@@ -85,17 +85,17 @@ const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
 const SHARED_APP_IMPORT_PATTERN = {
   group: ["@/**", "~/**"],
   message:
-    "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
+    "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
 };
 const PACKAGE_ALIAS_IMPORT_PATTERN = {
   group: ["@/**", "~/**"],
   message:
-    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
+    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See openspec/specs/architecture/build-pipeline/design.md. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
 };
 const PACKAGE_RELATIVE_IMPORT_PATTERN = {
   group: ["./*", "./**", "../*", "../**"],
   message:
-    "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See /docs/architecture/build-pipeline.",
+    "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
 };
 const MOD_IMPORT_PATTERN = {
   group: ["#src/*", "@/**", "~/**"],
@@ -296,7 +296,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
         // Asking whether an async hook fits the engine's `On` overloads costs tsgolint tens of seconds a file and tens of
-        // Gigabytes, the whole pass's peak, where tsc checks the program in a second. See /docs/architecture/lint-toolchain
+        // Gigabytes, the whole pass's peak, where tsc checks the program in a second. See openspec/specs/architecture/lint-toolchain/design.md
         "typescript/no-misused-promises": "off",
         "typescript/strict-void-return": "off",
       },
@@ -388,7 +388,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       { message: POLLING_MESSAGE, object: "expect", property: "poll" },
       {
         message:
-          "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization).",
+          "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see openspec/specs/architecture/serialization/README.md).",
         object: "JSON",
         property: "parse",
       },

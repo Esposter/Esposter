@@ -15,7 +15,6 @@
 | `context-efficiency`      | 2026-10-05 · Opus 5.5  |       |
 | `dependency-absorption`   | 2026-10-05 · Opus 5.5  |       |
 | `dependency-updates`      | 2026-10-14 · Haiku 5.5 |       |
-| `docs`                    | 2026-10-05 · Opus 5.5  |       |
 | `drizzle`                 | 2026-10-05 · Opus 5.5  |       |
 | `error-handling`          | 2026-10-05 · Opus 5.5  |       |
 | `esbabbler`               | 2026-10-05 · Opus 5.5  |       |

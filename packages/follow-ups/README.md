@@ -17,4 +17,4 @@ claude plugin install follow-ups@esposter
 
 ## Documentation
 
-[TodoList agent follow-ups](https://esposter.com/docs/resource/todolist-agent-follow-ups) — the origin a follow-up carries, the procedures the plugin's tools call, and what counts as a follow-up.
+[TodoList agent follow-ups](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md) — the origin a follow-up carries, the procedures the plugin's tools call, and what counts as a follow-up.

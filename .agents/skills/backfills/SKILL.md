@@ -5,7 +5,7 @@ description: Apply when a change to a persisted shape — a content blob's schem
 
 # Backfills
 
-A schema change that stored data no longer satisfies is finished only when the stored data satisfies it. The latest-shape-only standard (`apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`) keeps every read path to one shape, so the data is brought to that shape once, from outside the app, rather than tolerated inside it.
+A schema change that stored data no longer satisfies is finished only when the stored data satisfies it. The latest-shape-only standard (`openspec/specs/architecture/persisted-data-latest-shape-only/design.md`) keeps every read path to one shape, so the data is brought to that shape once, from outside the app, rather than tolerated inside it.
 
 ## Settled — do not re-propose
 
@@ -33,7 +33,7 @@ A field _removed_ from a schema is not one: Zod's object parse drops the stale k
 
 Every JSON blob is one zstd frame (`writeJsonBlob`): level `JSON_BLOB_COMPRESSION_LEVEL`, window `MAX_CONTENT_ENCODING_WINDOW_LOG`, served as `Content-Encoding: zstd`. A rewrite keeps all three.
 
-Snapshot objects are not rewritten. They are named by their hash and listed in Postgres (`resourceVersions`), prod's database is not reachable from a session, and a version is restored through the save path, which parses it — so a snapshot older than the change no longer restores until it expires (the revision retention, `apps/web/content/docs/resource/resource-snapshots.md`), the same accepted tradeoff as the deploy window the run's prod step accepts. A published version of a publishable type is the exception worth a look: if the change reaches a publishable type's content, its published pages read that snapshot, and the change is raised with the user before it ships.
+Snapshot objects are not rewritten. They are named by their hash and listed in Postgres (`resourceVersions`), prod's database is not reachable from a session, and a version is restored through the save path, which parses it — so a snapshot older than the change no longer restores until it expires (the revision retention, `openspec/specs/resource/resource-snapshots/design.md`), the same accepted tradeoff as the deploy window the run's prod step accepts. A published version of a publishable type is the exception worth a look: if the change reaches a publishable type's content, its published pages read that snapshot, and the change is raised with the user before it ships.
 
 Rewriting a working copy leaves `resources.contentHash` and `contentSize` stale until the next save. That is safe: a delta save against the stale hash is refused with CONFLICT and the client retries it as a full save.
 

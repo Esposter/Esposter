@@ -1,7 +1,7 @@
 # Docs
 
-`apps/web/content/docs` plus the hand-written markdown at the repo root, in each package, and in `.agents/` —
-read against the `docs` skill, `readme-standards` for the READMEs, `skill-authoring` for `.agents/skills`. The
+`openspec/` plus the hand-written markdown at the repo root, in each package, and in `.agents/` — read
+against the `openspec` skill, `readme-standards` for the READMEs, `skill-authoring` for `.agents/skills`. The
 diagram-mandate verdict is recorded per page inside the row's pass, never per area. The skill tree is one
 subject and has one ledger: its rows are here, and reading a skill for duplication and for prose that does not
 earn its line is the same read against the same owner.
@@ -15,7 +15,7 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 
 | Area                  | What it holds                                                                               |
 | --------------------- | ------------------------------------------------------------------------------------------- |
-| [content](content.md) | `apps/web/content/docs`, the root markdown, every package README                            |
+| [content](content.md) | `openspec/`, the root markdown, every package README                                        |
 | [skills](skills.md)   | `.agents/skills` — one skill per row, its `SKILL.md` and its `references/` read as one unit |
 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading.
@@ -28,17 +28,17 @@ What each pattern means is the owning skill's to say:
    being told to pass
 2. `(used to|previously|no longer|formerly|was replaced|has been replaced|we now|renamed from|the old )`
 3. `(deprecated|moved to|see instead|superseded by)`
-4. `\]\([^)]*\.md[)#]`, and `\[/docs/[^]]*\]\(` for link text repeating its own route
+4. `\[[^]]*/[^]]*\]\(` for link text repeating a path
 5. `^::`
 6. ` ```(typescript|javascript|shell|yml)`
 7. `mermaid` absent from a page whose prose names three parts and what passes between them
 8. a `## Notes` bullet whose claim already appears in a section above it
-9. a page that **has** a diagram — the inverse of 7, read against `docs`, `references/diagrams.md`. Its label
+9. a page that **has** a diagram — the inverse of 7, read against `openspec`, `references/diagrams.md`. Its label
    half is enforced (below), so what a pass looks for is the shape: a diagram that is a catalog, an inventory or
    a straight line. None of the three has a form a pattern can see — the tells are a node whose label is an
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
 
-Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of ten words two docs pages or skills of
+Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of ten words two specs or skills of
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
 does not, and is still the pass's to read. A run three pages share is a template rather than a copy and is left
 out, and neither a URL nor the words of a path both pages cite are counted — a citation is the same string on both by design,
@@ -72,19 +72,18 @@ recurring shape, and it needs `../`. The one line the check cannot judge is `ski
 
 Excluded: `CHANGELOG.md` (lerna output) · `~/.claude/plugins` skills (external, not ours to edit).
 
-Enforceable next. What is already enforced sits with what it guards: the link, index-coverage,
-Key Files, proposal-model, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, every backticked
-repo path and every ``the `x` skill`` name across all of this ledger's trees in `scripts/src/workspace/citations.test.ts`, every
-backticked code name in the same trees against the tree and the installed packages in `scripts/src/workspace/staleNames.test.ts`
-(the rename greps 2 and 3 find only where the prose admits to it), grep 8's decided subset in
-`scripts/src/workspace/restatedPointers.test.ts`, the sidebar map beside itself in
-`DocsSectionGroupsMap.test.ts`, the docs path segment beside the collection that reads it in
-`content.config.test.ts`, and prose restating a node or pnpm version in
-`content/docs/getToolchainVersionRestatements.test.ts`. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
-once every row is swept, since an unswept area still holds instances that would fail the build. Grep 1 needs an
-allowlist for the counts that may be exact (package count, configured limits) first. The label-line-break checks
-reach the skill tree too, since the diagram list it runs over already spans both; the rest do not, and
-`content/docs/index.test.ts` reads nothing else under `.agents/`.
+Enforceable next. What is already enforced sits with what it guards: every relative link under `openspec/` in
+`scripts/src/workspace/openspecLinks.test.ts`, the label-size cap and both label-line-break checks in
+`scripts/src/workspace/diagrams.test.ts`, every open change's model in `scripts/src/workspace/changeModel.test.ts`,
+every backticked repo path — a Key files row's included — and every ``the `x` skill`` name across all of this
+ledger's trees in `scripts/src/workspace/citations.test.ts`, every backticked code name in the same trees against
+the tree and the installed packages in `scripts/src/workspace/staleNames.test.ts` (the rename greps 2 and 3 find
+only where the prose admits to it), grep 8's decided subset in `scripts/src/workspace/restatedPointers.test.ts`,
+and prose restating a node or pnpm version in `scripts/src/workspace/toolchainVersionRestatements.test.ts`. Greps
+4, 5 and 6 are exact and decide themselves — but each can only land once every row is swept, since an unswept
+area still holds instances that would fail the build. Grep 1 needs an allowlist for the counts that may be exact
+(package count, configured limits) first. The diagram checks reach the skill tree too, since the pages they run
+over span both; the link check reads only `openspec/`.
 
 Prose that went stale against code which kept every one of its names is the gap none of these close, and it is
 not closeable from the tree: the `sweeps` skill's Settled list carries the measurement that settled it. What

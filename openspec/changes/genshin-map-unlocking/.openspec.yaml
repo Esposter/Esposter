@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [media-engine]
+x-touches:
+  [
+    "packages/genshin-world/src/services/map/findPointedLandmark.ts",
+    "packages/genshin-world/src/components/Hud/Navigation/**",
+    "packages/genshin-world/src/components/World/Session/**",
+  ]

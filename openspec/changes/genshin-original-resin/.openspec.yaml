@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-waiting: "the ley line outcrops' challenge and blossom, each outcrop placed at a Ley Line Blossom point of the official map"
+x-touches:
+  [
+    "packages/genshin-world/src/services/originalResin/**",
+    "packages/genshin-world/src/services/reward/**",
+    "packages/genshin-world/src/services/commission/takeCommissionClaim.ts",
+    "packages/genshin-world/src/services/expedition/claimExpedition.ts",
+  ]

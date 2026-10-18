@@ -21,6 +21,6 @@ Decide by what the value **is**, not by what is reachable:
 
 - **A preference of the visitor's** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
 
-The middle case is the one that gets mis-filed, and why its two neighbours are wrong for it is argued in `apps/web/content/docs/architecture/navigation.md`.
+The middle case is the one that gets mis-filed, and why its two neighbours are wrong for it is argued in `openspec/specs/architecture/navigation/design.md`.
 
-**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link**, since a link that forgets it leaves a page indistinguishable from one that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `apps/web/content/docs/resource/breadcrumb-trail.md`.
+**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link**, since a link that forgets it leaves a page indistinguishable from one that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `openspec/specs/resource/breadcrumb-trail/design.md`.

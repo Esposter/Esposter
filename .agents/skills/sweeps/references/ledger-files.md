@@ -21,11 +21,11 @@ place the shape does not allow.
 
 **"The current shape is already right" closes a finding — by documenting it, never by leaving it.** A finding that survives several passes is usually not unresolved; it is resolved and unrecorded. Someone keeps rediscovering the same duplication or asymmetry, reasoning about it, concluding the existing shape is correct, and writing that conclusion nowhere — so the ledger keeps it open and the next pass pays for the reasoning again. Three outcomes, and a finding must reach one of them:
 
-| Verdict                            | Where it goes                                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| The code is wrong                  | Fix it; delete the finding                                                                                         |
-| The code is right                  | Write the **why** into the owning docs page or skill (a diagram if it is an ordered mechanism); delete the finding |
-| Genuinely undecided — needs a call | Stays, with the decision named and the options stated                                                              |
+| Verdict                            | Where it goes                                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| The code is wrong                  | Fix it; delete the finding                                                                                    |
+| The code is right                  | Write the **why** into the owning spec or skill (a diagram if it is an ordered mechanism); delete the finding |
+| Genuinely undecided — needs a call | Stays, with the decision named and the options stated                                                         |
 
 Deleting a "code is right" finding without recording the rationale is the same failure as deleting a docs tombstone: the reasoning dies and the finding gets re-raised. The ledger holds coverage, so the rationale never stays there — it moves to whatever owns the topic.
 
@@ -41,7 +41,7 @@ when its metadata does — a ledger added, promoted or retired, or its `Scope` r
 - **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — the children open at `—`, since a row grepped because it was too large is a row nothing read.
 - **Split the row the moment it reads as too high a level, before any pass starts.** Two shapes give it away without counting anything: a unit naming several unrelated trees at once, and a unit that is a whole tree rather than a directory inside one. Both are bags, and a bag is swept by skimming — which is how a fully dated ledger still misses things. Count the files the row actually covers, and split until each row is a sitting.
 - **A row that could never have been read loses its date in the split.** Inheriting the parent's date onto children the parent never read carries the skim forward as if it were coverage. The date survives only where the whole unit was small enough that the pass really could have read it; everything else reopens at `—`. Why the split happened goes in its commit message, never into the ledger, which carries no history.
-- **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
+- **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own design, not by coverage.
 
 ## A ledger is keyed by its question, never by its address
 

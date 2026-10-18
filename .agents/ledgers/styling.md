@@ -28,7 +28,6 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Clicker`                                                                   | 2026-10-05 · Opus 5.5 |                                                                                    |
 | `app/components/Visual`                                                                    | 2026-10-05 · Opus 5.5 |                                                                                    |
 | `app/components/User`                                                                      | 2026-10-05 · Opus 5.5 |                                                                                    |
-| `app/components/Docs`                                                                      | 2026-10-05 · Opus 5.5 | the docs site's own chrome                                                         |
 | `app/components/Dashboard`, `Achievement`                                                  | 2026-10-05 · Opus 5.5 |                                                                                    |
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-10-05 · Opus 5.5 |                                                                                    |
 | `app/pages`, `app/layouts`                                                                 | 2026-10-05 · Opus 5.5 | page-level layout; region sizing and the sidebar/panel rules                       |

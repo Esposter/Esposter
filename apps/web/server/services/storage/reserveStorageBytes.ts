@@ -23,7 +23,7 @@ import { and, count, eq, gt, inArray, isNull, lte, ne, notInArray, or, sql, sum 
 // Upload requests concurrently has them all read the same low usage, all pass, and all upload — so everything
 // That decides happens behind the user row's lock. The counter itself only ever carries bytes that are actually
 // Stored, and a hold that has not landed yet lives in the ledger and is summed in here
-// (/docs/resource/storage-quotas)
+// (openspec/specs/resource/storage-quotas/design.md)
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: UserInAuth["id"],
@@ -38,11 +38,11 @@ export const reserveStorageBytes = async (
   const expiresAt = new Date(now.getTime() + WRITE_SAS_DURATION_MS);
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
   // No row, charges nothing and reports no failure. The completion allowance is the SAS's own duration reused, so
-  // Nothing new can drift from the policy (/docs/resource/storage-quotas)
+  // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
   const collectableBefore = new Date(now.getTime() - (EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
   await db.transaction(async (tx) => {
     // `storageLedger` before `users`, the order every path that touches both takes, so a reserve cannot close a
-    // Lock cycle with a concurrent release or reconcile (/docs/resource/storage-quotas). The collectable holds
+    // Lock cycle with a concurrent release or reconcile (openspec/specs/resource/storage-quotas/design.md). The collectable holds
     // Ride this write path rather than a sweep of their own. Only a hold that never entered the counter is one:
     // A reserve that took over a settled row left it holding the bytes of the blob it replaces, and dropping that
     // Row would strand them on the counter with nothing left to give them back

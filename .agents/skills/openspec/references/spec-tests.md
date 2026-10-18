@@ -1,0 +1,7 @@
+# The Spec Tests
+
+Read when a spec test fails, or before adding a link, a path or a diagram the tests will check.
+
+- **Tests enforce the structural half of a page**, so a stale tree fails `pnpm test` in `scripts` rather than waiting on an audit. In `scripts/src/workspace/`: `openspecLinks.test.ts` (every relative link under `openspec/` resolves), `diagrams.test.ts` (diagram labels over every hand-written page, `references/diagrams.md`), `citations.test.ts` (every backticked repo path, a Key files row's included, and every cited skill), `staleNames.test.ts` (every backticked code name), `changeModel.test.ts` (every open change names its model) and `manualVerification.test.ts` (the Genshin roadmap's batch). In `scripts/src/services/openspec/`, `readSpecFindings.test.ts` holds every scenario to its grammar, and `scripts/src/workspace/openspecValidate.test.ts` runs `openspec validate --all --strict`, which checks what the CLI reads: each change's artifacts and deltas and each spec's Purpose and Requirements.
+- **What they cannot see is a name in prose.** The traps when writing: a link to a page you are about to add fails until it exists, `app/shared/models/…` fails because shared models live at `apps/web/shared`, and an elided path (a `...` segment standing in for folders) is a broken path — write it in full.
+- **The archive is skipped.** An archived change is the record of what shipped, so the paths and links it cites age with the code by design, and no test reads it.

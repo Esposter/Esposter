@@ -4,7 +4,7 @@ Read when a write's body is computed from an entity the same request just read �
 
 ## Why the write is conditional
 
-**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** An entity is one blob, so an unconditional write-back carries the whole version the caller read and silently erases whatever landed in between — the hazard, and why it surfaces to nobody, is `apps/web/content/docs/architecture/conditional-writes.md`. This applies to any procedure whose write depends on what it just read.
+**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** An entity is one blob, so an unconditional write-back carries the whole version the caller read and silently erases whatever landed in between — the hazard, and why it surfaces to nobody, is `openspec/specs/architecture/conditional-writes/design.md`. This applies to any procedure whose write depends on what it just read.
 
 `getEntity` is the wrong reader here — it exists to **drop** the etag for callers that don't need it. `getEntityWithEtag` returns `{ entity, etag }`, and `updateEntity` forwards its extra arguments to the SDK, so the conditional write is `updateEntity(client, entity, "Merge", { etag })`. Where a shared procedure performs the read (as `getMessageProcedure` does), the etag belongs on the procedure context beside the entity — the round trip is already paid, and every procedure built on it then gets the option.
 

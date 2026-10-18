@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/genshin-world/src/models/save/**",
+    "packages/genshin-world/src/services/save/**",
+    "packages/genshin-world/src/models/character/CharacterSave.ts",
+    "packages/genshin-world/src/composables/useWorldCombat.ts",
+    "packages/genshin-world/src/composables/useWorldSaveSync.ts",
+    "packages/genshin-world/src/components/World/Session/**",
+  ]

@@ -54,15 +54,15 @@ pnpm test path/to/file.test.ts --run    # the suites a change touched; never a b
 
 From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In a package that gained, renamed or lost a module file: `pnpm build` regenerates its barrel, which is all a sibling typechecking against its source needs. Migrations are generated from `packages/db-schema/` and applied at app startup, never from the CLI — the `drizzle` skill owns all of it.
 
-On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` — loading the full set crashes the config load while `@vite-pwa/nuxt` resolves its virtual register module (the error and the probe that retires the fork are in `apps/web/content/docs/architecture/test-harness-workarounds.md`). A test needing an excluded module adds it to the Vitest branch there.
+On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` — loading the full set crashes the config load while `@vite-pwa/nuxt` resolves its virtual register module (the error and the probe that retires the fork are in `openspec/specs/architecture/test-harness-workarounds/design.md`). A test needing an excluded module adds it to the Vitest branch there.
 
 ## Finishing a change
 
-Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done. Steps 1–3 are an audit with a table of its own, which the `finishing` skill owns and `/finishing` runs at any point in the work, asked or not:
+Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a spec pass, anything — run this before saying it is done. Steps 1–3 are an audit with a table of its own, which the `finishing` skill owns and `/finishing` runs at any point in the work, asked or not:
 
 1. **`/code-review` over what you changed.** Both lanes, unprompted, every time: quality (reuse, simplification, efficiency, altitude) and correctness (defects, broken conventions). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism — that gets found here, not by a reviewer. The `code-review` skill owns the lanes, which rules a window loads, the trigger rule a finding must carry, and the stop rule.
 2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. Add the regression test for what the review exposed; add nothing another enforcer already owns (typecheck, a Zod constraint, an existing test), because such a test cannot fail honestly and only pins today's implementation; and trim the tests the change made redundant. The full criterion is the `testing` skill's "What to Test".
-3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (the `docs` skill and the `skill-authoring` skill) — in the same change, never "later". A rename owes the same sweep over prose: grep the old name across `content/docs`, `.agents/skills`, `.agents/ledgers` and the READMEs, and fix the flow diagrams that label an edge with it. A behaviour change owes that sweep with no name to grep, so the lookup runs the other way: list the pages whose `Key files` table names a source you changed, and read each one's prose and diagrams against what the code now does. No test fails on a name that only lives in a sentence, and none fails on a sentence that was true last week.
+3. **Carry the specs and skills with it.** A shipped decision updates its owning spec and, if it is a reusable convention, its owning skill (the `openspec` skill and the `skill-authoring` skill) — in the same change, never "later". A rename owes the same sweep over prose: grep the old name across `openspec`, `.agents/skills`, `.agents/ledgers` and the READMEs, and fix the flow diagrams that label an edge with it. A behaviour change owes that sweep with no name to grep, so the lookup runs the other way: list the designs whose `Key files` table names a source you changed, and read each one's prose and diagrams against what the code now does. No test fails on a name that only lives in a sentence, and none fails on a sentence that was true last week.
 4. **The tests of what the change touched**, once at the end and **in the background** while the session keeps working — the paths the change touched, passed as arguments, plus, where a change moved bytes into a bundle, that package's own suite, since only a fresh build moves its size snapshot. Nothing else runs locally: typecheck, lint and format are CI's on the push (step 6).
 5. **Commit the coherent chunk by pathspec on `ai/queue` itself in the main checkout (a worktree only for a concurrent change), then land it:** `git pull --rebase origin ai/queue && git push origin HEAD:ai/queue`, retried on a rejected push (the `review-queue` skill's loop, its worktree and its conflicts). Nothing rewrites `ai/queue`, so the pull replays only the commits you have not landed yet (the `review-queue` skill). Step 4 does not stand in the way: a push to `ai/queue` starts a review run that gates nothing, so the push goes out and the tests run against the same tree beside it. Anything they turn up is a commit behind it.
 6. **Verification waits until asked.** A push's CI run is not watched by the session, and nothing is fixed on its account unless the user asks for verification. Then read the red job's failed log, reproduce it with that one check, fix it, and push a commit behind it (the `running-checks` skill). A red that reaches `main` was red on `ai/queue` first, so it is fixed there, the same way.
@@ -73,7 +73,7 @@ Carrying one settled convention across code that predates this ritual is a **swe
 
 ## Specifications
 
-New specifications and design decisions are OpenSpec changes under `openspec/changes/<id>/`, and a change's requirements are merged into `openspec/specs/` only when its pull request has merged. The `openspec` skill owns the process; `openspec/config.yaml` holds the artifact rules. Existing proposals under `apps/web/content/docs/proposals/` and the architecture pages are not migrated by a change, and that migration has not started.
+Every feature is described under `openspec/`, and where its folder lives says whether it is built: `openspec/specs/` for what exists, `openspec/changes/` for what is designed and waiting, `openspec/deferred/` and `openspec/rejected/` for what was decided against for now or for good. A change is archived into the specs in the change that ships it. The `openspec` skill owns the process; `openspec/config.yaml` holds the artifact rules. GitHub renders the tree, diagrams included, so there is no docs site.
 
 ## Syncing to main
 
@@ -83,17 +83,17 @@ New specifications and design decisions are OpenSpec changes under `openspec/cha
 
 | Subject                                                                      | Owner                                                       |
 | :--------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| Storage split, Azure service map, Functions, Event Grid, Service Bus, PubSub | `apps/web/content/docs/architecture/azure-services.md`      |
-| Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `apps/web/content/docs/architecture/azure-services.md`      |
-| Notifications — the one event, Function and delivery path                    | `apps/web/content/docs/architecture/notifications.md`       |
-| RBAC — permission bitfield, hierarchy, the service functions                 | `apps/web/content/docs/esbabbler/rbac.md`                   |
-| Moderation — `AdminActionType` and every place it touches                    | `apps/web/content/docs/esbabbler/moderation.md`             |
-| Message types — `MessageComponentMap` and the shared shells                  | `apps/web/content/docs/esbabbler/message-list-rendering.md` |
-| Client reads and writes — `useQuery` / `useMutation` and their exceptions    | `apps/web/content/docs/architecture/client-data.md`         |
-| Monorepo orchestration, publishing, installs, CI runners                     | `apps/web/content/docs/architecture/monorepo-tooling.md`    |
-| Agent tree — `.agents/`, the `.claude` alias, tool excludes                  | `apps/web/content/docs/architecture/agent-configuration.md` |
-| Engineering loops — where work enters, what feeds what, what runs next       | `apps/web/content/docs/architecture/engineering-loops.md`   |
-| Review: what lands on `ai/queue`, reviewed and fixed by haiku                | `apps/web/content/docs/infra/review.md`                     |
+| Storage split, Azure service map, Functions, Event Grid, Service Bus, PubSub | `openspec/specs/architecture/azure-services/design.md`      |
+| Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `openspec/specs/architecture/azure-services/design.md`      |
+| Notifications — the one event, Function and delivery path                    | `openspec/specs/architecture/notifications/design.md`       |
+| RBAC — permission bitfield, hierarchy, the service functions                 | `openspec/specs/esbabbler/rbac/design.md`                   |
+| Moderation — `AdminActionType` and every place it touches                    | `openspec/specs/esbabbler/moderation/design.md`             |
+| Message types — `MessageComponentMap` and the shared shells                  | `openspec/specs/esbabbler/message-list-rendering/design.md` |
+| Client reads and writes — `useQuery` / `useMutation` and their exceptions    | `openspec/specs/architecture/client-data/design.md`         |
+| Monorepo orchestration, publishing, installs, CI runners                     | `openspec/specs/architecture/monorepo-tooling/design.md`    |
+| Agent tree — `.agents/`, the `.claude` alias, tool excludes                  | `openspec/specs/architecture/agent-configuration/design.md` |
+| Engineering loops — where work enters, what feeds what, what runs next       | `openspec/specs/architecture/engineering-loops/design.md`   |
+| Review: what lands on `ai/queue`, reviewed and fixed by haiku                | `openspec/specs/infra/review/design.md`                     |
 | Game text — the game's own words in its languages, by text id                | `genshin-text` skill                                        |
 | Building a proposal — choosing, verifying, shipping, handing back            | `building-proposals` skill                                  |
 | Specifications and decision records — OpenSpec changes under `openspec/`     | `openspec` skill                                            |
@@ -101,14 +101,14 @@ New specifications and design decisions are OpenSpec changes under `openspec/cha
 | Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
 | Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |
 | Reviewing anything — lanes, scope, findings, the stop rule                   | `code-review` skill                                         |
-| Enforcing a rule — construction, primitive, lint, test, then prose           | `apps/web/content/docs/architecture/enforcement-ladder.md`  |
+| Enforcing a rule — construction, primitive, lint, test, then prose           | `openspec/specs/architecture/enforcement-ladder/design.md`  |
 
 Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 
 ## Agent configuration
 
-Configuration read by the installed engineering skills (the Matt Pocock set the docs page lists) lives in `.agents/` with the rest of the agent tree. There is no root `docs/` folder — `apps/web/content/docs` is the public docs site. Those skills default to reading `docs/agents/*.md` and one offers to re-run setup when it does not find it: **don't** — that writes a second copy and creates the root `docs/` folder this layout exists to avoid. The deviation in full is in `apps/web/content/docs/architecture/agent-configuration.md`.
+Configuration read by the installed engineering skills (the Matt Pocock set the agent-configuration design lists) lives in `.agents/` with the rest of the agent tree. There is no root `docs/` folder — the specs live in `openspec/`. Those skills default to reading `docs/agents/*.md` and one offers to re-run setup when it does not find it: **don't** — that writes a second copy and creates the root `docs/` folder this layout exists to avoid. The deviation in full is in `openspec/specs/architecture/agent-configuration/design.md`.
 
 - **Issue tracker** — GitHub Issues on `Esposter/Esposter`, via the `gh` CLI; PRs are not a request surface (`.agents/issue-tracker.md`).
 - **Triage labels** — five canonical roles, each label string equal to its name (`.agents/triage-labels.md`).
-- **Domain docs** — already written; `apps/web/content/docs` is the glossary and the ADR set, so no root context file or ADR folder is created (`.agents/domain.md`).
+- **Domain docs** — already written; `openspec/` is the glossary and the decision record, so no root context file or ADR folder is created (`.agents/domain.md`).

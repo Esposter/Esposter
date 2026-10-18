@@ -51,7 +51,7 @@ Runtime data crossing any trust boundary (EventGrid `event.data`, queue messages
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `openspec/specs/architecture/persisted-data-latest-shape-only/design.md`.
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 
@@ -63,7 +63,7 @@ Every field carries the tightest constraint its domain allows — a bare `z.numb
 - **Schema must match its type exactly** — if a field is `FooType`, use `fooTypeSchema`, never inline `z.union([barSchema, ...])`. Every named type has exactly one named schema; never reconstruct a union inline.
 - **`.default()` only on a class-typed model or at a boundary**, never with `.optional()` and never on a schema satisfying an interface (`references/defaults.md`).
 - **Named ID field schemas** (`roomIdSchema`, `userIdSchema`, `userIdsSchema`), spread by `.shape` into a multi-field object (`references/id-fields.md`).
-- **Another resource's id is declared through `createResourceLinkSchema(ResourceLinkType.X)`** — a plain uuid in that place is a reference the resource-link index cannot see (`apps/web/content/docs/architecture/resource-links.md`).
+- **Another resource's id is declared through `createResourceLinkSchema(ResourceLinkType.X)`** — a plain uuid in that place is a reference the resource-link index cannot see (`openspec/specs/architecture/resource-links/design.md`).
 - **A field several models share is one named interface + schema** — when multiple models share a field (e.g. `bar`), define a single `Bar` / `barSchema` (named after the capability — the `naming` skill, "TypeScript & Interfaces") in `shared/models/entity/` and spread the schema's `.shape` into each model schema. Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
 - **An object key mirroring another schema's field is checked nowhere in two positions** — `.pick()`/`.omit()` on a generic `z.ZodObject` and `.safeExtend({ … })` — so there the key is the computed `[src.keyof().enum.field]`; everywhere else a literal key is correct and the computed form is noise (`references/field-key-checks.md`).
 - **A spread of `.shape` carries fields and nothing else** — `.catchall()` and every other whole-object modifier stays behind, where `.extend()` would have brought it. Nothing in the types changes when it goes missing, so the derived schema just starts stripping keys the base kept: re-declare the modifier on the derived schema and pin it with a test, because the typecheck will not.

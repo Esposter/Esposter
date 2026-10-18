@@ -5,14 +5,14 @@ description: Apply when about to git commit or git push, when deciding what bran
 
 # Review Queue
 
-Every agent works on **one permanent branch, `ai/queue`**, in the main checkout, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`apps/web/content/docs/infra/review.md`, its workflow `.github/workflows/Review.yaml`) plans every window of the commits `main` does not yet have, reviews all of them in one pool, and moves `main` forward only through the windows that passed. This skill is what an agent does on its side of that.
+Every agent works on **one permanent branch, `ai/queue`**, in the main checkout, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`openspec/specs/infra/review/design.md`, its workflow `.github/workflows/Review.yaml`) plans every window of the commits `main` does not yet have, reviews all of them in one pool, and moves `main` forward only through the windows that passed. This skill is what an agent does on its side of that.
 
 ## Settled — do not re-propose
 
 - **Per-chunk feature branches.** The queue is linear history and the review cuts its windows at commit boundaries, so a branch per chunk adds a merge that buys nothing.
 - **Pushing `main` by hand, outside the scenarios below.** `main` moves by the review's fast-forward. Two hand pushes are allowed, both plain fast-forwards, never forced: the owner's fast-forward of `main` to `ai/queue` once a review has passed, and the direct local push below. The owner's fast-forward is the session's to run when the owner says **sync to main**: that phrase is the whole instruction, so the session reviews `main..ai/queue` locally (the `code-review` skill, both lanes, every commit in the window), and once the review passes it pushes `main` as a plain fast-forward and syncs the local `main` to it. Each finding is fixed directly, in its own commit on `ai/queue`, with no approval asked; the sync then goes ahead on the fixed tip. Any other hand push is a commit the review never read.
   - **Direct local push (no review), two commit types only.** A commit whose subject is `fix(ci):` (a CI fix) or `chore(deps):` (a hand dependency update, `dependency-updates`), made locally in the main checkout. It goes to `ai/queue` and then `main` in the same sitting, without waiting for the review. The push does not wait on its CI run. A red result is fixed in the next commit, pushed to both branches the same way, after the verify request (`AGENTS.md`, step 6).
-  - **Never direct, whatever its size:** a docs page, a skill, a ledger, a roadmap entry, a feature, a refactor, a test. Those go to `ai/queue` and wait for the review, even when the change is one line of prose. A commit that touches docs alongside a CI fix is split, the fix going direct and the docs through the queue.
+  - **Never direct, whatever its size:** a spec, a skill, a ledger, a roadmap entry, a feature, a refactor, a test. Those go to `ai/queue` and wait for the review, even when the change is one line of prose. A commit that touches prose alongside a CI fix is split, the fix going direct and the prose through the queue.
   - **When in doubt, the queue.** If the subject cannot honestly say `fix(ci)` or `chore(deps)`, the commit is not direct.
   - **Automatic, not a session's push.** Renovate's minor and patch automerges land on `ai/queue` by the bot, which is the one other separate change that does not need a session. Majors and pnpm bumps wait for a person, per the `dependency-updates` skill.
 - **Merging `main` into `ai/queue`.** A merge is never linearised away, and it blinds the next pull: a rebase onto `origin/main` is then a no-op, and `git cherry` reads every already-landed commit as owed. The queue catches up by `git pull --rebase` only. The one merge the system makes itself is the review's, when `main` was pushed by hand.
@@ -49,7 +49,7 @@ A rebase conflict stops the loop on the commit it stopped on, and the agent that
 
 4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it; a local branch is deleted with `git branch -d`.
 
-**Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `apps/web/content/docs/architecture/monorepo-tooling.md`, Windows long paths).**
+**Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `openspec/specs/architecture/monorepo-tooling/design.md`, Windows long paths).**
 
 **Never `reset` or cherry-pick in the main checkout.** A change commits on `ai/queue` there; a concurrent change goes in a worktree instead.
 
@@ -61,13 +61,13 @@ A rebase conflict is always one of the agent's own commits meeting what `ai/queu
 
 ## CI on the queue and on main
 
-Whoever pushed a red typecheck or lint fixes it after the verify request (`AGENTS.md`, step 6): reproduce it with that one check and push the fix behind it. The review never waits on CI, and `main` is never repaired in place (`apps/web/content/docs/infra/review.md`, "CI on the queue").
+Whoever pushed a red typecheck or lint fixes it after the verify request (`AGENTS.md`, step 6): reproduce it with that one check and push the fix behind it. The review never waits on CI, and `main` is never repaired in place (`openspec/specs/infra/review/design.md`, "CI on the queue").
 
 ## Review issues
 
-The review opens an issue labelled `review` for each finding it owes, and the review's settle job closes it once every finding is fixed, refuted or recorded (`apps/web/content/docs/infra/review.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
+The review opens an issue labelled `review` for each finding it owes, and the review's settle job closes it once every finding is fixed, refuted or recorded (`openspec/specs/infra/review/design.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
 
-A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`apps/web/content/docs/architecture/engineering-loops.md`, "What runs next", item 2).
+A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`openspec/specs/architecture/engineering-loops/design.md`, "What runs next", item 2).
 
 ## Deep Dives
 

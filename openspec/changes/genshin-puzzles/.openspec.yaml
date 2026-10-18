@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/puzzles/**",
+    "packages/genshin-world/src/models/puzzle/**",
+    "packages/genshin-world/src/services/puzzle/**",
+    "packages/genshin-world/src/components/World/Puzzles/**",
+    "packages/genshin-world/src/composables/useWorldPuzzles.ts",
+  ]

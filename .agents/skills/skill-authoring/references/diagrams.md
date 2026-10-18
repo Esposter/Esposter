@@ -12,4 +12,4 @@ One `mermaid` block, in `SKILL.md` beside the rule it serves, when all three hol
 
 Keep it small enough to read at a glance, label the edges with the condition that takes you along them, and never let it carry a rule the prose does not — a diagram is unsearchable, and a rule that exists only in one is a rule nobody greps.
 
-Content docs have their own, stricter diagram mandate, owned by the `docs` skill; this is the narrower rule for skills.
+Specs have their own, stricter diagram mandate, owned by the `openspec` skill; this is the narrower rule for skills.

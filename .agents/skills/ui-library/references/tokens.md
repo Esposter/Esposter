@@ -1,6 +1,6 @@
 # Tokens
 
-Read when adding a colour pair, a style token or a theme, or when anything selects a theme. That a colour is a token, lengths and durations are steps, and type is the library's type rules is in `SKILL.md`; this page is how the token set grows. How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`.
+Read when adding a colour pair, a style token or a theme, or when anything selects a theme. That a colour is a token, lengths and durations are steps, and type is the library's type rules is in `SKILL.md`; this page is how the token set grows. How the palette reaches UnoCSS and the first response is `openspec/specs/architecture/ui-library/design.md`.
 
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**: it hands the reader's style and theme mode to `useSelectUiTheme`, whose one watcher selects the pair. A region in another mode or style is a `UiThemeScope`; the style a component draws in is `useUiStyle`'s, never the store's.

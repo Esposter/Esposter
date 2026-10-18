@@ -12,11 +12,11 @@ Read while a subagent is running, before launching several at once, or when clea
 
 ## Running several agents at once
 
-The whole flow — waves, the fixer, the compute queue's runners — is `apps/web/content/docs/architecture/agent-batches.md`.
+The whole flow — waves, the fixer, the compute queue's runners — is `openspec/specs/architecture/agent-batches/design.md`.
 
-Each agent in a batch works in its own worktree on `ai/queue`, set up and landed by the `review-queue` skill's loop. The Agent tool's `isolation: "worktree"` refuses this repository anyway (`.claude` is a committed symlink, `apps/web/content/docs/architecture/agent-configuration.md`).
+Each agent in a batch works in its own worktree on `ai/queue`, set up and landed by the `review-queue` skill's loop. The Agent tool's `isolation: "worktree"` refuses this repository anyway (`.claude` is a committed symlink, `openspec/specs/architecture/agent-configuration/design.md`).
 
-A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), and every unit runs on `haiku`. Implementation is haiku's: the main session settles a unit's calls in its prompt, and the agent settles any further call that the existing code or a public source answers, writing it into the page's Decisions. A screen brought to the game's likeness, a fix whose cause is found, a compute-queue runner and the wave's fixer are all haiku's. No agent runs on another family (the `llm-delegation` skill's Settled list). Haiku takes each screen and nearly every implementation, since opus spends most of the usage. Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. Ideation, triage and docs authoring stay in the main session, one area at a time; the one docs work a batch may take is the fan-out over separate areas that the `docs` skill allows, an agent per area (`references/area-passes.md`).
+A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), and every unit runs on `haiku`. Implementation is haiku's: the main session settles a unit's calls in its prompt, and the agent settles any further call that the existing code or a public source answers, writing it into the page's Decisions. A screen brought to the game's likeness, a fix whose cause is found, a compute-queue runner and the wave's fixer are all haiku's. No agent runs on another family (the `llm-delegation` skill's Settled list). Haiku takes each screen and nearly every implementation, since opus spends most of the usage. Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. Ideation, triage and docs authoring stay in the main session, one area at a time; the one spec work a batch may take is the fan-out over separate areas that the `openspec` skill allows, an agent per area (`references/area-passes.md`).
 
 Plan the batch around what the agents touch:
 
@@ -30,6 +30,6 @@ A batch leaves nothing to sweep but the branches and worktrees an older batch ma
 
 ## A batch that rebuilds the review
 
-The review runs the code on `ai/queue`, so a batch committing a change to the review's code would run each half-wired step against GitHub the moment it is pushed. While such a batch commits, the review's workflow is disabled (`gh workflow disable Review.yaml`). It is enabled again once the change is reviewed, fixed and pushed. Running the review by hand is its dispatch with the `from` and `to` inputs, documented in `apps/web/content/docs/infra/review.md`.
+The review runs the code on `ai/queue`, so a batch committing a change to the review's code would run each half-wired step against GitHub the moment it is pushed. While such a batch commits, the review's workflow is disabled (`gh workflow disable Review.yaml`). It is enabled again once the change is reviewed, fixed and pushed. Running the review by hand is its dispatch with the `from` and `to` inputs, documented in `openspec/specs/infra/review/design.md`.
 
 - **A new wave is a new inline script.** Re-invoking a workflow by its `scriptPath` reruns that same wave, with its own agents and labels, whatever `args` it is handed. Passing an older wave's path to start a different one launches a duplicate of the older wave. Write each new wave's script inline, and use `scriptPath` only to resume or re-run that very script.

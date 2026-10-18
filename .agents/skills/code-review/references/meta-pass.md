@@ -5,6 +5,6 @@ Read once per round, after the findings table: what did this round's own evidenc
 | Evidence                                                                                 | What it says                                     | The change that ends it                                         |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
 | You settled a finding by hand and the hop was cheap                                      | the trigger rule is missing that hop             | name the hop in "The trigger rule"                              |
-| The same false-positive class returns across rounds                                      | the bar is too low, or the decision is unwritten | raise the materiality bar, or write the doc page (`docs` skill) |
+| The same false-positive class returns across rounds                                      | the bar is too low, or the decision is unwritten | raise the materiality bar, or write the spec (`openspec` skill) |
 | A real defect escaped and surfaced later (a reviewer, next round, prod)                  | a lens does not exist                            | add it to the lane table                                        |
 | A `regression` or `reopened` finding matches no entry in `references/fixing-findings.md` | the cause is unrecorded and will be re-shipped   | append it there in the same round                               |

@@ -10,12 +10,12 @@ export const WEBHOOK_MAX_LENGTH = 1;
 export const DEFAULT_WEBHOOK_NAME = "Webhook";
 // What a room's emoji cost is bounded by. Room emoji are room-owned like attachments, so they sit outside the
 // Personal storage quota — a count cap plus the per-file caps the write SAS already signs is the whole
-// Accounting story, with nothing to meter. See /docs/esbabbler/emoji
+// Accounting story, with nothing to meter. See openspec/specs/esbabbler/emoji/design.md
 export const MAX_ROOM_EMOJIS = 50;
 export const MAX_ROOM_EMOJI_SIZE_BYTES = 256 * KIBIBYTE;
 // What a user's call backgrounds cost is bounded by. A slot's blob name is derived from its index rather than
 // Allocated, so the count is a property of the naming instead of something to enforce — and the size is read
 // Back off the listing, because a write SAS cannot bound what is PUT through it.
-// See /docs/esbabbler/calls/virtual-backgrounds
+// See openspec/specs/esbabbler/calls/virtual-backgrounds/design.md
 export const MAX_CALL_BACKGROUNDS = 5;
 export const MAX_CALL_BACKGROUND_SIZE_BYTES = 2 * MEGABYTE;

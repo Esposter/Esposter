@@ -5,7 +5,7 @@
 export default [
   {
     message:
-      "Don't wall a control off with a bare `@click.stop`. The container that opens on a click asks `checkIsNestedInteraction(event)` first, and a region that is its own control without being a link, button or field carries `data-nested-interaction`. See /docs/architecture/nested-interactions.",
+      "Don't wall a control off with a bare `@click.stop`. The container that opens on a click asks `checkIsNestedInteraction(event)` first, and a region that is its own control without being a link, button or field carries `data-nested-interaction`. See openspec/specs/architecture/nested-interactions/design.md.",
     selector:
       "VAttribute[directive=true][key.name.name='on'][key.argument.name='click'][value=null]:has(VIdentifier[name='stop'])",
   },

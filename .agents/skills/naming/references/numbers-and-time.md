@@ -12,7 +12,7 @@ Temporal.Duration.from({ days: 7 }).total("milliseconds");
 
 `.total("seconds")` for a unit conversion, and `Temporal.Duration.from({ milliseconds: ms }).total("minutes")`
 for ms→unit — never `ms / 1000`. It is a language global with nothing to import, but not yet Baseline, so it is
-polyfilled as `apps/web/content/docs/architecture/polyfills.md` says — a head script ahead of the bundle, and a web
+polyfilled as `openspec/specs/architecture/polyfills/design.md` says — a head script ahead of the bundle, and a web
 worker's own first-line import.
 
 - **Every field must be a finite integer**, so a sub-second duration is written in the unit that makes it one:

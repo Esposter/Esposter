@@ -10,7 +10,7 @@ import { standingTalksCommand } from "#src/services/genshinText/commands/standin
 import { writeCommand } from "#src/services/genshinText/commands/writeCommand";
 import { defineCommand } from "citty";
 
-// The game text's tool (apps/web/content/docs/genshin/game-text.md)
+// The game text's tool (openspec/specs/genshin/game-text/design.md)
 export const genshinTextCommand: CommandDef = defineCommand({
   meta: {
     description:

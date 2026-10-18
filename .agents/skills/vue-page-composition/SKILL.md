@@ -43,4 +43,4 @@ A permission-gated settings tab is hidden by a tab-definition map (`SettingsPerm
 
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
-**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded dialog or menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md`.
+**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded dialog or menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `openspec/specs/architecture/singleton-dialogs/design.md`.

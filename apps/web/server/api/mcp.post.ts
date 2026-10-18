@@ -10,7 +10,7 @@ import { defineEventHandler } from "nuxt/server";
 
 // The Model Context Protocol over its Streamable HTTP transport, stateless: each POST builds a server, answers one
 // Message and returns. This server never pushes unprompted, so the router's 405 to any other method is the answer the
-// Transport allows (/docs/architecture/agent-access)
+// Transport allows (openspec/specs/architecture/agent-access/design.md)
 export default defineEventHandler(async (event) => {
   // The transport requires `Origin` to be validated so no web page can drive the endpoint from a reader's browser. Its
   // Callers are command-line clients, which send none, so a request carrying one is refused before its key is read

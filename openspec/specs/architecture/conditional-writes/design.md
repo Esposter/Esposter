@@ -1,0 +1,81 @@
+# Conditional Writes
+
+A procedure that reads an entity, computes something from it, and writes the result back is not one operation — it is two, with a gap in between that another caller can write into. Azure Table stores an entity as a single blob, so the write carries the whole version the procedure read. Two of them running at once both compute from that same version, and the later write echoes back a body that never saw the earlier change.
+
+Nothing surfaces. There is no error, no log, and the caller whose write landed first was already told it succeeded. The change is simply gone, and the only witness is a user who watches their edit revert.
+
+So: **a write derived from what the procedure just read is conditional on the version it read.** This is [Persist Then Notify](../persist-then-notify/design.md)'s persist phase under concurrency — the guard/persist/notify ordering is unchanged, the persist step just carries the version it depends on.
+
+## Which writes this covers
+
+A write is a read-modify-write whenever the value it stores could not have been computed without first reading the entity:
+
+| Write                              | Why it qualifies                                                                                                        |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| A map or array rewritten wholesale | `votePoll` stores the whole votes map; `deleteFile` stores the whole surviving `files` array                            |
+| Any `"Replace"`                    | Merge cannot unset a property, so clearing one (`deleteLinkPreviewResponse`, `unpinMessage`) has to write the full body |
+| A counter or accumulator           | The new value is the old value plus one                                                                                 |
+
+A `"Merge"` of fields taken straight from the caller's input is **not** one — `updateMessage` writing the text the user typed, or `pinMessage` setting `isPinned: true`, depends on nothing it read.
+
+The `"Replace"` row is the one that gets missed, and it is the worst of the three: the write carries every property, so replaying it from a stale read reverts _all_ concurrent changes to that entity, not just the field the procedure meant to touch.
+
+## The lifecycle
+
+```mermaid
+flowchart TD
+  R["Read through getEntityWithEtag — entity plus the version it came from"] --> D["getUpdateEntity(entity) — apply the intent to this version"]
+  D --> W["Conditional write — updateEntity/updateMessage with { etag }"]
+  W -->|"accepted"| N["Notify — emit the delta, never the replaced body"]
+  W -->|"rejected — any error, not only a 412"| RR["Re-read the entity"]
+  RR -->|"gone"| NF["NOT_FOUND — the entity was deleted under the write"]
+  RR -->|"the read itself failed"| RF["Log it, then CONFLICT — the attempt could not be classified"]
+  RR -->|"version unchanged"| PE["Rethrow — the write failed for something a retry cannot fix"]
+  RR -->|"version moved"| B{"Attempts left?"}
+  B -->|"yes"| D
+  B -->|"no"| C["CONFLICT — the caller sends it again"]
+```
+
+The loop back to `getUpdateEntity` is the whole design: **the retry re-applies the intent, it does not replay the body.** "Record this vote", "drop this file", "clear this field" are all still valid after losing a race — only the body computed against the version that moved is stale. Writing that body again is the bug the conditional write exists to prevent.
+
+`updateEntityConditionally` (`server/services/azure/table/`) owns this loop. A caller supplies `getUpdateEntity`, which receives the **fresh** entity on every attempt, and `writeEntity`, which decides the mode and whether the write stamps message metadata. Do not hand-roll the loop per procedure.
+
+## Rules that fall out of it
+
+The lifecycle above is one helper, `updateEntityConditionally`, and the rules it holds every caller to — the intent re-applied to the version re-read rather than the body first computed, a bounded retry, exhaustion as an outcome the call chooses, only a lost race retrying, the delta as the payload, and follow-up work derived from the attempt that won — are `.agents/skills/azure-table/references/conditional-writes.md`; which reader supplies the version (`getEntityWithEtag`, riding on the procedure context where a shared procedure already reads) is `.agents/skills/azure-table/SKILL.md`. One rule is the page's own because it is about what a status code cannot say: **an absent entity and a failed read are different facts.** `getEntityWithEtag` returns its not-found sentinel for the service's own 404 and nothing else (`checkIsNotFound`), and every other fault propagates — collapsing them is how a throttled re-read gets reported to a voter as `NOT_FOUND` for the message they are looking straight at, where `CONFLICT`, logged with its real cause, tells them to send it again.
+
+## The same hazard where the version is not an etag
+
+The hazard an etag answers is general: **a write derived from a view that another writer can invalidate before it lands.** There are three ways to be safe from it, and they are not the same mechanism.
+
+**Serialize**, so no stale view can exist. `FOR UPDATE` takes the row and makes competing transactions wait, so the second one reads after the first has committed rather than beside it. Nothing is compared and nothing is rejected — the read and the write are simply not interleaved. This is what the storage ledger's reconcile uses to stop two events computing their deltas from the same `countedBytes`.
+
+**Or carry a version token**, where waiting is impossible because the competing writer is not a transaction you can block — it is another process, or an event that has already been delivered. Then the write states which version it depends on and is rejected if that has moved.
+
+**Or make the check the write**, where the condition is one the row can answer for itself. A `SELECT` that decides whether to write is a check-then-act: every concurrent caller reads the same pre-write row, so every one of them passes. Moving the predicate into the `UPDATE`'s own `WHERE` hands the decision to the database — the caller that gets a row back holds the claim and the one that gets none was beaten to it. This is what throttles an automatic [resource revision](../../resource/resource-snapshots/design.md) to one per interval, and it is the shape to reach for whenever a check reads "has enough time passed" or "is this still unclaimed": those are the row's questions, and asking them anywhere else is asking a copy.
+
+| Where                                          | How it is made safe                   | What that stops                                                   |
+| ---------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| Postgres read-modify-write                     | serialized — `FOR UPDATE`             | two transactions computing from one value concurrently            |
+| Azure Table read-modify-write                  | token — the entity `etag`             | a body computed against a version that has since moved            |
+| An event handler writing what an event reports | token — the event's ordering value    | an older event delivered after a newer one                        |
+| A throttle or a once-per-interval gate         | claim — the predicate in the `WHERE`  | two callers passing a check made from the same pre-write row      |
+| A save blob (Clicker, Dungeons, Genshin)       | token — the blob's `ETag` as If-Match | a save written over one another session changed since it was read |
+
+The event-handler row is the one that gets missed, because a handler can pass every idempotency check and still be wrong. **Idempotent is not order-independent.** Idempotency asks "does running this twice differ from running it once" — a redelivery computing a zero delta answers yes and is genuinely safe. Ordering asks a question idempotency never poses: _does an older event arriving after a newer one leave the wrong state behind?_ Replaying the stale event is a well-behaved no-op by every idempotency measure and still overwrites the current value with a superseded one.
+
+Event Grid guarantees at-least-once delivery and **no ordering at all** ([dead-letter handling](../../infra/eventgrid-dead-letter/design.md) covers the delivery half). So a handler whose write depends on _when_ its event happened needs the event to say so:
+
+- **`Microsoft.Storage.BlobCreated` carries `sequencer`** — Storage's per-blob ordering value, and the only thing in the payload that says which write happened last. It is an opaque hex string compared lexicographically after left-padding to a common length, never parsed as a number: it is far wider than a double, so two distinct sequencers round to one value and the comparison silently starts answering false. `checkIsNewerSequencer` in `packages/db/src/services/storage/` owns that comparison.
+- **The token is stored beside the value it ordered**, so the next event has something to compare against — `storageLedger.sequencer` beside `countedBytes` ([storage quotas](../../resource/storage-quotas/design.md)).
+- **A writer with no position passes no token and clears none, but it does not wait for one either.** The server's own provisional charge writes bytes without a sequencer. Clearing the stored one would leave the next stale event comparing against nothing and being applied, so the token it cannot rank against is the token it leaves alone. Making it _yield_ to that token is the tempting third rule and the wrong one: the blob it measures is rewritten under one name on every save, so an untokened writer that stood down after the first event never wrote again ([storage quotas](../../resource/storage-quotas/design.md) has what that cost). An unordered writer that cannot know it is not overwriting a newer measurement is instead made to be the one whose figure the next tokened write measures over.
+
+A handler that writes nothing derived from its event's moment — one that deletes by name, or sets a flag — needs none of this. The question to answer per handler is whether two events for the same subject can carry _different_ values for what it writes; if they can, order decides which is right.
+
+### Testing delivery order
+
+The delivery order is an argument, so the test is the two calls in the wrong order — no mock of Event Grid required. Assert the newest value survives **and** that the stale event still reports having found its subject, or a caller that retries on a miss will retry forever on a correctly-dropped event.
+
+## Testing it
+
+The mock honours the condition, so the loop is testable — and it resolves every client in one microtask drain, so two procedures never actually overlap unless the test holds the first write open. A green `Promise.all` that never interleaved reports the hazard as covered; the recipe that forces the overlap is `.agents/skills/azure-table/references/testing.md`.

@@ -20,7 +20,7 @@ How an individual component is written, typed and named. Assembling a page or li
 
 ## Shared Shell / Design-System Primitives — `references/shared-shell.md`
 
-Cross-product chrome is a small set of shared components in `components/Ui/` (the UI library) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare toolbar per editor.** Their design and rationale live in `apps/web/content/docs/resource/shell-cohesion.md`.
+Cross-product chrome is a small set of shared components in `components/Ui/` (the UI library) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare toolbar per editor.** Their design and rationale live in `openspec/specs/resource/shell-cohesion/design.md`.
 
 The `resource` layout's page header, `UiEmptyState`, `UiSkeleton` and `AppBreadcrumbs` are the set; what each is for, and what a new product or editor wires up (its page's header, a launcher entry), is that page. A search of its own is a scope of the one command palette (the `ui-library` skill, `references/keys-and-commands.md`).
 

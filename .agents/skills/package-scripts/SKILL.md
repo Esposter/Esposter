@@ -9,9 +9,9 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## Settled — do not re-propose
 
-- **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration".
-- **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
-- **Publishing a release from a developer's machine.** The release is the nightly `Release.yaml` run: `pnpm release` gates the tree, versions `main` and pushes the version commit and its tag, then publishes through npm's trusted publishing; the push to `main` that the release makes starts the review run (`MergeMain.yaml`), which merges the version commit back into `ai/queue`. No person runs it (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
+- **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `openspec/specs/architecture/monorepo-tooling/design.md`, "Recursive script orchestration".
+- **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`openspec/specs/architecture/no-compatibility-debt/design.md`).
+- **Publishing a release from a developer's machine.** The release is the nightly `Release.yaml` run: `pnpm release` gates the tree, versions `main` and pushes the version commit and its tag, then publishes through npm's trusted publishing; the push to `main` that the release makes starts the review run (`MergeMain.yaml`), which merges the version commit back into `ai/queue`. No person runs it (`openspec/specs/architecture/monorepo-tooling/design.md`, "Lerna Lite").
 
 ## `apps/web`
 
@@ -25,9 +25,9 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `tsx`, and the code is never bent to fit `node`.
 
-## `scriptsComments` — `references/scripts-comments.md`
+## `"scriptsComments"` — `references/scripts-comments.md`
 
-A script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object — never a `"// …"` key inside `scripts`, which pnpm lists as runnable (`scripts/src/workspace/packageScripts.test.ts`).
+A script that records something to undo later carries one `@TODO:` string in a sibling top-level `"scriptsComments"` object — never a `"// …"` key inside `scripts`, which pnpm lists as runnable (`scripts/src/workspace/packageScripts.test.ts`).
 
 ## Check Suite (after edits)
 
@@ -38,7 +38,7 @@ Once, after all the edits going out together: the tests of what the change touch
 - **A `--filter` that matches nothing exits 0** — prefer `pnpm -C <dir>`, and treat a filtered check's empty output as "it did not run" until a real compiler banner or test count proves otherwise.
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
-- **A command stays a script unless caching earns it a `vp run` task** in the root `vite.config.ts` — the three conditions, and what each rules out, are `apps/web/content/docs/architecture/vite-plus.md`, "The task cache".
+- **A command stays a script unless caching earns it a `vp run` task** in the root `vite.config.ts` — the three conditions, and what each rules out, are `openspec/specs/architecture/vite-plus/design.md`, "The task cache".
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
 - How each fails, and the name that shadows a pnpm command: `references/pnpm-traps.md`.
 

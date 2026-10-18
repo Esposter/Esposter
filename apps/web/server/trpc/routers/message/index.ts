@@ -316,13 +316,13 @@ export const baseMessageRouter = router({
     // Cannot store anything else. The size is NOT — `size` is whatever the client declared, an Azure write SAS
     // Carries no length constraint, and the block PUT never passes back through Nitro, so a client that
     // Under-declares can write past this cap until the SAS expires. Checking it here rejects the honest
-    // Oversized drop early; it is not a defence against a client that lies. See /docs/esbabbler/file-media.
+    // Oversized drop early; it is not a defence against a client that lies. See openspec/specs/esbabbler/file-media/design.md.
     const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
         throw getInvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }));
     // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
-    // Resources — a room's files belong to the room. See /docs/resource/storage-quotas
+    // Resources — a room's files belong to the room. See openspec/specs/resource/storage-quotas/design.md
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
       withThumbnail: true,

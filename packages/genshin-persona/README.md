@@ -52,7 +52,7 @@ Spoken lines stay silent until the `voice` verb has set the engine up, once, wit
 node "<plugin root>/scripts/genshin.mjs" voice ja     # or: /genshin-voice ja
 ```
 
-It installs the engine's runtime and weights — about a gigabyte, once — into the plugin's own state directory under `~/.claude/genshin-persona`, and ends by speaking one sentence as the session's character; replies are read aloud from the next reply on, by the plugin's own hooks module, with nothing written into your settings. Each character is read in a clone of their own voice, conditioned on one line of their performance fetched from the community wiki the first time they are picked; nothing lifted from the game ships with the plugin. How the engine runs, which device it settles on and why, and what it does when it cannot speak is the [spoken replies](https://esposter.com/docs/infra/claude-interface/spoken-replies) page.
+It installs the engine's runtime and weights — about a gigabyte, once — into the plugin's own state directory under `~/.claude/genshin-persona`, and ends by speaking one sentence as the session's character; replies are read aloud from the next reply on, by the plugin's own hooks module, with nothing written into your settings. Each character is read in a clone of their own voice, conditioned on one line of their performance fetched from the community wiki the first time they are picked; nothing lifted from the game ships with the plugin. How the engine runs, which device it settles on and why, and what it does when it cannot speak is the [spoken replies](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/claude-interface/spoken-replies/design.md) page.
 
 A [TypeSafe](https://typesafe.ai) API key, given as an option, turns the pick over to lore — one typed decision over the whole roster, weighing the date, the season's festivals and your moment — instead of the nearest birthday. The key is sensitive, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
 
@@ -62,7 +62,7 @@ claude plugin install genshin-persona@esposter --config typesafe_key=<key>
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/infra/claude-interface/persona-plugin) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin) to level up.
 
 ### Command reference
 
@@ -118,7 +118,7 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 
 ### Spinner and prompt hint
 
-Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, names the character among the labels at the right of the prompt's footer, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, names the character among the labels at the right of the prompt's footer, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin) page.
 
 The plugin writes nothing into your settings, so your own status line stays yours. To have it show the character's nameplate, the name in their colour on a badge of that colour's tone, point it at the script the plugin ships:
 
@@ -136,7 +136,7 @@ node "<plugin root>/scripts/genshin.mjs" reply english       # labels in one lan
 node "<plugin root>/scripts/genshin.mjs" status              # every setting, and where each value came from
 ```
 
-The languages on offer are the data package's, so `language` with no argument lists them, each in its own words beside the word you type for it, and either resolves. What arrives localized for nothing and what is written by hand per language is the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page's.
+The languages on offer are the data package's, so `language` with no argument lists them, each in its own words beside the word you type for it, and either resolves. What arrives localized for nothing and what is written by hand per language is the [persona plugin](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin) page's.
 
 ### How the character is picked
 

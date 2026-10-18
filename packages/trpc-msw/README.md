@@ -52,7 +52,7 @@ test("reads a post", async () => {
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/trpc-msw) to level up. It covers the design and the upstream `msw-trpc` issues this package answers.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-msw) to level up. It covers the design and the upstream `msw-trpc` issues this package answers.
 
 ### Key exports
 

@@ -12,7 +12,7 @@
     "text-to-speech",
     "voice-cloning"
   ],
-  "homepage": "https://esposter.com/docs/infra/claude-interface/persona-plugin",
+  "homepage": "https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

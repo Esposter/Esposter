@@ -5,11 +5,11 @@ description: Apply when planning, building or reviewing a refactor, a migration,
 
 # No Compatibility Debt
 
-Nothing in this repository keeps an older version of itself working. The argument, the correction flow and what it rules out are `apps/web/content/docs/architecture/no-compatibility-debt.md`; this skill is the trigger that puts that page in front of a session while it is still planning, and the index of the skills that own each narrower case.
+Nothing in this repository keeps an older version of itself working. The argument, the correction flow and what it rules out are `openspec/specs/architecture/no-compatibility-debt/design.md`; this skill is the trigger that puts that page in front of a session while it is still planning, and the index of the skills that own each narrower case.
 
 ## Settled — do not re-propose
 
-- **A migration staged behind a compatibility path** — an adapter that runs the old shape beside the new until a later phase deletes it. It is the same second code path the docs page refuses, only scheduled; the plan's own "phase 3 deletes it" is the step that slips. The user ruled it out for the kit framework on 2026-10-11.
+- **A migration staged behind a compatibility path** — an adapter that runs the old shape beside the new until a later phase deletes it. It is the same second code path that design refuses, only scheduled; the plan's own "phase 3 deletes it" is the step that slips. The user ruled it out for the kit framework on 2026-10-11.
 - **"Both shapes for now" because the move is large.** Size is a reason to script the move, never to keep two shapes.
 
 ## Rules

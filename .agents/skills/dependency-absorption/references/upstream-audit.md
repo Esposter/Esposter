@@ -1,6 +1,6 @@
 # Upstream Audit
 
-Read when reading a package's tracker, or giving an issue its verdict. The four verdicts and the order they are decided in are `apps/web/content/docs/architecture/dependency-admission.md` ("Triage"); this page is how the audit is run and what evidence each verdict needs.
+Read when reading a package's tracker, or giving an issue its verdict. The four verdicts and the order they are decided in are `openspec/specs/architecture/dependency-admission/design.md` ("Triage"); this page is how the audit is run and what evidence each verdict needs.
 
 ## Reading the tracker
 

@@ -116,7 +116,7 @@ jobs:
       # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
       # Draft once `pnpm release` has published the tag's versions, the host is attached to the draft, and `publish` makes
       # it public last, once every asset is on it. A failed `pnpm release` creates no draft at all, so the tag may exist
-      # without a release: the recovery is in apps/web/content/docs/architecture/release-flow.md
+      # without a release: the recovery is in openspec/specs/architecture/release-flow/design.md
       - name: 🚀 Release draft
         id: release
         env:
@@ -145,7 +145,7 @@ jobs:
   # The agent console's Windows host: one executable carrying its runtime and the Claude Code binary it runs, attached
   # To the draft release, which the page links as its download once published. One file rather than a zip, since
   # Windows runs an exe from inside a zip without the files beside it. Unsigned, since signing costs a yearly fee
-  # (apps/web/content/docs/infra/deferred/signed-host-installers.md)
+  # (openspec/deferred/infra/signed-host-installers/design.md)
   host-installer:
     needs: [check, release]
     if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'

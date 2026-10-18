@@ -1,5 +1,5 @@
 // A recreation pass, one kind of unknown each, run in `PARITY_PASS_ORDER`
-// (apps/web/content/docs/proposals/genshin/recreation-passes.md)
+// (openspec/changes/genshin-recreation-passes/design.md)
 export enum ParityPass {
   Atmosphere = "Atmosphere",
   Audio = "Audio",

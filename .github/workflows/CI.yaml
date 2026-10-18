@@ -1,6 +1,6 @@
 name: 🏗️ CI
 # The job shape and the traced task cache behind the builds and the checks are
-# `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`. Comments here keep only what
+# `openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape`. Comments here keep only what
 # that page does not say.
 
 on:

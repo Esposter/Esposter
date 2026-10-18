@@ -2,7 +2,7 @@
 
 Read when an area has no reference product yet, or two products compete for the role.
 
-The reference product is the one shipped product that already solved the domain, whose arrangement, wording and interaction a surface takes rather than reinvents (the `ux` skill, `references/reference-product.md`; the table is `apps/web/content/docs/architecture/design-sources.md`). A product review without one judges a surface against taste, which never converges: every pass finds a different taste.
+The reference product is the one shipped product that already solved the domain, whose arrangement, wording and interaction a surface takes rather than reinvents (the `ux` skill, `references/reference-product.md`; the table is `openspec/specs/architecture/design-sources/design.md`). A product review without one judges a surface against taste, which never converges: every pass finds a different taste.
 
 ## Picking one
 
@@ -14,7 +14,7 @@ The reference product is the one shipped product that already solved the domain,
 
 ## Where the pick is recorded
 
-Until something ships, the pick lives in the proposal's `## Sources`, one bullet per page read and the part taken from it (the `docs` skill, `references/links-and-sources.md`). When the surface ships, the design sources table gains the area's row in the same change — that page lists only what a shipped surface took.
+Until something ships, the pick lives in the proposal's `## Sources`, one bullet per page read and the part taken from it (the `openspec` skill, `references/links-and-sources.md`). When the surface ships, the design sources table gains the area's row in the same change — that page lists only what a shipped surface took.
 
 ## Reading it
 

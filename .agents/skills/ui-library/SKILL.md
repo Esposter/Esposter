@@ -5,15 +5,15 @@ description: Apply when building or restyling any interface in apps/web, choosin
 
 # UI Library
 
-Every interface in the app is drawn by a library of its own, built in `apps/web` on Vuetify 0's headless primitives. How it is built is `apps/web/content/docs/architecture/ui-library.md`, how it looks is `apps/web/content/docs/architecture/design-language.md`; this skill is the rules an edit follows.
+Every interface in the app is drawn by a library of its own, built in `apps/web` on Vuetify 0's headless primitives. How it is built is `openspec/specs/architecture/ui-library/design.md`, how it looks is `openspec/specs/architecture/design-language/design.md`; this skill is the rules an edit follows.
 
 ## Settled — do not re-propose
 
-- **A styled component library, another headless library, or writing the behaviour ourselves.** Argued and rejected in `apps/web/content/docs/architecture/ui-library.md`.
+- **A styled component library, another headless library, or writing the behaviour ourselves.** Argued and rejected in `openspec/specs/architecture/ui-library/design.md`.
 - **Moving the library into a package.** It stays in `apps/web` until a second app consumes it.
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
-- **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`apps/web/content/docs/architecture/ui-library.md`, "Rejected").
+- **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`openspec/specs/architecture/ui-library/design.md`, "Rejected").
 - **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is pinned by the agent console; why one look was rejected is the architecture page's "Design styles" section.
 
 ## A look is a style, not the library
@@ -32,7 +32,7 @@ The look is a design style — standard, the default, voxel or Genshin — besid
 
 ## Tokens
 
-How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`. The rules an edit follows:
+How the palette reaches UnoCSS and the first response is `openspec/specs/architecture/ui-library/design.md`. The rules an edit follows:
 
 - **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a palette colour the token set already covers.
 - **A length is a whole number of `--ui-step`, and a duration is `--ui-motion-short`, `-medium` or `-long`** — never a time, an easing or a `steps()` of its own (`references/tokens.md`).

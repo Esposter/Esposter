@@ -8,7 +8,7 @@
     "genshin",
     "mods"
   ],
-  "homepage": "https://esposter.com/docs/infra/claude-interface/genshin-mods",
+  "homepage": "https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/genshin-mods",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

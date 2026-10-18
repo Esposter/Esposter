@@ -3,7 +3,7 @@ import type { Plugin } from "@oxlint/plugins";
 import { noUnhandledEffectAfterEmit } from "#src/services/oxlint/persistThenNotify/noUnhandledEffectAfterEmit";
 import { definePlugin } from "@oxlint/plugins";
 
-// An oxlint JS plugin enforcing the persist-then-notify standard (/docs/architecture/persist-then-notify).
+// An oxlint JS plugin enforcing the persist-then-notify standard (openspec/specs/architecture/persist-then-notify/design.md).
 //
 // Once a function fires a realtime notify (`<name>EventEmitter.emit(...)`), the entity exists and the
 // Caller's outcome is decided — so every later `await` must be best-effort (never rejects) or the fatal

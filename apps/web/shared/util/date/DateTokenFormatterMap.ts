@@ -23,7 +23,7 @@ const padNumber = (value: number, length = PADDED_LENGTH): string => String(valu
 // Month and weekday names come from Intl rather than a hand-written table, and pinned to en-US rather than the
 // Reader's locale: these tokens only reach the message list and the resource table, whose labels are the one
 // Place a format string is still written by hand instead of being a `<NuxtTime>`
-// (/docs/architecture/date-time-display).
+// (openspec/specs/architecture/date-time-display/design.md).
 const formatDatePart = (formatter: Intl.DateTimeFormat, zonedDateTime: Temporal.ZonedDateTime): string =>
   formatter.format(new Date(zonedDateTime.epochMilliseconds));
 

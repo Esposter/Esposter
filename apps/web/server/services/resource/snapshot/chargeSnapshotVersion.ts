@@ -10,7 +10,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // The document — which is what makes the meter say something true: one cell edited costs about a hundred
 // Bytes, and a save that changed nothing costs nothing. On the owner rather than the caller, since a restore
 // Writes on their behalf. The object's own `BlobCreated` reconciles the figure to what storage recorded, which
-// Is the same number (/docs/resource/storage-quotas)
+// Is the same number (openspec/specs/resource/storage-quotas/design.md)
 export const chargeSnapshotVersion = async (
   db: Context["db"],
   resource: Pick<ResourceInResource, "id" | "userId">,

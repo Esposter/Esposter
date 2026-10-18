@@ -1,6 +1,6 @@
 # Residue Sweep
 
-Read when the last import of the absorbed package is about to go. Why the sweep exists is `apps/web/content/docs/architecture/dependency-admission.md` ("Executing an absorption"); the manifest, catalog and configuration half — a package named in a pre-bundle list or plugin match outliving its last importer with knip green — is the `build` skill's `references/dependency-placement.md`.
+Read when the last import of the absorbed package is about to go. Why the sweep exists is `openspec/specs/architecture/dependency-admission/design.md` ("Executing an absorption"); the manifest, catalog and configuration half — a package named in a pre-bundle list or plugin match outliving its last importer with knip green — is the `build` skill's `references/dependency-placement.md`.
 
 What that half does not reach is the residue in our own code, which names the package only in prose or not at all. Search for each:
 
@@ -8,6 +8,6 @@ What that half does not reach is the residue in our own code, which names the pa
 - **Type shims** — a local type standing in for one the package shipped wrongly, and the comment explaining it.
 - **Test-only branches in production code** — a test-mode or environment check that existed so a test double could serve what the real transport sends.
 - **Casts at the seam** — `as` on a value crossing between the package and our code, which a typed replacement no longer needs.
-- **Prose** — the docs pages and skills that name the package or explain a behaviour by it; the rename sweep in `AGENTS.md` "Finishing a change", step 3.
+- **Prose** — the specs and skills that name the package or explain a behaviour by it; the rename sweep in `AGENTS.md` "Finishing a change", step 3.
 
 Each hit lands in the catalog entry's own commit, as the admission page's residue sweep says.

@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports, parity-page]
+x-touches: ["packages/genshin-world/src/services/inazuma/**"]
+x-waiting: "the genshin-landmark-closure unit and its asset-map change on the PC: the shrine is landmark-tier, matched pose by pose on its meshes, and the torii is fitted in the capital's Shape pass (inazuma-shape) at the camera those landmarks solve; the Enkanomiya ruin also waits on a reference of Enkanomiya (the checklist's Dainichi Mikoshi from its plaza) and Enkanomiya's exports, neither held yet"

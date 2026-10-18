@@ -5,14 +5,14 @@ description: Apply when replacing a third-party package with code of our own, re
 
 # Dependency Absorption
 
-How an absorption is run. Whether a package should be absorbed at all — the three costs, the admission test, the stop list, the register of verdicts with its score, what an adapter is, the standard and the triage verdicts — is `apps/web/content/docs/architecture/dependency-admission.md`, and nothing here restates it.
+How an absorption is run. Whether a package should be absorbed at all — the three costs, the admission test, the stop list, the register of verdicts with its score, what an adapter is, the standard and the triage verdicts — is `openspec/specs/architecture/dependency-admission/design.md`, and nothing here restates it.
 
 ## Settled — do not re-propose
 
-- **Keeping a small, stable utility because owning it means maintaining it.** Maintenance is an agent's compute, and an absorbed utility is built as ESM by our own tsdown with every upstream issue fixed and tested; a utility stays a dependency only for a reason the admission test names (`apps/web/content/docs/architecture/dependency-admission.md`, "The admission test").
-- **A parity gap left because our app does not call that half.** An adapter is absorbed as a package of its own, and a package missing the surface it replaced is a fork with gaps (`apps/web/content/docs/architecture/dependency-admission.md`, "The standard an absorption meets").
-- **Porting a shape an engine has deprecated, for parity.** Parity is with the engines' current surface, and the replacement carries no debt the upstream package kept for its older users (`apps/web/content/docs/architecture/dependency-admission.md`, "The standard an absorption meets").
-- **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live on the package's docs page (`references/package-shape.md`).
+- **Keeping a small, stable utility because owning it means maintaining it.** Maintenance is an agent's compute, and an absorbed utility is built as ESM by our own tsdown with every upstream issue fixed and tested; a utility stays a dependency only for a reason the admission test names (`openspec/specs/architecture/dependency-admission/design.md`, "The admission test").
+- **A parity gap left because our app does not call that half.** An adapter is absorbed as a package of its own, and a package missing the surface it replaced is a fork with gaps (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
+- **Porting a shape an engine has deprecated, for parity.** Parity is with the engines' current surface, and the replacement carries no debt the upstream package kept for its older users (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
+- **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live in the package's spec (`references/package-shape.md`).
 - **Skipping the closed issues.** A closed issue is where a fix the replacement must keep, or a workaround our code still carries, is explained (`references/upstream-audit.md`).
 - **Porting the upstream's code.** A port carries its structure, its dead branches and its per-request costs into our tree. The replacement is rewritten from the ground up against the upstream's behaviour and its audit.
 

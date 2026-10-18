@@ -5,7 +5,7 @@ file another session is editing, and why a resume that reports nothing is the sw
 
 ## The review budget is not the session's to measure
 
-A sitting never sizes itself to a review window. Each review run cuts its window to fit under the file cap; the review owns the cap and the cut (`apps/web/content/docs/infra/review.md`, step 4). A session that counted files against the cap would be keeping a second copy of a number the constant
+A sitting never sizes itself to a review window. Each review run cuts its window to fit under the file cap; the review owns the cap and the cut (`openspec/specs/infra/review/design.md`, step 4). A session that counted files against the cap would be keeping a second copy of a number the constant
 already holds — the copy that goes stale the day the plan changes. The session's bound is the unit: one unit per
 commit, every unit read whole.
 

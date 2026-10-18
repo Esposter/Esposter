@@ -5,15 +5,15 @@ describe(getProposalShips, () => {
   const date = new Date(0).toISOString().slice(0, 10);
   const hash = "a";
 
-  test("names each area a commit deleted a proposal from once, and never a refactor or a root page", () => {
+  test("names each area a commit deleted a change from once, and never a refactor or the archive", () => {
     expect.hasAssertions();
 
     const names = [
-      "apps/web/content/docs/proposals/a/b.md",
-      "apps/web/content/docs/proposals/a/c/d.md",
-      "apps/web/content/docs/proposals/refactors/e.md",
-      "apps/web/content/docs/proposals/f.md",
-      "apps/web/content/docs/a/g.md",
+      "openspec/changes/a-b/design.md",
+      "openspec/changes/a-c-d/tasks.md",
+      "openspec/changes/refactors-e/design.md",
+      "openspec/changes/archive/2026-01-01-f-g/design.md",
+      "openspec/specs/h/design.md",
     ].join("\n");
 
     expect(getProposalShips(`\u001E${hash}\u001F0\u001F${date}\u001F\n\n${names}\n`)).toStrictEqual([

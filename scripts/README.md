@@ -13,7 +13,7 @@ The repository's own tooling — the workspace dependency graph, the outdated-de
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
 ### What's Included
 
@@ -24,7 +24,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `oxlint/`               | The custom oxlint JS plugins `oxlint.config.ts` loads by path                                                                                                                                                                                  |
 | `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                                                                                                                                                         |
 | `updateNode/`           | Bumps the node pin and hands installation to `vp env`                                                                                                                                                                                          |
-| `voiceMatch/`           | The reference selection — every character's story lines measured off the wiki, the most typical line chosen and its clone scored, generated into the plugin as one map (`apps/web/content/docs/infra/claude-interface/reference-selection.md`) |
+| `voiceMatch/`           | The reference selection — every character's story lines measured off the wiki, the most typical line chosen and its clone scored, generated into the plugin as one map (`openspec/specs/infra/claude-interface/reference-selection/design.md`) |
 | `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges                                                                                                                                     |
 | `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares in `shared/`                                                                                                                                    |
 | `crossOS/`              | Runs the per-platform command the root manifest's `crossOS` map names for a script                                                                                                                                                             |

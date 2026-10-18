@@ -1,6 +1,7 @@
 import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
+import { getOpenSpecOwners } from "#src/services/openspec/getOpenSpecOwners";
 import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
@@ -8,13 +9,16 @@ import { takeOne } from "@esposter/shared";
 
 // A skill's `SKILL.md` restates each of its reference pages by design — the index line names the trigger the page
 // Opens on, and an always-on rule is the page's rule in one line — so that pair is one owner. Two reference pages
-// Are two owners even inside one skill: each is the single statement of its topic, so a run they share is a copy
+// Are two owners even inside one skill: each is the single statement of its topic, so a run they share is a copy. Two
+// OpenSpec pages are one owner when they state one capability or one change (`getOpenSpecOwners`)
 const checkIsOneOwner = (firstPath: string, secondPath: string): boolean => {
   const skillName = getSkillName(firstPath);
+  const secondOwners = getOpenSpecOwners(secondPath);
   return (
-    skillName !== "" &&
-    skillName === getSkillName(secondPath) &&
-    (firstPath.endsWith("/SKILL.md") || secondPath.endsWith("/SKILL.md"))
+    (skillName !== "" &&
+      skillName === getSkillName(secondPath) &&
+      (firstPath.endsWith("/SKILL.md") || secondPath.endsWith("/SKILL.md"))) ||
+    getOpenSpecOwners(firstPath).some((owner) => secondOwners.includes(owner))
   );
 };
 // The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and

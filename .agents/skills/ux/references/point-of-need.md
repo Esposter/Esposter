@@ -18,7 +18,7 @@ the page's own chrome already opens is the same second copy, only better disguis
 a detour, since the person has to walk to it for what one button gives them anywhere. A scene carries only the
 actions it is the one place for — acting on the scene itself — and leaves the rest to the chrome. The agent
 console's world holds nothing that opens a console tab
-(`apps/web/content/docs/infra/claude-interface/agent-console/console-overlay.md`, Settled).
+(`openspec/specs/infra/claude-interface/agent-console/console-overlay/design.md`, Settled).
 
 ## Every feature has two surfaces
 

@@ -20,7 +20,7 @@ A search that finds nothing reports what it covered, never an absence: "not in t
 
 ## A fact is found once
 
-A fact a session establishes about the source is written down in the chunk that found it, on the domain's data-formats page (Genshin's is `apps/web/content/docs/genshin/game-data-formats.md`), with the command that shows it. That covers a format's field, an offset, which table holds a value, or the key that joins two tables. A later session cites the row rather than re-deriving the fact. A fact found by a probe is the probe's reason to be promoted to a tool (the rule in `SKILL.md`).
+A fact a session establishes about the source is written down in the chunk that found it, on the domain's data-formats page (Genshin's is `openspec/specs/genshin/game-data-formats/design.md`), with the command that shows it. That covers a format's field, an offset, which table holds a value, or the key that joins two tables. A later session cites the row rather than re-deriving the fact. A fact found by a probe is the probe's reason to be promoted to a tool (the rule in `SKILL.md`).
 
 ## An output names the code that wrote it
 

@@ -13,7 +13,7 @@ export const getSettlerPrompt = ({
 The issue's body is the findings the review owes. They are the bullets that open with a backtick, numbered from 0 in the order the body lists them. Each finding must end in exactly one of three terminal states, and none may be deferred:
 - fixed: fix it at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need;
 - refuted: the code disproves it, and the reason says what does;
-- recorded: it needs a design decision or a feature. Write it into the owning area's proposal or roadmap page (the \`building-proposals\` and \`docs\` skills), so the build loop takes it. Never open an issue for it.
+- recorded: it needs a design decision or a feature. Write it into the owning area's change or roadmap (the \`building-proposals\` and \`openspec\` skills), so the build loop takes it. Never open an issue for it.
 
 ${REVIEW_SESSION_CHECKS}
 

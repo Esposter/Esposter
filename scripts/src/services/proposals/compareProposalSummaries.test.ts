@@ -5,22 +5,15 @@ import { compareProposalSummaries } from "#src/services/proposals/compareProposa
 import { describe, expect, test } from "vitest";
 
 describe(compareProposalSummaries, () => {
-  const summary: ProposalSummary = {
-    blockerRoutes: [],
-    hasKeyFiles: true,
-    keyFileCount: 0,
-    path: "a",
-    route: "/a",
-    signals: [],
-  };
+  const summary: ProposalSummary = { blockerIds: [], hasKeyFiles: true, id: "a", keyFileCount: 0, signals: [] };
 
   test("orders sized before unsized, unblocked before blocked, then fewer signals, then fewer files", () => {
     expect.hasAssertions();
 
-    const unsized = { ...summary, hasKeyFiles: false, path: "e" };
-    const blocked = { ...summary, blockerRoutes: ["/b"], path: "d" };
-    const signalled = { ...summary, path: "c", signals: [ProposalSignal.Server] };
-    const larger = { ...summary, keyFileCount: 1, path: "b" };
+    const unsized = { ...summary, hasKeyFiles: false, id: "e" };
+    const blocked = { ...summary, blockerIds: ["b"], id: "d" };
+    const signalled = { ...summary, id: "c", signals: [ProposalSignal.Server] };
+    const larger = { ...summary, id: "b", keyFileCount: 1 };
 
     expect(
       [unsized, blocked, signalled, larger, summary].toSorted((firstSummary, secondSummary) =>

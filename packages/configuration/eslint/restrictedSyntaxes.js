@@ -81,7 +81,7 @@ export default [
     // Cannot be a ref belongs in a client-only phase and disables this rule there with that reason. Tests are
     // Unaffected: they address the global bare, which this selector does not match.
     message:
-      "Use `useLocalStorage(LocalStorageKey.X, default)` rather than `window.localStorage` — see /docs/architecture/browser-execution.",
+      "Use `useLocalStorage(LocalStorageKey.X, default)` rather than `window.localStorage` — see openspec/specs/architecture/browser-execution/design.md.",
     selector: "MemberExpression[object.name='window'][property.name='localStorage']",
   },
   {
@@ -92,7 +92,7 @@ export default [
     // All correct, and telling them apart is a reading pass rather than a pattern. A genuine top-level fork
     // Disables this on the line with its reason, the same way the ban above is excepted.
     message:
-      "A browser global at module scope is evaluated during SSR — move it into a phase (`onMounted`, `.client.ts`) or a ref — see /docs/architecture/browser-execution.",
+      "A browser global at module scope is evaluated during SSR — move it into a phase (`onMounted`, `.client.ts`) or a ref — see openspec/specs/architecture/browser-execution/design.md.",
     // `localStorage` is excluded rather than left to match both: the ban above names the replacement for it, and
     // A module-scope `window.localStorage` matching both selectors reports the same node twice
     selector: "MemberExpression[object.name='window'][property.name!='localStorage']:not(:function *)",

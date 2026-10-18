@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: 📚 Documentation
-    url: https://esposter.com/docs
+    url: https://github.com/Esposter/Esposter/tree/main/openspec
     about: Check the documentation for usage of packages
   - name: 💬 Discussions
     url: https://github.com/esposter/esposter/discussions

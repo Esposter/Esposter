@@ -17,7 +17,7 @@ import { getResultAsync } from "@esposter/shared";
 // Re-uploading the blob raises a fresh `BlobCreated`, which is exactly the remediation the runbook documents for a
 // Stranded payload. Doing it here makes that move automatic at the one moment the endpoint is known to be back, so
 // It is not a sweep: nothing is scheduled, and every start that follows a healthy one finds nothing to do
-// (/docs/infra/eventgrid-dead-letter).
+// (openspec/specs/infra/eventgrid-dead-letter/design.md).
 export const drainDeadLetterContainer = async (): Promise<number> => {
   const containerClient = await getContainerClient(AzureContainer.DeadLetter);
   let drainedCount = 0;

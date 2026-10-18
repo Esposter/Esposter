@@ -22,4 +22,4 @@ Read when reading a surface to list what it is missing.
 
 ## Writing it down
 
-Each gap becomes exactly one of: a fix with a test, a proposal, a deferred page, a rejected page (the `docs` skill, `references/area-passes.md`). A proposal with several separable parts becomes a folder with an index holding the build order (the `docs` skill, `references/page-shapes.md`), as `apps/web/content/docs/proposals/infra/agent-console/index.md` does. A gap left as a sentence in a report and nowhere else is found again next pass — which is churn.
+Each gap becomes exactly one of: a fix with a test, a proposal, a deferred idea, a rejected idea (the `openspec` skill, `references/area-passes.md`). A proposal with several separable parts becomes a program whose design holds the build order (the `openspec` skill, `references/page-shapes.md`), as `openspec/changes/infra-agent-console-program/design.md` does. A gap left as a sentence in a report and nowhere else is found again next pass — which is churn.

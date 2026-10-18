@@ -115,7 +115,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Best-effort for the same reason as the message branch below: the claim is single-shot, so a rethrow asks
       // For a redelivery that is skipped and leaves the job holding a claim it can never release. The delivery
       // Itself is no longer what is at risk — it is published now, so a failure past this point is Event Grid's
-      // To retry and dead-letter ([dead-letter replay](/docs/infra/eventgrid-dead-letter))
+      // To retry and dead-letter ([dead-letter replay](openspec/specs/infra/eventgrid-dead-letter/design.md))
       await getResultAsync(() =>
         publishNotification(eventGridPublisherClient, {
           roomId: processingJob.roomId,
@@ -148,7 +148,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       });
-      // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
+      // Best-effort after the message write ([persist then notify](openspec/specs/architecture/persist-then-notify/design.md)). A
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
       // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped.
       // One Result each, exactly as `createUserMessage` does: sharing one closure makes every step after the

@@ -9,7 +9,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 - **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
 - **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`references/non-printing-characters.md`).
-- **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`apps/web/content/docs/architecture/polyfills.md`).
+- **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`openspec/specs/architecture/polyfills/design.md`).
 
 ## Deep dives
 

@@ -1,0 +1,66 @@
+# Picture-in-Picture
+
+Pop the active call out into an always-on-top OS window (Google Meet / Discord style) using the **Document Picture-in-Picture API**. Unlike native `<video>` PiP, Document PiP renders arbitrary DOM, so the popped-out window shows the full call stage (screen share + side tiles, or the participant grid) **and** a compact control bar.
+
+Purely client-side: no DB changes, no procedures, no infrastructure. The LiveKit `Room` and every `MediaStream` live in Pinia stores independent of where the DOM renders — **popping out is a DOM relocation, not a media reconnection**. It builds on the [call lifetime boundary](../README.md): `activeCallSessionId` already survives navigation.
+
+Chromium 116+ only; the pop-out button is feature-detected and never renders unsupported (the full-page call view is the fallback). VueUse has no Document-PiP composable (its PiP surface drives the single-`<video>` native API), so `useDocumentPictureInPicture` is a small hand-rolled SSR-safe composable in the VueUse return-shape style (`{ isSupported, pictureInPictureWindow, open, close }`).
+
+## How it works
+
+The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cleared by `resetCallMedia`, so leaving the call auto-docks for free). `MessageContentCallPictureInPictureHost` — mounted once in `app.vue`, the persistent root outside `<NuxtPage>`, so the window survives all route and layout changes — watches it, opens/closes the OS window, and `<Teleport>`s the compact view into `pictureInPictureWindow.document.body` (the element, not a selector — Vue must teleport across documents). Component instances, reactivity, and handlers are unchanged; `<video :srcObject.prop>` keeps playing because the same `MediaStream` objects stay attached.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Docked: isInCall
+    Docked --> PoppedOut: PictureInPicture/Button click
+    Docked --> PoppedOut: startScreenShare (auto, post-picker)
+    note right of PoppedOut
+      Host opens OS window
+      Teleport PictureInPicture/View into pictureInPictureWindow.document.body
+      Bridge stylesheets (Uno + tokens)
+      Same MediaStream objects — no reconnect
+    end note
+    PoppedOut --> Docked: expand (navigate back to call surface)
+    PoppedOut --> Docked: user closes OS window (pagehide)
+    PoppedOut --> [*]: leaveCall (auto-dock + close)
+    Docked --> [*]: leaveCall
+```
+
+While popped out, the main page swaps the stage for `MessageContentCallPictureInPicturePlaceholder` ("call is in a mini player") but **keeps rendering the full control bar**, so every primary control stays usable (Meet parity). The presenter pill lives in `MessageContentCallView`'s top bar, shown over both the live stage and the placeholder.
+
+Both surfaces render the **same** `MessageContentCallStage` (`isDense` in PiP tightens padding/tile size and makes the screen stage non-interactive) — the layout lives in exactly one place; never fork a second stage.
+
+## Style bridge
+
+The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
+
+1. Rebuilds every `document.styleSheets` **and** `adoptedStyleSheets` entry into fresh `<style>` nodes by serialising `cssRules` — deliberate, because a stylesheet built through the CSSOM (`insertRule`), as UnoCSS's runtime builds its own, leaves `<style>` `textContent` empty; a naive `cloneNode` would copy nothing. Cross-origin sheets (which throw on `cssRules`) fall back to re-linked `<link>`s.
+2. Copies the root's attributes onto the PiP `<html>` — its class and style, and the data attributes the library's tokens are keyed on — so the "--ui-*" tokens resolve to the selected theme.
+3. Sets `<html>`/`<body>` `height: 100%` + `margin: 0` — a fresh document has no layout height, so `size-full` content would collapse.
+4. Attaches a `MutationObserver` on `document.head` to mirror late-added stylesheets (UnoCSS dev-time HMR injection).
+
+**Tooltips** are the library's `UiTooltip`, whose content is a manual popover rendered beside its trigger and placed by CSS anchor positioning, so a control teleported into the PiP window keeps its tooltip in that window's document with nothing to re-attach. The PiP control bar is a flat row of the call's single buttons — mute, camera, screenshare, deafen, raise hand, **Return to Call** and leave — without the device popovers or the connection health.
+
+## Gesture / activation rules
+
+`documentPictureInPicture.requestWindow()` **requires and consumes** a transient user activation — exactly like `getDisplayMedia()`. The two cannot share one click: opening PiP first spends the activation, so the picker never opens and the window pops out over a share that never starts. So `toggleScreenShare` awaits `setScreenShare(true)` **first** (the picker consumes the click; the user choosing a screen grants a **fresh** activation) and only then sets `isPoppedOut = true`. A cancelled/failed share throws before that line, so nothing pops. `PictureInPicture/Host` also checks `pictureInPictureWindow` after `await open()` and reverts the intent if no window materialised (unsupported, denied, activation lost).
+
+**The screen-share `<video>` must be `muted`**: `getDisplayMedia` may bundle a system-audio track, and a freshly opened PiP window has no activation, so browsers block autoplay of unmuted video — the stage would sit paused/blank (metadata loads, so the aspect ratio updates — the tell). Muted video always autoplays, and no audio is lost: screen-share audio plays through LiveKit's audio pipeline, not this element.
+
+## Standalone-call interaction
+
+`/calls/[id]` unmount normally leaves the call ([call view UI](../call-view/design.md)). Popping out a standalone call means navigating away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Since a popped-out standalone call has no on-page surface, `MessageLeftSideBarStatusBar` surfaces **any** active call and links to the correct route (`RoutePath.Messages(callRoomId)` for room calls, the calls route for standalone) — a docked call is always one click away. The browser allows exactly one Document PiP window per document.
+
+## Key files
+
+| File                                                                            | Role                                                             |
+| :------------------------------------------------------------------------------ | :--------------------------------------------------------------- |
+| `apps/web/app/types/documentPictureInPicture.d.ts`                              | ambient types (API not yet in lib.dom)                           |
+| `apps/web/app/composables/useDocumentPictureInPicture.ts`                       | SSR-safe `requestWindow` wrapper + style bridge + cleanup        |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/Host.vue`        | persistent window owner + teleport target (mounted in app.vue)   |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/View.vue`        | compact call surface inside the window                           |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/ControlBar.vue`  | trimmed control row (mute/camera/share/deafen/hand/expand/leave) |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/Button.vue`      | feature-detected pop-out toggle                                  |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/Placeholder.vue` | main-page "mini player" notice                                   |
+| `apps/web/app/composables/message/room/call/useCallParticipantTiles.ts`         | shared tile/presenter-name source for both surfaces              |

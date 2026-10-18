@@ -1,0 +1,19 @@
+## 1. The Player Level and its games
+
+- [ ] 1.1 Write the Player Level slice from the game's level table and read it with its schemas. Verify: a test named after the scenario "The Player Level follows the game's level table", written first and seen failing.
+- [ ] 1.2 Publish the Player Level slice through the hosted game data, dry run first. Verify: the publish step's dry run lists the Player Level slice with no write, and a test named after the scenario "Finishing the tutorial quest starts the Player Level at one" passes.
+
+## 2. Seating the challengers
+
+- [ ] 2.1 Seat Marjorie and Ellin at their estimated seats once the region holding their residents is written. Verify: a test named after the scenario "A seated challenger's talk opens the duel", written first and seen failing.
+- [ ] 2.2 Offer each challenger's games by the Player Level. Verify: tests named after the scenarios "A game opens once the Player Level reaches its level" and "A game above the Player Level is not offered".
+
+## 3. The other opponents' decks
+
+- [ ] 3.1 Model the cards and skills each further deck needs and publish each deck as its own record read by key. Verify: a test named after the scenario "A played card applies its effect", and the card's cost refusal named after "A card the player cannot pay for is refused".
+
+## 4. Invitationals, tavern challengers and the Card Shop
+
+- [ ] 4.1 Add the invitational and tavern challengers' duels, their rewards and the EXP they pay into the Player Level. Verify: tests named after the scenarios "A won duel pays cards, Lucky Coins and EXP" and "Passing a level's EXP raises the Player Level".
+- [ ] 4.2 Add the Card Shop's sales in Lucky Coins. Verify: tests named after the scenarios "A card is bought with Lucky Coins" and "A card the player cannot afford is not sold".
+- [ ] 4.3 Open the card game at Adventure Rank 32 with its tutorial quest. Verify: tests named after the scenarios "Reaching Adventure Rank 32 opens the card game" and "Below Adventure Rank 32 the card game stays closed".

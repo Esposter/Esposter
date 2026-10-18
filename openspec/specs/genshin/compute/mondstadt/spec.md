@@ -1,0 +1,63 @@
+## Purpose
+
+Mondstadt's region: its base ground, renderers, landmarks, camera, shape, surface, display, light and atmosphere, and its location's frame score.
+
+## Requirements
+
+### Requirement: The Mondstadt City location's landmarks
+
+The Mondstadt City location's landmarks SHALL each be tied to a named mesh of the extracted game before its camera is solved from them.
+
+#### Scenario: Unnamed landmarks leave the set empty and the camera unsolved
+
+- **GIVEN** the extraction names no mesh for the location's landmarks
+- **WHEN** the camera is to be solved
+- **THEN** the landmark set stays empty
+- **AND** the camera is not solved
+
+### Requirement: The Mondstadt City camera
+
+The Mondstadt City camera SHALL be written only when its landmarks reproject within 2 pixels root mean square.
+
+#### Scenario: A pose whose landmarks reproject beyond 2 pixels is not written
+
+- **GIVEN** a camera pose is solved on the location's six landmarks
+- **WHEN** the landmarks reproject more than 2 pixels root mean square off the reference
+- **THEN** the pose is not written
+
+### Requirement: Each Mondstadt pass
+
+Each Mondstadt pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
+
+#### Scenario: The display pass waits for the surface pass
+
+- **GIVEN** the Mondstadt display pass reads the surface pass
+- **WHEN** the surface pass is not yet held
+- **THEN** the display pass does not run
+
+#### Scenario: A pass whose readout misses its bar is not held
+
+- **GIVEN** a Mondstadt pass has run
+- **WHEN** its readout misses the bar its page names
+- **THEN** the pass is not held
+
+### Requirement: The Mondstadt City sun direction
+
+The Mondstadt City sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.
+
+#### Scenario: Solved shadow edges within 2 pixels set the held minute
+
+- **GIVEN** the sun's direction is solved from the shadows' edges over flat receivers
+- **WHEN** the solved edges lie within 2 pixels of the reference's
+- **THEN** the held minute replaces the provisional noon
+
+### Requirement: The Mondstadt City frame's score
+
+The Mondstadt City frame's score SHALL be reported without a numeric gate, and judged by eye.
+
+#### Scenario: A frame comparison reports its score and is judged by eye
+
+- **GIVEN** the Mondstadt City frame is compared against its reference
+- **WHEN** the comparison finishes
+- **THEN** its score is recorded and reported
+- **AND** the frame is checked by eye

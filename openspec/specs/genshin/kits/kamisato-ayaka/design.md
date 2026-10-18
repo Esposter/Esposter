@@ -1,0 +1,26 @@
+# Kamisato Ayaka
+
+Kamisato Ayaka's kit is its record and one behaviour module, `createAyakaKitBehaviour`, avatar 10000002: five strikes, the fourth of three hits, a three-hit charged attack, a collision and two plunges, Kamisato Art: Hyouka, Kamisato Art: Soumetsu's storm and Kamisato Art: Senho's Cryo infusion. Her multipliers are read from proud skill groups 231, 232 and 239, and match the wiki's Kamisato Art: Kabuki, Hyouka and Soumetsu values to two decimal places. Soumetsu's storm is a summon of nineteen cuts and a bloom, built as the shared effects below, with Blizzard Blade Seki no To's two smaller storms from two constellations, and Senho's infusion is built on the kit's sprint hook. Senho's Cryo application and its movement, A1's and A4's effects and her other constellations are not built.
+
+## Decisions
+
+- **Ayaka's reaches are priced with their offsets, and her fifth strike round her body.** gcsim centres her first, second and fourth strikes and her plunges ahead of the body, which prices each reach as its offset plus its radius; her third strike's 60-degree fan, centred half a metre behind, reaches 2.3 metres. Her fifth strike is a circle of 0.8 metres gcsim centres on the primary target, which an area does not hold, so it is priced round her body, as Mona's strikes are.
+- **Ayaka's charged attack reaches every enemy within 5 metres.** gcsim and the wiki lock it on an enemy within 5 metres and strike each enemy within 4 metres of that one, so it is priced as the 5-metre circle round her body, which an area's target does not yet hold. The wiki's 0.5-second internal cooldown for it is priced under the standard one, the only group a kit's hit is priced under.
+- **Soumetsu's storm stands where Ayaka cast it.** The wiki's storm moves forward until it meets an enemy, and gcsim centres it on the primary target, and neither gives its speed, so the storm is a summon standing at the cast, its cuts reaching 3.3 metres and its bloom 5. Blizzard Blade Seki no To's two smaller storms stand with it, each at a fifth of its multipliers, reaching 1.8 and 3 metres, as gcsim places them. All three are provisional until a recording measures the storm's path.
+- **Senho's infusion runs from the sprint.** The kit's `onSprint` restarts a 5-second Cryo infusion on each step of the sprint, so it runs out 5 seconds after the sprint ends, as the game gives it on her reappearing. An attack ends the sprint in the game, so the infusion over the sprint itself changes no hit. Senho's Cryo application as she reappears is not built, since the hook runs on each step of the sprint and nothing marks where the sprint ends, and A4, which restores 10 Stamina and gives an 18% Cryo DMG Bonus when that application hits, waits on it. Senho's own movement, its fog, its stamina of 10 to start and 15 a second and its crossing of water, is the controller's and is not built.
+
+## Not built
+
+- **Ayaka's A1 and her other constellations are not built.** A1's 30% DMG bonus for her normal and charged attacks has nowhere to go: a buff adds to an element's DMG Bonus, which Hyouka and Soumetsu read too, and a hit's own DMG Bonus is fixed on the hit or added by an infusion, which would change her attacks' element too. C6's charged attack bonus waits for the same reason, C1's cooldown cut on a Cryo hit and C4's DEF reduction have no hook in a hit, and C3 and C5 raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds.
+
+## Key files
+
+| File                                                             | Role                                                                               |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ayakaKit.ts` | `createAyakaKitBehaviour`, Ayaka's kit with Soumetsu's storms and Senho's infusion |
+
+## Sources
+
+- [Kamisato Art: Kabuki](https://genshin-impact.fandom.com/wiki/Kamisato_Art:_Kabuki), [Kamisato Art: Hyouka](https://genshin-impact.fandom.com/wiki/Kamisato_Art:_Hyouka), [Kamisato Art: Soumetsu](https://genshin-impact.fandom.com/wiki/Kamisato_Art:_Soumetsu) and [Kamisato Art: Senho](https://genshin-impact.fandom.com/wiki/Kamisato_Art:_Senho), Genshin Impact Wiki: Ayaka's strikes', charged attack's and plunges' gauges and poise, the charged attack's lock-on, Hyouka's and the storm's gauges, internal cooldowns and poise, the storm's path, and Senho's infusion, Cryo application and stamina.
+- [Amatsumi Kunitsumi Sanctification](https://genshin-impact.fandom.com/wiki/Amatsumi_Kunitsumi_Sanctification), [Kanten Senmyou Blessing](https://genshin-impact.fandom.com/wiki/Kanten_Senmyou_Blessing) and [Blizzard Blade Seki no To](https://genshin-impact.fandom.com/wiki/Blizzard_Blade_Seki_no_To), Genshin Impact Wiki: Ayaka's A1 and A4, and the second constellation's smaller storms, their share and their gauges and poise.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayaka), MIT: the kit's hitmarks, cancel frames and areas, the storm's cuts and bloom, the smaller storms' areas, and Senho's infusion.

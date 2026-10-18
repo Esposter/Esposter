@@ -28,7 +28,7 @@ One-sentence description (from package.json `description`, expanded for clarity)
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](<the package docs page or docs index — `references/content-rules.md`>) to level up.
+We highly recommend you take a look at the [documentation](<the package's specs or the specs root — `references/content-rules.md`>) to level up.
 Key exports table / usage examples / architecture notes
 
 ## <a name="license">⚖️ License</a>

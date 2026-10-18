@@ -16,7 +16,7 @@ The main session's context is the scarce resource. These are the habits that sto
 
 ## Wait on a condition, never a sleep
 
-This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (the `testing` skill, `references/polling.md`, and `apps/web/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test. And it is never for a check the session itself started: a backgrounded check announces its own completion, and polling it is the failure `running-checks` exists to stop.
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (the `testing` skill, `references/polling.md`, and `openspec/specs/architecture/no-polling/design.md`). Nothing here may be copied into a test. And it is never for a check the session itself started: a backgrounded check announces its own completion, and polling it is the failure `running-checks` exists to stop.
 
 Wait until the thing you need is actually true — the harness's `Monitor` tool with an until-condition, since the Bash tool blocks a foreground `sleep`. A fixed sleep is wrong in both directions — wasted when the work finished early, a false failure when it didn't. This matters most where "done" lies: a server can answer while still building its client bundle, and async UI resolves long after the document reports complete. Poll the state you care about, not a proxy for it.
 

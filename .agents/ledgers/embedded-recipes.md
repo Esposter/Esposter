@@ -1,6 +1,6 @@
 # Embedded recipes
 
-Every fence in a skill page, a ledger or a docs page that holds a **runnable recipe** rather than an
+Every fence in a skill page, a ledger or a spec that holds a **runnable recipe** rather than an
 illustrative code example, read against `skill-authoring`'s `references/embedded-recipes.md`: one command whose
 logic is its pattern stays where it is, anything with control flow becomes a tested script under
 `scripts/src/<domain>/<verb>/` wired as `pnpm ai:<domain>:<verb>`.
@@ -12,13 +12,14 @@ meant to **run** the block.
 | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ |
 | `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-10-05 · Opus 5.5 |                                                                                |
 | `.agents/ledgers/*.md`                         | 2026-10-05 · Opus 5.5 | a grep pipeline is one command — the find recipes are mostly already compliant |
-| `apps/web/content/docs/**/*.md`, root markdown | 2026-10-05 · Opus 5.5 |                                                                                |
+| root markdown                                  | 2026-10-05 · Opus 5.5 |                                                                                |
+| `openspec/**/*.md`                             | —                     |                                                                                |
 
 Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a block is a finding when it holds a
 loop, a branch, a fallback or a second process aggregating the first's output.
 
 ````bash
-grep -rn -A 30 '^```bash' --include=*.md .agents apps/web/content/docs *.md |
+grep -rn -A 30 '^```bash' --include=*.md .agents openspec *.md |
   grep -E "^\S+[-:][0-9]+[-:]\s*((for |while |until ).*(; do| do$)|if .*; then)"
 ````
 

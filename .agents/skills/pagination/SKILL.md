@@ -15,7 +15,7 @@ Every paginated list is three layers — a store on `useCursorPaginationData` (p
 
 ## Search-as-you-type — never hand-rolled
 
-A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginated results; data already loaded is searched with MiniSearch in a `computed`, never a hand-rolled index (`references/search-as-you-type.md`, `apps/web/content/docs/architecture/search.md`).
+A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginated results; data already loaded is searched with MiniSearch in a `computed`, never a hand-rolled index (`references/search-as-you-type.md`, `openspec/specs/architecture/search/design.md`).
 
 ## Bundle Ancillary Reads with the Primary Read
 

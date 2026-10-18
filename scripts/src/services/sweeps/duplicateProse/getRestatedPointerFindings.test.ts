@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getRestatedPointerFindings, () => {
   const ARGUMENT = "the queue holds the overflow for the next run rather than hiding the work from review";
-  const OWNER_PATH = "apps/web/content/docs/infra/review.md";
+  const OWNER_PATH = "openspec/specs/infra/review/design.md";
 
   test("reports a settled line restating a page it does not point at", () => {
     expect.hasAssertions();
@@ -16,7 +16,7 @@ describe(getRestatedPointerFindings, () => {
         },
         { path: OWNER_PATH, text: `# Review\n\nRejected: excluding files. ${ARGUMENT}.\n` },
       ]).map(({ otherPath, path }) => `${path} → ${otherPath}`),
-    ).toStrictEqual([".agents/skills/example/SKILL.md → apps/web/content/docs/infra/review.md"]);
+    ).toStrictEqual([".agents/skills/example/SKILL.md → openspec/specs/infra/review/design.md"]);
   });
 
   test("allows a settled line sharing a run with the page it points at", () => {

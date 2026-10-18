@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 
 describe(readQueueFiles, () => {
   const { commitFile, getCwd, publish, switchTo } = setupFixtureRepository();
-  const PAGE_PATH = "compute/genshin.md";
+  const PAGE_PATH = "compute/genshin/design.md";
   const DONE_LINE = "- [ ] `[cpu]` {done-run} — **Done.**";
   const OPEN_LINE = "- [ ] `[cpu]` {open-run} — **Open.**";
 

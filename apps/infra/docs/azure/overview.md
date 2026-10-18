@@ -4,7 +4,7 @@ Both development and production resources are declared in **one unified stack**,
 
 `pulumi stack` reports two resources more than there are source files: `pulumi:pulumi:Stack` (the stack record) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed and need no TypeScript declaration, so a mismatch of exactly two is expected rather than drift.
 
-What each Azure service is actually used _for_ is in [azure services](/docs/architecture/azure-services); this page covers only how the declarations are laid out.
+What each Azure service is actually used _for_ is in [azure services](../../../../openspec/specs/architecture/azure-services/design.md); this page covers only how the declarations are laid out.
 
 ## Source Tree
 

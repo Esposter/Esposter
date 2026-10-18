@@ -1,6 +1,6 @@
 # Area Mode — auditing a subsystem and the docs governing it
 
-Read when picking the window for a review of code that already exists, with no change to review: a subsystem plus the `apps/web/content/docs/` pages and `.agents/skills/**/*.md` pages that govern it. Use it for "review the docs on X and everything implementing them", for hunting bugs in code nobody has touched recently, and before a substantial change to an area you are about to rework.
+Read when picking the window for a review of code that already exists, with no change to review: a subsystem plus the `openspec/` specs and `.agents/skills/**/*.md` pages that govern it. Use it for "review the spec of X and everything implementing it", for hunting bugs in code nobody has touched recently, and before a substantial change to an area you are about to rework.
 
 **A target is required** — it is the scope. Without a change to fall back on, an area review with no target audits something nobody asked about, expensively. Ask which subsystem rather than guessing. The target can be a path, a package, a feature, or a subsystem by its domain name.
 
@@ -19,7 +19,7 @@ Two lenses have no counterpart in diff mode, because a diff supplies them for fr
 | ------------- | -------------------------------------------------- | ------------------------------------------------------- |
 | `correctness` | a defect in the code                               | a code fix + a test that fails against the pre-fix code |
 | `conformance` | the code and the record disagree                   | fix whichever side is wrong — the evidence says which   |
-| `record-gap`  | the behaviour is deliberate but undocumented       | a docs page, per the `docs` skill                       |
+| `record-gap`  | the behaviour is deliberate but undocumented       | a spec, per the `openspec` skill                        |
 | `cleanup`     | an `AGENTS.md` or skill convention the code breaks | as in diff mode                                         |
 
 Severity for `conformance` and `record-gap` is the cost of the wrong conclusion a reader would draw, which is usually minor — a critical `record-gap` should make you suspicious that it is really a `correctness` finding wearing the wrong label.

@@ -13,7 +13,7 @@ Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL databas
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
 ### Migration Workflow
 

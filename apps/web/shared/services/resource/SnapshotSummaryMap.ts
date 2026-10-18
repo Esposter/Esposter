@@ -9,7 +9,7 @@ import { ResourceType } from "@esposter/db-schema";
 // Whole history and a summary derived on read would cost one object reconstruction per row.
 //
 // A type with no meaningful count declares nothing rather than a line that restates its own name: an
-// Unsummarized row still carries its reason and its time. See /docs/resource/resource-snapshots
+// Unsummarized row still carries its reason and its time. See openspec/specs/resource/resource-snapshots/design.md
 export const SnapshotSummaryMap: {
   [TType in ResourceType]?: (content: ResourceContent<TType>) => string;
 } = {

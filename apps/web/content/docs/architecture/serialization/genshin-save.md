@@ -1,8 +1,0 @@
----
-title: The Genshin save
-description: Why the Genshin save's instants are read as the schema's ISO strings with plain JSON.parse, never revived into Date objects.
----
-
-# The Genshin save
-
-The Genshin save is a Zod-validated object written by `JSON.stringify`, its instants held as ISO strings that `genshinSaveSchema` reads with `z.iso.datetime()`. Each of its reads parses it as plain `JSON.parse`: the server's `readGenshinSaveState`, and the browser's copies through `parseJsonWithSchema`, which the signed-out `readGuestSave` and the journal's `parseGenshinJournal` share. A revival would turn each instant into a `Date` the schema rejects, and every save would read as absent, so the schema owns the instants as strings and the reviver is left out. The shared rule this follows is on [serialization](/docs/architecture/serialization).

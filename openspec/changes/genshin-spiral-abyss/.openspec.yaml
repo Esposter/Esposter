@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/spiralAbyss/**",
+    "packages/genshin-world/src/models/spiralAbyss/**",
+    "packages/genshin-world/src/services/spiralAbyss/**",
+  ]

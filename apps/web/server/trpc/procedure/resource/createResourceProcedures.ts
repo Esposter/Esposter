@@ -223,7 +223,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         }),
     ),
     // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
-    // Same door with the same version check (/docs/resource/resource-version-store)
+    // Same door with the same version check (openspec/specs/resource/resource-version-store/design.md)
     saveResourceContentDelta: getOwnerProcedure(
       type,
       saveResourceContentDeltaInputSchema,
@@ -238,7 +238,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       });
     }),
     // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
-    // Reference, reaching the same door with the same version check (/docs/architecture/file-uploads)
+    // Reference, reaching the same door with the same version check (openspec/specs/architecture/file-uploads/design.md)
     saveStagedResourceContent: getOwnerProcedure(
       type,
       saveStagedResourceContentInputSchema,
@@ -386,7 +386,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // The transaction's guarantee is unaffected: the version it claimed does point at content that was
         // Stored. What a failed repair leaves behind is that version still naming the swept assets, i.e. a live
         // Publication whose images 404 — so the rejection is reported rather than swallowed, because a silent
-        // Success would leave the page broken with nothing to signal it. See /docs/architecture/publishing
+        // Success would leave the page broken with nothing to signal it. See openspec/specs/architecture/publishing/design.md
         if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
           await getResultAsync(async () =>
             writePublishedVersion(
@@ -413,7 +413,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // A version is stored bytes the owner keeps, charged for what its object cost — its cloned assets charge
         // Themselves as each copy lands. After the transaction, never inside: the charge locks the ledger row
         // And then the user's, and a transaction held open across that waits on locks it is itself holding.
-        // See /docs/resource/storage-quotas
+        // See openspec/specs/resource/storage-quotas/design.md
         if (writtenVersion) await chargeSnapshotVersion(ctx.db, ctx.resource, writtenVersion);
         // Best-effort: a failed write loses one trail entry, never the publish.
         getSynchronizedFunction(writeResourceActivity)(ctx, {

@@ -6,7 +6,7 @@ import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
 // The programs that issue tokens for a survey. A Program binds its survey as a Survey link, kept in step with its
 // Content on every save, so the whole candidate set is one indexed lookup. The role is what decides it: a Program
 // Whose audience is this survey's Responses holds a Dataset link to it, which issues no tokens for it
-// (/docs/architecture/resource-links). Only the survey's owner can bind it, so their programs are the whole set
+// (openspec/specs/architecture/resource-links/design.md). Only the survey's owner can bind it, so their programs are the whole set
 export const readBoundProgramIds = async (
   db: Context["db"],
   { id, userId }: Pick<ResourceInResource, "id" | "userId">,

@@ -19,7 +19,7 @@ import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurr
 import { ResourceType } from "@esposter/db-schema";
 
 // The follow-up procedures an agent reaches through the MCP endpoint with a follow-ups key
-// (/docs/resource/todolist-agent-follow-ups). Each reads, changes and saves the list on the server, and acts only on a
+// (openspec/specs/resource/todolist-agent-follow-ups/design.md). Each reads, changes and saves the list on the server, and acts only on a
 // Follow-up — a todo with an origin, open and not handed back — so no follow-ups key ticks or annotates a todo the owner
 // Wrote, and none deletes one
 export const todoListRouter = router({

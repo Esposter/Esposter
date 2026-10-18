@@ -50,7 +50,7 @@ A worker or a server that already holds the readings imports note creation from 
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/pitch-transcription) to level up. It explains how the package works and how it absorbed `@spotify/basic-pitch`.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/pitch-transcription) to level up. It explains how the package works and how it absorbed `@spotify/basic-pitch`.
 
 ### Key exports
 

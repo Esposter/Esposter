@@ -12,8 +12,8 @@ The scarce resource is one shared Claude Code account limit. The main session, e
 - **Jev for an authoring step.** It returns typed decisions, never text, so a conflict resolved, a fix written, a commit split or a file edited is a session's work however mechanical it looks. Jev decides _whether_ and _which_; it never produces the artefact.
 - **A frontier text model as the cheap classification tier** — a small model prompted to "reply with one word". It samples text, so it can emit a value outside the set, and it then owes a parse, a validator and a retry path; a typed decision cannot leave its own domain and needs none of them.
 - **A subagent with no `model`.** It inherits the main session's family, so a lookup is priced at the thinker's rate and also re-read in the main context — the one delegation that costs more than doing the work in place.
-- **A subagent on any family but haiku** — opus or sonnet, for a spec, a lane, or work that felt judgement-heavy. Subagents are haiku-only; a session briefing many lanes at once is the failure mode. The `genshin-mods` delegation guard refuses the launch, a fork with it (`apps/web/content/docs/infra/claude-interface/genshin-mods/delegation.md`).
-- **Naming a model version where it chooses what runs** — in a skill, a doc, a workflow script, a delegation prompt or the review session launcher's model constant. Families ship new versions every few weeks and the project always wants the latest, so only the unversioned alias (`haiku`, `opus`) is written. A record of which model _did_ something keeps its version — a proposal's `model:` (the `docs` skill, `references/page-frontmatter.md`), a ledger's `Swept` cell written from the trailers.
+- **A subagent on any family but haiku** — opus or sonnet, for a spec, a lane, or work that felt judgement-heavy. Subagents are haiku-only; a session briefing many lanes at once is the failure mode. The `genshin-mods` delegation guard refuses the launch, a fork with it (`openspec/specs/infra/claude-interface/genshin-mods/delegation/design.md`).
+- **Naming a model version where it chooses what runs** — in a skill, a doc, a workflow script, a delegation prompt or the review session launcher's model constant. Families ship new versions every few weeks and the project always wants the latest, so only the unversioned alias (`haiku`, `opus`) is written. A record of which model _did_ something keeps its version — a change's `x-model` (the `openspec` skill, `references/change-metadata.md`), a ledger's `Swept` cell written from the trailers.
 
 ## In a session — the main session thinks, subagents run
 
@@ -63,7 +63,7 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 
 ## A headless session delegates in the foreground
 
-No headless session currently delegates: the review's reviewers and its fixer are separate `claude -p` sessions its script launches, never subagents of one (`apps/web/content/docs/infra/review.md`). One that does delegate waits on each subagent, since a `claude -p` session has no next turn in which to read a backgrounded result, and names the subagent tier per call.
+No headless session currently delegates: the review's reviewers and its fixer are separate `claude -p` sessions its script launches, never subagents of one (`openspec/specs/infra/review/design.md`). One that does delegate waits on each subagent, since a `claude -p` session has no next turn in which to read a backgrounded result, and names the subagent tier per call.
 
 ## A deterministic tier does not have to know whether it applies
 
@@ -81,7 +81,7 @@ Every headless session runs on the one review model constant, and no session lau
 
 ## Design for agents
 
-Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `apps/web/content/docs/resource/blueprint-resource.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `openspec/specs/resource/blueprint-resource/design.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
 
 ## Reference pages
 

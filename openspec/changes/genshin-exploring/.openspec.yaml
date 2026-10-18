@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts",
+    "scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts",
+    "scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts",
+    "scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts",
+    "packages/genshin-world/src/models/world/WaypointLandmark.ts",
+    "packages/genshin-world/src/models/world/Landmark.ts",
+    "packages/genshin-world/src/data/regions/mondstadt.json",
+  ]

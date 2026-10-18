@@ -1,0 +1,10 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [architecture]
+x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/app/models/resource/sheet/commands/**",
+    "apps/web/shared/models/resource/sheet/commands/**",
+    "apps/web/app/services/resource/sheet/**",
+  ]

@@ -1,0 +1,147 @@
+# Lint Toolchain
+
+Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in under a minute, nearly all of it the type-aware rules; ESLint is the slower half, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
+
+## What works today
+
+- One root `oxlint.config.ts` runs oxlint repo-wide with `typeAware: true` — `oxlint-tsgolint` executes the type-aware `typescript/*` rules (`no-floating-promises`, `await-thenable`, `no-duplicate-type-constituents`, …) natively.
+- `eslint-plugin-oxlint` (`packages/configuration/eslint/oxlint.js`) imports the same `oxlint.config.ts` and passes it to `buildFromOxlintConfig`, which appends `"off"` entries for every ESLint rule oxlint already covers. It is appended **last** in both flat configs, so its disables win.
+- **Every category oxlint runs must be listed explicitly in `oxlint.config.ts`, `correctness` included.** Oxlint keeps `correctness` on by default even when other categories are configured, but `eslint-plugin-oxlint` **replaces** its defaults with whatever the file names — so a category left implicit reads to the plugin as off, and it leaves the ESLint twin of every rule in that category enabled. ESLint then re-runs the type-aware rules oxlint already checked, which is where most of its time goes.
+- The strict and stylistic type-checked rule sets `typescript-eslint` ships are covered by oxlint's `typescript/*` rules, so `packages/configuration/eslint/typescriptRules.js` spreads no config and the `typescript-eslint` package is not installed — it holds only `no-restricted-syntax`, the one rule oxlint cannot express (no AST-selector rule). `prefer-optional-chain`, `no-restricted-imports` (the `randomUUID` ban), `no-restricted-types` (the `Omit` → `Except` ban), and `no-unused-expressions` live in `oxlint.config.ts`.
+- **A migrated ban must be _configured_ in oxlint, not merely un-deleted from ESLint.** `eslint-plugin-oxlint` disables the ESLint twin of any rule oxlint _runs_ (e.g. `no-restricted-imports`, `no-restricted-types`, `no-unused-expressions`) — every rule in an enabled category, whether or not the repo configures it. The one exception is a rule the repo sets to `"off"`: the plugin drops that rule's disable again, so an ESLint-side `"off"` beside it is load-bearing rather than redundant. So an ESLint-side ban for such a rule is silently dead the moment oxlint ships the rule name — the ban only lives if it is written into `oxlint.config.ts`. Verify with `eslint --print-config <file>` (the rule should read `[0]`/off) plus a planted violation run through oxlint.
+
+```mermaid
+flowchart LR
+  config["oxlint.config.ts (single source of truth)"]
+  oxlint["oxlint + oxlint-tsgolint (type-aware)"]
+  plugin["eslint-plugin-oxlint (buildFromOxlintConfig)"]
+  eslint["ESLint (only rules oxlint lacks)"]
+  config -->|"categories + rules + typeAware"| oxlint
+  config -->|"same file"| plugin
+  plugin -->|"appends off for every covered rule"| eslint
+```
+
+## What the type-aware pass costs
+
+The root oxlint scripts report their rule timings on every run: each passes `--debug=timings`, which prints a table at the end of the log naming each rule's time, its share and whether it is native, a JS plugin or type-aware. ESLint reports its own only where `TIMING` is set — the app's ESLint scripts set `TIMING=1`, but the root and package ESLint scripts do not, so their timings take `TIMING=1` set by hand. A slow or memory-hungry oxlint pass or app ESLint pass is therefore diagnosed from the log CI already has.
+
+The type-aware share is billed unevenly. `oxlint-tsgolint` computes each type lazily and caches it, so the first rule that forces an expensive type is charged for all of it, and switching that rule off moves the charge to the next rule that asks. Reading the table, the top rule is a lead, not a verdict: the expensive files are found by timing oxlint per package and then per file, and the fix is scoped to them.
+
+Five rules cost most of the type-aware pass on their own: `no-confusing-void-expression`, `no-misused-promises`, `no-generated-empty-object-type`, `no-floating-promises` and `strict-void-return`. The last takes over most of `no-misused-promises`'s cost once that rule is off, the way the lazy checker hands its bill on. They do not run on every lint. Each is set to `COSTLY_TYPE_AWARE_SEVERITY` in `oxlint.config.ts`, which is `"off"`. Once in a while a pass sets it to `"error"`, runs the root oxlint, fixes what the five report, sets it back to `"off"`, and dates the `oxlint` ledger's row. Until that pass, a floating promise can land unreported.
+
+`no-deprecated` runs on every lint, and it is the costliest rule in the pass: most of its time is spent in `apps/web`, where it makes the full lint about half as long again. The trade is worth it. An engine or a library marks a call `@deprecated` a release before it removes it, and code written from memory of an older API lands the deprecated call first — a Vite 8 config spelling `rollupOptions` for `rolldownOptions`, an h3 2 handler reaching for `getRequestHeader`. The rule catches those calls before they are committed.
+
+The Claude Code mod trees (`packages/genshin-mods` and `packages/genshin-persona/mod`) are the standing case. Their hooks register through the engine's `On` type, a pair of generic overloads whose callback parameter is computed from a large union of event patterns. The engine writes those declarations, and the repo cannot reshape them. `tsc` checks the same program in about a second. But `strict-void-return` and `no-misused-promises` ask, for every async hook, whether it is assignable to a void-returning callback, and over those overloads that query cost tens of seconds per file and tens of gigabytes of memory. The whole repo's peak memory was this one package. An `overrides` entry in `oxlint.config.ts` turns those two rules off for the mod trees alone, so every other type-aware rule still runs there, and the mod trees lint in about a second.
+
+```mermaid
+flowchart LR
+  log["--debug=timings table"] --> top{"top rule's cost spread across the repo?"}
+  top -->|"no — a few files"| bisect["time oxlint per package, then per file"]
+  bisect --> tsc{"tsc fast on the same program?"}
+  tsc -->|"yes — the rule's queries"| override["overrides entry: the asking rules off in that scope"]
+  tsc -->|"no — the types themselves"| types["fix the types, or ignorePatterns for a tsgo hang"]
+  top -->|"yes"| repo["weigh the rule repo-wide"]
+```
+
+## What remains in ESLint and why
+
+The remaining expensive rules, in descending cost order, and the trigger for migrating each:
+
+| Rule                   | Share of rule time | Blocker                                | Migrate when                                                                               |
+| ---------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `vue/no-child-content` | ~two thirds        | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
+| `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
+| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | per ban, not per rule — the ladder and the standing list are below                         |
+
+Once the type-aware rules were gone, `vue/no-child-content` became the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
+
+**`neverthrow/must-use-result` was dropped, not migrated.** It was the single most expensive rule (~a third of rule time) because it is the only one that needed `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is caught only by review, with `pnpm ai:sweep:unterminated-results` listing the candidates, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
+
+Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `jsonc/*`, `link-checker/*` — oxlint reads no JSON at all); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
+
+## Ongoing process
+
+On every oxlint / `eslint-plugin-oxlint` catalog bump:
+
+1. Re-measure with `TIMING=10` on the app ESLint run to see which rules now dominate.
+2. Check whether the top ESLint rules appear in `eslint-plugin-oxlint`'s generated rule maps (`dist/generated/rules-by-category.*` — including the `*TypeAwareRules` sets). If a rule is newly covered, it disappears from ESLint automatically via the appended config — verify with `eslint --print-config` on a sample file rather than editing anything.
+3. For custom rules (`no-restricted-syntax` selectors), evaluate oxlint's JS-plugin support as it matures — non-type-aware custom rules can move as soon as oxlint's plugin API supports the needed AST surface for `.vue` and `.ts` files. A selector can also retire without oxlint gaining a selector rule at all, when a **plugin** rule turns out to express the same ban — so read a bump's new plugin rules against the selector list too, and confirm the two agree against planted cases before deleting the entry.
+4. Remove ESLint-side manual `"off"` entries that only existed to duplicate oxlint coverage (they are dead weight once `eslint-plugin-oxlint` disables the rule).
+
+## Where a ban is written
+
+A ban goes to the first of these that can express it, and the step is chosen by running a planted violation
+through `oxlint -c` with the candidate rule configured — never by reading a rule list. `oxlint --rules` prints
+nothing in the shipped binary, and `id-denylist` was already shipping when a selector and then a JS plugin were
+written for the same ban, which is what this order exists to stop happening again.
+
+```mermaid
+flowchart TD
+  BAN["a ban to write"] --> OX{"an oxlint rule expresses it?"}
+  OX -->|"yes"| OXLINT["oxlint.config.ts — done"]
+  OX -->|"no"| ES{"an ESLint rule expresses it?"}
+  ES -->|"yes"| ESLINT["ESLint — and say which kind"]
+  ES -->|"no"| PLUGIN["an oxlint JS plugin under scripts/src/oxlint/"]
+  ESLINT --> KIND{"will oxlint ship this rule?"}
+  KIND -->|"yes — upstream gap"| TABLE["a row in the table above, with its trigger"]
+  KIND -->|"no — nothing upstream to wait for"| PARK["stays, and says so"]
+```
+
+**An ESLint entry has to say which of the two it is**, because they age in opposite directions. One waiting on an
+upstream gap — a rule oxlint will plausibly ship, or a context it will plausibly reach — is temporary, and earns
+a row in the table above so a bump is read against it. One expressing something no linter will ever ship a rule
+for is permanent, and a note saying so is what stops the next audit re-deriving it. A JS plugin is the last step
+rather than the second: it is surface this repo then owns, tests and maintains, so it is only right when nothing
+else can express the ban at all.
+
+**What has moved, and what has not.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are now
+`no-restricted-properties` and `no-restricted-globals` in `oxlint.config.ts`; the sites that disable them spell the
+directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
+`no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
+`vue-router` import — and the pages' `useRouter` ban takes one for `vue-router` and `#imports` for the same reason.
+
+What stays in ESLint, and why:
+
+| Ban                                                                                                                                                         | Why it stays                                                                                                                                                                          | Kind         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `window.localStorage`, `stopImmediatePropagation`, `splice`                                                                                                 | `no-restricted-properties` expresses all three, but oxlint reads an SFC's `<script>` and not its template, where these also apply through `vue/no-restricted-syntax`                  | upstream gap |
+| `.then`/`.catch`/`.finally`                                                                                                                                 | `promise/prefer-await-to-then` is off for the reasons the `oxlint` skill's `references/plugin-rules.md` states                                                                        | upstream gap |
+| `try`/`catch`, the `A`-prefix interface, the lookup-name and `can`/`should` bans, `field: T \| undefined`, the `*Store` member read, the template-only bans | each needs a syntax predicate; `typescript/naming-convention` and `camelcase` are not implemented in oxlint, and `id-match` is one repo-wide regex rather than a per-construct format | upstream gap |
+| the TypeScript `private` keyword ban                                                                                                                        | no linter ships it; it is this repo's own preference for `#`                                                                                                                          | permanent    |
+
+## Key files
+
+| File                                                                | Role                                                                                                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                                  | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`           |
+| `package.json`                                                      | The root oxlint scripts, each run with `--debug=timings`                                                      |
+| `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                      |
+| `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                                   |
+| `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                                |
+| `packages/configuration/eslint/plugins/scopedStyles.js`             | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here   |
+| `packages/configuration/eslint/plugins/htmlTagNames.js`             | The HTML standard's tag names that ban reads, with the upstream release and standard date it was crawled from |
+| `packages/configuration/eslint/plugins/htmlElementAttributes.js`    | The attributes each HTML element accepts, that ban's other half, with the same provenance                     |
+| `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`)   |
+
+## The HTML data behind the scoped-styles ban
+
+`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` 2.1.0 and `html-element-attributes` 3.5.0 packages under their MIT notice, and each file's header names the release and the date of the standard it was crawled from. A refresh re-crawls the standard and re-checks those headers.
+
+| Upstream issue or pull request                                                                                                                                                           | Verdict                                                                                                                                           | Where it is proven                                                                                                                            |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `html-element-attributes` [12](https://github.com/wooorm/html-element-attributes/issues/12) — `part`, `exportparts` missing                                                              | In scope, fixed upstream by [pull request 13](https://github.com/wooorm/html-element-attributes/pull/13); the data carries it                     | `scopedStyles.test.ts`, `shadowPartGlobalAttributes`                                                                                          |
+| `html-element-attributes` [10](https://github.com/wooorm/html-element-attributes/issues/10) — `shadow*` on `template`                                                                    | False positive: the standard defines them as `template`'s content attributes, so the data keeps them                                              | The [template element](https://html.spec.whatwg.org/multipage/scripting.html#the-template-element) section; the rule never reads `<template>` |
+| `html-element-attributes` [11](https://github.com/wooorm/html-element-attributes/issues/11) and [4](https://github.com/wooorm/html-element-attributes/issues/4) — `<span>` missing       | False positive: `span` has no attributes beyond the global ones, and the tag list holds it                                                        | `htmlTagNames.js`, and the global set in `htmlElementAttributes.js`                                                                           |
+| `html-element-attributes` [5](https://github.com/wooorm/html-element-attributes/issues/5) — deprecated attributes                                                                        | Out of scope: the data is what an element accepts, deprecated attributes included, and the rule must not flag an attribute an old page still uses | The upstream answer on the issue                                                                                                              |
+| `html-element-attributes` [6](https://github.com/wooorm/html-element-attributes/issues/6) — CommonJS build                                                                               | Out of scope: our own ESM build owns the module                                                                                                   | The `packages/configuration` build                                                                                                            |
+| `html-element-attributes` [7](https://github.com/wooorm/html-element-attributes/issues/7) — ARIA and `role`                                                                              | Out of scope: ARIA is its own dataset, and the rule accepts `role` and `aria-*` by name                                                           | `scopedStyles.test.ts`, `ariaAttribute`                                                                                                       |
+| `html-element-attributes` [9](https://github.com/wooorm/html-element-attributes/issues/9) and [14](https://github.com/wooorm/html-element-attributes/issues/14) — narrow `as const` type | Out of scope: the map is typed as a record of strings, since the rule looks up an arbitrary tag name, which a narrow type rejects                 | `htmlElementAttributes.js`                                                                                                                    |
+| `html-element-attributes` pull request [15](https://github.com/wooorm/html-element-attributes/pull/15) — `textarea` `type`                                                               | Rejected: `type` is a read-only DOM property, not a markup attribute the standard defines                                                         | The [textarea element](https://html.spec.whatwg.org/multipage/form-elements.html#the-textarea-element) section                                |
+| `html-tag-names` [3](https://github.com/wooorm/html-tag-names/issues/3) — `require` breaks webpack                                                                                       | Out of scope: a packaging fault in an upstream entry point, and we never import the package                                                       | None needed                                                                                                                                   |
+
+The tag names predate the standard's `selectedcontent` element, which the standard now defines and the rule therefore does not check. A refresh adds it.
+
+## Notes
+
+- Never remove `correctness` from the explicit category list — oxlint would still run those rules (its own default), but `eslint-plugin-oxlint` would silently re-enable their ESLint twins and double-lint them.
+- Coverage parity is verified, not assumed: before relying on oxlint for a migrated rule, reproduce a violation in a scratch file and confirm oxlint reports it (tsgolint rules included).

@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-opus-5-5
+x-touches: ["packages/genshin-world/src/services/artifact/**"]
+x-waiting: "a chest opened in the world, which Adventurer's four-piece answers: the chests unit's first step, as `openChest` is called nowhere yet"

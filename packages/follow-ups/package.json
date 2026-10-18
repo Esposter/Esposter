@@ -10,7 +10,7 @@
     "mcp",
     "todo-list"
   ],
-  "homepage": "https://esposter.com/docs/resource/todolist-agent-follow-ups",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

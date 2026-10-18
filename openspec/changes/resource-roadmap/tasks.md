@@ -1,0 +1,18 @@
+# Resource roadmap
+
+Every product is already a resource behind one [explorer](../../specs/resource/explorer/design.md), whose shell has closed its gap with the Azure portal; what is open now is the depth of each type against the product that already solved its domain — Microsoft To Do for the TodoList, the ISO flowchart palette for the Flowchart, Google Forms for survey responses, Notion for the Note, Power BI for the Dashboard, Mailchimp for the Email, Webflow for the Webpage, Qualtrics' distributions for the Program and the Azure portal's template deployment for the Blueprint. Items link their full specs under [proposals](../) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](../../deferred/resource/) + [rejected](../../rejected/resource/) before adding items, and the [sheet editor](../../specs/resource/sheet/README.md)'s own pair for anything inside the Data blade — the grid keeps its backlog with the editor. New Azure services are the only real cost anywhere below, besides the SurveyJS Creator licence that [paid storage tiers](../resource-paid-storage-tiers/design.md) would owe by ending its [open-source exception](../../rejected/resource/survey-creator-licence/design.md); everything else is frontend + procedures + at most a Postgres migration.
+
+## Next
+
+- [ ] [AI-native resources](../architecture-ai-native-resources-program/design.md) — beyond the content tools every type has, an open editor adopting an agent's save, the lifecycle as tools, the schema fixes and typed commands, wired once at the resource layer rather than per editor
+- [ ] [Flowchart shapes](../resource-flowchart-shapes/design.md) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
+- [ ] [Dashboard live canvas](../resource-dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it
+- [ ] [Dashboard card and table visuals](../resource-dashboard-card-and-table-visuals/design.md) — a single aggregated number and a table of exact values beside the charts, over the same binding
+- [ ] [Note images](../resource-note-images/design.md) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
+- [ ] [Note Markdown portability](../resource-note-markdown-portability/design.md) — import and export a Note as a `.md` file
+
+## Later
+
+- [ ] [Page builder](../resource-page-builder-program/design.md) — the Webpage and Email editors rebuilt on a typed node tree and MJML on the server, with GrapesJS and its plugin belt removed in one cutover; it replaces the plugin-belt pruning, which stops now
+- [ ] [Content-addressed assets](../resource-content-addressed-assets/design.md) — a publish references assets by content instead of cloning them, with reference rows written from a scan of each version's content and a count-but-never-collect period before anything is deleted
+- [ ] [Paid storage tiers](../resource-paid-storage-tiers/design.md) — sell a larger allowance through a merchant-of-record checkout, with the tier column staying the one input to the quota gate. Blocked on wanting to take money at all, and on shipping account deletion + data export alongside it

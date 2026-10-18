@@ -39,7 +39,7 @@ console.log(gameText[GameTextKey.Loading]);
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/genshin/game-text) to level up. It explains where the text comes from and how to reference a new string.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/game-text/design.md) to level up. It explains where the text comes from and how to reference a new string.
 
 ## <a name="license">⚖️ License</a>
 

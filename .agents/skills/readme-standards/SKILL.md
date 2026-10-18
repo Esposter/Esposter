@@ -1,6 +1,6 @@
 ---
 name: readme-standards
-description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter's README conventions — one anchor+emoji template, badges and Getting Started decided by whether a package is published or run, documentation links to hand-written docs pages, GitHub blob/tree URLs, and the two package inventories edited together.
+description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter's README conventions — one anchor+emoji template, badges and Getting Started decided by whether a package is published or run, documentation links to the package's specs, GitHub blob/tree URLs, and the two package inventories edited together.
 ---
 
 # README Standards — Esposter
@@ -28,7 +28,7 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
 
 ## Content Rules
 
-Lead with what it does; Getting Started only where it is installed or run; link to the package's hand-written docs page when one exists and otherwise the docs index; the package's own scripts; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
+Lead with what it does; Getting Started only where it is installed or run; link to the package's specs when they exist and otherwise the specs root; the package's own scripts; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
 
 ## Reference pages
 

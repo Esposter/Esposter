@@ -45,7 +45,7 @@ claude --plugin-dir packages/genshin-mods
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/infra/claude-interface/genshin-mods) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/genshin-mods) to level up.
 
 ### Command reference
 

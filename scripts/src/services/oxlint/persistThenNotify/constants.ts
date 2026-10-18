@@ -1,5 +1,5 @@
 export const MESSAGE =
-  "Unhandled effect after a notify (`emit`). Post-persist effects must be best-effort — wrap in getResultAsync(...).match(noop, console.error) — or move fatal work before the emit. See /docs/architecture/persist-then-notify.";
+  "Unhandled effect after a notify (`emit`). Post-persist effects must be best-effort — wrap in getResultAsync(...).match(noop, console.error) — or move fatal work before the emit. See openspec/specs/architecture/persist-then-notify/design.md.";
 // Calls that never reject: the neverthrow wrappers, and nothing of the repo's own. A helper that is best-effort
 // Inside cannot be told from a fatal one at its call site, so such a helper hands its ResultAsync back and the
 // Call site terminates it — which is the `.match` terminal `checkHasAbsorbingMatchTerminal` reads, and needs no

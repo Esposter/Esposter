@@ -4,7 +4,7 @@
 //
 // Walking is also what keeps a leaf's text raw: a caller that instead serializes the value and rewrites the
 // Serialized form hands its matcher the serializer's escaping on top of the content's own
-// ([content token rewriting](/docs/architecture/content-token-rewriting)). The traversal reproduces what a
+// ([content token rewriting](openspec/specs/architecture/content-token-rewriting/design.md)). The traversal reproduces what a
 // `JSON.stringify` -> `jsonDateParse` round trip produced, so it is a drop-in for one: own enumerable entries
 // Only, `undefined` values dropped, and Dates kept as Dates (the round trip revived them from their ISO form)
 export const deepReplaceStrings = <TValue>(value: TValue, replace: (value: string) => string): TValue => {

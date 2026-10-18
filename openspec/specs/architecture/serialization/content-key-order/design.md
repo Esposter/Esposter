@@ -1,0 +1,7 @@
+# Content key order
+
+A resource's content blob is the key its retained versions are stored under: a retained version is addressed by the SHA-256 of the serialized content, so a save of content the store already holds writes nothing and costs nothing ([resource version store](../../../resource/resource-version-store/design.md)). The blob is read by [resource content](../resource-content/design.md), and its bytes are the serialization `JSON.stringify` produces.
+
+That makes the order `JSON.stringify` emits load-bearing — and it holds by specification. ECMAScript fixes own-property enumeration order (integer-like keys ascending, then string keys in insertion order), `JSON.stringify` walks that order, and there is exactly one producer of these blobs: a Zod parse output built by one code path in one deploy. The same content in gives the same bytes out.
+
+**Settled: no canonicalization step.** RFC 8785, the JSON Canonicalization Scheme, exists for the situation this is not — several independent implementations that must agree on a digest for the same logical object. Adopting it here would sort every key of every document on every save to defend against a case the repo does not have. If a schema's key order ever does change, the cost is one extra keyframe on the next save of each history, after which deltas resume against the new order: a one-off storage blip, never a wrong or unreadable version, because the store verifies every reconstruction against the key it was asked for. Reach for canonicalization only if a second producer of these bytes ever appears.

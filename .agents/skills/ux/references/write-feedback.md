@@ -2,7 +2,7 @@
 
 Read when deciding how an action asks before it acts, when a dialog that answers a write closes, how an undo is
 offered, or where a failed write shows. `SKILL.md` keeps one paragraph; the mechanism is
-`apps/web/content/docs/architecture/destructive-confirmation.md` and `apps/web/content/docs/architecture/dialog-shell.md`.
+`openspec/specs/architecture/destructive-confirmation/design.md` and `openspec/specs/architecture/dialog-shell/design.md`.
 
 ## The write decides, never the call site
 
@@ -18,7 +18,7 @@ rule. How the confirm closes follows from the mutation, so a call site states it
 
 - **One rule for every delete, the undo as the second guard.** A reader cannot tell from a Delete button whether the
   app can reverse it, so a delete that did not ask is learned by losing something
-  (`apps/web/content/docs/architecture/rejected/no-confirm-for-undoable-deletes.md`).
+  (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
 - **An optimistic write's dialog never waits for the server.** The list already changed, so a dialog held over it
   while the request is out is a lag with nothing behind it. The rollback and the error toast are the answer to a
   rejection, as they are for every optimistic write.

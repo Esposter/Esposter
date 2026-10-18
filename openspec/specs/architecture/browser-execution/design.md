@@ -1,0 +1,58 @@
+# Browser Execution
+
+[Module boundaries](../module-boundaries/design.md) settles which way an import may point: `app/` is client code and `shared/` may not reach into it. That is a statement about the **import graph**, and it is silent about the thing this page is about — `app/` is _evaluated_ in more than one environment. The SSR render runs it in Node with no `window`, the browser runs it with one, and a test runs it in whichever environment its directive names, which by default is Node.
+
+So every module that touches a browser API faces the same question, and the failure mode is that each one answers it separately: a guard on one reader, none on its sibling writers, and a debounced save that fires after its test environment is torn down throws `window is not defined` — the run stays green on its assertions and still exits non-zero.
+
+**The guard belongs where the environment is decided, and there are only two such places.** A leaf never decides.
+
+```mermaid
+flowchart TD
+  Code["app/ module"] --> Q{"What is the browser API for?"}
+  Q -->|"state that outlives a reload"| S["useLocalStorage(LocalStorageKey.X, default)"]
+  Q -->|"one-shot I/O or an effect"| P["a client-only phase — onMounted, useReadData, a .client.ts plugin"]
+  Q -->|"both environments have a real answer"| F["checkIsServer() at the fork"]
+  S --> Safe["reads the default off-browser"]
+  P --> Safe2["never runs off-browser"]
+  F --> Safe3["each branch is reachable and meant"]
+```
+
+## Persisted state is a ref, not a key
+
+Anything the UI reads and writes over time — a collapsed sidebar, a display mode, a device id, a draft — is `useLocalStorage`. VueUse's ref answers the default off-browser, so there is nothing to guard, and the value is reactive, so nothing has to be re-read after a write.
+
+The consequence worth naming: **the ref is the storage, not a copy kept beside it.** The message input store holds `drafts` as a single `Map` behind `useLocalStorage`, with a serializer (`draftsSerializer`) that validates on read with the same Zod schema the model already declares. Holding that `Map` _and_ mirroring every change into a key per composer would be two sources of truth kept in step by hand — the arrangement in which one call site gets forgotten. `flush: "sync"` is set there deliberately: a draft is persisted state rather than rendered state, and the default pre-flush write leaves a window in which the composer is empty but the storage still holds what was in it.
+
+A store that needs a `Map` or a class instance passes a `serializer` rather than falling back to raw keys.
+
+## One-shot I/O belongs to a phase
+
+Some reads are genuinely not state: the offline save system reads one JSON blob once and hands it to a class constructor. Those live inside a client-only phase — `onMounted`, or `useReadData`, whose unauthenticated branch is `onMounted` for exactly this reason — and the module carries no guard of its own, because the phase already decided.
+
+`window.localStorage` is a `no-restricted-syntax` error, so this is enforced rather than remembered. The offline save system is the standing exception and disables the rule on the line, with its reason: the key is a parameter there, so no ref can own it. Tests need no exemption either, because a test addresses the global bare (`localStorage.clear()`): the `window.` prefix the rule requires of `app/` source would be a `ReferenceError` in a Node-environment test.
+
+## Module scope is the one position a rule can see
+
+The position this page is about is enforced too. A browser global read at the **top level of a module** is read while the module is being evaluated, which on the server happens before any phase could have decided anything — so it is the one place the environment question provably has not been answered yet, and the ban says so. Inside a function it may well have been answered: `onMounted`, an event handler, a `.client.ts` plugin's own export. The rule therefore stops at the function boundary, and telling a real phase from a leaf that merely sits inside one stays a reading pass.
+
+A genuine top-level fork disables the rule on the line with its reason, the same way the storage ban is excepted.
+
+What this leaves unenforced is the subtler half, and it is worth naming: a browser global inside a `computed` is inside a function, so nothing flags it, and it survives SSR only for as long as nothing reads that computed during the server render. A dialog that happens to be closed on the server is not a guard.
+
+What separates that from a computed whose browser read is genuinely safe is **why** the read is unreachable on the server. A dialog being closed, a panel being collapsed, a list being empty — those are states the server render happens to be in, and any of them can change without anyone touching the computed. A read is safe instead when the value guarding it **cannot exist** on the server: a DOM query made only inside `if (error)`, where `error` is produced by client-side validation on a form instance held in a template ref, is unreachable there — on the server there is no form, no validation and no error, structurally rather than incidentally. State the reason in a comment where it is not obvious; a computed whose guard is a state rather than a structural impossibility takes the phase or the ref instead.
+
+## What `checkIsServer()` is still for
+
+A genuine fork, where both branches are real and reachable: `serialize`/`deserialize` choosing `Buffer` over `btoa` and `useCursorPaginationOperationData` writing into the Nuxt payload only on the server. These are the only hand-written uses left, and each one exists because the _answer_ differs by environment, not because the _API_ is missing.
+
+`checkIsServer()` appearing at the top of a browser leaf is the smell this page exists to name. The question it asks there has already been answered — by a ref that reads a default, or by a phase that does not run — and asking it again is how the answers drift apart.
+
+## Key files
+
+| File                                                    | Role                                                    |
+| :------------------------------------------------------ | :------------------------------------------------------ |
+| `app/services/shared/LocalStorageKey.ts`                | Every persisted key, so two features cannot collide     |
+| `app/services/message/draft/draftsSerializer.ts`        | Map ⇄ storage with schema validation on read            |
+| `app/composables/useReadData.ts`                        | The client-only phase for an unauthenticated local read |
+| `packages/configuration/eslint/restrictedSyntaxes.js`   | The `window.localStorage` and module-scope bans         |
+| `packages/shared/src/util/environment/checkIsServer.ts` | The fork primitive                                      |

@@ -13,7 +13,7 @@ one set of names across every promoted ledger.
 | [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims. |
 | [messaging](messaging.md) | Esbabbler — its components, store, composables, services and models.                                                                                       |
 | [resource](resource.md)   | The resource explorer, the sheet editor and the other editors.                                                                                             |
-| [products](products.md)   | The app's smaller products — posts, the clicker, achievements, docs, the user pages and the standalone editors.                                            |
+| [products](products.md)   | The app's smaller products — posts, the clicker, achievements, the user pages and the standalone editors.                                                  |
 | [dungeons](dungeons.md)   | The game.                                                                                                                                                  |
 | [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                      |
 | [shared](shared.md)       | `apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.                                                       |

@@ -120,7 +120,7 @@ export const createAgentConsoleServer = async ({
   // A message that is not a command is answered with why, under no command id — the page cannot have sent it
   const receive = async (webSocket: WebSocket, data: RawData) => {
     const command = getResult(
-      // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization names
+      // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair openspec/specs/architecture/serialization/README.md names
       () => commandSchema.parse(JSON.parse(readMessageText(data))),
     )
       .orTee((error) => {
@@ -283,7 +283,7 @@ export const createAgentConsoleServer = async ({
           webSocket,
           request,
           hostNonce,
-          // oxlint-disable-next-line no-restricted-properties -- the handshake schema validates the payload, the pair /docs/architecture/serialization names
+          // oxlint-disable-next-line no-restricted-properties -- the handshake schema validates the payload, the pair openspec/specs/architecture/serialization/README.md names
           handshakeMessageSchema.parse(JSON.parse(readMessageText(data))),
         );
       }).match(noop, (error) => {
