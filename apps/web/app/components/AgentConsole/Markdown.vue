@@ -5,7 +5,6 @@ import { createRepositoryPathLinkifier } from "@/services/agentConsole/linkifyRe
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { sanitizeHtml } from "@esposter/shared";
 import { CommandType } from "agent-console-server/contracts";
 import { marked } from "marked";
@@ -22,10 +21,10 @@ const { files } = storeToRefs(agentConsoleFileStore);
 const repositoryPathLinkifier = computed(() => createRepositoryPathLinkifier(files.value));
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { openPage } = agentConsolePaneStore;
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
+// The session the message is shown in, so a file opened from the side chat reads through the side chat's session
+const { sessionId } = useAgentConsoleSession();
 const openRepositoryFile = (path: string) =>
-  sendCommand({ path, sessionId: currentSessionId.value, type: CommandType.ReadFile });
+  sendCommand({ path, sessionId: sessionId.value, type: CommandType.ReadFile });
 // A link to a page of this app opens in the side pane, unless a modifier asks for a tab of its own or it only moves to
 // An anchor on this page. Its target is not read, since the sanitizer gives every link one. A template cannot see a
 // Language global, so the link is read here

@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import AgentConsoleMarkdown from "@/components/AgentConsole/Markdown.vue";
+import { AGENT_CONSOLE_SESSION_KEY } from "@/services/agentConsole/constants";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
@@ -61,5 +62,26 @@ describe(AgentConsoleMarkdown, () => {
     expect(sendCommand).toHaveBeenCalledTimes(2);
     expect(sendCommand).toHaveBeenNthCalledWith(1, { path, sessionId: "session", type: CommandType.ReadFile });
     expect(sendCommand).toHaveBeenNthCalledWith(2, { path, sessionId: "session", type: CommandType.ReadFile });
+  });
+
+  test("opens a repository file through the session it is shown in, which in the side chat is not the console's", async () => {
+    expect.hasAssertions();
+
+    const path = "src/index.ts";
+    useAgentConsoleFileStore().storeFiles([path]);
+    useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();
+    const sideChatSessionId = crypto.randomUUID();
+    const sendCommand = vi.spyOn(useAgentConsoleConnectionStore(), "sendCommand");
+    const component = await mountSuspended(AgentConsoleMarkdown, {
+      global: { provide: { [AGENT_CONSOLE_SESSION_KEY]: { sessionId: ref(sideChatSessionId) } } },
+      props: { source: path },
+    });
+    await component.get('a[href="#agent-console-file"]').trigger("click");
+
+    expect(sendCommand).toHaveBeenCalledExactlyOnceWith({
+      path,
+      sessionId: sideChatSessionId,
+      type: CommandType.ReadFile,
+    });
   });
 });
