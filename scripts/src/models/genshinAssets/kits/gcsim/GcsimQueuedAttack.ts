@@ -14,5 +14,7 @@ export interface GcsimQueuedAttack {
   hitbox?: GcsimHitbox;
   // The values of the constant loops' variables this call is in, one iteration's, where a call is in a loop
   iterations?: Record<string, number>;
+  // A call in a `Tasks.Add` closure, which a task runs on its schedule, as a DoT's ticks are
+  isTaskCall?: true;
   line: number;
 }

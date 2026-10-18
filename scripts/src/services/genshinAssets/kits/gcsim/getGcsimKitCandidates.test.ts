@@ -208,6 +208,224 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([[2], [40], [1]]);
   });
 
+  test("reads a burst's loop calls of its one hitmark constant's declaration as its hits, where the constant names only its first", () => {
+    expect.hasAssertions();
+
+    const declaration = {
+      attackTag: "attacks.AttackTagElementalBurst",
+      fieldLineMap: {},
+      file: "burst.go",
+      siteLine: 6,
+      variableName: "ai",
+    };
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        { ...declaration, line: 6, talentVariable: "burstInitial" },
+        { ...declaration, fieldLineMap: { Mult: 8 }, line: 8, talentVariable: "burstDot" },
+        { ...declaration, fieldLineMap: { Mult: 11 }, line: 11, talentVariable: "burstFinal" },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }],
+        ["burstHitmark", { elementLines: {}, file: "burst.go", line: 2, value: 56 }],
+      ]),
+      filePaths: [],
+      folder: "keqing",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 56,
+          delayLine: 7,
+          file: "burst.go",
+          line: 7,
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+        {
+          attackName: "ai",
+          delay: 82,
+          delayLine: 9,
+          file: "burst.go",
+          line: 9,
+          iterations: { i: 0 },
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+        {
+          attackName: "ai",
+          delay: 93,
+          delayLine: 9,
+          file: "burst.go",
+          line: 9,
+          iterations: { i: 1 },
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+        {
+          attackName: "ai",
+          delay: 197,
+          delayLine: 12,
+          file: "burst.go",
+          line: 12,
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zz_keqing.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Keqing",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      [
+        "burst.hits.length",
+        "burst.hits.0.hitmarkFrames",
+        "burst.hits.1.hitmarkFrames",
+        "burst.hits.2.hitmarkFrames",
+        "burst.hits.3.hitmarkFrames",
+      ].map((path) => candidateMap.get(path)?.map(({ value }) => value)),
+    ).toStrictEqual([[4], [56], [82], [93], [197]]);
+  });
+
+  test("keeps a burst's one hitmark as its one hit where the loop calls of its declaration are ticks a task runs", () => {
+    expect.hasAssertions();
+
+    const declaration = {
+      attackTag: "attacks.AttackTagElementalBurst",
+      fieldLineMap: {},
+      file: "burst.go",
+      siteLine: 6,
+      variableName: "ai",
+    };
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        { ...declaration, line: 6, talentVariable: "burstInitial" },
+        { ...declaration, fieldLineMap: { Mult: 8 }, line: 8, talentVariable: "burstDot" },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }],
+        ["burstHitmark", { elementLines: {}, file: "burst.go", line: 2, value: 56 }],
+      ]),
+      filePaths: [],
+      folder: "kazuha",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 56,
+          delayLine: 7,
+          file: "burst.go",
+          line: 7,
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+        {
+          attackName: "ai",
+          delay: 140,
+          delayLine: 9,
+          file: "burst.go",
+          line: 9,
+          isTaskCall: true,
+          iterations: { i: 0 },
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+        {
+          attackName: "ai",
+          delay: 257,
+          delayLine: 9,
+          file: "burst.go",
+          line: 9,
+          isTaskCall: true,
+          iterations: { i: 1 },
+          hitbox: {
+            center: GcsimHitboxCenter.Player,
+            file: "burst.go",
+            line: 2,
+            name: "NewCircleHitOnTarget",
+            radius: 8,
+            shape: GcsimHitboxShape.Circle,
+          },
+        },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zz_kazuha.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Kazuha",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([1]);
+  });
+
   test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
     expect.hasAssertions();
 

@@ -6,7 +6,7 @@ import {
   GCSIM_SKILL_ATTACK_TAGS,
   GCSIM_SKILL_PRESS_HITBOX_NAMES,
 } from "#src/services/genshinAssets/kits/constants";
-import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
+import { addGcsimQueuedHits, isSameDeclaration } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimVariableHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimVariableHitbox";
@@ -72,6 +72,33 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     // And takes its talent variable's leaf only where that variable has a single multiplier, and its hitbox where the
     // Ability has none
     const queuedHits = getGcsimQueuedHits(gcsim, attackTags, hitmarks.file);
+    // A single hitmark that names the first of the slot's hits, where the loop calls of its declaration are the rest,
+    // As keqing's burst is, reads its queue calls as the hits, the loop's calls among them, where each call has its own
+    // Hitbox, else the slot keeps its one hit
+    const constantCall =
+      hitmarkValues.length === 1 ? queuedHits.find(({ delay }) => delay === hitmarkValues[0]) : undefined;
+    const loopCalls =
+      constantCall === undefined
+        ? []
+        : queuedHits.filter(
+            ({ attack, isTaskCall, iterations }) =>
+              iterations !== undefined && isTaskCall !== true && isSameDeclaration(attack, constantCall.attack),
+          );
+    if (
+      constantCall !== undefined &&
+      loopCalls.length > 0 &&
+      [constantCall, ...loopCalls].every(({ hitbox }) => hitbox !== undefined)
+    ) {
+      addGcsimQueuedHits(writer, gcsim, {
+        abilityName: slot,
+        attackTags,
+        framesName: `${slot}Frames`,
+        loopCallsAreHits: true,
+        path: slot,
+        targetingArea: SKILL_TARGETING_AREA,
+      });
+      continue;
+    }
     const readQueuedHit = (hitmark: number) => {
       const queuedAttacks = queuedHits.filter(({ delay }) => delay === hitmark);
       return queuedAttacks.length === 1 ? takeOne(queuedAttacks) : undefined;

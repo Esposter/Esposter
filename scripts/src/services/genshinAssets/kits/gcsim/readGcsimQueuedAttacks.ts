@@ -398,6 +398,7 @@ export const readGcsimQueuedAttacks = (
             file,
             hitbox,
             ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
+            ...(enclosingTasks.length > 0 && { isTaskCall: true }),
             line: token.line,
             ...(holdValue !== undefined && { holdValue }),
           });

@@ -9,5 +9,7 @@ export interface GcsimQueuedHit {
   hitbox?: GcsimHitbox;
   // The loop iteration a constant loop repeats the call in, where it is one: a repeated call is a tick of its attack
   iterations?: Record<string, number>;
+  // A call in a `Tasks.Add` closure, which a task runs on its schedule, as a DoT's ticks are
+  isTaskCall?: true;
   line: number;
 }

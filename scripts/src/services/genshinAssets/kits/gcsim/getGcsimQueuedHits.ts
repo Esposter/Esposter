@@ -47,6 +47,7 @@ export const getGcsimQueuedHits = (
             file,
             hitbox: queuedAttack.hitbox,
             ...(queuedAttack.iterations !== undefined && { iterations: queuedAttack.iterations }),
+            ...(queuedAttack.isTaskCall && { isTaskCall: true }),
             line: delayLine,
           },
         ]
