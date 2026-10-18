@@ -24,6 +24,7 @@ export const createParty = (characterIds: number[]): Party => {
     healthChanges: [],
     lunarChargedCloud: { secondsRemaining: 0, tickSeconds: 0 },
     lunarCrystallize: { contributorIds: new Set(), count: 0, harmonyCooldownSeconds: 0, moondrifts: [] },
+    particleCooldownSecondsMap: new Map(),
     switchedSeconds: -PARTY_SWITCH_COOLDOWN_SECONDS,
     teams: Array.from({ length: DEFAULT_PARTY_TEAM_COUNT }, (_value, index) => ({
       characterIds: index === 0 ? characterIds : [],

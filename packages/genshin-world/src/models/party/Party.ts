@@ -1,4 +1,5 @@
 import type { LunarChargedCloud } from "#src/models/party/LunarChargedCloud";
+import type { ParticleSource } from "#src/models/party/ParticleSource";
 import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { PartyLunarCrystallize } from "#src/models/party/PartyLunarCrystallize";
 import type { PartyMember } from "#src/models/party/PartyMember";
@@ -19,6 +20,8 @@ export interface Party {
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;
   lunarCrystallize: PartyLunarCrystallize;
+  // The seconds left before each source may drop its particle again, none once it is spent
+  particleCooldownSecondsMap: Map<ParticleSource, number>;
   switchedSeconds: number;
   teams: PartyTeam[];
   verdantDew: VerdantDew;

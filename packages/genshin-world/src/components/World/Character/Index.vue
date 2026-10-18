@@ -27,6 +27,7 @@ import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { stepPartyElementalStates } from "#src/services/party/stepPartyElementalStates";
 import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { useLoop, useTres } from "@tresjs/core";
@@ -147,6 +148,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     FIXED_STEP_SECONDS,
   );
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);
+  stepPartyElementalStates(party, FIXED_STEP_SECONDS);
   trailPosition.set(position.x, position.z);
   trailVelocity
     .set(position.x - characterController.previousPosition.x, position.z - characterController.previousPosition.z)

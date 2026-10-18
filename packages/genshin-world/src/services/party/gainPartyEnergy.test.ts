@@ -39,7 +39,7 @@ describe(gainPartyEnergy, () => {
 
     gainPartyEnergy(
       party,
-      { count: PARTICLE_COUNT, energyDropKind: EnergyDropKind.Particle, healthPercent: 50 },
+      { count: PARTICLE_COUNT, energyDropKind: EnergyDropKind.Particle },
       Element.Pyro,
       characterIdCombatantMap,
     );
@@ -60,7 +60,7 @@ describe(gainPartyEnergy, () => {
 
     gainPartyEnergy(
       party,
-      { count: 100, energyDropKind: EnergyDropKind.Particle, healthPercent: 50 },
+      { count: 100, energyDropKind: EnergyDropKind.Particle },
       Element.Pyro,
       characterIdCombatantMap,
     );
@@ -77,7 +77,7 @@ describe(gainPartyEnergy, () => {
 
     gainPartyEnergy(
       party,
-      { count: PARTICLE_COUNT, energyDropKind: EnergyDropKind.Particle, healthPercent: 50 },
+      { count: PARTICLE_COUNT, energyDropKind: EnergyDropKind.Particle },
       Element.Pyro,
       characterIdCombatantMap,
     );
