@@ -467,7 +467,7 @@ const homeRealmVisit = shallowRef<HomeRealmVisit>();
 // The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
 // Reach, which everything in the world stands on. It is built again only as a region's ground arrives
 const worldHeight = computed(() =>
-  createWorldHeight(windriseData.baseGround, [...(windrise.value?.regionGroundMap.values() ?? [])]),
+  createWorldHeight(windriseData.baseGrounds, [...(windrise.value?.regionGroundMap.values() ?? [])]),
 );
 const getGroundHeight = (x: number, z: number): number =>
   homeRealmVisit.value ? HOME_REALM_GROUND_HEIGHT : worldHeight.value(x, z);
