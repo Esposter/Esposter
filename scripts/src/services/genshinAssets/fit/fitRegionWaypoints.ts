@@ -45,8 +45,7 @@ export const fitRegionWaypoints = async ({ isDryRun }: { isDryRun: boolean }): P
         ];
         if (JSON.stringify(landmarks) !== JSON.stringify(data.landmarks) && !isDryRun)
           await writeWorldData(file, { ...data, landmarks });
-        const unnamed = waypoints.filter(({ areaId }) => areaId === "").length;
-        return `${region}: ${waypoints.length} waypoints placed, ${unnamed} in no catalogue area`;
+        return `${region}: ${waypoints.length} waypoints placed`;
       }),
   );
   return isDryRun ? [...reports, "nothing written"].join("\n") : reports.join("\n");

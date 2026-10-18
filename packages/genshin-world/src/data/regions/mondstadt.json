@@ -36,7 +36,8 @@
       "id": "windrise-statue-of-the-seven",
       "kind": "StatueOfTheSeven",
       "position": { "x": 44.38, "z": -0.51 },
-      "rotation": -1.5708
+      "rotation": -1.5708,
+      "arrival": { "heightOffset": 0.79, "position": { "x": 44.38, "z": -0.51 }, "rotation": -1.5708 }
     },
     {
       "areaId": "starfell-valley",
@@ -128,6 +129,393 @@
       "rotation": -1.6392,
       "areaId": "starfell-valley",
       "heightOffset": 61.77
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": 6.54, "position": { "x": 102.88, "z": -399.62 }, "rotation": 2.6529 },
+      "heightOffset": 6.54,
+      "id": "mondstadt-waypoint-5",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 102.88, "z": -399.62 },
+      "rotation": 2.6529
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 8.87, "position": { "x": 792.85, "z": 375.31 }, "rotation": 1.6717 },
+      "heightOffset": 8.87,
+      "id": "mondstadt-waypoint-6",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 792.85, "z": 375.31 },
+      "rotation": 1.6717
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 0.17, "position": { "x": 301.17, "z": -146.22 }, "rotation": 0.0511 },
+      "heightOffset": 0.17,
+      "id": "mondstadt-waypoint-8",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 301.17, "z": -146.22 },
+      "rotation": 0.0511
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 11.03, "position": { "x": 391.51, "z": -399.17 }, "rotation": 2.2591 },
+      "heightOffset": 11.03,
+      "id": "mondstadt-waypoint-10",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 391.51, "z": -399.17 },
+      "rotation": 2.2591
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": -1.17, "position": { "x": 406.9, "z": 238.74 }, "rotation": 0 },
+      "heightOffset": -1.17,
+      "id": "mondstadt-waypoint-11",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 406.9, "z": 238.74 },
+      "rotation": 0
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 16.32, "position": { "x": 89.24, "z": 269.71 }, "rotation": 0 },
+      "heightOffset": 16.32,
+      "id": "mondstadt-waypoint-12",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 89.24, "z": 269.71 },
+      "rotation": 0
+    },
+    {
+      "areaId": "galesong-hill",
+      "arrival": { "heightOffset": 0.63, "position": { "x": -454.47, "z": 731.94 }, "rotation": 2.1817 },
+      "heightOffset": 0.63,
+      "id": "mondstadt-waypoint-13",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -454.47, "z": 731.94 },
+      "rotation": 2.1817
+    },
+    {
+      "areaId": "galesong-hill",
+      "arrival": { "heightOffset": 17.24, "position": { "x": -424.74, "z": 165.53 }, "rotation": 2.1817 },
+      "heightOffset": 17.24,
+      "id": "mondstadt-waypoint-14",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -424.74, "z": 165.53 },
+      "rotation": 2.1817
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": 7.82, "position": { "x": -93.88, "z": -352.27 }, "rotation": 1.5708 },
+      "heightOffset": 7.82,
+      "id": "mondstadt-waypoint-15",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -93.88, "z": -352.27 },
+      "rotation": 1.5708
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": 72.52, "position": { "x": 763, "z": -1386.21 }, "rotation": 0 },
+      "heightOffset": 72.52,
+      "id": "mondstadt-waypoint-33",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 763, "z": -1386.21 },
+      "rotation": 0
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -10.39, "position": { "x": 491.47, "z": -1303.92 }, "rotation": 0 },
+      "heightOffset": -10.39,
+      "id": "mondstadt-waypoint-34",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 491.47, "z": -1303.92 },
+      "rotation": 0
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -19.47, "position": { "x": 892.31, "z": -1183.36 }, "rotation": 0 },
+      "heightOffset": -19.47,
+      "id": "mondstadt-waypoint-35",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 892.31, "z": -1183.36 },
+      "rotation": 0
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -17.49, "position": { "x": 1025.51, "z": -1532.77 }, "rotation": 0 },
+      "heightOffset": -17.49,
+      "id": "mondstadt-waypoint-36",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1025.51, "z": -1532.77 },
+      "rotation": 0
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -19.67, "position": { "x": 691.84, "z": -1605.4 }, "rotation": 0 },
+      "heightOffset": -19.67,
+      "id": "mondstadt-waypoint-37",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 691.84, "z": -1605.4 },
+      "rotation": 0
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": 9.09, "position": { "x": 408.25, "z": -880.92 }, "rotation": 0.3988 },
+      "heightOffset": 9.09,
+      "id": "mondstadt-waypoint-57",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 408.25, "z": -880.92 },
+      "rotation": 0.3988
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": 2.82, "position": { "x": 291.98, "z": -745.53 }, "rotation": -0.3469 },
+      "heightOffset": 2.82,
+      "id": "mondstadt-waypoint-58",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 291.98, "z": -745.53 },
+      "rotation": -0.3469
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 0.64, "position": { "x": 832.33, "z": 6.62 }, "rotation": -3.1299 },
+      "heightOffset": 0.64,
+      "id": "mondstadt-waypoint-59",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 832.33, "z": 6.62 },
+      "rotation": -3.1299
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": -13.06, "position": { "x": -27.44, "z": -1066.06 }, "rotation": 0.3687 },
+      "heightOffset": -13.06,
+      "id": "mondstadt-waypoint-61",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -27.44, "z": -1066.06 },
+      "rotation": 0.3687
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": 15.93, "position": { "x": 691.45, "z": -827.01 }, "rotation": 2.424 },
+      "heightOffset": 15.93,
+      "id": "mondstadt-waypoint-69",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 691.45, "z": -827.01 },
+      "rotation": 2.424
+    },
+    {
+      "areaId": "starfell-valley",
+      "arrival": { "heightOffset": 50.7, "position": { "x": 373.19, "z": -517.41 }, "rotation": -2.5741 },
+      "heightOffset": 50.7,
+      "id": "mondstadt-waypoint-122",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 373.19, "z": -517.41 },
+      "rotation": -2.5741
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 0.22, "position": { "x": -963.67, "z": -561.64 }, "rotation": 0 },
+      "heightOffset": 0.22,
+      "id": "mondstadt-waypoint-205",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -963.67, "z": -561.64 },
+      "rotation": 0
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 5.6, "position": { "x": -621.64, "z": -422.61 }, "rotation": 0.0921 },
+      "heightOffset": 5.6,
+      "id": "mondstadt-waypoint-206",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -621.64, "z": -422.61 },
+      "rotation": 0.0921
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": -8.27, "position": { "x": -1029.92, "z": -260.19 }, "rotation": 0.4774 },
+      "heightOffset": -8.27,
+      "id": "mondstadt-waypoint-208",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1029.92, "z": -260.19 },
+      "rotation": 0.4774
+    },
+    {
+      "areaId": "windwail-highland",
+      "arrival": { "heightOffset": -2.04, "position": { "x": -291.44, "z": -136.37 }, "rotation": -0.1397 },
+      "heightOffset": -2.04,
+      "id": "mondstadt-waypoint-209",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -291.44, "z": -136.37 },
+      "rotation": -0.1397
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": -6.34, "position": { "x": -728.03, "z": -856.31 }, "rotation": 2.4001 },
+      "heightOffset": -6.34,
+      "id": "mondstadt-waypoint-210",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -728.03, "z": -856.31 },
+      "rotation": 2.4001
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 1.42, "position": { "x": -430.73, "z": -693.14 }, "rotation": 2.4287 },
+      "heightOffset": 1.42,
+      "id": "mondstadt-waypoint-211",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -430.73, "z": -693.14 },
+      "rotation": 2.4287
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 3.4, "position": { "x": -555.36, "z": -257.08 }, "rotation": 2.2571 },
+      "heightOffset": 3.4,
+      "id": "mondstadt-waypoint-212",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -555.36, "z": -257.08 },
+      "rotation": 2.2571
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 11.79, "position": { "x": -860.99, "z": -253.77 }, "rotation": -0.3078 },
+      "heightOffset": 11.79,
+      "id": "mondstadt-waypoint-213",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -860.99, "z": -253.77 },
+      "rotation": -0.3078
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 61.38, "position": { "x": -1029.16, "z": -780.7 }, "rotation": -2.6765 },
+      "heightOffset": 61.38,
+      "id": "mondstadt-waypoint-214",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1029.16, "z": -780.7 },
+      "rotation": -2.6765
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 2.44, "position": { "x": -654.13, "z": -710.58 }, "rotation": 1.1239 },
+      "heightOffset": 2.44,
+      "id": "mondstadt-waypoint-222",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -654.13, "z": -710.58 },
+      "rotation": 1.1239
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": -25.86, "position": { "x": -1063.64, "z": 67.5 }, "rotation": -0.0541 },
+      "heightOffset": -25.86,
+      "id": "mondstadt-waypoint-225",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -1063.64, "z": 67.5 },
+      "rotation": -0.0541
+    },
+    {
+      "areaId": "dragonspine",
+      "arrival": { "heightOffset": 10.27, "position": { "x": -852.87, "z": -471.02 }, "rotation": 3.1357 },
+      "heightOffset": 10.27,
+      "id": "mondstadt-waypoint-228",
+      "kind": "TeleportWaypoint",
+      "position": { "x": -852.87, "z": -471.02 },
+      "rotation": 3.1357
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": 210.4, "position": { "x": 1987.01, "z": -738.95 }, "rotation": 2.4068 },
+      "heightOffset": 210.4,
+      "id": "mondstadt-waypoint-1865",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1987.01, "z": -738.95 },
+      "rotation": 2.4068
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": 53.14, "position": { "x": 984.45, "z": -954.03 }, "rotation": -0.6402 },
+      "heightOffset": 53.14,
+      "id": "mondstadt-waypoint-1884",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 984.45, "z": -954.03 },
+      "rotation": -0.6402
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -4.85, "position": { "x": 1202.06, "z": -1110.78 }, "rotation": -1.5795 },
+      "heightOffset": -4.85,
+      "id": "mondstadt-waypoint-1922",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1202.06, "z": -1110.78 },
+      "rotation": -1.5795
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": 2.25, "position": { "x": 1608.99, "z": -1064.59 }, "rotation": -2.5662 },
+      "heightOffset": 2.25,
+      "id": "mondstadt-waypoint-1923",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1608.99, "z": -1064.59 },
+      "rotation": -2.5662
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": -11.16, "position": { "x": 1651.33, "z": -971.42 }, "rotation": -3.066 },
+      "heightOffset": -11.16,
+      "id": "mondstadt-waypoint-1924",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1651.33, "z": -971.42 },
+      "rotation": -3.066
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": 9.31, "position": { "x": 1701.25, "z": -1021.68 }, "rotation": -1.8087 },
+      "heightOffset": 9.31,
+      "id": "mondstadt-waypoint-1925",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1701.25, "z": -1021.68 },
+      "rotation": -1.8087
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": -119.95, "position": { "x": 2220.48, "z": -1039.2 }, "rotation": -1.8662 },
+      "heightOffset": -119.95,
+      "id": "mondstadt-waypoint-1959",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 2220.48, "z": -1039.2 },
+      "rotation": -1.8662
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": 1.58, "position": { "x": 998.11, "z": -518.01 }, "rotation": 2.8121 },
+      "heightOffset": 1.58,
+      "id": "mondstadt-waypoint-2009",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 998.11, "z": -518.01 },
+      "rotation": 2.8121
+    },
+    {
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": -1.69, "position": { "x": 1099.93, "z": -813.83 }, "rotation": -1.2339 },
+      "heightOffset": -1.69,
+      "id": "mondstadt-waypoint-2033",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1099.93, "z": -813.83 },
+      "rotation": -1.2339
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": -69.55, "position": { "x": 1732.1, "z": -949.41 }, "rotation": -0.6832 },
+      "heightOffset": -69.55,
+      "id": "mondstadt-waypoint-2034",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1732.1, "z": -949.41 },
+      "rotation": -0.6832
+    },
+    {
+      "areaId": "windrest-peak",
+      "arrival": { "heightOffset": 16.32, "position": { "x": 1710.29, "z": -757.33 }, "rotation": 2.4772 },
+      "heightOffset": 16.32,
+      "id": "mondstadt-waypoint-2051",
+      "kind": "TeleportWaypoint",
+      "position": { "x": 1710.29, "z": -757.33 },
+      "rotation": 2.4772
     }
   ],
   "residents": [
