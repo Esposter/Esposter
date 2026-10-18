@@ -4,6 +4,16 @@
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 export const props = {
+  characterTitle: "Character Selection",
+  characters: [
+    { bonusLabel: "No Character Bonus", id: 1, label: "Amber", statusLabel: "" },
+    { bonusLabel: "No Character Bonus", id: 2, label: "Lisa", statusLabel: "" },
+    { bonusLabel: "No Character Bonus", id: 3, label: "Kaeya", statusLabel: "Exploring" },
+    { bonusLabel: "No Character Bonus", id: 4, label: "Xingqiu", statusLabel: "" },
+    { bonusLabel: "No Character Bonus", id: 5, label: "Noelle", statusLabel: "" },
+    { bonusLabel: "No Character Bonus", id: 6, label: "Sucrose", statusLabel: "" },
+    { bonusLabel: "No Character Bonus", id: 7, label: "Barbara", statusLabel: "" },
+  ],
   closeLabel: "Close",
   detail: {
     actionKind: ExpeditionActionKind.Send,
@@ -17,6 +27,7 @@ export const props = {
       { countLabel: "1~1", label: "White Radish 1~1", rarity: 1 },
       { countLabel: "1~1", label: "Carrot 1~1", rarity: 1 },
     ],
+    statusLabel: "",
   },
   hours: 4,
   limitLabel: "Expedition Limit: 1/2",
@@ -25,13 +36,14 @@ export const props = {
     { hasAlert: false, name: "Mondstadt" },
     { hasAlert: true, name: "Liyue" },
   ],
+  picking: false,
   pins: [
-    { id: 101, label: "Expedition place", x: 815, y: 195 },
-    { id: 102, label: "Expedition place", x: 565, y: 410 },
-    { id: 103, label: "Expedition place", x: 1053, y: 338 },
-    { id: 104, label: "Expedition place", x: 1118, y: 455 },
-    { id: 105, label: "Wolvendom", x: 745, y: 530 },
-    { id: 106, label: "Expedition place", x: 1175, y: 660 },
+    { awayLabel: "", id: 101, label: "Expedition place", x: 815, y: 195 },
+    { awayLabel: "", id: 102, label: "Expedition place", x: 565, y: 410 },
+    { awayLabel: "", id: 103, label: "Expedition place", x: 1053, y: 338 },
+    { awayLabel: "", id: 104, label: "Expedition place", x: 1118, y: 455 },
+    { awayLabel: "", id: 105, label: "Wolvendom", x: 745, y: 530 },
+    { awayLabel: "", id: 106, label: "Expedition place", x: 1175, y: 660 },
   ],
   place: 105,
   rewardsLabel: "Rewards",

@@ -1,7 +1,7 @@
 ## 1. Expedition screen and places
 
-- [ ] 1.1 Build the expedition screen from the public clip with its fixture, listing open places, free characters and expeditions away, and emitting send, claim and recall. Verify: a test named after the scenario 'A send the rules refuse is refused' written first and seen failing.
-- [ ] 1.2 Open each place only once its named statue is resonated, and join each nation's places as its statues are placed. Verify: tests named after the scenarios 'A place opens when its statue is resonated' and 'A place whose statue is not resonated stays closed' written first and seen failing.
+- [x] 1.1 Build the expedition screen from the public clip with its fixture, listing open places, free characters and expeditions away, and emitting send, claim and recall. Verify: a test named after the scenario 'A send the rules refuse is refused' written first and seen failing.
+- [x] 1.2 Open each place only once its named statue is resonated, and join each nation's places as its statues are placed. Verify: tests named after the scenarios 'A place opens when its statue is resonated' and 'A place whose statue is not resonated stays closed' written first and seen failing.
 
 ## 2. Katheryne and the party
 

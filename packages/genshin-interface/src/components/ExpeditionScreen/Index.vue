@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ExpeditionCharacter } from "#src/models/ExpeditionCharacter";
 import type { ExpeditionNation } from "#src/models/ExpeditionNation";
 import type { ExpeditionPin } from "#src/models/ExpeditionPin";
 import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
@@ -8,6 +9,10 @@ import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 interface Props {
+  // The picker's heading in the reader's language, the game's "Character Selection"
+  characterTitle: string;
+  // The characters the picker lists in the game's order, a character away from home shown with its status and not sent
+  characters: ExpeditionCharacter[];
   // The way out of the screen in the reader's language, read to assistive technology in place of its cross
   closeLabel: string;
   // The picked place: its name, its description, the rewards it may pay, the durations it offers and the action its
@@ -28,20 +33,29 @@ interface Props {
 const nation = defineModel<string>("nation", { required: true });
 const place = defineModel<number | undefined>("place");
 const hours = defineModel<number>("hours", { default: 0 });
-const { closeLabel, detail, limitLabel, nations, pins, rewardsLabel, title } = defineProps<Props>();
+const picking = defineModel<boolean>("picking", { default: false });
+const { characterTitle, characters, closeLabel, detail, limitLabel, nations, pins, rewardsLabel, title } =
+  defineProps<Props>();
 const emit = defineEmits<{
   claim: [placeId: number];
   close: [];
   recall: [placeId: number];
-  send: [placeId: number, hours: number];
+  send: [placeId: number, characterId: number, hours: number];
 }>();
 
-// The picked place's button acts on that place: a send takes the duration picked, a claim or a recall takes the place
+// The picked place's button acts on that place: a send opens the picker of the character it takes, a claim or a recall
+// Acts on the place at once
 const act = () => {
   if (!detail) return;
-  if (detail.actionKind === ExpeditionActionKind.Send) emit("send", detail.id, hours.value);
+  if (detail.actionKind === ExpeditionActionKind.Send) picking.value = true;
   else if (detail.actionKind === ExpeditionActionKind.Claim) emit("claim", detail.id);
   else emit("recall", detail.id);
+};
+// The character picked sends the place's expedition for the duration picked, and closes the picker
+const pick = (characterId: number) => {
+  if (!detail) return;
+  picking.value = false;
+  emit("send", detail.id, characterId, hours.value);
 };
 </script>
 
@@ -66,10 +80,11 @@ const act = () => {
       </li>
     </ul>
     <ul class="pins">
-      <li v-for="{ id, label, x, y } of pins" :key="id" :style="{ '--x': x, '--y': y }">
+      <li v-for="{ awayLabel, id, label, x, y } of pins" :key="id" :style="{ '--x': x, '--y': y }">
         <button class="pin" :aria-label="label" :aria-pressed="id === place" type="button" @click="place = id">
           <span aria-hidden="true">+</span>
         </button>
+        <span v-if="awayLabel" class="away">{{ awayLabel }}</span>
       </li>
     </ul>
     <section v-if="detail" class="detail">
@@ -82,9 +97,22 @@ const act = () => {
           <ItemTile class="item" :aria-label="label" :count="countLabel" :rarity role="img" />
         </li>
       </ul>
-      <ul class="durations">
+      <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
+      <ul v-else class="durations">
         <li v-for="duration of detail.durations" :key="duration">
           <button :aria-pressed="duration === hours" type="button" @click="hours = duration">{{ duration }}h</button>
+        </li>
+      </ul>
+    </section>
+    <section v-if="picking && detail" class="characters">
+      <p class="characters-title">{{ characterTitle }}</p>
+      <ul>
+        <li v-for="{ bonusLabel, id, label, statusLabel } of characters" :key="id">
+          <button class="character" :disabled="statusLabel !== ''" type="button" @click="pick(id)">
+            <span class="character-name">{{ label }}</span>
+            <span class="character-bonus">{{ bonusLabel }}</span>
+            <span v-if="statusLabel" class="character-status">{{ statusLabel }}</span>
+          </button>
         </li>
       </ul>
     </section>
@@ -215,6 +243,20 @@ const act = () => {
   box-shadow: 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
 }
 
+/* The time left on the expedition away from a place, a dark tag above its pin */
+.away {
+  position: absolute;
+  top: calc(var(--unit) * -110);
+  left: 0;
+  padding: calc(var(--unit) * 4) calc(var(--unit) * 14);
+  border-radius: calc(var(--unit) * 14);
+  background: rgb(24 26 34 / 0.9);
+  color: #fff;
+  font-size: calc(var(--unit) * 20);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
 .pin::after {
   position: absolute;
   top: 100%;
@@ -312,6 +354,79 @@ const act = () => {
   display: block;
   width: calc(var(--unit) * 76);
   height: calc(var(--unit) * 76);
+}
+
+.status {
+  position: absolute;
+  top: calc(var(--unit) * 527);
+  right: 0;
+  left: 0;
+  height: calc(var(--unit) * 69);
+  margin: 0;
+  background: #d9a441;
+  color: #fff;
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 69);
+  text-align: center;
+}
+
+/* The picker over the map's left, a row a character with its bonus words and its status when it is away */
+.characters {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--unit) * 960);
+  padding: calc(var(--unit) * 40) calc(var(--unit) * 50);
+  box-sizing: border-box;
+  background: rgb(31 37 54 / 0.96);
+  color: #f3eee3;
+}
+
+.characters-title {
+  margin: 0 0 calc(var(--unit) * 30);
+  color: #d8c8a0;
+  font-size: calc(var(--unit) * 30);
+}
+
+.characters ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.character {
+  display: flex;
+  width: 100%;
+  height: calc(var(--unit) * 120);
+  margin-bottom: calc(var(--unit) * 10);
+  padding: 0 calc(var(--unit) * 30);
+  flex-direction: column;
+  justify-content: center;
+  border: none;
+  border-radius: calc(var(--unit) * 6);
+  background: #3b4560;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.character:disabled {
+  opacity: 0.5;
+}
+
+.character-name {
+  font-size: calc(var(--unit) * 34);
+}
+
+.character-bonus {
+  color: #b9c2d6;
+  font-size: calc(var(--unit) * 22);
+}
+
+.character-status {
+  color: #e3c77a;
+  font-size: calc(var(--unit) * 22);
 }
 
 .durations {
