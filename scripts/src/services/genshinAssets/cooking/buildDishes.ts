@@ -1,8 +1,8 @@
 import type { BuffRow } from "#src/models/genshinAssets/cooking/BuffRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { CookingRecipe } from "genshin-world";
 
 import { BUFF_TABLE_NAME } from "#src/services/genshinAssets/cooking/constants";
-import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { toDishUse } from "#src/services/genshinAssets/cooking/toDishUse";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -11,10 +11,10 @@ import { GameDataset } from "genshin-world";
 
 // The use each dish gives when it is eaten, by the dish's item id, for every item a cook recipe yields that heals. A dish
 // That heals nothing is left out, and a dish's item the material table lacks is an error
-export const buildDishes = (): Record<string, unknown> => {
+export const buildDishes = (recipes: CookingRecipe[]): Record<string, unknown> => {
   const materialMap = new Map(readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME).map((row) => [row.id, row]));
   const buffRows = readExcelTable<BuffRow>(BUFF_TABLE_NAME);
-  const dishItemIds = new Set(readCookingRecipes().flatMap(({ resultItemIds }) => Object.values(resultItemIds)));
+  const dishItemIds = new Set(recipes.flatMap(({ resultItemIds }) => Object.values(resultItemIds)));
   const dishes = [...dishItemIds].flatMap((itemId) => {
     const materialRow = materialMap.get(itemId);
     if (!materialRow)

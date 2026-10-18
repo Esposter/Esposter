@@ -6,6 +6,7 @@ import { buildCookingRecipes } from "#src/services/genshinAssets/cooking/buildCo
 import { buildCookingTalents } from "#src/services/genshinAssets/cooking/buildCookingTalents";
 import { buildDishes } from "#src/services/genshinAssets/cooking/buildDishes";
 import { buildProcessingRecipes } from "#src/services/genshinAssets/cooking/buildProcessingRecipes";
+import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -17,10 +18,11 @@ export const cookingCommand: SubCommandsDef[string] = defineCommand({
     name: "cooking",
   },
   run: async ({ args }) => {
+    const recipes = readCookingRecipes();
     const objects = {
-      ...buildCookingRecipes(),
+      ...buildCookingRecipes(recipes),
       ...buildCookingTalents(),
-      ...buildDishes(),
+      ...buildDishes(recipes),
       ...buildProcessingRecipes(),
     };
     console.log(
