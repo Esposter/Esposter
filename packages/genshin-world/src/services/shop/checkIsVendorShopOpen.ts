@@ -1,5 +1,4 @@
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
-import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
 
 import { checkIsSouvenirShopOpen } from "#src/services/shop/checkIsSouvenirShopOpen";
 import { MONDSTADT_SOUVENIR_SHOP_ID } from "#src/services/shop/constants";
@@ -8,5 +7,7 @@ import { MONDSTADT_SOUVENIR_SHOP_ID } from "#src/services/shop/constants";
 // Offering, is at its last level, and every other shop from the start, the offerings of the other regions not being built
 export const checkIsVendorShopOpen = (
   shopId: number,
-  frostbearingTreeProgress: OfferingProgress<OfferingLevel>,
-): boolean => shopId !== MONDSTADT_SOUVENIR_SHOP_ID || checkIsSouvenirShopOpen(frostbearingTreeProgress);
+  frostbearingTreeLevel: number,
+  frostbearingTreeLevels: readonly OfferingLevel[],
+): boolean =>
+  shopId !== MONDSTADT_SOUVENIR_SHOP_ID || checkIsSouvenirShopOpen(frostbearingTreeLevel, frostbearingTreeLevels);

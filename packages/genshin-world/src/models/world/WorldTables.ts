@@ -9,6 +9,7 @@ import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
+import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
@@ -34,6 +35,8 @@ export interface WorldTables {
   craftingRecipes: CraftingRecipe[];
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
+  // The Frostbearing Tree's offering levels the game's table holds, the last of which opens Mondstadt's Souvenir Shop
+  frostbearingTreeLevels: OfferingLevel[];
   // The Frostbearing Trees' places in Mondstadt, each stood in the world
   frostbearingTreePlaces: FrostbearingTreePlace[];
   // The HUD's pieces' rects as the game's tree places them
