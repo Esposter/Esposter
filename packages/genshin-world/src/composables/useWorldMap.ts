@@ -20,11 +20,11 @@ import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
-import { addWeeklyReputationClaim } from "#src/services/reputation/addWeeklyReputationClaim";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
 import { getFinishedReputationRewards } from "#src/services/reputation/getFinishedReputationRewards";
 import { getReputationRequestBindings } from "#src/services/reputation/getReputationRequestBindings";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
+import { recordWeeklyReputationClaim } from "#src/services/reputation/recordWeeklyReputationClaim";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHiddenTransPointIds";
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
@@ -66,7 +66,8 @@ export const useWorldMap = ({
   recordedDoingIds: Readonly<Ref<ReadonlySet<string>>>;
   regionDataBaseUrl: string;
   reputation: Ref<ReputationProgress>;
-  // The request claims the week holds, each request's payment counted against the week's limit of requests
+  // The request claims the week holds, the newest the limit's size: the keeper offers no request past the limit, and a
+  // Request taken before it still pays when it finishes
   savedRequestClaimedAts: readonly Temporal.Instant[];
   setReputation: (nextReputation: ReputationProgress) => void;
   setWallet: (nextWallet: Wallet) => void;
@@ -190,13 +191,11 @@ export const useWorldMap = ({
     [mondstadtReputation, placedExplorationAreas, isJumpLandmarksLoaded, recordedDoingIds],
     settleExplorationThresholds,
   );
-  // A request's reward pays only while the week's request claims have room, and is withheld until the reset once they are
-  // Used up. The claim is counted only when its reward pays
+  // A request's reward pays once it finishes, past the week's limit too: the limit is held at the keeper's offer, so a
+  // Request taken before the limit is not withheld, and its claim is recorded with the week's
   const requestClaimedAts = shallowRef<readonly Temporal.Instant[]>(savedRequestClaimedAts);
   const payRequestReward = (reward: ReputationReward) => {
-    const nextClaimedAts = addWeeklyReputationClaim(requestClaimedAts.value, Temporal.Now.instant());
-    if (!nextClaimedAts) return;
-    requestClaimedAts.value = nextClaimedAts;
+    requestClaimedAts.value = recordWeeklyReputationClaim(requestClaimedAts.value, Temporal.Now.instant());
     payReputationReward(reward);
   };
   // A finished quest pays the Reputation request or Reputation quest it is, once: the event is emitted on the move

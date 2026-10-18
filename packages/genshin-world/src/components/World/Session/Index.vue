@@ -857,7 +857,7 @@ const {
 const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
-// Started, and not kept with the save: a provisional rule until the weekly refresh is read
+// Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
 const reputationOffer = shallowRef<ReputationRequest>();
 const reputationOfferTitle = computed(() => {
   const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
@@ -871,6 +871,8 @@ const drawReputationOffer = () => {
     reputation.value.level,
     Math.random(),
     offerableQuestIds,
+    requestClaimedAts.value,
+    getWorldNow(),
   );
 };
 // Accepting the offer starts its quest, which the world then runs as any other
