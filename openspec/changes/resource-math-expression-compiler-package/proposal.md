@@ -1,4 +1,4 @@
-# Math Expression
+# Math Expression Compiler
 
 ## Why
 
@@ -10,16 +10,16 @@ Three defects ride along. A cycle of math columns shows numbers, because the cyc
 
 ## What Changes
 
-- `@esposter/shared` gains a math expression parser and a compiler over plain numbers that reads every formula mathjs reads to a number the way mathjs reads it — its precedence, implicit multiplication, percentages, floored modulo, rounding and numeric functions — proved against a committed record of mathjs's own answers, so no formula a math column holds changes its value.
+- A new package, `math-expression-compiler`, holds a math expression parser and a compiler over plain numbers that reads every formula mathjs reads to a number the way mathjs reads it — its precedence, implicit multiplication, percentages, floored modulo, rounding, numeric functions and the functions that read flat lists of numbers — proved against a committed record of mathjs's own answers, so no formula a math column holds changes its value. It is a package rather than part of `@esposter/shared`, which every app and package imports, because it nearly doubles that bundle for the one consumer that evaluates formulas.
 - Every mathjs defect in that part of the engine is fixed, each with a regression test naming its issue.
 - A comparison or a logical operator yields one or zero, so a bare comparison shows a value instead of an empty cell.
 - A sheet's computed columns are compiled once per pass over its rows rather than resolved per cell, each aggregation is built once over its source, and a cycle is found at compile time, so every column on it shows empty cells.
-- The expression is checked in the column's edit form, which also names a column variable the expression uses but no binding declares. The stored schema no longer parses it, so a stored expression the evaluator cannot read leaves its column empty and never stops the sheet opening.
+- The expression is checked in the column's edit form, which also names a column variable the expression reads before anything binds it. The stored schema no longer parses it, so a stored expression the compiler cannot read leaves its column empty and never stops the sheet opening.
 - mathjs leaves the catalog, the app's manifest, the pre-bundle list and the dependency register.
 
 ## Capabilities
 
-- **shared/math-expression** (new)
+- **math-expression-compiler/language** (new)
 - **resource/sheet/computed-columns** (modified)
 
 ## Waiting on
@@ -28,7 +28,8 @@ None.
 
 ## Impact
 
-- `packages/shared`: the parser, the compiler and their models, and the package's bundle size snapshot.
+- `packages/math-expression-compiler`: the parser, the compiler, the function and constant tables, their models, the parity corpus and the package's bundle size snapshot.
+- `packages/shared`: the code it held for a day moves out, and its bundle size snapshot returns to what it was.
 - The sheet's math transformation schema and its edit form schema.
 - The computed column compute and every pass over a sheet's rows that reads it: the grid's row store, the filters, the statistics, the outliers, the clipboard and the dataset a dashboard reads.
 - The computed columns design, which describes the expression language.

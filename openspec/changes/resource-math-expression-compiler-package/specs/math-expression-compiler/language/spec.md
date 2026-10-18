@@ -52,9 +52,23 @@ A comparison or a logical operator SHALL yield `1` when it holds and `0` when it
 - **WHEN** the evaluator evaluates `1 < 3 < 2`
 - **THEN** the value is `0`
 
+### Requirement: A function takes flat lists where mathjs does
+
+A function SHALL accept a flat list of numbers in square brackets wherever mathjs reads one to a number, and a list inside a list SHALL be refused.
+
+#### Scenario: A function reads two lists
+
+- **WHEN** the evaluator evaluates `dot([1, 2], [3, 4])`
+- **THEN** the value is `11`
+
+#### Scenario: A list inside a list is refused
+
+- **WHEN** a caller parses `det([[1, 2], [3, 4]])`
+- **THEN** the parse fails with an error naming the inner list's position
+
 ### Requirement: A parse error names where it happened
 
-A formula that cannot be parsed SHALL be refused with an error naming the character, the function or the arity at fault.
+A formula that cannot be parsed SHALL be refused with an error naming the character it starts at, and the function or the arity at fault.
 
 #### Scenario: An unclosed parenthesis
 
@@ -64,7 +78,7 @@ A formula that cannot be parsed SHALL be refused with an error naming the charac
 #### Scenario: An unknown function
 
 - **WHEN** a caller parses `foo(1)`
-- **THEN** the parse fails with an error naming `foo`
+- **THEN** the parse fails with an error naming `foo` and its position
 
 #### Scenario: Nesting beyond the limit
 
@@ -80,3 +94,17 @@ A name SHALL resolve only to an assigned name, a variable in the scope or a name
 
 - **WHEN** the evaluator evaluates `constructor`
 - **THEN** the value is not a number
+
+### Requirement: A formula's free names follow its evaluation order
+
+The names a formula reads before anything binds them SHALL be its free names, where a name is bound by a constant, or by an assignment that every path to the read has run.
+
+#### Scenario: A name read before its assignment is free
+
+- **WHEN** a caller lists the free names of `x * (x = 2)`
+- **THEN** the list is `x`
+
+#### Scenario: A name every branch assigns is bound
+
+- **WHEN** a caller lists the free names of `(c ? (y = 1) : (y = 2)) + y`
+- **THEN** the list is `c`
