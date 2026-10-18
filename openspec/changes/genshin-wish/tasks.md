@@ -10,7 +10,7 @@
 
 ## 3. History and roster
 
-- [ ] 3.1 Record every draw's kind, item and time, and list them in the history beyond a year. Verify: tests named after 'A draw appears in the history with its kind, item and time' and 'History keeps draws beyond a year'.
+- [ ] 3.1 Record every draw's kind, item and time, and list them in the history for the year, pruned at write. Verify: appendWishHistory.test.ts, tests named after 'a draw appears in the history with its kind, item and time' and 'history keeps draws within the year and drops the older'. The History panel and the backfill of stored saves are still owed.
 - [x] 3.2 Add a first draw to the roster and count a repeat draw as a copy with its Starglitter returned. Verify: tests named after 'A new character joins the roster' and 'A repeat draw returns Starglitter'.
 
 ## 4. Beginners' wish

@@ -10,7 +10,7 @@ The wish offers the banners the game runs in their windows, keeps every draw in 
 
 - An event banner is offered only within its window, read from the wiki's banner page at the Asia server's offset, and beside the beginners' and standard banners.
 - Two character event banners can run side by side, sharing the character banners' counters.
-- The history lists each draw's kind, item and time, and keeps draws past a year.
+- The history lists each draw's kind, item and time, and keeps the draws of the last year, pruned at write.
 - A character drawn for the first time joins the roster; a repeat draw counts a copy and returns its Starglitter.
 - The beginners' wish draws Noelle as its featured four-star on its eighth wish only.
 - A Fate costs only earned Primogems, and a schedule naming an item the names do not hold fails the build.

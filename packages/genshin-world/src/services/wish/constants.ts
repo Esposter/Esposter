@@ -93,3 +93,6 @@ export const BEGINNERS_WISH_CHARACTER_IDS: readonly number[] = [
   10_000_031, 10_000_027, 10_000_020, 10_000_043, 10_000_023, 10_000_025,
 ];
 export const BEGINNERS_WISH_FEATURED_CHARACTER_ID = 10_000_034;
+// The window the wish history keeps its draws in, a year of hours as the game's Wish History page now shows (it was six
+// Months before), read as the instant's hours
+export const WISH_HISTORY_WINDOW = { hours: 365 * 24 };
