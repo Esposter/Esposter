@@ -79,13 +79,15 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       });
       return readReputationRequestQuest({ giving, groupItemIds, mainQuest, rewards, subQuest });
     }
-    const mainQuest = mainQuestMap.get(Number(questId));
+    // A city's opening quest is one sub quest of its world quest: titled by that world quest, read from its binary
+    const subQuestRow = subQuestMap.get(Number(questId));
+    const mainQuest = mainQuestMap.get(Number(questId)) ?? (subQuestRow && mainQuestMap.get(subQuestRow.mainId));
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
     const questType = mainQuest.type ?? MAIN_QUEST_DEFAULT_TYPE;
     const questKind = DumpedQuestKindMap[questType];
     if (!questKind) throw new InvalidOperationError(Operation.Read, questId, `has the unknown type ${questType}`);
     const questBinary = parseMachineJson<Record<string, unknown>>(
-      readFileSync(join(QUEST_BINARY_DIRECTORY, `${questId}.json`), "utf8"),
+      readFileSync(join(QUEST_BINARY_DIRECTORY, `${mainQuest.id}.json`), "utf8"),
     );
     const {
       notes: stepNotes,

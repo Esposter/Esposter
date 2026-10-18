@@ -60,6 +60,20 @@ describe(readQuestSteps, () => {
     });
   });
 
+  test("reads a step whose id is the quest's own id, as a city's opening sub quest's is", () => {
+    expect.hasAssertions();
+
+    const questBinary = { A: [{ B: 2001, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] }] }] };
+
+    expect(readQuestSteps(questBinary, 2001, checkIsText).steps).toStrictEqual([
+      {
+        id: "2001",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" }],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
   test("keeps every condition of a step that asks something, in the order the game lists them", () => {
     expect.hasAssertions();
 
