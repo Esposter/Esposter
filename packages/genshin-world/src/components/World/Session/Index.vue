@@ -212,6 +212,7 @@ import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
+import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
@@ -381,7 +382,7 @@ const {
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+const getWorldNow = () => getServerNow(serverClockOffsetMs);
 // The world's clock as a ref the computeds read, set from getWorldNow once each game minute so a reset or a regeneration that
 // Passes is seen without a write
 const worldNow = shallowRef(getWorldNow());
