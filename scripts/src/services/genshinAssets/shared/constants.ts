@@ -405,7 +405,7 @@ export const ROOT_PARENT_ID = "0";
 // Collapsed there all the same
 export const ORIGIN_TOLERANCE_METRES = 0.001;
 // How near a placed point's nearest official map point must lie, in game units, for the point to be filed in that map
-// Point's region: about nine in ten placed NPCs and domain entrances lie within about twenty of it
+// Point's region: about nine in ten placed NPCs lie within about twenty of it
 export const REGION_MAX_DISTANCE = 100;
 // The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
 // Each one's map fit is checked

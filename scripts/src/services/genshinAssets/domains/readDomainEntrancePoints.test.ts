@@ -19,4 +19,13 @@ describe(readDomainEntrancePoints, () => {
       `[InvalidOperationError: Invalid operation: Read, name: BinOutput/Scene/Point/scene3_point.json, has no point holding tranPos]`,
     );
   });
+
+  test("a scene whose entrance points hold no area is refused rather than filing every entrance under none", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readScenePointsOfKind).mockResolvedValueOnce([["7", { $type: "Point", tranPos: { x: 1 } }]]);
+    await expect(readDomainEntrancePoints()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: BinOutput/Scene/Point/scene3_point.json, has no point holding areaId]`,
+    );
+  });
 });
