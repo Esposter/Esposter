@@ -49,11 +49,8 @@ const readFunctionName = (tokens: readonly GoToken[], position: number): string 
     : undefined;
 };
 
-// The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Strike type and element by their gcsim names, its durability and poise evaluated through the package's constants, and
-// The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. A field the code
-// Sets after the literal is not read, but a `Mult` it sets after the literal is an attack of its own under that variable
-// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by a constant
+// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by
+// A constant
 const readGoStringConstants = (tokens: readonly GoToken[]): Map<string, string> => {
   const stringMap = new Map<string, string>();
   for (const [position, token] of tokens.entries()) {
