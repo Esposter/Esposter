@@ -64,7 +64,7 @@ Each built task names the test it was written first in, and each test is a scena
       `equipBagArtifact.test.ts`, `unequipArtifactToBag.test.ts`, `takeFodderArtifacts.test.ts`, `getAutoAddFodders.test.ts`,
       `getMaterialExperience.test.ts`.
 - [x] 6.3 The main affix pools and the main stat's value. Each slot's pool is the attributes its main prop depot lists
-      that the wiki's Artifact/Distribution page weighs for it, and the drop reads the pools through `rollPieceArtifact`.
+      that `ArtifactMainAffixWeightMap` weighs for it, and the drop reads the pools through `rollPieceArtifact`.
       The main stat's value is the attribute's curve at the artifact's rarity and level (`getArtifactMainAffixValue`),
       the lookup `getCharacterAttributeLines` now shares. Tests: `getArtifactMainAffixPools.test.ts`,
       `getArtifactMainAffixValue.test.ts`, and `getArtifactDetailStats.test.ts`. The published pools change once
