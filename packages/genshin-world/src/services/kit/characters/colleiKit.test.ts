@@ -141,4 +141,21 @@ describe(createColleiKitBehaviour, () => {
 
     expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
   });
+
+  test("a Constellation 1 Collei gains 20% Energy Recharge while she is off the field, and none on it", () => {
+    expect.hasAssertions();
+    const combatant = createColleiCombatant(1);
+
+    expect([
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }]),
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }]),
+    ]).toStrictEqual([[{ amount: 0.2, attribute: Attribute.EnergyRecharge }], []]);
+  });
+
+  test("a Constellation 0 Collei gains no Energy Recharge off the field", () => {
+    expect.hasAssertions();
+    const combatant = createColleiCombatant(0);
+
+    expect(COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }])).toStrictEqual([]);
+  });
 });
