@@ -6,6 +6,10 @@
 // Prints the id of any English text
 export enum GameTextKey {
   // The screens the world opens are named as the Paimon menu names their entries, or as a screen titles its own page
+  // The Spiral Abyss's fixed words the Abyss's screens show, named as the game's manual text map files them
+  AbyssBenedictionHint = "UI_TOWER_HINT_BATTLEBUFF",
+  AbyssCorridor = "UI_TOWER_CORRIDOR",
+  AbyssMoonSpire = "UI_TOWER_SPIRAL",
   Achievements = "UI_ACHIEVEMENT_TITLE",
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
   // Wishes return, Mora and Primogems
@@ -30,27 +34,43 @@ export enum GameTextKey {
   ArchiveMaterials = "UI_CODEX_MATERIAL",
   ArchiveTravelLog = "UI_CODEX_QUEST",
   ArchiveTutorials = "UI_CODEX_TIPS",
+  // The button that lifts a character past its level cap with Masterless Stella Fortuna
+  AscensionLimit = "UI_TEXT_ACTIVITY_LEVEL_UP",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
   AttributeAnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
+  AttributeAnemoResistance = "FIGHT_PROP_WIND_SUB_HURT",
   AttributeAttack = "FIGHT_PROP_CUR_ATTACK",
+  AttributeBaseAttack = "FIGHT_PROP_BASE_ATTACK",
+  AttributeBaseDefense = "FIGHT_PROP_BASE_DEFENSE",
+  AttributeBaseHealth = "FIGHT_PROP_BASE_HP",
   AttributeCriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
+  AttributeCooldownReduction = "FIGHT_PROP_SKILL_CD_MINUS_RATIO",
   AttributeCriticalRate = "FIGHT_PROP_CRITICAL",
   AttributeCryoDamageBonus = "FIGHT_PROP_ICE_ADD_HURT",
+  AttributeCryoResistance = "FIGHT_PROP_ICE_SUB_HURT",
   AttributeDefense = "FIGHT_PROP_CUR_DEFENSE",
   AttributeDendroDamageBonus = "FIGHT_PROP_GRASS_ADD_HURT",
+  AttributeDendroResistance = "FIGHT_PROP_GRASS_SUB_HURT",
   AttributeElectroDamageBonus = "FIGHT_PROP_ELEC_ADD_HURT",
+  AttributeElectroResistance = "FIGHT_PROP_ELEC_SUB_HURT",
   AttributeElementalMastery = "FIGHT_PROP_ELEMENT_MASTERY",
   AttributeEnergyRecharge = "FIGHT_PROP_CHARGE_EFFICIENCY",
   AttributeGeoDamageBonus = "FIGHT_PROP_ROCK_ADD_HURT",
+  AttributeGeoResistance = "FIGHT_PROP_ROCK_SUB_HURT",
   AttributeGroupAdvanced = "UI_AVATAR_INFO_PROP_ADVANCED",
   AttributeGroupBase = "UI_AVATAR_INFO_PROP_BASICS",
   AttributeGroupElemental = "UI_AVATAR_INFO_PROP_ELEMENT",
   AttributeHealingBonus = "FIGHT_PROP_HEAL_ADD",
   AttributeHydroDamageBonus = "FIGHT_PROP_WATER_ADD_HURT",
+  AttributeHydroResistance = "FIGHT_PROP_WATER_SUB_HURT",
+  AttributeIncomingHealingBonus = "FIGHT_PROP_HEALED_ADD",
   AttributeMaxHealth = "FIGHT_PROP_MAX_HP",
   AttributeMaxStamina = "PROP_MAX_STAMINA",
   AttributePhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
+  AttributePhysicalResistance = "FIGHT_PROP_PHYSICAL_SUB_HURT",
   AttributePyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
+  AttributePyroResistance = "FIGHT_PROP_FIRE_SUB_HURT",
+  AttributeShieldStrength = "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
   BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
@@ -60,6 +80,10 @@ export enum GameTextKey {
   BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The blossom of an outcrop that gives Character EXP materials, by its English name
+  BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
+  // The blossom of an outcrop that gives Mora, by its English name
+  BlossomOfWealth = "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
   BrilliantChrysanthemum = "2302571844",
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
@@ -75,6 +99,7 @@ export enum GameTextKey {
   CharacterArtifacts = "UI_STC_CHARACTERPAGE_RELIC",
   CharacterAttributes = "UI_STC_CHARACTER_PAGE_AVATAR",
   CharacterConstellation = "UI_STC_CHARACTERPAGE_TALENT",
+  CharacterDetails = "UI_CHARACTER_DETAIL",
   CharacterProfile = "FETTER_NAME",
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
@@ -101,7 +126,9 @@ export enum GameTextKey {
   CondessenceCrystal = "3736537308",
   // Party Setup's button to add, rename and disband teams
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
-  // The quit prompt's first button, which goes back to the world
+  // A dialog's action that goes ahead, the generic word the game's own dialogs share beside Cancel
+  Confirm = "UI_BEYOND_CONFIRM",
+  // The quit prompt's Continue Game label, which the two-choice prompt no longer draws
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
@@ -145,10 +172,6 @@ export enum GameTextKey {
   EmbercoreFlower = "3599966252",
   EnhancementOre = "2429162676",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
-  // The quit prompt's button that exits the game to the desktop
-  ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
-  // The quit prompt's button that leaves the world for the login interface
-  ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
   // The picker of the characters a send is made with, headed as the game heads its character list
   ExpeditionCharacterSelection = "UI_AVATAR_SELECT_PS4",
   // The expedition screen's words: the claim of a returned expedition, its recall, its send and its limit
@@ -300,6 +323,7 @@ export enum GameTextKey {
   JueyunChili = "22100332",
   // The touch layout's jump button, which a screen reader says in place of its glyph
   Jump = "UI_BEYOND_UIEDITOR_INSPECTOR_JUMP",
+  JumpOrMoveUpward = "CONTROL_JUMP_OR_SKILL4",
   KalpalataLotus = "1479130340",
   LakelightLily = "47843548",
   Lakkaberry = "3318899836",
@@ -310,6 +334,8 @@ export enum GameTextKey {
   // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort = "2960839764",
+  // The button that raises a character one level with its Character EXP materials
+  LevelUp = "UI_STC_CHARACTER_PAGE_LEVEL_UP",
   Liyue = "Liyue",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept
@@ -351,6 +377,10 @@ export enum GameTextKey {
   MoonfallSilver = "1570138468",
   Mora = "3578052980",
   MourningFlower = "1761418508",
+  MoveBackward = "CONTROL_MOVE_BACKWARD",
+  MoveForward = "CONTROL_MOVE_FORWARD",
+  MoveLeft = "CONTROL_MOVE_LEFT",
+  MoveRight = "CONTROL_MOVE_RIGHT",
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
   NakuWeed = "3623663804",
@@ -368,6 +398,8 @@ export enum GameTextKey {
   Padisarah = "200162340",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
+  // Paimon's Bargains, the shop the Paimon menu's Shop entry opens, which sells the Fates and the month's rotation
+  PaimonsBargains = "SHOP_TYPE_PAIMON",
   // The four teams every player starts with, each named Party 1 to 4 until it is renamed
   PartyDefaultName1 = "UI_TEAM_DEFAULT_NAME1",
   PartyDefaultName2 = "UI_TEAM_DEFAULT_NAME2",
@@ -377,6 +409,12 @@ export enum GameTextKey {
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
   Pinecone = "4200020428",
+  // The game over screen's title, once every member of the deployed team has fallen
+  PlayerDieNone = "PlayerDieNone",
+  // The prompt asking the player for the next member after a fall, in the game's words for a character to select
+  PleaseSelectCharacter = "UI_ACTIVITY_WEEK_ACTIVE_UNSELECTED_TIPS",
+  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
+  PlayerDefaultName = "Player_Default_Name",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
@@ -409,6 +447,8 @@ export enum GameTextKey {
   QuestsInProgress = "UI_TEXT_DOING",
   // Party Setup's button that fills the team's empty slots with the next characters
   QuickSetup = "UI_BUTTON_FAST_TEAM",
+  // The quit prompt's question, which the game asks before the player leaves
+  QuitConfirmQuestion = "UI_LOGOUT_CONFIRM_DESC",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",
@@ -424,6 +464,8 @@ export enum GameTextKey {
   ReputationMondstadtOutcropSearch = "1452899589",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
   ReputationReward = "REPUTATION_CITY_REWARD",
+  // The game over screen's button that revives the team at the nearest teleport waypoint
+  Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
   SakuraBloom = "3896942756",
@@ -436,18 +478,27 @@ export enum GameTextKey {
   // The settings' tabs, the Graphics and Audio tabs' headings and rows, and the words their values take: a quality tier
   // The device was given is filled into the default's words, and a resolution's width, height and mode into its own
   SettingsAccount = "UI_SETTING_PAGE_ACCOUNT_CATEGORY",
+  SettingsAimedHorizontalSensitivity = "UI_SETTING_FOCUS_HOR_SENSITIVITY",
+  SettingsAimedVerticalSensitivity = "UI_SETTING_FOCUS_VER_SENSITIVITY",
   SettingsAnisotropicFiltering = "UI_SETTING_GRAPHICS_ANISOTROPIC_FILTERING",
   SettingsAntiAliasing = "UI_SETTING_GRAPHICS_ANTIALIASING",
   SettingsAudio = "UI_SETTING_PAGE_SOUND_CATEGORY",
   SettingsAudioBalance = "UI_SETTING_AUDIO_BALANCE",
   SettingsAudioTitle = "UI_SETTING_AUDIO_TITLE",
   SettingsBloom = "UI_SETTING_GRAPHICS_BLOOM",
+  SettingsBoatCameraCorrection = "UI_SKIFFCAMERA_AUTOFIX_SETTING_DESC",
   SettingsBrightness = "UI_SETTING_GRAPHICS_HDR",
+  SettingsCameraTitle = "UI_SETTING_CAMERA_SETTING_TITLE",
+  SettingsCameraYAxisReset = "UI_AUTOHORIZONTAL_SETTING_DESC",
+  SettingsCombatCamera = "UI_COMBATCAMERA_SETTING_DESC",
   SettingsControls = "UI_SETTING_PAGE_CONTROL_CATEGORY",
+  SettingsControlsTitle = "UI_SETTING_INPUT_TYPE_TITLE",
+  SettingsControlType = "UI_SETTING_INPUT_TYPE",
   SettingsCoOpTeammateEffects = "UI_SETTING_GRAPHICS_REMOTE_AVATAR_EFFECT",
   SettingsCrowdDensity = "UI_SETTING_GRAPHICS_CROWD_DENSITY",
   SettingsCustom = "UI_SETTING_GRAPHICS_ADVANCED",
   SettingsDefault = "UI_SETTING_GRAPHICS_DEFAULT",
+  SettingsDefaultCameraDistance = "UI_SETTING_CAMERA_DEFAULT_DISTANCE",
   SettingsDialogueVolume = "UI_SETTING_AUDIO_VOICE",
   SettingsDisplayMode = "UI_SETTING_DISPLAY_MODE",
   SettingsDynamicCharacterResolution = "UI_SETTING_DYNAMIC_CHARACTER_RESOLUTION",
@@ -458,13 +509,18 @@ export enum GameTextKey {
   SettingsFsr = "UI_SETTING_FSR",
   SettingsFull = "UI_SETTING_AUDIO_DYNAMIC_RANGE_FULL",
   SettingsFullscreen = "UI_SETTING_FULL_SCREEN_DISPLAY",
+  SettingsGameLanguage = "UI_SETTING_GAME_LANGUAGE",
   SettingsGlobalIllumination = "UI_SETTING_GRAPHICS_GLOBAL_ILLUMINATION",
   SettingsGraphics = "UI_SETTING_PAGE_GRAPHIC_CATEGORY",
   SettingsGraphicsQuality = "UI_SETTING_GRAPHICS_QUALITY",
   SettingsGraphicsTitle = "UI_SETTING_GRAPHICS_TITLE",
   SettingsHigh = "UI_SETTING_HIGH",
+  SettingsHorizontalSensitivity = "UI_SETTING_DEFAULT_HOR_SENSITIVITY",
+  SettingsInputTypeKeyboard = "UI_SETTING_INPUT_TYPE_KEYBOARD",
+  SettingsKeyBindingActions = "UI_SETTING_PAGE_KEYBINDING_CHARACTER_ACTION_TITLE",
   SettingsKeyBindings = "UI_SETTING_PAGE_KEYBINDING_CATEGORY",
   SettingsLanguage = "UI_SETTING_PAGE_LANGUAGE_CATEGORY",
+  SettingsLanguageTitle = "UI_SETTING_LANGUAGE_TITLE",
   SettingsLow = "UI_SETTING_LOW",
   SettingsMedium = "UI_SETTING_MEDIUM",
   SettingsMessages = "UI_SETTING_PAGE_MESSAGE_CATEGORY",
@@ -473,6 +529,7 @@ export enum GameTextKey {
   SettingsMuteWhenMinimized = "UI_SETTING_AUDIO_MINIMIZEMUTE",
   SettingsOff = "UI_SETTING_CLOSE",
   SettingsOn = "UI_SETTING_OPEN",
+  SettingsOnlyWhenNotInCombat = "UI_SKIFFCAMERA_AUTOFIX_SETTING_NOTINCOMBAT",
   SettingsOther = "UI_SETTING_PAGE_OTHER_CATEGORY",
   SettingsOtherSettings = "UI_SETTING_AUDIO_OTHER",
   SettingsOutputSettings = "UI_SETTING_AUDIO_OUTPUT",
@@ -486,7 +543,9 @@ export enum GameTextKey {
   SettingsShadowQuality = "UI_SETTING_GRAPHICS_SHADOW_QUALITY",
   SettingsStereoSound = "UI_SETTING_AUDIO_OUTPUT_STEREO",
   SettingsSubsurfaceScattering = "UI_SETTING_GRAPHICS_SCREEN_SUBSURFACE_SCATTERING",
+  SettingsVerticalSensitivity = "UI_SETTING_DEFAULT_VER_SENSITIVITY",
   SettingsVisualEffects = "UI_SETTING_GRAPHICS_LATER_EFFECT",
+  SettingsVoiceOverLanguage = "UI_SETTING_AUDIO_LANGUAGE",
   SettingsVolume = "UI_SETTING_AUDIO_CONFIG",
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
@@ -531,9 +590,12 @@ export enum GameTextKey {
   StrangeTooth = "2715317724",
   Sumeru = "Sumeru",
   SumeruRose = "691451364",
+  // The Paimon menu's link to the game's survey, drawn disabled
+  Survey = "UI_STC_GAMEENTRYPAGE_SURVEY",
   SweetFlower = "1330975132",
   // The touch layout's aim button a bow's wielder has, as the controls list name it, said in place of its glyph
   SwitchAimingMode = "CONTROL_TOGGLE_ATTACK_MODE",
+  SwitchToWalkRun = "CONTROL_SLOW_MOVE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
   // The Talents tab's button that raises a combat talent by one level, the phase its next level needs, and the reasons it
@@ -561,7 +623,13 @@ export enum GameTextKey {
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Trishiraite = "239145148",
   Uid = "UI_PLAYER_PROFILE_UID",
+  // The offer that spends a Condensed Resin on a challenge's claim, by its English name
+  UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that spends Original Resin on a challenge's claim, by its English name
+  UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
+  // The Paimon menu's link to the game's version highlights, drawn disabled
+  VersionHighlights = "UI_STC_GAMEENTRYPAGE_HANDBOOK",
   Viparyas = "3570846172",
   // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
   WeaponAscend = "UI_EQUIP_PAGE_STARUP_BUTTON",
@@ -598,6 +666,8 @@ export enum GameTextKey {
   WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
   WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
   ZaytunPeach = "492153948",
+  // The map's zoom slider, named by the game's own word for Zoom
+  Zoom = "UI_BUTTON_ZOOM",
 }
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);
