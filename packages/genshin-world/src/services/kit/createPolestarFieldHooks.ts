@@ -3,7 +3,7 @@ import type { KitField } from "#src/models/kit/KitField";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { getStellarConductElementalDmgBonus } from "#src/services/combat/damage/getStellarConductElementalDmgBonus";
+import { getStellarConductElementalDamageBonus } from "#src/services/combat/damage/getStellarConductElementalDamageBonus";
 import {
   POLESTAR_BUFF_SOURCE,
   POLESTAR_FIELD_TICK_SECONDS,
@@ -47,7 +47,7 @@ export const createPolestarFieldHooks = (): Pick<KitField, "onEvent" | "onStep" 
           id: RADIANCE_STELLAR_CONDUCT_STATUS_ID,
           secondsRemaining: POLESTAR_FIELD_TICK_SECONDS,
         });
-      const amount = getStellarConductElementalDmgBonus(buffedHits);
+      const amount = getStellarConductElementalDamageBonus(buffedHits);
       for (const attribute of [Attribute.CryoDamageBonus, Attribute.ElectroDamageBonus])
         buffKitMember(context.kitEffectState, context.activeCombatant.characterId, {
           amount,

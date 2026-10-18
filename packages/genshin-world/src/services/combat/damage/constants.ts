@@ -41,9 +41,9 @@ export const LUNAR_CONTRIBUTION_WEIGHTS: readonly number[] = [0.6, 0.3, 0.05, 0.
 export const STELLAR_CONDUCT_MAX_RECORDED_HITS = 12;
 export const STELLAR_CONDUCT_RECORDED_COEFFICIENT_BONUS = 0.4;
 export const STELLAR_CONDUCT_COEFFICIENT_PER_HIT = 0.05;
-export const STELLAR_CONDUCT_ELEMENTAL_DMG_BONUS = 0.2;
-export const STELLAR_CONDUCT_RECORDED_ELEMENTAL_DMG_BONUS = 0.28;
-export const STELLAR_CONDUCT_ELEMENTAL_DMG_BONUS_PER_HIT = 0.01;
+export const STELLAR_CONDUCT_ELEMENTAL_DAMAGE_BONUS = 0.2;
+export const STELLAR_CONDUCT_RECORDED_ELEMENTAL_DAMAGE_BONUS = 0.28;
+export const STELLAR_CONDUCT_ELEMENTAL_DAMAGE_BONUS_PER_HIT = 0.01;
 // The Stellar Vortex's explosion, from the wiki's Damage page for the indirect Stellar Glimmer damage, has a Base Reaction
 // Coefficient of 2 at Lv. 1, its first two stacks of Stellar Swirl, and 3 at Lv. 2, from the third stack
 export const STELLAR_VORTEX_LEVEL_TWO_STACKS = 3;
