@@ -42,7 +42,7 @@ export const buildKitPublication = (
       failures.push(`${name}: has no published kit`);
       continue;
     }
-    const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord);
+    const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap);
     if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
   }
   if (failures.length > 0)

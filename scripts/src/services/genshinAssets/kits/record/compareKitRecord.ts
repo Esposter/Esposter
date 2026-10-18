@@ -114,7 +114,11 @@ export const compareKitRecord = (
   return getResult(() =>
     buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables, !isTagPredated),
   ).match(
-    (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
+    (built): KitComparison => ({
+      built,
+      failures: getMismatchedKitPaths(built.record, publishedRecord, tables.talentMultiplierMap),
+      overlay,
+    }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );
 };

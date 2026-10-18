@@ -77,7 +77,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
         ).match(
           ({ record }) => ({
             committedOverlay: overlay,
-            gapPaths: getMismatchedKitPaths(record, publishedRecord),
+            gapPaths: getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap),
             overlayFailures: [],
           }),
           (error) => ({
