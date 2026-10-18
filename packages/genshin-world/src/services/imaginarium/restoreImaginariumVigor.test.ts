@@ -8,8 +8,15 @@ describe(restoreImaginariumVigor, () => {
   test("a Mystery Cache's option restores a character's Vigor", () => {
     expect.hasAssertions();
 
-    const member: ImaginariumMember = { isSpecialGuest: false, vigor: 0 };
+    const member: ImaginariumMember = {
+      burstEnergyCost: 40,
+      energy: 0,
+      healthShare: 1,
+      isSpecialGuest: false,
+      maxHealth: 1000,
+      vigor: 0,
+    };
 
-    expect(restoreImaginariumVigor(member)).toStrictEqual({ isSpecialGuest: false, vigor: IMAGINARIUM_VIGOR });
+    expect(restoreImaginariumVigor(member)).toStrictEqual({ ...member, vigor: IMAGINARIUM_VIGOR });
   });
 });

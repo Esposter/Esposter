@@ -6,9 +6,9 @@ import { describe, expect, test } from "vitest";
 
 describe(winImaginariumBattle, () => {
   const alternateCast: ImaginariumMember[] = [
-    { isSpecialGuest: false, vigor: 2 },
-    { isSpecialGuest: true, vigor: 2 },
-    { isSpecialGuest: false, vigor: 2 },
+    { burstEnergyCost: 40, energy: 0, healthShare: 1, isSpecialGuest: false, maxHealth: 1000, vigor: 2 },
+    { burstEnergyCost: 40, energy: 0, healthShare: 1, isSpecialGuest: true, maxHealth: 1000, vigor: 2 },
+    { burstEnergyCost: 40, energy: 0, healthShare: 1, isSpecialGuest: false, maxHealth: 1000, vigor: 2 },
   ];
 
   test("a Battle Event offers a choice of two Alternate Cast members", () => {

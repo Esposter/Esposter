@@ -5,7 +5,14 @@ import { IMAGINARIUM_PERFORMER_COUNT, IMAGINARIUM_VIGOR } from "#src/services/im
 import { describe, expect, test } from "vitest";
 
 describe(checkIsImaginariumStageReady, () => {
-  const member: ImaginariumMember = { isSpecialGuest: false, vigor: IMAGINARIUM_VIGOR };
+  const member: ImaginariumMember = {
+    burstEnergyCost: 40,
+    energy: 0,
+    healthShare: 1,
+    isSpecialGuest: false,
+    maxHealth: 1000,
+    vigor: IMAGINARIUM_VIGOR,
+  };
 
   test("should be ready with four characters each holding Vigor", () => {
     expect.hasAssertions();

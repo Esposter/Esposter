@@ -7,7 +7,14 @@ import { fightImaginariumStage } from "#src/services/imaginarium/fightImaginariu
 import { describe, expect, test } from "vitest";
 
 describe(fightImaginariumStage, () => {
-  const member: ImaginariumMember = { isSpecialGuest: false, vigor: IMAGINARIUM_VIGOR };
+  const member: ImaginariumMember = {
+    burstEnergyCost: 40,
+    energy: 0,
+    healthShare: 1,
+    isSpecialGuest: false,
+    maxHealth: 1000,
+    vigor: IMAGINARIUM_VIGOR,
+  };
   const cast = Array.from({ length: IMAGINARIUM_PERFORMER_COUNT }, () => member);
   const progress = { defeatTarget: 3, defeats: 3, elapsedMilliseconds: 0, timeLimitMilliseconds: 1000 };
 
@@ -18,7 +25,14 @@ describe(fightImaginariumStage, () => {
     expect(fightImaginariumStage(cast, progress, false)).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Cleared,
-      principalCast: cast.map(() => ({ isSpecialGuest: false, vigor: IMAGINARIUM_VIGOR - 1 })),
+      principalCast: cast.map(() => ({
+        burstEnergyCost: 40,
+        energy: 40,
+        healthShare: 1,
+        isSpecialGuest: false,
+        maxHealth: 1000,
+        vigor: IMAGINARIUM_VIGOR - 1,
+      })),
     });
   });
 
@@ -39,7 +53,14 @@ describe(fightImaginariumStage, () => {
     expect(fightImaginariumStage(cast, { ...progress, defeats: 1 }, true)).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Wiped,
-      principalCast: cast.map(() => ({ isSpecialGuest: false, vigor: IMAGINARIUM_VIGOR - 1 })),
+      principalCast: cast.map(() => ({
+        burstEnergyCost: 40,
+        energy: 40,
+        healthShare: 1,
+        isSpecialGuest: false,
+        maxHealth: 1000,
+        vigor: IMAGINARIUM_VIGOR - 1,
+      })),
     });
   });
 });
