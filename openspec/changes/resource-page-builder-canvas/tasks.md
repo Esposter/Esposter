@@ -1,8 +1,8 @@
 ## 1. Frame
 
 - [x] 1.1 Give the app a browser suite on the shared browser configuration, in a configuration apart from the default run, with its own script. Verify: the suite's script runs a first browser test, and `pnpm test <a unit test path> --run` from `apps/web` starts no browser.
-- [ ] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: tests named after the scenarios 'Switching to tablet draws the page at tablet width' and 'A narrow pane scales the desktop canvas down'.
-- [ ] 1.3 Keep the page's styles out of the editor and the editor's styles out of the page, and stop custom HTML scripts from running in the canvas, in the browser suite. Record there whether the frame takes the sandbox. Verify: tests named after the scenarios 'A page's body style does not restyle the editor' and 'A script inside a custom HTML block does not run in the canvas'.
+- [x] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: tests named after the scenarios 'Switching to tablet draws the page at tablet width' and 'A narrow pane scales the desktop canvas down'.
+- [x] 1.3 Keep the page's styles out of the editor and the editor's styles out of the page, and stop custom HTML scripts from running in the canvas, in the browser suite. Record there whether the frame takes the sandbox. Verify: tests named after the scenarios 'A page's body style does not restyle the editor' and 'A script inside a custom HTML block does not run in the canvas'.
 
 ## 2. Selection and overlays
 
