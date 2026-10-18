@@ -143,6 +143,8 @@ export enum GameTextKey {
   CookingTitle = "UI_COOKING_QTE_TITLE",
   // The Petrified Tree a cleared domain raises, the tree the claim prompt names
   PetrifiedTree = "UI_ABYSSUS_CHEST_OPEN_TITLE",
+  // The realm's word for placing a furnishing, which the game shows as Place
+  HomeDeploy = "UI_HOMEWORLD_DEPLOY",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
@@ -532,6 +534,10 @@ export enum GameTextKey {
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
   ReputationReward = "REPUTATION_CITY_REWARD",
   // The game over screen's button that revives the team at the nearest teleport waypoint
+  // The notice a furnishing shows when the realm's area already holds its count of furnishings
+  RetHomeFurnitureArrangeLimit = "RetHomeFurnitureArrangeLimit",
+  // The notice a furnishing shows when the realm's area would pass its load
+  RetHomeFurnitureExceedLimit = "RetHomeFurnitureExceedLimit",
   Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
@@ -541,6 +547,8 @@ export enum GameTextKey {
   SaurianClawSucculent = "19028052",
   SeaGanoderma = "4094014932",
   Seagrass = "2121074820",
+  // The Serenitea Pot, as the map names its tab and a prompt names the gadget
+  SereniteaPot = "UI_MAP_TABBUTTON_TAB_HOMEWORLD",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   // The settings' tabs, the Graphics and Audio tabs' headings and rows, and the words their values take: a quality tier
   // The device was given is filled into the default's words, and a resolution's width, height and mode into its own
@@ -691,6 +699,8 @@ export enum GameTextKey {
   Trishiraite = "239145148",
   // The blossom a defeated normal boss leaves for its Original Resin claim, by its English name
   TrounceBlossom = "UI_WORLD_WEEKLYBOSS_TIPS_TITLE",
+  // Tubby, the realm's steward, named by the name text of his NPC row
+  Tubby = "3432976792",
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
