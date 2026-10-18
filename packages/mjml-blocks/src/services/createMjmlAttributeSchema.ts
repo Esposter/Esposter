@@ -4,6 +4,7 @@ import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkIsMjmlAddressAttribute } from "#src/services/checkIsMjmlAddressAttribute";
 import { MJML_COLOR_MATCHERS } from "#src/services/constants";
+import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
 
@@ -37,8 +38,8 @@ const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
   }
 };
 
-// The schema of one attribute's value, accepting what MJML's validator for its type accepts, and for an address only a scheme that is allowed
-export const createMjmlAttributeSchema = (type: MjmlAttributeType, name: string): z.ZodType<string> => {
-  const schema = createTypeSchema(type);
+// The schema of one attribute's value as its grammar writes its type, accepting what MJML's validator for that type accepts, and for an address only a scheme that is allowed
+export const createMjmlAttributeSchema = (grammar: string, name: string): z.ZodType<string> => {
+  const schema = createTypeSchema(parseMjmlAttributeType(grammar));
   return checkIsMjmlAddressAttribute(name) ? schema.and(allowedAddressSchema) : schema;
 };

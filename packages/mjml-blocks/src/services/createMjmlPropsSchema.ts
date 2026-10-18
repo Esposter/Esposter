@@ -3,7 +3,6 @@ import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition"
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
-import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { exhaustiveGuard, sanitizeHtml } from "@esposter/shared";
 import { z } from "zod";
 
@@ -32,7 +31,7 @@ export const createMjmlPropsSchema = <TContent>(
   }
 
   for (const [name, grammar] of Object.entries(specification.allowedAttributes))
-    shape[name] = createMjmlAttributeSchema(parseMjmlAttributeType(grammar), name).optional();
+    shape[name] = createMjmlAttributeSchema(grammar, name).optional();
 
   if (!specification.hasAlternativeText) return z.strictObject(shape);
 

@@ -1,5 +1,4 @@
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
-import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { getResultAsync } from "@esposter/shared";
 import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
@@ -38,7 +37,7 @@ describe(createMjmlAttributeSchema, () => {
   ])("$grammar on $tag $attribute agrees with MJML's strict validation for $value", async (sample) => {
     expect.hasAssertions();
 
-    const schema = createMjmlAttributeSchema(parseMjmlAttributeType(sample.grammar), sample.attribute);
+    const schema = createMjmlAttributeSchema(sample.grammar, sample.attribute);
     expect(schema.safeParse(sample.value).success).toBe(
       !(await checkIsRefusedByMjml(sample.tag, sample.attribute, sample.value)),
     );
@@ -51,7 +50,7 @@ describe(createMjmlAttributeSchema, () => {
   ])("$attribute refuses the scheme of $value", ({ attribute, value }) => {
     expect.hasAssertions();
 
-    expect(createMjmlAttributeSchema(parseMjmlAttributeType("string"), attribute).safeParse(value).success).toBe(false);
+    expect(createMjmlAttributeSchema("string", attribute).safeParse(value).success).toBe(false);
   });
 
   test.each([
@@ -62,14 +61,12 @@ describe(createMjmlAttributeSchema, () => {
   ])("$grammar $attribute refuses $value, a value that only contains a valid one", ({ attribute, grammar, value }) => {
     expect.hasAssertions();
 
-    expect(createMjmlAttributeSchema(parseMjmlAttributeType(grammar), attribute).safeParse(value).success).toBe(false);
+    expect(createMjmlAttributeSchema(grammar, attribute).safeParse(value).success).toBe(false);
   });
 
   test("an address accepts an allowed scheme", () => {
     expect.hasAssertions();
 
-    expect(
-      createMjmlAttributeSchema(parseMjmlAttributeType("string"), "href").safeParse("https://example.com").success,
-    ).toBe(true);
+    expect(createMjmlAttributeSchema("string", "href").safeParse("https://example.com").success).toBe(true);
   });
 });
