@@ -20,7 +20,7 @@ const frameBody = computed(() => frameDocument.value?.body);
 const frameWidth = computed(() =>
   device === PageBuilderDevice.Desktop ? Math.max(paneWidth.value, DESKTOP_MIN_WIDTH) : DEVICE_WIDTH_MAP[device],
 );
-const frameScale = computed(() => Math.min(1, paneWidth.value / frameWidth.value));
+const frameScale = computed(() => (paneWidth.value > 0 ? Math.min(1, paneWidth.value / frameWidth.value) : 1));
 
 // The page's css is replaced at most once per animation frame, so a burst of style patches writes the sheet once
 let styleFrame = 0;

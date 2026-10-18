@@ -51,6 +51,22 @@ describe("PageBuilderCanvasFrame", () => {
     expect(frame.contentWindow?.innerWidth).toBe(992);
   });
 
+  test("a pane with no width leaves the frame unscaled", async () => {
+    expect.hasAssertions();
+
+    const screen = await render(PageBuilderCanvasFrame, {
+      attrs: { style: { height: "400px", width: "0px" } },
+      props: { css: "", device: PageBuilderDevice.Desktop, title: "Page" },
+    });
+    const frame = screen.container.querySelector("iframe");
+    assert.exists(frame);
+
+    expect({ height: frame.style.height, transform: frame.style.transform }).toStrictEqual({
+      height: "400px",
+      transform: "scale(1)",
+    });
+  });
+
   test("a page's body style does not restyle the editor", async () => {
     expect.hasAssertions();
 
