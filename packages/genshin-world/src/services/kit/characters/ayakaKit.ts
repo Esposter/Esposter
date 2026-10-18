@@ -1,4 +1,8 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -28,21 +32,54 @@ const CONSTELLATION_1_CUT_SECONDS = 0.3;
 const CONSTELLATION_1_ICD_SECONDS = 0.1;
 const CONSTELLATION_1_ICD_STATUS_ID = "ayaka-snowswept-sakura-icd";
 // Amatsumi Kunitsumi Sanctification, from Ascension 1: after Kamisato Art: Hyouka her Normal and Charged attacks deal 30%
-// Increased DMG for 6 seconds, as genshin.gg gives the talent text. It is read as an additive DMG Bonus on each strike
-// https://genshin.gg/characters/ayaka/
+// Increased DMG for 6 seconds, as gcsim v2.47.2 (MIT) ayaka/asc.go gives it: an additive DMG Bonus on each Normal and Extra
+// (Charged) attack, for 360 frames
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/asc.go
 const ASCENSION_1 = 1;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS = 0.3;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_SECONDS = 6;
 const AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID = "ayaka-amatsumi-kunitsumi-sanctification";
+// Constellation 4, from gcsim v2.47.2 (MIT) ayaka/cons.go: an opponent Kamisato Art: Soumetsu's storms damage has its DEF
+// Reduced by 30% for 6 seconds, which the defence multiplier reads as an enemy status
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_DEFENCE_REDUCTION = 0.3;
+const CONSTELLATION_4_SECONDS = 6;
+const CONSTELLATION_4_STATUS_ID = "ayaka-frostflake-defence-reduction";
+// Constellation 6, Dance of Suigetsu, from gcsim v2.47.2 (MIT) ayaka/cons.go: the first Charged Attack hit on an enemy clears
+// Usurahi Butou's 298% DMG bonus 0.5 seconds on, and it returns 10 seconds after that clear
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go
+const CONSTELLATION_6 = 6;
+const USURAHI_BUTOU_DAMAGE_BONUS = 2.98;
+const USURAHI_BUTOU_CLEAR_SECONDS = 0.5;
+const USURAHI_BUTOU_RECHARGE_SECONDS = 10;
+const USURAHI_BUTOU_STATUS_ID = "ayaka-usurahi-butou-recharge";
 
 export const AYAKA_CHARACTER_ID = 10_000_002;
 
 // Kamisato Ayaka's behaviour: Kamisato Art: Soumetsu casts its storm, a summon standing where she cast it and priced by
 // Her, and from two constellations Blizzard Blade Seki no To's two smaller storms beside it, and Kamisato Art: Senho
 // Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and charged
-// Hits. Senho's Cryo application and movement, A4's effect, and Constellations 4 and 6 are not built: 4's DEF
-// Reduction needs a status that changes an enemy's defence, and 6's charged attack bonus needs a DMG bonus that only her
-// Charged attack reads
+// Hits. Senho's Cryo application and movement, and A4's effect, are not built. Constellations 4 and 6 are built: 4's DEF
+// Reduction is an enemy status on the storm hits, and 6's charged attack bonus runs on its own clear and recharge
+// Constellation 4's DEF cut, on each storm hit that strikes an enemy
+const getFrostflakeDefenceReduction = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
+  constellationCount >= CONSTELLATION_4
+    ? {
+        damageTakenBonus: 0,
+        defenseReduction: CONSTELLATION_4_DEFENCE_REDUCTION,
+        id: CONSTELLATION_4_STATUS_ID,
+        secondsRemaining: CONSTELLATION_4_SECONDS,
+      }
+    : undefined;
+const withFrostflakeDefenceReduction = (hits: KitHit[]): KitHit[] =>
+  hits.map((hit) => ({ ...hit, enemyStatus: getFrostflakeDefenceReduction }));
+// Usurahi Butou stays on until a Charged Attack's first hit starts its status, and through the 0.5 seconds the status's
+// Clear takes, so the status's time left above the recharge is when the bonus still applies
+const checkIsUsurahiButouOn = (effects: readonly KitEffect[], characterId: number): boolean => {
+  const status = findKitStatus(effects, characterId, USURAHI_BUTOU_STATUS_ID);
+  return !status || status.secondsRemaining > USURAHI_BUTOU_RECHARGE_SECONDS;
+};
 // Constellation 1's roll on a hit of her normal or charged attack, read as the hit strikes an enemy
 const snowsweptSakuraHit: KitHitBehaviour = {
   onStrike: ({ kitEffectState, party, random }, { combatant }) => {
@@ -61,9 +98,23 @@ const snowsweptSakuraHit: KitHitBehaviour = {
   },
 };
 
+// Constellation 6's start on a Charged Attack hit, as the hit strikes an enemy; Constellation 1's roll rides with it
+const chargedAttackHit: KitHitBehaviour = {
+  onStrike: (context, strike) => {
+    snowsweptSakuraHit.onStrike?.(context, strike);
+    const { combatant } = strike;
+    if (combatant.constellationCount < CONSTELLATION_6) return;
+    if (findKitStatus(context.kitEffectState.effects, combatant.characterId, USURAHI_BUTOU_STATUS_ID)) return;
+    addKitStatus(context.kitEffectState, combatant.characterId, {
+      id: USURAHI_BUTOU_STATUS_ID,
+      secondsRemaining: USURAHI_BUTOU_CLEAR_SECONDS + USURAHI_BUTOU_RECHARGE_SECONDS,
+    });
+  },
+};
+
 export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitBehaviour => {
-  const frostflakeHits = readHits("frostflake");
-  const smallFrostflakeHits = readHits("smallFrostflake");
+  const frostflakeHits = withFrostflakeDefenceReduction(readHits("frostflake"));
+  const smallFrostflakeHits = withFrostflakeDefenceReduction(readHits("smallFrostflake"));
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
@@ -73,12 +124,21 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
         castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
       },
     },
-    chargedAttack: { hits: kit.chargedAttack.hits.map(() => snowsweptSakuraHit) },
-    getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) =>
-      (attackTag === AttackTag.NormalAttack || attackTag === AttackTag.ChargedAttack) &&
-      findKitStatus(effects, combatant.characterId, AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID)
-        ? AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS
-        : 0,
+    chargedAttack: { hits: kit.chargedAttack.hits.map(() => chargedAttackHit) },
+    getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) => {
+      const amatsumiKunitsumiSanctificationBonus =
+        (attackTag === AttackTag.NormalAttack || attackTag === AttackTag.ChargedAttack) &&
+        findKitStatus(effects, combatant.characterId, AMATSUMI_KUNITSUMI_SANCTIFICATION_STATUS_ID)
+          ? AMATSUMI_KUNITSUMI_SANCTIFICATION_DAMAGE_BONUS
+          : 0;
+      const usurahiButouBonus =
+        attackTag === AttackTag.ChargedAttack &&
+        combatant.constellationCount >= CONSTELLATION_6 &&
+        checkIsUsurahiButouOn(effects, combatant.characterId)
+          ? USURAHI_BUTOU_DAMAGE_BONUS
+          : 0;
+      return amatsumiKunitsumiSanctificationBonus + usurahiButouBonus;
+    },
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => snowsweptSakuraHit) })),
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
