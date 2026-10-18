@@ -1,19 +1,9 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 
+import { createRecordingGcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/createRecordingGcsimKitCandidateWriter.test";
 import { addGcsimShieldRegenerationCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShieldRegenerationCandidates";
 import { describe, expect, test } from "vitest";
-
-// A writer that keeps each value it is given at its path, its file and line
-const createWriter = (added: Map<string, { file: string; line: number; value: unknown }>): GcsimKitCandidateWriter => ({
-  add: (path, value, file, line) => void added.set(path, { file, line, value }),
-  addFrames: () => undefined,
-  addHit: () => undefined,
-  addNoActionFileRule: () => undefined,
-  addNoPoiseRule: () => undefined,
-  toFile: (name) => name,
-});
 
 // A character whose burst.go declares the given constants, each on the line and with the value given
 const createCharacter = (constants: [name: string, line: number, value: number][]): GcsimCharacter =>
@@ -30,7 +20,7 @@ describe(addGcsimShieldRegenerationCandidates, () => {
     const added = new Map<string, { file: string; line: number; value: unknown }>();
 
     addGcsimShieldRegenerationCandidates(
-      createWriter(added),
+      createRecordingGcsimKitCandidateWriter(added),
       createCharacter([
         ["burstShieldAfterBenisonStack", 21, 31],
         ["burstShieldRegenerated", 22, 26],
@@ -48,7 +38,10 @@ describe(addGcsimShieldRegenerationCandidates, () => {
 
     const added = new Map<string, { file: string; line: number; value: unknown }>();
 
-    addGcsimShieldRegenerationCandidates(createWriter(added), createCharacter([["burstShieldInitial", 20, 31]]));
+    addGcsimShieldRegenerationCandidates(
+      createRecordingGcsimKitCandidateWriter(added),
+      createCharacter([["burstShieldInitial", 20, 31]]),
+    );
 
     expect(Object.fromEntries(added)).toStrictEqual({});
   });
