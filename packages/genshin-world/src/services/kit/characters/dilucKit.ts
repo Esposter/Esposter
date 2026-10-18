@@ -255,7 +255,7 @@ export const createDilucKitBehaviour = ({
       isConstellation6Buffed(activeCombatant.characterId, kitEffectState.effects)
         ? CONSTELLATION_6_BONUS
         : 0,
-    getStrikeDamageBonus: (strike, enemy, _party, effects = []) =>
+    getStrikeDamageBonus: (strike, enemy, _party, effects) =>
       (strike.combatant.constellationCount >= CONSTELLATION_1 &&
       enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
         ? CONSTELLATION_1_DAMAGE_BONUS
