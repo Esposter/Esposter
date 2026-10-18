@@ -85,9 +85,10 @@ const fillFlaskUntilDrained = (
 
 // Jahoda and a partner on a team of two, with her burst cast, each member at the health share given. Her Max HP is large,
 // So a heal moves a share too small to lift her past 70% of it over the burst's ticks
-const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number) => {
+const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number, ascension = 0) => {
   const combatant: Combatant = {
     ...createJahodaCombatant(),
+    ascension,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
     kit: JAHODA_KIT,
   };
@@ -254,6 +255,36 @@ describe(createJahodaKitBehaviour, () => {
     expect.hasAssertions();
     const context = createBurstHealContext(0.5, 0.4);
     expect(readHealedFrames(context, MOONSIGN_PARTNER_CHARACTER_ID)).toStrictEqual([]);
+  });
+
+  test("at Ascension 4, a heal tick above 70% of her health gives the active character Elemental Mastery for six seconds", () => {
+    expect.hasAssertions();
+    const context = createBurstHealContext(0.9, 0.4, 4);
+    for (let frame = 0; frame < 12; frame++) stepKitEffects(1 / 60, context);
+    expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.ElementalMastery,
+        characterId: JAHODA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 6,
+        source: "jahoda-ascension-4",
+      },
+    ]);
+  });
+
+  test("below Ascension 4, a heal tick gives no Elemental Mastery", () => {
+    expect.hasAssertions();
+    const context = createBurstHealContext(0.9, 0.4, 3);
+    for (let frame = 0; frame < 12; frame++) stepKitEffects(1 / 60, context);
+    expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
+  });
+
+  test("at Ascension 4, at 70% of her health or below, a heal tick gives no Elemental Mastery", () => {
+    expect.hasAssertions();
+    const context = createBurstHealContext(0.5, 0.4, 4);
+    for (let frame = 0; frame < 12; frame++) stepKitEffects(1 / 60, context);
+    expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
 
   test("at Ascendant Gleam, each robot strike counts Hidden Aces' robot internal cooldown", () => {
