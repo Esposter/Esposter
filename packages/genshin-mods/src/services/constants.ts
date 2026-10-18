@@ -60,11 +60,11 @@ export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const LOOKUP_COMMAND_REGEX: RegExp =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
-// The reads that write as well: sed's in-place edit, find's actions, and a redirection into a file, the stderr and
-// Stdout merges aside
+// The reads that write as well: sed's in-place edit, find's actions that write, and a redirection into a file, the
+// Stderr and stdout merges and the null device aside
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WRITING_LOOKUP_REGEX: RegExp =
-  /\bsed\b.*\s(?:-[a-zA-Z]*i|--in-place)|\bfind\b.*\s-(?:delete|exec|execdir|ok|okdir|fprint)\b|(?<![\d&])>(?!&)/iu;
+  /\bsed\b.*\s(?:-[a-zA-Z]*i|--in-place)|\bfind\b.*\s-(?:delete|exec|execdir|ok|okdir|fprint0?|fprintf|fls)\b|>(?!&|\s*\/dev\/null\b)/iu;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question
 export const DELEGATION_NUDGE_EVERY = 3;
 export const DELEGATION_NUDGE =

@@ -11,6 +11,7 @@ describe(checkIsLookupCommand, () => {
     ["an export and a cd before it", 'export PATH="/x:$PATH" && cd "$W" && cat a.ts'],
     ["a cd ended by a semicolon", 'cd "$W"; grep -r foo .'],
     ["leading whitespace", "  ls -la"],
+    ["a stderr redirect to the null device", "grep foo x 2>/dev/null"],
   ])("counts %s as a lookup", (_description, command) => {
     expect.hasAssertions();
 
@@ -29,6 +30,11 @@ describe(checkIsLookupCommand, () => {
     ["a find that deletes", "find . -name '*.tmp' -delete"],
     ["a find that runs a command", "find . -name x -exec rm {} ;"],
     ["an awk print into a file", "awk '{ print > \"out.txt\" }' a.txt"],
+    ["a numbered stdout redirect into a file", "cat notes 1> out.txt"],
+    ["a redirect of both streams into a file", "grep x a &> out.txt"],
+    ["a find that prints into a file", "find . -fprintf out.txt %p"],
+    ["a find that lists into a file", "find . -fls out.txt"],
+    ["a find that prints NUL-terminated into a file", "find . -fprint0 out.txt"],
   ])("does not count %s as a lookup", (_description, command) => {
     expect.hasAssertions();
 
