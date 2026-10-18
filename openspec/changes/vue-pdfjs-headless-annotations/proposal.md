@@ -18,7 +18,7 @@ The PDF viewer package's first change gives it loading, page drawing and the vie
 
 ## Waiting on
 
-- [PDF viewer as a headless package](../architecture-pdf-viewer-package/proposal.md), which creates the package, its document loading and its viewer.
+- [PDF viewer as a headless package](../archive/2026-10-18-architecture-pdf-viewer-package/proposal.md), which creates the package, its document loading and its viewer.
 
 ## Impact
 

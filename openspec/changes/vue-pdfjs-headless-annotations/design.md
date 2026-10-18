@@ -1,10 +1,10 @@
 # PDF annotations in the headless package
 
-`vue-pdfjs-headless`, once [the package change](../architecture-pdf-viewer-package/design.md) builds it, gains what a document holds besides its pages: forms, annotations and comments. All three are the renderer's annotation storage, so one composable reads and writes that storage, and one save writes it into the bytes a download carries.
+`vue-pdfjs-headless`, once [the package change](../archive/2026-10-18-architecture-pdf-viewer-package/design.md) builds it, gains what a document holds besides its pages: forms, annotations and comments. All three are the renderer's annotation storage, so one composable reads and writes that storage, and one save writes it into the bytes a download carries.
 
 ## Scope
 
-Today the package's viewer, from the [PDF viewer package](../architecture-pdf-viewer-package/design.md) change, renders pages through the renderer's annotation layer with its default of forms enabled, as the app's viewer does. A document's existing annotations show and its fields take input, but a download carries none of what was typed, and nothing can be drawn or commented. After this change:
+Today the package's viewer, from the [PDF viewer package](../archive/2026-10-18-architecture-pdf-viewer-package/design.md) change, renders pages through the renderer's annotation layer with its default of forms enabled, as the app's viewer does. A document's existing annotations show and its fields take input, but a download carries none of what was typed, and nothing can be drawn or commented. After this change:
 
 - **`usePdfAnnotations`** takes the viewer and the document `usePdfViewer` and `usePdfDocument` return. It sets the editor mode, reports changes, lists and adds comments, and saves.
 - **`vue-pdfjs-headless/xfdf`** holds `readXfdf` and `writeXfdf`, which map XFDF to the storage's entries and back, with no framework and no renderer.
