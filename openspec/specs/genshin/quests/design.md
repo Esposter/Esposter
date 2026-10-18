@@ -34,7 +34,7 @@ A `Quest` has the game's id, its kind, its title and description by text id, its
 | GoTo     | reach a place                   | the place's trigger                              |
 | TalkTo   | finish a talk                   | the talk                                         |
 | Defeat   | defeat enemies, a count of them | the enemy                                        |
-| Collect  | collect items, a count of them  | the item                                         |
+| Collect  | collect items, a count of them  | the item, or any of its alternative items        |
 | Interact | act on a thing                  | the thing, or the waypoint unlocked              |
 
 The kinds are the game's five, and the quest screen files them under the game's four lists. An event's quests are listed among the world quests, as the game's own quest types have it.
