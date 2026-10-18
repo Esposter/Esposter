@@ -17,5 +17,5 @@ export const compileRegexMatchTransformation: ColumnTransformationCompiler<Regex
           return match?.[transformation.groupIndex] ?? null;
         };
       },
-    () => () => null,
+    () => () => () => null,
   );

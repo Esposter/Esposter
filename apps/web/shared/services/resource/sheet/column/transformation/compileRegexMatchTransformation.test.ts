@@ -34,6 +34,11 @@ describe(compileRegexMatchTransformation, () => {
     expect(readRegexMatch({ ...baseTransformation, pattern: "(.+)" }, 0)).toBeNull();
   });
 
+  test("returns null when the pattern does not compile", () => {
+    expect.hasAssertions();
+    expect(readRegexMatch({ ...baseTransformation, pattern: "(" }, "a")).toBeNull();
+  });
+
   test("returns null when group index is out of range", () => {
     expect.hasAssertions();
     expect(readRegexMatch({ ...baseTransformation, groupIndex: 2, pattern: "(a)" }, "a")).toBeNull();
