@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [esbabbler]
+x-model: claude-haiku-5-5
+x-touches: ["apps/web/app/store/message/user/member.ts", "apps/web/app/composables/message/room/useReadMembers.ts"]

@@ -51,7 +51,6 @@ The member editor leaves out the Administrator bit, which no override can hold.
 - **Only the actor's held permissions may be granted.** Discord's rule for a channel entry, and the one `createRole` already applies to a role.
 - **Writes are a transaction, and an empty row is deleted.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show.
 - **Overrides are visible to the room, as role assignments are.** Reads and events take the member procedure, not the permission procedure, because the roles panel's data is already the room's own; a stricter read would hide from members a fact the roles already show them.
-- **The `genshin-assets` value in the table's migration is deliberate.** `storage.azureContainer` gained `genshin-assets` in the schema without a migration, and `db:gen` generated it with this table. The migration carries it so the migration chain matches the schema, and the Genshin side does not add it again.
 
 ## Key files
 
