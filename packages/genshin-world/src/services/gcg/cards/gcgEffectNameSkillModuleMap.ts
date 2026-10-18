@@ -36,6 +36,7 @@ import { signatureMix } from "#src/services/gcg/cards/signatureMix";
 import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
+import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
 import { theMyriadWilds } from "#src/services/gcg/cards/theMyriadWilds";
 import { tideAndTorrent } from "#src/services/gcg/cards/tideAndTorrent";
 import { trumpCardKitty } from "#src/services/gcg/cards/trumpCardKitty";
@@ -71,6 +72,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15022", galeBlade],
   ["Char_Skill_15023", dandelionBreeze],
   ["Char_Skill_16022", breastplate],
+  ["Char_Skill_16023", sweepingTimeSkill],
   ["Char_Skill_17012", floralBrush],
   ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],
