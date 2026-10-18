@@ -38,6 +38,7 @@ import {
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
   MAX_SETTLED_SEELIE_COUNT,
+  MAX_SHOP_PURCHASE_COUNT,
   MAX_SOLVED_PUZZLE_COUNT,
   MAX_STATUE_REGION_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
@@ -241,6 +242,11 @@ describe("genshinSaveSchema", () => {
           },
         ]),
       ),
+      shopPurchases: Array.from({ length: MAX_SHOP_PURCHASE_COUNT }, (_value, index) => ({
+        count: maxNumber,
+        goodsId: maxNumber - index,
+        lastPurchasedAt: maxInstant,
+      })),
       statues: {
         foundOculusIds: Array.from({ length: MAX_FOUND_OCULUS_COUNT }, (_value, index) =>
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

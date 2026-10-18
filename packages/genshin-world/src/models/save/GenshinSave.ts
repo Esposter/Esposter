@@ -76,7 +76,7 @@ export const genshinSaveSchema = z
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
-    shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT).default([]),
+    shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT),
     // The Spiral Abyss's progress by cycle: the Corridor's one cycle, and each Moon Spire period by its id
     spiralAbyss: spiralAbyssSaveSchema,
     // The statues' progress in each region, and the Oculi found
