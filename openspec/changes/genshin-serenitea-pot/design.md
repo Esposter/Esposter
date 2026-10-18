@@ -51,7 +51,7 @@ flowchart TD
 2. **The Realm Depot.** Realm Currency joins the wallet as a currency, item 204 in `CurrencyItemIdMap` and `ShopItemCurrencyMap`, its name a `GameTextKey` written by `genshin:text`, and the save's currencies record with it; then the depot's tabs are written from the goods rows the Decisions name through the shops' `buildShopGoodSlice`, and bought through `buyShopGood` at each tab's refresh.
 3. **The gadget and one realm layout**, entered and left, once the first layout's scene (world scene 2001 of `HomeworldModuleExcelConfigData`) is extracted as a region's is.
 4. **The placement editor and its load.** The refusal is built with the per-area furnishing count and the reduced load of a second copy (`placeHomeFurnishing`, over the `home/areas` and `home/furnishings` records). Still to build: the editor's surface and the load meter, which need item 3's realm scene.
-5. **Gift sets**, once the editor places the furnishing sets they are.
+5. **Gift sets.** `services/home/placeHomeFurnishingSet.ts` places a set whole: each of its furnishings goes through `placeHomeFurnishing` in turn, and the set is refused whole when one would not fit (`placeHomeFurnishingSet.test.ts`). The favour's dialogue and one-time reward wait on the favour rows being published and on the dialogue's game text.
 6. **Gardens, ponds, the other layouts and the Adeptal Mirror.**
 
 ## Data and measures
