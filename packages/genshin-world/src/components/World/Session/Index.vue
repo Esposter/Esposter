@@ -82,6 +82,8 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
+import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
@@ -364,8 +366,12 @@ const {
   savedParty: savedState.party,
   startingCharacterIdKitMap,
   statTables,
+  travelerElement,
   wildlifePlaces,
 });
+// The Traveler's element, which the statue she resonated with last gives her. The unlocked landmarks, which hold the
+// Resonances, set it again as they change, below the map
+const travelerElement = shallowRef(computeTravelerElement(getResonatedRegionIds(savedState.unlockedLandmarkIds)));
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does
 const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
@@ -465,6 +471,9 @@ const {
   setWallet,
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
   wallet,
+});
+watch(unlockedLandmarkIds, (landmarkIds) => {
+  travelerElement.value = computeTravelerElement(getResonatedRegionIds(landmarkIds));
 });
 // The Companionship EXP, the day's commissions, the statues, the solved puzzles and the Traveler's name no source changes
 // Yet, so they are carried as they were saved

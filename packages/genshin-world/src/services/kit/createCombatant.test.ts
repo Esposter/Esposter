@@ -32,4 +32,12 @@ describe(createCombatant, () => {
       weaponType: WeaponType.Bow,
     });
   });
+
+  test("the Traveler carries the element of the resonated statue", () => {
+    expect.hasAssertions();
+
+    const character = createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap);
+
+    expect(createCombatant(character, TRAVELER_KIT, [], statTables, Element.Geo).element).toBe(Element.Geo);
+  });
 });

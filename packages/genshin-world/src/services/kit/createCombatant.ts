@@ -10,12 +10,14 @@ import { getCharacterAttributeLines } from "#src/services/character/getCharacter
 
 // A character's combat once its kit is built: its attributes summed under the deployed team's resonances, its kit with
 // The modules of the sets it wears answering beside it, and its element and the kind of weapon it wields read off its
-// Row of the roster, which the gauge a hit applies and the energy a drop gives it read
+// Row of the roster, which the gauge a hit applies and the energy a drop gives it read. The Traveler's is the element of
+// The statue she resonated with last, which her row does not hold
 export const createCombatant = (
   character: Character,
   kit: Kit,
   elementalResonances: ElementalResonance[],
   statTables: StatTables,
+  element = statTables.characterDataMap.get(character.id)?.element,
 ): Combatant => {
   const characterData = statTables.characterDataMap.get(character.id);
   return {
@@ -23,7 +25,7 @@ export const createCombatant = (
     attributes: computeCharacterAttributes(getCharacterAttributeLines(character, statTables), elementalResonances),
     characterId: character.id,
     constellationCount: character.constellationCount,
-    element: characterData?.element,
+    element,
     elementalResonances,
     kit: getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),
     level: character.level,
