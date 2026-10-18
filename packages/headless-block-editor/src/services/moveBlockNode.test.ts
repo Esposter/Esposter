@@ -24,6 +24,12 @@ describe(moveBlockNode, () => {
     expect(applyPatches(movedDocument, inverses).document).toStrictEqual(TEST_DOCUMENT);
   });
 
+  test("a node into a slot that refuses its type", () => {
+    expect.hasAssertions();
+
+    expect(moveBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/1", "/content/0/props/children", 0)).toStrictEqual([]);
+  });
+
   test("moving a node into a later sibling", () => {
     expect.hasAssertions();
 

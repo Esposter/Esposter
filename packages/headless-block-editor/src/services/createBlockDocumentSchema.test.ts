@@ -7,6 +7,7 @@ import {
   TEST_HEADING_ID,
   TEST_LIST_ID,
   TEST_REGISTRY,
+  TEST_SECTION_ID,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
@@ -29,6 +30,31 @@ describe(createBlockDocumentSchema, () => {
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0, "props", "items", 0]]);
+  });
+
+  test.each<[string, BlockDocument, (number | string)[]]>([
+    [
+      "a prop its type's schema refuses",
+      { content: [{ props: { id: TEST_HEADING_ID, text: 5 }, type: "heading" }], root: { props: {} } },
+      ["content", 0, "props", "text"],
+    ],
+    [
+      "a node with no string id",
+      { content: [{ props: { text: "" }, type: "heading" }], root: { props: {} } },
+      ["content", 0, "props", "id"],
+    ],
+    [
+      "a slot that is not a list",
+      { content: [{ props: { children: "", id: TEST_SECTION_ID }, type: "section" }], root: { props: {} } },
+      ["content", 0, "props", "children"],
+    ],
+  ])("%s", (_title, document, expectedPath) => {
+    expect.hasAssertions();
+
+    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+
+    expect(success).toBe(false);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([expectedPath]);
   });
 
   test("a document from another registry", () => {

@@ -2,7 +2,6 @@ import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { TEST_DOCUMENT, TEST_ITEM_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { insertBlockNode } from "#src/services/insertBlockNode";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
-import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(applyBlockEdit, () => {
@@ -11,12 +10,6 @@ describe(applyBlockEdit, () => {
 
     const operations = updateBlockNodeProps("/content/5", { text: "" });
 
-    expect(
-      applyBlockEdit(TEST_DOCUMENT, operations).match(
-        (edit) => edit.document,
-        () => TEST_DOCUMENT,
-      ),
-    ).toStrictEqual(TEST_DOCUMENT);
     expect(
       applyBlockEdit(TEST_DOCUMENT, operations).match(
         () => "applied",
@@ -32,8 +25,15 @@ describe(applyBlockEdit, () => {
       props: { id: TEST_ITEM_ID, text: "" },
       type: "heading",
     });
-    const { document: editedDocument, inverses } = applyPatches(TEST_DOCUMENT, operations);
-
-    expect(applyPatches(editedDocument, inverses).document).toStrictEqual(TEST_DOCUMENT);
+    expect(
+      applyBlockEdit(TEST_DOCUMENT, operations).match(
+        ({ document, inverses }) =>
+          applyBlockEdit(document, inverses).match(
+            (reversed) => reversed.document,
+            () => undefined,
+          ),
+        () => undefined,
+      ),
+    ).toStrictEqual(TEST_DOCUMENT);
   });
 });

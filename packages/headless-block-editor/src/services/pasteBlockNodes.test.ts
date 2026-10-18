@@ -13,6 +13,8 @@ import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(pasteBlockNodes, () => {
+  const TEST_IMAGE_ID: string = crypto.randomUUID();
+
   test("pasting a node twice", () => {
     expect.hasAssertions();
 
@@ -39,15 +41,8 @@ describe(pasteBlockNodes, () => {
   test("pasting into another editor", () => {
     expect.hasAssertions();
 
-    const operations = pasteBlockNodes(
-      TEST_DOCUMENT,
-      TEST_REGISTRY,
-      [{ props: { id: TEST_SECTION_OTHER_ID }, type: "image" }],
-      "/content",
-      2,
-    );
-
-    expect(operations).toStrictEqual([]);
-    expect(applyPatches(TEST_DOCUMENT, operations).document).toStrictEqual(TEST_DOCUMENT);
+    expect(
+      pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [{ props: { id: TEST_IMAGE_ID }, type: "image" }], "/content", 2),
+    ).toStrictEqual([]);
   });
 });
