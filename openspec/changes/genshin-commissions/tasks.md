@@ -10,7 +10,7 @@
 
 ## 3. Quest tasks and blocking
 
-- [ ] 3.1 Keep a commission from being dealt at a place a quest in progress holds. Verify: a test named after the scenario 'a commission is not dealt where a quest in progress stands', seen failing first.
+- [x] 3.1 Keep a commission from being dealt at a place a quest in progress holds. Verify: a test named after the scenario 'a commission is not dealt where a quest in progress stands', seen failing first.
 - [ ] 3.2 Finish a quest task with its quest. Verify: a test named after the scenario 'a quest task finishes with its quest', seen failing first.
 
 ## 4. Handbook

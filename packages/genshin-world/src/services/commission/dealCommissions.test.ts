@@ -41,7 +41,7 @@ describe(dealCommissions, () => {
     ]);
   });
 
-  test("should never deal a commission whose place a quest holds", () => {
+  test("a commission is not dealt where a quest in progress stands", () => {
     expect.hasAssertions();
     const dealt = dealCommissions(commissions, new Set(["Event_1"]), RANK, () => 0);
     expect(dealt.map(({ commissionId }) => commissionId)).toStrictEqual([2, 3, 4, 5]);
