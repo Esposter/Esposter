@@ -54,7 +54,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   }
 
   // The game's offset is the size, scaled by the vertex's blue less a half where the block-B flag is below a half, and by
-  // One where it is not, as the program's form reads it
+  // One where it is not, as the program's form reads it. This is the TSL form of getGameOutlineOffset, the rule's reference,
+  // And the two hold one rule
   #createGameOffsetNode(offset: ToonEdge["offset"]): Node<"float"> {
     if (offset === undefined) return float(0);
     const scale = offset.blockBChannel < 0.5 ? vertexColor().b.sub(0.5) : float(1);
