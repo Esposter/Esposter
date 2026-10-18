@@ -5,6 +5,7 @@ import { addGcsimBladeRollerCandidates } from "#src/services/genshinAssets/kits/
 import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates";
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
+import { addGcsimScalespikerCannonCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimScalespikerCannonCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
 
 // The per-character builder mappings, by a character's gcsim folder: the values a folder holds beyond the shapes every
@@ -13,7 +14,10 @@ export const GcsimCharacterMappingMap: Partial<
   Record<string, (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter) => void>
 > = {
   chasca: addGcsimShellCandidates,
-  kinich: addGcsimLoopShotCandidates,
+  kinich: (writer, gcsim) => {
+    addGcsimLoopShotCandidates(writer, gcsim);
+    addGcsimScalespikerCannonCandidates(writer, gcsim);
+  },
   mizuki: addGcsimCloudCandidates,
   varesa: addGcsimFieryPassionCandidates,
   xilonen: addGcsimBladeRollerCandidates,
