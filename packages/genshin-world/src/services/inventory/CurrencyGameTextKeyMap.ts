@@ -12,4 +12,5 @@ export const CurrencyGameTextKeyMap = {
   [Currency.Mora]: GameTextKey.Mora,
   [Currency.OriginalResin]: GameTextKey.OriginalResin,
   [Currency.Primogem]: GameTextKey.Primogem,
+  [Currency.RealmCurrency]: GameTextKey.RealmCurrency,
 } as const satisfies Record<Currency, GameTextKey>;

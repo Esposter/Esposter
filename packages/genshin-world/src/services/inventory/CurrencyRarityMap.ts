@@ -11,4 +11,5 @@ export const CurrencyRarityMap = {
   [Currency.Mora]: 3,
   [Currency.OriginalResin]: 3,
   [Currency.Primogem]: 5,
+  [Currency.RealmCurrency]: 3,
 } as const satisfies Record<Currency, number>;

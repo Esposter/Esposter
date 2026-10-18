@@ -36,6 +36,7 @@ export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.Mora]: 0,
   [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
   [Currency.Primogem]: 0,
+  [Currency.RealmCurrency]: 0,
 };
 export const EMPTY_WALLET: Readonly<Wallet> = {
   ...EMPTY_CURRENCIES,
@@ -57,6 +58,7 @@ export const CurrencyItemIdMap: Record<Currency, number> = {
   [Currency.Mora]: MORA_ITEM_ID,
   [Currency.OriginalResin]: ORIGINAL_RESIN_ITEM_ID,
   [Currency.Primogem]: 201,
+  [Currency.RealmCurrency]: 204,
 };
 // Every item id the wallet takes in: each currency's, and Adventure EXP, which the Adventure Rank takes
 export const WALLET_ITEM_IDS: readonly number[] = [ADVENTURE_EXP_ITEM_ID, ...Object.values(CurrencyItemIdMap)];
