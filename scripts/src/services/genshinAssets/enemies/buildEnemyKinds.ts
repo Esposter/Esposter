@@ -17,6 +17,8 @@ import {
   MONSTER_TABLE_NAME,
   REGIONS_DIRECTORY,
 } from "#src/services/genshinAssets/enemies/constants";
+import { readAbyssDescribeIds } from "#src/services/genshinAssets/spiralAbyss/readAbyssDescribeIds";
+import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -30,8 +32,8 @@ const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): str
   if (!growCurve) throw new InvalidOperationError(Operation.Read, String(id), `grows ${property} by no curve`);
   return growCurve;
 };
-// The kinds every region's camps place, each read from the game's monster table with its family from the archive and
-// Its name's text id, and every level curve they name, as the records of the enemies dataset. A kind the tables lack is an
+// The kinds every region's camps place and every Spiral Abyss chamber fights, each read from the game's monster table with its
+// Family from the archive and its name's text id, and every level curve they name, as the records of the enemies dataset. A kind the tables lack is an
 // Error. The resistances are keyed by the world's elements, spelt as the game's tables spell them, which the world's
 // Schema checks. Returns the records the kinds and curves publish under
 export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
@@ -48,7 +50,16 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
   const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const enemyKinds = collectEnemyKindIds(regionDatas).map((enemyKindId) => {
+  // A describe the archive does not list is left out, as its kind has no archive entry to publish with: the Moon Spire
+  // Lists some of these, and none of the Corridor's
+  const abyssDescribeIds = readAbyssDescribeIds().filter((describeId) =>
+    animalCodexRows.some(
+      ({ describeId: codexDescribeId, type = ANIMAL_CODEX_TYPE }) =>
+        type === MONSTER_CODEX_TYPE && codexDescribeId === describeId,
+    ),
+  );
+  const abyssEnemyKindIds = Object.values(toAbyssEnemyKinds(abyssDescribeIds, monsterRows));
+  const enemyKinds = collectEnemyKindIds(regionDatas, abyssEnemyKindIds).map((enemyKindId) => {
     const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
     if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
     const codexRow = animalCodexRows.find(

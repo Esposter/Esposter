@@ -11,4 +11,13 @@ describe("collectEnemyKindIds", () => {
     ]);
     expect(kindIds).toStrictEqual([21010101, 21010401, 26010101]);
   });
+
+  test("a kind a chamber of the Spiral Abyss fights is published with the camps' kinds, once", () => {
+    expect.hasAssertions();
+    const kindIds = collectEnemyKindIds(
+      [{ enemyCamps: [{ members: [{ enemyKindId: 21010101 }] }] }],
+      [22010101, 21010101],
+    );
+    expect(kindIds).toStrictEqual([21010101, 22010101]);
+  });
 });
