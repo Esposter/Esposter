@@ -33,6 +33,9 @@ export interface KitContext {
   locomotionState: LocomotionState;
   // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written each step
   stamina: Stamina;
+  // The number of the deployed team's members that are Hexerei characters, which a Hexerei kit's projections and bonus read,
+  // Written each step
+  hexereiCount: number;
   // The ores the step's reactions strike, each from where its reaction landed, sent once its strikes have landed
   oreStrikes: OreStrike[];
   // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed

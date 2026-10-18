@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -21,6 +22,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   expiredEffects: [],
   kitEffectState: { effects: [] },
   locomotionState: LocomotionState.Idle,
+  hexereiCount: countKitHexereiMembers([combatant.characterId]),
   stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],
   reactionTriggers: [],

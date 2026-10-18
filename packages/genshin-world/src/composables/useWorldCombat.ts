@@ -214,6 +214,7 @@ export const useWorldCombat = ({
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
     // The first step writes the character controller's pool over this one, before any kit reads it
+    hexereiCount: 0,
     stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
     reactionTriggers: [],
