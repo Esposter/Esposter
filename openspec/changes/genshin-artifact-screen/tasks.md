@@ -65,3 +65,8 @@ Each built task names the test it was written first in, and each test is a scena
       the lookup `getCharacterAttributeLines` now shares. Tests: `getArtifactMainAffixPools.test.ts`,
       `getArtifactMainAffixValue.test.ts`, and `getArtifactDetailStats.test.ts`. The published pools change once
       `genshin:assets stats` republishes, which the main session runs.
+- [x] 6.4 The artifact lock, in the bag and on the Artifacts tab. A lock is the artifact's saved `isLocked`, so the
+      slot's Lock button on the panel and the bag's Lock button on a selected artifact toggle it, and fodder refuses a
+      locked artifact. Tests: `toggleCharacterArtifactLock.test.ts`, `toggleInventoryArtifactLock.test.ts`,
+      `getArtifactDetailStats.test.ts`. The lock's words are `ArtifactActionLock` and `ArtifactActionUnlock`, whose chunks
+      the main session writes.
