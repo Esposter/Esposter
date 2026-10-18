@@ -365,8 +365,9 @@ export const readGcsimQueuedAttacks = (
         enclosingFunction === undefined || sites.length === 0
           ? parameterIterations.map((parameters) => ({ delay: isReturned ? undefined : 0, parameters }))
           : readCallVariants(tokens, scope, loops, taskClosures, sites, enclosingFunction.parameters, isReturned);
+      const loopIterations = readIterations(loops, position);
       for (const callVariant of callVariants)
-        for (const loopIteration of readIterations(loops, position)) {
+        for (const loopIteration of loopIterations) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
           const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
           // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
