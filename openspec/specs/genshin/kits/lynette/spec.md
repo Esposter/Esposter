@@ -43,12 +43,28 @@ Magic Trick: Astonishing Shift SHALL land an initial hit and place a Bogglecat B
 - **THEN** each tick strikes the enemies within six metres of the box
 - **AND** the box ticks eleven times in all
 
+### Requirement: Constellation 4 skill charge
+
+From Constellation 4, Enigmatic Feint SHALL have one more charge than its base.
+
+#### Scenario: Constellation 4 adds a charge
+
+- **GIVEN** Lynette has Constellation 4
+- **WHEN** her skill's charges are read
+- **THEN** it has one more charge than the base
+
+#### Scenario: Constellation 3 adds nothing
+
+- **GIVEN** Lynette has Constellation 3
+- **WHEN** her skill's charges are read
+- **THEN** no charge is added
+
 ### Requirement: Unbuilt Lynette effects
 
-Lynette's Hold E, the Bogglecat Box's vivid shots, her heal on Enigmatic Feint, and her Ascension 4 passive and constellations SHALL NOT take effect.
+Lynette's Hold E, the Bogglecat Box's vivid shots, her heal on Enigmatic Feint, her Ascension 4 passive, and Constellations 1, 2 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lynette has her Ascension 4 passive or a constellation unlocked, or holds Enigmatic Feint
+- **GIVEN** Lynette has her Ascension 4 passive or Constellation 1, 2 or 6 unlocked, or holds Enigmatic Feint
 - **WHEN** the player fights with Lynette
 - **THEN** those effects have no effect

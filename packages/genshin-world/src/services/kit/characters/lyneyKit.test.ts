@@ -5,6 +5,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLyneyKitBehaviour, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
@@ -77,5 +78,25 @@ describe(createLyneyKitBehaviour, () => {
   test("the burst's Grin-Malkin Hat is set 282 frames after its cast, and its Pyrotechnic Strike lands 245 frames after that and 36 more", () => {
     expect.hasAssertions();
     expect(getSummonHitmarkSeconds(startAction(LYNEY_KIT.elementalBurst))).toBeCloseTo((282 + 245 + 36) / 60);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createLyneyCombatant(), constellationCount: 4 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    LYNEY_KIT.chargedAttack.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction).toStrictEqual({ [Element.Pyro]: 0.2 });
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = { ...createLyneyCombatant(), constellationCount: 3 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    LYNEY_KIT.chargedAttack.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
   });
 });
