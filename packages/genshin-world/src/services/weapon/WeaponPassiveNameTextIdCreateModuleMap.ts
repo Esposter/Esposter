@@ -59,6 +59,7 @@ import { createIronbonePassiveModule } from "#src/services/weapon/passives/creat
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
+import { createKaguraDanceOfTheSacredSakuraPassiveModule } from "#src/services/weapon/passives/createKaguraDanceOfTheSacredSakuraPassiveModule";
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
@@ -425,4 +426,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3814375507": createRadianceOnTheWaterPassiveModule,
   // Legacy of Lang-Gan (Lightbearing Moonshard)
   "3882258923": createLegacyOfLangGanPassiveModule,
+  // Kagura Dance of the Sacred Sakura (Kagura's Verity)
+  "3901432203": createKaguraDanceOfTheSacredSakuraPassiveModule,
 };

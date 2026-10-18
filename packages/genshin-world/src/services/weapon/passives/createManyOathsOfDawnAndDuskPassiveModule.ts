@@ -1,4 +1,3 @@
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
@@ -7,7 +6,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { countKitStatusStacks } from "#src/services/kit/effects/countKitStatusStacks";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -20,12 +19,6 @@ const LUNAR_CRYSTALLIZE_COOLDOWN_ID = "manyOathsOfDawnAndDuskLunarCrystallizeCoo
 // Text gives and the rank's params do not
 const MAXIMUM_SEAL_COUNT = 2;
 const SEAL_WINDOW_SECONDS = 0.2;
-
-// The Seals a character holds, none once their clock has run out
-const getSealCount = (effects: readonly KitEffect[], characterId: number): number => {
-  const seal = findKitStatus(effects, characterId, SEAL_ID);
-  return seal && seal.secondsRemaining > 0 ? (seal.stacks ?? 0) : 0;
-};
 
 // Many Oaths of Dawn and Dusk (Verdict) at its rank. Its ATK line is the table's. A Crystallize shield the party picks
 // Up, whoever's reaction left it, or a Lunar-Crystallize the party triggers, at most once every cooldown, gives the
@@ -40,11 +33,13 @@ export const createManyOathsOfDawnAndDuskPassiveModule = (params: number[]): Pas
     addKitStatus(kitEffectState, characterId, {
       id: SEAL_ID,
       secondsRemaining: sealSeconds,
-      stacks: Math.min(getSealCount(kitEffectState.effects, characterId) + 1, MAXIMUM_SEAL_COUNT),
+      stacks: Math.min(countKitStatusStacks(kitEffectState.effects, characterId, SEAL_ID) + 1, MAXIMUM_SEAL_COUNT),
     });
   return {
     getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) =>
-      attackTag === AttackTag.ElementalSkill ? getSealCount(effects, combatant.characterId) * damageBonusPerSeal : 0,
+      attackTag === AttackTag.ElementalSkill
+        ? countKitStatusStacks(effects, combatant.characterId, SEAL_ID) * damageBonusPerSeal
+        : 0,
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (event.kind === KitEventKind.ShieldCast && event.shield.isCrystallize) gainSeal(kitEffectState, characterId);
       else if (
@@ -57,7 +52,7 @@ export const createManyOathsOfDawnAndDuskPassiveModule = (params: number[]): Pas
         event.kind === KitEventKind.EnemyHit &&
         event.striker.characterId === characterId &&
         event.attackTag === AttackTag.ElementalSkill &&
-        getSealCount(kitEffectState.effects, characterId) > 0 &&
+        countKitStatusStacks(kitEffectState.effects, characterId, SEAL_ID) > 0 &&
         !checkIsKitStatusActive(kitEffectState.effects, characterId, SEAL_WINDOW_ID)
       ) {
         addKitStatus(kitEffectState, characterId, { id: SEAL_WINDOW_ID, secondsRemaining: SEAL_WINDOW_SECONDS });
