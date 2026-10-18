@@ -326,6 +326,8 @@ export enum GameTextKey {
   // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort = "2960839764",
+  // The button that raises a character one level with its Character EXP materials
+  LevelUp = "UI_STC_CHARACTER_PAGE_LEVEL_UP",
   Liyue = "Liyue",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept

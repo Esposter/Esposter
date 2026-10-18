@@ -30,6 +30,7 @@ import { getCharacterElement } from "#src/services/character/getCharacterElement
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getTalentRows } from "#src/services/character/getTalentRows";
+import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
 import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
 import { upgradeCharacterTalent } from "#src/services/character/upgradeCharacterTalent";
@@ -211,6 +212,23 @@ const talentPanel = computed(() => {
 });
 // The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
 // Never refuses
+// The chosen character raised one level with its Character EXP materials, or undefined where that is refused now
+const levelUpResult = computed(() => {
+  if (!character.value) return undefined;
+  const maxLevel = statTables.characterDataMap.get(character.value.id)?.ascensionPhases[character.value.ascension]
+    ?.maxLevel;
+  return maxLevel === undefined
+    ? undefined
+    : levelUpCharacter(character.value, { inventory: inventory.value, maxLevel, wallet: wallet.value });
+});
+// The chosen character raised one level, with the bag's materials and the wallet's Mora taken and the character written back
+const levelUpCharacterAt = () => {
+  const raised = levelUpResult.value;
+  if (!raised) return;
+  characters.value = characters.value.map((item) => (item.id === raised.character.id ? raised.character : item));
+  inventory.value = raised.inventory;
+  wallet.value = raised.wallet;
+};
 // Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
 const isLiftable = computed(() => {
   const liftLevel = character.value ? MASTERLESS_LEVEL_LIFTS.get(character.value.level) : undefined;
@@ -269,10 +287,12 @@ const activate = () => {
         v-if="character && tab === CharacterMenuTab.Attributes"
         :character
         :game-text
+        :is-level-upable="levelUpResult !== undefined"
         :is-liftable="isLiftable"
         :max-stamina
         :name="characterName"
         :stat-tables
+        @level-up="levelUpCharacterAt"
         @lift="liftCharacter"
       />
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />

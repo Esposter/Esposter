@@ -102,6 +102,15 @@ export const MASTERLESS_LEVEL_LIFTS: ReadonlyMap<number, { count: number; level:
   [90, { count: 1, level: 95 }],
   [95, { count: 2, level: 100 }],
 ]);
+// The Character EXP materials, each by the EXP it gives, the largest first: the Hero's Wit, the Adventurer's
+// Experience and the Wanderer's Advice, under the ids the game's tables give them
+export const CHARACTER_EXP_MATERIALS: readonly { exp: number; id: number }[] = [
+  { exp: 20_000, id: 104_003 },
+  { exp: 5000, id: 104_002 },
+  { exp: 1000, id: 104_001 },
+];
+// The Character EXP a point of Mora pays for: five EXP for each Mora the wiki's Character EXP page charges
+export const CHARACTER_EXP_PER_MORA = 5;
 // The attributes the game writes whole rather than as a percentage: the bases, the flats and Elemental Mastery
 export const WHOLE_ATTRIBUTES: readonly Attribute[] = [
   Attribute.BaseAttack,
