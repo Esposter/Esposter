@@ -8,7 +8,7 @@ The visual suite holds approved screens to their own last images. It says nothin
 
 - **A screen's image is written by `genshin:parity approve`.** Once a screen's compare clears its bar, `approve` writes its image as the `Index.win32.png` in its component's folder, a variant's as `Index-<variant>.win32.png` beside it, and runs the suite's `-u` for that one screen alone. A screen with no image on disk is not held by the suite.
 
-- **The variant separator is restated in `scripts`, and its one source is still open.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR`, and `scripts` restates it as `VISUAL_VARIANT_SEPARATOR` for `approve`. The decision is a workspace dependency from `scripts` on `genshin-interface`, read through a pure `./constants` export, since its root imports Vue components that the scripts runner cannot load. That waits on the install that writes the dependency and the build that writes the export, so the restatement stays until then.
+- **The variant separator has one source, landed pending its lockfile.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR`, and `scripts` reads that same constant for `approve` through a workspace dependency on `genshin-interface`, via its pure `./constants` export, since its root imports Vue components that the scripts runner cannot load. The restatement is gone. The lockfile entry and the interface's `./constants` build are owed to the install and build at integration.
 
 ## Key files
 

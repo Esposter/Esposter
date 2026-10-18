@@ -9,13 +9,13 @@ import {
   DEFAULT_APPROVAL,
   GENSHIN_WORLD_DIRECTORY,
   REFERENCES_DIRECTORY,
-  VISUAL_VARIANT_SEPARATOR,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
+import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -69,7 +69,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
   if (outcome !== ApprovalOutcome.Approved)
     throw new InvalidOperationError(Operation.Update, referenceId, `not approved: ${outcome}`);
   const testName =
-    variant === undefined ? reference.screen : `${reference.screen}${VISUAL_VARIANT_SEPARATOR}${variant}`;
+    variant === undefined ? reference.screen : `${reference.screen}${FIXTURE_VARIANT_SEPARATOR}${variant}`;
   // The suite's `-u` writes only the tests the filter selects, so no other screen's image moves
   const { status } = spawnSync(
     PNPM_FILE,
