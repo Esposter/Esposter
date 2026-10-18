@@ -20,7 +20,7 @@ The console attaches to a session a terminal runs, reads it from its transcript,
 
 ## Waiting on
 
-- The channel's permission relay, which `openspec/changes/infra-channel-chat/` still lists as unbuilt. That relay's two-choice bubble waits on `openspec/changes/infra-viewer-stage/`.
+- The channel's permission relay, which `openspec/changes/infra-channel-chat/` still lists as unbuilt. That relay's two-choice bubble waits on `openspec/changes/infra-viewer-stage/`, which is designed with nothing waiting on it and is unbuilt, so it is the unit to build first.
 
 ## Impact
 
