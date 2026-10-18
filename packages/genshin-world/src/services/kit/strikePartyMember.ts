@@ -16,7 +16,7 @@ import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
 // An enemy's strike on a party member: its damage is first taken by the team's shields, and what none of them absorbs is
 // Taken from the member as the share of its Max HP it is, then the kind's attack element, if it has one, is applied to it.
-// Each shield that took any of it is returned for its owner, as the damage it took
+// Each shield that took any of it is returned for its owner, as the health it lost
 export const strikePartyMember = (
   enemyTables: EnemyTables,
   party: Party,
