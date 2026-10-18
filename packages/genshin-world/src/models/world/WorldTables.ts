@@ -10,6 +10,8 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
+import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
+import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Catalogue } from "#src/models/world/Catalogue";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
@@ -22,6 +24,10 @@ export interface WorldTables {
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
   // Reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];
+  // The crafting bench's place in Mondstadt, in the region's axes, which its prompt stands on
+  craftingBenchPlace: CraftingBenchPlace;
+  // The bench's recipes in the game's order, which the crafting screen offers the learned ones of
+  craftingRecipes: CraftingRecipe[];
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
   // The Frostbearing Trees' places in Mondstadt, each stood in the world

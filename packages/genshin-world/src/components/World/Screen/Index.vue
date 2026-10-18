@@ -8,6 +8,8 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readTalentTables } from "#src/services/character/readTalentTables";
+import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
+import { readMondstadtCraftingBenchPlace } from "#src/services/crafting/readMondstadtCraftingBenchPlace";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
@@ -45,6 +47,8 @@ getResultAsync(() =>
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("crafting-recipes", readCraftingRecipes(props.gameDataBaseUrl)),
+      measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -61,11 +65,15 @@ getResultAsync(() =>
     catalogue,
     wildlifePlaces,
     frostbearingTreePlaces,
+    craftingRecipes,
+    craftingBenchPlace,
   ]) => {
     tables.value = {
       adventureRankTables,
       catalogue,
       characterTalentKits: talentTables.characterTalentKits,
+      craftingBenchPlace,
+      craftingRecipes,
       enemyTables,
       frostbearingTreePlaces,
       hudInterfaceRects,
