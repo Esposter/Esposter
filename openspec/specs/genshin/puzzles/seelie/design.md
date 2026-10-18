@@ -11,7 +11,7 @@ stateDiagram-v2
   Settled --> [*]
 ```
 
-The map gives one point per Seelie and no court, so a Seelie's court and start are not yet fitted into the world: the court is the one the wiki says a Seelie settles in, and the placed court is still to come.
+The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each Mondstadt court is paired with one Seelie by `pairSeelieCourts`, closest first, and the world's screen leads each paired Seelie from its place toward its court. The other regions' courts are still to come, and a settled Seelie's chest is not yet spawned, since the wiki's Seelie page names its kind.
 
 ## Key files
 

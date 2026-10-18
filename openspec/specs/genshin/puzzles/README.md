@@ -1,6 +1,6 @@
 # Puzzles
 
-The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. Nothing is placed in the world, drawn, struck or solved yet.
+The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. The Mondstadt Seelies are paired with their courts and led in the world; the monuments are not yet placed in the world, drawn, struck or solved.
 
 ## How it works
 
