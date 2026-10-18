@@ -40,6 +40,7 @@ import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
 import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
+import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
 import { magicGuide } from "#src/services/gcg/cards/magicGuide";
 import { maskOfSolitudeBasalt } from "#src/services/gcg/cards/maskOfSolitudeBasalt";
 import { masterOfWeaponry } from "#src/services/gcg/cards/masterOfWeaponry";
@@ -164,6 +165,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [332_014, guardiansOath],
   [333001, jueyunGuoba],
   [333004, northernSmokedChicken],
+  [333_003, lotusFlowerCrisp],
   [333_005, sweetMadame],
   [333_006, mondstadtHashBrown],
   [333_008, mintyMeatRolls],
