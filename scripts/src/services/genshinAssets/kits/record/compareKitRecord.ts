@@ -10,7 +10,7 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
-import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
@@ -90,12 +90,12 @@ export const compareKitRecord = (
     const isValueNeeded = entry !== undefined && "source" in entry && !checkIsKitValueEqual(sourceChoice?.value, value);
     if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
   };
-  const candidateMap = mergeKitCandidates(
-    getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),
+  const candidateMap = mergeKitCandidateSources({
+    namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
+    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),
+    ruleCandidateMap: getRuleKitCandidates(publishedValueMap),
     sourceCandidateMap,
-    getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
-    getRuleKitCandidates(publishedValueMap),
-  );
+  });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
   const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap);
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())

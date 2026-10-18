@@ -8,7 +8,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
-import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
@@ -65,12 +65,12 @@ export const resolveKitValues = (
   const ruleCandidateMap = getRuleKitCandidates(valueMap);
   chooseDefaults(ruleCandidateMap);
   return {
-    candidateMap: mergeKitCandidates(
-      namedListKitCandidateMap,
-      sourceCandidateMap,
-      namedHitKitCandidateMap,
+    candidateMap: mergeKitCandidateSources({
+      namedHitCandidateMap: namedHitKitCandidateMap,
+      namedListCandidateMap: namedListKitCandidateMap,
       ruleCandidateMap,
-    ),
+      sourceCandidateMap,
+    }),
     provenanceMap,
     valueMap,
   };
