@@ -55,6 +55,9 @@ export interface KitHit {
   isForcedCritical?: true;
   // Whether the hit's stagger level is Air, as the wiki's impulse types 5 to 9 are, which launches an enemy it staggers
   isLaunching?: true;
+  // Whether the hit lands as its hitmark falls, given the context it lands in, for a hit a condition such as a Moonsign
+  // Level gates. A hit with none always lands
+  landsWhen?: (context: KitContext) => boolean;
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
   // As a talent's hit
   lunarHit?: KitLunarHit;

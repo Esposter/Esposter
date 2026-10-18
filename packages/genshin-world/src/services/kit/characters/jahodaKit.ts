@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -20,8 +21,12 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import {
-  getJahodaAscensionOneEffects,
   getJahodaConstellationFourEnergy,
+  getJahodaElementEffects,
+  JAHODA_ASCENSION_4,
+  JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
+  JAHODA_ASCENSION_4_SECONDS,
+  JAHODA_ASCENSION_4_SOURCE,
 } from "#src/services/kit/characters/jahodaAscension";
 import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -91,10 +96,10 @@ const findLowestHealthCharacterId = (party: Party): number | undefined => {
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above 70%
 // Health the member with the lowest share of health is healed as well. Her burst's two robots are built at Ascendant
-// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, without the
-// Internal cooldown gcsim gives them, as the engine has no tag for it. Ascension 1 and Constellation 4 adjust them and
-// her heals, from jahodaAscension. Her Meowball, Constellations 1 and 2, and Ascension 4 are not built yet, as the record
-// does not carry them. Her Moonsign Benediction, Rooftop Dash
+// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, under the
+// Internal cooldown gcsim gives their strikes. Ascension 1 and Constellation 2 adjust them and her heals, and
+// Ascension 4 gives her Elemental Mastery on each heal above 70% Health, from jahodaAscension. Her Meowball and
+// Constellation 1 are not built yet, as the record does not carry them. Her Moonsign Benediction, Rooftop Dash
 // (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its record carries no lunar
 // Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
@@ -239,8 +244,16 @@ export const createJahodaKitBehaviour = ({
   const healBurst =
     (healer: Combatant, healMultiplier: number) =>
     (context: KitContext): void => {
-      const { activeCombatant, party } = context;
+      const { activeCombatant, kitEffectState, party } = context;
       if (getPartyMember(party, activeCombatant.characterId).healthShare > BURST_ADDITIONAL_HEAL_HEALTH_SHARE) {
+        // Ascension 4 gives the active character Elemental Mastery on each of these heals, restarting its buff
+        if (healer.ascension >= JAHODA_ASCENSION_4)
+          buffKitMember(kitEffectState, activeCombatant.characterId, {
+            amount: JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
+            attribute: Attribute.ElementalMastery,
+            secondsRemaining: JAHODA_ASCENSION_4_SECONDS,
+            source: JAHODA_ASCENSION_4_SOURCE,
+          });
         const lowestCharacterId = findLowestHealthCharacterId(party);
         if (lowestCharacterId !== undefined)
           changeKitMemberHealth(
@@ -262,32 +275,36 @@ export const createJahodaKitBehaviour = ({
     burst: {
       onStart: (context) => {
         const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
-        const ascensionOne = getJahodaAscensionOneEffects(
+        const isAscendantGleam = getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam;
+        const elementEffects = getJahodaElementEffects(
           activeCombatant.ascension,
+          activeCombatant.constellationCount,
+          isAscendantGleam,
           getDeployedCharacterIds(party).map((characterId) => characterIdCombatantMap.get(characterId)?.element),
         );
         schedulePeriodicKitTask(
           kitEffectState,
           activeCombatant.characterId,
           { firstSeconds: firstHealSeconds, intervalSeconds: healIntervalSeconds, untilSeconds: burstSeconds },
-          healBurst(activeCombatant, ascensionOne.healMultiplier),
+          healBurst(activeCombatant, elementEffects.healMultiplier),
         );
         // The robots are cast only at Ascendant Gleam, as gcsim reads the Moonsign level when she casts
-        if (getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam)
+        if (isAscendantGleam)
           startJahodaRobots(context, activeCombatant, burstSeconds, {
             absorbArea: robotAbsorbArea,
             absorbEnergy: getJahodaConstellationFourEnergy(activeCombatant.constellationCount),
             absorbFirstSeconds: robotAbsorbFirstSeconds,
-            absorbIntervalSeconds: robotAbsorbIntervalSeconds * ascensionOne.intervalMultiplier,
+            absorbIntervalSeconds: robotAbsorbIntervalSeconds * elementEffects.intervalMultiplier,
             absorbSpacingSeconds: robotAbsorbSpacingSeconds,
-            robotCount: JAHODA_ROBOT_COUNT + ascensionOne.extraRobots,
+            robotCount: JAHODA_ROBOT_COUNT + elementEffects.extraRobots,
             strikeFirstSeconds: robotFirstStrikeSeconds,
             strikeHit: {
               ...robotStrikeHitFields,
               hitmarkSeconds: 0,
-              talentMultiplier: robotStrikeMultiplier * ascensionOne.damageMultiplier,
+              internalCooldownTag: InternalCooldownTag.JahodaRobotStrike,
+              talentMultiplier: robotStrikeMultiplier * elementEffects.damageMultiplier,
             },
-            strikeIntervalSeconds: robotStrikeIntervalSeconds * ascensionOne.intervalMultiplier,
+            strikeIntervalSeconds: robotStrikeIntervalSeconds * elementEffects.intervalMultiplier,
             strikeTargetCount: ROBOT_STRIKE_TARGET_COUNT,
           });
       },

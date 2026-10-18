@@ -254,7 +254,7 @@ describe(createDilucKitBehaviour, () => {
     const tickHits: number[] = [];
     for (let frame = 0; frame < 230; frame++) {
       const strikes: KitStrike[] = [];
-      stepKitSummon(phoenix, FRAME_SECONDS, { x: 0, z: 0 }, strikes);
+      stepKitSummon(phoenix, FRAME_SECONDS, { x: 0, z: 0 }, strikes, context);
       for (const { hit } of strikes)
         if (hit.hitArea.radius === 9.4) explosionHits.push(frame);
         else tickHits.push(frame);

@@ -13,6 +13,7 @@ export const applyKitHitBehaviour = (hit: KitHit, behaviour: KitHitBehaviour, pa
     enemyStatus,
     healAttackShare,
     healPartyChance,
+    landsWhen,
     onStrike,
     stackedHitStatusId,
     takesWielderElement,
@@ -28,6 +29,7 @@ export const applyKitHitBehaviour = (hit: KitHit, behaviour: KitHitBehaviour, pa
   }
   if (enemyStatus) hit.enemyStatus = enemyStatus;
   if (healAttackShare) hit.healAttackShare = healAttackShare;
+  if (landsWhen) hit.landsWhen = landsWhen;
   if (onStrike) hit.onStrike = onStrike;
   if (bubbleOmenId !== undefined) {
     if (!hit.bubble) throw fail("its record holds no bubble");

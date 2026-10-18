@@ -13,9 +13,11 @@ export const NEFER_CHARACTER_ID = 10_000_122;
 export const VERDANT_DEW_STATUS_ID = "verdant-dew";
 export const PHANTASM_PERFORMANCE_STATUS_ID = "phantasm-performance";
 const PHANTASM_PERFORMANCES_PER_SHADOW_DANCE = 3;
+// The Verdant Dew a Shadow Dance starts with, the wiki's "Two initial charges"; the record's charges are the most it holds
+const INITIAL_VERDANT_DEW = 2;
 
-// Nefer's behaviour: Senet Strategy: Dance of a Thousand Nights enters Shadow Dance for her record's seconds, with her
-// Record's Verdant Dew charges, where her Charged Attack is Phantasm Performance, a stance of its own seven hits. Each
+// Nefer's behaviour: Senet Strategy: Dance of a Thousand Nights enters Shadow Dance for her record's seconds, with two
+// Verdant Dew held of at most her record's charges, where her Charged Attack is Phantasm Performance, a stance of its own seven hits. Each
 // Phantasm Performance starts only with a Verdant Dew held, spends one as it starts, and the third ends the state. Her strikes, skill hits, plunges
 // And burst's hits are her record's alone, and her frames and areas are provisional, read from Borrowed donors' gcsim
 // Hitmarks and areas.
@@ -26,13 +28,13 @@ const PHANTASM_PERFORMANCES_PER_SHADOW_DANCE = 3;
 // And Constellation 6 needs the Shadow Dance Charged Attack and Phantasm Performance
 export const createNeferKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const shadowDanceSeconds = readParameter("shadowDanceSeconds");
-  const verdantDewCharges = readParameter("phantasmPerformanceCharges");
+  const maxVerdantDew = readParameter("phantasmPerformanceCharges");
   const phantasmPerformance = readStance("phantasmPerformance", {
     chargedAttack: {
       canStart: ({ activeCombatant: { characterId }, kitEffectState }) =>
         countKitResource(kitEffectState.effects, characterId, VERDANT_DEW_STATUS_ID) > 0,
       onStart: ({ activeCombatant: { characterId }, kitEffectState }) => {
-        gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, -1, verdantDewCharges);
+        gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, -1, maxVerdantDew);
         const performances = gainKitResource(
           kitEffectState,
           characterId,
@@ -50,7 +52,7 @@ export const createNeferKitBehaviour = ({ readParameter, readStance }: KitRecord
       const { characterId } = combatant;
       spendKitResource(kitEffectState, characterId, PHANTASM_PERFORMANCE_STATUS_ID);
       spendKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID);
-      gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, verdantDewCharges, verdantDewCharges);
+      gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, INITIAL_VERDANT_DEW, maxVerdantDew);
       enterKitStance(kitEffectState, combatant, phantasmPerformance, shadowDanceSeconds);
     },
   };

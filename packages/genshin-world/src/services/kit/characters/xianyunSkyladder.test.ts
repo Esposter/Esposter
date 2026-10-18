@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -129,7 +130,10 @@ describe(createXianyunKitBehaviour, () => {
 
     const combatant = {
       ...createCombatant(4),
-      attributes: { ...computeCharacterAttributes([]), attack: 1000, maxHealth: 10_000 },
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 1000 },
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+      ]),
     };
     const context = createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([[XIANYUN_CHARACTER_ID, combatant]]),

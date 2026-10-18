@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -209,6 +210,22 @@ describe(createAinoKitBehaviour, () => {
     expect(summon?.hits[0]?.hitmarkSeconds).toBeCloseTo(10 / 60);
   });
 
+  test("a Water Ball counts the elemental burst's internal cooldown", () => {
+    expect.hasAssertions();
+    const { context, field, kitEffectState } = castBurstInTeam(0, [AINO_CHARACTER_ID]);
+    field?.onTick(context, 0);
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    expect(summon?.hits[0]?.internalCooldownTag).toBe(InternalCooldownTag.ElementalBurst);
+  });
+
+  test("at Ascension 1 with the team at Ascendant Gleam, a Water Ball counts the moon hit's own internal cooldown", () => {
+    expect.hasAssertions();
+    const { context, field, kitEffectState } = castBurstInTeam(1, ASCENDANT_TEAM);
+    field?.onTick(context, 0);
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    expect(summon?.hits[0]?.internalCooldownTag).toBe(InternalCooldownTag.AinoBurstMoonHit);
+  });
+
   test("below Ascendant Gleam or below Ascension 1, her burst keeps the base beat", () => {
     expect.hasAssertions();
     expect(castBurstInTeam(0, ASCENDANT_TEAM).field?.tickIntervalSeconds).toBeCloseTo(1.5);
@@ -260,6 +277,14 @@ describe(createAinoKitBehaviour, () => {
       strikeEnemy(context, teammate, aino);
 
       expect(context.strikes).toHaveLength(0);
+    });
+
+    test("a constellation 2 water ball counts no internal cooldown", () => {
+      expect.hasAssertions();
+      const { aino, context, teammate } = createTeammateTeam(2);
+      strikeEnemy(context, teammate, aino);
+
+      expect(context.strikes[0]?.hit.internalCooldownTag).toBeUndefined();
     });
 
     test("the water ball queues nothing while Aino is on the field", () => {

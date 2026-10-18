@@ -18,7 +18,6 @@
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3631 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "hits.iceUnleashed.length": { "cause": "Unclassified", "value": 3 },
   "hits.iceUnleashed.0.area": {
     "cause": "Unclassified",

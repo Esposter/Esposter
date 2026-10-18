@@ -62,6 +62,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
+          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([0.01 * wielder.attributes.attributeTotalMap[Attribute.Health], 0]);

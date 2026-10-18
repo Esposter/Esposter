@@ -45,6 +45,7 @@ export enum InternalCooldownTag {
   IfaSedationMark = "IfaSedationMark",
   IfaSkill = "IfaSkill",
   JahodaCons = "JahodaCons",
+  JahodaRobotStrike = "JahodaRobotStrike",
   KinichLoopShot = "KinichLoopShot",
   KinichScalespikerCannon = "KinichScalespikerCannon",
   KleePyroDamage = "KleePyroDamage",

@@ -57,12 +57,12 @@ describe(createIfaKitBehaviour, () => {
     expect(multipliers).toStrictEqual([0.536072, 0.474672, 0.747584, 1.4704, 0.568288, 1.136335, 1.419344]);
   });
 
-  test("the three normal attacks hit at their hitmarks and cancel into a walk at their table frames", () => {
+  test("the three normal attacks hit at their hitmarks and end at their animation frames", () => {
     expect.hasAssertions();
     expect(
       IFA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
     ).toStrictEqual([[10], [13], [42]]);
-    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 88]);
+    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 90]);
   });
 
   test("the charged attack hits at 45 frames of an 86-frame animation, costing 50 stamina", () => {
