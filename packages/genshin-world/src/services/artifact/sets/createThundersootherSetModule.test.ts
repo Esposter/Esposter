@@ -3,9 +3,9 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { THUNDERSOOTER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { THUNDERSOOTHER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
-import { createThundersooterSetModule } from "#src/services/artifact/sets/createThundersooterSetModule";
+import { createThundersootherSetModule } from "#src/services/artifact/sets/createThundersootherSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -34,12 +34,12 @@ const createEnemyUnder = (auraType?: AuraType) => {
   return enemy;
 };
 
-describe(createThundersooterSetModule, () => {
+describe(createThundersootherSetModule, () => {
   test("raises the DMG of a strike on an enemy under Electro by 35% from four pieces", () => {
     expect.hasAssertions();
 
-    const { getStrikeDamageBonus } = createThundersooterSetModule(
-      getArtifactSetBonus(statTables, THUNDERSOOTER_ARTIFACT_SET_ID, 4),
+    const { getStrikeDamageBonus } = createThundersootherSetModule(
+      getArtifactSetBonus(statTables, THUNDERSOOTHER_ARTIFACT_SET_ID, 4),
     );
 
     expect(getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Electro), party, [])).toBeCloseTo(0.35);
@@ -48,8 +48,8 @@ describe(createThundersooterSetModule, () => {
   test("raises no DMG on an enemy under another element or none", () => {
     expect.hasAssertions();
 
-    const { getStrikeDamageBonus } = createThundersooterSetModule(
-      getArtifactSetBonus(statTables, THUNDERSOOTER_ARTIFACT_SET_ID, 4),
+    const { getStrikeDamageBonus } = createThundersootherSetModule(
+      getArtifactSetBonus(statTables, THUNDERSOOTHER_ARTIFACT_SET_ID, 4),
     );
 
     expect(getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), party, [])).toBe(0);

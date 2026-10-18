@@ -46,7 +46,7 @@ export const OBSIDIAN_CODEX_ARTIFACT_SET_ID = 15_038;
 // Resolution of Sojourner's id in the set table
 export const RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID = 10_001;
 // Thundersoother's id in the set table
-export const THUNDERSOOTER_ARTIFACT_SET_ID = 14_002;
+export const THUNDERSOOTHER_ARTIFACT_SET_ID = 14_002;
 // Blizzard Strayer's id in the set table
 export const BLIZZARD_STRAYER_ARTIFACT_SET_ID = 14_001;
 // Deepwood Memories' id in the set table
