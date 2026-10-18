@@ -11,7 +11,7 @@ The weathers, the blend between them, their particles and splashes, the lightnin
 
 ## Still to build
 
-1. **Each area's template**, once the weather areas' outlines are read from the client's scene. `WeatherExcelConfigData` is added to `DUMP_TABLE_NAMES` (`scripts/src/services/genshinText/constants.ts`) and fetched with `pnpm -C scripts genshin:text fetch`. Each catalogue area takes the template of the weather area covering it, and an area whose template is not `Weather_Standard` gets its own rows. This waits on the user, since the outlines are in no published table.
+1. **Each area's template**, once the weather areas' outlines are read from the client's scene. `WeatherExcelConfigData` is in the dump at the install's build, so it is read from there with no fetch step. Each catalogue area takes the template of the weather area covering it, and an area whose template is not `Weather_Standard` gets its own rows. This waits on the user, since the outlines are in no published table.
 
 ## Deferred compute
 
