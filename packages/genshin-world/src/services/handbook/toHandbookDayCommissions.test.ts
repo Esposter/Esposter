@@ -36,6 +36,7 @@ describe(toHandbookDayCommissions, () => {
     const day = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
+      isBonusClaimed: false,
       dealtCommissions: [
         { commissionId: 3, count: 5, dealtRank: RANK },
         { commissionId: 2, count: 0, dealtRank: RANK },
@@ -78,6 +79,7 @@ describe(toHandbookDayCommissions, () => {
     const day = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
+      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 2, count: 0, dealtRank: RANK }],
     };
     expect(toHandbookDayCommissions(day, slice, ONE_POINT)[0]?.isClaimable).toBe(true);
@@ -89,6 +91,7 @@ describe(toHandbookDayCommissions, () => {
     const day = {
       claimedCommissionIds: [4],
       dealtAt: DEALT_AT,
+      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 4, count: 8, dealtRank: RANK }],
     };
     expect(toHandbookDayCommissions(day, slice, ONE_POINT)).toStrictEqual([

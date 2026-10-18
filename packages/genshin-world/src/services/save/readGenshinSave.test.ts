@@ -331,6 +331,7 @@ describe(readGenshinSave, () => {
       commissionDay: {
         claimedCommissionIds: [1],
         dealtAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+        isBonusClaimed: false,
         dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
           commissionId: index + 1,
           count: 0,

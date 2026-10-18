@@ -56,7 +56,7 @@ const useAfterReset = (events: WorldEvents) => {
     questProgressMap: shallowRef(new Map<string, QuestProgress>()),
     questsInProgress: computed<Quest[]>(() => []),
     rank: computed(() => RANK),
-    savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+    savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [], isBonusClaimed: false },
     savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
     savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
   });
@@ -77,6 +77,7 @@ const useUnfinishedDay = (rank: number) => {
     savedCommissionDay: {
       claimedCommissionIds: [],
       dealtAt: todayReset,
+      isBonusClaimed: false,
       dealtCommissions: [2, 3, 4, 5].map((commissionId) => ({ commissionId, count: 0, dealtRank: RANK })),
     },
     savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
@@ -102,6 +103,7 @@ describe(useWorldCommissions, () => {
       savedCommissionDay: {
         claimedCommissionIds: [1],
         dealtAt: todayReset.subtract({ minutes: 1 }),
+        isBonusClaimed: false,
         dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
@@ -125,7 +127,12 @@ describe(useWorldCommissions, () => {
       questProgressMap: shallowRef(new Map<string, QuestProgress>()),
       questsInProgress: computed<Quest[]>(() => []),
       rank: computed(() => RANK),
-      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedCommissionDay: {
+        claimedCommissionIds: [],
+        dealtAt: todayReset,
+        dealtCommissions: [],
+        isBonusClaimed: false,
+      },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
     });
@@ -157,7 +164,12 @@ describe(useWorldCommissions, () => {
       questProgressMap: shallowRef(new Map<string, QuestProgress>()),
       questsInProgress: computed<Quest[]>(() => []),
       rank: computed(() => RANK),
-      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedCommissionDay: {
+        claimedCommissionIds: [],
+        dealtAt: todayReset,
+        dealtCommissions: [],
+        isBonusClaimed: false,
+      },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 4 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
     });

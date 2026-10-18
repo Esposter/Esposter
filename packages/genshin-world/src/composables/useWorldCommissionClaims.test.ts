@@ -38,6 +38,7 @@ describe(useWorldCommissionClaims, () => {
   const DEALT_RANK = 12;
   const FINISH_PROGRESS = 3;
   const FIRST_CHARACTER_ID = 1;
+  const BONUS_MORA = 25;
   const MORA_REWARD = 10;
   const REWARD_TIER = 2;
   const STARTING_MORA = 500;
@@ -76,14 +77,18 @@ describe(useWorldCommissionClaims, () => {
     questId: "",
     rewardTier: REWARD_TIER,
   };
+  // Katheryne's bonus pays Mora at the same band in a different amount, so the bonus is told from the reward
+  const bonusBands = emptyBands();
+  bonusBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: BONUS_MORA, minCount: BONUS_MORA }];
   const slice: CommissionSlice = {
-    bonuses: emptyBands(),
+    bonuses: bonusBands,
     rewardTiers: [{ bands: moraBands, tier: REWARD_TIER }],
     tasks: [commission],
   };
   const dayWith = (count: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: NOW,
+    isBonusClaimed: false,
     dealtCommissions: [{ commissionId: 1, count, dealtRank: DEALT_RANK }],
   });
   const pointsOf = (halfPoints: number): EncounterPoints => ({ earnedOn: NOW, halfPoints });
@@ -187,5 +192,33 @@ describe(useWorldCommissionClaims, () => {
     expect(encounterPoints.value).toStrictEqual(pointsOf(2));
     expect(longTermEncounterPoints.value).toStrictEqual({ halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION });
     expect(wallet.value[Currency.OriginalResin]).toBe(0);
+  });
+
+  test("should refuse Katheryne's bonus until the day's four commissions are claimed", () => {
+    expect.hasAssertions();
+    const { claims, commissionDay, wallet } = createClaims({
+      day: dayWith(FINISH_PROGRESS),
+      halfPoints: 0,
+      longTermHalfPoints: 0,
+      resin: 0,
+    });
+    claims.claimKatheryneBonus();
+    expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
+    expect(commissionDay.value.isBonusClaimed).toBe(false);
+  });
+
+  test("should pay Katheryne's bonus once the day's four are claimed, into the wallet, and record it once", () => {
+    expect.hasAssertions();
+    const { claims, commissionDay, wallet } = createClaims({
+      day: { ...dayWith(FINISH_PROGRESS), claimedCommissionIds: [1, 2, 3, 4] },
+      halfPoints: 0,
+      longTermHalfPoints: 0,
+      resin: 0,
+    });
+    claims.claimKatheryneBonus();
+    expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA + BONUS_MORA);
+    expect(commissionDay.value.isBonusClaimed).toBe(true);
+    claims.claimKatheryneBonus();
+    expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA + BONUS_MORA);
   });
 });
