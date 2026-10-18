@@ -3,11 +3,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import {
-  SUPERLATIVE_SUPERSTRENGTH_ID,
-  superlativeSuperstrength,
-} from "#src/services/gcg/cards/superlativeSuperstrength";
-import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
+import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { takeOne } from "@esposter/shared";
 
 export const RAGING_ONI_KING_ID = 116_053;
@@ -33,10 +29,6 @@ export const ragingOniKing: GcgCardModule = {
     )
       return;
     side.usedCardIds.push(zoneCard.cardId);
-    placeGcgZoneCard(
-      takeOne(side.characters, characterIndex).statuses,
-      SUPERLATIVE_SUPERSTRENGTH_ID,
-      superlativeSuperstrength,
-    );
+    attachSuperlativeSuperstrength(takeOne(side.characters, characterIndex));
   },
 };

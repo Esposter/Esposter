@@ -2,11 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { Element } from "#src/models/Element";
-import {
-  SUPERLATIVE_SUPERSTRENGTH_ID,
-  superlativeSuperstrength,
-} from "#src/services/gcg/cards/superlativeSuperstrength";
-import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
+import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { takeOne } from "@esposter/shared";
 
 export const USHI_ID = 116_051;
@@ -18,7 +14,7 @@ const USHI_USAGES = 1;
 // Attaches Superlative Superstrength to Arataki Itto on the side, when she is on it
 const attachSuperlativeToItto = (duel: GcgDuel, sideIndex: number): void => {
   const itto = takeOne(duel.sides, sideIndex).characters.find(({ character }) => character.id === ARATAKI_ITTO_ID);
-  if (itto) placeGcgZoneCard(itto.statuses, SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength);
+  if (itto) attachSuperlativeSuperstrength(itto);
 };
 
 // Ushi, a summon that lasts the round: while its usage is unspent, the active character takes 1 less DMG. The first DMG that

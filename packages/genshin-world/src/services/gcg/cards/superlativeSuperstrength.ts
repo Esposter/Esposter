@@ -1,7 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
+import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { checkIsGcgChargedAttack } from "#src/services/gcg/effects/checkIsGcgChargedAttack";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 export const SUPERLATIVE_SUPERSTRENGTH_ID = 116_054;
@@ -28,4 +30,9 @@ export const superlativeSuperstrength: GcgCardModule = {
     zoneCard.usages >= SUPERLATIVE_SUPERSTRENGTH_REDUCTION_USAGES
       ? { count: 1, kind: GcgCostKind.Unaligned }
       : undefined,
+};
+
+// Attaches a Superlative Superstrength to a character: one more usage on the one she has, up to its most
+export const attachSuperlativeSuperstrength = (character: GcgCharacterState): void => {
+  placeGcgZoneCard(character.statuses, SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength);
 };
