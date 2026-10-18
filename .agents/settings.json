@@ -1,5 +1,5 @@
 {
-  "autoCompactWindow": 300000,
+  "autoCompactWindow": 500000,
   "enabledPlugins": { "genshin-mods@esposter": true, "genshin-persona@esposter": true },
   "extraKnownMarketplaces": { "esposter": { "autoUpdate": true, "source": { "path": ".", "source": "directory" } } },
   "statusLine": {
