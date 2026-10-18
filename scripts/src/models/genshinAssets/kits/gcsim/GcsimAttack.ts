@@ -1,4 +1,5 @@
 import type { GcsimAttackBranch } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackBranch";
+import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
 
 // One `AttackInfo` literal of a gcsim character's action files, its fields as written: the talent variable its
 // Multiplier reads, through any loop or local naming it, its attack and ICD tags, strike type and element by their gcsim
@@ -16,6 +17,9 @@ export interface GcsimAttack {
   fieldLineMap: Partial<Record<string, number>>;
   file: string;
   internalCooldownTag?: string;
+  // The loop iteration this variant applies to, where an if on a constant loop's variable sets a field on a copy: a call
+  // Takes it only in that iteration, and the copy's own attack in the others
+  iteration?: GcsimAttackIteration;
   line: number;
   poiseDamage?: number;
   poiseDamageVariable?: string;

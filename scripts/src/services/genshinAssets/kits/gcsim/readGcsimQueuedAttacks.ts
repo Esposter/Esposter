@@ -150,6 +150,7 @@ export const readGcsimQueuedAttacks = (
           delayLine: tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
           file,
           hitbox,
+          ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
           line: token.line,
         });
       }

@@ -1,7 +1,7 @@
 {
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 15039 } },
-  "burst.hits.0.poiseDamage": { "cause": "Unsourced", "value": 30 },
+  "burst.hits.0.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
   "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 15039 } },
   "burst.hits.2.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },

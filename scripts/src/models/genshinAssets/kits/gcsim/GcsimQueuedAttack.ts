@@ -10,5 +10,7 @@ export interface GcsimQueuedAttack {
   delayLine: number;
   file: string;
   hitbox?: GcsimHitbox;
+  // The values of the constant loops' variables this call is in, one iteration's, where a call is in a loop
+  iterations?: Record<string, number>;
   line: number;
 }
