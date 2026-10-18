@@ -123,6 +123,20 @@ describe(createIansanKitBehaviour, () => {
     expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([]);
   });
 
+  test("a passive takes effect at its ascension phase: Precise Movement ends with the blessing that drains out, taking Iansan's 20% ATK with it", () => {
+    expect.hasAssertions();
+    const combatant = { ...createIansanCombatant(), ascension: 1 };
+    const context = createKitTestContext(combatant);
+    IANSAN_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 1);
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    // Her 54 points drain out at nine seconds, and Precise Movement, which lasts to 16 seconds, goes with them
+    stepKitSeconds(context, 7);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toHaveLength(1);
+    stepKitSeconds(context, 2);
+    expect(IANSAN_KIT.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([]);
+  });
+
   test("a Constellation 1 blessing gives Iansan 15 energy for each 6 points consumed, then waits 18 seconds for the next", () => {
     expect.hasAssertions();
     const combatant = createIansanCombatant(1);
@@ -287,5 +301,21 @@ describe(createIansanKitBehaviour, () => {
     stepKitSeconds(context, 6);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(false);
     expect(countIansanPoints(context)).toBe(0);
+  });
+
+  test("a skill re-entry inside the burst's 12 seconds does not resume the burst's restore", () => {
+    expect.hasAssertions();
+    const combatant = { ...createIansanCombatant(), ascension: 1 };
+    const context = createKitTestContext(combatant);
+    IANSAN_KIT.elementalBurst.onStart?.(context);
+    // The burst's 15 points drain out at about 3.2 seconds, which ends that blessing and with it the restore
+    stepKitSeconds(context, 4);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(false);
+    // The skill re-enters at 4 seconds and a strike brings Precise Movement back, so only the restore is missing
+    IANSAN_KIT.elementalSkill.onStart?.(context);
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    stepKitSeconds(context, 1.2);
+    // Past the 5-second tick, which with the restore would give 4 points armed by the drain: only the drain shows
+    expect(countIansanPoints(context)).toBeCloseTo(54 - 6 * 1.2);
   });
 });

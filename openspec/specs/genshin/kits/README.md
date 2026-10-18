@@ -90,7 +90,7 @@ A passive or a constellation that answers something happening in combat is a kit
 flowchart TD
   STEP["stepActiveKit, at the fixed step"] -->|"another character on the field than the last step's"| SWAP["CharacterSwapped"]
   STEP -->|"the outbox: an enemy's strike a taunt took since the last step"| TAUNT["TauntDamaged"]
-  STEP -->|"stepKitEffects drops an effect that ran out"| EXPIRED["EffectExpired"]
+  STEP -->|"stepKitEffects drops an effect that ran out, or stepKitNightsoul exits a blessing its points ran out of"| EXPIRED["EffectExpired"]
   STEP -->|"the outbox: tickEnemyStatuses puts on it a status's tick that falls due"| TICK["StatusTicked"]
   STEP -->|"a normal attack starts, as its action does"| STARTED["NormalAttackStarted"]
   STEP -->|"a normal attack's first hitmark falls"| LANDED["NormalAttackLanded"]
@@ -130,7 +130,7 @@ flowchart TD
 
 - **CharacterSwapped** carries the character that left the field and the one now on it, read off the character the team's effects last stepped with (`KitEffectState.fieldCharacterId`). Chongyun's field infuses the one coming on, Ayato's Namisen stacks clear as he leaves, and Fischl's burst spawns its Oz at once.
 - **TauntDamaged** carries a taunt on the team and the damage an enemy's strike dealt it. `damageKitTaunt` puts each strike on the outbox (`KitContext.outbox`) as it lands, between steps, and the step sends the outbox in the order the strikes landed and empties it, ahead of its effects running down, so a strike that spends the taunt's health is heard before the taunt ends. Ushi's stack as it takes damage answers it.
-- **EffectExpired** carries an effect the step dropped, its seconds run out or ended by its kit or a swap. Rimechaser Blade strikes as Chongyun's field ends, and Tartaglia's stance sets his skill's cooldown as it ends.
+- **EffectExpired** carries an effect the step dropped, its seconds run out, its kit or a swap ends it, or a Nightsoul blessing's points run out, which `stepKitNightsoul` sends for the blessing it exits. Rimechaser Blade strikes as Chongyun's field ends, and Tartaglia's stance sets his skill's cooldown as it ends.
 - **NormalAttackStarted** carries a normal attack of the character on the field as its action starts, with the action and whether it is the first strike of its string (`isFirstStrike`), as gcsim's watcher reads the normal attack state's start. Raincutter sets its wave off from it, 7 frames on for a string's first strike and as it starts for a later one. `coordinateKitSummons` runs each summon's `onNormalAttackStart` at the same point, but it carries no first-strike flag, so a kit that needs one reads this event.
 - **NormalAttackLanded** carries a normal attack of the character on the field as its first hitmark falls, whether or not it struck anything. Evernight Raven's Oz attacks along with it, Gaze of the Deep fires with Fischl's own, and Ice Unleashed's blades follow Chongyun's fourth strike.
 - **ReactionTriggered** carries an enemy, the reactions a hit triggered on it, the kind of attack of that hit (`KitHit.attackTag`, none for a reaction a reach carries) and the combatant that dealt the hit. Thundering Retribution answers an Electro-related one the character on the field triggers while Oz stands.

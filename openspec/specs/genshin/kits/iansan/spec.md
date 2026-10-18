@@ -114,7 +114,7 @@ From Constellation 1, each 6 Nightsoul points her blessing consumes SHALL restor
 
 ### Requirement: Burst's points and restore
 
-Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, entering a 16-second blessing if she holds none, and SHALL restore a point a second for the 12 seconds the burst lasts, for as long as the blessing it lands in holds.
+Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, entering a 16-second blessing if she holds none, and SHALL restore a point a second for the 12 seconds the burst lasts, for as long as the blessing it lands in holds, and not once that blessing has exited, even if she enters another.
 
 #### Scenario: Burst enters a blessing
 
@@ -125,6 +125,13 @@ Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, enterin
 #### Scenario: The restore stops when the blessing ends
 
 - **GIVEN** the blessing her burst landed in has run out of points
+- **WHEN** another second passes
+- **THEN** the burst's restore gives her no points
+
+#### Scenario: A blessing entered again does not resume the restore
+
+- **GIVEN** the blessing her burst landed in has run out of points
+- **AND** she enters a new blessing within the burst's 12 seconds and Precise Movement is up again
 - **WHEN** another second passes
 - **THEN** the burst's restore gives her no points
 
