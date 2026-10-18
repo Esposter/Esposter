@@ -15,7 +15,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `aloy`               | —                      |                    |
 | `alyosha`            | 2026-10-19 · Haiku 5.5 |                    |
 | `amber`              | 2026-10-19 · Haiku 5.5 |                    |
-| `arataki-itto`       | —                      |                    |
+| `arataki-itto`       | —                      | design is `itto`   |
 | `arlecchino`         | 2026-10-19 · Haiku 5.5 |                    |
 | `baizhu`             | 2026-10-19 · Haiku 5.5 |                    |
 | `barbara`            | 2026-10-19 · Haiku 5.5 |                    |
@@ -96,7 +96,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `razor`              | 2026-10-19 · Haiku 5.5 |                    |
 | `rosaria`            | 2026-10-19 · Haiku 5.5 |                    |
 | `sandrone`           | 2026-10-19 · Haiku 5.5 |                    |
-| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 |                    |
+| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 | design is `kokomi` |
 | `sayu`               | —                      |                    |
 | `sethos`             | —                      |                    |
 | `shenhe`             | 2026-10-19 · Haiku 5.5 |                    |
@@ -126,7 +126,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `yaoyao`             | —                      |                    |
 | `yelan`              | —                      |                    |
 | `yoimiya`            | —                      |                    |
-| `yumemizuki-mizuki`  | —                      |                    |
+| `yumemizuki-mizuki`  | —                      | design is `mizuki` |
 | `yun-jin`            | 2026-10-19 · Haiku 5.5 |                    |
 | `zhongli`            | 2026-10-19 · Haiku 5.5 |                    |
 | `zibai`              | 2026-10-19 · Haiku 5.5 |                    |

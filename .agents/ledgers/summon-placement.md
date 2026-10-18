@@ -1,6 +1,6 @@
 # Summon placement
 
-A skill whose `afterDamage` only places its summon builds it with `createGcgSummonAfterDamage`, the convention in `openspec/specs/genshin/genius-invokation/decks/design.md`.
+The rule a pass carries is the `createGcgSummonAfterDamage` bullet in `openspec/specs/genshin/genius-invokation/decks/design.md`.
 
 | Unit                                                                        | Swept                  | Notes |
 | --------------------------------------------------------------------------- | ---------------------- | ----- |
