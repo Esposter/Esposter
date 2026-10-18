@@ -41,7 +41,7 @@ The colour map, `HighlightStyleMap` in the db constants, is the one place the co
 
 ## Upstream
 
-Every issue of `scriptcoded/sql-highlight` has one verdict, open or closed, read with its comments and checked against the 6.1.0 source. Four defects are in scope and each has a regression test named after its issue that fails against the upstream package: the test asserts the whole output, and upstream's segments differ. A "fixed upstream, pinned" row is a behaviour the upstream 6.1.0 already gets right, which the suite keeps as a pin.
+Each `scriptcoded/sql-highlight` issue, open and closed, was read through its comments against the 6.1.0 source and given a single verdict. Four defects are in scope and each has a regression test named after its issue that fails against the upstream package: the test asserts the whole output, and upstream's segments differ. A "fixed upstream, pinned" row is a behaviour the upstream 6.1.0 already gets right, which the suite keeps as a pin.
 
 | Upstream                                                        | Verdict                             | Proof                                                                                                                                                                                   |
 | :-------------------------------------------------------------- | :---------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
