@@ -4,6 +4,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -141,6 +142,29 @@ describe(strikeKitEnemies, () => {
 
     expect(targetedOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([enemy]);
     expect(areaOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([areaEnemy]);
+  });
+
+  test("lands a hitbox strike on its target and on the enemies its hitbox reaches of it, and no others", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const hitbox: KitHitbox = { offset: { x: -2.5, z: 2.5 }, shape: { kind: "circle", radius: 4.5 } };
+    const target = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "target", position: { x: 0, z: 0 } }, "");
+    const reached = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "reached", position: { x: 0, z: 1 } }, "");
+    const missed = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "missed", position: { x: 0, z: -6 } }, "");
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map([target, reached, missed].map((enemy) => [enemy.id, enemy])),
+      enemyTables,
+    });
+
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, hitbox, target }], context);
+
+    expect(
+      onKitEvent.mock.calls
+        .map(([event]) => event)
+        .filter((event) => event.kind === KitEventKind.DamageTaken)
+        .map(({ enemy }) => enemy.id),
+    ).toStrictEqual(["target", "reached"]);
   });
 
   test("sends the team's kits no elemental hit for a hit with no element", () => {
