@@ -119,15 +119,15 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
     step: GROUND_STEP,
     widths: GROUND_WIDTHS,
   });
-  // What a ground misses by over the samples the fit takes, and over the piece's own ground the bar is read on
-  const computeMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
-    mapTerrainResidualGrid(heightGrid, (x, z, height) => height - getGroundHeight(x, z));
-  const computeNaturalMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
-    mapTerrainResidualGrid(naturalGrid, (x, z, height) => height - getGroundHeight(x, z));
+  // What a ground misses by at each sample of a grid, the fit's samples or the piece's own ground the bar is read on
+  const computeMisses = (
+    grid: TerrainResidualGrid,
+    getGroundHeight: (x: number, z: number) => number,
+  ): TerrainResidualGrid => mapTerrainResidualGrid(grid, (x, z, height) => height - getGroundHeight(x, z));
   const detailSamples = selectBarSamples(computeTerrainDetail(naturalGrid, GROUND_STEP));
   const gate = roundFitted(computeRootMeanSquare(detailSamples));
   const getHillsHeight = createGaussianHillsHeight(hills);
-  const hillMisses = computeMisses(getHillsHeight);
+  const hillMisses = computeMisses(heightGrid, getHillsHeight);
   const plateaus = fitTerrainPlateaus(hillMisses);
   const cliffs = fitTerrainCliffs(plateaus.remainder);
   const { features: ridges, remainder } = fitTerrainRidges(cliffs.remainder);
@@ -140,12 +140,12 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
   const residual = { ...fitTerrainResidual(remainder, getFadeWeight), fade };
   const getGroundHeight = createTerrainShapeHeight({ ...hills, features, residual });
   const getFeaturedHeight = createTerrainShapeHeight({ ...hills, features });
-  const groundMisses = computeNaturalMisses(getGroundHeight);
+  const groundMisses = computeMisses(naturalGrid, getGroundHeight);
   // The composed ground against the tiles inside the cities, their tiers and walls among them
   const cityMisses = mapTerrainResidualGrid(tileGrid, (x, z, height) =>
     getCityDistance(x, z) === 0 ? getGroundHeight(x, z) - height : Number.NaN,
   ).values.filter((sample) => Number.isFinite(sample));
-  const unfadedMisses = computeNaturalMisses(getFeaturedHeight);
+  const unfadedMisses = computeMisses(naturalGrid, getFeaturedHeight);
   const drawnResidual = mapTerrainResidualGrid(heightGrid, (x, z, height) =>
     Number.isFinite(height) ? getGroundHeight(x, z) - getFeaturedHeight(x, z) : Number.NaN,
   );
@@ -181,7 +181,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
           : `${key}: the city areas fitted as the land they stand on, ${cityAreas.map(({ code }) => code).join(", ")}; inside them the composed ground stands ${roundFitted(computeMean([...cityMisses]))} metres over the tiles on the mean, ${roundFitted(computeRootMeanSquare([...cityMisses]))} RMS`,
         `${key}: a gate of ${gate} metres, the RMS of its own detail finer than ${GROUND_STEP} metres over ${detailSamples.length} samples`,
         `${key}: the bar, its hills and features ${bar} metres over its own ground against the gate's ${gate}, ${isHeld ? "held" : "missed, refused"}`,
-        `${key}: ${hills.hills.length} hills, ${getBandsReport(computeNaturalMisses(getHillsHeight), computeRootMeanSquare, " metres")} from its centre`,
+        `${key}: ${hills.hills.length} hills, ${getBandsReport(computeMisses(naturalGrid, getHillsHeight), computeRootMeanSquare, " metres")} from its centre`,
         `${key}: ${plateaus.features.length} plateaus, ${cliffs.features.length} cliffs and ${ridges.length} ridges, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
         `${key}: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
         `${key}: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over its samples and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
