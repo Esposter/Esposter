@@ -53,10 +53,14 @@ const createYaoyaoCombatant = (): Combatant => ({
 });
 
 // Yaoyao alone on the field at the given share of her Max HP, standing at the origin facing along the negative z axis
-const createYaoyaoContext = (healthShare: number, context: Partial<KitContext> = {}): KitContext => {
+const createYaoyaoContext = (
+  healthShare: number,
+  context: Partial<KitContext> = {},
+  combatant: Partial<Combatant> = {},
+): KitContext => {
   const party = createParty([YAOYAO_CHARACTER_ID]);
   getPartyMember(party, YAOYAO_CHARACTER_ID).healthShare = healthShare;
-  return createKitTestContext(createYaoyaoCombatant(), { party, ...context });
+  return createKitTestContext({ ...createYaoyaoCombatant(), ...combatant }, { party, ...context });
 };
 
 const createEnemyAt = (x: number, z: number) => ({
@@ -266,5 +270,38 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(findJumpingYuegui(context).at(-1)?.secondsRemaining).toBeCloseTo(6 - 222 / 60, 1);
     stepFrames(context, 140);
     expect(findJumpingYuegui(context)).toHaveLength(0);
+  });
+
+  test("constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds after a radish heals her", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5, {}, { constellationCount: 1 });
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES + 2);
+    const buff = context.kitEffectState.effects.find(
+      (effect) => effect.kind === "buff" && effect.attribute === Attribute.DendroDamageBonus,
+    );
+    expect(buff?.kind === "buff" ? [buff.amount, buff.characterId] : undefined).toStrictEqual([
+      0.15,
+      YAOYAO_CHARACTER_ID,
+    ]);
+  });
+
+  test("ascension 4 heals the active character 0.8% of Yaoyao's Max HP each second, for five seconds after a radish heals her", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5, {}, { ascension: 4 });
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES + 2);
+    const healthAfterRadish = getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare;
+    // The Yuegui ends after its first radish, so the next throw's own heal does not join the chain's
+    const yuegui = findYuegui(context);
+    if (yuegui) yuegui.secondsRemaining = 0;
+
+    stepFrames(context, 62);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBeCloseTo(healthAfterRadish + 0.008, 4);
+    stepFrames(context, 360);
+    const healthAfterChain = getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare;
+    stepFrames(context, 60);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBe(healthAfterChain);
   });
 });
