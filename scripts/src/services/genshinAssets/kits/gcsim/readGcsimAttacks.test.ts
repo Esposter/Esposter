@@ -87,4 +87,31 @@ describe(readGcsimAttacks, () => {
       readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
     ).toStrictEqual([undefined]);
   });
+
+  test("gives a Mult set after a literal its own attack under the variable it names, with the literal's element", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "func (c *char) burst() {",
+      "\tai := info.AttackInfo{",
+      "\t\tAttackTag: attacks.AttackTagDirectLunarCharged,",
+      "\t\tElement:   attributes.Electro,",
+      "\t\tMult:      burstMid[c.TalentLvlBurst()],",
+      "\t}",
+      "\tc.Core.QueueAttack(ai, ap, 0, 1)",
+      "\tai.Mult = burstFinal[c.TalentLvlBurst()]",
+      "\tc.Core.QueueAttack(ai, ap, 0, 2)",
+      "}",
+    ].join("\n");
+    const sources = [{ path: "burst.go", source }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(
+        ({ element, line, talentVariable, variableName }) => ({ element, line, talentVariable, variableName }),
+      ),
+    ).toStrictEqual([
+      { element: "attributes.Electro", line: 2, talentVariable: "burstMid", variableName: "ai" },
+      { element: "attributes.Electro", line: 8, talentVariable: "burstFinal", variableName: "ai" },
+    ]);
+  });
 });
