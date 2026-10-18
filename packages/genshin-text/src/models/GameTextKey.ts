@@ -38,8 +38,10 @@ export enum GameTextKey {
   ArtifactActionEnhance = "UI_EQUIP_PAGE_LEVEL_UP",
   ArtifactActionEquip = "UI_EQUIP_BUTTON",
   ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
-  // The set bonus block's heading, and the words it shows while no bonus is active
+  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
+  // Is active
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
+  ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
   // The five artifact slots under the names the game gives them, in the order it lists them
   ArtifactSlotCircletOfLogos = "EQUIP_DRESS",

@@ -1,15 +1,26 @@
 <script setup lang="ts">
+import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
+
+// One line of an artifact's stats: the attribute's name in the game and its value
+interface ArtifactStatLine {
+  label: string;
+  value: string;
+}
+
+// A worn artifact's stats: its main stat, whose value is empty while the table it comes from is unread, and its minor affixes
+interface ArtifactSlotStats {
+  mainStat: ArtifactStatLine;
+  subStats: ArtifactStatLine[];
+}
 
 interface Props {
   // The Enhance button's label, the game's word for raising a worn artifact's level with its EXP
   enhanceLabel: string;
   // The Equip button's label, shown while the picked slot is empty
   equipLabel: string;
-  // Each of the character's five artifact slots, in the game's order, true where an artifact is worn
-  equipped: boolean[];
   // Whether Equip is disabled, which it is while no artifact in the bag can be put on the picked slot
   isEquipDisabled: boolean;
   // The words the set bonus block shows while no bonus is active
@@ -20,6 +31,8 @@ interface Props {
   setBonusLines: string[];
   // Each slot's name in the game's order, which its disc is labelled by and the details pill shows for the picked slot
   slotNames: string[];
+  // Each slot's stats in the game's order, undefined where the character wears no artifact, which leaves its disc unlit
+  slotStats: (ArtifactSlotStats | undefined)[];
   // The Unequip button's label, shown while the picked slot holds a worn artifact
   unequipLabel: string;
 }
@@ -27,39 +40,51 @@ interface Props {
 const {
   enhanceLabel,
   equipLabel,
-  equipped,
   isEquipDisabled,
   noSetBonusLabel,
   setBonusHeading,
   setBonusLines,
   slotNames,
+  slotStats,
   unequipLabel,
 } = defineProps<Props>();
 // Each action names the slot it is taken on by its index
 const emit = defineEmits<{ enhance: [index: number]; equip: [index: number]; unequip: [index: number] }>();
-// The slot the details and buttons are for, the first until a disc is picked
+// The slot the details, stats and buttons are for, the first until a disc is picked
 const selectedIndex = ref(0);
-const isSelectedWorn = computed(() => equipped[selectedIndex.value] === true);
+const selectedStats = computed(() => slotStats[selectedIndex.value]);
+const isSelectedWorn = computed(() => selectedStats.value !== undefined);
 </script>
 
 <template>
   <!-- The Artifacts tab's panel: the five slots down its top, each a disc lit where the character wears an artifact and
-       picked by a click, the picked slot's name in the details pill, the set bonus block below it, and the Enhance and
-       Equip or Unequip buttons at its foot. The picked artifact's main and sub stats are not drawn yet -->
+       picked by a click, the picked slot's name in the details pill, the picked artifact's main and sub stats under it,
+       the set bonus block below them, and the Enhance and Equip or Unequip buttons at its foot. The stats' place is
+       provisional -->
   <div class="artifacts">
     <ul class="slots">
-      <li v-for="(isWorn, index) in equipped" :key="index">
+      <li v-for="(stats, index) in slotStats" :key="index">
         <button
           class="slot"
           :aria-label="slotNames[index]"
           :aria-pressed="index === selectedIndex"
-          :class="{ worn: isWorn }"
+          :class="{ worn: stats !== undefined }"
           type="button"
           @click="selectedIndex = index"
         />
       </li>
     </ul>
     <div class="details">{{ slotNames[selectedIndex] }}</div>
+    <ul v-if="selectedStats" class="stats">
+      <li class="stat">
+        <span>{{ selectedStats.mainStat.label }}</span>
+        <span>{{ selectedStats.mainStat.value }}</span>
+      </li>
+      <li v-for="(subStat, index) in selectedStats.subStats" :key="index" class="stat">
+        <span>{{ subStat.label }}</span>
+        <span>{{ subStat.value }}</span>
+      </li>
+    </ul>
     <div class="set-bonus">
       <p class="set-bonus-heading">{{ setBonusHeading }}</p>
       <ul v-if="setBonusLines.length > 0" class="set-bonus-lines">
@@ -67,7 +92,7 @@ const isSelectedWorn = computed(() => equipped[selectedIndex.value] === true);
       </ul>
       <p v-else class="set-bonus-lines">{{ noSetBonusLabel }}</p>
     </div>
-    <div class="buttons">
+    <CharacterMenuButtons>
       <GameButton
         class="button"
         :disabled="!isSelectedWorn"
@@ -93,14 +118,16 @@ const isSelectedWorn = computed(() => equipped[selectedIndex.value] === true);
       >
         {{ equipLabel }}
       </GameButton>
-    </div>
+    </CharacterMenuButtons>
   </div>
 </template>
 
 <style scoped>
 /* Measured off the English PC client's Artifacts tab at 21:9, its settled frame at 157.5 seconds of session-2.mp4 (the
-   registered reference for it), in units from the panel's top: the details pill at 163, the set bonus block from 227
-   to 829 and the buttons at 859. The slots are drawn in the panel's top, which the game draws in the scene. Colours are
+   registered reference for it), in units from the panel's top: the details pill at 163, the set bonus block's bottom at
+   829 and the buttons at 859. The slots are drawn in the panel's top, which the game draws in the scene. The stats rows
+   sit under the details pill from 227, a row of 36 units each, and the set bonus block starts at 420 below them: both are
+   provisional, since the registered frame shows no picked piece's stats, so their place is not measured. Colours are
    provisional */
 .artifacts {
   position: absolute;
@@ -158,9 +185,26 @@ const isSelectedWorn = computed(() => equipped[selectedIndex.value] === true);
   background: rgb(0 0 0 / 0.2);
 }
 
-.set-bonus {
+.stats {
   position: absolute;
   top: calc(var(--unit) * 227);
+  right: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--unit) * 36);
+}
+
+.set-bonus {
+  position: absolute;
+  top: calc(var(--unit) * 420);
   right: 0;
   bottom: calc(var(--unit) * 80);
   left: 0;
@@ -173,15 +217,6 @@ const isSelectedWorn = computed(() => equipped[selectedIndex.value] === true);
   padding: 0;
   text-align: center;
   list-style: none;
-}
-
-.buttons {
-  position: absolute;
-  top: calc(var(--unit) * 859);
-  right: 0;
-  left: 0;
-  display: flex;
-  gap: calc(var(--unit) * 23);
 }
 
 .button {

@@ -13,8 +13,18 @@ describe(getActiveArtifactSetBonuses, () => {
       SET_ID,
       {
         bonuses: [
-          { attributeLines: [{ attribute: Attribute.Health, value: 10 }], params: [], pieceCount: 2 },
-          { attributeLines: [{ attribute: Attribute.Attack, value: 20 }], params: [], pieceCount: 4 },
+          {
+            attributeLines: [{ attribute: Attribute.Health, value: 10 }],
+            descriptionTextHash: "",
+            params: [],
+            pieceCount: 2,
+          },
+          {
+            attributeLines: [{ attribute: Attribute.Attack, value: 20 }],
+            descriptionTextHash: "",
+            params: [],
+            pieceCount: 4,
+          },
         ],
         id: SET_ID,
       },
@@ -36,7 +46,13 @@ describe(getActiveArtifactSetBonuses, () => {
 
     const twoPieces = [createArtifact(ArtifactSlot.CircletOfLogos), createArtifact(ArtifactSlot.FlowerOfLife)];
     expect(getActiveArtifactSetBonuses(twoPieces, artifactSetDataMap)).toStrictEqual([
-      { attributeLines: [{ attribute: Attribute.Health, value: 10 }], params: [], pieceCount: 2, setId: SET_ID },
+      {
+        attributeLines: [{ attribute: Attribute.Health, value: 10 }],
+        descriptionTextHash: "",
+        params: [],
+        pieceCount: 2,
+        setId: SET_ID,
+      },
     ]);
   });
 
@@ -50,8 +66,20 @@ describe(getActiveArtifactSetBonuses, () => {
       createArtifact(ArtifactSlot.PlumeOfDeath),
     ];
     expect(getActiveArtifactSetBonuses(fourPieces, artifactSetDataMap)).toStrictEqual([
-      { attributeLines: [{ attribute: Attribute.Health, value: 10 }], params: [], pieceCount: 2, setId: SET_ID },
-      { attributeLines: [{ attribute: Attribute.Attack, value: 20 }], params: [], pieceCount: 4, setId: SET_ID },
+      {
+        attributeLines: [{ attribute: Attribute.Health, value: 10 }],
+        descriptionTextHash: "",
+        params: [],
+        pieceCount: 2,
+        setId: SET_ID,
+      },
+      {
+        attributeLines: [{ attribute: Attribute.Attack, value: 20 }],
+        descriptionTextHash: "",
+        params: [],
+        pieceCount: 4,
+        setId: SET_ID,
+      },
     ]);
   });
 

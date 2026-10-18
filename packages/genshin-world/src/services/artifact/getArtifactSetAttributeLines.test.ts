@@ -22,8 +22,18 @@ describe(getArtifactSetAttributeLines, () => {
       1,
       {
         bonuses: [
-          { attributeLines: [{ attribute: Attribute.HealthPercent, value: 0.2 }], params: [], pieceCount: 2 },
-          { attributeLines: [{ attribute: Attribute.ElementalMastery, value: 80 }], params: [], pieceCount: 4 },
+          {
+            attributeLines: [{ attribute: Attribute.HealthPercent, value: 0.2 }],
+            descriptionTextHash: "",
+            params: [],
+            pieceCount: 2,
+          },
+          {
+            attributeLines: [{ attribute: Attribute.ElementalMastery, value: 80 }],
+            descriptionTextHash: "",
+            params: [],
+            pieceCount: 4,
+          },
         ],
         id: 1,
       },
@@ -31,7 +41,14 @@ describe(getArtifactSetAttributeLines, () => {
     [
       2,
       {
-        bonuses: [{ attributeLines: [{ attribute: Attribute.AttackPercent, value: 0.18 }], params: [], pieceCount: 2 }],
+        bonuses: [
+          {
+            attributeLines: [{ attribute: Attribute.AttackPercent, value: 0.18 }],
+            descriptionTextHash: "",
+            params: [],
+            pieceCount: 2,
+          },
+        ],
         id: 2,
       },
     ],

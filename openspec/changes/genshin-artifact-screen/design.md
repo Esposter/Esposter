@@ -35,14 +35,13 @@ flowchart TD
 What works today and what this change adds:
 
 - **Built now:** the three services, the set reader, the two tables read into `StatTables`, and the Artifacts panel's
-  five slots, the picked slot's name, the set bonus block and its actions, drawn by its fixture and worn variant in the
-  visual suite, and the character screen's Artifacts tab, which passes the panel its words, slot names and the set
-  block's state. Their tests are named in the change's tasks, and the existing character, kit and save suites cover what
-  they share.
-- **Not built, and why:** the picked artifact's main and sub stats in the panel, whose layout the reference frame has
-  not been measured for yet, the set bonus lines, which wait on the effect text an artifact set's bonus is written with
-  (the artifact table holds the numbers, not that text), the panel's parity reference and approval, equipping from the
-  bag, unequipping to it and fodder taken from it. Each of the bag moves needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
+  five slots, the picked slot's name, the picked artifact's stats, the set bonus lines and its actions, drawn by its
+  fixture and worn variant in the visual suite, and the character screen's Artifacts tab, which passes the panel its
+  words, slot names, stats and the set block's lines. Their tests are named in the change's tasks, and the existing
+  character, kit and save suites cover what they share.
+- **Not built, and why:** the main stat's value, which waits on the main affix pools the drop reads (task 6.3), the
+  panel's parity reference and approval, equipping from the bag, unequipping to it and fodder taken from it. Each of the
+  bag moves needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
   (`InventoryItemSave`), so a piece cannot leave the bag equipped or enter it as fodder. The character-screen agent's
   change (`agent/w6-character-screen`) makes each bag artifact an individual, rolled at its drop and saved with a unique
   instance id, and that branch lands before this change does.
@@ -60,15 +59,24 @@ What works today and what this change adds:
 - **The panel names a slot by its index and holds no artifact model.** Its actions emit the index of the picked slot,
   and the host maps it to the character's artifact through these services, so the panel builds against the `Artifact`
   type rather than a view model of its own.
-- **The set block shows the game's own set line once its text is read.** `EQUIP_RELIC_SET_NUM` reads
-  `{0}-Piece Set: {1}`, so one key would carry the piece count and its effect, filled by `fillGameTextValues`. Rejected: a
-  heading key for each piece count, which splits one sentence the game writes whole. The key joins the enum with the
-  lines, since no code names it before then. Until a set's effect text is read, the block lists no lines and says that
-  no bonus is active only while none is.
+- **The set block shows the game's own set line for each bonus the worn set reaches.** `EQUIP_RELIC_SET_NUM` reads
+  `{0}-Piece Set: {1}`, so one key carries the piece count and its effect, filled by `fillGameTextValues`. Rejected: a
+  heading key for each piece count, which splits one sentence the game writes whole. The effect's words are the game's
+  own description of the affix at that piece count, read from the names record by its text hash (`descriptionTextHash`),
+  so the names builder collects them with no list change. A bonus whose words the names do not hold reads as an empty
+  effect, and the block says none is active only while none is.
+- **The stats lay out provisionally under the details pill.** The Details list's row pitch from the registered frame
+  sets each row at 36 units, and the stats' five rows push the set bonus block down from 227 to 420 units. The registered
+  frame shows no picked piece's stats, and the wiki's `File:Sanctifying Unction Artifact Interface.png` (page 56896,
+  read through api.php, provisional) is behind a bot challenge the sandbox cannot pass, so the place is estimated and the
+  parity measurement refines it.
 - **The buttons take the artifact page's own words where it has them.** Enhance is `UI_EQUIP_PAGE_LEVEL_UP`, not the
   weapon's `UI_EQUIP_PAGE_LEVELUP_BUTTON` that `WeaponEnhance` keys, since the artifact's own member should not carry the
   weapon's name. Equip is `UI_EQUIP_BUTTON`, and Unequip the one exact "Unequip" the dump holds, the potion buff's remove
   button (see Notes).
+- **A percentage affix is named by its flat attribute.** `ArtifactAffixGameTextKeyMap` labels `AttackPercent` as the flat
+  ATK, `DefensePercent` as DEF and `HealthPercent` as Max HP, since the game's own names for the percentages are not keyed
+  yet. Provisional until they are, and a percentage's value is shown with its percent sign either way.
 - **Enhancing refuses on the Mora in the service.** The gate is in `enhanceCharacterArtifact` rather than left to the
   caller, as `enhanceWeapon` does, so a caller that forgets the check cannot spend Mora it does not hold. The wiki's
   Enhancing section says the same: one Artifact EXP costs one Mora except when recycling a leveled artifact, which the
@@ -83,32 +91,41 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 
 ## Key files
 
-| File                                                                           | Role                                                                                                                   |
-| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts` | The attribute sum, now over the active set bonuses                                                                     |
-| `packages/genshin-world/src/services/character/parseStatTables.ts`             | Parses the rarity and EXP tables beside the existing ones                                                              |
-| `packages/genshin-world/src/services/character/readStatTables.ts`              | Fetches the rarity and EXP tables by their keys                                                                        |
-| `packages/genshin-world/src/models/character/StatTables.ts`                    | Carries the rarity and EXP maps the enhancement reads                                                                  |
-| `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                     |
-| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                      |
-| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                       |
-| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the set bonus block and the actions (its stats are not built)  |
-| `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's ten artifact members: the five slot names, the set block's heading and empty words, and the three actions  |
-| `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                             |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names and the set block's state, from the game text and the tables     |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, on the chest drop path: the character-screen agent's change, not this one's (not built)                 |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact, on the chest drop path: the character-screen agent's change, not this one's (not built) |
+| File                                                                           | Role                                                                                                                             |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts` | The attribute sum, now over the active set bonuses                                                                               |
+| `packages/genshin-world/src/services/character/parseStatTables.ts`             | Parses the rarity and EXP tables beside the existing ones                                                                        |
+| `packages/genshin-world/src/services/character/readStatTables.ts`              | Fetches the rarity and EXP tables by their keys                                                                                  |
+| `packages/genshin-world/src/models/character/StatTables.ts`                    | Carries the rarity and EXP maps the enhancement reads                                                                            |
+| `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                               |
+| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                                |
+| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                                 |
+| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the stats, the set bonus block and the actions, in the shared button row |
+| `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's eleven artifact members: the five slot names, the set block's heading, line and empty words, and the actions         |
+| `packages/genshin-world/src/services/artifact/getArtifactSetBonusLines.ts`     | Each active set bonus as its line: the piece count and its effect's words filled into the game's set line                        |
+| `packages/genshin-world/src/services/artifact/getArtifactDetailStats.ts`       | The picked artifact's main stat's name and its minor affixes' lines, in the Details list's form                                  |
+| `packages/genshin-world/src/services/artifact/ArtifactAffixGameTextKeyMap.ts`  | Each attribute an artifact's affix raises, by the game's name for it, a percentage under its flat attribute's name               |
+| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`               | A set bonus carries its effect's text hash beside its attribute lines                                                            |
+| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`              | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
+| `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                                       |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, on the chest drop path: the character-screen agent's change, not this one's (not built)                           |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact, on the chest drop path: the character-screen agent's change, not this one's (not built)           |
 
 New files, as a tree:
 
 ```text
 packages/genshin-world/src/
   models/artifact/ActiveArtifactSetBonus.ts
+  models/artifact/ArtifactDetailStats.ts
   services/artifact/
     equipCharacterArtifact.ts          (+ .test.ts)
     unequipCharacterArtifact.ts        (+ .test.ts)
     enhanceCharacterArtifact.ts        (+ .test.ts)
     getActiveArtifactSetBonuses.ts     (+ .test.ts)
+    getArtifactSetBonusLines.ts        (+ .test.ts)
+    getArtifactDetailStats.ts          (+ .test.ts)
+    ArtifactAffixGameTextKeyMap.ts
 ```
 
 ## Notes

@@ -19,6 +19,8 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
+import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
+import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
@@ -181,20 +183,24 @@ const weaponPanel = computed(() => {
     subStatValue,
   };
 });
-// Which artifact slots the character wears one in, in the game's order
-const artifactsEquipped = computed(() =>
-  ARTIFACT_SLOT_ORDER.map((slot) => character.value?.artifacts.some((artifact) => artifact.slot === slot) ?? false),
+// Each artifact slot's stats in the game's order, undefined where the character wears no artifact there
+const artifactSlotStats = computed(() =>
+  ARTIFACT_SLOT_ORDER.map((slot) => {
+    const artifact = character.value?.artifacts.find((wornArtifact) => wornArtifact.slot === slot);
+    return artifact ? getArtifactDetailStats(artifact, gameText) : undefined;
+  }),
 );
 // The artifact slots' names in the game's order
 const artifactSlotNames = computed(() => ARTIFACT_SLOT_ORDER.map((slot) => gameText[ArtifactSlotGameTextKeyMap[slot]]));
-// The set bonus block says there is no bonus only while none is active. Its lines wait on the effect text an artifact
-// Set's bonus is written with, which the artifact table does not hold yet, so the block lists none
-const noSetBonusLabel = computed(() =>
-  getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap).length === 0
-    ? gameText[GameTextKey.ArtifactSetBonusNone]
-    : "",
+// The set bonuses the worn artifacts reach, each as its line in the game's words, and the words for none, which are
+// Shown while none is active
+const activeArtifactSetBonuses = computed(() =>
+  getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap),
 );
-const setBonusLines: string[] = [];
+const setBonusLines = computed(() => getArtifactSetBonusLines(activeArtifactSetBonuses.value, gameText, nameText));
+const noSetBonusLabel = computed(() =>
+  activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
+);
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
@@ -363,12 +369,12 @@ const activate = () => {
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
-        :equipped="artifactsEquipped"
         is-equip-disabled
         :no-set-bonus-label="noSetBonusLabel"
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
         :set-bonus-lines="setBonusLines"
         :slot-names="artifactSlotNames"
+        :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
       />
       <CharacterMenuConstellation

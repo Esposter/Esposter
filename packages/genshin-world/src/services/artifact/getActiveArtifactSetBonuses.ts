@@ -18,6 +18,12 @@ export const getActiveArtifactSetBonuses = (
         throw new InvalidOperationError(Operation.Read, getActiveArtifactSetBonuses.name, `${setId}`);
       return artifactSetData.bonuses
         .filter(({ pieceCount }) => pieceCount <= setArtifacts.length)
-        .map(({ attributeLines, params, pieceCount }) => ({ attributeLines, params, pieceCount, setId }));
+        .map(({ attributeLines, descriptionTextHash, params, pieceCount }) => ({
+          attributeLines,
+          descriptionTextHash,
+          params,
+          pieceCount,
+          setId,
+        }));
     },
   ).flat();

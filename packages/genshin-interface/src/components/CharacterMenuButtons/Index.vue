@@ -1,8 +1,10 @@
 <template>
   <!-- The two buttons beneath a character menu's panel, the game's pills, each the panel's half less the gap between them -->
   <div class="buttons">
-    <span class="button" />
-    <span class="button" />
+    <slot>
+      <span class="button" />
+      <span class="button" />
+    </slot>
   </div>
 </template>
 
