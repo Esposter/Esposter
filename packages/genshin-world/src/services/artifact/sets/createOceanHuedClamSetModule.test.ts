@@ -35,19 +35,21 @@ const bonusOf = (pieceCount: number) => {
   assert.exists(bonus);
   return bonus;
 };
-// Sturdy, so no hit is clamped to the health the camp member starts with
-const createSturdyEnemy = () => ({
+// Sturdy, so no hit is clamped to the health the camp member starts with, and standing at the wearer's feet unless placed
+const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   health: 1e9,
+  id,
   maxHealth: 1e9,
+  position,
 });
-const createWearer = (maxHealth = 10_000): Combatant => {
+const createWearer = (maxHealth = 10_000, characterId = TRAVELER_CHARACTER_ID): Combatant => {
   const attributes = computeCharacterAttributes([]);
   attributes.maxHealth = maxHealth;
   return {
     ascension: 0,
     attributes,
-    characterId: TRAVELER_CHARACTER_ID,
+    characterId,
     constellationCount: 0,
     elementalResonances: [],
     kit: getPassiveKit(KIT, [createOceanHuedClamSetModule(bonusOf(4))]),
@@ -124,7 +126,31 @@ describe(createOceanHuedClamSetModule, () => {
     ).toBeCloseTo(damageFor([{ healthShare: 0.1, sourceCharacterId: TRAVELER_CHARACTER_ID }]));
   });
 
-  test("a heal given inside the 3.5-second cooldown after a foam's start builds none, and one given after it does", () => {
+  test("a foam's burst reaches the enemies within six metres of its wearer, and spares one beyond that", () => {
+    expect.hasAssertions();
+
+    const wearer = createWearer();
+    const near = createSturdyEnemy("near", { x: 3, z: 0 });
+    const far = createSturdyEnemy("far", { x: 30, z: 0 });
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      enemyMap: new Map([
+        [near.id, near],
+        [far.id, far],
+      ]),
+      enemyTables,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID]),
+    });
+
+    emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
+    stepKitSeconds(context, 3);
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, near, Element.Physical));
+    expect(1e9 - near.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
+    expect(far.health).toBe(1e9);
+  });
+
+  test("a heal given inside the 3.5-second cooldown after a foam's start is kept for the next foam, which bursts on it", () => {
     expect.hasAssertions();
 
     const wearer = createWearer();
@@ -136,6 +162,8 @@ describe(createOceanHuedClamSetModule, () => {
       kitEffectState,
       party: createParty([TRAVELER_CHARACTER_ID]),
     });
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Physical));
+    const healedHp = 0.2 * wearer.attributes.maxHealth;
 
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     expect(countFoams(kitEffectState)).toBe(1);
@@ -143,11 +171,42 @@ describe(createOceanHuedClamSetModule, () => {
     // The foam has burst at three seconds, and the cooldown still runs for another half second
     stepKitSeconds(context, 3.2);
     expect(countFoams(kitEffectState)).toBe(0);
+    const healthAfterFirstBurst = enemy.health;
+    expect(1e9 - healthAfterFirstBurst).toBeCloseTo(0.9 * healedHp * physicalMultiplier);
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     expect(countFoams(kitEffectState)).toBe(0);
 
     stepKitSeconds(context, 0.5);
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     expect(countFoams(kitEffectState)).toBe(1);
+    stepKitSeconds(context, 3);
+    expect(healthAfterFirstBurst - enemy.health).toBeCloseTo(0.9 * 2 * healedHp * physicalMultiplier);
+  });
+
+  test("while a foam stands, another wearer's heal builds no foam and adds nothing to it", () => {
+    expect.hasAssertions();
+
+    const wearer = createWearer();
+    const otherWearer = createWearer(10_000, OTHER_CHARACTER_ID);
+    const enemy = createSturdyEnemy();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      characterIdCombatantMap: new Map([
+        [TRAVELER_CHARACTER_ID, wearer],
+        [OTHER_CHARACTER_ID, otherWearer],
+      ]),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Physical));
+
+    emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
+    emitKitEvent(createHeal(0.5, OTHER_CHARACTER_ID), context);
+    expect(countFoams(kitEffectState)).toBe(1);
+
+    stepKitSeconds(context, 3);
+    expect(1e9 - enemy.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
   });
 });

@@ -1,5 +1,8 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
@@ -9,43 +12,55 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitHealedHp } from "#src/services/kit/getKitHealedHp";
 import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { takeOne } from "@esposter/shared";
 
 const OCEAN_HUED_CLAM_COOLDOWN_ID = "oceanHuedClamCooldown";
 const OCEAN_HUED_CLAM_FOAM_ID = "oceanHuedClamFoam";
+// The status a wearer's heals gather on while no foam takes them, which the next foam takes and its burst empties
+const OCEAN_HUED_CLAM_GATHERED_HP_ID = "oceanHuedClamGatheredHp";
+// The radius about the foam's centre that its burst reaches, as the foam's circle is drawn about the wearer in gcsim
+const OCEAN_HUED_CLAM_FOAM_RADIUS = 6;
 
-// The Sea-Dyed Foam's hooks on its field, each closing over the HP its wearer's heals have put in it. Its field hears the
-// Heal that made it too, as the kits hear it first, and it takes the HP of each heal its wearer gives, up to the maximum, until
-// It bursts at its tick, when the share of that HP is dealt as Physical DMG to each standing enemy. Its area is not modelled
-const createSeaDyedFoamHooks = (
-  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
-  characterId: number,
-  damageShare: number,
-  maximumHp: number,
-): Pick<KitField, "onEvent" | "onTick"> => {
-  let healedHp = 0;
-  return {
-    onEvent: (event, field) => {
-      if (event.kind !== KitEventKind.HealthChanged || event.sourceCharacterId !== characterId || field.tickIndex > 0)
-        return;
-      healedHp = Math.min(maximumHp, healedHp + getKitHealedHp(event, characterIdCombatantMap));
-    },
-    onTick: (context) => {
-      const owner = context.characterIdCombatantMap.get(characterId);
-      for (const enemy of context.enemyMap.values())
-        if (![EnemyState.Dead, EnemyState.Return].includes(enemy.state))
-          strikeReactionDamage(enemy, Element.Physical, damageShare * healedHp, owner, context);
-    },
+const getGatheredHp = (kitEffectState: KitEffectState, characterId: number): number =>
+  findKitStatus(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_GATHERED_HP_ID)?.stacks ?? 0;
+
+const setGatheredHp = (kitEffectState: KitEffectState, characterId: number, gatheredHp: number): void =>
+  addKitStatus(kitEffectState, characterId, {
+    id: OCEAN_HUED_CLAM_GATHERED_HP_ID,
+    secondsRemaining: Number.POSITIVE_INFINITY,
+    stacks: gatheredHp,
+  });
+
+const findSeaDyedFoam = (effects: readonly KitEffect[]): KitField | undefined =>
+  effects.find((effect): effect is KitField => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID);
+
+// The foam's burst, which deals the share of the HP gathered on its wearer as Physical DMG to each standing enemy within its
+// Radius of the centre it was cast at, and empties the gathered HP
+const createSeaDyedFoamBurst =
+  (centre: KitField["centre"], characterId: number, damageShare: number) =>
+  (context: KitContext): void => {
+    const gatheredHp = getGatheredHp(context.kitEffectState, characterId);
+    setGatheredHp(context.kitEffectState, characterId, 0);
+    const owner = context.characterIdCombatantMap.get(characterId);
+    for (const enemy of context.enemyMap.values())
+      if (
+        ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
+        checkIsInKitField({ centre, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
+      )
+        strikeReactionDamage(enemy, Element.Physical, damageShare * gatheredHp, owner, context);
   };
-};
 
-// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which takes the HP that
-// Heal restores, overflow and a Bond of Life's share included, from its wearer's heals until it bursts three seconds on, for
-// The table's second param of that HP as Physical DMG. One foam can start every 3.5 seconds, and it holds at most the fifth
-// Param's HP. The first param is its seconds, the second its DMG share, the third is zero and unread, and the fourth the cooldown
+// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three seconds on
+// For the table's second param of the HP its wearer's heals gathered, as Physical DMG to the enemies within six of the foam's
+// Centre. The heal the wearer gives while no foam stands gathers too, and the next foam takes it, as gcsim's accumulation does.
+// One foam stands at a time, so another wearer's heal gathers for nobody while it does. One foam can start every 3.5 seconds, and
+// It holds at most the fifth param's HP. The first param is its seconds, the second its DMG share, the third is zero and unread,
+// And the fourth the cooldown
 export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const foamSeconds = takeOne(bonus.params, 0);
   const damageShare = takeOne(bonus.params, 1);
@@ -54,26 +69,27 @@ export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveMo
   return {
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
-      const { characterIdCombatantMap, kitEffectState } = context;
+      const { body, characterIdCombatantMap, kitEffectState } = context;
       if (event.kind !== KitEventKind.HealthChanged || event.sourceCharacterId !== characterId) return;
-      if (
-        getKitHealedHp(event, characterIdCombatantMap) <= 0 ||
-        checkIsKitStatusActive(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID)
-      )
-        return;
-      addKitStatus(kitEffectState, characterId, { id: OCEAN_HUED_CLAM_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
-      castKitField(
+      const healedHp = getKitHealedHp(event, characterIdCombatantMap);
+      if (healedHp <= 0) return;
+      const foam = findSeaDyedFoam(kitEffectState.effects);
+      if (foam && foam.characterId !== characterId) return;
+      setGatheredHp(
         kitEffectState,
         characterId,
-        { x: 0, z: 0 },
-        {
-          id: OCEAN_HUED_CLAM_FOAM_ID,
-          nextTickSeconds: foamSeconds,
-          secondsRemaining: foamSeconds + SUMMON_LINGER_SECONDS,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-          ...createSeaDyedFoamHooks(characterIdCombatantMap, characterId, damageShare, maximumHp),
-        },
+        Math.min(maximumHp, getGatheredHp(kitEffectState, characterId) + healedHp),
       );
+      if (foam || checkIsKitStatusActive(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID)) return;
+      addKitStatus(kitEffectState, characterId, { id: OCEAN_HUED_CLAM_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
+      const centre = { ...body.position };
+      castKitField(kitEffectState, characterId, centre, {
+        id: OCEAN_HUED_CLAM_FOAM_ID,
+        nextTickSeconds: foamSeconds,
+        onTick: createSeaDyedFoamBurst(centre, characterId, damageShare),
+        secondsRemaining: foamSeconds + SUMMON_LINGER_SECONDS,
+        tickIntervalSeconds: Number.POSITIVE_INFINITY,
+      });
     },
   };
 };
