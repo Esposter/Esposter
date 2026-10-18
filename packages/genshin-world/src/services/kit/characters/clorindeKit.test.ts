@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { Party } from "#src/models/party/Party";
 
@@ -37,10 +38,15 @@ const createClorindeParty = (bondOfLifeShare: number, healthShare = 1): Party =>
   return party;
 };
 
-// Hunter's Vigil's press starts Night Vigil, then the stance action that `pickAction` gives is started in `party`, and the
-// Summons that action cast are returned
-const castNightVigilAction = (party: Party, pickAction: (stance: Combatant) => KitAction | undefined): KitSummon[] => {
+// Hunter's Vigil's press starts Night Vigil, with the given effects beside it, then the stance action that `pickAction` gives
+// Is started in `party`, and the Summons that action cast are returned
+const castNightVigilAction = (
+  party: Party,
+  pickAction: (stance: Combatant) => KitAction | undefined,
+  effects: KitEffect[] = [],
+): KitSummon[] => {
   const kitEffectState = castKitAction(CLORINDE_KIT.elementalSkill, createClorindeCombatant(0));
+  kitEffectState.effects.push(...effects);
   const stance = findKitStance(kitEffectState.effects, CLORINDE_CHARACTER_ID)?.combatant;
   if (stance === undefined) return [];
   pickAction(stance)?.onStart?.(createKitTestContext(stance, { kitEffectState, party }));
@@ -159,5 +165,25 @@ describe(createClorindeKitBehaviour, () => {
     castNightVigilAction(party, (stance) => stance.kit.elementalSkill);
 
     expect(getPartyMember(party, CLORINDE_CHARACTER_ID).healthShare).toBe(0.5);
+  });
+
+  test("impale the night's bond of life heal restores the same share of her max HP as her Max HP buff raises it", () => {
+    expect.hasAssertions();
+    const healthBuff: KitEffect = {
+      amount: 0.2,
+      attribute: Attribute.HealthPercent,
+      characterId: CLORINDE_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 10,
+    };
+    const unbuffed = createClorindeParty(0.5, 0.1);
+    const buffed = createClorindeParty(0.5, 0.1);
+
+    castNightVigilAction(unbuffed, (stance) => stance.kit.elementalSkill);
+    castNightVigilAction(buffed, (stance) => stance.kit.elementalSkill, [healthBuff]);
+
+    expect(getPartyMember(buffed, CLORINDE_CHARACTER_ID).healthShare).toBeCloseTo(
+      getPartyMember(unbuffed, CLORINDE_CHARACTER_ID).healthShare,
+    );
   });
 });

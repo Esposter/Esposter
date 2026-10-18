@@ -9,6 +9,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -64,7 +65,7 @@ export const createClorindeKitBehaviour = ({
   // As gcsim's skillHeal does, the Bond takes that heal before her HP does.
   // The heal lands at the press, where gcsim queues its full heal six frames later.
   const impaleTheNight = (context: KitContext): void => {
-    const { activeCombatant, body, kitEffectState, party } = context;
+    const { activeCombatant, body, characterIdCombatantMap, kitEffectState, party } = context;
     const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
     if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) {
       castKitSummon(kitEffectState, body, activeCombatant, [impaleTheNightNoHit], {
@@ -82,7 +83,7 @@ export const createClorindeKitBehaviour = ({
       activeCombatant.characterId,
       bondOfLifeShare *
         (isFull ? impaleTheNightFullHealing : impaleTheNightLowHealing) *
-        activeCombatant.attributes.maxHealth,
+        getKitMaxHealth(activeCombatant, kitEffectState.effects, party, characterIdCombatantMap),
     );
   };
   const nightVigil = readStance("nightVigil", {
