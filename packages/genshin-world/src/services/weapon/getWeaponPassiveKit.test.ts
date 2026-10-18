@@ -14,6 +14,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -112,5 +113,44 @@ describe(getWeaponPassiveKit, () => {
         createParty([TRAVELER_CHARACTER_ID]),
       ),
     ).toBe(0.12);
+  });
+
+  test("a passive is given the wielder's HP share second and the deployed team third, as the contract names them", () => {
+    expect.hasAssertions();
+
+    // A base kit whose one line counts the deployed team it is given, beside Full HP Critic Up's line at full HP
+    const teamCountKit: Kit = {
+      ...KIT,
+      getPassiveBonuses: (_combatant, _healthShare, deployedCombatants) => [
+        { amount: deployedCombatants.length, attribute: Attribute.CriticalRate },
+      ],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      teamCountKit,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      WEAPON_DATA,
+    );
+    const OTHER_CHARACTER_ID = 1;
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+    const characterIdCombatantMap = new Map([
+      [TRAVELER_CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, { ...combatant, characterId: OTHER_CHARACTER_ID, kit: KIT }],
+    ]);
+    const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(
+      weaponKit.getPassiveBonuses?.(combatant, 1, getDeployedCombatants(party, characterIdCombatantMap)),
+    ).toStrictEqual([
+      { amount: 2, attribute: Attribute.CriticalRate },
+      { amount: 0.14, attribute: Attribute.CriticalRate },
+    ]);
   });
 });

@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -86,11 +87,11 @@ describe(createCharlotteKitBehaviour, () => {
   test("the Ascension 4 Healing Bonus and Cryo DMG Bonus count each other member by region, at 5% apiece", () => {
     expect.hasAssertions();
     const charlotte = { ...createCharlotteCombatant(), ascension: 4 };
-    const team = [
-      charlotte,
-      { ...charlotte, characterId: 2, regionId: "fontaine" },
-      { ...charlotte, characterId: 3, regionId: "mondstadt" },
-      { ...charlotte, characterId: 4 },
+    const team: DeployedCombatant[] = [
+      { ...charlotte, isOnField: true },
+      { ...charlotte, characterId: 2, isOnField: false, regionId: "fontaine" },
+      { ...charlotte, characterId: 3, isOnField: false, regionId: "mondstadt" },
+      { ...charlotte, characterId: 4, isOnField: false },
     ];
     expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, [], team)).toStrictEqual([
       { amount: 0.05, attribute: Attribute.HealingBonus },
