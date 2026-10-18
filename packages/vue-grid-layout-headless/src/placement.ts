@@ -10,4 +10,5 @@ export * from "#src/placement/getColumnPitch";
 export * from "#src/placement/getGestureCell";
 export * from "#src/placement/getLayoutBottom";
 export * from "#src/placement/moveItem";
+export * from "#src/placement/placeMove";
 export * from "#src/placement/resolveMove";

@@ -10,8 +10,11 @@ import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
+import { CollisionMode } from "#src/models/CollisionMode";
+import { checkIsColliding } from "#src/placement/checkIsColliding";
 import { checkIsSameCell } from "#src/placement/checkIsSameCell";
 import { compactLayout } from "#src/placement/compactLayout";
+import { correctBounds } from "#src/placement/correctBounds";
 import { fitLayout } from "#src/placement/fitLayout";
 import { getCellPosition } from "#src/placement/getCellPosition";
 import { getCellSize } from "#src/placement/getCellSize";
@@ -19,11 +22,11 @@ import { getCellSpan } from "#src/placement/getCellSpan";
 import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
-import { resolveMove } from "#src/placement/resolveMove";
+import { placeMove } from "#src/placement/placeMove";
 import { findGridAt } from "#src/services/findGridAt";
 import { findGridRoot } from "#src/services/findGridRoot";
 import { mountedGrids } from "#src/services/mountedGrids";
-import { checkIsNestedControl } from "@esposter/shared";
+import { checkIsNestedControl, takeOne } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
@@ -73,9 +76,12 @@ export const useGridLayout = <T extends GridItem>(
     const target = previewItemMap.value.get(gesture.value.origin.id);
     return target ? getGeometry(target) : undefined;
   });
-  const gridHeight = computed(() =>
-    getCellPosition(getLayoutBottom(preview.value ?? layout.value), rowPitch.value, getOptions().spacing.padding),
-  );
+  // The last row ends a gap short of the next row's top, so the grid's bottom padding follows that row and not the gap
+  const gridHeight = computed(() => {
+    const { gap, padding } = getOptions().spacing;
+    const layoutBottom = getLayoutBottom(preview.value ?? layout.value);
+    return Math.max(0, getCellSize(layoutBottom, rowPitch.value, gap)) + 2 * padding;
+  });
   const resetGesture = () => {
     gesture.value = undefined;
     preview.value = undefined;
@@ -103,6 +109,11 @@ export const useGridLayout = <T extends GridItem>(
   const handlePointerMove = (event: PointerEvent) => {
     const activeGesture = gesture.value;
     if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
+    // A press released outside this grid never reaches its release, so a move with no button held ends the gesture
+    if (!activeGesture.isStarted && event.buttons === 0) {
+      resetGesture();
+      return;
+    }
 
     const offset = { x: event.clientX - activeGesture.start.x, y: event.clientY - activeGesture.start.y };
     if (!activeGesture.isStarted && Math.hypot(offset.x, offset.y) < getOptions().dragStartDistance) return;
@@ -119,8 +130,7 @@ export const useGridLayout = <T extends GridItem>(
     });
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
     gesture.value = { ...activeGesture, cell, isStarted: true, offset };
-    if (isCellChanged)
-      preview.value = compactLayout(resolveMove(layout.value, cell, getOptions().collision), getOptions().compactType);
+    if (isCellChanged) preview.value = placeMove(layout.value, cell, getOptions());
   };
   // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
   const getChangedCells = (changedLayout: GridItem[]): GridItem[] =>
@@ -130,29 +140,32 @@ export const useGridLayout = <T extends GridItem>(
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
-  // A dropped item lands with its top-left under the point, and compacts and resolves its collisions as a move here does
-  const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint) => {
+  // A dropped item lands with its top-left under the point, within the columns, and compacts and resolves its collisions as
+  // A move here does. Under prevent a drop that lands on another item is refused, so nothing is committed and it returns false
+  const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint): boolean => {
     const element = root.value;
-    if (!element) return;
+    if (!element) return false;
 
     const { left, top } = element.getBoundingClientRect();
     const { padding } = getOptions().spacing;
     const offset = { x: point.x - left - padding, y: point.y - top - padding };
     const origin = { ...item, x: 0, y: 0 };
-    const cell = getGestureCell({
+    const gestureCell = getGestureCell({
       columnNumber: getOptions().columnNumber,
       columnPitch: columnPitch.value,
       offset,
       origin,
       rowPitch: rowPitch.value,
     });
-    const landingLayout = [...layout.value, cell];
-    const landedLayout = compactLayout(
-      resolveMove(landingLayout, cell, getOptions().collision),
-      getOptions().compactType,
-    );
+    const cell = takeOne(correctBounds([gestureCell], getOptions().columnNumber));
+    const isRefused =
+      getOptions().collision === CollisionMode.Prevent && layout.value.some((other) => checkIsColliding(cell, other));
+    if (isRefused) return false;
+
+    const landedLayout = placeMove([...layout.value, cell], cell, getOptions());
     const changes = getChangedCells(landedLayout);
-    if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
+    getOptions().onCommit({ changes, removed: [] });
+    return true;
   };
   const self: MountedGrid = { accept };
   // A release over this grid writes what the drag previewed. A drag released over another grid leaves this one and lands there,
@@ -162,7 +175,7 @@ export const useGridLayout = <T extends GridItem>(
     if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
 
     const point = { x: event.clientX, y: event.clientY };
-    const dropGrid = draggedGesture.value ? findGridAt(point) : self;
+    const dropGrid = draggedGesture.value ? findGridAt(point, activeGesture.element) : self;
     const changes = getChangedCells(preview.value ?? []);
     resetGesture();
     if (dropGrid === self) {
@@ -170,11 +183,12 @@ export const useGridLayout = <T extends GridItem>(
       return;
     }
     if (!dropGrid) return;
+    // The source lets go of the item only once the grid under the pointer has taken it, so a refused drop stays in its source
+    if (!dropGrid.accept(activeGesture.origin, point)) return;
 
     const remainingItems = layout.value.filter((item) => item.id !== activeGesture.origin.id);
-    const remainingLayout = compactLayout(remainingItems, getOptions().compactType);
+    const remainingLayout = compactLayout(remainingItems, getOptions().columnNumber, getOptions().compactType);
     getOptions().onCommit({ changes: getChangedCells(remainingLayout), removed: [activeGesture.origin.id] });
-    dropGrid.accept(activeGesture.origin, point);
   };
   // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
   const reportContentHeight = (id: string, contentHeight: number) => {

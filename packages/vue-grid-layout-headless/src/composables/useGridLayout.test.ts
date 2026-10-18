@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import type { GridCommit } from "#src/models/GridCommit";
+import type { GridGeometry } from "#src/models/GridGeometry";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
 
@@ -12,6 +13,14 @@ import { startExternalDrag } from "#src/services/startExternalDrag";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, shallowRef, useTemplateRef } from "vue";
+
+// A tile's geometry as the inline style a test reads its position from
+const getStyle = ({ height, left, top, width }: GridGeometry) => ({
+  height: `${height}px`,
+  left: `${left}px`,
+  top: `${top}px`,
+  width: `${width}px`,
+});
 
 describe(useGridLayout, () => {
   const columnNumber = 12;
@@ -31,6 +40,7 @@ describe(useGridLayout, () => {
     gridSpacing = spacing,
     compactType = CompactType.Vertical,
     collision = CollisionMode.Push,
+    gridColumnNumber = columnNumber,
   ) => {
     const onCommit = vi.fn<(commit: GridCommit) => void>();
     const gridLayout = shallowRef<GridLayout>();
@@ -40,7 +50,7 @@ describe(useGridLayout, () => {
           const root = useTemplateRef<HTMLElement>("root");
           const layout = useGridLayout(root, () => ({
             collision,
-            columnNumber,
+            columnNumber: gridColumnNumber,
             compactType,
             dragStartDistance,
             isEditable: true,
@@ -60,12 +70,7 @@ describe(useGridLayout, () => {
                   {
                     class: "tile",
                     onPointerdown: (event: PointerEvent) => startGesture(event, item),
-                    style: {
-                      height: `${geometry.height}px`,
-                      left: `${geometry.left}px`,
-                      top: `${geometry.top}px`,
-                      width: `${geometry.width}px`,
-                    },
+                    style: getStyle(geometry),
                   },
                   [
                     h("span", {
@@ -78,29 +83,21 @@ describe(useGridLayout, () => {
                   ],
                 ),
               ),
-              placeholder.value
-                ? h("div", {
-                    class: "placeholder",
-                    style: {
-                      height: `${placeholder.value.height}px`,
-                      left: `${placeholder.value.left}px`,
-                      top: `${placeholder.value.top}px`,
-                      width: `${placeholder.value.width}px`,
-                    },
-                  })
-                : null,
+              placeholder.value ? h("div", { class: "placeholder", style: getStyle(placeholder.value) }) : null,
             ]);
         },
       }),
     );
 
     // A pointer over a grid is over its own root, so a release lands on the grid that was pressed
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([wrapper.element]);
 
     return { grid: gridLayout, onCommit, wrapper };
   };
 
   beforeEach(() => {
+    // The DOM here hits nothing and has no elementsFromPoint to spy on, so a test stands one in for the browser's hit list
+    document.elementsFromPoint = () => [];
     // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
     vi.stubGlobal(
       "ResizeObserver",
@@ -130,7 +127,7 @@ describe(useGridLayout, () => {
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: 2, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: 2, clientY: 0, pointerId });
     await tile.trigger("pointerup", { clientX: 2, clientY: 0, pointerId });
 
     expect(wrapper.find(".placeholder").exists()).toBe(false);
@@ -143,8 +140,8 @@ describe(useGridLayout, () => {
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(wrapper.find(".placeholder").exists()).toBe(true);
     expect(onCommit).not.toHaveBeenCalled();
@@ -163,14 +160,18 @@ describe(useGridLayout, () => {
     ]);
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
 
-    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toContain(`top: ${getCellPosition(2, 50, 10)}px`);
+    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toContain(
+      `top: ${getCellPosition(2, rowPitch, spacing.padding)}px`,
+    );
 
     await tile.trigger("pointercancel", { pointerId });
 
     expect(wrapper.find(".placeholder").exists()).toBe(false);
-    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toContain(`top: ${getCellPosition(0, 50, 10)}px`);
+    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toContain(
+      `top: ${getCellPosition(0, rowPitch, spacing.padding)}px`,
+    );
     expect(onCommit).not.toHaveBeenCalled();
   });
 
@@ -183,7 +184,7 @@ describe(useGridLayout, () => {
     ]);
     const tiles = wrapper.findAll(".tile");
     await tiles[0]?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tiles[0]?.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
+    await tiles[0]?.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
     await tiles[1]?.trigger("pointerdown", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
     await tiles[1]?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
 
@@ -196,7 +197,7 @@ describe(useGridLayout, () => {
 
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     await wrapper.get(".tile").trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await wrapper.get(".grid").trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await wrapper.get(".grid").trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
     await wrapper.get(".grid").trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }], removed: [] }]]);
@@ -208,7 +209,7 @@ describe(useGridLayout, () => {
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 2, y: 0 }], ResizeEdge.West);
     const handle = wrapper.get(".handle");
     await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await handle.trigger("pointermove", { clientX: -cellPitch, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: -cellPitch, clientY: 0, pointerId });
     await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 3, x: 1, y: 0 }], removed: [] }]]);
@@ -220,7 +221,7 @@ describe(useGridLayout, () => {
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }], ResizeEdge.West);
     const handle = wrapper.get(".handle");
     await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await handle.trigger("pointermove", { clientX: -cellPitch, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: -cellPitch, clientY: 0, pointerId });
 
     expect(wrapper.get(".placeholder").attributes("style")).toContain(
       `left: ${getCellPosition(0, cellPitch, spacing.padding)}px`,
@@ -281,7 +282,7 @@ describe(useGridLayout, () => {
     await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: 0, clientY: rowPitch * 2, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: 0, clientY: rowPitch * 2, pointerId });
     await tile.trigger("pointerup", { clientX: 0, clientY: rowPitch * 2, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 1, id: "a", w: 2, x: 0, y: 2 }], removed: [] }]]);
@@ -314,7 +315,7 @@ describe(useGridLayout, () => {
     await flushPromises();
     const tile = wrapper.findAll(".tile")[0];
     await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile?.trigger("pointermove", { clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
     await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([
@@ -347,7 +348,7 @@ describe(useGridLayout, () => {
     await flushPromises();
     const tile = wrapper.findAll(".tile")[0];
     await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile?.trigger("pointermove", { clientX: cellPitch * 3, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 3, clientY: 0, pointerId });
     await tile?.trigger("pointerup", { clientX: cellPitch * 3, clientY: 0, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([
@@ -380,23 +381,30 @@ describe(useGridLayout, () => {
     await flushPromises();
     const tile = wrapper.findAll(".tile")[0];
     await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile?.trigger("pointermove", { clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
     await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
 
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  test("the grid's height is its last row's bottom plus the padding on both sides", () => {
+    expect.hasAssertions();
+
+    const { grid } = mountGrid([{ h: 1, id: "a", w: 1, x: 0, y: 0 }], ResizeEdge.SouthEast, { gap: 10, padding: 20 });
+
+    expect(grid.value?.gridHeight.value).toBe(80);
+  });
+
   test("#6 Dropping a palette entry into the grid", async () => {
     expect.hasAssertions();
 
-    const { onCommit, wrapper } = mountGrid([]);
+    const { onCommit } = mountGrid([]);
     await flushPromises();
     // The palette sits outside every grid, so its entry is dragged in from a plain element
     const palette = document.createElement("div");
     document.body.append(palette);
     onTestFinished(() => palette.remove());
     palette.addEventListener("pointerdown", (event) => startExternalDrag(event, { h: 2, id: "palette", w: 2 }));
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding, pointerId };
     palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
     palette.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, ...point }));
@@ -407,16 +415,55 @@ describe(useGridLayout, () => {
     ]);
   });
 
-  test("a cancelled palette press drops nothing on a later release", async () => {
+  test("a palette entry dropped onto an item under prevent is refused", async () => {
     expect.hasAssertions();
 
-    const { onCommit, wrapper } = mountGrid([]);
+    const { onCommit } = mountGrid(
+      [{ h: 2, id: "a", w: 2, x: 0, y: 0 }],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Vertical,
+      CollisionMode.Prevent,
+    );
     await flushPromises();
     const palette = document.createElement("div");
     document.body.append(palette);
     onTestFinished(() => palette.remove());
     palette.addEventListener("pointerdown", (event) => startExternalDrag(event, { h: 2, id: "palette", w: 2 }));
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
+    const point = { clientX: spacing.padding, clientY: spacing.padding, pointerId };
+    palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
+    palette.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, ...point }));
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a dropped item wider than the grid is narrowed to its columns", async () => {
+    expect.hasAssertions();
+
+    const { onCommit } = mountGrid([], ResizeEdge.SouthEast, spacing, CompactType.Vertical, CollisionMode.Push, 4);
+    await flushPromises();
+    const palette = document.createElement("div");
+    document.body.append(palette);
+    onTestFinished(() => palette.remove());
+    palette.addEventListener("pointerdown", (event) => startExternalDrag(event, { h: 2, id: "palette", w: 5 }));
+    const point = { clientX: spacing.padding, clientY: spacing.padding, pointerId };
+    palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
+    palette.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, ...point }));
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [{ changes: [{ h: 2, id: "palette", w: 4, x: 0, y: 0 }], removed: [] }],
+    ]);
+  });
+
+  test("a cancelled palette press accepts once on the next release", async () => {
+    expect.hasAssertions();
+
+    const { onCommit } = mountGrid([]);
+    await flushPromises();
+    const palette = document.createElement("div");
+    document.body.append(palette);
+    onTestFinished(() => palette.remove());
+    palette.addEventListener("pointerdown", (event) => startExternalDrag(event, { h: 2, id: "palette", w: 2 }));
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding, pointerId };
     palette.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point }));
     palette.dispatchEvent(new PointerEvent("pointercancel", { bubbles: true, ...point }));
@@ -434,20 +481,45 @@ describe(useGridLayout, () => {
     const source = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     const target = mountGrid([]);
     await flushPromises();
-    // The pointer is over the target past the source's right edge, so the target previews the item there
-    vi.spyOn(document, "elementFromPoint").mockImplementation((x) =>
-      x >= cellPitch * 5 ? target.wrapper.element : source.wrapper.element,
-    );
     const tile = source.wrapper.get(".tile");
+    // The pointer is over the target past the source's right edge, so the target previews the item there, and the
+    // Dragged tile is the first element under the pointer, which the release looks past
+    vi.spyOn(document, "elementsFromPoint").mockImplementation((x) =>
+      x >= cellPitch * 5 ? [tile.element, target.wrapper.element] : [tile.element, source.wrapper.element],
+    );
     const point = { clientX: cellPitch * 6 + spacing.padding, clientY: 0, pointerId };
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", point);
+    await tile.trigger("pointermove", { ...point, buttons: 1 });
     await tile.trigger("pointerup", point);
 
     expect(source.onCommit.mock.calls).toStrictEqual([[{ changes: [], removed: ["a"] }]]);
     expect(target.onCommit.mock.calls).toStrictEqual([
       [{ changes: [{ h: 2, id: "a", w: 2, x: 6, y: 0 }], removed: [] }],
     ]);
+  });
+
+  test("a move refused by the grid under the pointer commits nothing", async () => {
+    expect.hasAssertions();
+
+    const source = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
+    const target = mountGrid(
+      [{ h: 2, id: "b", w: 2, x: 0, y: 0 }],
+      ResizeEdge.SouthEast,
+      spacing,
+      CompactType.Vertical,
+      CollisionMode.Prevent,
+    );
+    await flushPromises();
+    const tile = source.wrapper.get(".tile");
+    // The pointer releases over the target's own item, which prevent refuses to land the dragged item on
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([tile.element, target.wrapper.element]);
+    const point = { clientX: spacing.padding, clientY: spacing.padding, pointerId };
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { ...point, buttons: 1 });
+    await tile.trigger("pointerup", point);
+
+    expect(source.onCommit).not.toHaveBeenCalled();
+    expect(target.onCommit).not.toHaveBeenCalled();
   });
 
   test("#22 #40 Dragging inside a nested grid", async () => {
@@ -496,12 +568,7 @@ describe(useGridLayout, () => {
                   {
                     class: "outer-tile",
                     onPointerdown: (event: PointerEvent) => outer.startGesture(event, item),
-                    style: {
-                      height: `${geometry.height}px`,
-                      left: `${geometry.left}px`,
-                      top: `${geometry.top}px`,
-                      width: `${geometry.width}px`,
-                    },
+                    style: getStyle(geometry),
                   },
                   [
                     h(
@@ -511,12 +578,7 @@ describe(useGridLayout, () => {
                         h("div", {
                           class: "inner-tile",
                           onPointerdown: (event: PointerEvent) => inner.startGesture(event, innerItem),
-                          style: {
-                            height: `${innerGeometry.height}px`,
-                            left: `${innerGeometry.left}px`,
-                            top: `${innerGeometry.top}px`,
-                            width: `${innerGeometry.width}px`,
-                          },
+                          style: getStyle(innerGeometry),
                         }),
                       ),
                     ),
@@ -528,10 +590,10 @@ describe(useGridLayout, () => {
       }),
     );
     await flushPromises();
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.get(".inner").element);
     const tile = wrapper.get(".inner-tile");
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([tile.element, wrapper.get(".inner").element]);
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
     await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(outerCommit).not.toHaveBeenCalled();
@@ -546,31 +608,26 @@ describe(useGridLayout, () => {
     const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     await flushPromises();
     // Outside every grid the pointer is over the page itself, which no grid claims, so the move the drag previewed is dropped
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(document.body);
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([document.body]);
     const tile = wrapper.get(".tile");
     const point = { clientX: cellPitch * 4 + spacing.padding, clientY: 0, pointerId };
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", point);
+    await tile.trigger("pointermove", { ...point, buttons: 1 });
     await tile.trigger("pointerup", point);
 
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {
+  test("a press whose pointer was released outside the grid starts no drag", async () => {
     expect.hasAssertions();
 
-    const text = document.createTextNode("a");
-    document.body.append(text);
-    onTestFinished(() => {
-      text.remove();
-      window.getSelection()?.removeAllRanges();
-    });
-    window.getSelection()?.selectAllChildren(document.body);
     const { wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }]);
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
+    // The release fell outside the grid, so no release reached it, and the move that follows holds no button
+    await tile.trigger("pointermove", { buttons: 0, clientX: cellPitch, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
 
-    expect(wrapper.find(".placeholder").exists()).toBe(true);
+    expect(wrapper.find(".placeholder").exists()).toBe(false);
   });
 });

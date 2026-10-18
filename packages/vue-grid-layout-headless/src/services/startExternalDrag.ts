@@ -20,7 +20,7 @@ export const startExternalDrag = (event: PointerEvent, item: Pick<GridItem, "h" 
 
       controller.abort();
       const point = { x: releaseEvent.clientX, y: releaseEvent.clientY };
-      findGridAt(point)?.accept(item, point);
+      findGridAt(point, element)?.accept(item, point);
     },
     { signal },
   );

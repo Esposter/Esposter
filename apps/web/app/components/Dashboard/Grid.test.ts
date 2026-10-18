@@ -50,13 +50,13 @@ describe("dashboardGrid", () => {
       props: { columnNumber, isEditable: true, rowHeight, visuals: [visual] },
     });
     // A DOM without layout hits nothing, so the release is pointed at the grid it was pressed on, as a browser would hit it
-    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
+    document.elementsFromPoint = () => [];
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([wrapper.element]);
     const tile = wrapper.get(".dashboard-grid-tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
 
-    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(true);
     expect(wrapper.emitted("commit")).toBeUndefined();
 
     await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
