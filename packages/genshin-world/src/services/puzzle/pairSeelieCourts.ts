@@ -16,7 +16,7 @@ export const pairSeelieCourts = (seelies: readonly GroundPoint[], courts: readon
         seelieIndex,
       })),
     )
-    .toSorted((first, second) => first.distance - second.distance);
+    .toSorted((firstCandidate, secondCandidate) => firstCandidate.distance - secondCandidate.distance);
   const takenCourtIndexes = new Set<number>();
   const takenSeelieIndexes = new Set<number>();
   const pairs: Seelie[] = [];

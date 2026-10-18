@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { attributeLineSchema } from "#src/models/character/AttributeLine";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
+import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 

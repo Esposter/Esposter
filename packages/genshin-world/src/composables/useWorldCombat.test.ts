@@ -1,9 +1,9 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
-import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test } from "vitest";
