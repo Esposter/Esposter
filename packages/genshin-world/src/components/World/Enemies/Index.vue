@@ -133,7 +133,8 @@ const loadedCampIds = new Set<string>();
 // The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
 // Emits them
 let emittedCampLocksKey = "";
-// The enemies the last step saw staggered, so a stagger that is still on counts as one break and not one for each step
+// The enemies whose shield the last step saw broken, so a shield that is still broken counts as one break and not one
+// For each step
 const brokenShieldEnemies = new WeakSet<Enemy>();
 const getCampLocks = (): ChestLockSource[] =>
   computeCampLockSources(
