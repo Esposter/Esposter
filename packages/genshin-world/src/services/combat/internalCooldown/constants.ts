@@ -16,6 +16,11 @@ export const FURINA_SALON_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Objec
   resetIntervalSeconds: 30,
   sequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 2 === 0 ? 1 : 0))),
 });
+// Hidden Aces' robots' strikes, as gcsim gives them: the first four hits in 15 seconds count, and each hit after them none
+export const JAHODA_ROBOT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 15,
+  sequence: Object.freeze([1, 1, 1, 1, 0]),
+});
 // Burning's Pyro: the first hit applies and none after it, until two seconds have passed
 export const BURNING_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
   resetIntervalSeconds: 2,

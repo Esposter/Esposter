@@ -66,7 +66,7 @@ describe(createFurinaKitBehaviour, () => {
     const beforeSwitch = getFieldIds(kitEffectState).filter(Boolean);
     stepFrames(10, context);
 
-    expect(beforeSwitch).toStrictEqual(["furina-salon-member", "furina-salon-member", "furina-salon-member"]);
+    expect(beforeSwitch).toStrictEqual(["furina-salon-member-0", "furina-salon-member-1", "furina-salon-member-2"]);
     expect(getFieldIds(kitEffectState).filter(Boolean)).toStrictEqual(["furina-singer"]);
   });
 

@@ -132,7 +132,7 @@ From Ascension 1, Pirouette's third sword dance SHALL give each deployed member 
 
 ### Requirement: Ascension 4 raises Bountiful Core DMG
 
-From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG for each 1,000 of Nilou's Max HP above 30,000, up to 400%, and a Bloom's damage SHALL NOT take the bonus.
+From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG for each 1,000 of Nilou's Max HP above 30,000, up to 400%, and a Bloom's damage SHALL NOT take the bonus. The bonus is read through the deployed team's party reaction hook, on the reaction a Bountiful Core's burst makes.
 
 #### Scenario: A Bountiful Core bursts under Ascension 4
 

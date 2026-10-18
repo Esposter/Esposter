@@ -44,7 +44,6 @@
     "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 154 },
   "plunges.high.hits.length": { "cause": "NoActionFile", "value": 1 },
   "plunges.high.hits.0.area": {
     "cause": "NoActionFile",
@@ -52,7 +51,6 @@
   },
   "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 38 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 6 },
   "plunges.low.hits.length": { "cause": "NoActionFile", "value": 1 },
   "plunges.low.hits.0.area": {
     "cause": "NoActionFile",

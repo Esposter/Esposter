@@ -5,6 +5,7 @@ import {
   CITLALI_FROSTFALL_STORM_INTERNAL_COOLDOWN_GROUP,
   FURINA_SALON_INTERNAL_COOLDOWN_GROUP,
   KINICH_LOOP_SHOT_INTERNAL_COOLDOWN_GROUP,
+  JAHODA_ROBOT_INTERNAL_COOLDOWN_GROUP,
 } from "#src/services/combat/internalCooldown/constants";
 
 // The group a tag's hits count under where gcsim gives it one of its own, every other tag counting under the standard
@@ -14,4 +15,5 @@ export const InternalCooldownTagGroupMap: Partial<Record<InternalCooldownTag, In
   [InternalCooldownTag.FurinaChevalmarin]: FURINA_SALON_INTERNAL_COOLDOWN_GROUP,
   [InternalCooldownTag.FurinaUsher]: FURINA_SALON_INTERNAL_COOLDOWN_GROUP,
   [InternalCooldownTag.KinichLoopShot]: KINICH_LOOP_SHOT_INTERNAL_COOLDOWN_GROUP,
+  [InternalCooldownTag.JahodaRobotStrike]: JAHODA_ROBOT_INTERNAL_COOLDOWN_GROUP,
 };

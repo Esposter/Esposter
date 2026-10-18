@@ -3,8 +3,8 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { isAscendantGleam } from "#src/services/kit/isAscendantGleam";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -12,7 +12,6 @@ import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
 export const ZIBAI_CHARACTER_ID = 10_000_126;
 // The Phase Shift Radiance the shift accrues and Spirit Steed's Stride spends, the cooldowns that let each gain come once a
@@ -37,9 +36,9 @@ const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
 // Spends 70 of it, resets the cooldown on the Moonsign's Radiance, and the fourth Stride ends the shift. Her strikes outside
 // The shift, her burst and her plunges are her record's alone, and her frames and areas are provisional, read from a
 // Borrowed donor's gcsim hitmarks and areas.
-// Not built, each waiting on its own rule: the fourth normal attack's Moonsign gate, the extra instance of Geo
-// DMG, which needs the instance's multiplier that the record does not carry; the normal attack's Radiance is read at the
-// Normal attack's first hit's hitmark, not at a hit on an enemy, since no event tells the two apart
+// The fourth normal attack's extra instance of Geo DMG is the stance's second hit there, gated by Ascendant Gleam through
+// Its landing condition. Not built, each waiting on its own rule: the normal attack's Radiance is read at the normal
+// Attack's first hit's hitmark, not at a hit on an enemy, since no event tells the two apart
 // Constellation 1 needs Heaven and Earth Made Manifest's effects, which the kit does not build
 // Constellation 2 needs the Lunar Phase Shift's effects, which the kit does not build
 // Constellation 4 needs the Lunar Phase Shift's effects, which the kit does not build
@@ -74,7 +73,10 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
         removeKitEffects(kitEffectState, (effect) => effect.kind === "stance" && effect.characterId === characterId);
     },
   };
-  const lunarPhaseShift = readStance("lunarPhaseShift", { skill: spiritSteedStride });
+  const lunarPhaseShift = readStance("lunarPhaseShift", {
+    normalAttacks: [{}, {}, {}, { hits: [{}, { landsWhen: isAscendantGleam }] }],
+    skill: spiritSteedStride,
+  });
   const heavenAndEarthMadeManifest: KitActionBehaviour = {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       spendKitResource(kitEffectState, combatant.characterId, SPIRIT_STEED_STRIDE_COUNT_STATUS_ID);
@@ -108,7 +110,7 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
         event.kind === KitEventKind.ReactionTriggered &&
         event.striker.characterId !== characterId &&
         event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarCrystallize) &&
-        getMoonsignLevel(context.characterIdCombatantMap, context.party) === MoonsignLevel.AscendantGleam &&
+        isAscendantGleam(context) &&
         startKitCooldown(kitEffectState, characterId, MOONSIGN_RADIANCE_STATUS_ID, MOONSIGN_RADIANCE_COOLDOWN_SECONDS)
       )
         gainKitResource(

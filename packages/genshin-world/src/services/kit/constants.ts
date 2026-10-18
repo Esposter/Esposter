@@ -19,6 +19,11 @@ export const ON_FOOT_LOCOMOTION_STATES: readonly LocomotionState[] = [
 ];
 // The states a skill or burst starts and continues in as well as on the ground: falling and jumping
 export const AIRBORNE_LOCOMOTION_STATES: readonly LocomotionState[] = [LocomotionState.Fall, LocomotionState.Jump];
+// The states a dash or a jump action continues in: dashing as well as falling and jumping
+export const MOVEMENT_LOCOMOTION_STATES: readonly LocomotionState[] = [
+  LocomotionState.Dash,
+  ...AIRBORNE_LOCOMOTION_STATES,
+];
 // Holding the attack past this many seconds makes the string's next strike a charged attack, once the strike ends
 // Provisional: the hold a recording of the attack clips' input reads, through `genshin:assets timings`
 export const CHARGED_ATTACK_HOLD_SECONDS = 0.3;

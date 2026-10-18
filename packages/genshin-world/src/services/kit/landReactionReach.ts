@@ -42,7 +42,7 @@ export const landReactionReach = (
   context: KitContext,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reachRadius, reactionBonus: teamReactionBonus = 0, reactionType, spreadGauge }: TransformativeReaction,
+  { coreKind, element, reachRadius, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
@@ -82,7 +82,7 @@ export const landReactionReach = (
     const resistance = getEnemyResistance(kind, enemy, element);
     // The reaction's party bonuses on the enemy it reaches, its creator's own kit's among them, as the team's hooks read it
     const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus } = getDeployedReactionBonuses(
-      { combatant, element, enemy, reactionType },
+      { combatant, coreKind, element, enemy, reactionType },
       context,
     );
     const reactionDamage =
@@ -95,7 +95,7 @@ export const landReactionReach = (
             element,
             elementalState.seconds,
           ) *
-          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, damageBonus + teamReactionBonus) +
+          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, damageBonus) +
             (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {

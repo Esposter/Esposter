@@ -23,6 +23,10 @@ const THE_SHRINES_SACRED_SHADE_ASCENSION = 1;
 // Her Elemental Mastery raises the totems' DMG by 0.15%
 const ENLIGHTENED_BLESSING_ASCENSION = 4;
 const ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY = 0.0015;
+// Measured: gcsim (MIT) yaemiko/kitsune.go and cons.go, Constellation 6's DEF ignored on each Sesshou Sakura strike, which its
+// Its c6DefIgnore gives 0.6, where the comment there says 45%, and the kit reads the code's value
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_DEFENCE_IGNORED = 0.6;
 
 // A character's totems still standing, oldest first, as the effects are kept in the order they were added
 const findStandingTotems = (effects: KitEffect[], characterId: number): KitSummon[] =>
@@ -39,11 +43,11 @@ export const YAE_MIKO_CHARACTER_ID = 10_000_058;
 // Yae Miko's behaviour: Sesshou Sakura's totems, which strike on their own schedule at a level by how many stand, and
 // Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. From Ascension 1 each totem the
 // Burst destroys gives back a charge of the skill, and from Ascension 4 her Elemental Mastery raises the totems' DMG. Her
-// Constellations are not built, as the kit's events reach none of them yet
+// Constellations 1, 2 and 4 are not built, as the kit's events reach none of them yet
 // Constellation 1 needs the Tenko Thunderbolt's activation as an event, which the kit does not emit
 // Constellation 2 needs Sesshou Sakura's starting level, max level and range, which the kit does not build
 // Constellation 4 needs the Electro DMG Bonus from Sesshou Sakura's lightning hits, which the kit does not build
-// Constellation 6 needs the Sesshou Sakura's DEF ignore, which no strike hook carries
+// Constellation 6's CRIT DMG needs the Radiance Stellar-Conduct hit, which the kit has no state for, so only its DEF ignored is built
 export const createYaeMikoKitBehaviour = ({
   kit,
   readHitFields,
@@ -87,6 +91,11 @@ export const createYaeMikoKitBehaviour = ({
         castKitSummon(kitEffectState, body, combatant, thunderbolts.slice(0, standingTotems.length));
       },
     },
+    // Constellation 6 ignores a share of each enemy's DEF on Sesshou Sakura's strikes, which are Elemental Skill DMG
+    getStrikeDefenceIgnored: ({ attackTag, combatant }) =>
+      combatant.constellationCount >= CONSTELLATION_6 && attackTag === AttackTag.ElementalSkill
+        ? CONSTELLATION_6_DEFENCE_IGNORED
+        : 0,
     getStrikeDamageBonus: ({ attackTag, combatant }) =>
       combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
         ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *

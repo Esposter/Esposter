@@ -1,6 +1,6 @@
 ## Purpose
 
-Yae Miko's kit as built, with her Sesshou Sakura totems, Great Secret Art: Tenko Kenshin and both passives, and what is left of her constellations.
+Yae Miko's kit as built, with her Sesshou Sakura totems, Great Secret Art: Tenko Kenshin, both passives and Constellation 6's DEF ignored, and what is left of her constellations.
 
 ## Requirements
 
@@ -77,9 +77,16 @@ From Ascension 4, each totem strike SHALL deal 0.15% more DMG for each point of 
 
 ### Requirement: Unbuilt constellations
 
-Yae Miko's constellations SHALL have no effect in the world yet.
+Yae Miko's constellations other than Constellation 6's DEF ignored SHALL have no effect in the world yet.
 
 #### Scenario: Constellation has no effect
 
-- **WHEN** Yae Miko holds a constellation
+- **WHEN** Yae Miko holds Constellation 1, 2 or 4
 - **THEN** no constellation effect is applied
+
+#### Scenario: Constellation 6 ignores DEF on the totems' strikes
+
+- **GIVEN** Yae Miko has Constellation 6 unlocked
+- **WHEN** a totem's strike lands on an enemy
+- **THEN** 60% of the enemy's DEF is ignored for that strike
+- **AND** a Tenko Thunderbolt's strike ignores none
