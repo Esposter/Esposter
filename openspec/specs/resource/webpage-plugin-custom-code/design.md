@@ -58,6 +58,15 @@ The module passes user HTML through grapesjs's parser exactly as the upstream do
 
 The open vectors reach the stored HTML the editor saves, so a published page with them can run script in a viewer's browser. Closing them is a decision for the webpage publish or render path (sanitising the saved HTML once at its boundary), not for this block; it is recorded here and not fixed by the rewrite.
 
+## Key files
+
+| File                                                                   | Role                                                                     |
+| :--------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| `apps/web/app/services/webpageEditor/plugins/customCodePlugin.ts`      | The module: the custom-code component type, its modal and its sanitising |
+| `apps/web/app/services/webpageEditor/plugins/customCodePlugin.test.ts` | The component, script and sanitising tests                               |
+| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`          | The editor's plugin list, where the plugin is passed with its options    |
+| `apps/web/app/components/Resource/Webpage/Editor.vue`                  | The editor that saves `getHtml()`, which holds no code to restore        |
+
 ## Sources
 
 - Upstream repository: `GrapesJS/components-custom-code` (version 1.0.2, read from its published source map).

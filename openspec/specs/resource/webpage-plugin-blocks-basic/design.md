@@ -33,6 +33,14 @@ Every upstream issue and pull request, with its verdict:
 | #1, #4, #11, #13, #33, #41                          | Packaging, CI, docs typo, install audit, and migration     | Out of scope                 | The package is no longer a dependency                                                                                                                                                               |
 | #20 to #23, #26 to #29, #32, #34 to #37, #42 to #45 | Dependabot bumps                                           | Out of scope                 | The package's own build dependencies, no longer ours                                                                                                                                                |
 
+## Key files
+
+| File                                                                    | Role                                                                  |
+| :---------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/app/services/webpageEditor/plugins/blocksBasicPlugin.ts`      | The module: registers each block under its upstream id and category   |
+| `apps/web/app/services/webpageEditor/plugins/blocksBasicPlugin.test.ts` | The block, column and upstream-id tests                               |
+| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`           | The editor's plugin list, where the plugin is passed with its options |
+
 ## Sources
 
 - Upstream repository: `GrapesJS/blocks-basic` at 1.0.2, from the source map it publishes.

@@ -51,6 +51,14 @@ All forty-eight upstream issues and pull requests, the twenty dependency bumps s
 
 Counts: 2 defects (fixed here), 3 features (1 implemented, 2 kept), 10 out of scope, 13 false positives, 20 dependency bumps.
 
+## Key files
+
+| File                                                              | Role                                                                  |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/app/services/webpageEditor/plugins/formsPlugin.ts`      | The module: the form blocks, their traits and the preview check       |
+| `apps/web/app/services/webpageEditor/plugins/formsPlugin.test.ts` | The block and trait tests                                             |
+| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`     | The editor's plugin list, where the plugin is passed with its options |
+
 ## Sources
 
 - Upstream repository: `GrapesJS/components-forms` (version 2.0.6, read from its published source map).

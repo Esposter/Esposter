@@ -33,6 +33,14 @@ Beyond the issues, the source showed these, each fixed and tested as "no upstrea
 - The end text was written with `innerHTML`, so markup typed into it ran in the published page. Fixed by writing it as text.
 - A countdown whose element was re-rendered kept its interval running on the detached element until another countdown's script happened to run. The window-level "__gjsCountdownIntervals" registry only pruned those intervals then, and it held the detached elements. Fixed: the registry is gone and each timer stops itself once its element is detached. The registry lives on the canvas frame's window, so it never crossed editor instances.
 
+## Key files
+
+| File                                                                  | Role                                                                  |
+| :-------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/app/services/webpageEditor/plugins/countdownPlugin.ts`      | The module: the countdown component type, its script and its options  |
+| `apps/web/app/services/webpageEditor/plugins/countdownPlugin.test.ts` | The component and script tests                                        |
+| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`         | The editor's plugin list, where the plugin is passed with its options |
+
 ## Sources
 
 - Upstream repository: `GrapesJS/components-countdown` at 1.0.2, from its source map.
