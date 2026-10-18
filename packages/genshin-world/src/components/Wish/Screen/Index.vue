@@ -75,7 +75,7 @@ const historyCells = computed(() =>
     wishHistory.value,
     (itemId) => {
       const data = statTables.characterDataMap.get(itemId) ?? statTables.weaponDataMap.get(itemId);
-      return data ? { name: nameText[data.nameTextId], rarity: data.rarity } : { name: "", rarity: 0 };
+      return data ? { name: nameText[data.nameTextId] ?? "", rarity: data.rarity } : { name: "", rarity: 0 };
     },
     (bannerKind) =>
       splitGameTextColors(gameText[BannerKindGameTextKeyMap[bannerKind]])
