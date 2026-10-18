@@ -3,7 +3,6 @@ import type { GroundPoint } from "genshin-engine";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { applyBlessingShockwave } from "#src/services/spiralAbyss/blessings/applyBlessingShockwave";
 
 // The seconds a Stardread shockwave waits after it fires before it may fire again
 export const STARDREAD_COOLDOWN_SECONDS = 2;
@@ -30,5 +29,6 @@ export const applyStardreadShockwave = (
       reactionType === ReactionType.Shattered ||
       (reactionType === ReactionType.Swirl && element === Element.Cryo),
   );
-  return applyBlessingShockwave(readySeconds, isTriggered, position, seconds, STARDREAD_COOLDOWN_SECONDS);
+  if (!isTriggered || seconds < readySeconds) return { readySeconds };
+  return { readySeconds: seconds + STARDREAD_COOLDOWN_SECONDS, shockwavePosition: position };
 };
