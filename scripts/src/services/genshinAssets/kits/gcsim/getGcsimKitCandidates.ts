@@ -4,6 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
+import { addGcsimFrameListCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates";
 import { addGcsimNamedConstantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates";
 import { addGcsimNormalAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates";
 import { addGcsimPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates";
@@ -38,5 +39,6 @@ export const getGcsimKitCandidates = (
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);
   addGcsimNamedConstantCandidates(writer, gcsim, bagPaths);
+  addGcsimFrameListCandidates(writer, gcsim, bagPaths);
   return candidateMap;
 };
