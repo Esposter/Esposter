@@ -28,6 +28,8 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **No mail is delivered until the rules are read.** The screen lists what the save holds; which mail a player receives, and when, waits on the export.
 - **Claiming gives the items once.** A claimed mail stays in the list as read, so a reload cannot grant its items twice.
 - **The dump's birthday letters are the Traveler's, not a character's.** Seven untyped rows name a birthday, all "Best Wishes on Your Birthday" from the Mailing System and addressed to the Traveler; three are dated by `BirthdayMailExcelConfigData`, which keys them by mail id. No mail is dated to a character's birthday, though `FetterInfoExcelConfigData` dates all 120 characters. So delivery on a held character's birthday has no letter to deliver: it waits on a source for that letter, and until then no mail is delivered on a character's birthday.
+- **The save's mail list is backfilled with an empty list, and the Traveler's birthday is optional.** `mails` is required, so a save written before it is refused until the backfill sets it to `[]`; the main session adds that to its one backfill script and runs it on dev, and prod waits on the user. `travelerBirthday` is optional, since the profile sets it once and an unset birthday is a real state, so existing saves need no backfill.
+- **The Traveler's birthday is set once in the profile.** The wiki says the birth date is the player's choice in profile customization and cannot be changed once set, so the save holds it once and nothing after.
 
 ## Key files
 
@@ -37,6 +39,17 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 | `packages/genshin-world/src/services/save/constants.ts`            | Bounds the mail list at its longest, so the save's ceiling counts it               |
 | `packages/genshin-world/src/models/save/GenshinSave.ts`            | Holds the mail list beside the other collections the save keeps                    |
 | `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`      | Joins a mail's `rewardId` to its reward's items                                    |
+
+The new files sit in a tree:
+
+```text
+scripts/src/services/genshinAssets/mail/toMails.ts            ← the mail rows, skipping one with a key it cannot name or a missing reward, and counting both
+scripts/src/models/genshinAssets/mail/ExcelMailRow.ts         ← the mail table's named keys
+packages/genshin-world/src/models/mail/Mail.ts                ← a mail's text ids, expiry and items
+packages/genshin-world/src/models/mail/MailSave.ts            ← a mail as the save holds it: when delivered, claimed, read
+packages/genshin-world/src/models/save/TravelerBirthdaySave.ts ← the Traveler's birthday the profile sets once
+packages/genshin-world/src/services/mail/constants.ts         ← the mailbox's capacity
+```
 
 - The dump's two unnamed mail keys are not guessed at; the builder skips them, and a mail with a key it cannot name is not delivered.
 - A mail's expiry is `expireDays` from its delivery, which the delivery rules set; a mail never delivered does not expire.
