@@ -41,11 +41,11 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 - **Seventy-two hours.** An emptied stock is back in full seventy-two hours on, the day's and the night's kept apart by their own emptying (`checkIsFishingStockRefilled`).
 - **A draw.** A roll in one unit picks a fish by its share of the stock's total weight, and a stock weighing nothing draws none (`drawFishingWeight`).
 - **A lure.** A fish inside its flee range flees whatever the bait. A fish turns toward the bait it takes within its attract range, and every other lure is ignored (`computeFishReaction`).
-- **The reel.** The tension rises while the reel is held and falls while it is not, at one rate, clamped to the line's range. Inside the zone the rod's attack wears the fish's hit points down, and the fish is caught at none. Outside it the allowance runs out, and the line breaks past it (`stepFishingReel`).
+- **The reel.** The tension rises while the reel is held and falls while it is not, at the gear's inside rate while it lies inside the zone and its outside rate outside it, clamped to the bar's range. The zone starts at the fish's own offset, moves at its own speed for its own duration and holds, kept within the bar at the fish's width (`computeFishingZone`). Inside the zone the rod's attack wears the fish's hit points down, and the fish is caught at none. Outside it the allowance runs out, and the line breaks past it (`stepFishingReel`).
 
 ## Provisional
 
-- **The reel's tension rate and its allowance** (`REEL_TENSION_RATE`, `REEL_LOST_OUT_OF_ZONE_SECONDS`) are not in the tables. A recording of the minigame sets them, listed on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
+- **The reel's zone travel, its gear rates and its allowance** (`computeFishingZone`, the gear's `inSpeed` and `outSpeed`, `REEL_LOST_OUT_OF_ZONE_SECONDS`, and `REEL_BAR_MAX`) are held provisional. The gear's rates are the table's; the travel's direction and hold, the bar's scale and the allowance are not in the tables. A recording of the minigame sets them, listed on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
 
 ## Key files
 
@@ -58,6 +58,7 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 | `packages/genshin-world/src/services/fishing/checkIsFishingStockRefilled.ts` | Whether an emptied stock is back in full                      |
 | `packages/genshin-world/src/services/fishing/drawFishingWeight.ts`           | The fish a stock draws for a roll                             |
 | `packages/genshin-world/src/services/fishing/computeFishReaction.ts`         | A fish's answer to a lure within its reach                    |
+| `packages/genshin-world/src/services/fishing/computeFishingZone.ts`          | The reel's zone after its travel                              |
 | `packages/genshin-world/src/services/fishing/stepFishingReel.ts`             | The reel's tension, hit points and allowance after a step     |
 
 ## Sources

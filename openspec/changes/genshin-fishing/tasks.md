@@ -5,7 +5,7 @@
 
 ## 2. The reel
 
-- [ ] 2.1 Move the reel's zone by the fish's own width, speed, offset and duration, and apply its skills to the tension and the health. Verify: a test named after the scenario 'The line breaks after too long out of the zone' written first and seen failing.
+- [x] 2.1 Move the reel's zone by the fish's own width, speed, offset and duration, and apply its skills to the tension and the health. Verify: a test named after the scenario 'The line breaks after too long out of the zone' written first and seen failing.
 - [ ] 2.2 Put each fish caught into the bag with its reward and proficiency. Verify: a test named after the scenario 'A catch puts the fish in the bag' written first and seen failing.
 
 ## 3. Bait and points
