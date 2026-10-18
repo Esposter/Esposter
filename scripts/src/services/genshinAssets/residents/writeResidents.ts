@@ -7,6 +7,7 @@ import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/fi
 import { toCraftingKeeperPlace } from "#src/services/genshinAssets/crafting/toCraftingKeeperPlace";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import {
+  BUILDING_NPC_ID_MAP,
   REPUTATION_KEEPER_NPC_ID_MAP,
   RESIDENT_DUEL_GAME_ID_MAP,
 } from "#src/services/genshinAssets/residents/constants";
@@ -44,8 +45,8 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
         kind === SceneGroupMemberKind.Npc && place ? [[objectId, place]] : [],
       ),
     ),
-    ...Object.values(sceneGroups.buildings).flatMap(({ name, place }): [number, SceneGroupPlace][] => {
-      const keeperNpcId = REPUTATION_KEEPER_NPC_ID_MAP.get(name);
+    ...Object.entries(sceneGroups.buildings).flatMap(([buildingId, { name, place }]): [number, SceneGroupPlace][] => {
+      const keeperNpcId = BUILDING_NPC_ID_MAP.get(buildingId) ?? REPUTATION_KEEPER_NPC_ID_MAP.get(name);
       return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
     }),
     ...craftingKeeperPlaces,
