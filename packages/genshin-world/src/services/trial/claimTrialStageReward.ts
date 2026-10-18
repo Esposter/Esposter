@@ -4,7 +4,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { TrialStageClaim } from "#src/models/trial/TrialStageClaim";
 
-import { claimAbyssRewards } from "#src/services/spiralAbyss/claimAbyssRewards";
+import { claimAbyssRewards } from "#src/services/reward/claimAbyssRewards";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The claim of a trial stage's first clear: its reward paid into the bag and the wallet, and the stage recorded as claimed. A

@@ -5,7 +5,7 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { claimAbyssRewards } from "#src/services/spiralAbyss/claimAbyssRewards";
+import { claimAbyssRewards } from "#src/services/reward/claimAbyssRewards";
 import { describe, expect, test } from "vitest";
 
 describe(claimAbyssRewards, () => {
