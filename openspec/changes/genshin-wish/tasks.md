@@ -15,4 +15,4 @@
 
 ## 4. Beginners' wish
 
-- [ ] 4.1 Draw Noelle as the beginners' featured four-star on the eighth wish only. Verify: a test named after 'Noelle is drawn only on the eighth beginners' wish'.
+- [x] 4.1 Draw Noelle as the beginners' featured four-star on the eighth wish only. Verify: a test named after 'Noelle is drawn only on the eighth beginners' wish'.
