@@ -3,6 +3,7 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitTableLabel } from "#src/models/genshinAssets/kits/tables/KitTableLabel";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { CombatTalent, WeaponType } from "genshin-world";
@@ -104,7 +105,7 @@ describe(getKitHitLabelMap, () => {
     ]);
     const overlay: KitOverlay = {
       "skill.hits.0.multiplier": {
-        cause: "Unclassified",
+        cause: KitProvisionalCause.Unclassified,
         value: { index: 1, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
       },
     };
