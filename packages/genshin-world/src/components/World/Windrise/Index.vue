@@ -17,7 +17,7 @@ import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
+import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { GrassTrail, LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -155,8 +155,8 @@ interface Props {
   isPaused?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
-  // The pose of the last jump, which a teleport sets and which brings back a boss whose blossom is unclaimed
-  jumpPose?: WorldJumpPose;
+  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
+  lastTeleportAt?: Temporal.ZonedDateTime;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
@@ -181,6 +181,8 @@ interface Props {
   wildlifeList: Wildlife[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
   windriseData: WindriseData;
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
+  trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
   worldLevel: number;
   // The game's world level table, which raises the camps' levels under a World Level
@@ -206,7 +208,7 @@ const {
   isHeld,
   isPaused,
   isTuning,
-  jumpPose,
+  lastTeleportAt,
   kitEffectState,
   landmarkCollider,
   oculusPlaces,
@@ -218,6 +220,7 @@ const {
   sceneExportBaseUrl,
   seelies,
   wildlifeList,
+  trounceBlossoms,
   windriseData,
   worldLevel,
   worldLevelRows,
@@ -226,6 +229,7 @@ const emit = defineEmits<{
   charge: [];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
+  respawn: [spawnKey: string];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -545,7 +549,8 @@ onUnmounted(() => {
       :enemy-tables
       :get-ground-height
       :is-held
-      :jump-pose="jumpPose"
+      :last-teleport-at="lastTeleportAt"
+      :trounce-blossoms="trounceBlossoms"
       :light-uniforms
       :outcrop-camps="outcropCamps"
       :ramp-texture
@@ -555,6 +560,7 @@ onUnmounted(() => {
       :world-level
       :world-level-rows
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
+      @respawn="(spawnKey) => emit('respawn', spawnKey)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
     />
     <!-- The animals run from the character where the references show none, so a witness render draws none of them -->

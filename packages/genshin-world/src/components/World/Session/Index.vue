@@ -70,6 +70,7 @@ import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
+import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
@@ -721,6 +722,31 @@ const {
   setWallet,
   wallet,
 });
+// The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
+const {
+  chooseTrounceBlossomClaim,
+  claimPrompt: trounceClaimPrompt,
+  closeTrounceBlossomClaim,
+  forgetTrounceBlossom,
+  lastTeleportAt,
+  openTrounceBlossomClaim,
+  trounceBlossomInteractables,
+  trounceBlossoms,
+} = useWorldTrounceBlossoms({
+  adventureExp,
+  adventureRankTables,
+  completedMainQuestIds,
+  enemyKindMap: enemyTables.enemyKindMap,
+  events,
+  gameText,
+  getGroundHeight,
+  inventory,
+  materialDataMap,
+  nameText,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
@@ -744,6 +770,7 @@ const interactables = computed<Interactable[]>(() => {
     ...residentInteractables.value,
     ...chestInteractables.value,
     ...outcropInteractables.value,
+    ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
@@ -970,6 +997,8 @@ defineExpose({ jumpTo, readCameraPosition });
               pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
+            else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.value.has(interactable.id))
+              openTrounceBlossomClaim(interactable.id, getWorldNow());
             else if (interactable?.kind === InteractionKind.Claim)
               openOutcropClaim(Number(interactable.id), getWorldNow());
             else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
@@ -1054,7 +1083,9 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
-        :jump-pose="jumpPose"
+        :last-teleport-at="lastTeleportAt"
+        :trounce-blossoms="trounceBlossoms"
+        @respawn="forgetTrounceBlossom"
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
@@ -1147,6 +1178,15 @@ defineExpose({ jumpTo, readCameraPosition });
           :original-label="gameText[GameTextKey.UseOriginalResin]"
           @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
           @close="closeOutcropClaim"
+        />
+        <OfferChoice
+          v-if="trounceClaimPrompt"
+          :cancel-label="gameText[GameTextKey.Cancel]"
+          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :offers="trounceClaimPrompt.offers"
+          :original-label="gameText[GameTextKey.UseOriginalResin]"
+          @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
+          @close="closeTrounceBlossomClaim"
         />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>

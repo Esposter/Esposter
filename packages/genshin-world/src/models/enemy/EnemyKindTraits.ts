@@ -13,4 +13,6 @@ export interface EnemyKindTraits {
   enemyDropFamily?: EnemyDropFamily;
   energyDrops: EnergyDrop[];
   poiseType: PoiseType;
+  // The boss's own drop its Trounce Blossom pays, none for a kind that leaves no blossom
+  uniqueDropId?: number;
 }
