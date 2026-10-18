@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import type { GridGesture } from "@/models/dashboard/GridGesture";
-import type { GridItem } from "@/models/dashboard/GridItem";
 import type { GridTile } from "@/models/dashboard/GridTile";
 import type { Visual } from "#shared/models/dashboard/data/Visual";
+import type { GridItem, GridSpacing } from "vue-grid-layout-headless";
 
-import { GridGestureType } from "@/models/dashboard/GridGestureType";
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
-import { checkIsSameCell } from "@/services/dashboard/grid/checkIsSameCell";
-import { compactLayout } from "@/services/dashboard/grid/compactLayout";
-import { fitLayout } from "@/services/dashboard/grid/fitLayout";
-import { getCellPosition } from "@/services/dashboard/grid/getCellPosition";
-import { getCellSize } from "@/services/dashboard/grid/getCellSize";
-import { getColumnPitch } from "@/services/dashboard/grid/getColumnPitch";
-import { getGestureCell } from "@/services/dashboard/grid/getGestureCell";
-import { getLayoutBottom } from "@/services/dashboard/grid/getLayoutBottom";
-import { moveItem } from "@/services/dashboard/grid/moveItem";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { checkIsNestedControl } from "@esposter/shared";
+import { GridGestureType } from "vue-grid-layout-headless";
+import {
+  checkIsSameCell,
+  compactLayout,
+  fitLayout,
+  getCellPosition,
+  getCellSize,
+  getColumnPitch,
+  getGestureCell,
+  getLayoutBottom,
+  moveItem,
+} from "vue-grid-layout-headless/placement";
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 
@@ -31,8 +33,9 @@ const { columnNumber, isEditable, rowHeight, visuals } = defineProps<Props>();
 const emit = defineEmits<{ commit: [changes: GridItem[]] }>();
 const grid = useTemplateRef("grid");
 const { width } = useElementSize(grid);
-const columnPitch = computed(() => getColumnPitch(width.value, columnNumber));
-const rowPitch = computed(() => rowHeight + DASHBOARD_GRID_MARGIN);
+const spacing: GridSpacing = { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN };
+const columnPitch = computed(() => getColumnPitch(width.value, columnNumber, spacing));
+const rowPitch = computed(() => rowHeight + spacing.gap);
 // Each visual at its saved cell, kept within the columns and compacted, so a narrower screen never overlaps
 const layout = computed(() =>
   fitLayout(
@@ -48,10 +51,10 @@ const draggedGesture = computed(() =>
   gesture.value?.kind === GridGestureType.Move && gesture.value.isStarted ? gesture.value : undefined,
 );
 const getCellStyle = (cell: GridItem) => ({
-  height: `${getCellSize(cell.h, rowPitch.value)}px`,
-  left: `${getCellPosition(cell.x, columnPitch.value)}px`,
-  top: `${getCellPosition(cell.y, rowPitch.value)}px`,
-  width: `${getCellSize(cell.w, columnPitch.value)}px`,
+  height: `${getCellSize(cell.h, rowPitch.value, spacing.gap)}px`,
+  left: `${getCellPosition(cell.x, columnPitch.value, spacing.padding)}px`,
+  top: `${getCellPosition(cell.y, rowPitch.value, spacing.padding)}px`,
+  width: `${getCellSize(cell.w, columnPitch.value, spacing.gap)}px`,
 });
 // A dragged tile stays under the pointer while the others move aside, so it is drawn from its own cell and offset
 const tiles = computed(() =>
@@ -76,7 +79,7 @@ const placeholderStyle = computed(() => {
   return target ? getCellStyle(target) : undefined;
 });
 const gridStyle = computed(() => ({
-  height: `${getCellPosition(getLayoutBottom(preview.value ?? layout.value), rowPitch.value)}px`,
+  height: `${getCellPosition(getLayoutBottom(preview.value ?? layout.value), rowPitch.value, spacing.padding)}px`,
 }));
 const resetGesture = () => {
   gesture.value = undefined;

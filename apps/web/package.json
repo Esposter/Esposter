@@ -168,6 +168,7 @@
     "trpc-nuxt-module": "workspace:*",
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
+    "vue-grid-layout-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",
     "vue-router": "catalog:",
     "web-push": "catalog:",

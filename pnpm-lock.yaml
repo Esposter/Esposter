@@ -1288,6 +1288,9 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.44
+      vue-grid-layout-headless:
+        specifier: workspace:*
+        version: link:../../packages/vue-grid-layout-headless
       vue-phaserjs:
         specifier: workspace:*
         version: link:../../packages/vue-phaserjs
@@ -2351,6 +2354,37 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.6.7
+
+  packages/vue-grid-layout-headless:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      '@arethetypeswrong/core':
+        specifier: 'catalog:'
+        version: 0.18.5
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      '@vue/test-utils':
+        specifier: 'catalog:'
+        version: 2.5.1(@vue/compiler-dom@3.5.44)(@vue/server-renderer@3.5.44)(vue@3.5.44)
+      happy-dom:
+        specifier: 'catalog:'
+        version: 21.0.1
+      publint:
+        specifier: 'catalog:'
+        version: 0.3.25
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.1(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.1)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsx@4.23.15)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.4(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/browser-playwright@5.0.4)(@vitest/browser-preview@5.0.4)(@vitest/coverage-v8@5.0.4)(@vitest/ui@5.0.4)(happy-dom@21.0.1)(msw@3.0.3(@types/node@26.6.5)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.44
 
   packages/vue-pdfjs-headless:
     dependencies:

@@ -1,6 +1,5 @@
-import type { GridGestureType } from "@/models/dashboard/GridGestureType";
-import type { GridItem } from "@/models/dashboard/GridItem";
 import type { GridTile } from "@/models/dashboard/GridTile";
+import type { GridGestureType, GridItem } from "vue-grid-layout-headless";
 
 export interface GridGesture {
   // The cell the gesture last previewed, so a move that stays within it rebuilds nothing

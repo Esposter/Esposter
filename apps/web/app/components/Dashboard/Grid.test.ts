@@ -2,17 +2,16 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import DashboardGrid from "@/components/Dashboard/Grid.vue";
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
-import { getCellPosition } from "@/services/dashboard/grid/getCellPosition";
-import { getCellSize } from "@/services/dashboard/grid/getCellSize";
-import { getColumnPitch } from "@/services/dashboard/grid/getColumnPitch";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { getCellPosition, getCellSize, getColumnPitch } from "vue-grid-layout-headless/placement";
 
 describe("dashboardGrid", () => {
   const columnNumber = 12;
   const gridWidth = 970;
-  const cellPitch = getColumnPitch(gridWidth, columnNumber);
+  const spacing = { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN };
+  const cellPitch = getColumnPitch(gridWidth, columnNumber, spacing);
   const pointerId = 1;
   const rowHeight = 40;
   const rowPitch = rowHeight + DASHBOARD_GRID_MARGIN;
@@ -154,10 +153,10 @@ describe("dashboardGrid", () => {
       top: tile.element.style.top,
       width: tile.element.style.width,
     }).toStrictEqual({
-      height: `${getCellSize(2, rowPitch)}px`,
-      left: `${getCellPosition(3, cellPitch)}px`,
-      top: `${getCellPosition(1, rowPitch)}px`,
-      width: `${getCellSize(2, cellPitch)}px`,
+      height: `${getCellSize(2, rowPitch, spacing.gap)}px`,
+      left: `${getCellPosition(3, cellPitch, spacing.padding)}px`,
+      top: `${getCellPosition(1, rowPitch, spacing.padding)}px`,
+      width: `${getCellSize(2, cellPitch, spacing.gap)}px`,
     });
   });
 

@@ -5,9 +5,6 @@ export const DASHBOARD_EDITOR_ROW_HEIGHT = 40;
 export const DASHBOARD_PUBLISHED_ROW_HEIGHT = 50;
 // The space before, between and after the cells, on both axes
 export const DASHBOARD_GRID_MARGIN = 10;
-export const DASHBOARD_GRID_MIN_SPAN = 1;
-// A collider the moved visual has passed over by more than this share of its own height is left where it is
-export const DASHBOARD_GRID_PASS_RATIO = 0.25;
 // Widest first, so the first breakpoint the width reaches is the one a screen takes
 export const DASHBOARD_BREAKPOINTS = [
   { columnNumber: DASHBOARD_NO_COLUMNS, minimumWidth: 1200 },

@@ -12,7 +12,7 @@ After the change:
 - **`vue-grid-layout-headless`** holds `useGridLayout`. It takes the layout, the column count and the grid's options, and returns the preview layout, each item's position and size, the placeholder, and the pointer handlers a tile and its handles bind. It emits one commit of changed cells per gesture, as the dashboard's grid does today.
 - **`apps/web/app/components/Dashboard/Grid.vue`** keeps only the markup and the app's tokens: the tiles, the handles it chooses to draw, and the placeholder.
 
-The package depends on nothing but its `vue` peer.
+The package depends on its `vue` peer and on `@esposter/shared` alone. The press rule refuses a press on a nested control with `checkIsNestedControl`, the one DOM helper it shares with the rest of the app, and everything else is native (`addEventListener`, `ResizeObserver`, `setPointerCapture`) with no utility library.
 
 ## How it works
 
