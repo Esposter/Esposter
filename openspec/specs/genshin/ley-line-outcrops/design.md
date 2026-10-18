@@ -47,7 +47,8 @@ flowchart TD
 | `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`             | a region's kinds, sections and places, as its slice is written                      |
 | `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`  | whether a kind is open at a rank with the listed areas unlocked                     |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`            | the Ley Line Blossoms of the official map written into each region's outcrop places |
-| `packages/genshin-world/src/services/leyLine/computeOutcropCamp.ts`      | the camp a touch spawns at a waiting outcrop's place                                |
+| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`       | the camp a touch spawns at an outcrop's place, of provisional size and kinds        |
+| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`     | the blossom reveals once every enemy of its place's camp is down                    |
 | `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | the nearest other fitted place, or none where no place is free                      |
 
 ## Sources
