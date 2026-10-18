@@ -103,8 +103,8 @@ export const EXPERIENCE_BONUS_WEIGHTS: readonly WeightedValue<number>[] = [
 ];
 // The starting minor affix counts an artifact a chest or a domain drops is drawn among by its stars, each with its
 // Weight. The wiki's Artifact_Drop_Distribution gives these for an artifact a domain drops, its Domains row: two stars
-// Start with none at 80% and with one at 20%, three stars with one at 80% and with two at 20%. It names no chest row, so
-// These are provisional. One star names no count, so it is taken to start with none
+// Start with none at 80% and with one at 20%, three stars with one at 80% and with two at 20%. It names no chest row,
+// So these are provisional. One star names no count, so it is taken to start with none
 export const ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS: Readonly<
   Partial<Record<number, readonly WeightedValue<number>[]>>
 > = {

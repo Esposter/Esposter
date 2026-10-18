@@ -7,8 +7,8 @@ import { drawArtifactPiece } from "#src/services/artifact/drawArtifactPiece";
 import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { takeOne } from "@esposter/shared";
 
-// One artifact of a set as a drop rolls it: its slot drawn evenly among the five, then its piece at the rarity given (see
-// drawArtifactPiece), and the artifact rolled at that piece
+// One artifact of a set as a drop rolls it: its slot drawn evenly among the five, then its piece at the rarity
+// Given (see drawArtifactPiece), and the artifact rolled at that piece
 export const drawSetArtifact = (
   set: ReliquarySetData,
   rarity: number,
