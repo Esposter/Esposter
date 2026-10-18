@@ -30,4 +30,60 @@ describe(healPartyMember, () => {
       partyMember: { ...createPartyMember(), healthShare: 0 },
     });
   });
+
+  test("a Bond of Life takes the heal before the HP does, and records the share it took", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const partyMember = getPartyMember(party, 1);
+    partyMember.healthShare = 0.5;
+    partyMember.bondOfLifeShare = 0.25;
+    healPartyMember(party, 1, 0.5);
+
+    expect({
+      bondOfLifeShare: partyMember.bondOfLifeShare,
+      healthChanges: party.healthChanges,
+      healthShare: partyMember.healthShare,
+    }).toStrictEqual({
+      bondOfLifeShare: 0,
+      healthChanges: [{ bondOfLifeShare: 0.25, characterId: 1, healthShare: 0.25, overflowHealthShare: 0 }],
+      healthShare: 0.75,
+    });
+  });
+
+  test("a Bond of Life that takes a whole heal leaves the HP as it was, and still records the heal it took", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const partyMember = getPartyMember(party, 1);
+    partyMember.healthShare = 0.5;
+    partyMember.bondOfLifeShare = 0.5;
+    healPartyMember(party, 1, 0.25);
+
+    expect({
+      bondOfLifeShare: partyMember.bondOfLifeShare,
+      healthChanges: party.healthChanges,
+      healthShare: partyMember.healthShare,
+    }).toStrictEqual({
+      bondOfLifeShare: 0.25,
+      healthChanges: [{ bondOfLifeShare: 0.25, characterId: 1, healthShare: 0, overflowHealthShare: 0 }],
+      healthShare: 0.5,
+    });
+  });
+
+  test("a Bond of Life counts the share it clears, toward the amount a clear is priced at", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const partyMember = getPartyMember(party, 1);
+    partyMember.healthShare = 0.5;
+    partyMember.bondOfLifeShare = 0.5;
+    healPartyMember(party, 1, 0.25);
+    healPartyMember(party, 1, 0.25);
+
+    expect({
+      bondOfLifeClearedShare: partyMember.bondOfLifeClearedShare,
+      bondOfLifeShare: partyMember.bondOfLifeShare,
+    }).toStrictEqual({ bondOfLifeClearedShare: 0.5, bondOfLifeShare: 0 });
+  });
 });
