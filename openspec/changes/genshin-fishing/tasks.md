@@ -11,7 +11,7 @@
 ## 3. Bait and points
 
 - [ ] 3.1 Draw each bait's fish from the wiki's fish pages, with the crafting recipes, the rod's multiplier and accuracy. Verify: tests named after the scenarios 'A fish is drawn only by its own bait' and 'A cast with another bait draws none of a fish's kind' written first and seen failing.
-- [ ] 3.2 Draw each point's fish from every pool of its region. Verify: tests named after the scenarios 'A point draws from its region's pools' and 'A point in a region with no pool draws nothing' written first and seen failing.
+- [x] 3.2 Draw each point's fish from every pool of its region. Verify: tests named after the scenarios 'A point draws from its region's pools' and 'A point in a region with no pool draws nothing' written first and seen failing.
 
 ## 4. Screen and exchanges
 
