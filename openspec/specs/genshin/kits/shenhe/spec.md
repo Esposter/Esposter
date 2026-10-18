@@ -1,6 +1,6 @@
 ## Purpose
 
-Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge built and her Quill, other passives and Constellations 2, 4 and 6 left unbuilt.
+Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge and Constellation 2's six extra field seconds built, and her Quill, other passives, Constellation 2's Cryo CRIT DMG bonus and Constellations 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -74,12 +74,28 @@ From Constellation 1, Spring Spirit Summoning SHALL have one more charge than it
 - **WHEN** her skill's charges are read
 - **THEN** no charge is added
 
+### Requirement: Constellation 2 extends the field
+
+From Constellation 2, Divine Maiden's Deliverance's field SHALL last six seconds longer than its base.
+
+#### Scenario: Constellation 2 extends the field
+
+- **GIVEN** Shenhe has Constellation 2
+- **WHEN** Divine Maiden's Deliverance is cast
+- **THEN** its field lasts six seconds longer
+
+#### Scenario: Constellation 1 leaves the field as its base
+
+- **GIVEN** Shenhe has Constellation 1
+- **WHEN** Divine Maiden's Deliverance is cast
+- **THEN** its field lasts its base
+
 ### Requirement: Unbuilt Shenhe effects
 
-Shenhe's Quill, her other passives and her Constellations 2, 4 and 6 SHALL NOT take effect.
+Shenhe's Quill, her other passives, her Constellation 2's Cryo CRIT DMG bonus and her Constellations 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Shenhe has the Quill, a passive or Constellation 2, 4 or 6 unlocked
+- **GIVEN** Shenhe has the Quill, a passive, Constellation 2's CRIT DMG bonus or Constellation 4 or 6 unlocked
 - **WHEN** the player fights with Shenhe
 - **THEN** that effect has no effect

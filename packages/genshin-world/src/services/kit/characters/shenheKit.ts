@@ -20,6 +20,9 @@ const BURST_ASCENSION = 1;
 const BURST_CRYO_DAMAGE_BONUS = 0.15;
 const BURST_CRYO_DAMAGE_BONUS_SOURCE = "shenhe-burst-cryo";
 const CONSTELLATION_1 = 1;
+// Constellation 2 adds six seconds to the field, as gcsim (MIT) shenhe/burst.go's burstDuration does at 2 constellations
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_FIELD_SECONDS = 6;
 
 export const SHENHE_CHARACTER_ID = 10_000_063;
 
@@ -27,7 +30,7 @@ export const SHENHE_CHARACTER_ID = 10_000_063;
 // The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her Quill is not built:
 // The kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to the hits of whoever carries it, which no
 // Kit step reads. Constellation 1's charge is built; her other passives and Constellations 2, 4 and 6 are not
-// Constellation 2 needs the field's extra 6 seconds and a Cryo CRIT DMG bonus, which no strike hook carries
+// Constellation 2's field runs six seconds longer, and its Cryo CRIT DMG bonus, which no strike hook carries, is not built
 // Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill, which the kit does not build
 // Constellation 6 needs the Icy Quill's trigger quota, which the kit does not build
 export const createShenheKitBehaviour = ({
@@ -80,7 +83,11 @@ export const createShenheKitBehaviour = ({
             castKitSummon(tickEffectState, centreBody, combatant, takeOne(burstTicks, tickIndex % burstTicks.length));
           },
           radius: burstTickFields.hitArea.radius,
-          secondsRemaining: burstDurationSeconds + burstStartSeconds + 0.1,
+          secondsRemaining:
+            burstDurationSeconds +
+            burstStartSeconds +
+            0.1 +
+            (combatant.constellationCount >= CONSTELLATION_2 ? CONSTELLATION_2_FIELD_SECONDS : 0),
           tickIntervalSeconds: fieldTickIntervalSeconds,
         });
       },
