@@ -1,10 +1,27 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGamingKitBehaviour, GAMING_CHARACTER_ID } from "#src/services/kit/characters/gamingKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const GAMING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GAMING_CHARACTER_ID);
+
+// The passive bonuses a combatant of the ascension and the HP share reads from Gaming's kit
+const getPassiveBonuses = (ascension: number, healthShare: number) =>
+  GAMING_KIT.getPassiveBonuses?.(
+    {
+      ascension,
+      attributes: computeCharacterAttributes([]),
+      characterId: GAMING_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: GAMING_KIT,
+      level: 90,
+    },
+    healthShare,
+  );
 
 describe(createGamingKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -65,6 +82,20 @@ describe(createGamingKitBehaviour, () => {
       collision: 37 / 60,
       high: { hitmarkSeconds: 46 / 60, poiseDamage: 200 },
       low: { hitmarkSeconds: 43 / 60, poiseDamage: 150 },
+    });
+  });
+
+  describe("the Ascension 4 passive, Air of Prosperity", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getPassiveBonuses(4, 0.4)).toStrictEqual([{ amount: 0.2, attribute: Attribute.IncomingHealingBonus }]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getPassiveBonuses(3, 0.4)).toStrictEqual([]);
     });
   });
 });
