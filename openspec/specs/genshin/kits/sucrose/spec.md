@@ -61,12 +61,40 @@ Sucrose's Ascension 1 Swirl Elemental Mastery share, her Ascension 4 team share 
 - **WHEN** a skill or burst hit lands
 - **THEN** the team gains a share of her Elemental Mastery for that hit
 
+### Requirement: Constellation 4 cuts Astable's cooldown on every seventh attack
+
+From constellation 4, every seventh normal or charged attack of Sucrose's while she is on the field SHALL cut the cooldown of Astable Anemohypostasis Creation-6308 by a random 1 to 7 seconds, and the count SHALL start again.
+
+#### Scenario: The seventh attack cuts the cooldown
+
+- **GIVEN** Sucrose is at constellation 4 and is on the field
+- **WHEN** her seventh normal or charged attack lands
+- **THEN** Astable's cooldown is cut by a random 1 to 7 seconds
+
+#### Scenario: Attacks before the seventh cut nothing
+
+- **GIVEN** Sucrose is at constellation 4 and is on the field
+- **WHEN** fewer than seven of her attacks have landed since the last cut
+- **THEN** Astable's cooldown is unchanged
+
+#### Scenario: Attacks made off the field count nothing
+
+- **GIVEN** Sucrose is at constellation 4 and another character is on the field
+- **WHEN** an attack of hers would land
+- **THEN** the count is unchanged
+
+#### Scenario: Below the fourth constellation no cut is made
+
+- **GIVEN** Sucrose is at constellation 3
+- **WHEN** seven of her attacks land
+- **THEN** Astable's cooldown is unchanged
+
 ### Requirement: Unbuilt Sucrose effects
 
-The skill's pull, Constellation 4 and her Hexerei team bonus SHALL NOT take effect.
+The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Sucrose has Constellation 4 or the Hexerei team bonus unlocked
+- **GIVEN** Sucrose has the skill's pull or the Hexerei team bonus unlocked
 - **WHEN** the player fights with Sucrose
 - **THEN** that effect has no effect
