@@ -8,6 +8,7 @@ import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTer
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { MinedOutcropSave } from "#src/models/gathering/MinedOutcropSave";
 import type { InvestigationDaySave } from "#src/models/investigation/InvestigationDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
@@ -16,6 +17,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import type { StatueProgressSave, StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { TipSave } from "#src/models/tip/TipSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
@@ -212,6 +214,30 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
   }
   return enemyRespawns;
 };
+// A mined outcrop both copies hold is the later mining of the two, since the later one keeps it gone the longer
+const mergeMinedOutcrops = (account: MinedOutcropSave[], guest: MinedOutcropSave[]): MinedOutcropSave[] => {
+  const minedOutcropMap = new Map<string, MinedOutcropSave>();
+  for (const minedOutcrop of [...account, ...guest]) {
+    const heldMinedOutcrop = minedOutcropMap.get(minedOutcrop.id);
+    if (
+      heldMinedOutcrop === undefined ||
+      Temporal.Instant.compare(
+        Temporal.Instant.from(minedOutcrop.minedAt),
+        Temporal.Instant.from(heldMinedOutcrop.minedAt),
+      ) > 0
+    )
+      minedOutcropMap.set(minedOutcrop.id, minedOutcrop);
+  }
+  return [...minedOutcropMap.values()];
+};
+// The tips shown in either copy stay shown, and a tip waiting in either copy waits only while neither has shown it
+const mergeTips = (account: TipSave, guest: TipSave): TipSave => {
+  const shown = new Set([...account.shown, ...guest.shown]);
+  return {
+    queued: [...new Set([...account.queued, ...guest.queued])].filter((id) => !shown.has(id)),
+    shown: [...shown],
+  };
+};
 // A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
 // Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
 // And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
@@ -238,7 +264,8 @@ const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): st
     )
     .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
 
-export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
+export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: Temporal.Instant): GenshinSave => {
+  const minedOutcrops = mergeMinedOutcrops(account.minedOutcrops ?? [], guest.minedOutcrops ?? []);
   const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
     account.reputationBountyClaimedAts,
     guest.reputationBountyClaimedAts,
@@ -340,6 +367,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       solvedPuzzleIds: [...new Set([...account.puzzles.solvedPuzzleIds, ...guest.puzzles.solvedPuzzleIds])],
     },
     mails,
+    ...(minedOutcrops.length > 0 && { minedOutcrops }),
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
@@ -349,7 +377,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),
-    tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
+    tips: mergeTips(account.tips, guest.tips),
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {
@@ -358,7 +386,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? Math.max(account.wallet.primogemResinRefillCount, guest.wallet.primogemResinRefillCount)
         : account.wallet.primogemResinRefillCount,
     },
-    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, Temporal.Now.instant()),
+    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, now),
     wishPity,
     worldLevelAdjustment: checkIsLaterWorldLevelAdjustment(guest.worldLevelAdjustment, account.worldLevelAdjustment)
       ? guest.worldLevelAdjustment

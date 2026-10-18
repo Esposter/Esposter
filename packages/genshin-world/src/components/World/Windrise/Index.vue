@@ -178,9 +178,9 @@ interface Props {
   landmarkCollider: LandmarkCollider;
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
   lastTeleportAt?: Temporal.Instant;
-  // The Oculi not yet found, each stood in at its place
   // The mining outcrops standing now, each stood in as a rock at its place
   miningOutcropPlaces: GatheringPlace[];
+  // The Oculi not yet found, each stood in at its place
   oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;

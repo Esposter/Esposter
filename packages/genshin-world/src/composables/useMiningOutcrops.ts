@@ -1,4 +1,5 @@
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
+import type { MinedOutcrop } from "#src/models/gathering/MinedOutcrop";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { Ref } from "vue";
@@ -10,34 +11,37 @@ import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPo
 import { readMiningOutcropPlaces } from "#src/services/gathering/readMiningOutcropPlaces";
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMiningOutcropStanding";
 import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
 import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
-import { shallowRef } from "vue";
+import { computed, shallowRef } from "vue";
 
 // The mining outcrops of each region the world has loaded: a region's places are read once, and its daily reset draws
 // Its outcrops to stand at them until the next reset. A strike breaks one like an ore, dropping its Magical Crystal Chunks
-// And leaving it gone until the next reset's draw
+// And leaving it gone until the next reset's draw. The mined ones are the save's, held until their respawn
 export const useMiningOutcrops = ({
   breakOre,
   gameDataBaseUrl,
   getWorldNow,
   rank,
   regionIds,
+  savedMinedOutcrops,
 }: {
   breakOre: (place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
   rank: Readonly<Ref<number>>;
   regionIds: Readonly<Ref<string[]>>;
+  savedMinedOutcrops: readonly MinedOutcrop[];
 }) => {
   // Each region's places, read as the world loads it. A region no publish wrote holds none, so it draws none
   const placesMap = shallowRef(new Map<string, GatheringPlace[]>());
   const requestedRegionIds = new Set<string>();
   // Each region's day's draw: the reset it was drawn at, and the places drawn
   const drawnMap = shallowRef(new Map<string, { at: Temporal.Instant; placeIds: string[] }>());
-  const minedAtMap = shallowRef(new Map<string, Temporal.Instant>());
+  const minedAtMap = shallowRef(new Map(savedMinedOutcrops.map(({ id, minedAt }) => [id, minedAt] as const)));
   const brokenShareMap = shallowRef(new Map<string, number>());
   const standingMiningOutcrops = shallowRef<GatheringPlace[]>([]);
   watchImmediate(regionIds, (ids) => {
@@ -69,10 +73,15 @@ export const useMiningOutcrops = ({
       drawnMap.value = new Map([...drawnMap.value, [regionId, { at, placeIds }]]);
     }
   };
-  // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. The list is replaced only
-  // When its places change, so the world's stand-ins are not written each frame
+  // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. A reset reaches the standing
+  // Places only through its day's draw, which replaces the draws, so they are worked out again only when the places, the
+  // Draws or the mined map is replaced, and the list is replaced only when its places change
+  let standingInputs: readonly unknown[] | undefined;
   const refreshMiningOutcrops = (now: Temporal.Instant, random: () => number) => {
     drawDayMiningOutcrops(now, random);
+    const inputs = [placesMap.value, drawnMap.value, minedAtMap.value];
+    if (standingInputs?.every((input, index) => input === inputs[index])) return;
+    standingInputs = inputs;
     const standing = [...placesMap.value].flatMap(([regionId, places]) =>
       computeStandingMiningOutcrops(places, drawnMap.value.get(regionId), minedAtMap.value, now),
     );
@@ -94,10 +103,14 @@ export const useMiningOutcrops = ({
         continue;
       }
       breakOre({ id, kind, position }, random);
-      minedAtMap.value = new Map([...minedAtMap.value, [id, now]]);
+      // The mining keeps only the outcrops still gone at this moment, so the save holds the day's mined ones and no more
+      minedAtMap.value = new Map(
+        [...minedAtMap.value, [id, now] as const].filter(([, minedAt]) => !checkIsMiningOutcropStanding(minedAt, now)),
+      );
       brokenShareMap.value = new Map([...brokenShareMap.value].filter(([oreId]) => oreId !== id));
       standingMiningOutcrops.value = standingMiningOutcrops.value.filter((place) => place.id !== id);
     }
   };
-  return { placesMap, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops };
+  const minedOutcrops = computed<MinedOutcrop[]>(() => [...minedAtMap.value].map(([id, minedAt]) => ({ id, minedAt })));
+  return { minedOutcrops, placesMap, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops };
 };

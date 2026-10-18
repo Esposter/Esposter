@@ -18,7 +18,7 @@ import {
   GRASS_RECAPTURE_DISTANCE,
   TILE_SELECTION_CAPACITY,
 } from "#src/services/constants";
-import { useLoop, useTres } from "@tresjs/core";
+import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainDrawsChanged,
   createGrassCulling,
@@ -30,7 +30,6 @@ import {
 } from "genshin-engine";
 import { Matrix4, Mesh, Vector2, Vector3 } from "three";
 import { uniform } from "three/tsl";
-import { WebGPURenderer } from "three/webgpu";
 
 interface Props {
   bladeHeight: number;
@@ -117,7 +116,7 @@ const capturedDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // Terrain draws its tiles all round the eye, so turning the camera never changes them and never redraws the capture
 onBeforeRender(() => {
   const activeCamera = camera.value;
-  if (!activeCamera || !(renderer instanceof WebGPURenderer)) return;
+  if (!activeCamera || !isWebGPURenderer(renderer)) return;
   eye.copy(activeCamera.position).add(origin);
   cameraGround.value.set(eye.x, eye.z);
   for (const { clipFromModel, culling, grassMesh } of grassRings) {
@@ -139,9 +138,10 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const { grassMesh } of grassRings) {
+  for (const { culling, grassMesh } of grassRings) {
     grassMesh.geometry.dispose();
     grassMesh.material.dispose();
+    culling.dispose();
   }
 });
 </script>

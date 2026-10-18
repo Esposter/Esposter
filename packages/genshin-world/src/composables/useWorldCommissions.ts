@@ -44,6 +44,7 @@ export const useWorldCommissions = ({
   savedCommissionDay,
   savedEncounterPoints,
   savedLongTermEncounterPoints,
+  worldNow,
 }: {
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
@@ -55,6 +56,7 @@ export const useWorldCommissions = ({
   savedCommissionDay: CommissionDay;
   savedEncounterPoints: EncounterPoints;
   savedLongTermEncounterPoints: LongTermEncounterPoints;
+  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const commissionSlices = shallowRef<CommissionSlice[]>([]);
   const commissionDay = shallowRef<CommissionDay>(savedCommissionDay);
@@ -122,9 +124,9 @@ export const useWorldCommissions = ({
   events.on("oculusFound", () => {
     earnEncounterHalfPoints(OCULUS_ENCOUNTER_HALF_POINTS);
   });
-  // The whole points held at the moment they are read, which a claim spends one of
+  // The whole points held at the world's clock, which a claim spends one of and the daily reset takes
   const wholeEncounterPoints = computed(() =>
-    Math.floor(readEncounterPoints(encounterPoints.value, getWorldNow()).halfPoints / HALF_POINTS_PER_ENCOUNTER_POINT),
+    Math.floor(readEncounterPoints(encounterPoints.value, worldNow.value).halfPoints / HALF_POINTS_PER_ENCOUNTER_POINT),
   );
   const wholeLongTermEncounterPoints = computed(() =>
     Math.floor(

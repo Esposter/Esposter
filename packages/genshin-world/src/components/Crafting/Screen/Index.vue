@@ -42,12 +42,16 @@ interface Props {
   crafters: CraftingCell[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The world's clock as a craft reads it at the moment the craft is made
+  getWorldNow: () => Temporal.Instant;
   // The crafter picked as the bench opens, the party's character on the field
   initialCrafterId: number;
   // The game's material table by item id, which each crafted item is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
+  // The world's clock as the bench shows it, which the amounts it can make and the Original Resin it holds are read at
+  now: Temporal.Instant;
   // What the player has learned from instructions
   progress: CraftingProgress;
   // The world's seeded random source, which each craft's talent draws from
@@ -67,9 +71,11 @@ const {
   artifactDropTables,
   crafters,
   gameText,
+  getWorldNow,
   initialCrafterId,
   materialDataMap,
   nameText,
+  now,
   progress,
   random,
   recipes,
@@ -122,11 +128,7 @@ const pickedRecipe = computed(
 const amountMaximum = computed(() => {
   if (!pickedRecipe.value) return 1;
   return Math.max(
-    computeCraftableCount(
-      pickedRecipe.value,
-      { inventory: inventory.value, wallet: wallet.value },
-      Temporal.Now.instant(),
-    ),
+    computeCraftableCount(pickedRecipe.value, { inventory: inventory.value, wallet: wallet.value }, now),
     1,
   );
 });
@@ -140,7 +142,7 @@ const materials = computed<CraftingMaterial[]>(() =>
     id: material.id,
     owned:
       material.id === ORIGINAL_RESIN_ITEM_ID
-        ? regenerateOriginalResin(wallet.value, Temporal.Now.instant())[Currency.OriginalResin]
+        ? regenerateOriginalResin(wallet.value, now)[Currency.OriginalResin]
         : countInventoryItem(inventory.value.items, material.id),
     required: material.count,
   })),
@@ -169,7 +171,7 @@ const craft = () => {
   const crafted = craftRecipe(recipe, craftCount, getItemDefinition(recipe.resultItemId, nameText, materialDataMap), {
     adventureRank,
     inventory: inventory.value,
-    now: Temporal.Now.instant(),
+    now: getWorldNow(),
     progress,
     wallet: wallet.value,
   });

@@ -321,3 +321,13 @@ The save SHALL hold the instant each defeated enemy in a camp with no boss comes
 - **GIVEN** a guest save and an account save each holding a respawn time for the same enemy, the guest's the later
 - **WHEN** the two saves are merged
 - **THEN** the merged save holds the guest's respawn time for the enemy
+
+### Requirement: The save holds each mined outcrop until its respawn
+
+The save SHALL hold each mined outcrop by its place's id with the instant it was mined, as an ISO string on the server's clock, and SHALL leave the field absent while none is mined. A merge SHALL keep the later of the two copies' instants for each outcrop.
+
+#### Scenario: A reload keeps a mined outcrop gone until its respawn
+
+- **GIVEN** an outcrop mined on the server's clock
+- **WHEN** the page is reloaded before the outcrop's respawn
+- **THEN** the outcrop is still gone, and it stands again from its respawn

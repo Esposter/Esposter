@@ -10,16 +10,9 @@ const chamber = (id: number, index: number) => ({
   index,
   monsterLevel: 1,
 });
-// The Moon Spire's period from the 16th of October 2026, whose blessing is Stardread, over the English words and names,
-// Offering the period's first floor with its three chambers
+// A made-up floor with its three chambers, beside a blessing read by its game text hashes over the English names
 const floors: AbyssFloor[] = [
-  {
-    chambers: [chamber(401, 1), chamber(402, 2), chamber(403, 3)],
-    id: 1134,
-    index: 9,
-    teamCount: 2,
-    unlockStarCount: 0,
-  },
+  { chambers: [chamber(11, 1), chamber(12, 2), chamber(13, 3)], id: 1, index: 1, teamCount: 1, unlockStarCount: 1 },
 ];
 export const props = {
   blessing: { descriptionTextHash: 2415435448, icon: "UI_TowerBlessing_107", nameTextHash: 1867767671 },

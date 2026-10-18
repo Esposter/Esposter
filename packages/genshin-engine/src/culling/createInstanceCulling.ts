@@ -1,5 +1,5 @@
 import type { InstanceCulling } from "#src/models/culling/InstanceCulling";
-import type { Node, WebGPURenderer } from "three/webgpu";
+import type { Node, Renderer } from "three/webgpu";
 
 import {
   CULLING_INDEX_COUNT_INDEX,
@@ -43,9 +43,13 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
     indirect,
     // The instance a survivor's slot draws, read by the draw's own vertex stage at its instance index
     survivor: float(storage(survivorAttribute, "uint", count).toReadOnly().element(instanceIndex)),
-    cull: (renderer: WebGPURenderer) => {
+    cull: (renderer: Renderer) => {
       renderer.compute(resetCount);
       renderer.compute(cullInstances);
+    },
+    dispose: () => {
+      indirect.dispose();
+      survivorAttribute.dispose();
     },
   };
 };

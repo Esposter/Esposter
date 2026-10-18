@@ -8,3 +8,5 @@ export const WEEKLY_RESET_DAY_OF_WEEK = 1;
 export const MONTHLY_RESET_DAY_OF_MONTH = 1;
 // The days a week holds
 export const DAYS_IN_WEEK = 7;
+// The game minute the world's clock is read again at, so a reset or a regeneration that passes is seen within the minute
+export const WORLD_CLOCK_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

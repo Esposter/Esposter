@@ -43,6 +43,7 @@ export const useWorldCommissionClaims = ({
   setInventory,
   setWallet,
   wallet,
+  worldNow,
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
@@ -63,6 +64,7 @@ export const useWorldCommissionClaims = ({
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
+  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   // Where a routing's items land: the Adventure EXP, the characters, the bag and the wallet
   const writeRouting = (routing: CommissionRouting) => {
@@ -122,19 +124,20 @@ export const useWorldCommissionClaims = ({
     commissionDay.value = bonusClaim.day;
     writeRouting(routing);
   };
-  // The conversion of a Long-Term Encounter Point, made for the Original Resin it costs where the daily points fall short
-  const computeConversion = () =>
+  // The conversion of a Long-Term Encounter Point at a moment, made for the Original Resin it costs where the daily points fall short
+  const computeConversion = (now: Temporal.Instant) =>
     convertLongTermEncounterPoint({
       encounterPoints: encounterPoints.value,
       longTermEncounterPoints: longTermEncounterPoints.value,
       majorVersion: LONG_TERM_MAJOR_VERSION,
-      now: getWorldNow(),
+      now,
       storage: computeEncounterPointStorage(commissionDay.value, commissionSlice.value),
       wallet: wallet.value,
     });
-  const canConvertLongTermPoint = computed(() => computeConversion() !== undefined);
+  // Offered by the world's clock, so a resin that regenerates or a reset that passes with no write is seen
+  const canConvertLongTermPoint = computed(() => computeConversion(worldNow.value) !== undefined);
   const convertLongTermPoint = () => {
-    const conversion = computeConversion();
+    const conversion = computeConversion(getWorldNow());
     if (!conversion) return;
     encounterPoints.value = conversion.encounterPoints;
     longTermEncounterPoints.value = conversion.longTermEncounterPoints;

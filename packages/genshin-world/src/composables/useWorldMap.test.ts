@@ -210,6 +210,7 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        getWorldNow: () => Temporal.Now.instant(),
         placedDoings,
         questStepTargets,
         recordedDoingIds,

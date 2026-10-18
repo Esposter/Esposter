@@ -212,6 +212,8 @@ import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionId
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
+import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
+import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
@@ -346,6 +348,7 @@ const {
   setEnemyRespawnAt,
   setInventory,
   setNamecardItemId,
+  queuedTipIds,
   setWallet,
   shownTipIds,
   travelerBirthday,
@@ -354,7 +357,7 @@ const {
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
-const { closeTip, showingTip } = useWorldTips({ events, shownTipIds, tips });
+const { closeTip, showingTip } = useWorldTips({ events, queuedTipIds, shownTipIds, tips });
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -381,7 +384,13 @@ const {
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+const getWorldNow = () => getServerNow(serverClockOffsetMs);
+// The world's clock as a ref the computeds read, set from getWorldNow once each game minute so a reset or a regeneration that
+// Passes is seen without a write
+const worldNow = shallowRef(getWorldNow());
+useIntervalFn(() => {
+  worldNow.value = getWorldNow();
+}, WORLD_CLOCK_INTERVAL_MS);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoint, openFishingPoint, stepFishing } =
   useWorldFishing({
@@ -443,6 +452,7 @@ const {
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
+  worldNow,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, readBook } = useWorldArchive({
@@ -848,6 +858,7 @@ const { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLo
     setInventory,
     setWallet,
     wallet,
+    worldNow,
   });
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
 const profileNamecards = computed(() =>
@@ -1005,8 +1016,11 @@ const reputationLevel = shallowRef(reputation.value.level);
 // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
 // Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
 const reputationOffer = shallowRef<ReputationRequest>();
+// The request waits while a taken bounty hunts, and is offered once the bounty is claimed
+const reputationRequestOffer = computed(() => (bountyHunt.value ? undefined : reputationOffer.value));
 const reputationOfferTitle = computed(() => {
-  const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
+  const request = reputationRequestOffer.value;
+  const quest = request && quests.value.find(({ id }) => id === String(request.questId));
   return quest ? questTextMap.value[quest.titleTextId] : undefined;
 });
 const drawReputationOffer = () => {
@@ -1025,8 +1039,8 @@ const drawReputationOffer = () => {
 const acceptReputationOffer = () => {
   if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
   if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
-  if (!reputationOffer.value) return;
-  acceptQuest(String(reputationOffer.value.questId));
+  if (!reputationRequestOffer.value) return;
+  acceptQuest(String(reputationRequestOffer.value.questId));
   reputationOffer.value = undefined;
 };
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -1091,6 +1105,7 @@ const {
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  getWorldNow,
   placedDoings,
   questStepTargets,
   recordedDoingIds,
@@ -1109,6 +1124,7 @@ const {
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty } =
   useWorldReputationBounty({
     events,
+    getWorldNow,
     payReputationReward,
     random: () => kitContext.random(),
     reputation,
@@ -1159,6 +1175,7 @@ useWorldSaveSync({
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
     mails: mails.value,
+    minedOutcrops: minedOutcrops.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
     party: playerRoster.value?.party ?? party,
@@ -1170,6 +1187,7 @@ useWorldSaveSync({
     reputationBountyHunt: bountyHunt.value,
     reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
+    queuedTipIds: queuedTipIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
     spiralAbyssProgressMap: abyssProgressMap.value,
@@ -1183,14 +1201,12 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
+// A character's name in the reader's language, read from the game's text by its data's name
+const getCharacterName = (characterId: number) =>
+  nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "";
 // The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
 // Whom no expedition is sent with
-const expeditionCharacters = computed(() =>
-  characters.value.map(({ id }) => ({
-    id,
-    name: nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
-  })),
-);
+const expeditionCharacters = computed(() => characters.value.map(({ id }) => ({ id, name: getCharacterName(id) })));
 // Each character's passives it has unlocked at its ascension, by their proud skill groups, which the expedition talents are
 // Read from. A character with no talent kit has none
 const characterPassiveGroupIdMap = computed(
@@ -1216,23 +1232,20 @@ const downCharacterIds = computed(
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
-  computeCraftingCrafters(
-    getDeployedCharacterIds(party),
-    getActiveCharacterId(party),
-    (characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "",
-  ),
+  computeCraftingCrafters(getDeployedCharacterIds(party), getActiveCharacterId(party), getCharacterName),
 );
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
 // With resin, and each day's are drawn at the daily reset
 // The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
-const { refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
+const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
   breakOre,
   gameDataBaseUrl,
   getWorldNow,
   rank,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
+  savedMinedOutcrops: savedState.minedOutcrops,
 });
 const {
   chooseOutcropClaim,
@@ -1252,6 +1265,7 @@ const {
   completedMainQuestIds,
   enemyMap: kitContext.enemyMap,
   events,
+  friendshipLevels,
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
@@ -1283,8 +1297,8 @@ const {
   completedMainQuestIds,
   enemyKindMap: enemyTables.enemyKindMap,
   events,
+  friendshipLevels,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
   gameText,
   getGroundHeight,
   getWorldNow,
@@ -1295,6 +1309,7 @@ const {
   setInventory,
   setWallet,
   wallet,
+  worldNow,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
@@ -1341,6 +1356,7 @@ const {
   unlockedLandmarks,
   weaponDataMap: statTables.weaponDataMap,
   wallet,
+  worldNow,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
 const fightingCamps = computed(() => [
@@ -1375,7 +1391,6 @@ const domainArenaInteractables = computed<Interactable[]>(() => {
 });
 const interactables = computed<Interactable[]>(() => {
   if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
-  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
   const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
   const abyssEntrance: Interactable = {
@@ -1384,6 +1399,8 @@ const interactables = computed<Interactable[]>(() => {
     name: gameText[GameTextKey.AbyssMoonSpire],
     position: { x: abyssX, y: getGroundHeight(abyssX, abyssZ), z: abyssZ },
   };
+  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a
+  // Statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
     id,
     kind: InteractionKind.Activate,
@@ -1515,6 +1532,18 @@ const stepShortcutWheel = (isHeld: boolean, x: number, y: number): void => {
   isShortcutWheelOpen.value = shortcutWheelStep.isOpen;
   shortcutWheelPickedIndex.value = shortcutWheelStep.pickedIndex;
   if (shortcutWheelStep.openedScreenKind !== undefined) screenKind.value = shortcutWheelStep.openedScreenKind;
+};
+// A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does not
+// Open on the world's first frame after the screen
+const closeShortcutWheel = (): void => {
+  shortcutWheelStep = {
+    isOpen: false,
+    move: shortcutWheelStep.move,
+    openedScreenKind: undefined,
+    pickedIndex: undefined,
+  };
+  isShortcutWheelOpen.value = false;
+  shortcutWheelPickedIndex.value = undefined;
 };
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
@@ -1659,6 +1688,7 @@ defineExpose({ jumpTo, readCameraPosition });
               inputState.moveRight,
               -inputState.moveForward,
             );
+          else if (screenKind !== ScreenKind.World) closeShortcutWheel();
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
           if (!isPaused && screenKind === ScreenKind.World)
@@ -1769,7 +1799,11 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
-            } else if (interactable?.kind === InteractionKind.Activate && unlockedLandmarkIds.has(interactable.id)) {
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              unlockedLandmarkIds.has(interactable.id) &&
+              getStatueRegionId(interactable.id) !== undefined
+            ) {
               openWorship(interactable.id);
             } else if (
               interactable?.kind === InteractionKind.Activate &&
@@ -2080,7 +2114,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           :landmarks="unlockedLandmarks"
           :recorded-doing-ids
-          :server-clock-offset-ms
+          :now="worldNow"
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
@@ -2129,7 +2163,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :mails
           :material-data-map="materialDataMap"
           :names="nameText"
-          :now="getWorldNow()"
+          :now="worldNow"
           :text-map="mailData.textMap"
           @claim="(mailId) => claimMail(mailId)"
           @claim-all="claimAllMails()"
@@ -2245,7 +2279,8 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :name-text
           :stat-tables
-          :server-clock-offset-ms
+          :get-world-now="getWorldNow"
+          :now="worldNow"
           :wish-schedule
           :stella-fortuna-name-text-id-map
           :trials
@@ -2261,10 +2296,12 @@ defineExpose({ jumpTo, readCameraPosition });
           :adventure-rank="rank"
           :character-data-map="statTables.characterDataMap"
           :game-text
+          :get-world-now="getWorldNow"
           :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
           :inventory
           :material-data-map
           :name-text
+          :now="worldNow"
           :rotation="paimonsBargainsRotation"
           :wallet
           :weapon-data-map="statTables.weaponDataMap"
@@ -2364,7 +2401,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:power="restorativePower"
       :game-text
       :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
-      :get-name="(characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ''] || ''"
+      :get-name="getCharacterName"
       :get-now="getWorldNow"
       :party
       :statue-count="resonatedRegionIds.length"
@@ -2429,10 +2466,12 @@ defineExpose({ jumpTo, readCameraPosition });
       :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
       :game-text
+      :get-world-now="getWorldNow"
       :initial-crafter-id="crafting.crafterId"
       :inventory
       :material-data-map
       :name-text
+      :now="worldNow"
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
@@ -2496,10 +2535,12 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
       :game-text
+      :get-world-now="getWorldNow"
       :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :material-data-map
       :name-text
+      :now="worldNow"
       :reputation-level="reputation.level"
       :wallet
       @close="screenKind = ScreenKind.World"
@@ -2519,7 +2560,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :inventory
       :material-data-map
       :name-text
-      :now="getWorldNow()"
+      :now="worldNow"
       :random="kitContext.random"
       :region-statue-progress-map="regionStatueProgressMap"
       :wallet

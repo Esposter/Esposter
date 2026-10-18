@@ -47,24 +47,16 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
+  // The world's clock as the map shows it, which the Original Resin the top bar counts is read at
+  now: Temporal.Instant;
   // The doings the save records as done, which an area counts alongside the statues its unlocked landmarks light
   recordedDoingIds: ReadonlySet<string>;
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
-  // The server's clock minus this machine's, which the Original Resin's regeneration is read against
-  serverClockOffsetMs?: number;
   wallet: Wallet;
 }
 
-const {
-  camera,
-  catalogue,
-  explorationAreas,
-  gameText,
-  landmarks,
-  recordedDoingIds,
-  serverClockOffsetMs = 0,
-  wallet,
-} = defineProps<Props>();
+const { camera, catalogue, explorationAreas, gameText, landmarks, now, recordedDoingIds, wallet } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
@@ -176,12 +168,7 @@ const regionTag = computed(() => {
 });
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
-const originalResin = computed(
-  () =>
-    regenerateOriginalResin(wallet, Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }))[
-      Currency.OriginalResin
-    ],
-);
+const originalResin = computed(() => regenerateOriginalResin(wallet, now)[Currency.OriginalResin]);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
   closeButton.value?.focus();

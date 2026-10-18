@@ -10,6 +10,7 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { MinedOutcrop } from "#src/models/gathering/MinedOutcrop";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 import type { HomePlanting } from "#src/models/home/HomePlanting";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
@@ -70,6 +71,7 @@ export interface GenshinSaveState {
   inventory: Inventory;
   investigationDay: InvestigationDay;
   mails: MailSave[];
+  minedOutcrops: readonly MinedOutcrop[];
   namecardItemId: number;
   openedChestIds: ReadonlySet<string>;
   party: Party;
@@ -79,6 +81,7 @@ export interface GenshinSaveState {
   reputation: ReputationProgress;
   reputationBountyClaimedAts: readonly Temporal.Instant[];
   reputationBountyHunt: ReputationBountyHunt | undefined;
+  queuedTipIds: readonly number[];
   reputationRequestClaimedAts: readonly Temporal.Instant[];
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];

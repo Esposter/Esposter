@@ -33,6 +33,6 @@ describe(quickUseGadget, () => {
     const readyAt = epoch.add({ seconds: 10 });
     const cooldownGroupReadyAtMap = new Map([[GROUP_ID, readyAt]]);
 
-    expect(quickUseGadget(cooldownGroupReadyAtMap, gadget, epoch)).toStrictEqual(new Map([[GROUP_ID, readyAt]]));
+    expect(quickUseGadget(cooldownGroupReadyAtMap, gadget, epoch)).toBeUndefined();
   });
 });

@@ -46,6 +46,7 @@ export const useWorldSave = ({
     | "namecardItemId"
     | "openedChestIds"
     | "processingJobs"
+    | "queuedTipIds"
     | "regionStatueProgressMap"
     | "shownTipIds"
     | "travelerBirthday"
@@ -66,8 +67,9 @@ export const useWorldSave = ({
   );
   const archiveKillsMap = shallowRef<ArchiveKills>(savedState.archiveKillsMap);
   const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
-  // The tips the world has shown, each once by its id, kept with the save
+  // The tips the world has shown, each once by its id, kept with the save, and the tips it has triggered and not yet shown
   const shownTipIds = shallowRef<ReadonlySet<number>>(savedState.shownTipIds);
+  const queuedTipIds = shallowRef<readonly number[]>(savedState.queuedTipIds);
   // The camps cleared, each once: a camp whose last enemy falls is kept, and one cleared again is not added twice
   const clearedCamps = shallowRef<readonly ClearedCamp[]>(savedState.clearedCamps);
   const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
@@ -155,6 +157,7 @@ export const useWorldSave = ({
     setEnemyRespawnAt,
     setInventory,
     setNamecardItemId,
+    queuedTipIds,
     setWallet,
     shownTipIds,
     travelerBirthday,

@@ -11,6 +11,7 @@ export const props = {
   explorationAreas: [],
   gameText: ENGLISH_GAME_TEXT,
   landmarks: [],
+  now: Temporal.Now.instant(),
   recordedDoingIds: new Set(),
   wallet: EMPTY_WALLET,
 };

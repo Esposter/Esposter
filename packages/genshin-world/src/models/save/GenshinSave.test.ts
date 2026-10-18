@@ -323,7 +323,7 @@ describe("genshinSaveSchema", () => {
         isPinned: false,
         isRead: false,
       })),
-      tips: { shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
+      tips: { queued: [], shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
       travelerBirthday: { day: 31, month: 12 },
       namecardItemId: maxNumber,
       travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),

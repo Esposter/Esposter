@@ -39,10 +39,11 @@ const inventoryOf = (itemIds: number[]): Inventory => ({
   nextId: itemIds.length,
   quickSwapItemIds: [],
 });
-const createWorldTips = (tips: Tip[], shown: ReadonlySet<number> = new Set()) => {
+const createWorldTips = (tips: Tip[], shown: ReadonlySet<number> = new Set(), queued: readonly number[] = []) => {
   const events = createWorldEvents();
+  const queuedTipIds = shallowRef<readonly number[]>(queued);
   const shownTipIds = shallowRef<ReadonlySet<number>>(shown);
-  return { events, shownTipIds, ...useWorldTips({ events, shownTipIds, tips }) };
+  return { events, queuedTipIds, shownTipIds, ...useWorldTips({ events, queuedTipIds, shownTipIds, tips }) };
 };
 
 describe(useWorldTips, () => {
@@ -73,6 +74,25 @@ describe(useWorldTips, () => {
     expect(showingTip.value).toStrictEqual(tip(2));
     closeTip();
     expect(showingTip.value).toBeUndefined();
+  });
+
+  test("a tip waiting behind the one on screen is kept in the save until it is shown", () => {
+    expect.hasAssertions();
+    const { closeTip, events, queuedTipIds, shownTipIds } = createWorldTips([tip(1), tip(2)]);
+    events.emit("finishQuest", quest(QUEST_ID), PROGRESS, PROGRESS);
+    expect(queuedTipIds.value).toStrictEqual([2]);
+    expect(shownTipIds.value).toStrictEqual(new Set([1]));
+    closeTip();
+    expect(queuedTipIds.value).toStrictEqual([]);
+    expect(shownTipIds.value).toStrictEqual(new Set([1, 2]));
+  });
+
+  test("a tip the save left waiting is shown on the next world event after the save is read back", () => {
+    expect.hasAssertions();
+    const { events, showingTip } = createWorldTips([tip(1)], new Set(), [1]);
+    expect(showingTip.value).toBeUndefined();
+    events.emit("worldLevelUp", 99);
+    expect(showingTip.value).toStrictEqual(tip(1));
   });
 
   test("a quest-all tip naming the quest that finishes is shown", () => {

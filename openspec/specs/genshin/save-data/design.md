@@ -23,6 +23,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - Adventure EXP, Mondstadt's Reputation (its level and EXP), the bounty taken (optional, absent while none is taken), the week's bounty and request claims (`[]` while none is held, and a save written before they were added is backfilled to `[]`) and each character's Companionship EXP, by character id;
 - the ranks whose Katheryne reward is claimed, from rank 2, as a list (`adventureRankRewardsClaimed`) ([adventure rank](../adventure-rank/design.md));
 - the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](../adventure-rank/design.md)).
+- the mining outcrops mined since the last reset, each by its place's id with the instant it was mined, absent while none is mined, so a reload keeps them gone until their respawn ([mining outcrops](../mining-outcrops/design.md));
 - the name the player chose for the Traveler, empty while none is chosen, which the [HUD](../hud/design.md)'s party shows in place of the game's own.
 
 It does not hold:
@@ -32,7 +33,7 @@ It does not hold:
 - a boss camp's defeats, whose return waits on the claim or the next jump, so a reload brings the boss back ([enemies](../enemies/design.md));
 - the exploration's camps cleared, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md));
 - the Archive's opened entries and each Living Being's defeat count, which a reload starts over ([archive](../archive/design.md)). The [archive change](../../../changes/genshin-archive/design.md) adds them as a slice.
-- the tips the world has shown, by their push tip id, so each tip is shown once per save ([archive](../archive/design.md), its tutorials).
+- the tips the world has shown, by their push tip id, so each tip is shown once per save ([archive](../archive/design.md), its tutorials), and the tips it has triggered and not yet shown, in the order they are to be shown, so a reload shows the next one as the save left it.
 
 Some values are derived on load and never saved: a character's Friendship Level is read from its Companionship EXP, and a namecard is held by its character's level or its category's completion, so no save keeps it. The one the player equips is the save's, as `namecardItemId`, since the choice is what the player did. The save holds what the player did and nothing derived.
 

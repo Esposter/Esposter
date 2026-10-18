@@ -1,3 +1,4 @@
+import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -8,22 +9,28 @@ import type { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBoss
 
 import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { DomainKind } from "#src/models/domains/DomainKind";
+import { DomainLevelState } from "#src/models/domains/DomainLevelState";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/stormterror";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { createParty } from "#src/services/party/createParty";
+import { flushReads } from "#src/services/shared/flushReads.test";
+import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
 
+vi.mock(import("#src/services/data/readGameDataEntry"));
 vi.mock(import("#src/services/domains/readWeeklyBossDomains"), () => ({
   readWeeklyBossDomains: vi.fn<typeof readWeeklyBossDomains>(() =>
     Promise.resolve({ "1006": { levels: [{ dungeonId: 1, enemyLevel: 1, recommendedRank: 40 }] } }),
@@ -75,7 +82,7 @@ const createBrokenBoss = (campId: string): Enemy => ({
   traits: { energyDrops: [], poiseType: PoiseType.Boss },
 });
 
-const createDomains = () => {
+const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMilliseconds(0))) => {
   const events = createWorldEvents();
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const domains = useWorldDomains({
@@ -87,7 +94,7 @@ const createDomains = () => {
     completedMainQuestIds: shallowRef(new Set<string>()),
     events,
     gameDataBaseUrl: "",
-    getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
+    getWorldNow: clock.getWorldNow,
     kitEffectState: { effects: [] },
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpTo,
@@ -103,6 +110,7 @@ const createDomains = () => {
     unlockedLandmarks: ref<Landmark[]>([domainEntrance]),
     wallet: ref<Wallet>(EMPTY_WALLET),
     weaponDataMap: new Map(),
+    worldNow: clock.worldNow,
   });
   return { domains, events, jumpTo };
 };
@@ -120,12 +128,12 @@ describe("stepDomainChallenge", () => {
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));
     // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
-    expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
     // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
     events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));
-    expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
   });
 });
 
@@ -147,5 +155,59 @@ describe("entering and leaving a domain", () => {
     domains.leaveDomain();
     expect(domains.domainArena.value).toBeUndefined();
     expect(jumpTo).toHaveBeenLastCalledWith(computeJumpPose(domainEntrance));
+  });
+});
+
+describe("a domain level's day", () => {
+  // A Domain of Forgery open on Mondays, and on Sundays like every one
+  const forgeryEntrance: DomainEntranceLandmark = { ...domainEntrance, domainKind: DomainKind.Forgery, entryId: 2 };
+  const forgerySchedule: DomainSchedule = {
+    artifactSetIds: [],
+    kind: DomainKind.Forgery,
+    levels: [
+      {
+        disorder: "",
+        dungeonId: 1,
+        enemyLevel: 1,
+        recommendedRank: 15,
+        resinCost: 0,
+        scheduledDaysOfWeek: [1],
+        treeArtifacts: [],
+        treeRewards: [],
+      },
+    ],
+  };
+  // The epoch falls on a Thursday on the server's clock, so the fifth day on is a Monday and the sixth a Tuesday
+  const monday = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 4 * 24 });
+  const tuesday = monday.add({ hours: 24 });
+  const openForgery = async (clock: ReturnType<typeof createWorldClock>) => {
+    vi.mocked(readGameDataEntry).mockResolvedValue(forgerySchedule);
+    const { domains } = createDomains(clock);
+    domains.openDomain(forgeryEntrance);
+    await flushReads();
+    return domains;
+  };
+
+  test("its row closes when the game day turns on a day it is not open", async () => {
+    expect.hasAssertions();
+
+    const clock = createWorldClock(monday);
+    const domains = await openForgery(clock);
+    expect(domains.domainLevelRows.value.map(({ state }) => state)).toStrictEqual([DomainLevelState.Open]);
+    clock.moveTo(tuesday);
+    expect(domains.domainLevelRows.value.map(({ state }) => state)).toStrictEqual([DomainLevelState.Closed]);
+  });
+
+  test("a level is entered on a day it is open, and not once the game day has turned", async () => {
+    expect.hasAssertions();
+
+    const clock = createWorldClock(monday);
+    const domains = await openForgery(clock);
+    clock.moveTo(tuesday);
+    domains.enterDomain(1);
+    expect(domains.domainArena.value).toBeUndefined();
+    clock.moveTo(monday);
+    domains.enterDomain(1);
+    expect(domains.domainArena.value).toBeDefined();
   });
 });

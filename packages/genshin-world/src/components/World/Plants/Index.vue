@@ -10,7 +10,7 @@ import type {
   TreeOptions,
 } from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
-import type { Node, UniformNode } from "three/webgpu";
+import type { Node, Renderer, StorageBufferAttribute, UniformNode } from "three/webgpu";
 
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 import {
@@ -24,7 +24,7 @@ import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColo
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { composePlantPlaceMatrix } from "#src/services/world/composePlantPlaceMatrix";
 import { withFinalizer } from "@esposter/shared";
-import { useLoop, useTres } from "@tresjs/core";
+import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
   createImpostorMaterial,
   createInstancedGeometry,
@@ -36,7 +36,6 @@ import {
 } from "genshin-engine";
 import { Group, Matrix4, Mesh, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
-import { WebGPURenderer } from "three/webgpu";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each plant stands on
@@ -55,6 +54,7 @@ interface Props {
 
 // Each kind of plant is one culling pass and one draw of all its places, the pass keeping the places in view
 interface PlantBatch {
+  attribute: StorageBufferAttribute;
   clipFromModel: UniformNode<"mat4", Matrix4>;
   culling: InstanceCulling;
   material: ToonNodeMaterial;
@@ -105,7 +105,7 @@ const addPlantBatch = (
   const mesh = new Mesh(instancedGeometry, material);
   mesh.frustumCulled = false;
   plantsGroup.add(mesh);
-  batches.push({ clipFromModel, culling, material, mesh });
+  batches.push({ attribute, clipFromModel, culling, material, mesh });
 };
 
 const domeMatrices = placeMatrices(
@@ -124,7 +124,7 @@ if (domeMatrices.length > 0)
   );
 
 // The oak's impostor is baked once from its mesh on the first frame the renderer can draw, then each tree is one card
-const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
+const bakeOakImpostor = (webGPURenderer: Renderer): void => {
   const { branchGeometry, leafGeometry } = createTreeGeometry(treeSpeciesOptionsMap[TreeSpecies.GreatOak]);
   const impostor = withFinalizer(
     () =>
@@ -156,7 +156,7 @@ const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
 
 // Every batch's pass runs each frame, its clip matrix taken from the camera the frame draws with, as the grass's is
 onBeforeRender(() => {
-  if (!(renderer instanceof WebGPURenderer)) return;
+  if (!isWebGPURenderer(renderer)) return;
   if (!oakImpostor) bakeOakImpostor(renderer);
   const activeCamera = camera.value;
   if (!activeCamera) return;
@@ -170,7 +170,12 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
-  for (const { material } of batches) material.dispose();
+  for (const { attribute, culling, material, mesh } of batches) {
+    mesh.geometry.dispose();
+    attribute.dispose();
+    culling.dispose();
+    material.dispose();
+  }
   domeGeometry.dispose();
   treeGeometry?.dispose();
   oakImpostor?.albedoTarget.dispose();

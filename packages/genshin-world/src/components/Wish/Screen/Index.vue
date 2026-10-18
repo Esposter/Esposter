@@ -44,10 +44,12 @@ import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-te
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The world's clock as a draw reads it at the moment the draw is made
+  getWorldNow: () => Temporal.Instant;
   // The names the stat tables cite by text id, in the reader's language
   nameText: Readonly<Record<string, string>>;
-  // The server's clock offset from this machine's, which the event banners are offered at the game's time by
-  serverClockOffsetMs: number;
+  // The world's clock as the screen shows it, at which the event banners on offer are read
+  now: Temporal.Instant;
   // The game's stat tables, which the banners' pools are read from
   statTables: StatTables;
   // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
@@ -68,7 +70,7 @@ const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", {
 // The draws the wish history keeps, which the draws of each set are appended to
 const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTextIdMap, trials, wishSchedule } =
+const { gameText, getWorldNow, nameText, now, statTables, stellaFortunaNameTextIdMap, trials, wishSchedule } =
   defineProps<Props>();
 const emit = defineEmits<{ close: []; trial: [trial: Trial] }>();
 // The draws the History popup lists, each named from the stat tables and its banner labelled in the reader's language
@@ -83,20 +85,13 @@ const historyCells = computed(() =>
       splitGameTextColors(gameText[BannerKindGameTextKeyMap[bannerKind]])
         .map(({ text }) => text)
         .join(""),
-    Temporal.Now.timeZoneId(),
+    Intl.DateTimeFormat().resolvedOptions().timeZone,
   ),
 );
 // The banners the world offers now, their pools read from the stat tables and named in the reader's language: the
 // Permanent ones and each event banner the schedule has open at the game's time
 const banners = computed(() =>
-  createBanners(
-    statTables,
-    nameText,
-    getOpenEventBanners(
-      wishSchedule,
-      Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }).epochMilliseconds,
-    ),
-  ),
+  createBanners(statTables, nameText, getOpenEventBanners(wishSchedule, now.epochMilliseconds)),
 );
 // The banners on offer in the game's order, each kind's in the order the schedule gives them, the beginners' wish gone
 // Once its wishes are made. Each is named in the runs of colour the game words its kind in, and a second banner of a kind
@@ -249,7 +244,7 @@ const wish = (count: number) => {
   inventory.value = nextInventory;
   pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
   const { kind } = banner.value;
-  const drawnAt = Temporal.Now.instant();
+  const drawnAt = getWorldNow();
   wishHistory.value = appendWishHistory(
     wishHistory.value,
     wishes.results.map(({ item }) => ({ bannerKind: kind, itemId: item.id, time: drawnAt.toString() })),

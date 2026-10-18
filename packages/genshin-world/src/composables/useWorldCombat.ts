@@ -11,6 +11,7 @@ import type { HudMember } from "#src/models/hud/HudMember";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
@@ -50,7 +51,7 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
-import { computed, shallowRef, watch } from "vue";
+import { computed, shallowReactive, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
@@ -180,14 +181,14 @@ export const useWorldCombat = ({
   const startingCombatant = activeCombatant.value;
   if (!startingCombatant)
     throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${getActiveCharacterId(party)}`);
-  // The world's combat state, which the character on the field steps into: it starts with the active character standing at
-  // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
-  // Seeded source, so a session's rolls repeat
   // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps.
   // Impetuous Winds cuts every spend from it, the body's and the kit's, read from the field's resonances at each spend
   const stamina = createStamina(STAMINA_MAX, () =>
     getImpetuousWindsStaminaConsumptionMultiplier(activeCombatant.value?.elementalResonances ?? []),
   );
+  // The world's combat state, which the character on the field steps into: it starts with the active character standing at
+  // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
+  // Seeded source, so a session's rolls repeat
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -197,7 +198,8 @@ export const useWorldCombat = ({
     enemyMap: new Map<string, Enemy>(),
     enemyTables,
     expiredEffects: [],
-    kitEffectState: { effects: [] },
+    // Reactive as a shallow object, so the HUD's Max HP follows the team's effects as they start and lapse
+    kitEffectState: shallowReactive<KitEffectState>({ effects: [] }),
     locomotionState: LocomotionState.Idle,
     isSkillHeld: false,
     hexereiCount: 0,

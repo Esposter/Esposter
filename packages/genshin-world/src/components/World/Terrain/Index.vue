@@ -6,7 +6,6 @@ import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround"
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 import type {
   LightUniforms,
-  SurfaceDetail,
   TerrainOptions,
   TerrainRing,
   TerrainSelection,
@@ -55,8 +54,6 @@ import { uniform } from "three/tsl";
 interface Props {
   // Starts one of the pool's workers, which the app builds with its bundler from the package's worker entry
   createTerrainWorker: () => Worker;
-  // The procedural detail the ground's colour is modulated by, where its export carries one
-  detail?: SurfaceDetail;
   // Written each frame with the tiles drawn, for whatever else reads the ground, such as the grass's capture
   draws: TerrainSelection;
   // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
@@ -81,7 +78,6 @@ interface Props {
 
 const {
   createTerrainWorker,
-  detail,
   draws,
   isGroundSettled,
   lightUniforms,
@@ -99,12 +95,7 @@ const { camera, renderer, scene } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestRange, finestTileSize } = terrainOptions;
 const morphEye = uniform(new Vector3());
-const terrainMaterial = createTerrainMaterial(
-  terrainOptions,
-  morphEye,
-  { detail, lightUniforms, rampTexture },
-  waterUniforms,
-);
+const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
 // Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its tile's

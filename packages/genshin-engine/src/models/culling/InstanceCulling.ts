@@ -1,11 +1,13 @@
-import type { IndirectStorageBufferAttribute, Node, WebGPURenderer } from "three/webgpu";
+import type { IndirectStorageBufferAttribute, Node, Renderer } from "three/webgpu";
 
 // A per-instance culling pass and the indirect draw its survivors are drawn with
 export interface InstanceCulling {
   // Runs the pass for the frame: clears the count, then tests every instance. Called before the draw it feeds
-  cull: (renderer: WebGPURenderer) => void;
+  cull: (renderer: Renderer) => void;
   // The indirect draw's arguments, whose instance count the pass fills
   indirect: IndirectStorageBufferAttribute;
   // The instance a drawn survivor stands for, read at the draw's own instance index
   survivor: Node<"float">;
+  // Releases the indirect draw's arguments and the survivor list from the GPU, once the draw they feed is gone
+  dispose: () => void;
 }
