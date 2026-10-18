@@ -10,6 +10,7 @@ import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OPEN_WORLD_SCENE_ID, REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
+import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
@@ -26,10 +27,11 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
     readWorldGroundHeight(),
     readDomainEntrancePoints(),
   ]);
-  const [originX, originY, originZ] = origin;
-  // The map points carried into the region's axes, which the place is too: a mirror and a shift keep every distance
+  const [, originY] = origin;
+  // The map points carried into the region's axes, which the place is too: a mirror and a shift keep every distance.
+  // Stay unrounded, since a rounding could tip a near tie between two regions
   const axesMapPoints = regionMapPoints.map(({ position, region }) => ({
-    position: { x: position.x - originX, z: originZ - position.z },
+    position: toRegionAxesPosition(position, origin),
     region,
   }));
   const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME).filter(

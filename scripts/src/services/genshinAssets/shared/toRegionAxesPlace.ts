@@ -2,6 +2,7 @@ import type { GroundPoint } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { ROTATION_DECIMALS } from "#src/services/genshinAssets/shared/constants";
+import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 import { MathUtils } from "three";
 
 // Where a game place stands in a region's axes round the origin's place, as a region's other places do: its x less the
@@ -10,12 +11,13 @@ import { MathUtils } from "three";
 export const toRegionAxesPlace = (
   position: GroundPoint,
   turnDegrees: number,
-  [originX, , originZ]: readonly [number, number, number],
+  origin: readonly [number, number, number],
 ): { position: GroundPoint; rotation: number } => {
   const radians = MathUtils.degToRad(turnDegrees);
   const turn = Math.atan2(Math.sin(radians), Math.cos(radians));
+  const axesPosition = toRegionAxesPosition(position, origin);
   return {
-    position: { x: roundFitted(position.x - originX), z: roundFitted(originZ - position.z) },
+    position: { x: roundFitted(axesPosition.x), z: roundFitted(axesPosition.z) },
     rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS || 0,
   };
 };

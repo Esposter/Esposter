@@ -7,6 +7,7 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { applySimilarityTransform } from "#src/services/genshinAssets/points/applySimilarityTransform";
 import { GROUND_LAYER } from "#src/services/genshinAssets/points/constants";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
+import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 
 // Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and then into
 // Its region's axes round the Windrise origin, each id under the given prefix. A point on a layer under the ground is left
@@ -17,7 +18,7 @@ export const placeMapPoints = <Kind>(
   transform: SimilarityTransform,
   labelIdKindMap: ReadonlyMap<number, Kind>,
   idPrefix: string,
-  [originX, , originZ]: readonly [number, number, number],
+  origin: readonly [number, number, number],
 ): MapPointPlacement<Kind> => {
   const areaIdRegionMap = new Map(
     Object.entries(InteractiveMapRegionMap).map(([region, { areaId }]) => [areaId, region]),
@@ -37,14 +38,10 @@ export const placeMapPoints = <Kind>(
       continue;
     }
     const fitted = applySimilarityTransform(transform, { x: point.x_pos, z: point.y_pos });
-    const position = { x: roundFitted(fitted.x), z: roundFitted(fitted.z) };
+    const position = toRegionAxesPosition({ x: roundFitted(fitted.x), z: roundFitted(fitted.z) }, origin);
     regionPlaces.set(region, [
       ...(regionPlaces.get(region) ?? []),
-      {
-        id: `${idPrefix}-${point.id}`,
-        kind,
-        position: { x: roundFitted(position.x - originX), z: roundFitted(originZ - position.z) },
-      },
+      { id: `${idPrefix}-${point.id}`, kind, position: { x: roundFitted(position.x), z: roundFitted(position.z) } },
     ]);
   }
   placement.places = Object.fromEntries(regionPlaces);
