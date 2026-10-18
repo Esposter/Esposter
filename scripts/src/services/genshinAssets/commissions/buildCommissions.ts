@@ -1,5 +1,6 @@
 import type { ExcelDailyTaskLevelRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskLevelRow";
 import type { ExcelDailyTaskRewardRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRewardRow";
+import type { ExcelCityTaskOpenRow } from "#src/models/genshinAssets/commissions/ExcelCityTaskOpenRow";
 import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";
@@ -38,7 +39,8 @@ const checkLevelBands = (levelRows: ExcelDailyTaskLevelRow[]): void => {
 // Every region's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items of
 // Katheryne's bonus by band, which each region's record shares. Every preview is read through the reward table, and each
 // Band's items are the preview's items with a count drawn from its range, so the world's claim draws them. Published as
-// One record a region, each task filed under the region its city is named for, and a city no region is named for left out
+// One record a region, each task filed under the region its city is named for, with the main quest its city opens with
+// When the dump names one, and a city no region is named for left out
 export const buildCommissions = (): Record<string, unknown> => {
   const previews = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),
@@ -74,6 +76,12 @@ export const buildCommissions = (): Record<string, unknown> => {
       };
     })
     .toSorted((firstTier, secondTier) => firstTier.tier - secondTier.tier);
+  const openingQuestIdMap = new Map(
+    readExcelTable<ExcelCityTaskOpenRow>("CityTaskOpenExcelConfigData").map(({ cityId, questId }) => [
+      CityIdRegionMap[cityId],
+      questId,
+    ]),
+  );
   const rows = readExcelTable<ExcelDailyTaskRow>("DailyTaskExcelConfigData");
   return Object.fromEntries(
     Object.values(CityIdRegionMap).map((region) => {
@@ -81,7 +89,11 @@ export const buildCommissions = (): Record<string, unknown> => {
         .filter((row) => CityIdRegionMap[row.cityId] === region)
         .map((row) => toCommissionTask(row, region))
         .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
-      return [`${GameDataset.Commissions}/${region}`, commissionSliceSchema.parse({ bonuses, rewardTiers, tasks })];
+      const openingQuestId = openingQuestIdMap.get(region);
+      return [
+        `${GameDataset.Commissions}/${region}`,
+        commissionSliceSchema.parse({ bonuses, openingQuestId, rewardTiers, tasks }),
+      ];
     }),
   );
 };

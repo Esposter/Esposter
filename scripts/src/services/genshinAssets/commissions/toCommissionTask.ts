@@ -12,8 +12,8 @@ import { DailyTaskTypeKindMap } from "#src/services/genshinAssets/commissions/Da
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CommissionKind } from "genshin-world";
 
-// One daily task of the dump as the world holds it, its quest as an id and none for a scene task, its title by its text id
-// And the region it is preferred in. A type or finish the maps do not name is an error, since the task would be dealt or
+// One daily task of the dump as the world holds it, its quest as an id and none for a scene task, its title by its name text
+// Id and the region it is preferred in. A type or finish the maps do not name is an error, since the task would be dealt or
 // Finished wrongly
 export const toCommissionTask = (row: ExcelDailyTaskRow, preferredRegion: string): Commission => {
   const {
@@ -43,6 +43,6 @@ export const toCommissionTask = (row: ExcelDailyTaskRow, preferredRegion: string
     preferredRegion,
     questId: row.questId ? String(row.questId) : "",
     rewardTier: row.taskRewardId,
-    titleTextId: row.titleTextMapHash,
+    nameTextId: String(row.titleTextMapHash),
   };
 };

@@ -39,7 +39,7 @@ describe(toCommissionTask, () => {
       preferredRegion: PREFERRED_REGION,
       questId: "",
       rewardTier: 2,
-      titleTextId: 1001,
+      nameTextId: "1001",
     });
   });
 
@@ -72,7 +72,7 @@ describe(toCommissionTask, () => {
       preferredRegion: PREFERRED_REGION,
       questId: "7",
       rewardTier: 2,
-      titleTextId: 1002,
+      nameTextId: "1002",
     });
   });
 
