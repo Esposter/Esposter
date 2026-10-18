@@ -2,7 +2,7 @@ import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoint
 import { describe, expect, test } from "vitest";
 
 describe(placeMapPoints, () => {
-  test("carries each ground point of a kind into its region's axes at the fit's place, and leaves out the rest", () => {
+  test("only fitted places are written", () => {
     expect.hasAssertions();
     // A point at (1.5, 2.25) under an offset of (10, 20) lands at (11.5, 22.25) in the game's coordinates.
     // An origin of (0, 0) leaves it at (11.5, -22.25) in the region's axes, its z mirrored

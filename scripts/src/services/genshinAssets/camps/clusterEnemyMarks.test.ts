@@ -2,7 +2,7 @@ import { clusterEnemyMarks } from "#src/services/genshinAssets/camps/clusterEnem
 import { describe, expect, test } from "vitest";
 
 describe(clusterEnemyMarks, () => {
-  test("Nearby enemy marks form one camp", () => {
+  test("nearby enemy marks form one camp", () => {
     expect.hasAssertions();
     // Each mark lies five units from the next, so the chain joins all three within a distance of ten
     const places = [
@@ -13,7 +13,7 @@ describe(clusterEnemyMarks, () => {
     expect(clusterEnemyMarks(places, 10)).toStrictEqual([places]);
   });
 
-  test("Marks farther apart than the clustering distance form separate camps", () => {
+  test("marks farther apart than the clustering distance form separate camps", () => {
     expect.hasAssertions();
     const places = [
       { id: "slime-1", kind: "Slime", position: { x: 0, z: 0 } },
