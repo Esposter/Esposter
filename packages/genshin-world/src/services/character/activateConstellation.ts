@@ -1,20 +1,24 @@
 import type { Character } from "#src/models/character/Character";
 import type { Constellation } from "#src/models/character/Constellation";
 
+import { ConstellationActivationRefusal } from "#src/models/character/ConstellationActivationRefusal";
+import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character's next constellation activated, as the game activates them: the one after the last active, spending one
-// Of the character's own Stella Fortuna. A refusal throws before anything is returned, so no Stella Fortuna is taken for
-// A constellation that is not activated, and a character whose set is empty, Aloy's, activates none
+// Of the character's own Stella Fortuna. A refusal, the one getConstellationActivationRefusal names, throws before
+// Anything is returned, so no Stella Fortuna is taken for a constellation that is not activated, and a character whose
+// Set is empty, Aloy's, activates none
 export const activateConstellation = (character: Character, constellations: readonly Constellation[]): Character => {
   const constellationNumber = character.constellationCount + 1;
-  if (constellationNumber > constellations.length)
+  const refusal = getConstellationActivationRefusal(character, constellations);
+  if (refusal === ConstellationActivationRefusal.AllActive)
     throw new InvalidOperationError(
       Operation.Update,
       activateConstellation.name,
       `constellation ${constellationNumber}`,
     );
-  if (character.stellaFortunaCount < 1)
+  else if (refusal === ConstellationActivationRefusal.NoStellaFortuna)
     throw new InvalidOperationError(
       Operation.Update,
       activateConstellation.name,
