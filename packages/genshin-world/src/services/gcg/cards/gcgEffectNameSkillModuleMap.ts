@@ -32,6 +32,7 @@ import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gc
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
 import { theMyriadWilds } from "#src/services/gcg/cards/theMyriadWilds";
 import { tideAndTorrent } from "#src/services/gcg/cards/tideAndTorrent";
+import { trumpCardKitty } from "#src/services/gcg/cards/trumpCardKitty";
 
 // Every character skill's own script, by the effect name the game gives the skill
 export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<string, GcgSkillModule>([
@@ -60,6 +61,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
   ["Char_Skill_15023", dandelionBreeze],
+  ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],
   ["Char_Skill_22013", theMyriadWilds],
   ["Char_Skill_22014", tideAndTorrent],
