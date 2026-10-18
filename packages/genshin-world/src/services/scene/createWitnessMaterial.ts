@@ -49,10 +49,11 @@ export const createWitnessMaterial = (
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) {
-    const mappedNormal = normalMap(texture(normal));
+    // The mapped normal is a vector, which three types as any node
+    const mappedNormal: Node = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it
-    material.normalNode = isLeafCard ? faceDirection.mul(mappedNormal) : mappedNormal;
+    material.normalNode = isLeafCard ? (mappedNormal as Node<"vec3">).mul(faceDirection) : mappedNormal;
   }
   const mask = getTexture(WitnessProperty.DetailMask);
   if (mask && floats[WitnessProperty.EmissionType]) {
