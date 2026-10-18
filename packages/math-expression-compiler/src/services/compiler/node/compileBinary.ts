@@ -3,10 +3,10 @@ import type { MathExpressionCompiled } from "#src/models/compiler/MathExpression
 import type { MathExpressionEvaluator } from "#src/models/compiler/MathExpressionEvaluator";
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
-import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
-import { checkIsPercentageExpression } from "#src/services/compiler/checkIsPercentageExpression";
-import { getMathExpressionBinaryCompute } from "#src/services/compiler/getMathExpressionBinaryCompute";
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
+import { checkIsPercentageExpression } from "#src/services/compiler/checkIsPercentageExpression";
+import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathExpressionScalarCompute";
+import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 
 export const compileBinary = (
   node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Binary }>,
@@ -29,7 +29,7 @@ export const compileBinary = (
   }
 
   const compiledRight = context.compile(right);
-  const compute = getMathExpressionBinaryCompute(name);
+  const compute = getMathExpressionScalarCompute(name, "computeBinary");
   const absorption = MathExpressionBitwiseAbsorptionMap[name];
   // A left operand that decides a bitwise operation answers it, and the right operand is never read, as in mathjs
   const evaluate: MathExpressionEvaluator = (values, locals) => {

@@ -5,14 +5,14 @@ import type { MathExpressionResult } from "#src/models/compiler/MathExpressionRe
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
-import { getMathExpressionBinaryCompute } from "#src/services/compiler/getMathExpressionBinaryCompute";
+import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathExpressionScalarCompute";
 
 export const compileComparison = (
   node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Comparison }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledOperands = node.operands.map((operand) => context.compile(operand));
-  const computes = node.names.map((name) => getMathExpressionBinaryCompute(name));
+  const computes = node.names.map((name) => getMathExpressionScalarCompute(name, "computeBinary"));
   // A chain holds only while each pair does, and a pair past the first false one is never read
   const evaluate: MathExpressionEvaluator = (values, locals) => {
     let left = compiledOperands[0]?.evaluate(values, locals) ?? null;
