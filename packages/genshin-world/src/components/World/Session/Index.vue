@@ -1020,11 +1020,13 @@ defineExpose({ jumpTo, readCameraPosition });
               if (checkIsExpeditionTalk(interactable.id, getResidents())) screenKind = ScreenKind.Expedition;
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
-              // And its talk is a dialogue until then
+              // And no shop opens before the world's clock is read, so its talk is a dialogue until then
+              const gameClockMinutes = windrise.value?.gameClock.minutes;
               if (
                 screenKind === ScreenKind.Shop &&
                 (!checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels) ||
-                  !checkIsVendorHourOpen(shopId, windrise.value?.gameClock.minutes ?? 0))
+                  gameClockMinutes === undefined ||
+                  !checkIsVendorHourOpen(shopId, gameClockMinutes))
               )
                 screenKind = ScreenKind.Dialogue;
               reputationLevel = reputation.level;
