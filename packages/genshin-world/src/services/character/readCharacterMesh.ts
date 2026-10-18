@@ -12,12 +12,14 @@ import {
   createPmxTexture,
   createPmxToonTexture,
   parsePmx,
+  PmxSphereMode,
 } from "genshin-engine";
 
-// A character's model from its pack: the PMX read, then every texture a material draws with read and decoded once: its
-// Texture, its sphere map and its toon ramp where the file names one in the model's list. A material's shared toon ramp
-// Is the world's own, so no file of it is read. A texture the pack does not hold draws its material without it, logged
-// Once for the model, and a file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all
+// A character's model from its pack: the PMX read, then every texture a material draws with read once: its Texture, its
+// Sphere map and its toon ramp where the file names one in the model's list, each decoded for each role it is drawn in,
+// As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own, so
+// No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model, and
+// A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
   { lightUniforms, rampTexture }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
@@ -30,26 +32,40 @@ export const readCharacterMesh = (
     const drawnTextureIndices = new Set(
       pmxModel.materials.flatMap((material) => getCharacterMaterialTextureIndices(material)),
     );
+    const colourTextureIndices = new Set(
+      pmxModel.materials.flatMap(({ sphereMode, sphereTextureIndex, textureIndex }) =>
+        sphereMode === PmxSphereMode.Disabled ? [textureIndex] : [textureIndex, sphereTextureIndex],
+      ),
+    );
     const toonTextureIndices = new Set(
       pmxModel.materials.filter(({ isToonShared }) => !isToonShared).map(({ toonIndex }) => toonIndex),
     );
     const missingTexturePaths: string[] = [];
-    const textures = await Promise.all(
+    const blobs = await Promise.all(
       pmxModel.textures.map(async (path, textureIndex) => {
         if (!drawnTextureIndices.has(textureIndex)) return undefined;
         const textureBlob = await characterPackReader.readFile(path);
-        if (textureBlob === undefined) {
-          missingTexturePaths.push(path);
-          return undefined;
-        }
-        return toonTextureIndices.has(textureIndex) ? createPmxToonTexture(textureBlob) : createPmxTexture(textureBlob);
+        if (textureBlob === undefined) missingTexturePaths.push(path);
+        return textureBlob;
       }),
     );
     if (missingTexturePaths.length > 0)
       console.warn(`The model draws untextured the textures its release lacks: ${missingTexturePaths.join(", ")}`);
+    // A toon is flipped and read without sRGB, so a texture drawn both as a colour and as a toon is decoded once each way
+    // Rather than shared, where the one decoded as a toon would draw its colour flipped and unconverted
+    const colourTextures = await Promise.all(
+      blobs.map((blob, textureIndex) =>
+        blob && colourTextureIndices.has(textureIndex) ? createPmxTexture(blob) : Promise.resolve(undefined),
+      ),
+    );
+    const toonTextures = await Promise.all(
+      blobs.map((blob, textureIndex) =>
+        blob && toonTextureIndices.has(textureIndex) ? createPmxToonTexture(blob) : Promise.resolve(undefined),
+      ),
+    );
     const transparentTextureIndices = new Set(
       [...new Set(pmxModel.materials.map(({ textureIndex }) => textureIndex))].filter((textureIndex) => {
-        const image = textures[textureIndex]?.image;
+        const image = colourTextures[textureIndex]?.image;
         return image instanceof ImageBitmap && checkTransparentTexels(image);
       }),
     );
@@ -59,9 +75,9 @@ export const readCharacterMesh = (
         lightUniforms,
         pmxMaterial,
         rampTexture,
-        sphereTexture: textures[pmxMaterial.sphereTextureIndex],
-        texture: textures[pmxMaterial.textureIndex],
-        toonTexture: pmxMaterial.isToonShared ? undefined : textures[pmxMaterial.toonIndex],
+        sphereTexture: colourTextures[pmxMaterial.sphereTextureIndex],
+        texture: colourTextures[pmxMaterial.textureIndex],
+        toonTexture: pmxMaterial.isToonShared ? undefined : toonTextures[pmxMaterial.toonIndex],
       }),
     );
     return createPmxMesh(pmxModel, materials);
