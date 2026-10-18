@@ -6,6 +6,7 @@ describe(getCellSpan, () => {
     expect.hasAssertions();
 
     expect(getCellSpan(90, 50, 10)).toBe(2);
+    expect(getCellSpan(91, 50, 10)).toBe(3);
     expect(getCellSpan(-1, 50, 10)).toBe(1);
   });
 });

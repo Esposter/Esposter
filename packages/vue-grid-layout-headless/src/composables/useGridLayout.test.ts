@@ -3,11 +3,13 @@ import type { GridItem } from "#src/models/GridItem";
 
 import { useGridLayout } from "#src/composables/useGridLayout";
 import { CompactType } from "#src/models/CompactType";
+import type { GridLayout } from "#src/models/GridLayout";
+
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
-import { defineComponent, h, useTemplateRef } from "vue";
+import { defineComponent, h, shallowRef, useTemplateRef } from "vue";
 
 describe(useGridLayout, () => {
   const columnNumber = 12;
@@ -28,11 +30,12 @@ describe(useGridLayout, () => {
     compactType = CompactType.Vertical,
   ) => {
     const onCommit = vi.fn<(changes: GridItem[]) => void>();
+    const gridLayout = shallowRef<GridLayout>();
     const wrapper = mount(
       defineComponent({
         setup() {
           const root = useTemplateRef<HTMLElement>("root");
-          const { placeholder, startGesture, tiles } = useGridLayout(root, () => ({
+          const layout = useGridLayout(root, () => ({
             columnNumber,
             compactType,
             dragStartDistance,
@@ -42,6 +45,8 @@ describe(useGridLayout, () => {
             rowHeight,
             spacing: gridSpacing,
           }));
+          gridLayout.value = layout;
+          const { placeholder, startGesture, tiles } = layout;
 
           return () =>
             h("div", { class: "grid", ref: "root" }, [
@@ -85,7 +90,7 @@ describe(useGridLayout, () => {
       }),
     );
 
-    return { onCommit, wrapper };
+    return { grid: gridLayout, onCommit, wrapper };
   };
 
   beforeEach(() => {
@@ -273,6 +278,17 @@ describe(useGridLayout, () => {
     await tile.trigger("pointerup", { clientX: 0, clientY: rowPitch * 2, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([[[{ h: 1, id: "a", w: 2, x: 0, y: 2 }]]]);
+  });
+
+  test("#11 #42 #55 An item grows to hold its content", async () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid([{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }]);
+    await flushPromises();
+    // Two rows hold the span less one gap, so content one pixel past that needs a third row
+    grid.value?.reportContentHeight("a", 2 * rowPitch - spacing.gap + 1);
+
+    expect(onCommit.mock.calls).toStrictEqual([[[{ h: 3, id: "a", w: 2, x: 0, y: 0 }]]]);
   });
 
   test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {

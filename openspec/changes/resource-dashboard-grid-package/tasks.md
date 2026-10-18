@@ -8,7 +8,7 @@
 - [x] 2.1 Resize from every edge and corner. Verify: tests titled "#38 #51 Resizing from the left edge" and "A resize past the grid's edge".
 - [x] 2.2 Outer padding as its own option, separate from the gap between tiles. Verify: a test titled "#17 #62 Padding the grid apart from its gaps".
 - [x] 2.3 Horizontal compaction and no compaction. Verify: tests titled "#36 Compacting sideways" and "#36 Leaving a dropped item where it lands".
-- [ ] 2.4 Items sized to their content, in whole rows. Verify: a test titled "#11 #42 #55 An item grows to hold its content".
+- [x] 2.4 Items sized to their content, in whole rows. Verify: a test titled "#11 #42 #55 An item grows to hold its content".
 - [ ] 2.5 Swap on drop as a collision mode beside push and prevent. Verify: tests titled "#66 Swapping two items on drop", "A swap that lands on several items" and "A move refused under prevent".
 - [ ] 2.6 Dropping an item in from outside the grid, a palette or another grid. Verify: tests titled "#6 Dropping a palette entry into the grid", "#21 Moving an item into another grid" and "A drop outside every grid".
 - [ ] 2.7 A grid nested in a tile moves its own items. Verify: a test titled "#22 #40 Dragging inside a nested grid".

@@ -8,6 +8,8 @@ import type { ComputedRef } from "vue";
 export interface GridLayout<T extends GridItem = GridItem> {
   gridHeight: ComputedRef<number>;
   placeholder: ComputedRef<GridGeometry | undefined>;
+  // Reports the content height of an auto-height item, which takes the whole rows that hold it
+  reportContentHeight: (id: string, contentHeight: number) => void;
   startGesture: (event: PointerEvent, item: T, edge?: ResizeEdge) => void;
   tiles: ComputedRef<GridTile<T>[]>;
 }

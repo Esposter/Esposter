@@ -13,6 +13,7 @@ import { compactLayout } from "#src/placement/compactLayout";
 import { fitLayout } from "#src/placement/fitLayout";
 import { getCellPosition } from "#src/placement/getCellPosition";
 import { getCellSize } from "#src/placement/getCellSize";
+import { getCellSpan } from "#src/placement/getCellSpan";
 import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
@@ -113,17 +114,34 @@ export const useGridLayout = <T extends GridItem>(
     gesture.value = { ...activeGesture, cell, isStarted: true, offset };
     if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell), getOptions().compactType);
   };
-  // A pointer released after a drag writes every cell the drag changed, once, and a press that never started writes nothing
-  const handlePointerUp = (event: PointerEvent) => {
-    if (event.pointerId !== gesture.value?.pointerId) return;
-
-    const changes = (preview.value ?? []).flatMap((item): GridItem[] => {
+  // The cells of a layout that differ from the saved one, in the form the consumer writes back
+  const getChangedCells = (changedLayout: T[]): GridItem[] =>
+    changedLayout.flatMap((item): GridItem[] => {
       const savedItem = savedItemMap.value.get(item.id);
       return savedItem && !checkIsSameCell(item, savedItem)
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
+  // A pointer released after a drag writes every cell the drag changed, once, and a press that never started writes nothing
+  const handlePointerUp = (event: PointerEvent) => {
+    if (event.pointerId !== gesture.value?.pointerId) return;
+
+    const changes = getChangedCells(preview.value ?? []);
     resetGesture();
+    if (changes.length > 0) getOptions().onCommit(changes);
+  };
+  // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
+  const reportContentHeight = (id: string, contentHeight: number) => {
+    const savedItem = savedItemMap.value.get(id);
+    if (!savedItem?.isAutoHeight) return;
+
+    const h = getCellSpan(contentHeight, rowPitch.value, getOptions().spacing.gap);
+    if (h === savedItem.h) return;
+
+    const otherItems = getOptions().items.filter((item) => item.id !== id);
+    const changes = getChangedCells(
+      fitLayout([...otherItems, { ...savedItem, h }], getOptions().columnNumber, getOptions().compactType),
+    );
     if (changes.length > 0) getOptions().onCommit(changes);
   };
   const handlePointerCancel = (event: PointerEvent) => {
@@ -155,5 +173,5 @@ export const useGridLayout = <T extends GridItem>(
     element.removeEventListener("pointercancel", handlePointerCancel);
   });
 
-  return { gridHeight, placeholder, startGesture, tiles };
+  return { gridHeight, placeholder, reportContentHeight, startGesture, tiles };
 };
