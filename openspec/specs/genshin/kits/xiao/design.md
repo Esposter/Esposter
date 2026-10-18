@@ -13,6 +13,7 @@ Xiao's kit is its record and one behaviour module, `createXiaoKitBehaviour`, on 
 - **Xiao's areas are priced with their offsets, at gcsim's fan angles.** gcsim centres each strike's circle up to 1.1 metres ahead of the body or 0.1 behind it and opens it to a fan of 150 to 360 degrees, so each reach is its offset plus its radius at that angle, 1.7 to 3.1 metres and 1.9 to 3.5 converted, and spawns the first strike's second hit and the fifth strike as boxes on their near edge at the body, each priced as the circle to its far corner. His plunges are gcsim's under the burst, the only ones it models, both landing at 46 frames and ending at 62 and 66, counted from the plunge's action, and reaching 1, 3 and 5 metres, 4 and 6 converted.
 - **Constellation 2's Energy Recharge is off-field, read from the deployed team.** gcsim's `cons.go` lines 14 to 27 give Xiao 25% Energy Recharge while `c.Core.Player.Active() != c.Index()` (line 21), so `getPassiveBonuses` reads his entry's `isOnField` from the deployed team, as Collei's Constellation 1 does.
 - **Constellation 4's DEF Bonus is a passive bonus read from his HP share.** `getPassiveBonuses` receives the health share the step gives, as Bennett's Constellation 2 does, so the 100% DEF Bonus holds while his HP is under half and lapses above it.
+- **The high plunge's hitmark, 46 frames, is Unsourced.** gcsim's plunges land at 46 frames, which the reader gives no candidate for under the burst, so the value stands and removing it breaks the build. Reading the plunge settles it.
 
 ## Not built
 
