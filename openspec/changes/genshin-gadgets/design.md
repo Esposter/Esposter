@@ -24,7 +24,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 ```mermaid
 flowchart TD
   GATE["Equipped, and its cooldown group ready"] --> KIND{"Its kind"}
-  KIND -->|"detector"| POINT["Points to the nearest of its kind in its city"]
+  KIND -->|"detector"| POINT["Points to the nearest of its kind in its region"]
   KIND -->|"collector"| STORE["Stores or spends its element"]
   KIND -->|"device"| PLACE["Placed in the world"]
   POINT --> START["Its group's cooldown starts, or its cooldown on a failed use"]

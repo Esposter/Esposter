@@ -42,9 +42,9 @@ Pressing Z SHALL use the equipped gadget when its cooldown group is ready, and S
 - **WHEN** the player taps Z, releasing it before the quick swap's hold
 - **THEN** the gadget is not used and the HUD shows its cooldown
 
-### Requirement: A detector points to the nearest of what it finds in its city
+### Requirement: A detector points to the nearest of what it finds in its region
 
-A detector SHALL point to the nearest thing of its kind in its city, a Treasure Compass to a treasure box and a Seelie detector to a Seelie crystal.
+A detector SHALL point to the nearest thing of its kind in its region, a Treasure Compass to a treasure box in its city's region and a Seelie detector to a Seelie crystal in the region the player stands in.
 
 #### Scenario: A compass points to the nearest box in its city
 
@@ -52,11 +52,11 @@ A detector SHALL point to the nearest thing of its kind in its city, a Treasure 
 - **WHEN** the compass is used
 - **THEN** it points to the nearest treasure box in that city
 
-#### Scenario: A Seelie detector points to the nearest crystal in its city
+#### Scenario: A Seelie detector points to the nearest crystal in its region
 
-- **GIVEN** the player uses a Seelie detector in a city with Seelie crystals
+- **GIVEN** the player uses a Seelie detector in a region with Seelie crystals
 - **WHEN** the detector is used
-- **THEN** it points to the nearest Seelie crystal in that city
+- **THEN** it points to the nearest Seelie crystal in that region
 
 ### Requirement: Holding Z opens a quick swap of up to four gadgets
 
