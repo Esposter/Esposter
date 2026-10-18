@@ -18,6 +18,7 @@ describe(useWorldCombat, () => {
   test("a new player starts with the Traveler alone", () => {
     expect.hasAssertions();
     const { characters } = useWorldCombat({
+      characterIdConstellationsMap: new Map(),
       enemyTables,
       events: createWorldEvents(),
       gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
@@ -37,6 +38,7 @@ describe(useWorldCombat, () => {
     expect.hasAssertions();
     const events = createWorldEvents();
     const { kitContext } = useWorldCombat({
+      characterIdConstellationsMap: new Map(),
       enemyTables,
       events,
       gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,

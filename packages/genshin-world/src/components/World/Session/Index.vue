@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
-import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
-import type { Constellation } from "#src/models/character/Constellation";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -59,7 +57,7 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
+import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -110,6 +108,7 @@ const {
   adventureRankTables,
   cameraPose,
   catalogue,
+  characterConstellationKits,
   characterPackBaseUrl,
   characterTalentKits,
   craftingBenchPlace,
@@ -338,6 +337,8 @@ const { offerFrostbearingTree } = useWorldOfferings({
   setWallet,
   wallet,
 });
+// The constellations each character's one set holds, by its id, read with the other tables before the world opens
+const characterIdConstellationsMap = getCharacterIdConstellationsMap(characterConstellationKits);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   characterIdSkillGlyphsMap,
@@ -359,6 +360,7 @@ const {
     const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
     if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
   },
+  characterIdConstellationsMap,
   placeWorldDrops,
   savedCharacters: savedState.characters,
   savedParty: savedState.party,
@@ -366,30 +368,10 @@ const {
   statTables,
   wildlifePlaces,
 });
-// The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
-// Traveler's form has a set for each element, which a statue picks, so it has none here until one does
-const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readConstellationTables(gameDataBaseUrl)).match(
-  (kits) => {
-    constellationKits.value = kits;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
-const characterIdConstellationsMap = computed(() => {
-  const map = new Map<number, Constellation[]>();
-  for (const { characterId, depots } of constellationKits.value) {
-    const [depot] = depots;
-    if (depots.length === 1 && depot) map.set(characterId, depot.constellations);
-  }
-  return map;
-});
 // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
 const stellaFortunaNameTextIdMap = computed(() => {
   const map = new Map<number, string>();
-  for (const { characterId, depots } of constellationKits.value) {
+  for (const { characterId, depots } of characterConstellationKits) {
     const [depot] = depots;
     if (depots.length === 1 && depot) map.set(characterId, depot.stellaFortuna.nameTextId);
   }

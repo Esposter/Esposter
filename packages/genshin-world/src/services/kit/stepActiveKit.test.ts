@@ -17,7 +17,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -42,7 +42,10 @@ import {
 import { Vector3 } from "three";
 import { describe, expect, test, vi } from "vitest";
 
-const characterIdKitMap = await readCharacterKits(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]);
+const characterIdKitMap = await readCharacterKits(
+  GAME_DATA_LOCAL_BASE_URL,
+  new Map([[TRAVELER_CHARACTER_ID, TALENT_START_LEVELS]]),
+);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   ascension: 0,

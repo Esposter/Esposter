@@ -14,7 +14,13 @@ import { describe, expect, test } from "vitest";
 
 describe(buildKit, () => {
   const PROUD_SKILL_GROUP_ID = 1;
-  const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5, 15] }] };
+  const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = {
+    [PROUD_SKILL_GROUP_ID]: [
+      { level: 1, paramList: [0.5, 15] },
+      { level: 13, paramList: [0.75, 20] },
+    ],
+  };
+  const TALENT_LEVEL_MAP = { [PROUD_SKILL_GROUP_ID]: 1 };
   const HIT_RECORD: KitHitRecord = {
     area: { angle: 2 * Math.PI, height: 2, radius: 1 },
     hitmarkFrames: 12,
@@ -45,7 +51,7 @@ describe(buildKit, () => {
   test("resolves each frame count into seconds and each parameter off its talent's table, and tags each hit", () => {
     expect.hasAssertions();
 
-    const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, () => ({}));
+    const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, () => ({}));
     const { actionAttackTag, hitmarkSeconds, talentMultiplier } = takeOne(takeOne(kit.normalAttacks).hits);
 
     expect({
@@ -65,12 +71,23 @@ describe(buildKit, () => {
     });
   });
 
+  test("reads each parameter at the level its talent plays at", () => {
+    expect.hasAssertions();
+    const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, { [PROUD_SKILL_GROUP_ID]: 13 }, () => ({}));
+    const { talentMultiplier } = takeOne(takeOne(kit.normalAttacks).hits);
+
+    expect({ burstCooldownSeconds: kit.burstCooldownSeconds, talentMultiplier }).toStrictEqual({
+      burstCooldownSeconds: 20,
+      talentMultiplier: 0.75,
+    });
+  });
+
   test("hands its behaviour a reader of the record's named values over the very kit it builds", () => {
     expect.hasAssertions();
     let castSeconds = 0;
     let stanceSkill: unknown;
 
-    const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, ({ readSeconds, readStance }) => {
+    const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readSeconds, readStance }) => {
       castSeconds = readSeconds("cast");
       ({ elementalSkill: stanceSkill } = readStance("dance"));
       return {};
@@ -84,7 +101,7 @@ describe(buildKit, () => {
     expect.hasAssertions();
 
     expect(() =>
-      buildKit(RECORD, TALENT_MULTIPLIER_MAP, ({ readHit }) => {
+      buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readHit }) => {
         readHit("missing");
         return {};
       }),
@@ -92,7 +109,7 @@ describe(buildKit, () => {
       `[InvalidOperationError: Invalid operation: Read, name: hits.missing, is not in its kit's record]`,
     );
     expect(() =>
-      buildKit(RECORD, TALENT_MULTIPLIER_MAP, ({ readHits }) => {
+      buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readHits }) => {
         readHits("explosion");
         return {};
       }),
@@ -105,7 +122,7 @@ describe(buildKit, () => {
     expect.hasAssertions();
 
     expect(() =>
-      buildKit(RECORD, TALENT_MULTIPLIER_MAP, () => ({ burst: { hits: [{}, {}] } })),
+      buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, () => ({ burst: { hits: [{}, {}] } })),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: burst, its record holds 1 hits]`,
     );
@@ -118,13 +135,16 @@ describe(buildKit, () => {
       skill: createActionRecord([{ ...HIT_RECORD, healParty: { defenseShare: 0, flatHealth: 100 } }]),
     };
 
-    expect(() => buildKit(record, TALENT_MULTIPLIER_MAP, () => ({}))).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, () => ({})),
+    ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: skill.hits.0, its behaviour leaves its bubble's omen, its party heal's chance or its stacked hit's status missing]`,
     );
     expect(
       takeOne(
-        buildKit(record, TALENT_MULTIPLIER_MAP, () => ({ skill: { hits: [{ healPartyChance: () => 1 }] } }))
-          .elementalSkill.hits,
+        buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, () => ({
+          skill: { hits: [{ healPartyChance: () => 1 }] },
+        })).elementalSkill.hits,
       ).healParty?.flatHealth,
     ).toBe(100);
   });
@@ -134,7 +154,7 @@ describe(buildKit, () => {
     const record: KitRecord = { ...RECORD, hitFields: { heal: { healParty: { defenseShare: 0, flatHealth: 100 } } } };
 
     expect(() =>
-      buildKit(record, TALENT_MULTIPLIER_MAP, ({ readHitFields }) => {
+      buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readHitFields }) => {
         readHitFields("heal", ["hitArea", "hitmarkSeconds", "poiseDamage", "talentMultiplier"]);
         return {};
       }),
@@ -152,7 +172,7 @@ describe(buildKit, () => {
     const record: KitRecord = { ...RECORD, hitFields: { explosion: { area, hitmarkFrames, poiseDamage } } };
 
     expect(() =>
-      buildKit(record, TALENT_MULTIPLIER_MAP, ({ readHitFields }) => {
+      buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readHitFields }) => {
         readHitFields("explosion", shortFields);
         return {};
       }),

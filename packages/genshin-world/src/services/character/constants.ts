@@ -1,3 +1,5 @@
+import type { TalentLevels } from "#src/models/character/TalentLevels";
+
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -18,6 +20,11 @@ export const COMBAT_TALENT_ORDER = [
 ];
 // The level every combat talent starts at, before any upgrade raises it
 export const TALENT_START_LEVEL = 1;
+export const TALENT_START_LEVELS: TalentLevels = {
+  [CombatTalent.ElementalBurst]: TALENT_START_LEVEL,
+  [CombatTalent.ElementalSkill]: TALENT_START_LEVEL,
+  [CombatTalent.NormalAttack]: TALENT_START_LEVEL,
+};
 // The listing beside the characters' folders of the ids a host holds a pack for, so a character with none is drawn as
 // Its capsule without a request of its own, and of the packs the browser keeps
 export const CHARACTER_PACK_INDEX_PATH = "index.json";

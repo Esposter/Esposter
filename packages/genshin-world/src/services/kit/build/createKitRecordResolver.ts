@@ -1,3 +1,4 @@
+import type { TalentLevelMap } from "#src/models/character/TalentLevelMap";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -11,12 +12,12 @@ import type { KitRecord } from "#src/models/kit/record/KitRecord";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { KitTargeting } from "#src/models/kit/record/KitTargeting";
-import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { MISSING_KIT_BEHAVIOUR_ID } from "#src/services/kit/build/constants";
 import { missingKitBehaviour } from "#src/services/kit/build/missingKitBehaviour";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The field of a striker's attributes each stat a hit scales with is read from, its total where none holds it
 const ScalingAttributeFieldMap: Partial<Record<Attribute, "attack" | "defense" | "maxHealth">> = {
@@ -39,15 +40,20 @@ const getScalingStat = (attribute: Attribute, { attributes }: Combatant): number
 const getAdditiveScalingAttribute = ({ lunarReactionType, scalingAttribute }: Partial<KitHitRecord>) =>
   lunarReactionType === undefined ? scalingAttribute : undefined;
 
-// Resolves the values of a kit's record into its kit's, given the character's multipliers: a parameter read off its
-// Talent's table at the first level, a count of frames divided into seconds, a targeting zone as its area, and a hit
-// Scaling with a stat other than ATK as that share of the stat, its talent multiplier nought. What a behaviour completes,
-// A party heal's chance, an omen's id and a stacked hit's status, is left missing for it to give
-export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap) => {
-  const toParameter = (parameter: KitParameter): number =>
-    typeof parameter === "number"
-      ? parameter
-      : getTalentMultiplier(talentMultiplierMap, parameter.proudSkillGroupId, TALENT_START_LEVEL, parameter.index);
+// Resolves the values of a kit's record into its kit's, given the character's multipliers and the level each of its
+// Talents plays at: a parameter read off its talent's table at that level, a count of frames divided into seconds, a
+// Targeting zone as its area, and a hit scaling with a stat other than ATK as that share of the stat, its talent
+// Multiplier nought. What a behaviour completes, a party heal's chance, an omen's id and a stacked hit's status, is left
+// Missing for it to give
+export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap, talentLevelMap: TalentLevelMap) => {
+  const toParameter = (parameter: KitParameter): number => {
+    if (typeof parameter === "number") return parameter;
+    const { index, proudSkillGroupId } = parameter;
+    const level = talentLevelMap[proudSkillGroupId];
+    if (level === undefined)
+      throw new InvalidOperationError(Operation.Read, `${proudSkillGroupId}`, "is not a talent of its kit");
+    return getTalentMultiplier(talentMultiplierMap, proudSkillGroupId, level, index);
+  };
   const toHitFields = (hitRecord: Partial<KitHitRecord>): Partial<KitHit> => {
     const { bubble, healParty, lunarReactionType, multiplier, scalingAttribute, stackedHit } = hitRecord;
     const additiveScalingAttribute = getAdditiveScalingAttribute(hitRecord);

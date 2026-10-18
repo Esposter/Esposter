@@ -10,4 +10,4 @@
 
 ## 3. Constellation additions
 
-- [ ] 3.1 Have the kit read each talent at its own level plus its constellations' additions, once the character kits hold the read. Verify: a test named after 'A constellation raises a talent above level ten'. Blocked until the character kits land.
+- [x] 3.1 Have the kit read each talent at its own level plus its constellations' additions, once the character kits hold the read. Verify: a test named after 'A constellation raises a talent above level ten'.

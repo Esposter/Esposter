@@ -1,4 +1,5 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
@@ -22,6 +23,9 @@ export interface WorldTables {
   adventureRankTables: AdventureRankTables;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
+  // Each character's constellations as the game's tables hold them, by skill set, which a kit plays its talents at the
+  // Levels of, and the character screen's Constellation tab lists
+  characterConstellationKits: CharacterConstellationKit[];
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
   // Reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];
