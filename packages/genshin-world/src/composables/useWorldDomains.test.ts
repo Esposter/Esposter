@@ -3,6 +3,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 
 import { useWorldDomains } from "#src/composables/useWorldDomains";
@@ -11,7 +12,9 @@ import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -67,6 +70,7 @@ const createBrokenBoss = (campId: string): Enemy => ({
 
 const createDomains = () => {
   const events = createWorldEvents();
+  const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const domains = useWorldDomains({
     adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
@@ -75,8 +79,9 @@ const createDomains = () => {
     events,
     gameDataBaseUrl: "",
     getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
+    kitEffectState: { effects: [] },
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
-    jumpTo: vi.fn<() => void>(),
+    jumpTo,
     materialDataMap: new Map(),
     nameText: {},
     random: () => 0.5,
@@ -86,7 +91,7 @@ const createDomains = () => {
     unlockedLandmarks: ref<Landmark[]>([domainEntrance]),
     wallet: ref<Wallet>(EMPTY_WALLET),
   });
-  return { domains, events };
+  return { domains, events, jumpTo };
 };
 
 describe("stepDomainChallenge", () => {
@@ -108,5 +113,26 @@ describe("stepDomainChallenge", () => {
     expect(step()).toStrictEqual([]);
     events.emit("poiseBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+  });
+});
+
+describe("entering and leaving a domain", () => {
+  test("Entering a domain fades into its scene", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
+    expect(jumpTo).toHaveBeenCalledTimes(1);
+    expect(jumpTo).toHaveBeenLastCalledWith(computeDomainScenePose(domainEntrance.arrival));
+  });
+
+  test("Leaving a domain fades back to its entrance", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await domains.quickChallengeDomain(domainEntrance, 40, true);
+    domains.leaveDomain();
+    expect(domains.domainArena.value).toBeUndefined();
+    expect(jumpTo).toHaveBeenLastCalledWith(computeJumpPose(domainEntrance));
   });
 });
