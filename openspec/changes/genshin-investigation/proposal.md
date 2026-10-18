@@ -2,7 +2,7 @@
 
 ## Why
 
-The daily cap of investigations counts a game day, and no code finds where one turns over: the game's daily reset, at four in the morning on its own clock. Nothing keeps a count per game day yet, so the cap has no day to count in. The rule sat in the built spec, which holds only what exists, so it is recorded here until it is built.
+The daily cap of investigations counts a game day. The game's daily reset already exists, at four in the morning on its own clock, as `GAME_DAY_START_HOUR` and `GAME_TIME_ZONE`, and the forge's daily cap counts its points in that day. The investigation count is not kept per game day, so the cap has no day to count in. The rule sat in the built spec, which holds only what exists, so it is recorded here until it is built.
 
 ## What Changes
 
@@ -18,4 +18,4 @@ The investigation count is kept from the game's latest daily reset, so investiga
 
 ## Impact
 
-- The investigation services in the Genshin world: the reset that a game day starts at and the count the cap compares.
+- The investigation services in the Genshin world: the count the cap compares, taken from the game day that the existing reset constants in `originalResin/constants.ts` define, not a second reset.
