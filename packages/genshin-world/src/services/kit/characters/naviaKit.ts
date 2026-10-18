@@ -131,7 +131,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, cannonHits),
     },
-    getPassiveBonuses: (combatant, _healthShare, _effects, deployedCombatants) => {
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       const stacks = Math.min(
         ASCENSION_4_MAXIMUM_STACKS,
         deployedCombatants.filter(({ element }) => element !== undefined && ASCENSION_4_ELEMENTS.has(element)).length,
