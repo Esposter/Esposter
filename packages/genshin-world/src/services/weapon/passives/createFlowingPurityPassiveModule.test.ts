@@ -54,10 +54,11 @@ describe(createFlowingPurityPassiveModule, () => {
     flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.5), context, wielder);
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
-    expect(buffs.map(({ attribute, secondsRemaining }) => ({ attribute, secondsRemaining }))).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ attribute, secondsRemaining: 15 })),
+    expect(
+      buffs.map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
+    ).toStrictEqual(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute, secondsRemaining: 15 })),
     );
-    expect(buffs.every(({ amount }) => Math.abs(amount - 0.1) < 1e-9)).toBe(true);
   });
 
   test("the DMG Bonus a clear raises is at most the rank's maximum", () => {
