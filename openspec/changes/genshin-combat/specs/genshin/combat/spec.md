@@ -68,7 +68,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered while a field stands SHALL set its time back to 7 seconds rather than leave a second field. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
-#### Scenario: a Stellar-Conduct sustains its Polestar Field for 7 seconds
+#### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
 - **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
 - **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player (`stellarconduct_gadget.go`), placed by the reaction path for any enabler
