@@ -7,3 +7,5 @@ export const RESTORATIVE_POWER_REFILL_SHARE = 0.01;
 export const RESTORATIVE_POWER_REFILL_SECONDS = 15;
 // The share of a character's Max HP one click on the Blessing heals it by
 export const BLESSING_HEAL_HEALTH_SHARE = 0.1;
+// The Adventure Rank EXP each Oculus gives when it is collected, as the wiki's Adventure EXP page states it
+export const OCULUS_ADVENTURE_EXP = 60;
