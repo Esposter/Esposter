@@ -27,6 +27,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -80,6 +81,8 @@ const createNahidaKit = async (): Promise<Kit> => {
 const KIT = await createNahidaKit();
 // The kit the four original tests read, the same kit the new ones build
 const NAHIDA_KIT = KIT;
+// The elemental skill's first hit, the one a press strikes with
+const pressHit = takeOne(KIT.elementalSkill.hits);
 const createCombatant = (characterId: number, element: Element, elementMastery = 0, kit: Kit = KIT): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementMastery }]),
@@ -164,8 +167,8 @@ describe("seeds of Skandha", () => {
     const enemies = [createEnemyAt("first"), createEnemyAt("second")];
     KIT.elementalSkill.onStart?.(context);
     for (const enemy of enemies) {
-      const strike: KitStrike = { body: context.body, combatant, hit: KIT.elementalSkill.hits[0] };
-      KIT.elementalSkill.hits[0].onStrike?.(context, strike, enemy);
+      const strike: KitStrike = { body: context.body, combatant, hit: pressHit };
+      pressHit.onStrike?.(context, strike, enemy);
     }
 
     expect(enemies.map((enemy) => checkHasSeeds(enemy))).toStrictEqual([true, true]);
@@ -178,8 +181,8 @@ describe("seeds of Skandha", () => {
     const enemies = Array.from({ length: 9 }, (_, index) => createEnemyAt(`enemy-${index}`));
     const strikeEach = (struck: readonly ReturnType<typeof createEnemyAt>[]) => {
       for (const enemy of struck) {
-        const strike: KitStrike = { body: context.body, combatant, hit: KIT.elementalSkill.hits[0] };
-        KIT.elementalSkill.hits[0].onStrike?.(context, strike, enemy);
+        const strike: KitStrike = { body: context.body, combatant, hit: pressHit };
+        pressHit.onStrike?.(context, strike, enemy);
       }
     };
     KIT.elementalSkill.onStart?.(context);
@@ -204,8 +207,8 @@ describe("tri-Karma Purification", () => {
     const unmarked = createEnemyAt("unmarked");
     KIT.elementalSkill.onStart?.(context);
     for (const enemy of marked) {
-      const strike: KitStrike = { body: context.body, combatant, hit: KIT.elementalSkill.hits[0] };
-      KIT.elementalSkill.hits[0].onStrike?.(context, strike, enemy);
+      const strike: KitStrike = { body: context.body, combatant, hit: pressHit };
+      pressHit.onStrike?.(context, strike, enemy);
     }
     context.enemyMap.set(unmarked.id, unmarked);
     for (const enemy of marked) context.enemyMap.set(enemy.id, enemy);
@@ -216,7 +219,7 @@ describe("tri-Karma Purification", () => {
     );
     const unmarkedStrikes = context.strikes.length;
     KIT.onKitEvent?.(
-      { enemy: marked[0], kind: KitEventKind.ReactionTriggered, reactions: [], striker: combatant },
+      { enemy: takeOne(marked), kind: KitEventKind.ReactionTriggered, reactions: [], striker: combatant },
       context,
       combatant,
     );
@@ -247,19 +250,11 @@ describe("tri-Karma Purification", () => {
       );
     const outside = createTeamContext();
     KIT.elementalSkill.onStart?.(outside);
-    KIT.elementalSkill.hits[0].onStrike?.(
-      outside,
-      { body: outside.body, combatant, hit: KIT.elementalSkill.hits[0] },
-      enemy,
-    );
+    pressHit.onStrike?.(outside, { body: outside.body, combatant, hit: pressHit }, enemy);
     react(outside);
     const inside = createTeamContext();
     KIT.elementalSkill.onStart?.(inside);
-    KIT.elementalSkill.hits[0].onStrike?.(
-      inside,
-      { body: inside.body, combatant, hit: KIT.elementalSkill.hits[0] },
-      enemy,
-    );
+    pressHit.onStrike?.(inside, { body: inside.body, combatant, hit: pressHit }, enemy);
     KIT.elementalBurst.onStart?.(inside);
     getField(inside.kitEffectState.effects)?.onTick(inside, 0);
     react(inside);
@@ -286,11 +281,7 @@ describe("tri-Karma Purification", () => {
       party: createParty([NAHIDA_CHARACTER_ID, teammate.characterId]),
     });
     KIT.elementalSkill.onStart?.(context);
-    KIT.elementalSkill.hits[0].onStrike?.(
-      context,
-      { body: context.body, combatant, hit: KIT.elementalSkill.hits[0] },
-      enemy,
-    );
+    pressHit.onStrike?.(context, { body: context.body, combatant, hit: pressHit }, enemy);
     KIT.elementalBurst.onStart?.(context);
     getField(context.kitEffectState.effects)?.onTick(context, 0);
     KIT.onKitEvent?.(
@@ -327,11 +318,7 @@ describe("tri-Karma Purification", () => {
     const particleEvents = () =>
       onKitEvent.mock.calls.filter(([event]) => event.kind === KitEventKind.EnergyParticleCollected).length;
     KIT.elementalSkill.onStart?.(context);
-    KIT.elementalSkill.hits[0].onStrike?.(
-      context,
-      { body: context.body, combatant, hit: KIT.elementalSkill.hits[0] },
-      enemy,
-    );
+    pressHit.onStrike?.(context, { body: context.body, combatant, hit: pressHit }, enemy);
     react();
     const first = particleEvents();
     stepKitSeconds(context, 2.5);
