@@ -10,6 +10,13 @@ describe(checkIsMiningOutcropStanding, () => {
     expect(checkIsMiningOutcropStanding(undefined, refresh)).toBe(true);
   });
 
+  test("a mining outcrop mined before the day's draw stands again at that draw", () => {
+    expect.hasAssertions();
+    const minedAt = refresh.subtract({ hours: 1 });
+    expect(checkIsMiningOutcropStanding(minedAt, refresh.subtract({ seconds: 1 }))).toBe(false);
+    expect(checkIsMiningOutcropStanding(minedAt, refresh)).toBe(true);
+  });
+
   test("a mined mining outcrop is gone until the next day's draw, and stands from it", () => {
     expect.hasAssertions();
     const minedAt = refresh;

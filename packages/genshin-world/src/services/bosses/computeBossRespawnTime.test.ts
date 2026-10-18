@@ -3,7 +3,7 @@ import { BOSS_RESPAWN_AFTER_CLAIM_DURATION } from "#src/services/bosses/constant
 import { describe, expect, test } from "vitest";
 
 describe(computeBossRespawnTime, () => {
-  const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 
   test("a claimed boss comes back its respawn duration after the claim", () => {
     expect.hasAssertions();

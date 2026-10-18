@@ -1,13 +1,14 @@
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { BOSS_RESPAWN_AFTER_CLAIM_DURATION } from "#src/services/bosses/constants";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
-import { COMMON_ENEMY_RESPAWN_DURATION, DAILY_RESET_TIME } from "#src/services/enemy/constants";
+import { COMMON_ENEMY_RESPAWN_DURATION } from "#src/services/enemy/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeEnemyRespawnTime, () => {
-  const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
+  // The epoch is eight in the morning in the server's zone, so the next 04:00 reset is twenty hours on
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
   const place = { x: 0, z: 0 };
-  const dailyReset = epoch.toPlainDate().toZonedDateTime({ plainTime: DAILY_RESET_TIME, timeZone: "UTC" });
+  const nextDailyReset = epoch.add({ hours: 20 });
 
   test("a common camp's member comes back after its respawn duration", () => {
     expect.hasAssertions();
@@ -17,12 +18,14 @@ describe(computeEnemyRespawnTime, () => {
     );
   });
 
-  test("a camp with an elite comes back at the next daily reset", () => {
+  test("a camp with an elite comes back at the next daily reset of the server's clock", () => {
     expect.hasAssertions();
 
-    expect(computeEnemyRespawnTime([EnemyType.Common, EnemyType.Elite], epoch)?.toString()).toBe(dailyReset.toString());
-    expect(computeEnemyRespawnTime([EnemyType.Elite], dailyReset)?.toString()).toBe(
-      dailyReset.add({ days: 1 }).toString(),
+    expect(computeEnemyRespawnTime([EnemyType.Common, EnemyType.Elite], epoch)?.toString()).toBe(
+      nextDailyReset.toString(),
+    );
+    expect(computeEnemyRespawnTime([EnemyType.Elite], nextDailyReset)?.toString()).toBe(
+      nextDailyReset.add({ hours: 24 }).toString(),
     );
   });
 

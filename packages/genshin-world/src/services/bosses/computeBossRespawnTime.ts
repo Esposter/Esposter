@@ -2,6 +2,5 @@ import { BOSS_RESPAWN_AFTER_CLAIM_DURATION } from "#src/services/bosses/constant
 
 // When a normal boss comes back, given when its Trounce Blossom was claimed. An unclaimed boss has no time at all, since
 // It stays defeated until the player teleports away
-export const computeBossRespawnTime = (
-  claimedAt: Temporal.ZonedDateTime | undefined,
-): Temporal.ZonedDateTime | undefined => claimedAt?.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION);
+export const computeBossRespawnTime = (claimedAt: Temporal.Instant | undefined): Temporal.Instant | undefined =>
+  claimedAt?.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION);

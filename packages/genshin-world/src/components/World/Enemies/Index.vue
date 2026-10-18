@@ -62,7 +62,7 @@ interface Props {
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  lastTeleportAt?: Temporal.ZonedDateTime;
+  lastTeleportAt?: Temporal.Instant;
   lightUniforms: LightUniforms;
   // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is won
   outcropCamps?: EnemyCamp[];
@@ -112,13 +112,11 @@ const emit = defineEmits<{
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 const { onBeforeRender } = useLoop();
-// The world's clock as a moment in the reader's own time zone, which the daily reset is read in
-const getZonedNow = () => getWorldNow().toZonedDateTimeISO(Temporal.Now.timeZoneId());
 // The enemy types of a camp's members, by which a defeated member comes back
 const getCampEnemyTypes = (members: EnemyCamp["members"]) =>
   members.map(({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType);
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
-const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
+const spawnKeyDefeatedAtMap = new Map<string, Temporal.Instant>();
 const loadedCampIds = new Set<string>();
 // The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
 // Emits them
@@ -143,7 +141,7 @@ watchImmediate(
     const campIds = new Set([...enemyCamps, ...fightingCamps].map(({ id }) => id));
     for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
     for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
-    const now = getZonedNow();
+    const now = getWorldNow();
     for (const { id, members } of enemyCamps) {
       if (loadedCampIds.has(id)) continue;
       loadedCampIds.add(id);
@@ -160,9 +158,9 @@ watchImmediate(
               trounceBlossoms.get(spawnKey),
               lastTeleportAt,
             );
-            if (!respawnAt || Temporal.ZonedDateTime.compare(respawnAt, now) > 0) continue;
+            if (!respawnAt || Temporal.Instant.compare(respawnAt, now) > 0) continue;
           }
-        } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now.toInstant()) > 0) continue;
+        } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now) > 0) continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
         if (trounceBlossoms.has(spawnKey)) emit("respawn", spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
@@ -192,7 +190,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       isAnyDefeated = true;
       const enemyKind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
       const spawnKey = getSpawnKey(enemy.campId, enemy.id);
-      const defeatedAt = getZonedNow();
+      const defeatedAt = getWorldNow();
       spawnKeyDefeatedAtMap.set(spawnKey, defeatedAt);
       emit(
         "defeat",
@@ -205,7 +203,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
         .find(({ id }) => id === enemy.campId);
       // A camp with no boss brings each defeated member back at an instant the save keeps
       const respawnAt = camp && computeEnemyRespawnTime(getCampEnemyTypes(camp.members), defeatedAt);
-      if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toInstant().toString());
+      if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toString());
       const [firstMember] = camp?.members ?? [];
       if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))
         emit("campCleared", { id: camp.id, position: firstMember.position });

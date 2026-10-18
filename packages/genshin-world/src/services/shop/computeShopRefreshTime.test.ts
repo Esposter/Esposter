@@ -1,5 +1,5 @@
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
 import { describe, expect, test } from "vitest";
 

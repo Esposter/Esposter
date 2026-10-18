@@ -2,7 +2,7 @@ import type { ImaginariumSeason } from "#src/models/imaginarium/ImaginariumSeaso
 
 import { Element } from "#src/models/Element";
 import { findImaginariumSeason } from "#src/services/imaginarium/findImaginariumSeason";
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(findImaginariumSeason, () => {

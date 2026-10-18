@@ -4,12 +4,13 @@ import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
 import { FORGE_DAILY_POINT_CAP, FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
+import { computeGameDay } from "#src/services/time/computeGameDay";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 describe(computeForgeRefusalLabel, () => {
   const now = Temporal.Instant.fromEpochMilliseconds(0);
-  const gameDay = now.toZonedDateTimeISO("UTC").toPlainDate();
+  const gameDay = computeGameDay(now);
   const RECIPE_FORGE_POINT = 10;
   const recipe: ForgeRecipe = {
     forgePoint: RECIPE_FORGE_POINT,
