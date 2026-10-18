@@ -43,11 +43,11 @@ export enum GameTextKey {
   ArtifactActionLock = "EQUIP_LOCK_TIP_1",
   ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
   ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
-  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
-  // Is active
   ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
   ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
   ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
+  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
+  // Is active
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
@@ -624,11 +624,11 @@ export enum GameTextKey {
   // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
   ReputationRequestAccept = "REPUTATION_REQUEST_BUTTON_1",
   ReputationReward = "REPUTATION_CITY_REWARD",
-  // The game over screen's button that revives the team at the nearest teleport waypoint
   // The notice a furnishing shows when the realm's area already holds its count of furnishings
   RetHomeFurnitureArrangeLimit = "RetHomeFurnitureArrangeLimit",
   // The notice a furnishing shows when the realm's area would pass its load
   RetHomeFurnitureExceedLimit = "RetHomeFurnitureExceedLimit",
+  // The game over screen's button that revives the team at the nearest teleport waypoint
   Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
