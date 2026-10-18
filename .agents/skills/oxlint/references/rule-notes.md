@@ -19,6 +19,14 @@ redundant to the linter and mandatory to the typecheck, so it goes back with a d
 with, and a lint pass that autofixed it is not done until the typecheck has run over the same tree. A regex
 literal is the other initializer that needs it, and takes the same directive.
 
+## The `unicorn/prefer-spread` autofix turns a typed array's copy into a number array
+
+`prefer-spread` reports a bare `.slice()` and `--fix` writes `[...value]`. For an array that is the same copy; for a `Uint8Array` it is a `number[]`, and the bytes a `Blob` or a parser was meant to receive are gone. Copy a typed array through its constructor (`new Uint8Array(data)`), which the rule leaves alone and which also narrows a shared buffer to an `ArrayBuffer` a `Blob` takes.
+
+## The `vitest/prefer-mock-promise-shorthand` autofix loses the mock's `this`
+
+A mock that resolves to the instance it ran on, `mockImplementation(function (this: Chart) { return Promise.resolve(this); })`, is reported, and `--fix` writes `mockResolvedValue(this)`, whose `this` is the test's rather than the instance's. The rule reads only an inline function, so name the implementation at module scope and pass it (`resolveToChart` in `apps/web/app/components/Styled/ApexChart.test.ts`). A test asserting which instance a call ran on reads it from `mock.contexts`.
+
 ## `typescript/no-useless-default-assignment` (oxlint)
 
 The rule proves a default can never fire from the signature it is written on — and for an overloaded function that
