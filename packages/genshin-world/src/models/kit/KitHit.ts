@@ -43,6 +43,8 @@ export interface KitHit {
   hitmarkSeconds: number;
   internalCooldownTag?: InternalCooldownTag;
   isBlunt?: true;
+  // Whether the hit always lands as a critical hit, which its strike rolls no CRIT Rate for
+  isForcedCritical?: true;
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
   // As a talent's hit
   lunarHit?: KitLunarHit;

@@ -93,8 +93,9 @@ export const strikeEnemy = (
   } = priceEnemyReactions(kind, enemy, reactions, combatant, element);
 
   const isCritical =
+    kitHit.isForcedCritical ||
     random() <
-    attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
+      attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const resistance = getEnemyResistance(kind, enemy, element);
   const damage = kitHit.lunarHit
     ? getDirectLunarDamage(kitHit, kitHit.lunarHit, talentMultiplier, combatant, moonsign, resistance, isCritical)

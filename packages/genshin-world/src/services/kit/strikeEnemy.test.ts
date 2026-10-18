@@ -114,6 +114,46 @@ describe(strikeEnemy, () => {
     ]);
   });
 
+  test("lands a forced critical hit as a critical one whatever its striker's CRIT Rate rolls, and an unforced hit as the roll says", () => {
+    expect.hasAssertions();
+
+    const CRITICAL_DAMAGE = 0.5;
+    const { talentMultiplier } = TRAVELER_KIT.plungeCollision;
+    const combatant: Combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.CriticalDamage, value: CRITICAL_DAMAGE },
+      ]),
+    };
+    const damage = (isCritical: boolean): number =>
+      getDamage({
+        attackerLevel: LEVEL,
+        criticalDamage: CRITICAL_DAMAGE,
+        defense,
+        isCritical,
+        resistance: kind.physicalResistance,
+        stat: ATTACK,
+        talentMultiplier,
+      });
+    const forcedEnemy = createSturdyEnemy();
+    const unforcedEnemy = createSturdyEnemy();
+
+    strikeEnemy(
+      enemyTables,
+      forcedEnemy,
+      { ...TRAVELER_KIT.plungeCollision, isForcedCritical: true },
+      combatant,
+      NEVER_CRITICAL,
+    );
+    strikeEnemy(enemyTables, unforcedEnemy, TRAVELER_KIT.plungeCollision, combatant, NEVER_CRITICAL);
+
+    expect([forcedEnemy.health, unforcedEnemy.health]).toStrictEqual([
+      forcedEnemy.maxHealth - damage(true),
+      unforcedEnemy.maxHealth - damage(false),
+    ]);
+  });
+
   test("draws its CRIT rolls from the seeded source, so the same seed prices the same hits", () => {
     expect.hasAssertions();
 
