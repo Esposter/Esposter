@@ -14,6 +14,9 @@ export enum QuestId {
   ReputationRequest7070601 = "7070601",
   ReputationRequest7070701 = "7070701",
   ReputationRequest7070801 = "7070801",
+  ReputationRequest7070901 = "7070901",
+  ReputationRequest7071001 = "7071001",
+  ReputationRequest7071101 = "7071101",
   ReputationRequest7071201 = "7071201",
   ReputationRequest7071301 = "7071301",
   ReputationRequest7071401 = "7071401",
@@ -22,8 +25,8 @@ export enum QuestId {
   WanderersTrail = "351",
 }
 
-// The Mondstadt keeper's delivery requests, each a sub quest its request row names. The three camp requests are not
-// Carried: their camps' targets are not in the tables the quest reader takes
+// The Mondstadt keeper's delivery requests, each a sub quest its request row names. The three that ask for any one of a
+// Group's items, Manly Jack's, are carried as collects of the group's items
 export const ReputationRequestQuestIds: readonly QuestId[] = [
   QuestId.ReputationRequest7070001,
   QuestId.ReputationRequest7070101,
@@ -34,6 +37,9 @@ export const ReputationRequestQuestIds: readonly QuestId[] = [
   QuestId.ReputationRequest7070601,
   QuestId.ReputationRequest7070701,
   QuestId.ReputationRequest7070801,
+  QuestId.ReputationRequest7070901,
+  QuestId.ReputationRequest7071001,
+  QuestId.ReputationRequest7071101,
   QuestId.ReputationRequest7071201,
   QuestId.ReputationRequest7071301,
   QuestId.ReputationRequest7071401,

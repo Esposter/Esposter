@@ -11,6 +11,7 @@ describe(getFinishedReputationRewards, () => {
   const REWARD: ReputationReward = { exp: 80, items: [{ count: 20_000, id: 202 }] };
   const QUEST_ID = 901;
   const TARGET_ID = "3";
+  const ALTERNATIVE_TARGET_ID = "4";
   const BINDINGS = [{ questId: QUEST_ID, reward: REWARD }];
   const createQuest = (kind: QuestObjectiveKind, count: number): Quest => ({
     descriptionTextId: "description",
@@ -31,6 +32,36 @@ describe(getFinishedReputationRewards, () => {
     const nextProgress = advanceQuest(quest, progress, { kind: QuestObjectiveKind.Collect, targetId: TARGET_ID });
 
     expect(getFinishedReputationRewards(quest, progress, nextProgress, BINDINGS)).toStrictEqual([REWARD]);
+  });
+
+  test("a group delivery request pays on completion, whichever of its items is collected", () => {
+    expect.hasAssertions();
+
+    const quest: Quest = {
+      ...createQuest(QuestObjectiveKind.Collect, 2),
+      steps: [
+        {
+          id: "1",
+          objectives: [
+            {
+              alternativeTargetIds: [ALTERNATIVE_TARGET_ID],
+              count: 2,
+              kind: QuestObjectiveKind.Collect,
+              targetId: TARGET_ID,
+            },
+          ],
+          textId: "step",
+        },
+      ],
+    };
+    const progress = { objectiveCounts: [0], stepIndex: 0 };
+    const oneCollected = advanceQuest(quest, progress, { kind: QuestObjectiveKind.Collect, targetId: TARGET_ID });
+    const finished = advanceQuest(quest, oneCollected, {
+      kind: QuestObjectiveKind.Collect,
+      targetId: ALTERNATIVE_TARGET_ID,
+    });
+
+    expect(getFinishedReputationRewards(quest, oneCollected, finished, BINDINGS)).toStrictEqual([REWARD]);
   });
 
   test("a finished reputation quest pays once", () => {
