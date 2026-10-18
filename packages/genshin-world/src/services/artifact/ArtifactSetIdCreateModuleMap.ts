@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import {
   ADVENTURER_ARTIFACT_SET_ID,
+  AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,
   BLIZZARD_STRAYER_ARTIFACT_SET_ID,
   BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID,
@@ -53,6 +54,7 @@ import {
   WANDERERS_TROUPE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
 import { createAdventurerSetModule } from "#src/services/artifact/sets/createAdventurerSetModule";
+import { createAubadeOfMorningstarAndMoonSetModule } from "#src/services/artifact/sets/createAubadeOfMorningstarAndMoonSetModule";
 import { createBerserkerSetModule } from "#src/services/artifact/sets/createBerserkerSetModule";
 import { createBlizzardStrayerSetModule } from "#src/services/artifact/sets/createBlizzardStrayerSetModule";
 import { createBloodstainedChivalrySetModule } from "#src/services/artifact/sets/createBloodstainedChivalrySetModule";
@@ -108,6 +110,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   Partial<Record<number, (bonus: ArtifactSetBonus) => PassiveModule>>
 > = {
   [ADVENTURER_ARTIFACT_SET_ID]: createAdventurerSetModule,
+  [AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID]: createAubadeOfMorningstarAndMoonSetModule,
   [BERSERKER_ARTIFACT_SET_ID]: createBerserkerSetModule,
   [BLIZZARD_STRAYER_ARTIFACT_SET_ID]: createBlizzardStrayerSetModule,
   [BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID]: createBloodstainedChivalrySetModule,
