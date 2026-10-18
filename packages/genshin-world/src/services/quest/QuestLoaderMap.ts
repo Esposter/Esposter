@@ -10,6 +10,8 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
   [QuestIdValues.BirdsEyeView]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/352", z.unknown()),
   [QuestIdValues.CandidatureAnalysis]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11019", z.unknown()),
   [QuestIdValues.ForegoneConclusion]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11026", z.unknown()),
+  [QuestIdValues.InazumaOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/7280801", z.unknown()),
+  [QuestIdValues.LiyueOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/2211102", z.unknown()),
   [QuestIdValues.ReputationRequest7070001]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/7070001", z.unknown()),
   [QuestIdValues.ReputationRequest7070101]: (gameDataBaseUrl) =>
@@ -35,6 +37,7 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
   [QuestIdValues.ReputationRequest7071401]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/7071401", z.unknown()),
   [QuestIdValues.SevenStarSelection]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11018", z.unknown()),
+  [QuestIdValues.SumeruOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/7380201", z.unknown()),
   [QuestIdValues.TheSeventhSamurai]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/72154", z.unknown()),
   [QuestIdValues.WanderersTrail]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/351", z.unknown()),
 };
