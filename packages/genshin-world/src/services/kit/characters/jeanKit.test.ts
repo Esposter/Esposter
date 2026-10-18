@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
@@ -10,13 +11,15 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
 import { createJeanKitBehaviour, JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -35,6 +38,19 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createJeanEnemy = (x: number, z: number): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   position: { x, z },
+});
+
+// The DMG Reduction the character holds as the team's buffs leave it, which an enemy's strike is priced against
+const getDamageReduction = (combatant: Combatant, context: KitContext): number =>
+  getBuffedCombatant(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
+    .attributes.attributeTotalMap[Attribute.DamageReduction];
+
+// An enemy's strike that lands on Jean, as the world tells the kits it did
+const createJeanStruckEvent = () => ({
+  isShielded: false,
+  kind: KitEventKind.PartyMemberStruck,
+  striker: createJeanEnemy(0, 0),
+  struckCharacterId: JEAN_CHARACTER_ID,
 });
 
 describe(createJeanKitBehaviour, () => {
@@ -276,5 +292,60 @@ describe(createJeanKitBehaviour, () => {
     stepKitEffects(1, context);
 
     expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("at six constellations, Dandelion Breeze's field cuts the DMG Jean's character takes inside it by 35%", () => {
+    expect.hasAssertions();
+    const combatant = createJeanCombatant(0, 6);
+    const context = createKitTestContext(combatant);
+    JEAN_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+
+    expect(getDamageReduction(combatant, context)).toBe(0.35);
+  });
+
+  test("at six constellations, a character who leaves the field keeps the cut through 3 strikes, which end it", () => {
+    expect.hasAssertions();
+    const combatant = createJeanCombatant(0, 6);
+    const context = createKitTestContext(combatant);
+    JEAN_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    context.body = { ...context.body, position: { x: 100, z: 0 } };
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    const reductions = [getDamageReduction(combatant, context)];
+    for (let strike = 0; strike < 3; strike++) {
+      JEAN_KIT.onKitEvent?.(createJeanStruckEvent(), context, combatant);
+      reductions.push(getDamageReduction(combatant, context));
+    }
+
+    expect(reductions).toStrictEqual([0.35, 0.35, 0.35, 0]);
+  });
+
+  test("at six constellations, a character who leaves the field keeps the cut for 10 seconds without strikes", () => {
+    expect.hasAssertions();
+    const combatant = createJeanCombatant(0, 6);
+    const context = createKitTestContext(combatant);
+    JEAN_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    context.body = { ...context.body, position: { x: 100, z: 0 } };
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    stepKitSeconds(context, 9.9);
+    const beforeLapse = getDamageReduction(combatant, context);
+    stepKitSeconds(context, 0.2);
+
+    expect([beforeLapse, getDamageReduction(combatant, context)]).toStrictEqual([0.35, 0]);
+  });
+
+  test("below six constellations, Dandelion Breeze's field cuts no DMG, inside it or after leaving it", () => {
+    expect.hasAssertions();
+    const combatant = createJeanCombatant(0, 5);
+    const context = createKitTestContext(combatant);
+    JEAN_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    const insideReduction = getDamageReduction(combatant, context);
+    context.body = { ...context.body, position: { x: 100, z: 0 } };
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+
+    expect([insideReduction, getDamageReduction(combatant, context)]).toStrictEqual([0, 0]);
   });
 });

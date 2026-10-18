@@ -1,6 +1,6 @@
 ## Purpose
 
-Jean's kit as built: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast, with Constellations 1, 2 and 4 built. Her Constellation 6, the hold's pull and the off-field members' activation heal are not built.
+Jean's kit as built: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast, with Constellations 1, 2, 4 and 6 built. The hold's pull and the off-field members' activation heal are not built.
 
 ## Requirements
 
@@ -97,6 +97,22 @@ From Constellation 4, each opponent within Dandelion Breeze's field SHALL have i
 - **GIVEN** Jean is at constellation 3 and Dandelion Breeze's field is out
 - **WHEN** the field ticks
 - **THEN** no opponent's Anemo RES is reduced
+
+### Requirement: Constellation 6 cuts incoming DMG inside the field and after leaving it
+
+From Constellation 6, the character inside Dandelion Breeze's field SHALL take 35% less DMG, and a character who leaves the field SHALL keep the cut through her next 3 strikes or 10 seconds, whichever comes first.
+
+#### Scenario: Cut inside the field
+
+- **GIVEN** Jean has Constellation 6
+- **WHEN** the character on the field stands inside Dandelion Breeze's field
+- **THEN** that character takes 35% less DMG
+
+#### Scenario: Cut after leaving the field
+
+- **GIVEN** Jean has Constellation 6 and the character on the field has left Dandelion Breeze's field
+- **WHEN** an enemy strikes her, or 10 seconds pass
+- **THEN** she takes 35% less DMG until the third strike or 10 seconds, whichever comes first
 
 ### Requirement: Dandelion Breeze's field heals and regenerates
 

@@ -2,6 +2,8 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
@@ -11,12 +13,15 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -60,6 +65,17 @@ const ANEMO_RESISTANCE_STATUS: EnemyStatus = {
   resistanceReduction: { [Element.Anemo]: ANEMO_RESISTANCE_REDUCTION },
   secondsRemaining: ANEMO_RESISTANCE_SECONDS,
 };
+// Lion's Fang, Fair Protector of Mondstadt, from six constellations, cuts the DMG the character inside Dandelion Breeze's
+// Field takes by 35%, and for 3 strikes or 10 seconds once she leaves it, as the wiki's constellation text gives it.
+// Constellation 6 is left unimplemented in gcsim v2.47.2 (MIT) jean/cons.go, so the wiki decides
+// https://genshin-impact.fandom.com/wiki/Jean
+const LIONS_FANG_CONSTELLATION = 6;
+const LIONS_FANG_DAMAGE_REDUCTION = 0.35;
+const LIONS_FANG_AFTER_SECONDS = 10;
+const LIONS_FANG_AFTER_STRIKES = 3;
+const LIONS_FANG_FIELD_SOURCE = "jean-constellation-6-field";
+const LIONS_FANG_AFTER_SOURCE = "jean-constellation-6-after";
+const LIONS_FANG_AFTER_STATUS_ID = "jean-constellation-6-after";
 
 // The Dandelion Field's tick, written for Jean as she cast it, with its heals in HP. Tick 0 is its activation, which heals
 // The character on the field by the activation heal and, from Ascension 4, gives Jean back a fifth of the burst's energy.
@@ -82,13 +98,71 @@ const createFieldTick =
     gainPartyMemberEnergy(context.party, owner, LET_THE_WIND_LEAD_ENERGY_SHARE * owner.kit.burstEnergyCost);
   };
 
+// Whether an effect is the cut that lasts after a character leaves the field, its buff or the strikes it has left
+const checkIsLionsFangAfter = (effect: KitEffect, characterId: number): boolean =>
+  effect.characterId === characterId &&
+  ((effect.kind === "buff" && effect.source === LIONS_FANG_AFTER_SOURCE) ||
+    (effect.kind === "status" && effect.id === LIONS_FANG_AFTER_STATUS_ID));
+
+// Starts a character's cut after leaving the field, for 10 seconds or its 3 strikes, which replaces any it holds
+const startLionsFangAfter = (kitEffectState: KitEffectState, characterId: number): void => {
+  removeKitEffects(
+    kitEffectState,
+    (effect) => checkIsLionsFangAfter(effect, characterId) || checkIsLionsFangField(effect, characterId),
+  );
+  buffKitMember(kitEffectState, characterId, {
+    amount: LIONS_FANG_DAMAGE_REDUCTION,
+    attribute: Attribute.DamageReduction,
+    secondsRemaining: LIONS_FANG_AFTER_SECONDS,
+    source: LIONS_FANG_AFTER_SOURCE,
+  });
+  addKitStatus(kitEffectState, characterId, {
+    id: LIONS_FANG_AFTER_STATUS_ID,
+    secondsRemaining: LIONS_FANG_AFTER_SECONDS,
+    stacks: LIONS_FANG_AFTER_STRIKES,
+  });
+};
+
+// Whether an effect is the cut a character holds while she stands inside the field
+const checkIsLionsFangField = (effect: KitEffect, characterId: number): boolean =>
+  effect.kind === "buff" && effect.source === LIONS_FANG_FIELD_SOURCE && effect.characterId === characterId;
+
+// Each step while Dandelion Breeze's field stands, from six constellations, holds the cut on the active character while
+// She stands inside the field. A character who held it and is now outside, or no longer active, has left it, so her
+// Cut after leaving starts, and a character who enters again takes the cut from the field
+const createLionsFangStep =
+  (owner: Combatant) =>
+  (context: KitContext, field: KitField): void => {
+    if (owner.constellationCount < LIONS_FANG_CONSTELLATION) return;
+    const { activeCombatant, body, kitEffectState } = context;
+    const activeCharacterId = activeCombatant.characterId;
+    const isInside = checkIsInKitField(field, body.position);
+    const leavingCharacterIds = kitEffectState.effects.flatMap((effect) =>
+      effect.kind === "buff" &&
+      effect.source === LIONS_FANG_FIELD_SOURCE &&
+      (!isInside || effect.characterId !== activeCharacterId)
+        ? [effect.characterId]
+        : [],
+    );
+    for (const characterId of leavingCharacterIds) startLionsFangAfter(kitEffectState, characterId);
+    if (!isInside || kitEffectState.effects.some((effect) => checkIsLionsFangField(effect, activeCharacterId))) return;
+    removeKitEffects(kitEffectState, (effect) => checkIsLionsFangAfter(effect, activeCharacterId));
+    buffKitMember(kitEffectState, activeCharacterId, {
+      amount: LIONS_FANG_DAMAGE_REDUCTION,
+      attribute: Attribute.DamageReduction,
+      secondsRemaining: field.secondsRemaining,
+      source: LIONS_FANG_FIELD_SOURCE,
+    });
+  };
+
 export const JEAN_CHARACTER_ID = 10_000_003;
 
 // Jean's behaviour: each strike's hit carries Wind Companion's heal, rolling from Ascension 1. Gale Blade held a second or
 // More plays Spiraling Tempest's from one constellation, adding its DMG bonus to her Anemo DMG Bonus for the blast's
 // Animation, the hit it lands within. Dandelion Breeze casts its field where she stands, healing the character on it at
 // Its activation and each second after, and its entering and exiting damage, priced by her as she stood then
-// Constellation 6 needs the 35% incoming DMG cut inside the field and after leaving it, which the kit does not apply
+// From six constellations, the field cuts the incoming DMG of the character inside it by 35%, and for 3 strikes or 10 seconds
+// After she leaves it, as its step holds and counts it
 export const createJeanKitBehaviour = ({
   kit,
   readHits,
@@ -111,6 +185,7 @@ export const createJeanKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: fieldStartSeconds,
+          onStep: createLionsFangStep(combatant),
           onTick: createFieldTick(
             combatant,
             { centre: position, radius: fieldRadius },
@@ -130,6 +205,15 @@ export const createJeanKitBehaviour = ({
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => windCompanionStrike) })),
     // Constellation 2: Jean's pickup of a particle or orb gives the party Movement SPD and ATK SPD while she is on the field
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+      // Each strike on a member counts against the cut she holds after leaving the field, and ends it at its last
+      if (event.kind === KitEventKind.PartyMemberStruck) {
+        const status = findKitStatus(kitEffectState.effects, event.struckCharacterId, LIONS_FANG_AFTER_STATUS_ID);
+        if (status === undefined) return;
+        const stacks = (status.stacks ?? 0) - 1;
+        if (stacks > 0) status.stacks = stacks;
+        else removeKitEffects(kitEffectState, (effect) => checkIsLionsFangAfter(effect, event.struckCharacterId));
+        return;
+      }
       if (
         event.kind !== KitEventKind.EnergyParticleCollected ||
         combatant.constellationCount < PARTY_SPEED_CONSTELLATION ||
