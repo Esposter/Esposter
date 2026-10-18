@@ -196,7 +196,6 @@ export const useWorldDomains = ({
   // Whether a clear has raised the Petrified Tree the player has not claimed yet
   const isDomainTreeRaised = shallowRef(false);
   const domainClaimOffers = shallowRef<BlossomClaimOffer[]>();
-  const isDomainChallengeActive = computed(() => domainChallenge.value !== undefined);
   // The camp of the wave in play, which the enemies spawn while the challenge runs
   const domainCamps = computed(() => (domainChallenge.value ? [domainChallenge.value.camp] : []));
   const spawnWaveCamp = (arena: DomainArena, waveIndex: number) =>
@@ -463,7 +462,6 @@ export const useWorldDomains = ({
     domainEntrance,
     domainLevelRows,
     enterDomain,
-    isDomainChallengeActive,
     isDomainTreeRaised,
     leaveDomain,
     openDomain,
