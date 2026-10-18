@@ -18,3 +18,7 @@
 
 - [x] 4.1 Add the viewer verb that writes the address and the motion map, proves the connection, and extend teardown to remove them. Verify: tests named after the scenarios 'The viewer verb proves the connection with one bubble', 'The viewer verb reports a viewer that did not answer' and 'Teardown removes the viewer setup' written first and seen failing.
 - [x] 4.2 Leave a machine with no viewer exactly as it is today. Verify: a test named after the scenario 'A machine with no viewer is unchanged' written first and seen failing.
+
+## 5. Absent motion shape
+
+- [ ] 5.1 Store an unmapped moment as `""` rather than deleting its key with `undefined`, so the motion map is a full record of the two moments and reads by truthiness. The reader's defaults, the verb's empty map, `getViewerReaction`'s return type and the stored file format change in the same commit, and `ViewerConfiguration.ts`'s `Partial<Record<…>>` shape goes with them. Verify: a test named after the scenario this adds to the spec delta, written first and seen failing, with the stored file of the previous shape read and rewritten.
