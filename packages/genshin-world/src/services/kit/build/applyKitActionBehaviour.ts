@@ -11,7 +11,8 @@ export const applyKitActionBehaviour = (
   behaviour: KitActionBehaviour | undefined,
   path: string,
 ): KitAction => {
-  const { decideLength, hits = [], onStart } = behaviour ?? {};
+  const { checkIsStateEndingPress, decideLength, hits = [], onStart } = behaviour ?? {};
+  if (checkIsStateEndingPress) action.checkIsStateEndingPress = checkIsStateEndingPress;
   if (decideLength) action.decideLength = decideLength;
   if (hits.length > action.hits.length)
     throw new InvalidOperationError(Operation.Update, path, `its record holds ${action.hits.length} hits`);

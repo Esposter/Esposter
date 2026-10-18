@@ -8,6 +8,9 @@ import type { KitHit } from "#src/models/kit/KitHit";
 // Given the enemy the body turned to, if it turned to one
 export interface KitAction {
   hits: KitHit[];
+  // Asked as a press of the action starts, whether that press ends the state the kit holds. Such a press plays none of the
+  // Action's hits and sets no cooldown, as gcsim's press that leaves a state does
+  checkIsStateEndingPress?: (context: KitContext) => boolean;
   // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
   isAimed?: true;
   // Run as the action starts, played by the character on the field at the enemy it targets, if it targets one

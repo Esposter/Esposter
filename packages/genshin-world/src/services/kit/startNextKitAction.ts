@@ -59,6 +59,12 @@ export const startNextKitAction = (
   const isSkillReady = getSkillReadySeconds(kit, context.activeCombatant, partyMember.skillCooldownSeconds) <= 0;
   const isChaining = kitState.skillChainCount > 0;
   const isSkillTriggered = kit.elementalSkillHolds ? kitState.skillReleasedSeconds > 0 : isSkillPressed;
+  // A press that ends the state the skill holds starts it with none of its hits, off any cooldown, and ends a chain
+  if (isSkillTriggered && isSkillOrBurstState && kit.elementalSkill.checkIsStateEndingPress?.(context)) {
+    kitState.skillChainCount = 0;
+    kitState.skillChainSeconds = 0;
+    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits);
+  }
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
     if (isChaining) {
       const followUps = kit.elementalSkillChain?.followUps ?? [];
