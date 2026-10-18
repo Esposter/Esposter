@@ -10,6 +10,7 @@ import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -17,7 +18,9 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
+import { getReactionDamage } from "#src/services/combat/damage/getReactionDamage";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
+import { getStellarConductCoefficient } from "#src/services/combat/damage/getStellarConductCoefficient";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
@@ -27,7 +30,9 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
@@ -748,6 +753,93 @@ describe(strikeEnemy, () => {
     expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
       { ...combatant, isOnField: true },
       { combatant, element: Element.Dendro, enemy, reactionType: LunarReactionType.LunarBloom },
+      context,
+    );
+  });
+
+  test.each([
+    ["Stellar-Conduct", StellarReactionType.StellarConduct, getStellarConductCoefficient(3)],
+    ["Stellar Swirl", StellarReactionType.StellarSwirl, 1],
+  ])(
+    "prices a direct %s hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence",
+    (_title, stellarReactionType, coefficient) => {
+      expect.hasAssertions();
+
+      const ELEMENTAL_MASTERY = 400;
+      const BASE_DAMAGE_BONUS = 0.07;
+      const REACTION_BONUS = 0.18;
+      const enemy = createSturdyEnemy();
+      const combatant: Combatant = {
+        ...createCombatant(),
+        attributes: computeCharacterAttributes([
+          { attribute: Attribute.Attack, value: ATTACK },
+          { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
+          { attribute: Attribute.StellarGlimmerReactionDamageBonus, value: REACTION_BONUS },
+        ]),
+        kit: {
+          ...TRAVELER_KIT,
+          stellarJubilee: { getBaseDamageBonus: () => BASE_DAMAGE_BONUS, stellarReactionTypes: [] },
+        },
+      };
+      const hit: KitHit = {
+        element: Element.Cryo,
+        hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+        hitmarkSeconds: 0,
+        poiseDamage: 0,
+        stellarReactionType,
+        talentMultiplier: 2,
+      };
+      const damage =
+        getReactionDamage(coefficient, 2 * ATTACK, ELEMENTAL_MASTERY, BASE_DAMAGE_BONUS, REACTION_BONUS) *
+        getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Cryo));
+      const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+      addKitStatus(context.kitEffectState, CHARACTER_ID, {
+        id: RADIANCE_STELLAR_CONDUCT_STATUS_ID,
+        secondsRemaining: 4,
+        stacks: 3,
+      });
+
+      strikeEnemy(enemy, hit, combatant, context);
+
+      expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+    },
+  );
+
+  test("a direct Stellar-Conduct hit takes the party reaction bonuses Stellar-Conduct takes, and its Elevation last", () => {
+    expect.hasAssertions();
+
+    const PARTY_DAMAGE_BONUS = 0.2;
+    const PARTY_CRITICAL_DAMAGE_BONUS = 0.5;
+    const ELEVATION_BONUS = 0.15;
+    const enemy = createSturdyEnemy();
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({
+      criticalDamageBonus: PARTY_CRITICAL_DAMAGE_BONUS,
+      criticalRateBonus: 1,
+      damageBonus: PARTY_DAMAGE_BONUS,
+      elevationBonus: ELEVATION_BONUS,
+    }));
+    const combatant: Combatant = { ...createCombatant(), kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
+    const hit: KitHit = {
+      element: Element.Electro,
+      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+      hitmarkSeconds: 0,
+      poiseDamage: 0,
+      stellarReactionType: StellarReactionType.StellarConduct,
+      talentMultiplier: 2,
+    };
+    const damage =
+      getReactionDamage(1, 2 * ATTACK, 0, 0, PARTY_DAMAGE_BONUS) *
+      getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Electro)) *
+      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS) *
+      (1 + ELEVATION_BONUS);
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
+
+    strikeEnemy(enemy, hit, combatant, context);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
+      { ...combatant, isOnField: true },
+      { combatant, element: Element.Electro, enemy, reactionType: StellarReactionType.StellarConduct },
       context,
     );
   });
