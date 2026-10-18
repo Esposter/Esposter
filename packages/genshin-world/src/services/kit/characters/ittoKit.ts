@@ -14,6 +14,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
@@ -141,9 +142,10 @@ export const createIttoKitBehaviour = ({
     // Converted, with the burst's Normal ATK SPD, for its seconds from the cast or until he leaves the field, as gcsim's
     // Exit deletes the burst's ATK and ATK SPD
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         buffKitMember(kitEffectState, combatant.characterId, {
-          amount: royalDescentDefenseShare * combatant.attributes.defense,
+          amount:
+            royalDescentDefenseShare * getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           attribute: Attribute.Attack,
           isEndedOnSwap: true,
           secondsRemaining: royalDescentSeconds,

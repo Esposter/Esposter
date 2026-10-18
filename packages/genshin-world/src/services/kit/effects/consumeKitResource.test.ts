@@ -51,4 +51,28 @@ describe(consumeKitResource, () => {
     expect(status?.secondsRemaining).toBe(16);
     expect(status?.stacks).toBe(7);
   });
+
+  test("keeps the swap end and the Nightsoul rate of a status when a stack is spent", () => {
+    expect.hasAssertions();
+
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, CHARACTER_ID, {
+      id: RESOURCE_ID,
+      isEndedOnSwap: true,
+      nightsoulRate: { maximum: 90, perSecond: -1 },
+      secondsRemaining: 16,
+      stacks: 8,
+    });
+
+    expect(consumeKitResource(kitEffectState, CHARACTER_ID, RESOURCE_ID, 1)).toBe(true);
+    expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, RESOURCE_ID)).toStrictEqual({
+      characterId: CHARACTER_ID,
+      id: RESOURCE_ID,
+      isEndedOnSwap: true,
+      kind: "status",
+      nightsoulRate: { maximum: 90, perSecond: -1 },
+      secondsRemaining: 16,
+      stacks: 7,
+    });
+  });
 });
