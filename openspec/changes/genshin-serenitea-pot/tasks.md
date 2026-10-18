@@ -1,7 +1,7 @@
 ## 1. Realm entry
 
 - [x] 1.1 Open the realm from the pot at Adventure Rank 28 and not below. Verify: a test named after the scenario 'The pot opens the realm at Adventure Rank 28', written first and seen failing, with 'The pot does not open the realm below Adventure Rank 28' beside it.
-- [ ] 1.2 Leave the realm by the gadget or a teleport, returning to where the player went in. Verify: a test named after the scenario 'The gadget leaves the realm where the player went in'.
+- [x] 1.2 Leave the realm by the gadget or a teleport, returning to where the player went in. Verify: a test named after the scenario 'The gadget leaves the realm where the player went in'.
 
 ## 2. Companions
 
