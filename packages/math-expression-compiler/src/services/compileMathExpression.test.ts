@@ -182,7 +182,7 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
   });
 
-  test.each([["A function reads two lists"]])("%s", (_title) => {
+  test("a function reads two lists", () => {
     expect.hasAssertions();
 
     expect(evaluateFormula("dot([1, 2], [3, 4])")).toBe(11);

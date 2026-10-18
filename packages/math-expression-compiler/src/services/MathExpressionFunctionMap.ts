@@ -30,18 +30,14 @@ import { computeQuantile } from "#src/services/computeQuantile";
 import { computeSum } from "#src/services/computeSum";
 import { computeVectorNorm } from "#src/services/computeVectorNorm";
 import { computeZeta } from "#src/services/computeZeta";
+import { MAXIMUM_DIGITS, MAXIMUM_STIRLING_WORK, MILLER_RABIN_BASES } from "#src/services/constants";
 import { shiftDecimalPlaces } from "#src/services/shiftDecimalPlaces";
 import { toNumber } from "#src/services/toNumber";
-
-// A function of the table is keyed by its mathjs name, and is the signatures it takes: each one's parameter kinds, its
-// Arities and its computation. A computation yields null where mathjs would throw, which the evaluation turns into an error
-const MAXIMUM_DIGITS = 15;
 
 // A computation of numbers takes them as one array, never spread into arguments, so a list of any length is read
 type NumberCompute = (values: readonly number[]) => null | number;
 
 const countTruthy = (values: readonly number[]): number => values.filter((value) => checkIsTruthy(value)).length;
-
 // The numbers a call's values hold, where a list of numbers stands for its numbers
 const toNumbers = (values: readonly MathExpressionValue[]): number[] => values.flat();
 const signature = (
@@ -74,7 +70,6 @@ const orderedListSignatures = (
   signature([MathExpressionParameterType.List, MathExpressionParameterType.Number], 2, 2, ofListPair(compute)),
   listPairSignature(compute),
 ];
-
 // A function of one argument takes only a list of one number, the list form every such function of mathjs's takes
 const singletonListSignature = (compute: (value: number) => null | number): MathExpressionSignature =>
   listSignature((values) => (values.length === 1 ? compute(values[0] ?? Number.NaN) : null));
@@ -110,8 +105,9 @@ const withNumberThenList =
   (compute: (value: number, list: number[]) => null | number): MathExpressionSignature["compute"] =>
   (values) =>
     compute(toNumbers(values.slice(0, 1))[0] ?? Number.NaN, toNumbers(values.slice(1)));
-// A bitwise function folds its operands left to right. An operand that decides the result, zero for and and minus one for
-// Or, ends the fold without the operands after it being read, and an operand that is not an integer is an error
+// A bitwise function folds its operands left to right. An operand that decides the result ends the fold early.
+// The operands after it are never read. Zero decides an and, and minus one decides an or.
+// An operand that is not an integer is an error
 const bitwiseFold =
   (absorbing: number, compute: (left: number, right: number) => number): NumberCompute =>
   (values) => {
@@ -177,9 +173,6 @@ const computeBellNumber = (index: number): null | number => {
   }
   return row[0] ?? Number.NaN;
 };
-// The work of a Stirling number is its count times the narrower of its band, the parts or the count less the parts, so a
-// Number past this work is an error rather than a long loop
-const MAXIMUM_STIRLING_WORK = 4_000_000;
 // The column of parts, for a few parts: S(m, r) = r S(m - 1, r) + S(m - 1, r - 1), updated in place from the highest part down
 const computeStirlingColumn = (count: number, parts: number): number => {
   const column: number[] = Array.from({ length: parts + 1 }, (_element, index) => (index === 0 ? 1 : 0));
@@ -234,8 +227,6 @@ const computeIntegerGreatestCommonDivisor = (values: readonly number[]): null | 
   if (!values.every((value) => Number.isInteger(value))) return null;
   return values.reduce((total, value) => computeGreatestCommonDivisor(total, value), 0);
 };
-// The bases under which Miller-Rabin is exact for every integer below 3.3e24, so for the safe integers it is deterministic
-const MILLER_RABIN_BASES: readonly bigint[] = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n];
 
 const computeModularPower = (base: bigint, exponent: bigint, modulus: bigint): bigint => {
   let result = 1n;
@@ -248,9 +239,8 @@ const computeModularPower = (base: bigint, exponent: bigint, modulus: bigint): b
   }
   return result;
 };
-
-// Whether a window of Miller-Rabin rounds passes for one base: the power is one or minus one, or it reaches minus one by
-// Squaring while the power of two below the number's own factor allows
+// Whether a window of Miller-Rabin rounds passes for one base: the power is one or minus one, or squaring it reaches minus one.
+// The squaring runs only while the power of two below the number's own factor allows
 const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: bigint, twos: number): boolean => {
   const minusOne = candidate - 1n;
   let power = computeModularPower(base, oddPart, candidate);
@@ -261,10 +251,9 @@ const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: big
   }
   return false;
 };
-
 // Whether an integer is prime, by Miller-Rabin over fixed bases, which never trial-divides.
 // Past the safe integers every number is even, so composite, and the test runs only on the safe ones
-const computeIsPrime = (value: number): boolean => {
+const checkIsPrime = (value: number): boolean => {
   if (!Number.isInteger(value) || value < 2 || value > Number.MAX_SAFE_INTEGER) return false;
 
   const candidate = BigInt(value);
@@ -300,7 +289,9 @@ const computeNorm = (values: readonly number[]): null | number => {
   if (values.length === 1) return Math.abs(values[0] ?? Number.NaN);
   return Math.sqrt(computeSum(values.map((value) => value * value)));
 };
-
+// A function of the table is keyed by its mathjs name, and is the signatures it takes.
+// Each signature gives its parameter kinds, its arities and its computation.
+// A computation yields null where mathjs would throw, which the evaluation turns into an error
 export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]> = {
   abs: unary(Math.abs),
   acos: unary(Math.acos),
@@ -405,7 +396,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   isNaN: unary((value) => toNumber(Number.isNaN(value))),
   isNegative: unary((value) => toNumber(value < 0)),
   isPositive: unary((value) => toNumber(value > 0)),
-  isPrime: unary((value) => toNumber(computeIsPrime(value))),
+  isPrime: unary((value) => toNumber(checkIsPrime(value))),
   isZero: unary((value) => toNumber(value === 0)),
   kldivergence: [listPairSignature(computeKullbackLeibler)],
   larger: binary((left, right) => toNumber(checkIsLarger(left, right))),

@@ -10,7 +10,9 @@ import { MathExpressionParameterType } from "#src/models/MathExpressionParameter
 import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
 import { computeNumberLiteral } from "#src/services/computeNumberLiteral";
 import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
-import { failMathExpression, failMathExpressionAt, getMathExpressionColumn } from "#src/services/failMathExpression";
+import { failMathExpression } from "#src/services/failMathExpression";
+import { failMathExpressionAt } from "#src/services/failMathExpressionAt";
+import { getMathExpressionColumn } from "#src/services/getMathExpressionColumn";
 import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
 import { getMathExpressionSignatures } from "#src/services/getMathExpressionSignatures";
 import { getMathExpressionToken } from "#src/services/getMathExpressionToken";

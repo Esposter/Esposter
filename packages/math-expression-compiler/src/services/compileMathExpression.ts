@@ -1,10 +1,17 @@
+import type { MathExpressionCompileContext } from "#src/models/MathExpressionCompileContext";
+import type { MathExpressionCompiled } from "#src/models/MathExpressionCompiled";
+import type { MathExpressionCompiledArgument } from "#src/models/MathExpressionCompiledArgument";
+import type { MathExpressionEvaluator } from "#src/models/MathExpressionEvaluator";
 import type { MathExpressionNode } from "#src/models/MathExpressionNode";
+import type { MathExpressionOuterBinding } from "#src/models/MathExpressionOuterBinding";
+import type { MathExpressionResult } from "#src/models/MathExpressionResult";
 import type { MathExpressionSignature } from "#src/models/MathExpressionSignature";
 import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
+import { NO_LOCALS, NO_VALUES } from "#src/services/constants";
 import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
 import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
 import { getMathExpressionSignatures } from "#src/services/getMathExpressionSignatures";
@@ -13,31 +20,9 @@ import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantM
 import { toNumber } from "#src/services/toNumber";
 import { exhaustiveGuard } from "@esposter/shared";
 
-interface CompileContext {
-  assignedSlots: ReadonlyMap<string, number>;
-  variableIndices: ReadonlyMap<string, number>;
-}
-interface Compiled {
-  evaluate: Evaluator;
-  isConstant: boolean;
-}
-// An argument is a number, or the numbers of a list, so its evaluator yields either, or null where the argument is an error
-interface CompiledArgument {
-  evaluate: (values: readonly number[], locals: Result[]) => MathExpressionValue | null;
-  isConstant: boolean;
-}
-type Evaluator = (values: readonly number[], locals: Result[]) => Result;
-// An evaluator yields null where mathjs would throw, which is an error that the whole formula takes, and NaN where mathjs
-// Yields NaN as a value, which a comparison or a condition reads as mathjs does. The public function makes an error NaN
-type Result = null | number;
-
-const NO_VALUES: readonly number[] = [];
-const NO_LOCALS: Result[] = [];
-
 // An operator's function takes one signature, the first of its table entry, which a call matches by its arguments
 const getCompute = (name: string): MathExpressionSignature["compute"] =>
   getMathExpressionSignatures(name)?.[0]?.compute ?? (() => null);
-
 // A percentage expression is a percentage, or a sum or difference of percentage expressions
 const checkIsPercentageExpression = (node: MathExpressionNode): boolean => {
   if (node.type === MathExpressionNodeType.Percentage) return true;
@@ -54,26 +39,29 @@ const collectAssignedNames = (node: MathExpressionNode, names: Set<string>): voi
 const getConstantValue = (name: string): number | undefined =>
   Object.hasOwn(MathExpressionConstantMap, name) ? MathExpressionConstantMap[name] : undefined;
 
-const compileName = (name: string, context: CompileContext): Compiled => {
+const compileName = (name: string, context: MathExpressionCompileContext): MathExpressionCompiled => {
   // An assigned name reads the slot, which starts at its outer value, so it reads that until its assignment runs
   const slot = context.assignedSlots.get(name);
   if (slot !== undefined) return { evaluate: (_values, locals) => locals[slot] ?? null, isConstant: false };
 
   const index = context.variableIndices.get(name);
   if (index !== undefined) return { evaluate: (values) => values[index] ?? Number.NaN, isConstant: false };
-
   // A name that is neither a variable, an assignment nor a constant is an error, not a value
   const constant = getConstantValue(name);
   return { evaluate: () => constant ?? null, isConstant: true };
 };
 
-const compileComparison = (names: string[], operands: MathExpressionNode[], context: CompileContext): Compiled => {
+const compileComparison = (
+  names: string[],
+  operands: MathExpressionNode[],
+  context: MathExpressionCompileContext,
+): MathExpressionCompiled => {
   const compiledOperands = operands.map((operand) => compileNode(operand, context));
   const computes = names.map((name) => getCompute(name));
   // A chain holds only while each pair does, and a pair past the first false one is never read
-  const evaluate: Evaluator = (values, locals) => {
+  const evaluate: MathExpressionEvaluator = (values, locals) => {
     let left = compiledOperands[0]?.evaluate(values, locals) ?? null;
-    let result: Result = 1;
+    let result: MathExpressionResult = 1;
     for (const [index, compute] of computes.entries()) {
       const right = compiledOperands[index + 1]?.evaluate(values, locals) ?? null;
       if (left === null || right === null) return null;
@@ -85,7 +73,6 @@ const compileComparison = (names: string[], operands: MathExpressionNode[], cont
   };
   return { evaluate, isConstant: compiledOperands.every((operand) => operand.isConstant) };
 };
-
 // The left operands that decide a bitwise and or or: zero for and, and minus one for or
 const BITWISE_ABSORPTIONS: Readonly<Record<string, { absorbs: number; result: number }>> = {
   bitAnd: { absorbs: 0, result: 0 },
@@ -96,15 +83,15 @@ const compileBinary = (
   name: string,
   left: MathExpressionNode,
   right: MathExpressionNode,
-  context: CompileContext,
-): Compiled => {
+  context: MathExpressionCompileContext,
+): MathExpressionCompiled => {
   const compiledLeft = compileNode(left, context);
   // X + y% is x + x * y / 100, unless x is a percentage expression, where the right side adds as a plain value
   const isAdditive = name === "add" || name === "subtract";
   if (isAdditive && right.type === MathExpressionNodeType.Percentage && !checkIsPercentageExpression(left)) {
     const compiledPercent = compileNode(right.operand, context);
     const sign = name === "add" ? 1 : -1;
-    const evaluate: Evaluator = (values, locals) => {
+    const evaluate: MathExpressionEvaluator = (values, locals) => {
       const base = compiledLeft.evaluate(values, locals);
       const percent = compiledPercent.evaluate(values, locals);
       if (base === null || percent === null) return null;
@@ -117,7 +104,7 @@ const compileBinary = (
   const compute = getCompute(name);
   const absorption = BITWISE_ABSORPTIONS[name];
   // A left operand that decides a bitwise operation answers it, and the right operand is never read, as in mathjs
-  const evaluate: Evaluator = (values, locals) => {
+  const evaluate: MathExpressionEvaluator = (values, locals) => {
     const leftValue = compiledLeft.evaluate(values, locals);
     if (leftValue === null) return null;
     if (absorption?.absorbs === leftValue) return absorption.result;
@@ -133,8 +120,8 @@ const compileLogical = (
   operator: MathExpressionLogicalOperator,
   left: MathExpressionNode,
   right: MathExpressionNode,
-  context: CompileContext,
-): Compiled => {
+  context: MathExpressionCompileContext,
+): MathExpressionCompiled => {
   const compiledLeft = compileNode(left, context);
   const compiledRight = compileNode(right, context);
   const isConstant = compiledLeft.isConstant && compiledRight.isConstant;
@@ -175,13 +162,13 @@ const compileConditional = (
   condition: MathExpressionNode,
   whenTrue: MathExpressionNode,
   whenFalse: MathExpressionNode,
-  context: CompileContext,
-): Compiled => {
+  context: MathExpressionCompileContext,
+): MathExpressionCompiled => {
   const compiledCondition = compileNode(condition, context);
   const compiledWhenTrue = compileNode(whenTrue, context);
   const compiledWhenFalse = compileNode(whenFalse, context);
   // Only the chosen branch is evaluated, and a condition that is NaN is false, as in mathjs
-  const evaluate: Evaluator = (values, locals) => {
+  const evaluate: MathExpressionEvaluator = (values, locals) => {
     const test = compiledCondition.evaluate(values, locals);
     if (test === null) return null;
     return checkIsTruthy(test) ? compiledWhenTrue.evaluate(values, locals) : compiledWhenFalse.evaluate(values, locals);
@@ -191,9 +178,11 @@ const compileConditional = (
     isConstant: compiledCondition.isConstant && compiledWhenTrue.isConstant && compiledWhenFalse.isConstant,
   };
 };
-
 // A list argument yields the numbers of its elements, and any element that is an error makes the list one
-const compileList = (elements: MathExpressionNode[], context: CompileContext): CompiledArgument => {
+const compileList = (
+  elements: MathExpressionNode[],
+  context: MathExpressionCompileContext,
+): MathExpressionCompiledArgument => {
   const compiledElements = elements.map((element) => compileNode(element, context));
   return {
     evaluate: (values, locals) => {
@@ -209,16 +198,21 @@ const compileList = (elements: MathExpressionNode[], context: CompileContext): C
   };
 };
 
-const compileArgument = (node: MathExpressionNode, context: CompileContext): CompiledArgument => {
+const compileArgument = (
+  node: MathExpressionNode,
+  context: MathExpressionCompileContext,
+): MathExpressionCompiledArgument => {
   if (node.type === MathExpressionNodeType.List) return compileList(node.elements, context);
 
-  const compiled = compileNode(node, context);
-  return { evaluate: compiled.evaluate, isConstant: compiled.isConstant };
+  return compileNode(node, context);
 };
-
 // A call of one or two arguments hands its values straight to its function, and a longer call gathers them in a loop.
 // The signature a call takes is the one its argument kinds match, the same one the parser checked it against
-const compileCall = (name: string, argumentNodes: MathExpressionNode[], context: CompileContext): Compiled => {
+const compileCall = (
+  name: string,
+  argumentNodes: MathExpressionNode[],
+  context: MathExpressionCompileContext,
+): MathExpressionCompiled => {
   const signatures = getMathExpressionSignatures(name);
   const parameterTypes = argumentNodes.map((argument) => getMathExpressionParameterType(argument));
   const compute = matchMathExpressionSignature(signatures ?? [], parameterTypes)?.compute ?? (() => null);
@@ -259,7 +253,7 @@ const compileCall = (name: string, argumentNodes: MathExpressionNode[], context:
   };
 };
 
-const compileUnfolded = (node: MathExpressionNode, context: CompileContext): Compiled => {
+const compileUnfolded = (node: MathExpressionNode, context: MathExpressionCompileContext): MathExpressionCompiled => {
   switch (node.type) {
     case MathExpressionNodeType.Assignment: {
       const slot = context.assignedSlots.get(node.name) ?? 0;
@@ -319,9 +313,8 @@ const compileUnfolded = (node: MathExpressionNode, context: CompileContext): Com
       return exhaustiveGuard(node);
   }
 };
-
 // A subtree that reads no variable and no assignment is computed once, here, and an error it folds to is kept as an error
-const compileNode = (node: MathExpressionNode, context: CompileContext): Compiled => {
+const compileNode = (node: MathExpressionNode, context: MathExpressionCompileContext): MathExpressionCompiled => {
   const compiled = compileUnfolded(node, context);
   if (!compiled.isConstant) return compiled;
 
@@ -329,19 +322,12 @@ const compileNode = (node: MathExpressionNode, context: CompileContext): Compile
   return { evaluate: () => value, isConstant: true };
 };
 
-// The value an assigned name holds before its assignment runs: the variable of that name, else the constant, else nothing
-interface OuterBinding {
-  constant?: number;
-  variableIndex?: number;
-}
-
-const readOuterValue = (outer: OuterBinding, values: readonly number[]): Result => {
+const readOuterValue = (outer: MathExpressionOuterBinding, values: readonly number[]): MathExpressionResult => {
   if (outer.variableIndex !== undefined) return values[outer.variableIndex] ?? Number.NaN;
   return outer.constant ?? null;
 };
-
-// Compiles a parsed formula into a function of the values of the variables named by `variableNames`, in that order. A name
-// The formula reads that is neither a variable, an assignment nor a constant is an error, which the function yields as NaN.
+// Compiles a parsed formula into a function of the values of the variables named by `variableNames`, in that order.
+// A name the formula reads that is neither a variable, an assignment nor a constant is an error, which the function yields as NaN.
 // Each call starts every assigned name at its outer value, as mathjs reads it until the assignment runs
 export const compileMathExpression = (
   node: MathExpressionNode,
@@ -352,7 +338,7 @@ export const compileMathExpression = (
   const assignedSlots = new Map(Array.from(assignedNames, (name, slot): [string, number] => [name, slot]));
   const variableIndices = new Map(variableNames.map((name, index): [string, number] => [name, index]));
   const compiled = compileNode(node, { assignedSlots, variableIndices });
-  const outerBindings: OuterBinding[] = Array.from(assignedNames, (name) => ({
+  const outerBindings: MathExpressionOuterBinding[] = Array.from(assignedNames, (name) => ({
     constant: getConstantValue(name),
     variableIndex: variableIndices.get(name),
   }));
