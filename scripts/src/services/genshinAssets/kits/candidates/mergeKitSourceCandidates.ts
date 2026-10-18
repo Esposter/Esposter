@@ -1,6 +1,6 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
-import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 
 // The source candidates each path's default is chosen from, in the order its field is known by. A field the game's
 // Tables hold, its multipliers, stamina, cooldowns, energy and counts, takes the tables first: the dump is the latest
@@ -14,12 +14,15 @@ export const mergeKitSourceCandidates = ({
   tableCandidateMap: ReadonlyMap<string, KitCandidate[]>;
   wikiCandidateMap: ReadonlyMap<string, KitCandidate[]>;
 }): Map<string, KitCandidate[]> => {
-  const gcsimFirstMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap, wikiCandidateMap);
-  const tableFirstMap = mergeKitCandidates(tableCandidateMap, gcsimCandidateMap, wikiCandidateMap);
-  return new Map(
-    [...gcsimFirstMap].map(([path, candidates]) => [
-      path,
-      tableCandidateMap.has(path) ? (tableFirstMap.get(path) ?? candidates) : candidates,
-    ]),
+  // Keyed in gcsim's order, then the tables' and the wiki's, and each path takes the tables first. A path only gcsim or
+  // The wiki gives has no table candidate to take first, so its gcsim then wiki order is the same either way
+  const mergedMap = new Map(
+    [...gcsimCandidateMap.keys(), ...tableCandidateMap.keys(), ...wikiCandidateMap.keys()].map(
+      (path): [string, KitCandidate[]] => [path, []],
+    ),
   );
+  for (const candidateMap of [tableCandidateMap, gcsimCandidateMap, wikiCandidateMap])
+    for (const [path, candidates] of candidateMap)
+      for (const candidate of candidates) addKitCandidate(mergedMap, path, candidate);
+  return mergedMap;
 };
