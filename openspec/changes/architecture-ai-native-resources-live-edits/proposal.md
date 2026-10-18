@@ -23,7 +23,7 @@ Every open resource adopts another device's save, and an unsaved edit is present
 
 ## Waiting on
 
-None.
+The client half of the work is waiting on a typecheck run the building session cannot make locally. Keep mine also needs a decision the spec does not name: the resource store holds no content reference, so re-saving the local document requires a content-store hook, to be named in this change's design. Both are recorded in `tasks.md`.
 
 ## Impact
 

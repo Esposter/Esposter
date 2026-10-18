@@ -826,9 +826,7 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    let saveEvent:
-      | undefined
-      | { content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
+    let saveEvent: undefined | { contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });
@@ -843,7 +841,6 @@ describe("resourceRouter", () => {
 
     expect(saveEvent.id).toBe(webpageResource.id);
     expect(saveEvent.contentVersion).toBe(restoredResource.contentVersion);
-    expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
     expect(
       items
         .map(({ activityType }) => activityType)

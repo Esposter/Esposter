@@ -3,6 +3,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { getRouteParam } from "@/util/router/getRouteParam";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // Saves from other devices stream in over onSaveResourceContent, so the item table and calendar
 // Stay live without any polling or manual refresh
@@ -21,11 +22,12 @@ export const useTodoListSubscribables = () => {
         $trpc.todoList.onSaveResourceContent.subscribe(
           { id },
           {
-            onData: ({ content, contentVersion }) => {
-              // The wire shape is the schema's plain data; the store treats it as its content type,
-              // Mirroring how loadContent adopts readContent's payload
-              storeSaveResourceContent(content as TodoListResource, contentVersion);
-            },
+            // The stream names the new version only, so the saved content is re-read and adopted with it
+            onData: ({ contentVersion }) =>
+              getResultAsync(() => $trpc.todoList.readResourceContent.query({ id })).match(
+                (content) => storeSaveResourceContent(content as TodoListResource, contentVersion),
+                console.error,
+              ),
           },
         ),
       );

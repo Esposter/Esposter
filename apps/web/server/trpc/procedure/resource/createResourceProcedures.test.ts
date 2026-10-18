@@ -184,7 +184,7 @@ describe(createResourceProcedures, () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
 
-  test("emits saved content to other devices", async () => {
+  test("emits the saved version and writing device to other devices, not the content", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
@@ -197,11 +197,11 @@ describe(createResourceProcedures, () => {
       () => dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
     );
 
-    expect(data.id).toBe(newResource.id);
-    expect(data.contentVersion).toBe(1);
-    // The emitted content is the schema-parsed input, which materialises optional keys as
-    // Undefined — serialising both sides compares what a client actually receives over the wire
-    expect(jsonDateParse(JSON.stringify(data.content))).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
+    expect(data).toStrictEqual({
+      contentVersion: 1,
+      device: { sessionId: expect.any(String), userId: expect.any(String) },
+      id: newResource.id,
+    });
   });
 
   test("fails save content with old content version", async () => {

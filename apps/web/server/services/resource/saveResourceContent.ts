@@ -202,7 +202,7 @@ export const saveResourceContent = async (
     });
 
   resourceEventEmitter.emit("saveResourceContent", [
-    { content: parsedContent, contentVersion: savedResource.contentVersion, id },
+    { contentVersion: savedResource.contentVersion, id },
     getDevice(ctx.getSessionPayload),
   ]);
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on

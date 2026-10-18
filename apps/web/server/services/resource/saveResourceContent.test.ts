@@ -215,9 +215,7 @@ describe(saveResourceContent, () => {
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
     expect.hasAssertions();
 
-    let saveEvent:
-      | undefined
-      | { content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
+    let saveEvent: undefined | { contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });
@@ -233,11 +231,9 @@ describe(saveResourceContent, () => {
 
     expect(savedResource.contentVersion).toBe(resource.contentVersion + 1);
     expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(content)));
-    expect(saveEvent.id).toBe(resource.id);
-    // The event carries the version the update returned, so a subscriber's next save is not rejected as stale
-    expect(saveEvent.contentVersion).toBe(savedResource.contentVersion);
-    // The event carries what was written, which is the parsed content — the same shape every reader gets back
-    expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(content)));
+    // The event carries the version the update returned, so a subscriber's next save is not rejected as stale, and
+    // Names the resource alone: the content is re-read by whoever hears it
+    expect(saveEvent).toStrictEqual({ contentVersion: savedResource.contentVersion, id: resource.id });
     expect(readActivityTypes()).toStrictEqual([ResourceActivityType.ContentSaved]);
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
   });

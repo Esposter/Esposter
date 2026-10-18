@@ -4,9 +4,10 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { EventEmitter } from "node:events";
 
 interface ResourceEvents {
-  // Content is untyped here — the per-type factory pins it back to that type's content schema
+  // The content itself is not carried: a subscriber re-reads it through the type's own read, so a large document
+  // Crosses by the same path as any read rather than over the socket
   saveResourceContent: [
-    [{ content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] }, Device],
+    [{ contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] }, Device],
   ];
 }
 

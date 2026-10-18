@@ -1,6 +1,7 @@
 import type { Transaction } from "#server/models/db/Transaction";
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
+import type { Device } from "#shared/models/auth/Device";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
@@ -178,19 +179,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
         ),
     ),
     // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
-    // View of this resource live
+    // View of this resource live. It names the new version and the writing device, never the content: a subscriber
+    // Re-reads the content through readResourceContent, so a large document crosses the way any read does
     onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
       ctx,
       input: { id },
       signal,
     }): AsyncGenerator<{
-      content: ResourceContent<TType>;
       contentVersion: ResourceInResource["contentVersion"];
+      device: Device;
       id: ResourceInResource["id"];
     }> {
       for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
-        if (data.id === id && !checkIsSameDevice(device, ctx.getSessionPayload))
-          yield { ...data, content: data.content as ResourceContent<TType> };
+        if (data.id === id && !checkIsSameDevice(device, ctx.getSessionPayload)) yield { ...data, device };
     }),
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(
       ({ input: { id } }) => readContent(id),
