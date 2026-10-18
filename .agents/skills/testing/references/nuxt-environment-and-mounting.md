@@ -9,11 +9,7 @@ The mount helper overrides the app's global `RouterLink` with its own component 
 ```ts
 import { RouterLink } from "vue-router";
 
-await mountSuspended(Foo, {
-  global: { components: { RouterLink } },
-  props,
-  route: "openspec/specs/architecture/README.md",
-});
+await mountSuspended(Foo, { global: { components: { RouterLink } }, props, route: "/" });
 ```
 
 The `route` option resolves against the app's real routes, so route matching (params, catch-alls) behaves exactly as it does in the browser.
