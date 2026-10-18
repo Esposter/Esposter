@@ -3,7 +3,6 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "the other regions' Seelie courts, which the official map's label 147 marks only in Mondstadt and the Seelie page gives only as counts"
 x-touches:
   [
     "scripts/src/services/genshinAssets/puzzles/**",

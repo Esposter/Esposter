@@ -9,17 +9,16 @@ import { GameDataset, OculusKind } from "genshin-world";
 // Each region's Oculi as one slice of the oculi dataset, from the official map's points and the fit. The notes count
 // Each region's Oculi and what was left out, then each region whose count differs from the wiki's; a match reports
 // Nothing
-export const buildOculusPlaces = async (): Promise<GameDataBuild> => {
-  const { notes, objects } = await buildFittedMapPointSlices(
+export const buildOculusPlaces = (): Promise<GameDataBuild> =>
+  buildFittedMapPointSlices(
     GameDataset.Oculi,
     new Map(Object.values(OculusKind).map((kind) => [OculusKindLabelIdMap[kind], kind])),
     "oculus",
     "Oculi",
+    (regionPlaces) => regionPlaces,
+    (places) =>
+      Object.entries(InteractiveMapRegionMap).flatMap(([region, { oculus }]) => {
+        const note = reportKindCount(region, "Oculi", places[region]?.length ?? 0, oculus.count);
+        return note ? [note] : [];
+      }),
   );
-  const countNotes = Object.entries(InteractiveMapRegionMap).flatMap(([region, { oculus }]) => {
-    const places = objects[`${GameDataset.Oculi}/${region}`];
-    const note = reportKindCount(region, "Oculi", Array.isArray(places) ? places.length : 0, oculus.count);
-    return note ? [note] : [];
-  });
-  return { notes: [...notes, ...countNotes], objects };
-};
