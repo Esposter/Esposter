@@ -43,7 +43,7 @@ const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatan
   level: 90,
 });
 
-// Strikes one enemy with a hit, aimed at it through the target, and returns the kinds of the events the team's kits saw
+// Strikes one enemy with a hit, aimed at it through the target
 const strikeWithHit = (
   hit: KitHit,
   enemy: ReturnType<typeof createEnemy>,
