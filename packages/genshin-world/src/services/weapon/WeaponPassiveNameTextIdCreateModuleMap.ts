@@ -23,6 +23,7 @@ import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/pas
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
+import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
@@ -258,4 +259,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "369700907": createBenthicPulsePassiveModule,
   // Tip of the Spear (Rightful Reward)
   "2803637475": createTipOfTheSpearPassiveModule,
+  // Fall Into Place (Master Key)
+  "706623635": createFallIntoPlacePassiveModule,
 };
