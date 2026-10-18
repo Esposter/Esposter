@@ -18,6 +18,8 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
   return {
     openedChestIds,
     ...useWorldChests({
+      artifactMainAffixPools: [],
+      artifactRarityDataMap: new Map(),
       events: createWorldEvents(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       gameDataBaseUrl: "",

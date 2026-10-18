@@ -1,5 +1,8 @@
+import type { Artifact } from "#src/models/artifact/Artifact";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { ItemCategory } from "genshin-interface";
@@ -45,6 +48,56 @@ describe(toInventorySave, () => {
 
     expect(() => toInventorySave(inventory)).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: toInventorySave, weapon 0 without its state]`,
+    );
+  });
+
+  test("saves an artifact as the artifact it was rolled as", () => {
+    expect.hasAssertions();
+
+    const artifactDefinition = {
+      category: ItemCategory.Artifact,
+      id: 60_110,
+      name: "",
+      rank: 0,
+      rarity: 1,
+      stackLimit: 1,
+    };
+    const artifact: Artifact = {
+      experience: 0,
+      isLocked: false,
+      level: 0,
+      mainAffix: Attribute.Health,
+      minorAffixes: [{ attribute: Attribute.Attack, value: 10 }],
+      rarity: 1,
+      setId: 10_010,
+      slot: ArtifactSlot.FlowerOfLife,
+    };
+    const inventory: Inventory = {
+      items: [{ artifact, definition: artifactDefinition, id: 2, quantity: 1 }],
+      nextId: 3,
+    };
+
+    expect(toInventorySave(inventory)).toStrictEqual({
+      items: [{ artifact, id: 2, itemId: 60_110, kind: InventoryItemKind.Artifact, quantity: 1 }],
+      nextId: 3,
+    });
+  });
+
+  test("refuses an artifact that holds no artifact", () => {
+    expect.hasAssertions();
+
+    const artifactDefinition = {
+      category: ItemCategory.Artifact,
+      id: 60_110,
+      name: "",
+      rank: 0,
+      rarity: 1,
+      stackLimit: 1,
+    };
+    const inventory: Inventory = { items: [{ definition: artifactDefinition, id: 0, quantity: 1 }], nextId: 1 };
+
+    expect(() => toInventorySave(inventory)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: toInventorySave, artifact 0 without its artifact]`,
     );
   });
 });

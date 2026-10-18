@@ -1,3 +1,5 @@
+import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
+import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
@@ -18,7 +20,7 @@ import { computeChestInteractables } from "#src/services/chest/computeChestInter
 import { openChest } from "#src/services/chest/openChest";
 import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
-import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
+import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -31,6 +33,8 @@ import { computed, shallowRef } from "vue";
 // Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
 // Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done
 export const useWorldChests = ({
+  artifactMainAffixPools,
+  artifactRarityDataMap,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -50,6 +54,8 @@ export const useWorldChests = ({
   wallet,
   waterLevel,
 }: {
+  artifactMainAffixPools: readonly ArtifactMainAffixPool[];
+  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -109,18 +115,19 @@ export const useWorldChests = ({
       random,
       Currency.AnemoSigil,
       checkIsDropFallingAway(getGroundHeight(x, z), waterLevel),
-      reliquarySets,
+      { artifactMainAffixPools, artifactRarityDataMap, reliquarySets },
     );
     setWallet(opening.wallet);
     gainWorldAdventureExp(opening.adventureExp);
     openedChestIds.value = opening.openedChestIds;
     let nextInventory = inventory.value;
     const overflowDrops: DroppedItem[] = [];
-    for (const { count, itemId } of opening.bagDrops) {
+    for (const dropped of opening.bagDrops) {
+      const { itemId } = dropped;
       const definition = getDroppedItemDefinition(itemId, nameText, materialDataMap, reliquaryPieceEntryMap);
-      const addition = addInventoryItem(nextInventory, definition, count);
+      const addition = addDroppedItem(nextInventory, dropped, definition);
       nextInventory = addition.inventory;
-      if (addition.overflow > 0) overflowDrops.push({ count: addition.overflow, itemId });
+      if (addition.overflow > 0) overflowDrops.push({ ...dropped, count: addition.overflow });
       events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(itemId) });
     }
     setInventory(nextInventory);

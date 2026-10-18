@@ -7,8 +7,8 @@ import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 
-// An entry of the bag as its save holds it, by the item's id and its kind: a weapon with its state, an artifact with its
-// Level, and a stack with its count. Its name and tab are left to the game's tables
+// An entry of the bag as its save holds it, by the item's id and its kind: a weapon with its state, an artifact with the
+// Artifact it was rolled as, and a stack with its count. Its name and tab are left to the game's tables
 const toInventoryItemSave = ({ definition, ...entry }: InventoryItem): InventoryItemSave => {
   const { id, quantity } = entry;
   const itemId = definition.id;
@@ -19,10 +19,10 @@ const toInventoryItemSave = ({ definition, ...entry }: InventoryItem): Inventory
     return { ascension, experience, id, itemId, kind: InventoryItemKind.Weapon, level, quantity: 1, refinement };
   }
   if (definition.category === ItemCategory.Artifact) {
-    const { level } = entry;
-    if (level === undefined)
-      throw new InvalidOperationError(Operation.Read, toInventorySave.name, `artifact ${id} without its level`);
-    return { id, itemId, kind: InventoryItemKind.Artifact, level, quantity: 1 };
+    const { artifact } = entry;
+    if (artifact === undefined)
+      throw new InvalidOperationError(Operation.Read, toInventorySave.name, `artifact ${id} without its artifact`);
+    return { artifact, id, itemId, kind: InventoryItemKind.Artifact, quantity: 1 };
   }
   return { id, itemId, kind: InventoryItemKind.Stack, quantity };
 };
