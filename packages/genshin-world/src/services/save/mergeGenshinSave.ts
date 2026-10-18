@@ -15,7 +15,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
-import type { StatueProgressSave, StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
@@ -66,9 +66,6 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
   checkIsFurtherByLevel(progress, than, ({ heldCounts }) => countHeldItems(heldCounts));
-// Whether a region's statues are further on than another's: by the level reached, then by the Oculi held toward the next
-const checkIsFurtherStatueRegion = (progress: StatueRegionProgressSave, than: StatueRegionProgressSave): boolean =>
-  progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
 // The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
 // Tree's is. A region's claimed level is the account's, as its rewards were paid into the account's bag, which the merge
 // keeps: a level the guest claimed was paid into the guest's bag, so the account claims it again and is paid once, and a
@@ -78,7 +75,9 @@ const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressS
   for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
     const accountProgress = regions[regionId];
     const furtherProgress =
-      accountProgress && !checkIsFurtherStatueRegion(guestProgress, accountProgress) ? accountProgress : guestProgress;
+      accountProgress && !checkIsFurtherByLevel(guestProgress, accountProgress, ({ heldCount }) => heldCount)
+        ? accountProgress
+        : guestProgress;
     regions[regionId] = { ...furtherProgress, claimedLevel: accountProgress?.claimedLevel ?? 0 };
   }
   return { foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])], regions };
