@@ -19,11 +19,15 @@ import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { ABSORBING_PRISM_ID, absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
 import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
+import { ABYSSAL_SUMMONS_ID } from "#src/services/gcg/cards/abyssalSummons";
 import { CROWFEATHER_COVER_ID, crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
+import { CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
 import { DARKFIRE_FURNACE_ID, darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
+import { ELECTRO_HILICHURL_SHOOTER_ID, electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
 import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
+import { HILICHURL_BERSERKER_ID, hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
 import { TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
 import { TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -564,5 +568,64 @@ describe("crowfeather Cover", () => {
     expect(takeOne(duel.sides, 0).characters[0]?.statuses).toStrictEqual([
       { cardId: CROWFEATHER_COVER_ID, counter: 0, rounds: 0, usages: 2 },
     ]);
+  });
+});
+
+describe("abyssal Summons", () => {
+  const ABYSSAL_SUMMONS_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: ABYSSAL_SUMMONS_ID,
+    isLocation: false,
+    kind: GcgCardKind.Event,
+    nameTextId: 1,
+  };
+
+  test.each([
+    ["Cryo Hilichurl Shooter", 0, CRYO_HILICHURL_SHOOTER_ID],
+    ["Hilichurl Berserker", 0.5, HILICHURL_BERSERKER_ID],
+    ["Electro Hilichurl Shooter", 0.99, ELECTRO_HILICHURL_SHOOTER_ID],
+  ])("it summons %s for the draw of %s, for 2 usages", (_name, draw, summonId) => {
+    expect.hasAssertions();
+
+    const duel: GcgDuel = {
+      ...createDuel([
+        createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+        createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+      ]),
+      random: () => draw,
+    };
+    takeOne(duel.sides, 0).hand = [ABYSSAL_SUMMONS_ID];
+    takeOne(duel.sides, 0).cards = [ABYSSAL_SUMMONS_CARD];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([{ cardId: summonId, counter: 0, rounds: 0, usages: 2 }]);
+  });
+});
+
+describe("hilichurl summons", () => {
+  test.each([
+    ["Cryo Hilichurl Shooter", CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter],
+    ["Hilichurl Berserker", HILICHURL_BERSERKER_ID, hilichurlBerserker],
+    ["Electro Hilichurl Shooter", ELECTRO_HILICHURL_SHOOTER_ID, electroHilichurlShooter],
+  ])("%s deals 1 DMG at each End Phase, and is spent after its second", (_name, cardId, module) => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(cardId, module)];
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(9);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([{ cardId, counter: 0, rounds: 0, usages: 1 }]);
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
   });
 });

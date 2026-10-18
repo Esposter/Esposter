@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
+import { abyssalSummons } from "#src/services/gcg/cards/abyssalSummons";
 import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
 import { aegisOfAbyssalFlame } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
@@ -22,6 +23,7 @@ import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conqueror
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
 import { crossfire } from "#src/services/gcg/cards/crossfire";
 import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
+import { cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
 import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
@@ -30,6 +32,7 @@ import { dendroCore } from "#src/services/gcg/cards/dendroCore";
 import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
 import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
 import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
+import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
@@ -43,6 +46,7 @@ import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfu
 import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
+import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
@@ -217,6 +221,9 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [223_021, embersRekindled],
   [224_011, absorbingPrism],
   [225011, transcendentAutomaton],
+  [303_211, cryoHilichurlShooter],
+  [303_213, hilichurlBerserker],
+  [303_214, electroHilichurlShooter],
   [303_305, mushroomPizzaInEffect],
   [311_101, magicGuide],
   [311201, ravenBow],
@@ -240,6 +247,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_014, kidKujirai],
   [322016, dunyarzad],
   [322017, rana],
+  [332_015, abyssalSummons],
   [3120111, vermillionHereafterBonus],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
