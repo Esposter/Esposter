@@ -5,6 +5,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { QuestMark } from "#src/models/quest/QuestMark";
+import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -360,6 +361,8 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
     questsOffered,
     questTextMap,
   });
+// The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
+const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
   useWorldMap({
@@ -368,11 +371,15 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
     gainWorldAdventureExp,
     gameDataBaseUrl,
     regionDataBaseUrl,
+    reputation,
+    setReputation: (nextReputation) => {
+      reputation.value = nextReputation;
+    },
     setWallet,
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
     wallet,
   });
-// The Reputation, the Companionship EXP and the Traveler's name no source changes yet, so they are carried as they were
+// The Companionship EXP and the Traveler's name no source changes yet, so they are carried as they were
 // Saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
@@ -386,7 +393,7 @@ useWorldSaveSync({
     inventory: inventory.value,
     openedChestIds: openedChestIds.value,
     quests: questProgressMap.value,
-    reputation: savedState.reputation,
+    reputation: reputation.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
