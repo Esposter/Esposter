@@ -8,6 +8,7 @@ import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/
 import { createBlackWingPassiveModule } from "#src/services/weapon/passives/createBlackWingPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
+import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
@@ -234,4 +235,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3265578323": createSkyRippingDragonSpinePassiveModule,
   // Wandering Clouds (Skyward Atlas)
   "2012979451": createWanderingCloudsPassiveModule,
+  // Boundless Blessing (Lost Prayer to the Sacred Winds)
+  "483941803": createBoundlessBlessingPassiveModule,
 };
