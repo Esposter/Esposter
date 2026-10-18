@@ -30,6 +30,7 @@ const wearer: Combatant = {
   kit: KIT,
   level: 1,
 };
+const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
@@ -73,6 +74,24 @@ describe(createBloodstainedChivalrySetModule, () => {
     expect(getChargedAttackStaminaMultiplier?.(context)).toBe(1);
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
     expect(getChargedAttackStaminaMultiplier?.(context)).toBe(0);
+  });
+
+  test("cuts only its wearer's Charged Attacks, so a teammate's keeps its cost while the bonus stands", () => {
+    expect.hasAssertions();
+
+    const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const wearerContext = createKitTestContext(wearer, { kitEffectState, party });
+    const teammate: Combatant = { ...wearer, characterId: OTHER_CHARACTER_ID };
+    const teammateContext = createKitTestContext(teammate, {
+      kitEffectState,
+      party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+    });
+    const { getChargedAttackStaminaMultiplier, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
+
+    onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, wearerContext, wearer);
+    expect(getChargedAttackStaminaMultiplier?.(wearerContext)).toBe(0);
+    expect(getChargedAttackStaminaMultiplier?.(teammateContext)).toBe(1);
   });
 
   test("starts the bonus only on a defeat its wearer deals while it is the active character, and a swap off the field keeps it", () => {

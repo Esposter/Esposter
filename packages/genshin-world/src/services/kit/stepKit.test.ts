@@ -129,7 +129,7 @@ describe(stepKit, () => {
     expect(lowStaminaFixture.stamina.value).toBe(19);
   });
 
-  test("holds a charged attack at its stamina times the kit's multiplier, so none starts it on an empty pool", () => {
+  test("a charged attack costing none needs some stamina in the pool, so none starts it on an empty pool", () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
@@ -143,8 +143,26 @@ describe(stepKit, () => {
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < 3; index++) step({ isAttackHeld: true });
 
-    expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
+    expect(step({ isAttackHeld: true })).toBeUndefined();
     expect(stamina.value).toBe(0);
+  });
+
+  test("a charged attack costing none starts on a pool that holds some stamina, and spends none of it", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    stamina.value = 1;
+    const context = createKitTestContext(TRAVELER_COMBATANT);
+    const step = (input: Partial<KitInput>) =>
+      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
+    step({ isAttackHeld: true, isAttackPressed: true });
+    for (let index = 0; index < 3; index++) step({ isAttackHeld: true });
+
+    expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
+    expect(stamina.value).toBe(1);
   });
 
   test("starts a skill only off its cooldown", () => {

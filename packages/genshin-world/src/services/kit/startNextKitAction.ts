@@ -39,7 +39,9 @@ export const startNextKitAction = (
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
   if (isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
     const chargedAttackStamina = kit.chargedAttackStamina * (kit.getChargedAttackStaminaMultiplier?.(context) ?? 1);
-    if (stamina.checkCanSpend(chargedAttackStamina)) {
+    // A charged attack still needs some stamina in the pool when its cost is cut to none, as the wiki's note on Bloodstained
+    // Chivalry says, so an empty pool starts none
+    if (stamina.value > 0 && stamina.checkCanSpend(chargedAttackStamina)) {
       // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
       if (chargedAttackStamina > 0) stamina.spend(chargedAttackStamina);
       return startKitAction(kitState, kit.chargedAttack, landedHits);
