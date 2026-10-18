@@ -1,6 +1,6 @@
 ## Purpose
 
-The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems. A Teleport Waypoint unlocks the same way, paying nothing on its first unlock yet, and domain entrances are not yet in the world's data.
+The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems. A Teleport Waypoint unlocks the same way, paying its point's reward on its first unlock where the point has one, and domain entrances are not yet in the world's data.
 
 ## Requirements
 
@@ -72,14 +72,19 @@ Windrise's statue SHALL pay five Primogems on its first unlock and no more after
 
 ### Requirement: Waypoints unlock as statues do
 
-A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is, and its first unlock SHALL pay nothing.
+A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is, and its first unlock SHALL pay the Primogems and Adventure EXP of its point's reward row when it has one, and nothing when it has none.
 
 #### Scenario: Waypoint unlocked on F
 
 - **WHEN** the player resonates with a Teleport Waypoint on F
 - **THEN** the waypoint is unlocked and offered as a jump
 
-#### Scenario: Waypoint's first unlock pays nothing
+#### Scenario: Waypoint's first unlock pays its point's reward
 
-- **WHEN** a Teleport Waypoint is unlocked for the first time
-- **THEN** no Primogems are added to the wallet
+- **WHEN** a Teleport Waypoint whose point has a reward row is unlocked for the first time
+- **THEN** that row's Primogems are added to the wallet and its Adventure EXP is granted
+
+#### Scenario: Waypoint without a reward row pays nothing
+
+- **WHEN** a Teleport Waypoint whose point has no reward row is unlocked for the first time
+- **THEN** no Primogems are added to the wallet and no Adventure EXP is granted

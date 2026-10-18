@@ -29,7 +29,7 @@ flowchart TD
 
 ## Not built yet
 
-- **Touching, fighting and claiming in play.** Mondstadt's outcrops stand at the official map's 35 Ley Line Blossom points, written into its region data as outcrop places, as the [spawned places](../../../changes/genshin-spawned-places/design.md) page sets out. A touch spawns the camp its place holds, and an outcrop with no camp spawns none. No source pairs a wiki location with a map point, so no place has a camp yet. The daily draw still starts over the dump's places, not these, so no outcrop is in play. The enemies per place come from the wiki's table, which is not in the dump, and the claim's F prompt is built but not wired.
+- **Touching, fighting and claiming in play.** Mondstadt's outcrops stand at the official map's few dozen Ley Line Blossom points, written into its region data as outcrop places, as the [spawned places](../../../changes/genshin-spawned-places/design.md) page sets out. A touch spawns the camp its place holds, and an outcrop with no camp spawns none. No source pairs a wiki location with a map point, so no place has a camp yet. The daily draw still starts over the dump's places, not these, so no outcrop is in play. The enemies per place come from the wiki's table, which is not in the dump, and the claim's F prompt is built but not wired.
 - **The claims' rewards.** Not read yet: each refresh row lists its reward previews, one a World Level, which name them, as the [proposal](../../../changes/genshin-ley-line-outcrops/design.md) sets out.
 - **Fontaine, Natlan and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
 - **Nod-Krai.** The refresh rows name no kind for it.

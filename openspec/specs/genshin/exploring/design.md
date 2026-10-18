@@ -64,7 +64,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 ## Notes
 
 - **A locked waypoint's F prompt is named as a statue.** The world's prompts name each locked jump landmark by the Statue of The Seven's text, as they did when only statues were jumps, so a waypoint reads the same until its own text is named. [Roadmap](../../../changes/genshin-roadmap/tasks.md) holds the fix.
-- **A waypoint's first unlock pays no reward yet.** `LandmarkIdStatuePointIdMap` names only Windrise's statue, so unlocking a waypoint pays no Primogems or Adventure EXP and counts no transport point unlock until its point is named there.
+- **A waypoint whose point has a reward row pays on its first unlock.** `payFirstUnlockReward` reads the waypoint's point from the number its id ends in, through `computeLandmarkPointId`, and pays that row's Primogems and Adventure EXP. The transport point unlock still goes by `LandmarkIdStatuePointIdMap`, which names only Windrise's statue, so a waypoint counts no transport point unlock until its point is named there.
 - **Only the regions in `WAYPOINT_REGIONS` have waypoints.** Each further region is added to that list once its map fit is checked.
 
 ## Sources
