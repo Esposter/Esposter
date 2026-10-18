@@ -16,7 +16,7 @@ flowchart TD
 ## Rules
 
 - **A hundred a day.** `INVESTIGATION_DAILY_CAP` is the most investigations in one game day. At the cap, no more spots spawn; below it, they do.
-- **The count is the game day's.** The game day starts at the daily reset, 04:00 in the game's time zone, so the count that the cap compares is the one kept from that reset. `computeInvestigationDay` keeps a day's count while its key is at or after the latest reset, read by `computeLastDailyReset`, the reset the commissions read, so the game day is the one the commissions keep and not a second reset. `recordInvestigation` counts one more investigation and keys a day that has none at its first. The day is saved as the `investigationDay` slice, `{ count, dayKey }`, whose key is empty before the first investigation.
+- **The count is the game day's.** The game day starts at the daily reset, 04:00 in the game's time zone, so the count that the cap compares is the one kept from that reset. `computeInvestigationDay` keeps a day's count while its key is at or after the latest reset, read by `computeLastDailyReset`, the reset the commissions read, so the game day is the one the commissions keep and not a second reset. `recordInvestigation` counts one more investigation and keys a day that has none at its first. The day is saved as the `investigationDay` slice, `{ count, dayKey }`, whose key is empty before the first investigation. Two copies of a save merge by the larger count when both keys fall in the same game day, and otherwise by the later day's counter.
 
 ## Key files
 

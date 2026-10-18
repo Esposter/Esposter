@@ -79,6 +79,10 @@ describe(mergeGenshinSave, () => {
   const GUEST_TRAVELER_NAME = "b";
   const EARLIER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const LATER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
+  // Two keys in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the day after it
+  const EARLIER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).toString();
+  const LATER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
+  const NEXT_GAME_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 21 }).toString();
   // A character as a save holds it, the fields a test reads set by its own overrides
   const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
     artifacts: [],
@@ -468,6 +472,22 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(guest.commissionDay);
+  });
+
+  test("keeps the account's larger count when both copies counted the same game day", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: LATER_DAY_KEY } };
+
+    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(account.investigationDay);
+  });
+
+  test("keeps the later game day's counter, whatever its count", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: NEXT_GAME_DAY_KEY } };
+
+    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(guest.investigationDay);
   });
 
   test("keeps the Encounter Points earned on the later daily reset", () => {
