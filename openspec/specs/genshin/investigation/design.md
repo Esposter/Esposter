@@ -14,7 +14,7 @@ flowchart TD
 ## Rules
 
 - **A hundred a day.** `INVESTIGATION_DAILY_CAP` is the most investigations in one game day. At the cap, no more spots spawn; below it, they do.
-- **The count is the game day's.** The game day starts at the daily reset, 04:00 in the game's time zone, so the count that the cap compares is the one kept from that reset. The count's store is not built, so the reset is a rule for it to follow.
+- **The count is the game day's.** The game day starts at the daily reset, 04:00 in the game's time zone, so the count that the cap compares is the one kept from that reset. The count's store is not built, and the reset it keeps to is the [investigation change](../../../changes/genshin-investigation/proposal.md)'s.
 
 ## Key files
 
