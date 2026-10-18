@@ -2,7 +2,7 @@
 
 Collei's kit is its record and one behaviour module, `createColleiKitBehaviour`, avatar 10000067: four strikes, a fully charged shot, a collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion with its leap field. Her multipliers are read from proud skill groups 6731, 6732 and 6739; Floral Brush's cooldown and Trump-Card Kitty's cooldown and energy cost come from the same groups.
 
-Not yet built: Sprout (Ascension 1) and the Cuilein-Anbar Zone's extension (Ascension 4) both react to a reaction another party member triggers, which no passive can read yet. Constellation 1's Energy Recharge, Constellation 2's Sprout extension, Constellation 4's Elemental Mastery for the other members and Constellation 6's Forest of Falling Arrows wait on a passive's hook, which the kit does not yet offer.
+Not yet built: Sprout (Ascension 1) and the Cuilein-Anbar Zone's extension (Ascension 4) both react to a reaction another party member triggers, which no passive can read yet. Constellation 1's Energy Recharge, Constellation 2's Sprout extension and Constellation 6's Forest of Falling Arrows wait on a passive's hook. Constellation 4's Elemental Mastery for the other members is built on Trump-Card Kitty's start, which the kit does not yet offer.
 
 ## Decisions
 
