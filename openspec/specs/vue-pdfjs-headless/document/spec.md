@@ -29,7 +29,7 @@ The package SHALL load a document from a URL, from bytes or from a file the read
 
 - **GIVEN** a file the reader picked from their device
 - **WHEN** it is loaded
-- **THEN** the document's page count is the file's
+- **THEN** the document loads from the file's bytes
 
 #### Scenario: Loading parameters reach the renderer as given
 

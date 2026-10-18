@@ -10,7 +10,7 @@ The package opens a source through whichever renderer the consumer hands it, and
 - **Sources become URLs or byte arrays.** A URL is handed over as `url`. A `File` is read into bytes first, and a byte array is copied before it goes in as `data`, because the renderer takes ownership of whatever buffer it receives.
 - **Progress is a ref.** Each progress report from the loading task replaces `progress`, which holds the bytes loaded so far and the total.
 - **A protected file pauses the load.** When the renderer asks for a password, the package records the request and whether the previous attempt was rejected. `submitPassword` hands the answer back and the same task keeps going.
-- **A failed load is recorded and logged.** A rejection that is not caused by a release sets `isFailed` and writes the error to the console. A rejection caused by a release is ignored, because the newer load has replaced it.
+- **A failed load is recorded and logged.** A rejection that is not caused by a release sets `isFailed`, destroys the load's task and writes the error to the console. A rejection caused by a release is ignored, because the newer load has replaced it.
 
 ```mermaid
 flowchart TD

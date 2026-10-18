@@ -17,11 +17,13 @@ interface UsePdfDocumentOptions {
   source: MaybeRefOrGetter<PdfSource | undefined>;
 }
 
+const EMPTY_PROGRESS: PdfLoadingProgress = { loaded: 0, total: 0 };
+
 // Loads a document from a source through the consumer's renderer, with its password prompt and its failure as state.
 // A source change or the scope's end releases the load in flight, and nothing it reports afterwards is kept
 export const usePdfDocument = ({ parameters = {}, renderer, source }: UsePdfDocumentOptions): PdfDocumentState => {
   const pdfDocument = shallowRef<PDFDocumentProxy>();
-  const progress = ref<PdfLoadingProgress>({ loaded: 0, total: 0 });
+  const progress = ref<PdfLoadingProgress>(EMPTY_PROGRESS);
   const isFailed = ref(false);
   const isPasswordRequested = ref(false);
   const isPasswordWrong = ref(false);
@@ -30,12 +32,16 @@ export const usePdfDocument = ({ parameters = {}, renderer, source }: UsePdfDocu
   // Bumped by every release, so a load still waiting on its source destroys the task it made instead of holding it
   let loadGeneration = 0;
 
-  const release = () => {
-    loadGeneration++;
+  // Destroys the task the current load has made, if it has made one, so its worker is not left running
+  const destroyCurrentTask = () => {
     if (loadingTask) destroyLoadingTask(loadingTask);
     loadingTask = undefined;
+  };
+  const release = () => {
+    loadGeneration++;
+    destroyCurrentTask();
     pdfDocument.value = undefined;
-    progress.value = { loaded: 0, total: 0 };
+    progress.value = EMPTY_PROGRESS;
     isFailed.value = false;
     isPasswordRequested.value = false;
     isPasswordWrong.value = false;
@@ -55,6 +61,8 @@ export const usePdfDocument = ({ parameters = {}, renderer, source }: UsePdfDocu
       };
       // The renderer asks again with the reason when a password is wrong, so the prompt says so rather than starting over
       task.onPassword = (passwordCallback: (password: string) => void, reason: number) => {
+        if (generation !== loadGeneration) return;
+
         updatePassword = passwordCallback;
         isPasswordWrong.value = reason === currentRenderer.api.PasswordResponses.INCORRECT_PASSWORD;
         isPasswordRequested.value = true;
@@ -66,6 +74,7 @@ export const usePdfDocument = ({ parameters = {}, renderer, source }: UsePdfDocu
       if (generation !== loadGeneration) return;
 
       isFailed.value = true;
+      destroyCurrentTask();
       console.error(error);
     });
   };
