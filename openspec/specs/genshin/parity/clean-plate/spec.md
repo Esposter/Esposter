@@ -39,12 +39,13 @@ Translucent glass drawn over a recording SHALL be coloured from the scene around
 - **THEN** the band's colour is solved from the scene around it
 - **AND** the opaque pieces and their placements are scored as drawn
 
-### Requirement: A capture is compared in the colours its file states
+### Requirement: A capture is compared untagged
 
-A captured frame SHALL be shown for comparison with the colour tags its file states, so it is not colour-managed twice.
+A captured frame SHALL be written for comparison without the colour tags its file states, so a browser does not colour-manage it a second time and draw it darker than its file.
 
-#### Scenario: Tagged capture shown
+#### Scenario: Tagged capture written untagged
 
 - **GIVEN** a capture whose file is tagged with its gamma and primaries
-- **WHEN** the frame is shown for comparison
-- **THEN** its brightness matches the darkness of its file
+- **WHEN** the frame is written for comparison
+- **THEN** the frame is untagged
+- **AND** its brightness matches the darkness of its file
