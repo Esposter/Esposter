@@ -1647,11 +1647,9 @@ defineExpose({ jumpTo, readCameraPosition });
           input.readInput(context.delta);
           hudFrame.seconds = context.elapsed;
           if (!isPaused)
-            screenKind = getNextScreenKind(
-              screenKind,
-              inputState.pressedActions,
-              checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
-            );
+            screenKind = getNextScreenKind(screenKind, inputState.pressedActions, {
+              isPaimonMenuLocked: checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
+            });
           if (!isPaused && screenKind === ScreenKind.World)
             stepShortcutWheel(
               inputState.heldActions.has(InputAction.OpenShortcutWheel),

@@ -18,12 +18,14 @@ describe(getNextScreenKind, () => {
   ])("from %s, %s leaves %s open", (screenKind, action, nextScreenKind) => {
     expect.hasAssertions();
 
-    expect(getNextScreenKind(screenKind, new Set([action]), false)).toBe(nextScreenKind);
+    expect(getNextScreenKind(screenKind, new Set([action]), { isPaimonMenuLocked: false })).toBe(nextScreenKind);
   });
 
   test("a restricted step keeps the Paimon menu shut", () => {
     expect.hasAssertions();
 
-    expect(getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), true)).toBe(ScreenKind.World);
+    expect(
+      getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), { isPaimonMenuLocked: true }),
+    ).toBe(ScreenKind.World);
   });
 });

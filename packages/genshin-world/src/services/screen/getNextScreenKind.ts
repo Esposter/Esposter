@@ -11,7 +11,7 @@ import { InputActionScreenKindMap } from "#src/services/screen/InputActionScreen
 export const getNextScreenKind = (
   screenKind: ScreenKind,
   pressedActions: ReadonlySet<InputAction>,
-  isPaimonMenuLocked: boolean,
+  { isPaimonMenuLocked }: { isPaimonMenuLocked: boolean },
 ): ScreenKind => {
   if (screenKind === ScreenKind.Dialogue || screenKind === ScreenKind.GcgDuel) return screenKind;
 
