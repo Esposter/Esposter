@@ -14,6 +14,7 @@ export enum GenshinVerb {
   Untranslated = "untranslated",
   Unverbed = "unverbed",
   Use = "use",
+  Viewer = "viewer",
   Voice = "voice",
   Volume = "volume",
 }
