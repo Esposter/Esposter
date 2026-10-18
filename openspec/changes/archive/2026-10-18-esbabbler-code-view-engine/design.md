@@ -30,7 +30,7 @@ Every issue of `surmon-china/vue-codemirror`, open and closed, gets one verdict 
 
 | Issue      | Verdict                                      | Proof                                                                                                                                                   |
 | :--------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| #78        | In scope — defect                            | the test "#78 keeps the attachment's text in place while it leaves"                                                                                     |
+| #78        | In scope — defect                            | the test "#78 A dialog closes around a code attachment"                                                                                                 |
 | #121, #229 | Out of scope — CodeMirror                    | the view takes its text once, at creation; a caller writing a live document marks the write with the engine's own `Transaction.addToHistory` annotation |
 | #148       | In scope — defect, ruled out by construction | the app imports its own `codemirror` and `@codemirror/state`, with no wrapper between them to resolve a second copy                                     |
 | #150       | Out of scope — CodeMirror                    | a keymap's precedence is the engine's `Prec`; the read-only view binds no keymap of its own                                                             |
