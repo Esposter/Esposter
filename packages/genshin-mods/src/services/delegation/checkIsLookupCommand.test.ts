@@ -25,6 +25,10 @@ describe(checkIsLookupCommand, () => {
     ["a script run by an interpreter", "python scripts/update.py"],
     ["a chained command that is not a lookup", 'cd "$W" && pnpm test'],
     ["a lookup named only as an argument", "echo cat"],
+    ["a sed edit in place", "sed -i 's/a/b/' src/x.ts"],
+    ["a find that deletes", "find . -name '*.tmp' -delete"],
+    ["a find that runs a command", "find . -name x -exec rm {} ;"],
+    ["an awk print into a file", "awk '{ print > \"out.txt\" }' a.txt"],
   ])("does not count %s as a lookup", (_description, command) => {
     expect.hasAssertions();
 
