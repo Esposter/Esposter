@@ -107,6 +107,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         enemy,
         party,
         kitEffectState.effects,
+        characterIdCombatantMap,
       );
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =

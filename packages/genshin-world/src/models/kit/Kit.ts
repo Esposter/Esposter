@@ -90,14 +90,16 @@ export interface Kit {
     effects: readonly KitEffect[],
   ) => number;
   // The flat base damage, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
-  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
-  // It. A member's own strikes are priced by its own hooks, not this one
+  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team, the effects on
+  // It and the team's built combatants by id, which a member's current attributes are read from. A member's own strikes
+  // Are priced by its own hooks, not this one
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number };
   highPlunge: KitAction;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
