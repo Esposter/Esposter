@@ -42,7 +42,8 @@ export const useWorldAchievements = ({
     textMap: Readonly<Record<string, string>>;
   }>();
   watch(screenKind, (newScreenKind) => {
-    if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
+    if ((newScreenKind !== ScreenKind.Achievements && newScreenKind !== ScreenKind.PaimonMenu) || achievementData.value)
+      return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
       const [{ achievements, categories }, textMap] = await Promise.all([

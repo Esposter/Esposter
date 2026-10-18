@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { InteractionState } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuNamecardDialog from "#src/components/Menu/NamecardDialog/Index.vue";
 import MenuWorldLevelDialog from "#src/components/Menu/WorldLevelDialog/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { checkIsSystemOpen } from "#src/services/adventureRank/checkIsSystemOpen";
@@ -40,6 +42,9 @@ interface Props {
   // Whether the World Level can be lowered or restored at all, and whether it is lowered, for its dialog's button
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The namecard the player equipped by its item id, 0 for none, and the held namecards the profile can show
+  namecardItemId: number;
+  namecards: ProfileNamecard[];
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
   // When the World Level last changed, for the cooldown its dialog's button waits on
@@ -57,15 +62,30 @@ const {
   interactionState,
   isWorldLevelAdjustable,
   isWorldLevelLowered,
+  namecardItemId,
+  namecards,
   worldLevel,
   worldLevelChangedAt,
 } = defineProps<Props>();
-const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
+const emit = defineEmits<{
+  close: [];
+  open: [screenKind: TitledScreenKind];
+  pickNamecard: [itemId: number];
+  quit: [];
+  toggleWorldLevel: [];
+}>();
 const backButton = useTemplateRef("backButton");
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
 // Behind it is inert until it closes, so focus stays in the dialog
 const isWorldLevelDialogOpen = ref(false);
+// The namecard the profile shows is the held one the player equipped, and its picker changes it, closing back to the menu
+const isNamecardDialogOpen = ref(false);
+const equippedNamecard = computed(() => namecards.find(({ itemId }) => itemId === namecardItemId));
+const pickNamecard = (itemId: number) => {
+  isNamecardDialogOpen.value = false;
+  emit("pickNamecard", itemId);
+};
 // The info button is inert until the menu is patched, so the focus goes back to it on the tick after the dialog closes
 const closeWorldLevelDialog = async () => {
   isWorldLevelDialogOpen.value = false;
@@ -180,6 +200,22 @@ onBeforeUnmount(() => {
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
         <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
+        <GameButton
+          class="namecard"
+          :disabled="namecards.length === 0"
+          :kind="GameButtonKind.Plain"
+          @click="isNamecardDialogOpen = true"
+        >
+          {{ equippedNamecard?.name }}
+        </GameButton>
+        <MenuNamecardDialog
+          v-if="isNamecardDialogOpen"
+          :game-text
+          :namecard-item-id
+          :namecards
+          @close="isNamecardDialogOpen = false"
+          @pick="pickNamecard"
+        />
         <div class="contents">
           <GameButton
             v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
@@ -447,6 +483,18 @@ onBeforeUnmount(() => {
 
 .birthday {
   top: calc(var(--unit) * 286);
+}
+
+/* Provisional: the namecard's button sits under the birthday, to be fitted beside the card's avatar by the parity compare */
+.namecard {
+  position: absolute;
+  top: calc(var(--unit) * 322);
+  left: calc(var(--unit) * 313.5);
+  width: calc(var(--unit) * 300);
+  color: #e2e8ed;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+  text-align: left;
 }
 
 /* The rank's and the World Level's values end where the current client's do, 17 units left of the info disc, at its

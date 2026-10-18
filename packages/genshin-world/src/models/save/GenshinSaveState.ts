@@ -32,9 +32,9 @@ import type { BannerKind } from "genshin-interface/save";
 // Section and its defeat counts by entry id, the Frostbearing Tree's offering Progress, the furnishings placed in the
 // Realm, each Region's Statues of The Seven progress by the Region's id, the ids of the Oculi found, the ids of the
 // Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party, the
-// Cooking progress and processing queues, and the purchases of each limited good that still count against its limit.
-// Each defeated enemy's moment of coming back by its spawn key, in the camps with no boss among them, the save's slices
-// Convert to and from these
+// Cooking progress and processing queues, the namecard the profile shows by its item id, and the purchases of each limited
+// Good that still count against its limit. Each defeated enemy's moment of coming back by its spawn key, in the camps with
+// No boss among them, the save's slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -56,6 +56,7 @@ export interface GenshinSaveState {
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];
   inventory: Inventory;
+  namecardItemId: number;
   openedChestIds: ReadonlySet<string>;
   party: Party;
   processingJobs: Record<number, ProcessingJob>;

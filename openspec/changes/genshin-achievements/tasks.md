@@ -13,4 +13,4 @@
 
 ## 4. Namecard grant
 
-- [ ] 4.1 Add a finished category's namecard to the profile's held namecards, read from progress. Verify: tests named after the scenarios 'a finished category adds its namecard to the profile' and 'an unfinished category adds no namecard', seen failing first.
+- [x] 4.1 Add a finished category's namecard to the profile's held namecards, read from progress. Verify: tests named after the scenarios 'a finished category adds its namecard to the profile' and 'an unfinished category adds no namecard', seen failing first.

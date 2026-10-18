@@ -41,6 +41,7 @@ export const useWorldSave = ({
     | "foundOculusIds"
     | "frostbearingTreeProgress"
     | "inventory"
+    | "namecardItemId"
     | "openedChestIds"
     | "processingJobs"
     | "regionStatueProgressMap"
@@ -51,6 +52,7 @@ export const useWorldSave = ({
 }) => {
   const inventory = ref<Inventory>(savedState.inventory);
   const wallet = ref<Wallet>(savedState.wallet);
+  const namecardItemId = ref(savedState.namecardItemId);
   const wishHistory = ref(savedState.wishHistory);
   const wishPityMap = ref(savedState.wishPityMap);
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(
@@ -116,6 +118,9 @@ export const useWorldSave = ({
   const setEnemyRespawnAt = (spawnKey: string, respawnAt: string) => {
     enemyRespawnMap.value = new Map([...enemyRespawnMap.value, [spawnKey, respawnAt]]);
   };
+  const setNamecardItemId = (nextItemId: number) => {
+    namecardItemId.value = nextItemId;
+  };
   return {
     achievementProgressMap,
     archiveKillsMap,
@@ -129,11 +134,13 @@ export const useWorldSave = ({
     foundOculusIds,
     frostbearingTreeProgress,
     inventory,
+    namecardItemId,
     openedChestIds,
     processingJobs,
     regionStatueProgressMap,
     setEnemyRespawnAt,
     setInventory,
+    setNamecardItemId,
     setWallet,
     wallet,
     wishHistory,

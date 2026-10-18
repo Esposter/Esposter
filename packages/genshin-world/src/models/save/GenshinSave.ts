@@ -90,6 +90,8 @@ export const genshinSaveSchema = z
     // The name the player chose for the Traveler, empty while none is chosen
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
+    // The namecard the profile shows, by its item id
+    namecardItemId: z.number().int().nonnegative(),
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,

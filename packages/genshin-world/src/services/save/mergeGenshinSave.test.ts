@@ -392,6 +392,21 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).travelerName).toBe(GUEST_TRAVELER_NAME);
   });
 
+  test("keeps the account's equipped namecard over the guest's", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, namecardItemId: 210_901 };
+    const guest = { ...EMPTY_GENSHIN_SAVE, namecardItemId: 210_902 };
+
+    expect(mergeGenshinSave(account, guest).namecardItemId).toBe(210_901);
+  });
+
+  test("keeps the guest's equipped namecard while the account has equipped none", () => {
+    expect.hasAssertions();
+    const guest = { ...EMPTY_GENSHIN_SAVE, namecardItemId: 210_902 };
+
+    expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).namecardItemId).toBe(210_902);
+  });
+
   test("keeps the account's commissions of the day when the account dealt them later", () => {
     expect.hasAssertions();
     const account = {

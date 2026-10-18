@@ -74,6 +74,7 @@ import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldForging } from "#src/composables/useWorldForging";
+import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
@@ -112,6 +113,8 @@ import { computeForgeInteractables } from "#src/services/forging/computeForgeInt
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
@@ -289,11 +292,13 @@ const {
   foundOculusIds,
   frostbearingTreeProgress,
   inventory,
+  namecardItemId,
   openedChestIds,
   processingJobs,
   regionStatueProgressMap,
   setEnemyRespawnAt,
   setInventory,
+  setNamecardItemId,
   setWallet,
   wallet,
   wishHistory,
@@ -646,6 +651,20 @@ const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes } =
   useWorldCooking(gameDataBaseUrl);
 const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
+const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
+// The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
+const profileNamecards = computed(() =>
+  computeProfileNamecardItemIds({
+    achievements: achievementData.value?.achievements ?? [],
+    categories: achievementData.value?.categories ?? [],
+    characters: characters.value,
+    friendshipLevels: friendshipLevels.value,
+    friendshipNamecards: friendshipNamecards.value,
+    progressMap: achievementProgressMap.value,
+  })
+    .filter((itemId) => materialDataMap.has(itemId))
+    .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
+);
 // The forge's state for this session: the save holds no forge slice, so a reload empties it, and its clock is read again each
 // Interval while the forge screen is open so its queues' time left moves
 const forgeAmount = ref(1);
@@ -854,6 +873,7 @@ useWorldSaveSync({
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
     inventory: inventory.value,
+    namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
     party,
     processingJobs: processingJobs.value,
@@ -1620,9 +1640,12 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
+      :namecard-item-id="namecardItemId"
+      :namecards="profileNamecards"
       :server-clock-offset-ms
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
+      @pick-namecard="(itemId) => setNamecardItemId(itemId)"
       @quit="emit('quit')"
       @toggle-world-level="toggleWorldLevel()"
     >

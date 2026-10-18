@@ -275,6 +275,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       settledSeelieIds: [...new Set([...account.puzzles.settledSeelieIds, ...guest.puzzles.settledSeelieIds])],
       solvedPuzzleIds: [...new Set([...account.puzzles.solvedPuzzleIds, ...guest.puzzles.solvedPuzzleIds])],
     },
+    namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),

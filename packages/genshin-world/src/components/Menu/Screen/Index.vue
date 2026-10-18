@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
@@ -21,6 +22,9 @@ interface Props {
   // Whether the World Level can be lowered or restored now, and whether it is lowered
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The namecard the player equipped, 0 for none, and the held namecards the profile can show
+  namecardItemId: number;
+  namecards: ProfileNamecard[];
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
   worldLevel: number;
@@ -31,7 +35,7 @@ interface Props {
 const slots = defineSlots<Partial<Record<TitledScreenKind, () => VNode>>>();
 const screenKind = defineModel<ScreenKind>("screenKind", { required: true });
 const { gameText } = defineProps<Props>();
-const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
+const emit = defineEmits<{ pickNamecard: [itemId: number]; quit: []; toggleWorldLevel: [] }>();
 </script>
 
 <template>
@@ -47,11 +51,14 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
     :game-text
     :is-world-level-adjustable
     :is-world-level-lowered
+    :namecard-item-id
+    :namecards
     :server-clock-offset-ms
     :world-level
     :world-level-changed-at
     @close="screenKind = ScreenKind.World"
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
+    @pick-namecard="(itemId) => emit('pickNamecard', itemId)"
     @quit="emit('quit')"
     @toggle-world-level="emit('toggleWorldLevel')"
   />
