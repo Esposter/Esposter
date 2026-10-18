@@ -1,5 +1,4 @@
 {
-  "frames.radiantPsalterShield": { "cause": "Unsourced", "value": 31 },
   "parameters.radiantPsalterShieldMaxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 11539 }
