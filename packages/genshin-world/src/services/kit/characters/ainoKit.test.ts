@@ -75,9 +75,9 @@ const castBurstInTeam = (ascension: number, characterIds: number[]) => {
   return { context, field, kitEffectState };
 };
 
-// Aino's burst is cast with a teammate in the team, and the teammate is the one on the field: the context her kit reads
-// The teammate's hits in, with the zone the burst left standing
-const createTeammateTeam = (constellationCount: number) => {
+// Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in, and
+// The zone her burst leaves standing, unless the test skips the burst
+const createTeammateTeam = (constellationCount: number, { isBurstCast = true }: { isBurstCast?: boolean } = {}) => {
   const aino = { ...createAinoCombatant(0), constellationCount };
   const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
   const kitEffectState: KitEffectState = { effects: [] };
@@ -89,7 +89,7 @@ const createTeammateTeam = (constellationCount: number) => {
     kitEffectState,
     party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
   });
-  AINO_KIT.elementalBurst.onStart?.(context);
+  if (isBurstCast) AINO_KIT.elementalBurst.onStart?.(context);
   return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
 };
 // The kit reads a hit of the striker's on the enemy, as the party's kits take each event. The hit defaults to the
@@ -333,17 +333,8 @@ describe("constellation 1's Elemental Mastery", () => {
 
   test("the member swapped in while Aino's status runs gets 80 Elemental Mastery, and keeps it to the status's end", () => {
     expect.hasAssertions();
-    const aino = { ...createAinoCombatant(0), constellationCount: 1 };
-    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const { aino, context, teammate } = createTeammateTeam(1, { isBurstCast: false });
     const base = teammate.attributes.attributeTotalMap[Attribute.ElementalMastery];
-    const context = createKitTestContext(aino, {
-      characterIdCombatantMap: new Map<number, Combatant>([
-        [aino.characterId, aino],
-        [teammate.characterId, teammate],
-      ]),
-      kitEffectState: { effects: [] },
-      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
-    });
     AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, aino);
     expect(getBuffedMastery(teammate, context)).toBe(base);
 
@@ -363,17 +354,8 @@ describe("constellation 1's Elemental Mastery", () => {
 
   test("a member swapped in after Aino's status runs out gets no Elemental Mastery", () => {
     expect.hasAssertions();
-    const aino = { ...createAinoCombatant(0), constellationCount: 1 };
-    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const { aino, context, teammate } = createTeammateTeam(1, { isBurstCast: false });
     const base = teammate.attributes.attributeTotalMap[Attribute.ElementalMastery];
-    const context = createKitTestContext(aino, {
-      characterIdCombatantMap: new Map<number, Combatant>([
-        [aino.characterId, aino],
-        [teammate.characterId, teammate],
-      ]),
-      kitEffectState: { effects: [] },
-      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
-    });
     AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, aino);
     stepKitSeconds(context, 15);
     AINO_KIT.onKitEvent?.(
