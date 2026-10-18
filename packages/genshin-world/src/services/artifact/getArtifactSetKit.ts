@@ -4,12 +4,9 @@ import type { Kit } from "#src/models/kit/Kit";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ArtifactSetIdCreateModuleMap } from "#src/services/artifact/ArtifactSetIdCreateModuleMap";
-import { BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { WILDLIFE_ANSWERING_ARTIFACT_SET_IDS } from "#src/services/artifact/constants";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// The sets whose module answers a hit on wildlife, as the wiki says of Bloodstained Chivalry; no other set's module hears it
-const WILDLIFE_ANSWERING_ARTIFACT_SET_IDS = [BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID];
 
 // A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus its
 // Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A character
