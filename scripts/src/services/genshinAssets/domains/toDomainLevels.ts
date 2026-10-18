@@ -1,4 +1,5 @@
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
@@ -9,6 +10,7 @@ import {
   ALL_DAYS_OF_WEEK,
   DOMAIN_DAY_PAIRS,
   DOMAIN_LEVEL_TYPE,
+  DUNGEON_LEVEL_ENTITY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
   DungeonEntryTypeDomainKindMap,
   REWARD_PREVIEW_TABLE_NAME,
@@ -78,14 +80,29 @@ const toBookRewards = (
   });
 };
 
+// A daily fight's ley line disorder is the one level config its dungeon row names, read through the entity table's config name
+const getDisorder = (dungeon: ExcelDungeonRow, entityNames: ReadonlyMap<number, string>): string => {
+  const entityIds = Object.keys(dungeon.levelConfigMap ?? {});
+  const disorder = entityIds.length === 1 ? entityNames.get(Number(entityIds[0])) : undefined;
+  if (!disorder)
+    throw new InvalidOperationError(
+      Operation.Read,
+      DUNGEON_LEVEL_ENTITY_TABLE_NAME,
+      `names no single ley line disorder for level ${dungeon.id}`,
+    );
+  return disorder;
+};
+
 const toDomainLevel = (
   dungeon: ExcelDungeonRow,
   scheduledDaysOfWeek: readonly number[],
   previewMap: ReadonlyMap<number, ExcelRewardPreviewRow>,
   bookRewards: RewardItem[],
   treeArtifacts: TreeArtifact[],
+  disorder: string,
 ): DomainLevel => ({
   dungeonId: dungeon.id,
+  disorder,
   enemyLevel: dungeon.levelRevise,
   recommendedRank: dungeon.limitLevel,
   resinCost: dungeon.statueCostCount,
@@ -105,7 +122,11 @@ export const toDomainLevels = (
   previews: ExcelRewardPreviewRow[],
   points: Record<string, DumpedScenePoint>,
   materials: MaterialRow[],
+  levelEntities: ExcelDungeonLevelEntityRow[],
 ): Record<string, DomainSchedule> => {
+  const entityNames = new Map(
+    levelEntities.flatMap(({ id, levelConfigName }) => (levelConfigName ? [[id, levelConfigName] as const] : [])),
+  );
   const dungeonMap = new Map(dungeons.map((dungeon) => [dungeon.id, dungeon]));
   const previewMap = new Map(previews.map((preview) => [preview.id, preview]));
   const rarities = new Map(materials.map(({ id, rankLevel }) => [id, rankLevel]));
@@ -134,6 +155,7 @@ export const toDomainLevels = (
           previewMap,
           [],
           findTreeRow(BLESSING_TREE_ARTIFACT_ROWS, dungeon.limitLevel).artifacts,
+          getDisorder(dungeon, entityNames),
         ),
       );
     }
@@ -170,7 +192,11 @@ export const toDomainLevels = (
       rarities,
       dungeon.limitLevel,
     );
-    addLevel(match.entry.id, match.kind, toDomainLevel(dungeon, scheduledDaysOfWeek, previewMap, bookRewards, []));
+    addLevel(
+      match.entry.id,
+      match.kind,
+      toDomainLevel(dungeon, scheduledDaysOfWeek, previewMap, bookRewards, [], getDisorder(dungeon, entityNames)),
+    );
   }
 
   return Object.fromEntries(

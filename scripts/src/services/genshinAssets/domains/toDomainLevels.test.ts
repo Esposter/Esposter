@@ -1,3 +1,4 @@
+import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
@@ -18,6 +19,7 @@ const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntr
 });
 const createDungeon = (overrides: Partial<ExcelDungeonRow>): ExcelDungeonRow => ({
   id: 1001,
+  levelConfigMap: { 1995: 100 },
   levelRevise: 37,
   limitLevel: 25,
   passRewardPreviewID: 20,
@@ -26,6 +28,7 @@ const createDungeon = (overrides: Partial<ExcelDungeonRow>): ExcelDungeonRow => 
   type: "DUNGEON_DAILY_FIGHT",
   ...overrides,
 });
+const LEVEL_ENTITIES: ExcelDungeonLevelEntityRow[] = [{ id: 1995, levelConfigName: "LevelEntity_ElementAddHurt_Fire" }];
 const createPreview = (id: number, itemIds: number[]): ExcelRewardPreviewRow => ({
   id,
   previewItems: itemIds.map((itemId) => ({ id: itemId })),
@@ -64,25 +67,26 @@ describe(toDomainLevels, () => {
   test("a talent domain's level takes the days of the pair its book is set for", () => {
     expect.hasAssertions();
 
-    expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {}, materials)).toStrictEqual(
-      {
-        10: {
-          artifactSetIds: [],
-          kind: DomainKind.Mastery,
-          levels: [
-            {
-              dungeonId: 1001,
-              enemyLevel: 37,
-              recommendedRank: 25,
-              resinCost: 20,
-              scheduledDaysOfWeek: [2, 5],
-              treeArtifacts: [],
-              treeRewards: [],
-            },
-          ],
-        },
+    expect(
+      toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {}, materials, LEVEL_ENTITIES),
+    ).toStrictEqual({
+      10: {
+        artifactSetIds: [],
+        kind: DomainKind.Mastery,
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
+            resinCost: 20,
+            scheduledDaysOfWeek: [2, 5],
+            treeArtifacts: [],
+            treeRewards: [],
+          },
+        ],
       },
-    );
+    });
   });
 
   test("a talent domain's level pays its pair's book at the count its rarity has in its Adventure Rank's row", () => {
@@ -90,25 +94,26 @@ describe(toDomainLevels, () => {
 
     // A level of rank 25 reads the Mastery row at 27, which counts only two-star books, so the three- and four-star books
     // Of the pair are not paid
-    expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101])], {}, materials)).toStrictEqual(
-      {
-        10: {
-          artifactSetIds: [],
-          kind: DomainKind.Mastery,
-          levels: [
-            {
-              dungeonId: 1001,
-              enemyLevel: 37,
-              recommendedRank: 25,
-              resinCost: 20,
-              scheduledDaysOfWeek: [1, 4],
-              treeArtifacts: [],
-              treeRewards: [{ averageCount: 3.2, itemId: 101, maxCount: 4, minCount: 3 }],
-            },
-          ],
-        },
+    expect(
+      toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101])], {}, materials, LEVEL_ENTITIES),
+    ).toStrictEqual({
+      10: {
+        artifactSetIds: [],
+        kind: DomainKind.Mastery,
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
+            resinCost: 20,
+            scheduledDaysOfWeek: [1, 4],
+            treeArtifacts: [],
+            treeRewards: [{ averageCount: 3.2, itemId: 101, maxCount: 4, minCount: 3 }],
+          },
+        ],
       },
-    );
+    });
   });
 
   test("a weapon domain's level takes the days of the pair its material is set for", () => {
@@ -120,29 +125,39 @@ describe(toDomainLevels, () => {
       type: "DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE",
     });
     const dungeon = createDungeon({ id: 2001, passRewardPreviewID: 21, subType: "DUNGEON_SUB_WEAPON" });
-    expect(toDomainLevels([entry], [dungeon], [createPreview(21, [203])], {}, materials)).toStrictEqual({
-      2: {
-        artifactSetIds: [],
-        kind: DomainKind.Forgery,
-        levels: [
-          {
-            dungeonId: 2001,
-            enemyLevel: 37,
-            recommendedRank: 25,
-            resinCost: 20,
-            scheduledDaysOfWeek: [3, 6],
-            treeArtifacts: [],
-            treeRewards: [],
-          },
-        ],
+    expect(toDomainLevels([entry], [dungeon], [createPreview(21, [203])], {}, materials, LEVEL_ENTITIES)).toStrictEqual(
+      {
+        2: {
+          artifactSetIds: [],
+          kind: DomainKind.Forgery,
+          levels: [
+            {
+              dungeonId: 2001,
+              enemyLevel: 37,
+              recommendedRank: 25,
+              disorder: "LevelEntity_ElementAddHurt_Fire",
+              resinCost: 20,
+              scheduledDaysOfWeek: [3, 6],
+              treeArtifacts: [],
+              treeRewards: [],
+            },
+          ],
+        },
       },
-    });
+    );
   });
 
   test("a domain closed today is refused", () => {
     expect.hasAssertions();
 
-    const schedules = toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {}, materials);
+    const schedules = toDomainLevels(
+      [talentEntry],
+      [createDungeon({})],
+      [createPreview(20, [102])],
+      {},
+      materials,
+      LEVEL_ENTITIES,
+    );
     const epochDay = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
     // The epoch fell on a Thursday, so four days after it is a Monday and five a Tuesday
     const monday = epochDay.add({ days: 4 });
@@ -159,7 +174,14 @@ describe(toDomainLevels, () => {
 
     const dungeon = createDungeon({ subType: "DUNGEON_SUB_RELIQUARY" });
     expect(
-      toDomainLevels([blessingEntry], [dungeon], [createPreview(20, [])], { 48: blessingPoint }, materials),
+      toDomainLevels(
+        [blessingEntry],
+        [dungeon],
+        [createPreview(20, [])],
+        { 48: blessingPoint },
+        materials,
+        LEVEL_ENTITIES,
+      ),
     ).toStrictEqual({
       1: {
         artifactSetIds: [],
@@ -169,6 +191,7 @@ describe(toDomainLevels, () => {
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -187,7 +210,9 @@ describe(toDomainLevels, () => {
       previewItems: [{ count: "100", id: 102 }, { id: 0 }, { count: "15", id: 105 }, { id: 0 }],
     };
     const dungeon = createDungeon({ statueCostCount: 40 });
-    expect(toDomainLevels([blessingEntry], [dungeon], [preview], { 48: blessingPoint }, materials)).toStrictEqual({
+    expect(
+      toDomainLevels([blessingEntry], [dungeon], [preview], { 48: blessingPoint }, materials, LEVEL_ENTITIES),
+    ).toStrictEqual({
       1: {
         artifactSetIds: [],
         kind: DomainKind.Blessing,
@@ -196,6 +221,7 @@ describe(toDomainLevels, () => {
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 40,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -217,7 +243,7 @@ describe(toDomainLevels, () => {
       previewItems: [{ id: 101 }, { count: "2.2", id: 103 }, { count: "3;4", id: 104 }, { count: "3", id: 102 }],
     };
     expect(
-      toDomainLevels([blessingEntry], [createDungeon({})], [preview], { 48: blessingPoint }, materials),
+      toDomainLevels([blessingEntry], [createDungeon({})], [preview], { 48: blessingPoint }, materials, LEVEL_ENTITIES),
     ).toStrictEqual({
       1: {
         artifactSetIds: [],
@@ -227,6 +253,7 @@ describe(toDomainLevels, () => {
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -241,7 +268,7 @@ describe(toDomainLevels, () => {
     expect.hasAssertions();
 
     expect(() =>
-      toDomainLevels([blessingEntry], [createDungeon({})], [], { 48: blessingPoint }, materials),
+      toDomainLevels([blessingEntry], [createDungeon({})], [], { 48: blessingPoint }, materials, LEVEL_ENTITIES),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: RewardPreviewExcelConfigData, has no reward preview 20]`,
     );
@@ -251,7 +278,14 @@ describe(toDomainLevels, () => {
     expect.hasAssertions();
 
     expect(
-      toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101, 102, 103])], {}, materials),
+      toDomainLevels(
+        [talentEntry],
+        [createDungeon({})],
+        [createPreview(20, [101, 102, 103])],
+        {},
+        materials,
+        LEVEL_ENTITIES,
+      ),
     ).toStrictEqual({
       10: {
         artifactSetIds: [],
@@ -261,6 +295,7 @@ describe(toDomainLevels, () => {
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [7],
             treeArtifacts: [],
@@ -281,6 +316,7 @@ describe(toDomainLevels, () => {
         [createPreview(30, [999])],
         {},
         materials,
+        LEVEL_ENTITIES,
       ),
     ).toStrictEqual({});
   });
@@ -290,9 +326,33 @@ describe(toDomainLevels, () => {
 
     const otherEntry = createEntry({ descriptionCycleRewardList: [[102], [104], [105], [102, 104, 105]], id: 11 });
     expect(() =>
-      toDomainLevels([talentEntry, otherEntry], [createDungeon({})], [createPreview(20, [102])], {}, materials),
+      toDomainLevels(
+        [talentEntry, otherEntry],
+        [createDungeon({})],
+        [createPreview(20, [102])],
+        {},
+        materials,
+        LEVEL_ENTITIES,
+      ),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: DungeonExcelConfigData, names level 1001 in two domains]`,
+    );
+  });
+
+  test("a level naming two ley line disorders is refused", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      toDomainLevels(
+        [talentEntry],
+        [createDungeon({ levelConfigMap: { 1995: 100, 1996: 100 } })],
+        [createPreview(20, [102])],
+        {},
+        materials,
+        LEVEL_ENTITIES,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: DungeonLevelEntityConfigData, names no single ley line disorder for level 1001]`,
     );
   });
 });
