@@ -16,7 +16,7 @@ import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -100,7 +100,7 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
   const status = findKitStatus(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID);
   const stacks = status?.stacks ?? 0;
   if (status) status.stacks = 0;
-  const { defense } = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes;
+  const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
   return stacks * FATAL_RECKONING_DEFENSE_SHARE * defense;
 };
 

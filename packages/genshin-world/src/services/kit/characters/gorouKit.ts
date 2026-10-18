@@ -17,7 +17,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) gorou/skill.go, the General's War Banner placed two metres ahead of the body, where
@@ -196,7 +196,7 @@ export const createGorouKitBehaviour = ({
             id: CONSTELLATION_4_HEAL_ID,
             nextTickSeconds: burstHitmarkSeconds + CONSTELLATION_4_SECONDS,
             onTick: createConstellation4Heal(
-              getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes.defense,
+              getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap),
             ),
             secondsRemaining: burstHitmarkSeconds + juugaSeconds,
             tickIntervalSeconds: CONSTELLATION_4_SECONDS,

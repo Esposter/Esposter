@@ -4,7 +4,7 @@ import type { Party } from "#src/models/party/Party";
 
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 
-// The final DEF of a character after the buffs on it, which every reader of a character's DEF takes
+// The final DEF of a character after the buffs on it
 export const getKitDefense = (
   combatant: Combatant,
   effects: readonly KitEffect[],
