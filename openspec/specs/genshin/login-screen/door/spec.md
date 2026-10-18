@@ -65,6 +65,11 @@ The door SHALL light from its middle, with a bright line down its panel over a g
 - **WHEN** the door is clicked
 - **THEN** a bright line runs down its panel over a glow across the door
 
+#### Scenario: Line rides a piece's rise
+
+- **WHEN** a piece of the door rises
+- **THEN** the line on that piece sits on its own slit, carried with the piece's lift, not on the door's rest x
+
 ### Requirement: Door casts no shadow
 
 The door SHALL cast no shadow onto the walkway.
