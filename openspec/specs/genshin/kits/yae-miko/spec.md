@@ -1,6 +1,6 @@
 ## Purpose
 
-Yae Miko's kit as built, with her Sesshou Sakura totems and Great Secret Art: Tenko Kenshin, and what is left of her passives and constellations.
+Yae Miko's kit as built, with her Sesshou Sakura totems, Great Secret Art: Tenko Kenshin and both passives, and what is left of her constellations.
 
 ## Requirements
 
@@ -55,9 +55,29 @@ Yae Miko's burst SHALL strike a circle of radius 7 metres at 100 frames and dest
 - **WHEN** the burst is cast
 - **THEN** each totem is destroyed and fires a Tenko Thunderbolt that strikes at 154 frames and then every 24 frames
 
-### Requirement: Unbuilt passives and constellations
+### Requirement: The burst gives back a skill charge for each totem it destroys from Ascension 1
 
-Yae Miko's passives and constellations SHALL have no effect in the world yet.
+From Ascension 1, each totem Great Secret Art: Tenko Kenshin destroys SHALL reset the cooldown of one charge of Sesshou Sakura.
+
+#### Scenario: Destroyed totems give back charges
+
+- **GIVEN** Yae Miko has reached Ascension 1 and two totems stand while her skill's charges cool
+- **WHEN** the burst is cast
+- **THEN** two charges' cooldowns are taken off her skill's cooldown
+
+### Requirement: Elemental Mastery raises the totems' DMG from Ascension 4
+
+From Ascension 4, each totem strike SHALL deal 0.15% more DMG for each point of Yae Miko's Elemental Mastery.
+
+#### Scenario: A totem strike scales with Elemental Mastery
+
+- **GIVEN** Yae Miko has reached Ascension 4
+- **WHEN** a totem strikes
+- **THEN** its DMG Bonus is 0.15% of her Elemental Mastery
+
+### Requirement: Unbuilt constellations
+
+Yae Miko's constellations SHALL have no effect in the world yet.
 
 #### Scenario: Constellation has no effect
 
