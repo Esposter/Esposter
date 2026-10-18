@@ -24,6 +24,7 @@ describe(readReputationRequestQuest, () => {
       descriptionTextId: "2",
       id: "900101",
       kind: QuestKind.World,
+      mainId: "9001",
       offerTalkIds: [],
       parentQuestIds: [],
       rewards: [],

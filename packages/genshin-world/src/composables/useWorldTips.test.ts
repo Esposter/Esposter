@@ -18,6 +18,7 @@ const quest = (id: string): Quest => ({
   descriptionTextId: "",
   id,
   kind: QuestKind.World,
+  mainId: id,
   offerTalkIds: [],
   rewards: [],
   steps: [],

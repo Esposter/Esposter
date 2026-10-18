@@ -25,6 +25,8 @@ export interface Quest {
   descriptionTextId: string;
   id: string;
   kind: QuestKind;
+  // The main quest the quest is filed under: its own id for a main quest, and the one a Reputation request is a sub quest of
+  mainId: string;
   // The talks offering the quest, any one of which ending starts it, none for a quest that starts otherwise
   offerTalkIds: string[];
   // The quests that must all be finished before this one starts, read from the accept conditions of its sub quests, none for a quest that starts otherwise
@@ -43,6 +45,7 @@ export const questSchema = z
     descriptionTextId: z.string().min(1),
     id: z.string().min(1),
     kind: z.enum(QuestKind) satisfies z.ZodType<QuestKind>,
+    mainId: z.string().min(1),
     offerTalkIds: z.array(z.string().min(1)),
     parentQuestIds: z.array(z.string().min(1)),
     rewards: z.array(questRewardItemSchema),

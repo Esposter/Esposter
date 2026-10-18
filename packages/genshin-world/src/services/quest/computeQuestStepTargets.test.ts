@@ -12,6 +12,7 @@ describe(computeQuestStepTargets, () => {
     descriptionTextId: "",
     id: "quest",
     kind: QuestKind.World,
+    mainId: "quest",
     offerTalkIds: [],
     parentQuestIds: [],
     rewards: [],

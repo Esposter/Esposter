@@ -17,6 +17,7 @@ describe(getFinishedReputationRewards, () => {
     descriptionTextId: "description",
     id: String(QUEST_ID),
     kind: QuestKind.World,
+    mainId: String(QUEST_ID),
     offerTalkIds: [],
     parentQuestIds: [],
     rewards: [],

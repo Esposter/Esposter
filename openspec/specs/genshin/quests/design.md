@@ -73,7 +73,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 | File                                                                     | Role                                                                             |
 | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps, talks, finish rewards and schema                |
+| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its main quest, kind, words, steps, talks, rewards and schema           |
 | `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, target and count                         |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                  |
 | `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk          |

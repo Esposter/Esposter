@@ -10,6 +10,7 @@ const createQuest = (id: string): Quest => ({
   descriptionTextId: "descriptionTextId",
   id,
   kind: QuestKind.Archon,
+  mainId: id,
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],

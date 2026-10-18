@@ -14,6 +14,7 @@ describe(getTalkOffers, () => {
     descriptionTextId: "descriptionTextId",
     id: "id",
     kind: QuestKind.World,
+    mainId: "id",
     offerTalkIds: [],
     parentQuestIds: [],
     rewards: [],

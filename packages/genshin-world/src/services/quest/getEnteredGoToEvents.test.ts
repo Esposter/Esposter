@@ -12,6 +12,7 @@ const quest: Quest = {
   descriptionTextId: "descriptionTextId",
   id: "0",
   kind: QuestKind.Archon,
+  mainId: "0",
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],
