@@ -22,7 +22,7 @@
   "skillHolds.length": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 35, "source": "Gcsim", "value": 55 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 28 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "file": "skill.go", "line": 66, "source": "Gcsim", "value": 27 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11532 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11532 } },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
