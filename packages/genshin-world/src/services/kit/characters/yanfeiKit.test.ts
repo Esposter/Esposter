@@ -1,6 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -15,6 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYanfeiKitBehaviour, YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -62,21 +65,33 @@ const landCriticalChargedAttack = (ascension: number, criticalHitCount = 1) => {
 const countSealStatuses = (effects: KitEffect[]): number =>
   effects.filter((effect) => effect.kind === "status" && effect.id.startsWith("yanfei-seal")).length;
 
-const getCriticalRateBonus = (constellationCount: number, healthShare: number): number => {
-  const combatant = createYanfeiCombatant(constellationCount);
+// The summons the kit holds, in the order they were cast
+const readSummons = (context: KitContext): KitSummon[] =>
+  context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
+// The CRIT Rate a strike of hers gains on an enemy at the health share given
+const getStrikeCriticalRateBonus = (strike: KitStrike, healthShare: number): number => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   return (
     YANFEI_KIT.getStrikeCriticalRateBonus?.(
-      {
-        attackTag: AttackTag.ChargedAttack,
-        body: createKitTestContext(combatant).body,
-        combatant,
-        hit: takeOne(YANFEI_KIT.chargedAttack.hits),
-      },
+      strike,
       { ...enemy, health: healthShare * enemy.maxHealth },
       createParty([YANFEI_CHARACTER_ID]),
       [],
     ) ?? 0
+  );
+};
+
+const getCriticalRateBonus = (constellationCount: number, healthShare: number): number => {
+  const combatant = createYanfeiCombatant(constellationCount);
+  return getStrikeCriticalRateBonus(
+    {
+      attackTag: AttackTag.ChargedAttack,
+      body: createKitTestContext(combatant).body,
+      combatant,
+      hit: takeOne(YANFEI_KIT.chargedAttack.hits),
+    },
+    healthShare,
   );
 };
 
@@ -123,6 +138,16 @@ describe(createYanfeiKitBehaviour, () => {
 
     expect([getCriticalRateBonus(1, 0.4), getCriticalRateBonus(2, 0.5)]).toStrictEqual([0, 0]);
   });
+
+  test("a Constellation 2 switch's CRIT Rate reaches her charged attack's own strikes", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createYanfeiCombatant(2));
+    YANFEI_KIT.chargedAttack.onStart?.(context);
+    const strikes: KitStrike[] = [];
+    stepKitSummon(takeOne(readSummons(context)), 2, context.body.position, strikes, context);
+
+    expect(getStrikeCriticalRateBonus(takeOne(strikes), 0.4)).toBe(0.2);
+  });
 });
 
 describe("blazing Eye", () => {
@@ -142,5 +167,29 @@ describe("blazing Eye", () => {
     expect.hasAssertions();
 
     expect(landCriticalChargedAttack(4, 2)).toHaveLength(2);
+  });
+
+  test("a Constellation 2 switch's CRIT Rate reaches Blazing Eye's strikes, as they are Charged Attacks", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createYanfeiCombatant(2), ascension: 4 };
+    const context = createKitTestContext(combatant);
+    YANFEI_KIT.chargedAttack.onStart?.(context);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    YANFEI_KIT.onKitEvent?.(
+      {
+        enemy,
+        hit: takeOne(takeOne(readSummons(context)).hits),
+        isCritical: true,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+    const strikes: KitStrike[] = [];
+    stepKitSummon(takeOne(readSummons(context), 1), 2, context.body.position, strikes, context);
+
+    expect(getStrikeCriticalRateBonus(takeOne(strikes), 0.4)).toBe(0.2);
   });
 });
