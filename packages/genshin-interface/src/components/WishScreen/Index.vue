@@ -3,6 +3,7 @@ import type { BannerKind } from "#src/models/BannerKind";
 import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { TextSegment } from "#src/models/TextSegment";
 import type { WishBannerCard } from "#src/models/WishBannerCard";
+import type { WishHistoryCell } from "#src/models/WishHistoryCell";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
 import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishResultCell } from "#src/models/WishResultCell";
@@ -11,6 +12,7 @@ import type { WishSet } from "#src/models/WishSet";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import WishDetails from "#src/components/WishDetails/Index.vue";
+import WishHistory from "#src/components/WishHistory/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
@@ -29,6 +31,8 @@ interface Props {
   detailsLabel: string;
   // The Epitomized Path's Fate Points as the game words and colours them, "[]" on every banner but the weapon wish's
   fatePoints: TextSegment[];
+  // The draws the History popup lists, the newest first
+  history: WishHistoryCell[];
   // The History button's words
   historyLabel: string;
   // The Epitomized Path's name, "" on every banner but the weapon wish's
@@ -58,6 +62,7 @@ const {
   currencies,
   detailsLabel,
   fatePoints,
+  history,
   historyLabel,
   pathLabel,
   pool,
@@ -71,6 +76,7 @@ const {
 const emit = defineEmits<{ buy: []; close: []; dismiss: []; wish: [count: number] }>();
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
+const isHistoryOpen = ref(false);
 const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeatured && rarity === 5));
 const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).join("");
 const bannerLabelText = computed(() => {
@@ -124,7 +130,9 @@ const bannerLabelText = computed(() => {
       <GameButton class="link" :kind="GameButtonKind.Reply" @click="isDetailsOpen = true">{{
         detailsLabel
       }}</GameButton>
-      <GameButton class="link" :kind="GameButtonKind.Reply">{{ historyLabel }}</GameButton>
+      <GameButton class="link" :kind="GameButtonKind.Reply" @click="isHistoryOpen = true">{{
+        historyLabel
+      }}</GameButton>
     </div>
     <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
     <div v-if="bannerId" class="sets">
@@ -159,6 +167,13 @@ const bannerLabelText = computed(() => {
       :pool
       :title="detailsLabel"
       @close="isDetailsOpen = false"
+    />
+    <WishHistory
+      v-if="isHistoryOpen"
+      :close-label="backLabel"
+      :history
+      :title="historyLabel"
+      @close="isHistoryOpen = false"
     />
     <div v-if="results.length > 0" class="results" @click="emit('dismiss')">
       <ul class="result-list">
