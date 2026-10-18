@@ -11,6 +11,7 @@ export const createCharacter = (overrides: Partial<Character> = {}): Character =
   displayName: "",
   element: "",
   name: "",
+  rarity: 4,
   region: "",
   title: "",
   version: "",

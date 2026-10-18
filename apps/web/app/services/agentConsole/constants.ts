@@ -13,6 +13,23 @@ export const SESSION_START_HOOK_EVENT = "SessionStart";
 // The persona plugin installs on its own; its session-start lines are shared as text rather than through a module
 export const GENSHIN_CHARACTER_LINE_PREFIX = "Character: ";
 export const GENSHIN_ELEMENT_LINE_PREFIX = "Element: ";
+// The character's stars and the welcome chart's rows, on their own session-start lines beside the character's
+export const GENSHIN_RARITY_LINE_PREFIX = "Rarity: ";
+export const GENSHIN_LORE_RATES_LINE_PREFIX = "Lore rates: ";
+// The star a session opens with: purple for four stars and gold for five
+export const GENSHIN_FOUR_STAR_COLOR = "#c1a1ff";
+export const GENSHIN_FIVE_STAR_COLOR = "#ffc85c";
+// How long the star takes to fall from above the world into the nameplate, and the heights it starts and lands at in
+// The view, which runs from 1 at its top edge to -1 at its bottom
+export const FALLING_STAR_DURATION_SECONDS = Temporal.Duration.from({ seconds: 2 }).total("seconds");
+export const FALLING_STAR_START_Y = 1.2;
+export const FALLING_STAR_LAND_Y = -0.55;
+// The camera's field of view, and the distance at which the view is two units high at the star's depth, so those
+// Heights hold whatever the canvas's width
+export const FALLING_STAR_FOV_DEGREES = 50;
+export const FALLING_STAR_CAMERA_DISTANCE = 1 / Math.tan((FALLING_STAR_FOV_DEGREES / 2) * (Math.PI / 180));
+// The rates panel's percentages in the reader's locale, as the welcome's chart prints them
+export const PERCENT_FORMAT = new Intl.NumberFormat(undefined, { style: "percent" });
 // A token count at the precision a gauge is read at — 30.3K of 1M rather than every digit
 export const TOKEN_COUNT_FORMAT = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1, notation: "compact" });
 // How many lines of a tool's result show under it before the call is unfolded, as the terminal shows

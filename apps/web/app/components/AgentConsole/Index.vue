@@ -13,7 +13,7 @@ const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
+const { avatar, currentSessionId, themeScene, themeSessionStartContext } = storeToRefs(agentConsoleSessionStore);
 const isMounted = useMounted();
 const loadingSteps = computed<LoadingStep[]>(() => [
   { isDone: isMounted.value, title: "Starting the page" },
@@ -57,6 +57,14 @@ const isOpeningShown = ref(true);
           <!-- The game is mounted the way the Genshin page mounts it, through the component that owns the save and lease -->
           <Genshin @load="isWorldLoaded = true" @ready="isWorldReady = true" />
           <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
+          <!-- The theme's scene is mounted over the world for the session it presents, and is not the console's -->
+          <component
+            :is="themeScene"
+            v-if="isLoaded && themeScene"
+            :key="currentSessionId"
+            :avatar="avatar"
+            :session-start-context="themeSessionStartContext"
+          />
           <AgentConsoleSheet v-if="isLoaded" />
         </div>
         <AgentConsolePanelHud />

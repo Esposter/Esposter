@@ -15,6 +15,8 @@ export interface Card {
   headline: string;
   // The roster's own name, which the context carries on a line of its own for a reader that is not a person
   name: string;
+  // The character's stars, which the console's Genshin theme draws the star's colour from
+  rarity: 4 | 5;
   // The plugin's aside in brackets — the birthday and how far off it is — never a line the character says; "" when
   // The character has no birthday
   note: string;

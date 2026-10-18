@@ -1,5 +1,6 @@
 import { deliverWarmRequest } from "#src/services/deliverWarmRequest";
 import { formatLoreChart } from "#src/services/formatLoreChart";
+import { getLoreRates } from "#src/services/getLoreRates";
 import { formatUpcomingBirthdays } from "#src/services/formatUpcomingBirthdays";
 import { getCard } from "#src/services/getCard";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
@@ -28,16 +29,17 @@ if (pick) {
   const localization = await readLocalization(language);
   const personaCard = await readPersonaCard(character.name);
   const card = getCard(character, today, localization, personaCard);
+  const loreRates = loreResponse ? getLoreRates(loreResponse, roster) : [];
   // What the welcome says under the note: why the tier fell through when it did, the tier's leaning when it chose
   // And who is close when it did not, and the voice once one is set up
   const remarks = [
     loreFailure && localization.strings.lorePickUnanswered(loreFailure),
     loreResponse
-      ? formatLoreChart(loreResponse, roster, localization)
+      ? formatLoreChart(loreRates, localization)
       : formatUpcomingBirthdays(roster, today, character.name, localization),
     readVoiceRemark(localization.strings),
   ];
   // The warm waits for no more than a synthesizer's bind
   await deliverWarmRequest(character.name, personaCard);
-  console.log(getSessionStartOutput(card, remarks, readReplyLanguage() ?? language, language));
+  console.log(getSessionStartOutput(card, remarks, readReplyLanguage() ?? language, language, loreRates));
 }

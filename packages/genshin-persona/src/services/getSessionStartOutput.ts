@@ -1,11 +1,14 @@
 import type { Card } from "#src/models/Card";
+import type { LoreRate } from "#src/models/LoreRate";
 import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
 import {
   CHARACTER_LINE_PREFIX,
   DEFAULT_LANGUAGE,
   ELEMENT_LINE_PREFIX,
+  LORE_RATES_LINE_PREFIX,
   NAMEPLATE_PREFIX,
+  RARITY_LINE_PREFIX,
 } from "#src/services/constants";
 import { formatCard } from "#src/services/formatCard";
 import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstruction";
@@ -16,13 +19,15 @@ import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstr
 // Is a fact the model answers from. The reply language rides in the context rather than in the output style, which
 // Is a file the plugin ships and cannot vary per person, and it is absent only when everything the model reads is
 // English already — the reply language and the card's, which is the interface language's — so the common case
-// Costs nothing and a card in another language never pulls the spoken lines into it. The context's last line names
-// The character for a program — the agent console's Genshin theme — rather than for the model
+// Costs nothing and a card in another language never pulls the spoken lines into it. The context's last lines name
+// The character for a program — the agent console's Genshin theme — rather than for the model: its stars, and the
+// Welcome chart's rows when the lore pick chose it, which the theme's rates panel shows
 export const getSessionStartOutput = (
   card: Card,
   remarks: string[],
   replyLanguage: string,
   interfaceLanguage: string,
+  loreRates: LoreRate[] = [],
 ): string => {
   const isEnglishThroughout = replyLanguage === DEFAULT_LANGUAGE && interfaceLanguage === DEFAULT_LANGUAGE;
   const instruction = isEnglishThroughout ? "" : getReplyLanguageInstruction(replyLanguage);
@@ -33,6 +38,8 @@ export const getSessionStartOutput = (
         instruction,
         `${CHARACTER_LINE_PREFIX}${card.name}`,
         card.element ? `${ELEMENT_LINE_PREFIX}${card.element}` : "",
+        `${RARITY_LINE_PREFIX}${card.rarity}`,
+        loreRates.length > 0 ? `${LORE_RATES_LINE_PREFIX}${JSON.stringify(loreRates)}` : "",
       ]
         .filter(Boolean)
         .join("\n"),

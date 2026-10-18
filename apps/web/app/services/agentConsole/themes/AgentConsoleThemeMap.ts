@@ -3,6 +3,7 @@ import type { AgentConsoleTheme } from "@/models/agentConsole/AgentConsoleTheme"
 import { AgentConsoleThemeType } from "@/models/agentConsole/AgentConsoleThemeType";
 import { UiToken } from "@/models/ui/UiToken";
 import { GENSHIN_CHARACTER_LINE_PREFIX, GENSHIN_ELEMENT_LINE_PREFIX } from "@/services/agentConsole/constants";
+import { getSessionStartLine } from "@/services/agentConsole/getSessionStartLine";
 import { ElementColorMap } from "genshin-text";
 
 const defaultTheme: AgentConsoleTheme = { getAvatar: () => "", getPalette: () => ({}), reactions: {} };
@@ -13,18 +14,12 @@ export const AgentConsoleThemeMap = {
   [AgentConsoleThemeType.Default]: defaultTheme,
   [AgentConsoleThemeType.Genshin]: {
     ...defaultTheme,
-    getAvatar: (sessionStartContext) =>
-      sessionStartContext
-        .split("\n")
-        .find((line) => line.startsWith(GENSHIN_CHARACTER_LINE_PREFIX))
-        ?.slice(GENSHIN_CHARACTER_LINE_PREFIX.length) ?? "",
+    getAvatar: (sessionStartContext) => getSessionStartLine(sessionStartContext, GENSHIN_CHARACTER_LINE_PREFIX),
     getPalette: (sessionStartContext) => {
-      const element = sessionStartContext
-        .split("\n")
-        .find((line) => line.startsWith(GENSHIN_ELEMENT_LINE_PREFIX))
-        ?.slice(GENSHIN_ELEMENT_LINE_PREFIX.length);
+      const element = getSessionStartLine(sessionStartContext, GENSHIN_ELEMENT_LINE_PREFIX);
       const accent = element ? ElementColorMap[element] : undefined;
       return accent ? { [UiToken.Accent]: accent } : {};
     },
+    scene: defineAsyncComponent(() => import("@/components/AgentConsole/Theme/Genshin/WishBanner.vue")),
   },
 } as const satisfies Record<AgentConsoleThemeType, AgentConsoleTheme>;

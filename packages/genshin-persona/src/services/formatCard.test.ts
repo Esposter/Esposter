@@ -22,6 +22,7 @@ describe(formatCard, () => {
       name: "name",
       note: "",
       personaCard: { greeting, habits: ["habit"], signOff: "signOff", verbs: [] },
+      rarity: 4,
     };
 
     expect(formatCard(card)).toBe(

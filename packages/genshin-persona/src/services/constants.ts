@@ -69,6 +69,10 @@ export const NAMEPLATE_PREFIX = "✦ ";
 export const CHARACTER_LINE_PREFIX = "Character: ";
 // The stable element key beside the character name, for a theme to read without parsing the localized headline
 export const ELEMENT_LINE_PREFIX = "Element: ";
+// The character's stars beside the element, so the star a theme draws for the session is coloured by the game's own rarity
+export const RARITY_LINE_PREFIX = "Rarity: ";
+// The welcome chart's rows as JSON, which a theme draws the odds from; absent unless the lore pick chose the character
+export const LORE_RATES_LINE_PREFIX = "Lore rates: ";
 export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;
@@ -82,8 +86,10 @@ export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
 // Between the fields of a pick record and of the pin
 export const STATE_FIELD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
-// The roster cache's file name is the prefix and the installed data package's version, so a bump writes a new one
+// The roster cache's file name is the prefix, the revision of the roster's fields and the installed data package's
+// Version, so a bump or a new field writes a new one: a cache written before a field existed reads it as missing
 export const ROSTER_CACHE_PREFIX = "roster-";
+export const ROSTER_CACHE_REVISION = 2;
 export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;

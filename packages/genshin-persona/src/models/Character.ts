@@ -17,6 +17,8 @@ export interface Character {
   // The English name, which is the identity: the pin, the pick records, the reference clips, the card modules and
   // Every wiki lookup are keyed by it, so it is stable across a change of interface language
   name: string;
+  // The character's stars, four or five, as the game data's rarity field spells them
+  rarity: 4 | 5;
   region: string;
   title: string;
   // The game patch that introduced the character, as its "major.minor" label

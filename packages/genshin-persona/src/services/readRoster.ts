@@ -48,6 +48,7 @@ export const readRoster = (language: string): Character[] => {
       displayName: localized.name,
       element: character.elementText,
       name: character.name,
+      rarity: character.rarity,
       region: localized.region,
       title: localized.title,
       version: character.version,

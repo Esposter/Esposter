@@ -10,7 +10,7 @@ A session drawn by lore opens as a wish in the Genshin theme, and the characters
 
 - The characters met in recent sessions join the state the tier reads for its draw. This part changes the terminal's behaviour too and needs no console, so it ships on its own.
 - When a session drawn by lore opens in the Genshin theme, a star falls in the colour of the character's rarity, purple for four stars and gold for five, and resolves into the character's nameplate.
-- The banner's details show every character with the probability the tier gave them, the same rows the welcome chart prints.
+- The banner's details show the rows the welcome chart prints, each with the probability the tier gave it.
 - A pinned character skips the draw, so the nameplate appears without the fall.
 
 ## Capabilities

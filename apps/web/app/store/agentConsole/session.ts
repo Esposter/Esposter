@@ -26,17 +26,21 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
   const streamDraft = computed(() => sessionView.value.streamDraft);
   const toolCallMap = computed(() => sessionView.value.toolCallMap);
-  // The first theme that finds its own line in a session-start hook's context presents that session
+  // The first theme that finds its own line in a session-start hook's context presents that session, and its scene,
+  // Which is handed the same context
   const themeContext = computed(() => {
     for (const sessionStartContext of sessionView.value.sessionStartContexts)
       for (const theme of Object.values(AgentConsoleThemeMap)) {
         const avatar = theme.getAvatar(sessionStartContext);
-        if (avatar) return { avatar, palette: theme.getPalette(sessionStartContext) };
+        if (avatar)
+          return { avatar, palette: theme.getPalette(sessionStartContext), scene: theme.scene, sessionStartContext };
       }
 
-    return { avatar: "", palette: {} };
+    return { avatar: "", palette: {}, scene: undefined, sessionStartContext: "" };
   });
   const avatar = computed(() => themeContext.value.avatar);
+  const themeScene = computed(() => themeContext.value.scene);
+  const themeSessionStartContext = computed(() => themeContext.value.sessionStartContext);
   const themeStyle = computed(() =>
     Object.fromEntries(Object.entries(themeContext.value.palette).map(([token, value]) => [`--ui-${token}`, value])),
   );
@@ -109,6 +113,8 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     storeSessionReset,
     storeSessions,
     streamDraft,
+    themeScene,
+    themeSessionStartContext,
     themeStyle,
     timelineLanes,
     todoUpdate,
