@@ -96,6 +96,34 @@ export const readGcsimAttacks = (
         variableName: readVariableName(tokens, position),
       });
     }
+    // A `Mult` the code sets after a literal, `ai.Mult = burstFinal[...]`, is that literal's attack under the variable it
+    // Names: the nearest literal of the same name before it, its fields as written, its multiplier as set here
+    for (const [position, token] of tokens.entries()) {
+      if (
+        token.text !== "Mult" ||
+        !checkIsGoPunctuation(tokens[position - 1], ".") ||
+        !checkIsGoPunctuation(tokens[position + 1], "=") ||
+        tokens[position - 2]?.kind !== GoTokenKind.Identifier
+      )
+        continue;
+      const variableName = tokens[position - 2]?.text;
+      const literal = attacks.filter(
+        (attack) => attack.file === file && attack.variableName === variableName && attack.line < token.line,
+      );
+      const talentVariable = resolveGoAlias(
+        aliasMap,
+        getGoRootName(parseGoExpression(tokens, position + 2).expression),
+        position,
+      );
+      const literalAttack = literal.at(-1);
+      if (literalAttack === undefined || talentVariable === undefined) continue;
+      attacks.push({
+        ...literalAttack,
+        fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
+        line: token.line,
+        talentVariable,
+      });
+    }
     return attacks;
   });
 };
