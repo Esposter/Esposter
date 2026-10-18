@@ -1,15 +1,18 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { ExcelFeatureTagGroupRow } from "#src/models/genshinAssets/fishing/ExcelFeatureTagGroupRow";
 import type { ExcelFishBaitRow } from "#src/models/genshinAssets/fishing/ExcelFishBaitRow";
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
 import type { ExcelFishProficientRow } from "#src/models/genshinAssets/fishing/ExcelFishProficientRow";
 import type { ExcelFishRewardRow } from "#src/models/genshinAssets/fishing/ExcelFishRewardRow";
 import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFishRodRow";
+import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { Fish, FishingPool, FishReward, FishRod } from "genshin-world";
 
 import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
-import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
+import { toFishingPool, toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPool";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
@@ -63,14 +66,15 @@ const toFishReward = (row: ExcelFishRewardRow): FishReward => ({
 
 // The fish, their rods, skills, baits, proficiency and each fish's catch reward, and each region's pools built as the
 // Fishing dataset's records, the pools filed by the city they are fished in. A pool filed under no region named here is
-// Left out and counted in the notes
+// Left out and counted in the notes. A bait's fish are joined from the dump, its pools' fish or its tags' fish
 export const buildFishingTables = (): GameDataBuild => {
   const stocks = new Map(
     readExcelTable<ExcelFishStockRow>("FishStockExcelConfigData").map((stock) => [stock.id, stock]),
   );
+  const poolRows = readExcelTable<ExcelFishPoolRow>("FishPoolExcelConfigData");
   const regionPools: Record<string, FishingPool[]> = {};
   let skippedPools = 0;
-  for (const row of readExcelTable<ExcelFishPoolRow>("FishPoolExcelConfigData")) {
+  for (const row of poolRows) {
     const region = CityIdRegionMap[row.cityId];
     if (region === undefined) {
       skippedPools++;
@@ -78,9 +82,21 @@ export const buildFishingTables = (): GameDataBuild => {
     }
     regionPools[region] = [...(regionPools[region] ?? []), toFishingPool(row, stocks)];
   }
-  const fish = readExcelTable<Fish>("FishExcelConfigData").map((row) => toFish(row));
+  const poolFishIds = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
+  const fishRows = readExcelTable<ExcelFishRow>("FishExcelConfigData");
+  const fish = fishRows.map((row) => toFish(row));
+  const groupTags = new Map(
+    readExcelTable<ExcelFeatureTagGroupRow>("FeatureTagGroupExcelConfigData").map((group) => [
+      group.groupID,
+      new Set(group.tagIDs.filter((tag) => tag !== 0)),
+    ]),
+  );
+  const fishTags = new Map(fishRows.map((row) => [row.id, groupTags.get(row.monsterId) ?? new Set<number>()]));
+  const baits = readExcelTable<ExcelFishBaitRow>("FishBaitExcelConfigData").map((row) =>
+    toFishingBait(row, fishTags, poolFishIds),
+  );
+  const joinedFishCount = new Set(baits.flatMap((bait) => bait.fishIds)).size;
   const rods = readExcelTable<ExcelFishRodRow>("FishRodExcelConfigData").map((row) => toFishRod(row));
-  const baits = readExcelTable<ExcelFishBaitRow>("FishBaitExcelConfigData").map((row) => row.id);
   const skills = readExcelTable<ExcelFishSkillRow>("FishSkillExcelConfigData").map((row) => toFishSkill(row));
   const proficiency = readExcelTable<ExcelFishProficientRow>("FishProficientExcelConfigData");
   const fishRewardIds = new Set(fish.map((row) => row.rewardId));
@@ -91,7 +107,7 @@ export const buildFishingTables = (): GameDataBuild => {
     notes: [
       ...Object.entries(regionPools).map(([region, pools]) => `${region}: ${pools.length} pools`),
       `${fish.length} fish and ${rods.length} rods, ${skippedPools} pools in no region left out`,
-      `${baits.length} baits, ${skills.length} fish skills, ${proficiency.length} proficiency rows`,
+      `${baits.length} baits drawing ${joinedFishCount} of ${fish.length} fish, ${skills.length} fish skills, ${proficiency.length} proficiency rows`,
       `${rewards.length} catch rewards, ${fishRewardIds.size} named by the fish`,
     ],
     objects: {
