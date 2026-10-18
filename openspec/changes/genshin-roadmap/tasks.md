@@ -175,7 +175,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [x] `menu-settings.mkv` — **Settings screen**, found as `captures/yt-5EmJX_RyuY8-menu-settings.mp4` (https://www.youtube.com/watch?v=5EmJX_RyuY8, 0–220 s), a near one: the English PC client at 1080p and 60 frames a second. Read by [settings](../../specs/genshin/compute/settings/design.md).
 - [x] `ore-strike.mkv` — **Ore strike**, found as `captures/yt-VlRNdhoeXTk-ore-strike.mp4` (https://www.youtube.com/watch?v=VlRNdhoeXTk, 0–170 s), a near one: the English PC client at 1080p and 60 frames a second, with a face camera from 170 s. A montage cut between strikes, so which counts it settles is [gathering](../../specs/genshin/gathering/design.md)'s.
 - [ ] **Sealed chest freed** — `chest-seal-pyro.mkv`, waits on [chests](../genshin-chests/design.md).
-- [ ] **Buried chest dug** — `chest-dig.mkv`, waits on [chests](../genshin-chests/design.md).
+- [x] `chest-dig.mkv` — **Buried chest dug**, found as `captures/yt-j5ggVp4ffyc-chest-dig.mp4` (https://www.youtube.com/watch?v=j5ggVp4ffyc, 10–30 s), cut to `chest-dig.mkv`, a near one: 29.8 frames a second, not 60, at 1080p in English. The dig prompt, the dig and its rewards are shown.
 - [ ] **Camp locks a chest** — `chest-camp-lock.mkv`, waits on [chests](../genshin-chests/design.md).
 - [ ] **Boss claim Companionship EXP** — `companionship-claim-boss.mkv`, waits on [companionship](../genshin-companionship/design.md).
 - [ ] **Domain claim Companionship EXP** — `companionship-claim-domain.mkv`, waits on [companionship](../genshin-companionship/design.md).
