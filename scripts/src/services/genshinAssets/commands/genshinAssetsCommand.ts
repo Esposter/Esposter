@@ -39,6 +39,7 @@ import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand"
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
+import { enemyCampsCommand } from "#src/services/genshinAssets/commands/enemyCampsCommand";
 import { outcropPlacesCommand } from "#src/services/genshinAssets/commands/outcropPlacesCommand";
 import { paletteCommand } from "#src/services/genshinAssets/commands/paletteCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
@@ -122,6 +123,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     domains: domainsCommand,
     waypoints: waypointsCommand,
     "outcrop-places": outcropPlacesCommand,
+    "enemy-camps": enemyCampsCommand,
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,

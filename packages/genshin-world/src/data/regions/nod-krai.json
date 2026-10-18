@@ -1,5 +1,1274 @@
 {
-  "enemyCamps": [],
+  "enemyCamps": [
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-1",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-100102",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3807.01, "z": -10009.56 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-100101",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3807.64, "z": -10003.68 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-100100",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3813.64, "z": -10010.06 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-100099",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3814.52, "z": -10004.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-2",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-99258",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3939.41, "z": -9950.05 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-99257",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3940.16, "z": -9955.05 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-99256",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3942.03, "z": -9952.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-3",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93520",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3990.73, "z": -11114.41 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93519",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3994.46, "z": -11112.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-4",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93518",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3180.69, "z": -10864.41 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93517",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3182.19, "z": -10862.79 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93516",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3182.32, "z": -10865.04 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-93515",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3183.66, "z": -10863.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-5",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91188",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1328.97, "z": -11108.5 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-6",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91187",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1258.45, "z": -11077.24 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91186",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1257.7, "z": -11078.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-7",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91157",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -46.77, "z": -10875.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-8",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91156",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -42.77, "z": -10889.71 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-9",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91155",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -199.29, "z": -12455.23 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91154",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -193.54, "z": -12448.98 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91153",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -207.04, "z": -12453.23 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91152",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -199.04, "z": -12463.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-10",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91151",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -216.55, "z": -11129 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91150",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -219.05, "z": -11130.88 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91149",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -216.3, "z": -11132.88 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-11",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91024",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 10.49, "z": -11161.63 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91023",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 12.99, "z": -11158.01 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91022",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 17.62, "z": -11158.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-12",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91021",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -214.3, "z": -11759.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-13",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91020",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -209.8, "z": -11743.86 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91019",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -205.3, "z": -11747.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-14",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91018",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 186.77, "z": -12019.91 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91017",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 183.65, "z": -12019.03 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91016",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 184.52, "z": -12021.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-15",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91010",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1355.97, "z": -10503.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-16",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91009",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1370.47, "z": -10508.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-17",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91008",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 304.04, "z": -10040.57 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91007",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 306.04, "z": -10046.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-18",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91006",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 312.79, "z": -10054.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-19",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91005",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 424.81, "z": -10401.13 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91004",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 428.81, "z": -10394.63 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91003",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 433.81, "z": -10401.13 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91002",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 437.81, "z": -10392.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-20",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90664",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -310.81, "z": -11368.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-21",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90663",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -323.57, "z": -11368.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-22",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90662",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 53.75, "z": -10805.32 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90661",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 57.25, "z": -10803.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-23",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90660",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -195.04, "z": -11319.54 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90659",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -191.04, "z": -11328.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-24",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90658",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -169.79, "z": -11388.3 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90657",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -173.54, "z": -11386.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-25",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90656",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 375.68, "z": -9926.17 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90655",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 377.05, "z": -9929.55 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90654",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 380.43, "z": -9930.8 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90653",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 384.05, "z": -9931.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-26",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90652",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 398.68, "z": -9933.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-27",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90651",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 334.79, "z": -10305.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-28",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90650",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 324.17, "z": -10303.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-29",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90646",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 184.77, "z": -12172.93 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90645",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 176.27, "z": -12176.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-30",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90644",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -259.8, "z": -12264.95 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90643",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -268.31, "z": -12265.45 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90642",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -276.31, "z": -12270.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-31",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90641",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -156.29, "z": -12285.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-32",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90640",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -164.79, "z": -12277.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-33",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90639",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -168.29, "z": -12267.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-34",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90638",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 205.02, "z": -12113.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-35",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90635",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 18.24, "z": -12190.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-36",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90634",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 22.24, "z": -12204.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-37",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90633",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 28.74, "z": -11909.39 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90632",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 19.24, "z": -11909.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-38",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90628",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 991.16, "z": -10385.38 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90627",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 982.91, "z": -10385.63 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90626",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 982.41, "z": -10395.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-39",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90625",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 917.64, "z": -10427.63 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90624",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 913.89, "z": -10435.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-40",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90623",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 827.38, "z": -10605.66 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90622",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 823.38, "z": -10614.66 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90621",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 827.88, "z": -10619.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-41",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90620",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 724.74, "z": -10550.65 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90619",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 726.61, "z": -10556.28 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90618",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 730.49, "z": -10546.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-42",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90614",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 421.31, "z": -10889.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-43",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-90613",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 418.31, "z": -10879.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-44",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-99259",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3722.87, "z": -9751.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-45",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-95023",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3747.51, "z": -11169.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-46",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-93548",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3610.86, "z": -10875.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-47",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-90665",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 242.28, "z": -10313.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-48",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-90649",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 326.3, "z": -12022.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-49",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-90648",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 330.92, "z": -12032.28 }
+        },
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-90647",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 339.3, "z": -12031.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-50",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93539",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3911.69, "z": -11486.52 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93538",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3913.94, "z": -11487.52 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-51",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93537",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3874.56, "z": -11177.96 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93536",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3875.17, "z": -11179.46 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93535",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3875.94, "z": -11182.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-52",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93534",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3748.54, "z": -11171.97 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93533",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3750.03, "z": -11169.59 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93532",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3750.19, "z": -11175.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-53",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93531",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3278.86, "z": -10721.34 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93530",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3281.82, "z": -10721.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-54",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93529",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3183.44, "z": -10952.43 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93528",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3183.31, "z": -10954.93 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-93527",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3184.56, "z": -10956.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-55",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91185",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1537.5, "z": -10805.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-56",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91184",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1545.5, "z": -10811.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-57",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91015",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -204.8, "z": -12060.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-58",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91014",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -104.53, "z": -12339.96 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91013",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -111.28, "z": -12336.71 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-91012",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -113.53, "z": -12340.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-59",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-90717",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 227.4, "z": -10309.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-60",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-90637",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 200.02, "z": -12117.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-61",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-93526",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3750.67, "z": -11171.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-62",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-93522",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3909.56, "z": -11489.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-63",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-93521",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3184.19, "z": -10953.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-64",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-91011",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -109.78, "z": -12339.96 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-65",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-90631",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -74.27, "z": -11837.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-66",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-93499",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3914.03, "z": -11491.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-67",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-90667",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 238.03, "z": -10299.61 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-90666",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 241.03, "z": -10309.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-68",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-90630",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -67.27, "z": -11837.88 }
+        }
+      ]
+    },
+    {
+      "areaId": "nod-krai",
+      "id": "nod-krai-camp-69",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-90629",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -76.77, "z": -11844.38 }
+        }
+      ]
+    }
+  ],
   "id": "nod-krai",
   "landmarks": [
     {
