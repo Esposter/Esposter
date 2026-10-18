@@ -88,7 +88,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `nilou`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `ningguang`          | —                      |                                                                          |
 | `noelle`             | —                      |                                                                          |
-| `odette`             | —                      |                                                                          |
+| `odette`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ororon`             | —                      |                                                                          |
 | `prune`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `qiqi`               | —                      |                                                                          |
