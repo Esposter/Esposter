@@ -696,6 +696,35 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("adds the delays of the Tasks.Add closures a method's call is nested in, outer and inner, to the queue calls in that method", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package collei",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.burstTicks(0)",
+          "\t\t}, 43)",
+          "\t}, 25)",
+          "}",
+          "",
+          "func (c *char) burstTicks(snap int) {",
+          "\tc.Core.QueueAttackWithSnap(ai, ap, snap, 0, 0)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[12, 68]]);
+  });
+
   test("reads no delay from a method's call outside any task closure, which runs at its caller's own time", () => {
     expect.hasAssertions();
 
