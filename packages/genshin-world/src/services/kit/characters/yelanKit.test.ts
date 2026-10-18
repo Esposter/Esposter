@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
@@ -162,5 +163,35 @@ describe(createYelanKitBehaviour, () => {
     stepYelanSeconds(context, takeOne(YELAN_KIT.elementalBurst.hits).hitmarkSeconds + 2.5);
 
     expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
+  });
+});
+
+describe("ascension 1", () => {
+  // Yelan's passive bonuses at an ascension, on a team of her (Hydro) and members of the given elements
+  const readPassiveBonuses = (
+    ascension: number,
+    teamElements: Element[],
+  ): { amount: number; attribute: Attribute }[] | undefined => {
+    const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
+    const deployedCombatants = [
+      { ...combatant, isOnField: true },
+      ...teamElements.map((element) => ({ ...createYelanCombatant(), element, isOnField: false })),
+    ];
+    return YELAN_KIT.getPassiveBonuses?.(combatant, 0.5, deployedCombatants, []);
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPassiveBonuses(1, [Element.Pyro])).toStrictEqual([{ amount: 0.12, attribute: Attribute.HealthPercent }]);
+    expect(readPassiveBonuses(1, [Element.Pyro, Element.Electro, Element.Cryo])).toStrictEqual([
+      { amount: 0.3, attribute: Attribute.HealthPercent },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPassiveBonuses(0, [Element.Pyro])).toStrictEqual([]);
   });
 });
