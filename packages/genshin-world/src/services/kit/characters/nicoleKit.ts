@@ -222,7 +222,6 @@ const startC2Ticker = (
   seconds: number,
 ): void => {
   const id = `${CONSTELLATION_2_TICKER_ID}-${characterId}`;
-  removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === id);
   castKitField(
     kitEffectState,
     nicoleCharacterId,
@@ -264,10 +263,6 @@ const upgradeAscensionBuff = (
   );
   const buffSeconds = Math.min(seconds, skillBuff?.secondsRemaining ?? 0);
   if (buffSeconds <= 0) return;
-  removeKitEffects(
-    kitEffectState,
-    (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === ASCENSION_1_SOURCE,
-  );
   buffKitMember(kitEffectState, characterId, {
     amount: ASCENSION_1_AMOUNT,
     attribute: Attribute.Attack,
@@ -330,11 +325,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
               effect.characterId === previousCharacterId &&
               effect.source === ASCENSION_1_SOURCE,
           );
-        // A swap made before the last one's upgrade lands cancels that upgrade, as gcsim's a1Src token does
-        removeKitEffects(
-          context.kitEffectState,
-          (effect) => effect.kind === "field" && effect.id === ASCENSION_1_SWAP_ID,
-        );
+        // A swap made before the last one's upgrade lands is replaced by this swap's task, as gcsim's a1Src token does
         scheduleKitTask(
           context.kitEffectState,
           combatant.characterId,
