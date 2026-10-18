@@ -94,6 +94,9 @@ export const GCG_CATALYZING_FIELD_ID = 117;
 export const GCG_CATALYZING_FIELD_MAX_USAGES = 2;
 // The two foods that stay on their character as a status for the round, so a character holds one of them a round
 export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_003, 333_004, 333_005, 333_007, 333_008, 333_009];
+// Toss-Up, whose play takes the dice it rerolls as its choice, and the two rerolls it makes
+export const GCG_TOSS_UP_CARD_ID = 332_003;
+export const GCG_TOSS_UP_REROLL_COUNT = 2;
 // The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
 export const GCG_PLAYER_SIDE_INDEX = 0;
 export const GCG_OPPONENT_SIDE_INDEX = 1;
