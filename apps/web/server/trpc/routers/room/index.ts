@@ -315,7 +315,7 @@ export const baseRoomRouter = router({
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
       // Agree with the name the row renders
-      const displayName = getDisplayNameExpression();
+      const displayName = getDisplayNameExpression(usersToRoomsInMessage, usersInAuth);
       const sortableColumns = { ...getPublicUserColumns(usersInAuth), displayName };
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));

@@ -1,6 +1,12 @@
 import type { Context } from "#server/trpc/context";
 
-import { roomsInMessage, RoomType, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  getDisplayNameExpression,
+  roomsInMessage,
+  RoomType,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -9,7 +15,7 @@ import { alias } from "drizzle-orm/pg-core";
 export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) => {
   const participantMembership = alias(usersToRoomsInMessage, "participantMembership");
   const participantUser = alias(usersInAuth, "participantUser");
-  const participantDisplayName = sql<string>`coalesce(nullif(${participantMembership.displayName}, ''), ${participantUser.name})`;
+  const participantDisplayName = getDisplayNameExpression(participantMembership, participantUser);
   return db
     .select({
       displayName:

@@ -30,6 +30,7 @@ import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friendsInSocial,
+  getDisplayNameExpression,
   getPublicUserColumns,
   PublicUserColumns,
   roomsInMessage,
@@ -39,7 +40,7 @@ import {
 } from "@esposter/db-schema";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, inArray, ne, or, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 export const directMessageRouter = router({
@@ -221,7 +222,7 @@ export const directMessageRouter = router({
       const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
       const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
       const usersInAuth2 = alias(usersInAuth, "usersInAuth2");
-      const participantDisplayName = sql<string>`coalesce(nullif(${usersToRoomsInMessage2.displayName}, ''), ${usersInAuth2.name})`;
+      const participantDisplayName = getDisplayNameExpression(usersToRoomsInMessage2, usersInAuth2);
       const rows = await ctx.db
         .select({
           displayName: participantDisplayName,
