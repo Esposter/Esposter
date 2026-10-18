@@ -42,10 +42,10 @@ export const reserveStorageBytes = async (
   const collectableBefore = new Date(now.getTime() - (EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
   await db.transaction(async (tx) => {
     // `storageLedger` before `users`, the order every path that touches both takes, so a reserve cannot close a
-    // Lock cycle with a concurrent release or reconcile (openspec/specs/resource/storage-quotas/design.md). The collectable holds
-    // Ride this write path rather than a sweep of their own. Only a hold that never entered the counter is one:
-    // A reserve that took over a settled row left it holding the bytes of the blob it replaces, and dropping that
-    // Row would strand them on the counter with nothing left to give them back
+    // Lock cycle with a concurrent release or reconcile (openspec/specs/resource/storage-quotas/design.md). The
+    // Collectable holds ride this write path rather than a sweep of their own. Only a hold that never entered the
+    // Counter is one: a reserve that took over a settled row left it holding the bytes of the blob it replaces, and
+    // Dropping that row would strand them on the counter with nothing left to give them back
     await tx
       .delete(storageLedgerInStorage)
       .where(

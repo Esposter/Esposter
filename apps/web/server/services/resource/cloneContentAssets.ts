@@ -38,8 +38,9 @@ const cloneAsset = async (
   // A clone is stored bytes like any other, charged to whoever the clone is for. The source's length is
   // Provisional: the copy raises its own `BlobCreated`, which finds this row and replaces the figure with what
   // Landed, so a source overwritten mid-copy costs seconds of a wrong number rather than a second HEAD on every
-  // Clone (openspec/specs/resource/storage-quotas/design.md). Charged before the copy, never after: Event Grid orders nothing, and
-  // An event arriving before the row exists is dropped for good — `reconcileStorageLedgerEntry` reads a blob
+  // Clone (openspec/specs/resource/storage-quotas/design.md). Charged before the copy, never after: Event Grid
+  // Orders nothing, and an event arriving before the row exists is dropped for good — `reconcileStorageLedgerEntry`
+  // Reads a blob
   // Nothing reserved as unaccounted rather than as an error, so nothing retries the provisional figure away
   await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
   // The charge is a claim about a blob, so it unwinds the moment the blob turns out not to exist: a destination
@@ -86,7 +87,8 @@ export const cloneContentAssets = async <TContent>(
   // Every clone takes a freshly minted asset id, never the source's. `restoreSnapshotVersion` clones back into
   // The working copy's own `{id}/files`, so a carried-over name would rebuild the exact name an editor delete
   // Already published for deletion — and a named-blob deletion event carries no time bound
-  // (openspec/specs/architecture/blob-lifecycle/design.md), so its replay destroys the restored blob. Minting also keeps a working
+  // (openspec/specs/architecture/blob-lifecycle/design.md), so its replay destroys the restored blob. Minting also
+  // Keeps a working
   // Copy and a published snapshot of the same file — content can embed both — from racing two copies onto one
   // Destination name.
   // Readability is a property of the resource, and content routinely names one resource's assets many times, so

@@ -7,8 +7,8 @@ import { useRuntimeConfig } from "nuxt/server";
 // Reclaims is referenced by no message, so there is nothing to check ownership against. The grant is signed
 // Instead — every member of a room can read every attachment's id off the wire, so a name-only delete would let
 // Any of them destroy anyone's posted attachment. It expires with the write SAS, which bounds the grant rather
-// Than closing it (openspec/specs/architecture/blob-lifecycle/design.md), and the expiry is signed with the rest so it cannot be
-// Edited
+// Than closing it (openspec/specs/architecture/blob-lifecycle/design.md), and the expiry is signed with the rest
+// So it cannot be edited
 export const createUploadFileToken = (
   userId: string,
   roomId: string,

@@ -7,7 +7,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 // A resource operation reaches the owner's other devices. The session that performed it is excluded: it showed
 // The toast synchronously the moment the mutation resolved, so a push to it would be the same news twice.
 //
-// Best-effort, and always after the write it reports ([persist then notify](openspec/specs/architecture/persist-then-notify/design.md)):
+// Best-effort, and always after the write it reports
+// ([persist then notify](openspec/specs/architecture/persist-then-notify/design.md)):
 // A failed publish costs one notification, never the operation that already landed.
 export const publishResourceOperation = async (
   { session, user }: GetSessionPayload,

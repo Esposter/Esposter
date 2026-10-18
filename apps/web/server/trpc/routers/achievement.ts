@@ -95,10 +95,10 @@ export const achievementRouter = router({
       const userId = ctx.getSessionPayload?.user.id;
       const targetUserId = input ?? userId;
       if (!targetUserId) throw new TRPCError({ code: "UNAUTHORIZED" });
-      // The endpoint is deliberately public (docs/user/public-profile.md), so anyone may ask for anyone's
-      // Achievements — but only the unlocked ones. A locked row names a hidden achievement the viewer has not
-      // Earned, and an in-progress row publishes how far along someone is; the public profile renders neither,
-      // So the filter belongs here rather than in the one surface that currently happens to drop them
+      // The endpoint is deliberately public (openspec/specs/user/public-profile/design.md), so anyone may ask
+      // For anyone's Achievements — but only the unlocked ones. A locked row names a hidden achievement the viewer
+      // Has not earned, and an in-progress row publishes how far along someone is; the public profile renders
+      // Neither, so the filter belongs here rather than in the one surface that currently happens to drop them
       return ctx.db.query.userAchievementsInAchievement.findMany({
         where: { ...(targetUserId !== userId && { unlockedAt: { isNotNull: true } }), userId: { eq: targetUserId } },
         with: UserAchievementInAchievementRelations,

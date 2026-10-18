@@ -20,8 +20,9 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
 
   roomEventEmitter.emit("deleteRoom", { roomId: deletedRoom.id, sessionId: session.id, userId: user.id });
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed — which is
-  // Also why both run after the broadcast (openspec/specs/architecture/persist-then-notify/design.md): the room is gone the moment
-  // The row is, so making every member's UI wait on a blob listing and two Event Grid POSTs buys them nothing.
+  // Also why both run after the broadcast (openspec/specs/architecture/persist-then-notify/design.md): the room is gone
+  // The moment the row is, so making every member's UI wait on a blob listing and two Event Grid POSTs buys them
+  // Nothing.
   await Promise.all([
     // A room's attachments have no ceiling, so the prefix goes to the handler rather than being walked here —
     // Enumerating a long-lived room's blobs inline would hold the owner's delete open until it timed out.

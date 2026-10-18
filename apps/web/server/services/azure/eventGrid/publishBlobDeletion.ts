@@ -6,10 +6,11 @@ import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // The one durable blob-cleanup publish every delete funnels through — best-effort and post-persist
-// (openspec/specs/architecture/persist-then-notify/design.md): a failed listing or publish only orphans blobs, never the mutation
-// That already landed, while a publish that lands is retried to completion by the idempotent handler. Accepts a
-// Thunk so a fallible listing runs inside the same best-effort unit, and chunks because a listing can hold more
-// Names than one event may carry — a publish that fails midway still made every chunk before it durable.
+// (openspec/specs/architecture/persist-then-notify/design.md): a failed listing or publish only orphans blobs,
+// Never the mutation that already landed, while a publish that lands is retried to completion by the idempotent
+// Handler. Accepts a thunk so a fallible listing runs inside the same best-effort unit, and chunks because a
+// Listing can hold more names than one event may carry — a publish that fails midway still made every chunk before it
+// Durable.
 export const publishBlobDeletion = (
   subject: string,
   containerName: AzureContainer,

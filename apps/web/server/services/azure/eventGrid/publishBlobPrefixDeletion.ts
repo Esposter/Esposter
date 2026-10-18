@@ -8,7 +8,8 @@ import { getResultAsync } from "@esposter/shared";
 // It. A caller whose blob set has no ceiling — a room's entire attachment directory — must never walk it
 // Inline, because the listing and every event it chunks into land on the request path with the caller's
 // Response waiting on them. Same best-effort, post-persist contract
-// (openspec/specs/architecture/persist-then-notify/design.md): a dropped publish orphans blobs, never the mutation that landed.
+// (openspec/specs/architecture/persist-then-notify/design.md): a dropped publish orphans blobs, never
+// The mutation that landed.
 // `createdBefore` is stated by every caller rather than defaulted, because both answers are load-bearing and
 // Neither is safe to inherit: a bound the caller wanted and did not get lets a replay delete what was written
 // After the decision, and a bound on a prefix nothing will ever own again permanently strands every blob that
