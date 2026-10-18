@@ -52,7 +52,7 @@ describe(readReputationRequestQuest, () => {
         subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
       }).steps,
     ).toStrictEqual([
-      { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
+      { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["9001"] }], textId: "3" },
     ]);
   });
 

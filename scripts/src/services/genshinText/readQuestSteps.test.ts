@@ -31,7 +31,7 @@ describe(readQuestSteps, () => {
         {
           banType: QuestBanType.BanGroupTransportOnly,
           id: "100",
-          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["0"] }],
           textId: String(TEXT_HASH),
         },
       ],
@@ -53,7 +53,7 @@ describe(readQuestSteps, () => {
       steps: [
         {
           id: "100",
-          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["0"] }],
           textId: String(TEXT_HASH),
         },
       ],
