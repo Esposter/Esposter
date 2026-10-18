@@ -8,7 +8,7 @@ Today the package's [viewer](../../specs/vue-pdfjs-headless/viewer/design.md) re
 
 - **`usePdfAnnotations`** takes the viewer and the document `usePdfViewer` and `usePdfDocument` return. It sets the editor mode, reports changes, lists and adds comments, and saves.
 - **`vue-pdfjs-headless/xfdf`** holds `readXfdf` and `writeXfdf`, which map XFDF to the storage's entries and back, with no framework and no renderer. It is a second build entry beside `index`, declared the way `packages/genshin-engine/tsdown.config.ts` declares its worker.
-- **The download** that `usePdfViewer` returns saves new bytes once the storage holds a change or a watermark is set: the renderer's own `PDFDocumentProxy.saveDocument` writes the storage into them, and the package's download service hands them to the browser as it hands the original bytes today.
+- **The download** that `usePdfViewer` returns saves new bytes once the storage holds a change or a watermark is set: the renderer's own `PDFDocumentProxy.saveDocument` writes the storage into them, and the shared `downloadFile` hands them to the browser as it hands the original bytes today.
 
 ## How it works
 
