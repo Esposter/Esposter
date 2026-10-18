@@ -51,21 +51,24 @@
   },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 36 },
   "skill.animationFrames": { "cause": "NoActionFile", "value": 60 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 4 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 3 },
   "skill.hits.0.area": { "cause": "NoActionFile", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "skill.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
   "skill.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 20 },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 13032 } },
   "skill.hits.1.area": { "cause": "NoActionFile", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "skill.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
   "skill.hits.1.hitmarkFrames": { "cause": "NoActionFile", "value": 20 },
-  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 13032 } },
   "skill.hits.2.area": { "cause": "NoActionFile", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "skill.hits.2.element": { "cause": "Unsourced", "value": "Rock" },
   "skill.hits.2.hitmarkFrames": { "cause": "NoActionFile", "value": 20 },
-  "skill.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13032 } },
-  "skill.hits.3.area": { "cause": "NoActionFile", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
-  "skill.hits.3.element": { "cause": "Unsourced", "value": "Rock" },
-  "skill.hits.3.hitmarkFrames": { "cause": "NoActionFile", "value": 20 },
-  "skill.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 13032 } }
+  "skillChain.followUps.0.animationFrames": { "cause": "Unsourced", "value": 60 },
+  "skillChain.followUps.0.hits.0.area": {
+    "cause": "NoActionFile",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
+  },
+  "skillChain.followUps.0.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 20 },
+  "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 1 }
 }

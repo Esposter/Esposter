@@ -6,11 +6,15 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 - **Lohen borrows Xiangling's hitmarks and areas, provisional.** His strikes, charged attack and burst all take hers, a polearm user of his role.
 - **Lohen's burst reads its "Skill DMG" label for six hits.**
+- **Lohen's skill is a named list of four hits.** Its Etched Into Bone and Soul label gives the list, each hit at the skill's ×4 multiplier, and the list's length is four. The skill's own hit count stays `0` by overlay, as the list replaces it. The Etched hits' area, hit frames and poise are Unsourced, copied from his burst hit's area and frames, since no donor gives them; their element is Cryo from the wiki.
+- **Evilsbane Blade's 500% is a prose value.** It is on the named hit `hits.evilsbaneBlade`, Unsourced 5, as the only source is his summary text, not a talent table.
+- **Will to Win's damage per point is read for the skill and the burst.** The skill's gives `parameters.etchedWillToWinDamagePerPoint` and the burst's gives `parameters.manifestJudgmentWillToWinDamagePerPoint`.
 - **The sweep's causes.** gcsim has no action file for Lohen, so every frame, area and hit count his strikes, charged attack, plunges and burst take from a donor is `NoActionFile` in his overlay. His own elements, multipliers, the skill's animation and its zero hits are `Unsourced`, as no source gives them.
 
 ## Not built
 
-- **His skill deals no hit yet.** Lohen's record reads none of his skill's labels, so the skill is its animation alone.
+- **Masterstroke's infusion is not built.** The skill's duration is read as `parameters.masterstrokeDuration`, but no behaviour infuses his strikes yet.
+- **Joy's and Will to Win's maxima are not recorded.** The dump gives no number for either, so no record field takes them.
 
 ## Key files
 
@@ -23,4 +27,5 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 - [Lohen](https://genshin-impact.fandom.com/wiki/Lohen) and [Category:Lohen Talents](https://genshin-impact.fandom.com/wiki/Category:Lohen_Talents), Genshin Impact Wiki: Lohen's multipliers, energy, cooldowns and costs.
 - Lohen's clips, `Ani_Avatar_Boy_Pole_Lohen_*`, read with `genshin:assets timings` from the installed game.
+- The game's `ProudSkillExcelConfigData` rows for Lohen's skill and burst groups (12932, 12939): his multipliers, durations, cooldowns, costs and Will to Win values.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xiangling), MIT at v2.47.2: Xiangling's hitmarks and areas, which Lohen's strikes, charged attack and burst take.
