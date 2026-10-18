@@ -114,5 +114,6 @@ export const createGanyuKitBehaviour = ({
           secondsRemaining: iceLotusFlowerHitmarkSeconds + iceLotusSeconds,
         }),
     },
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= 2 ? 1 : 0),
   };
 };

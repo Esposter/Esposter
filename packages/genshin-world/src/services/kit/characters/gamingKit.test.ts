@@ -1,12 +1,40 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGamingKitBehaviour, GAMING_CHARACTER_ID } from "#src/services/kit/characters/gamingKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const GAMING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GAMING_CHARACTER_ID);
+const createGamingCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: GAMING_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: GAMING_KIT,
+  level: 90,
+  weaponType: WeaponType.Claymore,
+});
+
+// Gaming hears his own healing land with the given share of it overflowing, and the kit's state after it
+const reportHealing = (combatant: Combatant, overflowHealthShare: number): KitEffectState => {
+  const { kitEffectState } = createKitTestContext(combatant);
+  GAMING_KIT.onKitEvent?.(
+    { characterId: GAMING_CHARACTER_ID, healthShare: 0.1, kind: KitEventKind.HealthChanged, overflowHealthShare },
+    createKitTestContext(combatant, { kitEffectState }),
+    combatant,
+  );
+
+  return kitEffectState;
+};
 
 // The passive bonuses a combatant of the ascension and the HP share reads from Gaming's kit
 const getPassiveBonuses = (ascension: number, healthShare: number) =>
@@ -95,5 +123,27 @@ describe(createGamingKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(getPassiveBonuses(3, 0.4)).toStrictEqual([]);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(
+      reportHealing(createGamingCombatant(2), 0.1).effects.find(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
+      ),
+    ).toStrictEqual({
+      amount: 0.2,
+      attribute: Attribute.AttackPercent,
+      characterId: GAMING_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 5,
+    });
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(reportHealing(createGamingCombatant(1), 0.1).effects).toHaveLength(0);
   });
 });
