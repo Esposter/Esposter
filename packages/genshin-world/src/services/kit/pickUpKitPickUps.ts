@@ -18,8 +18,8 @@ const checkIsPickedUp = (effect: KitEffect, body: GroundPoint): effect is KitPic
 // Does, in the order the team's effects hold them
 export const pickUpKitPickUps = (context: KitContext, body: GroundPoint): void => {
   const { kitEffectState } = context;
-  if (!kitEffectState.effects.some((effect) => checkIsPickedUp(effect, body))) return;
   const pickUps = kitEffectState.effects.filter((effect) => checkIsPickedUp(effect, body));
+  if (pickUps.length === 0) return;
   removeKitEffects(kitEffectState, (effect) => checkIsPickedUp(effect, body));
   for (const pickUp of pickUps) pickUp.onPickedUp(context, pickUp);
 };
