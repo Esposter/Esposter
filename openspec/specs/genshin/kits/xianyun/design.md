@@ -9,6 +9,7 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 - **The burst's heals** — the instant heal at the burst's hitmark, and the continuous heals every 2.5 seconds for 16 seconds. `KitPartyHeal` rides a hit only as the hit strikes an enemy, so a heal with no enemy struck waits on a party heal the kit's own timer can give.
 - **The airborne buff** — the higher jumps it gives the party. It waits on a party buff the controller's jump reads.
 - **Passives and constellations** — none is built.
+- **Constellation 1's extra charge is a skill charge.** White Clouds at Dawn's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
 
 ## Key files
 

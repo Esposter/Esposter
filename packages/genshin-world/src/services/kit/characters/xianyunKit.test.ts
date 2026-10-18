@@ -1,10 +1,22 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXianyunKitBehaviour, XIANYUN_CHARACTER_ID } from "#src/services/kit/characters/xianyunKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const XIANYUN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIANYUN_CHARACTER_ID);
+const createXianyunCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: XIANYUN_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: XIANYUN_KIT,
+  level: 90,
+});
 
 describe(createXianyunKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -68,5 +80,17 @@ describe(createXianyunKitBehaviour, () => {
     expect(Math.round(XIANYUN_KIT.elementalBurst.seconds * 60)).toBe(103);
     expect(XIANYUN_KIT.burstEnergyCost).toBe(70);
     expect(XIANYUN_KIT.burstCooldownSeconds).toBe(18);
+  });
+
+  test("a Constellation 1 switch adds one White Clouds at Dawn charge", () => {
+    expect.hasAssertions();
+
+    expect(XIANYUN_KIT.getSkillChargeBonus?.(createXianyunCombatant(1))).toBe(1);
+  });
+
+  test("a Constellation 0 switch adds no White Clouds at Dawn charge", () => {
+    expect.hasAssertions();
+
+    expect(XIANYUN_KIT.getSkillChargeBonus?.(createXianyunCombatant(0))).toBe(0);
   });
 });
