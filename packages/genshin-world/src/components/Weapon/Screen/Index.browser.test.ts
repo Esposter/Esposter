@@ -53,7 +53,8 @@ describe("weaponScreen", () => {
 
     const { container } = await render(WeaponScreenContainer, { props });
 
-    await expect.element(page.getByText(weaponName, { exact: true })).toBeVisible();
+    // The breadcrumb heads the screen, ahead of the bag's copy of the same weapon, which the Enhance panel lists as fodder
+    await expect.element(page.getByText(weaponName, { exact: true }).first()).toBeVisible();
     await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
     await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
@@ -297,5 +298,17 @@ describe("weaponScreen", () => {
     await expect.element(page.getByText(heldDescription, { exact: true })).toBeVisible();
     expect(heldDescription).toContain(`${heldValue}%`);
     expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe(heldDescription);
+  });
+
+  // The close mark at the screen's top gives its close back to the screen's owner
+  test("should close the weapon screen when its close mark is pressed", async () => {
+    expect.hasAssertions();
+
+    const onClose = vi.fn<() => void>();
+    render(WeaponScreenContainer, { attrs: { onClose }, props });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Back] }).click();
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

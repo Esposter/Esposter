@@ -385,7 +385,8 @@ const act = () => {
   color: rgb(255 255 255 / 0.4);
 }
 
-/* Provisional: the passive's place beneath the ore row is unmeasured, and its ranks are listed in refinement order */
+/* Provisional: the passive's place beneath the ore row is unmeasured, and its ranks are listed in refinement order.
+   It is display only, so it takes no pointer events: the fodder row beneath it stays pickable */
 .passive {
   position: absolute;
   top: calc(var(--unit) * 330);
@@ -396,6 +397,7 @@ const act = () => {
   color: #fff;
   font-size: calc(var(--unit) * 22);
   list-style: none;
+  pointer-events: none;
 }
 
 .passive-name {
