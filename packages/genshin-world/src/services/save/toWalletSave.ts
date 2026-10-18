@@ -15,6 +15,7 @@ export const toWalletSave = (wallet: Wallet): WalletSave => ({
     [Currency.Mora]: wallet[Currency.Mora],
     [Currency.OriginalResin]: wallet[Currency.OriginalResin],
     [Currency.Primogem]: wallet[Currency.Primogem],
+    [Currency.RealmCurrency]: wallet[Currency.RealmCurrency],
   },
   originalResinChangedAt: wallet.originalResinChangedAt.toString(),
   primogemResinRefillCount: wallet.primogemResinRefillCount,

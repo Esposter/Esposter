@@ -361,6 +361,7 @@ export enum GameTextKey {
   RainbowRose = "2386700548",
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
+  RealmCurrency = "1255754076",
   RedBerryshroom = "1096616044",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
   ReputationMondstadtMerchantDiscounts = "1610612133",
