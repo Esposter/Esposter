@@ -5,6 +5,7 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import { AuraType } from "#src/models/combat/AuraType";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { FREEZE_DECAY_RATE } from "#src/services/combat/aura/constants";
@@ -176,6 +177,66 @@ describe(applyElement, () => {
       })),
     );
     expect(state.auras.get(AuraType.Hydro)?.gauge).toBeCloseTo(0.6);
+  });
+
+  test("a Cryo Swirl starts Stellar Swirl while the party enables it", () => {
+    expect.hasAssertions();
+
+    const state = createState([[AuraType.Cryo, { decayRate: 0, gauge: 1, isImmutable: false }]]);
+    const reactions = applyElement(state, Element.Anemo, 0.25, {
+      stellarReactionTypes: [StellarReactionType.StellarSwirl],
+    });
+
+    expect(reactions).toStrictEqual([{ element: Element.Cryo, reactionType: ReactionType.StellarSwirl }]);
+  });
+
+  test("a Cryo Swirl stays an ordinary Swirl without the enabler", () => {
+    expect.hasAssertions();
+
+    const state = createState([[AuraType.Cryo, { decayRate: 0, gauge: 1, isImmutable: false }]]);
+    const reactions = applyElement(state, Element.Anemo, 1);
+
+    expect(reactions).toStrictEqual([
+      { element: Element.Cryo, reactionType: ReactionType.Swirl, spreadGauge: expect.closeTo(2.2) },
+    ]);
+  });
+
+  test("a Stellar Swirl spreads no Cryo beside it", () => {
+    expect.hasAssertions();
+
+    const state = createState([[AuraType.Cryo, { decayRate: 0, gauge: 1, isImmutable: false }]]);
+    const [reaction] = applyElement(state, Element.Anemo, 0.25, {
+      stellarReactionTypes: [StellarReactionType.StellarSwirl],
+    });
+
+    expect(reaction).not.toHaveProperty("spreadGauge");
+  });
+
+  test("a Superconduct becomes Stellar-Conduct while the party enables it", () => {
+    expect.hasAssertions();
+
+    const superconductState = createState([
+      [AuraType.Electro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }],
+    ]);
+    const stellarConductState = createState([
+      [AuraType.Electro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }],
+    ]);
+    applyElement(superconductState, Element.Cryo, 1);
+    const reactions = applyElement(stellarConductState, Element.Cryo, 1, {
+      stellarReactionTypes: [StellarReactionType.StellarConduct],
+    });
+
+    expect(reactions).toStrictEqual([{ element: Element.Cryo, reactionType: ReactionType.StellarConduct }]);
+    expect(stellarConductState.auras).toStrictEqual(superconductState.auras);
+  });
+
+  test("no Stellar-Conduct occurs without the enabler", () => {
+    expect.hasAssertions();
+
+    const state = createState([[AuraType.Electro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }]]);
+    const reactions = applyElement(state, Element.Cryo, 1);
+
+    expect(reactions).toStrictEqual([{ element: Element.Cryo, reactionType: ReactionType.Superconduct }]);
   });
 
   test("freezes a target with twice the gauge it consumed", () => {
