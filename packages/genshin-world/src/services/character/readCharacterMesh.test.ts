@@ -1,6 +1,8 @@
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { PmxModel } from "genshin-engine";
 
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 import {
   createCharacterMaterial,
@@ -67,6 +69,7 @@ describe(readCharacterMesh, () => {
     };
 
     const result = await readCharacterMesh(characterPackReader, {
+      characterId: TRAVELER_CHARACTER_ID,
       lightUniforms: createLightUniforms(),
       rampTexture: new DataTexture(),
     });
@@ -77,5 +80,27 @@ describe(readCharacterMesh, () => {
     expect(materialOptions[0]?.texture).toBe(colourTexture);
     expect(materialOptions[1]?.toonTexture).toBe(toonTexture);
     expect(materialOptions[1]?.toonTexture).not.toBe(materialOptions[0]?.texture);
+  });
+
+  test("a model is drawn at its character's unit", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(parsePmx).mockReturnValue({ materials: [], textures: [] } as unknown as PmxModel);
+    const characterPackReader: CharacterPackReader = {
+      key: "test",
+      readFile: (path) => Promise.resolve(new Blob([path])),
+    };
+
+    await readCharacterMesh(characterPackReader, {
+      characterId: TRAVELER_CHARACTER_ID,
+      lightUniforms: createLightUniforms(),
+      rampTexture: new DataTexture(),
+    });
+
+    expect(createPmxMesh).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      getCharacterPmxUnitMetres(TRAVELER_CHARACTER_ID),
+    );
   });
 });

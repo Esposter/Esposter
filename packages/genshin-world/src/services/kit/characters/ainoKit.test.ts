@@ -197,6 +197,17 @@ describe(createAinoKitBehaviour, () => {
     expect(summon?.hits[0]?.hitArea.radius).toBe(14);
   });
 
+  test("a Water Ball's hitmark counts from the tick that drops it, ten frames on, not from the burst's start", () => {
+    expect.hasAssertions();
+
+    const { context, kitEffectState } = castBurstInTeam(0, [AINO_CHARACTER_ID]);
+
+    // The first tick drops the first ball at its first tick's seconds, so the ball lands ten frames on from its drop
+    stepKitTestEffects(2.1, context);
+    const [summon] = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+    expect(summon?.hits[0]?.hitmarkSeconds).toBeCloseTo(10 / 60);
+  });
+
   test("below Ascendant Gleam or below Ascension 1, her burst keeps the base beat", () => {
     expect.hasAssertions();
     expect(castBurstInTeam(0, ASCENDANT_TEAM).field?.tickIntervalSeconds).toBeCloseTo(1.5);

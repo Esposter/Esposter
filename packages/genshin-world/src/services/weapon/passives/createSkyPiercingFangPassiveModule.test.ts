@@ -12,6 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -32,10 +33,10 @@ const wielder: Combatant = {
 // Charged hits deal twenty per cent of ATK more for twelve seconds
 const skywardBladePassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
-const createStrike = (attackTag: AttackTag): KitStrike => ({
+const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
+  combatant,
   hit: TRAVELER_KIT.plungeCollision,
 });
 
@@ -69,13 +70,12 @@ describe(createSkyPiercingFangPassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
-          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([0.2 * wielder.attributes.attack, 0.2 * wielder.attributes.attack]);
   });
 
-  test("the share is the wielder's ATK with its buffs on", () => {
+  test("the share is the striker's ATK, priced with its buffs on", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -91,13 +91,19 @@ describe(createSkyPiercingFangPassiveModule, () => {
       attributeTotalMap[Attribute.BaseAttack] * (1 + attributeTotalMap[Attribute.AttackPercent] + 0.5) +
       attributeTotalMap[Attribute.Attack];
 
+    const pricedWielder = getBuffedCombatant(
+      wielder,
+      context.kitEffectState.effects,
+      context.party,
+      context.characterIdCombatantMap,
+    );
+
     expect(
       skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        createStrike(AttackTag.NormalAttack, pricedWielder),
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toBeCloseTo(0.2 * buffedAttack);
   });
@@ -112,7 +118,6 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toBe(0);
     skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
@@ -123,7 +128,6 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -141,7 +145,6 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
-        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });

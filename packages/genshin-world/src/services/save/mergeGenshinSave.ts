@@ -249,13 +249,14 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once by its id, and a read or claimed mail stays so whichever save it was read or claimed in
+  // A mail is kept once by its id, and a read, claimed or pinned mail stays so whichever save it was read, claimed or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find(({ id }) => id === accountMail.id);
     return guestMail
       ? {
           ...accountMail,
           isClaimed: accountMail.isClaimed || guestMail.isClaimed,
+          isPinned: accountMail.isPinned || guestMail.isPinned,
           isRead: accountMail.isRead || guestMail.isRead,
         }
       : accountMail;
@@ -269,6 +270,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
     ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
+    cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
+    cardGameRewardedGameIds: [
+      ...new Set([...account.cardGameRewardedGameIds, ...guest.cardGameRewardedGameIds]),
+    ].toSorted((firstGame, secondGame) => firstGame - secondGame),
     characters: mergeCharacters(account.characters, guest.characters),
     characterTrials: {
       claimedStageIds: [

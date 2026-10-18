@@ -1,6 +1,7 @@
 import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import type { Element } from "#src/models/Element";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -51,13 +52,17 @@ export interface KitHit {
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
   // As a talent's hit
   lunarHit?: KitLunarHit;
-  // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, if the hit gives
-  // Its striker something back as it lands
-  onStrike?: (context: KitContext, strike: KitStrike) => void;
+  // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, and the enemy it
+  // Strikes, if the hit gives its striker something back as it lands. Only a strike that reads the enemy takes the third
+  // Argument, so a callback given the strike alone is still a valid one
+  onStrike?: (context: KitContext, strike: KitStrike, enemy?: Enemy) => void;
   poiseDamage: number;
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;
   talentMultiplier: number;
+  // The index of the one enemy the hit strikes among those its area reaches, wrapped to their count, instead of each of
+  // Them, as a shell's hit takes its enemies in turn. None for a hit that strikes every enemy its area reaches
+  targetIndex?: number;
   // Whether the hit lands on an enemy's weak point, read as it lands: the strike sets it on an aimed hit to an enemy with weak points
   weakPoint?: boolean;
 }

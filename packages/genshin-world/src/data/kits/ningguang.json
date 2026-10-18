@@ -1,11 +1,11 @@
 {
-  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 37 },
-  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 37 },
+  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
   "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },
   "hits.piercingFragmentsStrikeGem.length": { "cause": "Unclassified", "value": 2 },
   "hits.piercingFragmentsStrikeGem.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 }
   },
   "hits.piercingFragmentsStrikeGem.0.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "hits.piercingFragmentsStrikeGem.0.multiplier": {
@@ -13,26 +13,26 @@
     "value": { "index": 0, "proudSkillGroupId": 2731 }
   },
   "hits.piercingFragmentsStrikeGem.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 }
   },
-  "hits.piercingFragmentsStrikeGem.1.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
+  "hits.piercingFragmentsStrikeGem.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
   "hits.piercingFragmentsStrikeGem.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 2731 }
   },
   "hits.strikeGem.length": { "cause": "Unclassified", "value": 2 },
   "hits.strikeGem.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 }
   },
   "hits.strikeGem.0.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "hits.strikeGem.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2731 } },
   "hits.strikeGem.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 }
   },
-  "hits.strikeGem.1.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
+  "hits.strikeGem.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
   "hits.strikeGem.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2731 } },
   "hits.starshatterGem.length": { "cause": "Unclassified", "value": 6 },
   "hits.starshatterGem.0.area": {
@@ -121,10 +121,10 @@
   "hits.starJadeShot.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "hits.starJadeShot.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 2731 } },
   "hits.chargedAttackGem.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
   },
-  "hits.chargedAttackGem.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
+  "hits.chargedAttackGem.hitmarkFrames": { "cause": "Unsourced", "value": 30 },
   "hits.chargedAttackGem.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2731 } },
   "hits.jadeScreen.area": {
     "cause": "Unclassified",
@@ -132,9 +132,9 @@
   },
   "hits.jadeScreen.hitmarkFrames": { "cause": "DiffersFromSource", "value": 17 },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
-  "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
-  "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 66 },
-  "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "normalAttacks.length": { "cause": "Unclassified", "value": 2 },
+  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
+  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 66 },
+  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

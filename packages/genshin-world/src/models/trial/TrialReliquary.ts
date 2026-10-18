@@ -1,8 +1,15 @@
-// A reliquary a trial template names: its artifact, the level and main stat the game gives it and the sub-stats it carries
+import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import type { Attribute } from "#src/models/character/Attribute";
+import type { AttributeLine } from "#src/models/character/AttributeLine";
+
+// A reliquary a trial template names, as the artifact it is worn as: its set and slot, its rarity in stars, its level counted
+// From zero, the main stat it raises and the sub-stats it carries at the values the game gives them
 export interface TrialReliquary {
-  appendPropIds: number[];
   id: number;
   level: number;
-  mainPropId: number;
-  reliquaryId: number;
+  mainAffix: Attribute;
+  minorAffixes: AttributeLine[];
+  rarity: number;
+  setId: number;
+  slot: ArtifactSlot;
 }

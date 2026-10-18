@@ -14,6 +14,7 @@ import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import {
   MAX_HOME_BLUEPRINT_COUNT,
   MAX_HOME_COMPANION_COUNT,
@@ -93,6 +94,11 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      cardGameExp: maxNumber,
+      cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT }, (_value, index) => maxNumber - index),
+      characterTrials: {
+        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
+      },
       adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
@@ -107,6 +113,9 @@ describe("genshinSaveSchema", () => {
             Array.from({ length: MAX_ARCHIVE_ENTRY_COUNT }, (_value, index) => maxNumber - index),
           ]),
         ),
+      },
+      characterTrials: {
+        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
       },
       characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
@@ -155,6 +164,7 @@ describe("genshinSaveSchema", () => {
           count: maxNumber,
           dealtRank: maxNumber,
         })),
+        isBonusClaimed: false,
       },
       investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: maxInstant },
       companionshipExp: Object.fromEntries(
@@ -296,6 +306,7 @@ describe("genshinSaveSchema", () => {
         deliveredAt: maxInstant,
         id: maxNumber - index,
         isClaimed: false,
+        isPinned: false,
         isRead: false,
       })),
       tips: { shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
@@ -393,6 +404,7 @@ describe("genshinSaveSchema", () => {
         deliveredAt: new Date(0).toISOString(),
         id: index + 1,
         isClaimed: false,
+        isPinned: false,
         isRead: false,
       })),
     };
@@ -476,6 +488,23 @@ describe("genshinSaveSchema", () => {
       genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } })
         .success,
     ).toBe(true);
+  });
+
+  test("refuses a save with no card game EXP", () => {
+    expect.hasAssertions();
+
+    expect(genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, cardGameExp: undefined }).success).toBe(false);
+  });
+
+  test("refuses a list of rewarded games past its cap", () => {
+    expect.hasAssertions();
+
+    expect(
+      genshinSaveSchema.safeParse({
+        ...EMPTY_GENSHIN_SAVE,
+        cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT + 1 }, (_value, index) => index + 1),
+      }).success,
+    ).toBe(false);
   });
 
   test("refuses a save with no Mora", () => {

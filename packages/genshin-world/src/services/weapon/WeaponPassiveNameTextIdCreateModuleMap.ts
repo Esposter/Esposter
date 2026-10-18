@@ -54,6 +54,7 @@ import { createReactionAttackPassiveModule } from "#src/services/weapon/passives
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
+import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
@@ -288,4 +289,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "953016699": createStarfireUponTheSnowplainsPassiveModule,
   // Echo of a Vow (Echoes of the Heart)
   "2626267635": createEchoOfAVowPassiveModule,
+  // Samurai Conduct (Kitain Cross Spear)
+  "1395787867": createSamuraiConductPassiveModule,
+  // Samurai Conduct (Katsuragikiri Nagamasa)
+  "1828182147": createSamuraiConductPassiveModule,
 };

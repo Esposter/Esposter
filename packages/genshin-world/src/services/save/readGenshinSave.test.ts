@@ -31,6 +31,8 @@ describe(readGenshinSave, () => {
   const ARCHIVE_KILL_COUNT = 1;
   const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const ADVENTURE_EXP = 1200;
+  const CARD_GAME_EXP = 1250;
+  const REWARDED_GAME_IDS = [1021, 1103];
   const CHARACTER_ID = 6;
   const CHARACTER_COPY_COUNT = 2;
   const CHARACTER_LEVEL = 5;
@@ -192,6 +194,8 @@ describe(readGenshinSave, () => {
     ...EMPTY_GENSHIN_SAVE,
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
+    cardGameExp: CARD_GAME_EXP,
+    cardGameRewardedGameIds: REWARDED_GAME_IDS,
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     cooking: COOKING_SAVE,
@@ -270,7 +274,7 @@ describe(readGenshinSave, () => {
 
     const save = {
       ...EMPTY_GENSHIN_SAVE,
-      mails: [{ deliveredAt: new Date(0).toISOString(), id: 35, isClaimed: false, isRead: false }],
+      mails: [{ deliveredAt: new Date(0).toISOString(), id: 35, isClaimed: false, isPinned: false, isRead: false }],
       travelerBirthday: { day: 13, month: 10 },
     };
 
@@ -347,6 +351,7 @@ describe(readGenshinSave, () => {
       commissionDay: {
         claimedCommissionIds: [1],
         dealtAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+        isBonusClaimed: false,
         dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
           commissionId: index + 1,
           count: 0,

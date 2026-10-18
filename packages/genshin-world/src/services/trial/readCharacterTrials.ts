@@ -5,6 +5,10 @@ import type { TrialReward } from "#src/models/trial/TrialReward";
 import type { TrialStage } from "#src/models/trial/TrialStage";
 import type { TrialTemplate } from "#src/models/trial/TrialTemplate";
 
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
+import { attributeLineSchema } from "#src/models/character/AttributeLine";
+import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
@@ -30,11 +34,13 @@ const trialBuildSchema = z.object({
   weaponId: z.int().positive(),
 }) satisfies z.ZodType<TrialBuild>;
 const trialReliquarySchema = z.object({
-  appendPropIds: z.array(z.int().positive()),
   id: z.int().positive(),
-  level: z.int().positive(),
-  mainPropId: z.int().positive(),
-  reliquaryId: z.int().positive(),
+  level: z.int().nonnegative(),
+  mainAffix: z.enum(Attribute),
+  minorAffixes: z.array(attributeLineSchema).max(MAX_MINOR_AFFIX_COUNT),
+  rarity: z.int().positive(),
+  setId: z.int().positive(),
+  slot: z.enum(ArtifactSlot),
 }) satisfies z.ZodType<TrialReliquary>;
 const trialRewardSchema = z.object({
   count: z.int().positive(),

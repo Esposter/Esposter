@@ -129,9 +129,9 @@ describe("ice Lotus", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(111_012, iceLotus);
-    expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard, Element.Cryo)).toBe(2);
     expect(zoneCard.usages).toBe(1);
-    expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard, Element.Cryo)).toBe(2);
     expect(zoneCard.usages).toBe(0);
   });
 });
@@ -141,9 +141,9 @@ describe("jade Screen", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(116_011, jadeScreen);
-    expect(jadeScreen.modifyDamageReceived?.(context, 1, zoneCard)).toBe(1);
+    expect(jadeScreen.modifyDamageReceived?.(context, 1, zoneCard, Element.Cryo)).toBe(1);
     expect(zoneCard.usages).toBe(2);
-    expect(jadeScreen.modifyDamageReceived?.(context, 2, zoneCard)).toBe(1);
+    expect(jadeScreen.modifyDamageReceived?.(context, 2, zoneCard, Element.Cryo)).toBe(1);
     expect(zoneCard.usages).toBe(1);
   });
 });

@@ -1,5 +1,7 @@
 import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
+
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -119,5 +121,31 @@ describe("menuPaimon", () => {
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }))
       .toBeInTheDocument();
+  });
+
+  // The row offers the button that sets the birthday while it is unset, and the dialog's confirm sets the picked date once
+  test("a birthday not yet set is set once from the profile's dialog", async () => {
+    expect.hasAssertions();
+
+    const onSetBirthday = vi.fn<(birthday: TravelerBirthdaySave) => void>();
+    render(MenuPaimon, { attrs: { onSetBirthday }, props });
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
+    // The month list comes before the day list, so the first October is the month
+    await page.getByRole("button", { exact: true, name: "10" }).first().click();
+    await page.getByRole("button", { exact: true, name: "13" }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
+
+    expect(onSetBirthday).toHaveBeenCalledExactlyOnceWith({ day: 13, month: 10 });
+  });
+
+  test("a birthday already set shows its date and no button to set it", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props: { ...props, travelerBirthday: { day: 13, month: 10 } } });
+
+    await expect.element(page.getByText("10/13", { exact: true })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }))
+      .not.toBeInTheDocument();
   });
 });

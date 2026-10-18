@@ -1,6 +1,6 @@
 ## 1. Rewards
 
-- [x] 1.1 Resolve each reward of a clear to its items and give them: wallet currencies to the wallet, the rest to the bag, refused whole when the bag has no room. Verify: claimAbyssRewards.test.ts, written first and seen failing, named after 'Primogems and Mora from a reward go to the wallet', 'A material from a reward goes into the bag' and 'A claim is refused whole when the bag has no room'.
+- [x] 1.1 Resolve each reward of a clear to its items and give them: wallet currencies to the wallet, the rest to the bag, refused whole when the bag has no room. Verify: claimRewards.test.ts, written first and seen failing, named after 'Primogems and Mora from a reward go to the wallet', 'A material from a reward goes into the bag' and 'A claim is refused whole when the bag has no room'.
 
 ## 2. Chambers
 

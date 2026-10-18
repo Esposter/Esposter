@@ -15,6 +15,7 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import {
   MAX_HOME_BLUEPRINT_COUNT,
   MAX_HOME_COMPANION_COUNT,
@@ -203,12 +204,14 @@ const LONGEST_ABYSS_CYCLE_SAVE = {
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  cardGameExp: MAX_SAVE_NUMBER,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
   clearedDomains: [],
-  commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
+  commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [], isBonusClaimed: false },
   investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: MAX_SAVE_INSTANT },
   encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
@@ -271,7 +274,13 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
 // The longest planting a save holds: its plot and seed at the largest number, and its instant at the longest
 const LONGEST_HOME_PLANTING = { plantedAt: MAX_SAVE_INSTANT, plotId: MAX_SAVE_NUMBER, seedItemId: MAX_SAVE_NUMBER };
 // The longest mail a save holds, its flags at their longer value of false
-const LONGEST_MAIL_SAVE = { deliveredAt: MAX_SAVE_INSTANT, id: MAX_SAVE_NUMBER, isClaimed: false, isRead: false };
+const LONGEST_MAIL_SAVE = {
+  deliveredAt: MAX_SAVE_INSTANT,
+  id: MAX_SAVE_NUMBER,
+  isClaimed: false,
+  isPinned: false,
+  isRead: false,
+};
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each
 // Collection at its cap times its longest entry. Each id is counted at its bound's length, since the game's ids are
 // Plain characters, so an id that escapes to a longer serialization is refused by the same ceiling
@@ -281,6 +290,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_CHARACTER_TRIAL_STAGE_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  GCG_REWARDABLE_GAME_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ADVENTURE_RANK * getListEntryLength(MAX_ADVENTURE_RANK) +
   COMMISSIONS_PER_DAY *
@@ -349,13 +359,20 @@ export const EMPTY_PARTY_SAVE: PartySave = {
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  cardGameExp: 0,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
   clearedDomains: [],
-  commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
+  commissionDay: {
+    claimedCommissionIds: [],
+    dealtAt: "1970-01-01T00:00:00Z",
+    dealtCommissions: [],
+    isBonusClaimed: false,
+  },
   investigationDay: { count: 0, dayKey: "" },
   encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
   longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },

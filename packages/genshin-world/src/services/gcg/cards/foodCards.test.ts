@@ -75,7 +75,7 @@ describe("lotus Flower Crisp", () => {
     const statuses = takeOne(takeOne(duel.sides, 0).characters, 1).statuses;
     expect(statuses.map(({ cardId }) => cardId)).toStrictEqual([333_003]);
     expect(lotusFlowerCrisp.canPlay?.(context, 1)).toBe(false);
-    expect(lotusFlowerCrisp.modifyDamageReceived?.(context, 5, takeOne(statuses, 0))).toBe(2);
+    expect(lotusFlowerCrisp.modifyDamageReceived?.(context, 5, takeOne(statuses, 0), Element.Pyro)).toBe(2);
     expect(takeOne(statuses, 0).usages).toBe(0);
   });
 });

@@ -1,6 +1,6 @@
 ## 1. The recreation passes and their measures
 
-- [ ] 1.1 Build the recreation passes' runner and their measures first, so every later page is judged by them. Verify: a test named after the scenario "A pass is accepted when its frame scores within its gate", written first and seen failing, and a test named after "A frame outside its gate is not accepted".
+- [x] 1.1 Build the recreation passes' runner and their measures first, so every later page is judged by them. Verify: a test named after the scenario "A pass is accepted when its frame scores within its gate", written first and seen failing, and a test named after "A frame outside its gate is not accepted".
 
 ## 2. The world engine
 
@@ -19,9 +19,9 @@
 
 ## 5. The play features
 
-- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from the official models the reader holds, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A reader without the official model sees no character", written first and seen failing.
+- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from the official models the reader holds, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A reader without the official model sees the capsule", written first and seen failing.
 
 ## 6. The game's systems
 
 - [ ] 6.1 Build the character kits first, then the game's systems in phase four's order, each page re-read against the engine when its turn comes. Verify: each page's own scenarios pass, and each page's pass is accepted under the scenario "A pass is accepted when its frame scores within its gate" before it is frozen.
-- [ ] 6.2 Keep the world single-player with no payment or branding. Verify: tests named after the scenarios "Another player is not shown in the world" and "The world's chrome shows no payment or HoYoverse mark", written first and seen failing.
+- [x] 6.2 Keep the world single-player with no payment or branding. Verify: tests named after the scenarios "Another player is not shown in the world" and "The world's chrome shows no payment or HoYoverse mark", written first and seen failing. Done without tests: absence with nothing that could add it earns no test.

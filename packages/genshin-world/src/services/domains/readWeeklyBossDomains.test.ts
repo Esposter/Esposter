@@ -1,12 +1,16 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { weeklyBossDomainsSchema } from "#src/models/domains/WeeklyBossDomain";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { describe, expect, test } from "vitest";
 
 describe(readWeeklyBossDomains, () => {
-  test("no weekly boss domain is read before a publish has written them to the hosted game data", async () => {
+  test("the weekly bosses' trounce domains are read from the game data the publish wrote", async () => {
     expect.hasAssertions();
 
-    await expect(readWeeklyBossDomains("https://example.invalid/")).resolves.toStrictEqual({});
+    const domains = await readWeeklyBossDomains(GAME_DATA_LOCAL_BASE_URL);
+
+    expect(domains).toHaveProperty(["1006", "levels"]);
+    expect(domains["1006"]?.levels.length).toBeGreaterThan(0);
   });
 });
 

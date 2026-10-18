@@ -14,13 +14,12 @@ export const claimCommissionReward = (
   encounterPoints: number,
   commissionId: number,
   slice: CommissionSlice,
-  rank: number,
   random: () => number,
 ): CommissionClaim | undefined => {
   const dealt = findDealtCommission(day, commissionId, slice);
   if (!dealt) return undefined;
   if (checkIsCommissionFinished(dealt.progress, dealt.commission))
-    return takeCommissionClaim(day, encounterPoints, dealt, slice, rank, random);
+    return takeCommissionClaim(day, encounterPoints, dealt, slice, random);
   if (encounterPoints < 1) return undefined;
-  return takeCommissionClaim(day, encounterPoints - 1, dealt, slice, rank, random);
+  return takeCommissionClaim(day, encounterPoints - 1, dealt, slice, random);
 };

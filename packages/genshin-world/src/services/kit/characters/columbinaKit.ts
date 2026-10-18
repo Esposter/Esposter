@@ -8,6 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
+import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
@@ -22,8 +23,8 @@ const ASCENDANT_GLEAM_SKILL_DOT_RADIUS = 6;
 
 // Columbina's behaviour: her skill's DoT, a field that follows her body and ticks its hit round its centre from the press's
 // Hit for the table's duration, which a press while it runs restarts. Its tick reaches further while her team is at Ascendant
-// Gleam. Her own Moonsign Benediction, which would count her toward that level, is not declared yet: it waits on the kit
-// Record's republish. The burst's field is not built yet
+// Gleam. Her Moonsign Benediction counts her toward that level, and its Base DMG bonus is the curve of her max HP in
+// columbinaBenediction.ts. The burst's field is not built yet
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
 // Constellation 1 needs Eternal Tides' Gravity Interference effect, which the skill's field does not carry
 // Constellation 2 needs Gravity Ripple, which the skill does not summon yet
@@ -62,6 +63,9 @@ export const createColumbinaKitBehaviour = ({
   };
 
   return {
+    moonsignBenediction: {
+      getBaseDamageBonus: ({ attributes }) => getBenedictionBaseDamageBonus(attributes.maxHealth),
+    },
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // A press while the DoT runs restarts its duration, as gcsim restarts the status and keeps its ticks

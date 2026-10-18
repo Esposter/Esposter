@@ -22,10 +22,12 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { Trial } from "#src/models/trial/Trial";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
@@ -80,6 +82,7 @@ import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldForging } from "#src/composables/useWorldForging";
@@ -102,6 +105,7 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
@@ -128,7 +132,10 @@ import { computeForgeInteractables } from "#src/services/forging/computeForgeInt
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
+import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
+import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
@@ -314,6 +321,7 @@ const {
   achievementProgressMap,
   archiveKillsMap,
   archiveProgressMap,
+  chooseTravelerBirthday,
   clearedCamps,
   clearedDomainIds,
   cookingProgress,
@@ -332,6 +340,7 @@ const {
   setNamecardItemId,
   setWallet,
   shownTipIds,
+  travelerBirthday,
   wallet,
   wishHistory,
   wishPityMap,
@@ -345,6 +354,9 @@ const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: Inve
 };
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
+// The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
+const cardGameExp = ref(savedState.cardGameExp);
+const cardGameRewardedGameIds = ref(savedState.cardGameRewardedGameIds);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
   acceptQuest,
@@ -402,7 +414,17 @@ const {
 });
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
-const { commissionDay, encounterPoints, handbookDayCommissions, longTermEncounterPoints } = useWorldCommissions({
+const {
+  commissionDay,
+  commissionSlice,
+  encounterPointLimit,
+  encounterPoints,
+  handbookDayCommissions,
+  isAdventureEncountersUnlocked,
+  longTermEncounterPoints,
+  wholeEncounterPoints,
+  wholeLongTermEncounterPoints,
+} = useWorldCommissions({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
@@ -472,7 +494,7 @@ const homePotPoint = shallowRef<{ x: number; z: number }>();
 // The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
 // Reach, which everything in the world stands on. It is built again only as a region's ground arrives
 const worldHeight = computed(() =>
-  createWorldHeight(windriseData.baseGround, [...(windrise.value?.regionGroundMap.values() ?? [])]),
+  createWorldHeight(windriseData.baseGrounds, [...(windrise.value?.regionGroundMap.values() ?? [])]),
 );
 const getGroundHeight = (x: number, z: number): number =>
   homeRealmVisit.value ? HOME_REALM_GROUND_HEIGHT : worldHeight.value(x, z);
@@ -499,10 +521,13 @@ const { achievementData } = useWorldAchievements({
 const {
   claim: claimMail,
   claimAll: claimAllMails,
+  deleteGift: deleteGiftMail,
+  deleteRead: deleteReadMails,
   isBagFull: isMailBagFull,
   mailData,
   mails,
   markMailRead,
+  toggleMailPin,
 } = useWorldMail({
   gameDataBaseUrl,
   getWorldNow,
@@ -667,6 +692,7 @@ getResultAsync(() => readConstellationTables(gameDataBaseUrl)).match(
 );
 const characterIdConstellationsMap = computed(() => getCharacterIdConstellationsMap(constellationKits.value));
 const {
+  characterIdKitMap,
   characterIdSkillGlyphsMap,
   characters,
   chargeParty,
@@ -686,6 +712,12 @@ const {
   events,
   gameDataBaseUrl,
   onPartyDown: () => {
+    // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
+    if (trialArena.value) {
+      const returnPose = stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+      if (returnPose) jumpTo(returnPose);
+      return;
+    }
     // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
     // Jump to the nearest waypoint, so the entrance is where the player lands
     if (!domainArena.value) {
@@ -709,6 +741,24 @@ const {
   travelerElement,
   wildlifePlaces,
 });
+// The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
+const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trialSecondsRemaining, trials } =
+  useWorldTrials({
+    artifactRarityDataMap,
+    characterDataMap: statTables.characterDataMap,
+    characterIdKitMap,
+    characters,
+    claimedStageIds: savedState.characterTrialClaimedStageIds,
+    gameDataBaseUrl,
+    inventory,
+    materialDataMap,
+    nameText,
+    party,
+    setInventory,
+    setWallet,
+    wallet,
+    weaponDataMap: statTables.weaponDataMap,
+  });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
   characters,
@@ -735,6 +785,31 @@ const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap,
   useWorldCooking(gameDataBaseUrl);
 const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
+// The claims a commission makes with the points held, from the handbook's Commissions tab
+const { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLongTermPoint } =
+  useWorldCommissionClaims({
+    adventureExp,
+    adventureRankTables,
+    characters,
+    commissionDay,
+    commissionSlice,
+    completedMainQuestIds,
+    encounterPoints,
+    friendshipLevels,
+    getWorldNow,
+    inventory,
+    longTermEncounterPoints,
+    materialDataMap,
+    names: nameText,
+    party,
+    rank,
+    setCharacters: (nextCharacters) => {
+      characters.value = nextCharacters;
+    },
+    setInventory,
+    setWallet,
+    wallet,
+  });
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
 const profileNamecards = computed(() =>
   computeProfileNamecardItemIds({
@@ -808,6 +883,28 @@ const {
 });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
+// A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
+// the way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
+const payCardGameReward = (gameId: number | undefined, won: boolean) => {
+  const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
+  if (!won || !weekGame) return;
+  const granted = grantGcgGameReward(
+    {
+      cardGameExp: cardGameExp.value,
+      inventory: inventory.value,
+      rewardedGameIds: cardGameRewardedGameIds.value,
+      wallet: wallet.value,
+    },
+    weekGame.gameId,
+    toGcgWeekGameRewards(weekGame),
+    nameText,
+    materialDataMap,
+  );
+  cardGameExp.value = granted.cardGameExp;
+  cardGameRewardedGameIds.value = granted.rewardedGameIds;
+  setInventory(granted.inventory);
+  setWallet(granted.wallet);
+};
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
@@ -966,9 +1063,11 @@ useWorldSaveSync({
     adventureRankRewardsClaimed: adventureRankRewardsClaimed.value,
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
+    cardGameExp: cardGameExp.value,
+    cardGameRewardedGameIds: cardGameRewardedGameIds.value,
     characterCopyCountMap: characterCopyCountMap.value,
-    characters: characters.value,
-    characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
+    characters: playerRoster.value?.characters ?? characters.value,
+    characterTrialClaimedStageIds: trialClaimedStageIds.value,
     clearedCamps: clearedCamps.value,
     clearedDomainIds: clearedDomainIds.value,
     commissionDay: commissionDay.value,
@@ -989,7 +1088,7 @@ useWorldSaveSync({
     mails: mails.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
-    party,
+    party: playerRoster.value?.party ?? party,
     processingJobs: processingJobs.value,
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
@@ -999,7 +1098,7 @@ useWorldSaveSync({
     shownTipIds: shownTipIds.value,
     spiralAbyssProgressMap: abyssProgressMap.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
-    travelerBirthday: savedState.travelerBirthday,
+    travelerBirthday: travelerBirthday.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
@@ -1258,6 +1357,23 @@ const enterDomainLevel = (dungeonId: number) => {
   screenKind.value = ScreenKind.World;
   enterDomain(dungeonId);
 };
+// A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
+// East of where the player stands (PROVISIONAL until the trial's scene is read)
+const openTrial = async (trial: Trial) => {
+  const returnPose = computeStandingPose(
+    { position: characterBody.position, yaw: characterBody.rotation.y },
+    getGroundHeight(characterBody.position.x, characterBody.position.z),
+  );
+  if (!(await enterTrial(trial, returnPose))) return;
+  screenKind.value = ScreenKind.World;
+  jumpTo(
+    computeDomainScenePose({
+      heightOffset: 0,
+      position: { x: characterBody.position.x, z: characterBody.position.z },
+      rotation: characterBody.rotation.y,
+    }),
+  );
+};
 // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
 const handbookDomains = computed(() =>
   toHandbookDomains(
@@ -1479,6 +1595,12 @@ defineExpose({ jumpTo, readCameraPosition });
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
             partyDown: false,
           });
+          const trialReturnPose = stepTrial({
+            deltaMilliseconds: context.delta,
+            isPlaying: !isPaused && screenKind === ScreenKind.World,
+            partyDown: false,
+          });
+          if (trialReturnPose) jumpTo(trialReturnPose);
           stepAbyss({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
@@ -1620,6 +1742,7 @@ defineExpose({ jumpTo, readCameraPosition });
               // Katheryne's talk opens the expedition screen in place of the talk, once she stands in the world
               if (checkIsExpeditionTalk(interactable.id, getResidents())) {
                 grantRewards(claimKatheryneRewards());
+                claimKatheryneBonus();
                 screenKind = ScreenKind.Expedition;
               }
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
@@ -1661,6 +1784,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :grass-trail
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
+          :is-move-held="isShortcutWheelOpen || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
           :kit-context
           :landmark-collider
@@ -1796,6 +1920,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :quick-swap-open="isQuickSwapOpen"
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
+      :trial-seconds-remaining="trialSecondsRemaining"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
@@ -1853,10 +1978,12 @@ defineExpose({ jumpTo, readCameraPosition });
       :namecard-item-id="namecardItemId"
       :namecards="profileNamecards"
       :server-clock-offset-ms
+      :traveler-birthday="travelerBirthday"
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
       @pick-namecard="(itemId) => setNamecardItemId(itemId)"
       @quit="emit('quit')"
+      @set-birthday="(birthday) => chooseTravelerBirthday(birthday)"
       @toggle-world-level="toggleWorldLevel()"
     >
       <template #[ScreenKind.Map]>
@@ -1921,7 +2048,10 @@ defineExpose({ jumpTo, readCameraPosition });
           @claim="(mailId) => claimMail(mailId)"
           @claim-all="claimAllMails()"
           @close="screenKind = ScreenKind.World"
+          @delete-gift="(mailId) => deleteGiftMail(mailId)"
+          @delete-read="deleteReadMails()"
           @read="(mailId) => markMailRead(mailId)"
+          @pin="(mailId) => toggleMailPin(mailId)"
         />
       </template>
       <template #[ScreenKind.Quests]>
@@ -1942,15 +2072,22 @@ defineExpose({ jumpTo, readCameraPosition });
         <HandbookScreen
           :commissions="[]"
           :completed-count="0"
+          :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && canConvertLongTermPoint"
           :day-commissions="handbookDayCommissions"
           :domains="handbookDomains"
+          :encounter-point-limit="encounterPointLimit"
+          :encounter-points="wholeEncounterPoints"
           :game-text
           :investigation-rewards="[]"
+          :is-adventure-encounters-unlocked="isAdventureEncountersUnlocked"
+          :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"
           @challenge="challengeWeeklyBoss"
+          @claim-commission="(commissionId) => claimCommission(commissionId)"
           @claim-first-clear="claimWeeklyBossFirstClearReward"
           @close="screenKind = ScreenKind.World"
+          @use-long-term-encounter-points="convertLongTermPoint()"
         />
       </template>
       <template #[ScreenKind.Character]>
@@ -1970,6 +2107,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :material-data-map
           :max-stamina="STAMINA_MAX"
           :name-text
+          :reliquary-sets
           :stat-tables
           :talent-upgrade-map
           :traveler-bonus-lines
@@ -2024,7 +2162,9 @@ defineExpose({ jumpTo, readCameraPosition });
           :server-clock-offset-ms
           :wish-schedule
           :stella-fortuna-name-text-id-map
+          :trials
           @close="screenKind = ScreenKind.World"
+          @trial="openTrial"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
@@ -2125,8 +2265,11 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :language
       @leave="
-        gcgGameId = undefined;
-        screenKind = ScreenKind.World;
+        (won) => {
+          payCardGameReward(gcgGameId, won);
+          gcgGameId = undefined;
+          screenKind = ScreenKind.World;
+        }
       "
     />
     <StatueScreen

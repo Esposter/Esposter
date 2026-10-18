@@ -56,11 +56,15 @@ interface Props {
   quickSelects: InventoryQuickSelect[];
   // The gadget action that equips the detail's gadget to the quick-use slot, in the reader's language
   quickUseLabel: string;
+  // The Lock button's words, shown on an unlocked bag artifact
+  lockLabel: string;
   sortLabels: Record<InventorySort, string>;
   tabLabels: Record<ItemCategory, string>;
   title: string;
   // The detail panel's button that uses the selected entry, in the reader's language
   useLabel: string;
+  // The Unlock button's words, shown on a locked bag artifact
+  unlockLabel: string;
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });
@@ -94,10 +98,12 @@ const {
   orderLabel,
   quickSelects,
   quickUseLabel,
+  lockLabel,
   sortLabels,
   tabLabels,
   title,
   useLabel,
+  unlockLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{
   cancelDestroy: [];
@@ -105,6 +111,7 @@ const emit = defineEmits<{
   close: [];
   confirmDestroy: [];
   destroy: [];
+  lock: [id: string];
   quickSelect: [rarity: number];
   quickUse: [id: string];
   toggleDestroy: [];
@@ -176,6 +183,14 @@ watch(
           @click="emit('use', selectedCell.id)"
         >
           {{ useLabel }}
+        </button>
+        <button
+          v-if="selectedCell.isLockable && !isDestroying"
+          class="lock"
+          type="button"
+          @click="emit('lock', selectedCell.id)"
+        >
+          {{ selectedCell.isLocked ? unlockLabel : lockLabel }}
         </button>
       </section>
       <button
@@ -507,6 +522,7 @@ watch(
   list-style: none;
 }
 
+.lock,
 .quick-select,
 .quick-use,
 .destroy-button,
@@ -527,6 +543,14 @@ watch(
   position: absolute;
   top: calc(var(--unit) * 960);
   left: calc(var(--unit) * 1298);
+}
+
+.lock {
+  position: absolute;
+  bottom: calc(var(--unit) * 88);
+  left: calc(var(--unit) * 28);
+  width: calc(var(--unit) * 437);
+  height: calc(var(--unit) * 52);
 }
 
 .confirm {

@@ -1,8 +1,7 @@
 import type { GameDataIndexKey } from "#src/models/data/GameDataIndexKey";
 import type { z } from "zod";
 
-import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
-import { gameDataLock } from "#src/services/data/gameDataLock";
+import { readGameDataIndex } from "#src/services/data/readGameDataIndex";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -14,10 +13,7 @@ export const readGameDataEntry = async <T>(
   entryId: string,
   schema: z.ZodType<T>,
 ): Promise<T> => {
-  const indexHash: string | undefined = gameDataLock.indexes[indexKey];
-  if (indexHash === undefined)
-    throw new InvalidOperationError(Operation.Read, indexKey, "is not in the game data lock");
-  const index = gameDataIndexSchema.parse(await readGameDataObject(gameDataBaseUrl, indexHash));
+  const index = await readGameDataIndex(gameDataBaseUrl, indexKey);
   const hash = index[entryId];
   if (hash === undefined)
     throw new InvalidOperationError(Operation.Read, `${indexKey}/${entryId}`, "is not in its index");

@@ -4,9 +4,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ARLECCHINO_CHARACTER_ID, createArlecchinoKitBehaviour } from "#src/services/kit/characters/arlecchinoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -109,5 +111,17 @@ describe(createArlecchinoKitBehaviour, () => {
     expect(
       getBuffedCombatant(combatant, [], party, new Map()).attributes.attributeTotalMap[Attribute.PyroDamageBonus],
     ).toBe(0.4);
+  });
+
+  test("her burst resets her skill's cooldown 107 frames after it starts", () => {
+    expect.hasAssertions();
+    const combatant = createArlecchinoCombatant(0);
+    const context = createKitTestContext(combatant);
+    getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds = 20;
+    ARLECCHINO_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, toKitSeconds(106));
+    expect(getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds).toBeGreaterThan(0);
+    stepKitSeconds(context, toKitSeconds(2));
+    expect(getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds).toBe(0);
   });
 });

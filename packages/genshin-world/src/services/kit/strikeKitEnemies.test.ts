@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
@@ -49,6 +50,21 @@ const strikeWithHit = (
   const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
   const strikes: KitStrike[] = [{ attackTag, body: context.body, combatant, hit, target: enemy }];
   strikeKitEnemies(strikes, context);
+};
+
+// Strikes a hit into the enemies given, and returns the enemies the team's kits saw it damage, in the order it struck them
+const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
+  const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+  const combatant = createCombatant(onKitEvent);
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])),
+    enemyTables,
+  });
+  strikeKitEnemies([{ body: context.body, combatant, hit }], context);
+  return onKitEvent.mock.calls
+    .map(([event]) => event)
+    .filter((event) => event.kind === KitEventKind.DamageTaken)
+    .map(({ enemy }) => enemy);
 };
 
 describe(strikeKitEnemies, () => {
@@ -108,6 +124,23 @@ describe(strikeKitEnemies, () => {
     expect(
       getStrikeDamageBonus.mock.calls[0]?.[0].combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
     ).toBe(100);
+  });
+
+  test("gives a hit's onStrike the enemy each strike lands on, a targeted hit's and an area hit's alike", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(vi.fn());
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const targetedOnStrike = vi.fn<NonNullable<KitHit["onStrike"]>>();
+    strikeWithHit({ ...KIT_HIT, onStrike: targetedOnStrike }, enemy, combatant);
+    const areaEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const areaOnStrike = vi.fn<NonNullable<KitHit["onStrike"]>>();
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[areaEnemy.id, areaEnemy]]), enemyTables });
+    const areaHit = { ...KIT_HIT, hitArea: { angle: 2 * Math.PI, height: 1000, radius: 1000 }, onStrike: areaOnStrike };
+    const body = { ...context.body, position: { x: 0, z: -10 } };
+    strikeKitEnemies([{ body, combatant, hit: areaHit }], context);
+
+    expect(targetedOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([enemy]);
+    expect(areaOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([areaEnemy]);
   });
 
   test("sends the team's kits no elemental hit for a hit with no element", () => {
@@ -273,5 +306,39 @@ describe(strikeKitEnemies, () => {
         .filter((event) => event.kind === KitEventKind.EnemyDefeated)
         .map(({ enemy: defeated }) => defeated),
     ).toStrictEqual([enemy]);
+  });
+
+  const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };
+
+  test("a single-target hit strikes only the enemy at its index among those its area reaches", () => {
+    expect.hasAssertions();
+    const firstEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "first-enemy" }, "");
+    const secondEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "second-enemy" }, "");
+
+    expect(
+      strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 1 }, [firstEnemy, secondEnemy]),
+    ).toStrictEqual([secondEnemy]);
+  });
+
+  test("a single-target hit wraps its index over the enemies its area reaches, as gcsim's shells take them in turn", () => {
+    expect.hasAssertions();
+    const firstEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "first-enemy" }, "");
+    const secondEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "second-enemy" }, "");
+
+    expect(
+      strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 3 }, [firstEnemy, secondEnemy]),
+    ).toStrictEqual([secondEnemy]);
+  });
+
+  test("a single-target hit strikes no enemy when its area reaches none", () => {
+    expect.hasAssertions();
+    const farEnemy = createEnemy(
+      enemyTables,
+      [],
+      { ...ENEMY_CAMP_MEMBER, id: "far-enemy", position: { x: 100, z: 0 } },
+      "",
+    );
+
+    expect(strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 0 }, [farEnemy])).toStrictEqual([]);
   });
 });

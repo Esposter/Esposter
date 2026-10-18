@@ -1,5 +1,6 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import {
   atCapWeapon,
@@ -10,6 +11,7 @@ import {
   ORE_ID,
   oreName,
   props,
+  rankedWeaponData,
   variants,
   weaponData,
 } from "#src/components/Weapon/Screen/Index.fixture";
@@ -18,6 +20,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
+import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -29,19 +32,36 @@ const levelTextOf = (level: number, maxLevel: number) =>
 const levelText = levelTextOf(1, weaponData.ascensionPhases[0]?.maxLevel ?? 1);
 // The copy in the bag sits at the level cap, whose text is the open weapon's text at the cap
 const copyLevelText = levelTextOf(atCapWeapon.level, weaponData.ascensionPhases[0]?.maxLevel ?? atCapWeapon.level);
+// The weapon the screen opens on, as its bag entry holds it, and the EXP it holds towards the level after its own
+const heldWeapon = getBagWeapon(props.inventory.items, OPEN_ENTRY_ID);
+const heldRequiredExp =
+  getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
+const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
+// The names a passive is given in the passive tests, its name and its three ranks' descriptions by their text ids
+const PASSIVE_NAMES: Record<string, string> = {
+  "passive-name": "Passive",
+  "passive-rank-1": "Rank one",
+  "passive-rank-2": "Rank two",
+  "passive-rank-3": "Rank three",
+};
+const PASSIVE_RANK_TEXT_IDS = ["passive-rank-1", "passive-rank-2", "passive-rank-3"];
 
 describe("weaponScreen", () => {
-  // The weapon's name and its level over the phase's cap, as the game's own level format writes them
+  // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
     expect.hasAssertions();
 
-    render(WeaponScreenContainer, { props });
+    const { container } = await render(WeaponScreenContainer, { props });
 
     await expect.element(page.getByText(weaponName, { exact: true })).toBeVisible();
+    await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
+    await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
+    expect(container.querySelectorAll(".spark.lit")).toHaveLength(heldWeapon.ascension);
+    expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(`${heldWeapon.refinement}`);
   });
 
-  // The Enhance tab's name, the first action the weapon screen offers, in the reader's game language
+  // The tabs the weapon screen offers in the reader's game language: Enhance, Refine, and Ascend at the level cap
   test("the action labels read in the reader's game language", async () => {
     expect.hasAssertions();
 
@@ -49,6 +69,11 @@ describe("weaponScreen", () => {
     render(WeaponScreenContainer, { props: { ...props, gameText } });
 
     await expect.element(page.getByText(gameText[GameTextKey.WeaponEnhance], { exact: true }).first()).toBeVisible();
+    await expect.element(page.getByText(gameText[GameTextKey.WeaponRefine], { exact: true }).first()).toBeVisible();
+
+    render(WeaponScreenContainer, { props: { ...props, ...variants.atCap, gameText } });
+
+    await expect.element(page.getByText(gameText[GameTextKey.WeaponAscend], { exact: true }).first()).toBeVisible();
   });
 
   // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is written back
@@ -56,13 +81,20 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
     render(WeaponScreenContainer, {
-      props: { ...props, "onUpdate:inventory": onUpdateInventory, wallet: { ...props.wallet, [Currency.Mora]: 0 } },
+      props: {
+        ...props,
+        "onUpdate:inventory": onUpdateInventory,
+        "onUpdate:wallet": onUpdateWallet,
+        wallet: { ...props.wallet, [Currency.Mora]: 0 },
+      },
     });
 
     await page.getByText(oreName, { exact: true }).first().click();
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponEnhance], { exact: true }).last().click();
     expect(onUpdateInventory).not.toHaveBeenCalled();
+    expect(onUpdateWallet).not.toHaveBeenCalled();
   });
 
   // Enhance with an ore and a fodder weapon picked: both leave the bag, the ore's count drops by one and the weapon levels up
@@ -70,7 +102,10 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
-    render(WeaponScreenContainer, { props: { ...props, "onUpdate:inventory": onUpdateInventory } });
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
+    render(WeaponScreenContainer, {
+      props: { ...props, "onUpdate:inventory": onUpdateInventory, "onUpdate:wallet": onUpdateWallet },
+    });
 
     await page.getByText(oreName, { exact: true }).first().click();
     await page.getByText(fodderName, { exact: true }).first().click();
@@ -81,6 +116,8 @@ describe("weaponScreen", () => {
     expect(writtenInventory?.items.some((item) => item.id === FODDER_ENTRY_ID)).toBe(false);
     expect(countInventoryItem(writtenInventory?.items ?? [], ORE_ID)).toBe(2);
     expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBeGreaterThan(1);
+    expect(onUpdateWallet).toHaveBeenCalledTimes(1);
+    expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBeLessThan(props.wallet[Currency.Mora]);
   });
 
   // Ascend is absent below the level cap and offered at it
@@ -123,6 +160,11 @@ describe("weaponScreen", () => {
       ascension: 1,
     });
     expect(onUpdateWallet).toHaveBeenCalledWith(EMPTY_WALLET);
+    const nextPhaseItems = weaponData.ascensionPhases[1]?.costItems ?? [];
+    const writtenItems = onUpdateInventory.mock.calls[0]?.[0].items ?? [];
+    expect(nextPhaseItems.map(({ id }) => countInventoryItem(writtenItems, id))).toStrictEqual(
+      nextPhaseItems.map(() => 0),
+    );
   });
 
   // The Adventure Rank below the next phase's requirement: the bag is not written back
@@ -130,12 +172,20 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
     render(WeaponScreenContainer, {
-      props: { ...props, ...variants.ascend, adventureRank: 0, "onUpdate:inventory": onUpdateInventory },
+      props: {
+        ...props,
+        ...variants.ascend,
+        adventureRank: 0,
+        "onUpdate:inventory": onUpdateInventory,
+        "onUpdate:wallet": onUpdateWallet,
+      },
     });
 
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }).last().click();
     expect(onUpdateInventory).not.toHaveBeenCalled();
+    expect(onUpdateWallet).not.toHaveBeenCalled();
   });
 
   // Refine with a copy picked: the copy leaves the bag, the weapon gains the copy's rank, and that rank's Mora is spent
@@ -186,5 +236,66 @@ describe("weaponScreen", () => {
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefine], { exact: true }))
       .not.toBeInTheDocument();
+  });
+
+  // The passive's name and each rank's description, the rank the weapon holds marked
+  test("a weapon with a passive shows its description at its rank", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, {
+      props: {
+        ...props,
+        nameText: { ...props.nameText, ...PASSIVE_NAMES },
+        weaponDataMap: new Map<number, WeaponData>([
+          ...props.weaponDataMap,
+          [
+            weaponData.id,
+            { ...weaponData, passiveNameTextId: "passive-name", passiveRankDescriptionTextIds: PASSIVE_RANK_TEXT_IDS },
+          ],
+        ]),
+      },
+    });
+
+    await expect.element(page.getByText("Passive", { exact: true })).toBeVisible();
+    expect(container.querySelectorAll(".passive-row")).toHaveLength(PASSIVE_RANK_TEXT_IDS.length);
+    expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe("Rank one");
+  });
+
+  // A weapon with no passive lists none beneath its ores
+  test("a weapon with no passive shows none", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, {
+      props: {
+        ...props,
+        weaponDataMap: new Map<number, WeaponData>([
+          ...props.weaponDataMap,
+          [weaponData.id, { ...weaponData, passiveNameTextId: "", passiveRankDescriptionTextIds: [] }],
+        ]),
+      },
+    });
+
+    expect(container.querySelector(".passive")).toBeNull();
+  });
+
+  // The held rank's description is the one the game gives that rank, its value filled in as the weapon's record gives it
+  test("a weapon's rank descriptions read the values their rank gives", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, {
+      props: {
+        ...props,
+        weaponDataMap: new Map<number, WeaponData>([
+          ...props.weaponDataMap,
+          [weaponData.id, { ...rankedWeaponData, id: weaponData.id }],
+        ]),
+      },
+    });
+    const heldDescription = props.nameText[rankedWeaponData.passiveRankDescriptionTextIds[0] ?? ""] ?? "";
+    const heldValue = Math.round((rankedWeaponData.passiveRankParams[0]?.[0] ?? 0) * 100);
+
+    await expect.element(page.getByText(heldDescription, { exact: true })).toBeVisible();
+    expect(heldDescription).toContain(`${heldValue}%`);
+    expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe(heldDescription);
   });
 });

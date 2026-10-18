@@ -20,6 +20,15 @@ export const GCG_SWITCH_DICE_COUNT = 1;
 export const GCG_ROUND_LIMIT = 15;
 // The shield a character holds at most, and the points one Crystallize grants to its user's active character
 export const GCG_SHIELD_LIMIT = 2;
+
+// The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
+// rewards a victory of, none the same
+export const GCG_REWARDABLE_GAME_COUNT = 942;
+
+// The card game's items in the dump: its Player EXP, a virtual item the card game's rewards pay into its EXP, and the Lucky Coin
+// Its Card Shop prices in and its rewards pay
+export const GCG_PLAYER_EXP_ITEM_ID = 146;
+export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
 export const GCG_CRYSTALLIZE_SHIELD = 1;
 // The damage a Frozen character takes more from a Pyro or Physical hit, which removes its Frozen status
 export const GCG_FROZEN_BONUS = 2;

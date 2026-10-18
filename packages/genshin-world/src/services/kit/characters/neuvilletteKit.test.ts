@@ -3,6 +3,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNeuvilletteKitBehaviour, NEUVILLETTE_CHARACTER_ID } from "#src/services/kit/characters/neuvilletteKit";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { SOURCEWATER_DROPLET_FIELD_ID } from "#src/services/kit/constants";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
@@ -11,7 +14,7 @@ const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILL
 // The passive bonuses a combatant gets at an ascension phase and HP share, each as its attribute and amount to a thousandth
 const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribute, number][] =>
   (
-    createNeuvilletteKitBehaviour().getPassiveBonuses?.(
+    createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).getPassiveBonuses?.(
       {
         ascension,
         attributes: computeCharacterAttributes([]),
@@ -82,5 +85,40 @@ describe(createNeuvilletteKitBehaviour, () => {
   test("a passive does not take effect below its ascension phase", () => {
     expect.hasAssertions();
     expect(getPassiveBonusPairs(3, 0.5)).toStrictEqual([]);
+  });
+});
+
+describe("the burst's droplets", () => {
+  test("spawns three, two and one droplets at its ticks, 95, 135 and 154 frames in", () => {
+    expect.hasAssertions();
+
+    const combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: NEUVILLETTE_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: NEUVILLETTE_KIT,
+      level: 90,
+    };
+    const context = createKitTestContext(combatant);
+    createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).burst?.onStart?.(context);
+    const dropletCounts: number[] = [];
+    for (let frame = 1; frame <= 154; frame++) {
+      stepKitSeconds(context, FIXED_STEP_SECONDS);
+      dropletCounts.push(
+        context.kitEffectState.effects.filter(
+          (effect) =>
+            effect.kind === "field" && effect.id === SOURCEWATER_DROPLET_FIELD_ID && effect.secondsRemaining > 0,
+        ).length,
+      );
+    }
+    expect([
+      dropletCounts[93],
+      dropletCounts[94],
+      dropletCounts[133],
+      dropletCounts[134],
+      dropletCounts[153],
+    ]).toStrictEqual([0, 3, 3, 5, 6]);
   });
 });
