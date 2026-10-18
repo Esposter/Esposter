@@ -8,6 +8,17 @@ import { throwCollectedFailures } from "#src/services/shared/throwCollectedFailu
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
+// A multiplier's constellation is the join key its build reads a talent variable at, which the published shape omits
+const omitConstellation = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(omitConstellation);
+  if (value === null || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => key !== "constellation")
+      .map(([key, child]): [string, unknown] => [key, omitConstellation(child)]),
+  );
+};
+
 // Every kit's record and sources from its sources and committed overlay, as the entries of the `kits` and `kitSources`
 // Indexes by avatar id, each kit built after the donors its overlay borrows from. A record must reproduce its published
 // Values exactly unless its kit is one the publish means to change, so a kit whose overlay or sources moved unasked fails
@@ -34,7 +45,7 @@ export const buildKitPublication = (
       );
     }
     const { record, sources } = built;
-    kits[String(characterId)] = record;
+    kits[String(characterId)] = omitConstellation(record);
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;
     if (publishedRecord === undefined) {

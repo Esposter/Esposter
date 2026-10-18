@@ -20,7 +20,7 @@ export const readRangeLoop = (
   const variable = isNamed ? tokens[forPosition + 1] : undefined;
   if (isNamed ? variable?.kind !== GoTokenKind.Identifier : tokens[forPosition + 1]?.text !== "range") return undefined;
   const boundStart = forPosition + (isNamed ? 4 : 2);
-  const bound = parseGoExpression(tokens, boundStart);
+  const bound = parseGoExpression(tokens, boundStart, true);
   const boundValue = evaluateGoNumber(bound.expression, resolveName);
   if (
     !checkIsGoPunctuation(tokens[bound.end], "{") ||

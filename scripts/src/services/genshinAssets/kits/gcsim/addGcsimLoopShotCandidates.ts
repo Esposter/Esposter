@@ -25,6 +25,7 @@ export const addGcsimLoopShotCandidates = (writer: GcsimKitCandidateWriter, gcsi
   const { add, toFile } = writer;
   const { attacks, config, constantMap } = gcsim;
   const actionCount = findGcsimConstant(constantMap, "skillHitNum");
+  const actionCountValue = readGoNumber(actionCount?.value);
   const hitmarks = findGcsimConstant(constantMap, "skillAttackHitmarks");
   const attack = attacks.find(({ talentVariable }) => talentVariable === "loopShot");
   if (
@@ -32,11 +33,11 @@ export const addGcsimLoopShotCandidates = (writer: GcsimKitCandidateWriter, gcsi
     hitmarks === undefined ||
     attack === undefined ||
     !Array.isArray(hitmarks.value) ||
-    readGoNumber(actionCount.value) === undefined
+    actionCountValue === undefined
   )
     return;
   const file = toFile(hitmarks.file);
-  add(`${LOOP_SHOT_PATH}.length`, readGoNumber(actionCount.value), file, actionCount.line);
+  add(`${LOOP_SHOT_PATH}.length`, actionCountValue, file, actionCount.line);
   for (const [actionIndex, actionHitmarks] of hitmarks.value.entries()) {
     if (!Array.isArray(actionHitmarks)) continue;
     const actionPath = `${LOOP_SHOT_PATH}.${actionIndex}`;

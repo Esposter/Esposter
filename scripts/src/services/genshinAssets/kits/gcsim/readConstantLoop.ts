@@ -11,12 +11,16 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { readRangeLoop } from "#src/services/genshinAssets/kits/gcsim/readRangeLoop";
 import { readSliceRangeLoop } from "#src/services/genshinAssets/kits/gcsim/readSliceRangeLoop";
 
-// The `for` loop opening at the position when it counts a variable from a constant start up to a constant bound in
-// Constant steps, its values and its body's braces, else Undefined
+// The `for` loop opening at the position when it counts a variable from a constant start up to a bound, its values and
+// Its body's braces, else Undefined. The bound is read at the constellation, so a constellation branch's `=` to a local
+// The bound names is taken or left out as the constellation reaches it. A step the reader cannot evaluate, as in
+// `i += c.call()`, is not unrolled: the loop gives its first iteration alone, at its start, or none if the bound
+// Stops it before then
 export const readConstantLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
+  resolveBoundName: (name: string) => GoValue | undefined,
 ): ConstantLoop | undefined => {
   const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
   if (rangeLoop !== undefined) return rangeLoop;
@@ -25,7 +29,7 @@ export const readConstantLoop = (
   const variable = tokens[forPosition + 1];
   if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
     return undefined;
-  const start = parseGoExpression(tokens, forPosition + 3);
+  const start = parseGoExpression(tokens, forPosition + 3, true);
   if (
     !checkIsGoPunctuation(tokens[start.end], ";") ||
     tokens[start.end + 1]?.text !== variable.text ||
@@ -33,7 +37,7 @@ export const readConstantLoop = (
   )
     return undefined;
   const isBoundInclusive = checkIsGoPunctuation(tokens[start.end + 2], "<=");
-  const bound = parseGoExpression(tokens, start.end + 3);
+  const bound = parseGoExpression(tokens, start.end + 3, true);
   const stepStart = bound.end + 1;
   if (!checkIsGoPunctuation(tokens[bound.end], ";") || tokens[stepStart]?.text !== variable.text) return undefined;
   // `i++` steps by one, `i += 90` by its expression
@@ -41,23 +45,23 @@ export const readConstantLoop = (
   const isAddAssign =
     checkIsGoPunctuation(tokens[stepStart + 1], "+") && checkIsGoPunctuation(tokens[stepStart + 2], "=");
   if (!isIncrement && !isAddAssign) return undefined;
-  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3);
+  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3, true);
   const stepEnd = step === undefined ? stepStart + 2 : step.end;
   if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
   const startValue = evaluateGoNumber(start.expression, resolveName);
-  const boundValue = evaluateGoNumber(bound.expression, resolveName);
+  const boundValue = evaluateGoNumber(bound.expression, resolveBoundName);
   const stepValue = step === undefined ? 1 : evaluateGoNumber(step.expression, resolveName);
-  if (
-    typeof startValue !== "number" ||
-    typeof boundValue !== "number" ||
-    typeof stepValue !== "number" ||
-    stepValue <= 0
-  )
+  if (typeof startValue !== "number" || typeof boundValue !== "number" || (stepValue !== undefined && stepValue <= 0))
     return undefined;
+  const isRunning = (value: number): boolean => (isBoundInclusive ? value <= boundValue : value < boundValue);
   const values: number[] = [];
-  for (let value = startValue; isBoundInclusive ? value <= boundValue : value < boundValue; value += stepValue) {
-    if (values.length === GO_MAX_LOOP_ITERATIONS) return undefined;
-    values.push(value);
+  if (stepValue === undefined) {
+    if (isRunning(startValue)) values.push(startValue);
+  } else {
+    for (let value = startValue; isRunning(value); value += stepValue) {
+      if (values.length === GO_MAX_LOOP_ITERATIONS) return undefined;
+      values.push(value);
+    }
   }
   const bodyEnd = findClosing(tokens, stepEnd, "{", "}");
   return bodyEnd === undefined

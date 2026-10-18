@@ -19,6 +19,7 @@ const call = (delay: number, line: number) => ({ attackName: "ai", delay, delayL
 const createCharacter = (abil: string, calls: ReturnType<typeof call>[]): GcsimCharacter =>
   ({
     attacks: [{ abil, file: "cons.go", fieldLineMap: {}, line: 4, siteLine: 4, variableName: "ai" }],
+    goSources: [],
     queuedAttacks: calls,
   }) as unknown as GcsimCharacter;
 

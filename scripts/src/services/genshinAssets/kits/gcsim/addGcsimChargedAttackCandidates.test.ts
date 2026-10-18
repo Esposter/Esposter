@@ -4,6 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
+import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -67,6 +68,7 @@ const gcsim: GcsimCharacter = {
   filePaths: [],
   folder: "iansan",
   holdCooldowns: [],
+  goSources: [],
   queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
   talentArrayMap: new Map(),
   talentFile: "iansan.go",
@@ -99,6 +101,7 @@ describe(addGcsimChargedAttackCandidates, () => {
       gcsim,
       WeaponType.Catalyst,
     );
+    addGcsimChargedAttackVariantCandidates(createGcsimKitCandidateWriter(candidateMap, gcsim, tables), gcsim);
 
     const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
     expect(valueOf("chargedAttackVariant.hits.length")).toBe(1);
@@ -115,6 +118,7 @@ describe(addGcsimChargedAttackCandidates, () => {
     const fallbackGcsim: GcsimCharacter = {
       ...gcsim,
       constantMap: new Map([...gcsim.constantMap].filter(([name]) => name !== "chargeHitmarks")),
+      goSources: [],
       queuedAttacks: [
         { attackName: "ai", delayLine: 69, file: "charge.go", line: 60 },
         { attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 },
@@ -126,6 +130,10 @@ describe(addGcsimChargedAttackCandidates, () => {
       createGcsimKitCandidateWriter(candidateMap, fallbackGcsim, tables),
       fallbackGcsim,
       WeaponType.Catalyst,
+    );
+    addGcsimChargedAttackVariantCandidates(
+      createGcsimKitCandidateWriter(candidateMap, fallbackGcsim, tables),
+      fallbackGcsim,
     );
 
     const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;

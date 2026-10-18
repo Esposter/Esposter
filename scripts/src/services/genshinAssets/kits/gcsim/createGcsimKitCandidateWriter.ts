@@ -21,7 +21,7 @@ import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
-import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
+import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
 
 // The first frames of a constant's list, descending through each level's first element
@@ -67,7 +67,15 @@ export const createGcsimKitCandidateWriter = (
     // The talent file's labels, and the rest from its `AttackInfo` fields, its poise else from the poise variable's
     addHit: (
       path,
-      { areaHitbox, attack, hitmark, multiplierKey = GcsimMultiplierKey.Multiplier, poiseDamage, talentLeaf },
+      {
+        areaHitbox,
+        attack,
+        constellation,
+        hitmark,
+        multiplierKey = GcsimMultiplierKey.Multiplier,
+        poiseDamage,
+        talentLeaf,
+      },
       targetingArea,
     ) => {
       if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
@@ -85,7 +93,11 @@ export const createGcsimKitCandidateWriter = (
           isLabelled = true;
           add(
             `${path}.${multiplierKey}`,
-            { index, proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]] },
+            {
+              index,
+              proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]],
+              ...(constellation !== undefined && { constellation }),
+            },
             toFile(talentFile),
             parameter.line,
           );
@@ -93,13 +105,19 @@ export const createGcsimKitCandidateWriter = (
       }
       // A hit whose talent row names no parameter reads the array its attack's variable names, joined to its
       // Parameter by value
-      const talentArray = isLabelled ? undefined : talentArrayMap.get(attack?.talentVariable ?? "");
-      const joined =
-        talentArray === undefined
-          ? undefined
-          : joinGcsimTalentArray(talentArray, talentMultiplierMap, Object.values(talentGroupIdMap));
-      if (talentArray !== undefined && joined !== undefined)
-        add(`${path}.multiplier`, joined, toFile(talentFile), talentArray.line);
+      const talentArrayJoin = isLabelled
+        ? undefined
+        : joinGcsimVariableTalentArray(talentArrayMap, attack?.talentVariable ?? "", {
+            talentGroupIdMap,
+            talentMultiplierMap,
+          });
+      if (talentArrayJoin !== undefined)
+        add(
+          `${path}.multiplier`,
+          { ...talentArrayJoin.multiplier, ...(constellation !== undefined && { constellation }) },
+          toFile(talentFile),
+          talentArrayJoin.line,
+        );
       if (attack === undefined) return;
       const fieldFile = toFile(attack.file);
       const fieldLine = (key: string) => attack.fieldLineMap[key] ?? attack.line;

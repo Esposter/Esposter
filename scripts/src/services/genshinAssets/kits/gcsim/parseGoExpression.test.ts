@@ -13,4 +13,15 @@ describe(parseGoExpression, () => {
 
     expect(parameterStarts.map((start) => tokens[start]?.text)).toStrictEqual(["attack", "2"]);
   });
+
+  test("a control clause's bare name ends at its brace, which opens the clause's block rather than a composite literal", () => {
+    expect.hasAssertions();
+
+    const tokens = tokenizeGo("tick {\n\tbody\n}");
+
+    expect(parseGoExpression(tokens, 0, true)).toStrictEqual({
+      end: 1,
+      expression: { kind: GoExpressionKind.Identifier, name: "tick" },
+    });
+  });
 });

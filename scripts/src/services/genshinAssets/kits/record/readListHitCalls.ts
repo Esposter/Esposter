@@ -19,7 +19,10 @@ export const readListHitCalls = (
 ): Map<string, KitCandidate[]> | undefined => {
   const hitmarkCalls = typeof hitmark === "number" ? namedHit.queuedCalls.filter(({ delay }) => delay === hitmark) : [];
   if (hitmarkCalls.length === 1) return hitmarkCalls[0]?.fieldMap;
-  if (namedHit.queuedCalls.length === listLength) return namedHit.queuedCalls[index]?.fieldMap;
+  // A call with no delay gives its hit no hitmark, so the hit takes none of its fields unless its hitmark is set
+  const ownCall = namedHit.queuedCalls[index];
+  if (namedHit.queuedCalls.length === listLength)
+    return ownCall?.delay === undefined && hitmark === undefined ? undefined : ownCall?.fieldMap;
   const takingSites = [...siteCallsMap.values()].filter(
     ({ calls, keys }) => calls.length === listLength && keys.has(key),
   );

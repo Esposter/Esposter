@@ -149,4 +149,24 @@ describe(buildKitPublication, () => {
       `[InvalidOperationError: Invalid operation: Create, name: 1, its record cannot be built: Invalid operation: Read, name: 2, borrows from 1, which borrows back to a kit already being built]`,
     );
   });
+
+  test("publishes a multiplier without the constellation its overlay joins it by", () => {
+    expect.hasAssertions();
+
+    // Gcsim's multiplier for the first strike names the constellation its talent variable reads at
+    const sourceCandidateMap = new Map(SOURCE_CANDIDATE_MAP);
+    sourceCandidateMap.set("normalAttacks.0.hits.0.multiplier", [
+      {
+        provenance: { file: "kit.go", line: 1, source: KitSource.Gcsim },
+        value: { constellation: 4, index: 0, proudSkillGroupId: 1 },
+      },
+    ]);
+
+    const { indexes } = buildKitPublication([createInput(1, false, {}, sourceCandidateMap)], [1]);
+
+    expect(indexes[GameDataset.Kits]).toHaveProperty(["1", "normalAttacks", 0, "hits", 0, "multiplier"], {
+      index: 0,
+      proudSkillGroupId: 1,
+    });
+  });
 });

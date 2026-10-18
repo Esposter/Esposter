@@ -43,6 +43,7 @@ const createBennett = (abilityHitboxesMap: GcsimConfig["abilityHitboxesMap"] = n
   filePaths: [],
   holdCooldowns: [],
   folder: "bennett",
+  goSources: [],
   queuedAttacks: [],
   talentArrayMap: new Map(),
   talentFile: "bennett.go",

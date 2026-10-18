@@ -2,6 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
 import { addGcsimBladeRollerCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates";
+import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates";
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
@@ -15,6 +16,7 @@ export const GcsimCharacterMappingMap: Partial<
 > = {
   chasca: addGcsimShellCandidates,
   columbina: addGcsimMoondewCleanseCandidates,
+  iansan: addGcsimChargedAttackVariantCandidates,
   kinich: addGcsimLoopShotCandidates,
   mizuki: addGcsimCloudCandidates,
   varesa: addGcsimFieryPassionCandidates,

@@ -63,6 +63,7 @@ const createGcsim = (withMoondewCleanse: boolean): GcsimCharacter => ({
   filePaths: [],
   folder: "columbina",
   holdCooldowns: [],
+  goSources: [],
   queuedAttacks: [],
   talentArrayMap: new Map(),
   talentFile: "columbina.go",

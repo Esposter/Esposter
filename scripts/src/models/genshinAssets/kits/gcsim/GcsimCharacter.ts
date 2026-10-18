@@ -6,13 +6,14 @@ import type { GcsimTalentArray } from "#src/models/genshinAssets/kits/gcsim/Gcsi
 import type { GcsimTalentParameter } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentParameter";
 import type { GcsimTravel } from "#src/models/genshinAssets/kits/gcsim/GcsimTravel";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
+import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 
 // What the builder reads of one gcsim character folder at a ref: its folder, its config and the config's path, its
 // Package's constants by name, the frames each ability file animates by, its `AttackInfo` literals, its talent file's
 // Parameters by `<talent>|<label>`, its multiplier arrays by the variable they are named by, the travel its projectiles
 // Land after by the hitmark constant they are released at,
-// Its queue calls, the cooldown each of its skill hold's switch cases gives the skill, and the paths of its files below
-// the folder
+// Its queue calls, the cooldown each of its skill hold's switch cases gives the skill, the Go sources its queue calls
+// Are read from, and the paths of its files below the folder
 export interface GcsimCharacter {
   animationFrameNameMap: Map<string, string>;
   attacks: GcsimAttack[];
@@ -21,6 +22,7 @@ export interface GcsimCharacter {
   constantMap: Map<string, GoConstant>;
   filePaths: string[];
   folder: string;
+  goSources: GoSource[];
   holdCooldowns: GcsimHoldCooldown[];
   queuedAttacks: GcsimQueuedAttack[];
   talentArrayMap: Map<string, GcsimTalentArray>;

@@ -14,10 +14,12 @@ const UNKNOWN_EXPRESSION: GoExpression = Object.freeze({ kind: GoExpressionKind.
 // One Go expression read from its first token: the literals, integer sums, calls, indexes and composite literals
 // Gcsim's action files write, each operator binding as Go binds it. A form past those, a function literal or a keyed
 // Struct, is read as unknown and skipped to its end. Returns the expression and the position after it, where a line end
-// At the top of the expression ends it
+// At the top of the expression ends it. A control clause's expression, a loop's step or bound, reads a name's brace as
+// The clause's block, as Go does, so no composite literal opens there
 export const parseGoExpression = (
   tokens: readonly GoToken[],
   start: number,
+  isControlClause = false,
 ): { end: number; expression: GoExpression } => {
   let position = start;
   const peek = () => tokens[position];
@@ -74,7 +76,7 @@ export const parseGoExpression = (
         return UNKNOWN_EXPRESSION;
       }
       const name = readQualifiedName();
-      if (!checkIsPunctuation("{")) return { kind: GoExpressionKind.Identifier, name };
+      if (isControlClause || !checkIsPunctuation("{")) return { kind: GoExpressionKind.Identifier, name };
       // A typed composite, a struct's literal such as `info.Point{Y: 1}`, which no value read here is
       position = skipGoBrackets(tokens, position);
       return UNKNOWN_EXPRESSION;

@@ -44,7 +44,6 @@ const KIT_TABLES: KitTables = {
   weaponType: WeaponType.Sword,
 };
 const attackConstant = (value: GoValue, line: number, file = "attack.go") => ({ elementLines: {}, file, line, value });
-const toConstantAt = (file: string, line: number, value: GoValue) => ({ elementLines: {}, file, line, value });
 const createCharacterFixture = (
   folder: string,
   {
@@ -67,6 +66,7 @@ const createCharacterFixture = (
   filePaths: [],
   folder,
   holdCooldowns: [],
+  goSources: [],
   queuedAttacks: [],
   talentArrayMap: new Map(),
   talentFile: `${folder}.go`,
@@ -90,6 +90,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "razor",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "razor.go",
@@ -132,6 +133,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "razor",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "razor.go",
@@ -180,6 +182,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "itto",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "itto.go",
@@ -228,6 +231,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
       filePaths: [],
       folder: "jean",
+      goSources: [],
       queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
       talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
@@ -276,6 +280,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
       filePaths: [],
       folder: "jean",
+      goSources: [],
       queuedAttacks: [{ attackName: "ai", delay: 92, delayLine: 9, file: "burst.go", line: 7 }],
       talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
@@ -326,6 +331,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
       filePaths: [],
       folder: "varesa",
+      goSources: [],
       queuedAttacks: [
         {
           attackName: "ai",
@@ -390,6 +396,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
       filePaths: [],
       folder: "varesa",
+      goSources: [],
       queuedAttacks: [
         {
           attackName: "ai",
@@ -498,6 +505,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 24, value: 32 }]]),
       filePaths: [],
       folder: "razor",
+      goSources: [],
       queuedAttacks: [
         { attackName: "ai", delay: 32, delayLine: 67, file: "burst.go", line: 67 },
         { attackName: "ai", delay: 1, delayLine: 110, file: "burst.go", line: 110 },
@@ -540,6 +548,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["skillFrames", toConstant([{ animationFrames: 50 }, { animationFrames: 80 }])]]),
       filePaths: [],
       folder: "mona",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "mona.go",
@@ -577,6 +586,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "navia",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "navia.go",
@@ -612,6 +622,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstFrames", toConstant({ animationFrames: 90 })]]),
       filePaths: [],
       folder: "barbara",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "barbara.go",
@@ -704,6 +715,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "aino",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "aino.go",
@@ -743,6 +755,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map(),
       filePaths: [],
       folder: "aino",
+      goSources: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "aino.go",
@@ -804,6 +817,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "razor",
+      goSources: [],
       queuedAttacks: [
         { attackLine: undefined, attackName: undefined, delay: 60, delayLine: 4, file: "skill.go", hitbox, line: 4 },
         { attackLine: undefined, attackName: "hit", delay: 60, delayLine: 5, file: "skill.go", hitbox, line: 5 },
@@ -1125,9 +1139,9 @@ describe(getGcsimKitCandidates, () => {
         },
       ],
       constants: [
-        ["fierySkillFrames", toConstantAt("skill.go", 33, frames(52))],
+        ["fierySkillFrames", attackConstant(frames(52), 33, "skill.go")],
         ["fierySkillHitmark", attackConstant(2, 19, "skill.go")],
-        ["burstFrames", toConstantAt("burst.go", 27, frames(122))],
+        ["burstFrames", attackConstant(frames(122), 27, "burst.go")],
         ["burstHitmark", attackConstant(88, 18, "burst.go")],
       ],
       talentParameters: [
@@ -1198,6 +1212,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "zhongli",
+      goSources: [],
       queuedAttacks: [{ attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", line: 5 }],
       talentArrayMap: new Map(),
       talentFile: "zhongli.go",
@@ -1224,5 +1239,35 @@ describe(getGcsimKitCandidates, () => {
         candidateMap.get(path)?.map(({ value }) => value),
       ),
     ).toStrictEqual([undefined, undefined, [1]]);
+  });
+
+  test("gives a skill with no hold constant one hold, its hit the one call its hold parameter sets to 1 fires", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["skillPressFrames", toConstant(38)]]),
+      filePaths: [],
+      folder: "zhongli",
+      goSources: [],
+      queuedAttacks: [
+        { attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", holdValue: 1, line: 5 },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zhongli.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["skillHolds.length", "skillHolds.0.action.hits.0.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [48]]);
   });
 });
