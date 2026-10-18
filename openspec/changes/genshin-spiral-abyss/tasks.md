@@ -5,7 +5,7 @@
 ## 2. Chambers
 
 - [x] 2.1 Enter a chamber with the party set. Verify: a test named after the scenarios 'A chamber is entered with the party set' and 'A chamber cannot be entered without a party'.
-- [ ] 2.2 Advance each half when its last enemy is defeated, with a two-team chamber's second half taking its enemies from its scene. Verify: tests named after 'A half advances when its last enemy is defeated' and 'A two-team chamber's second half takes its enemies from its scene'. Blocked until the chamber's domain scene is derived.
+- [ ] 2.2 Advance each half when its last enemy is defeated, with a two-team chamber's second half taking its enemies from its scene. Verify: tests named after 'A half advances when its last enemy is defeated' and 'A two-team chamber's second half takes its enemies from its scene'. Built: `advanceAbyssHalf` advances a half on its last enemy. Blocked on the second half: the dump lists no monsters for the Moon Spire chambers (levels 400 to 423, the floors of the current period), so their enemies wait on the scene export.
 - [x] 2.3 Carry health and energy into the next chamber and award stars against the clock. Verify: tests named after 'Health and energy at a clear carry into the next chamber', 'Clearing a chamber with time left earns its stars' and 'A chamber not cleared before its clock runs out fails'. The carry is the snapshot the design records: taken at the clear, and the next chamber starts from it.
 
 ## 3. Blessings and the wormhole
