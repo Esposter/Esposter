@@ -4,19 +4,23 @@ import { GameDataset } from "#src/models/data/GameDataset";
 import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
+import { NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"), () => ({
-  CharacterIdCreateKitBehaviourMap: {},
-}));
+vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"), async () => {
+  // Hoisted above the imports, so the factory reads Nefer's module on its own
+  const { createNeferKitBehaviour, NEFER_CHARACTER_ID: neferCharacterId } =
+    await import("#src/services/kit/characters/neferKit");
+  return { CharacterIdCreateKitBehaviourMap: { [neferCharacterId]: () => Promise.resolve(createNeferKitBehaviour) } };
+});
 
 describe(readCharacterKit, () => {
   // Its own record and multipliers hold none of the Traveler's values, so a kit built from them would differ
-  test("builds the Traveler's kit from the Traveler's record and multipliers for a character the map holds no module for", async () => {
+  test("a character without a kit of its own fights by the Traveler's kit", async () => {
     expect.hasAssertions();
 
     const [kit, travelerKit] = await Promise.all([
@@ -43,6 +47,20 @@ describe(readCharacterKit, () => {
     );
     expect(takeOne(raisedKit.elementalBurst.hits).talentMultiplier).toBe(
       takeOne(startKit.elementalBurst.hits).talentMultiplier,
+    );
+  });
+
+  test("a character with its own kit fights by it", async () => {
+    expect.hasAssertions();
+
+    const [kit, travelerKit] = await Promise.all([
+      readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEFER_CHARACTER_ID),
+      readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID),
+    ]);
+
+    // The Traveler's kit takes its wielder's element for its skill's hit, which Nefer's own module does not
+    expect(kit.elementalSkill.hits.map(({ element }) => element)).not.toStrictEqual(
+      travelerKit.elementalSkill.hits.map(({ element }) => element),
     );
   });
 
