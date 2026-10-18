@@ -24,6 +24,14 @@ describe(mergeGenshinSave, () => {
   const SEELIE_ID = "seelie-1";
   const OTHER_SEELIE_ID = "seelie-2";
   const PUZZLE_ID = "puzzle-1";
+  const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
+  const OTHER_PLACEMENT = {
+    areaId: 2,
+    furnishingItemId: 4,
+    position: { x: 3, y: 0, z: 4 },
+    rotation: 0,
+    sceneId: 2001,
+  };
   const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
   const OTHER_REFILL_DAY = Temporal.PlainDate.from(REFILL_DAY).add({ days: 1 }).toString();
   const ACCOUNT_REFILL_COUNT = 2;
@@ -130,6 +138,14 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, openedChests: [OTHER_CHEST_ID] };
 
     expect(mergeGenshinSave(account, guest).openedChests).toStrictEqual([CHEST_ID]);
+  });
+
+  test("keeps the account's placements over the guest's", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, homePlacements: [PLACEMENT] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, homePlacements: [OTHER_PLACEMENT] };
+
+    expect(mergeGenshinSave(account, guest).homePlacements).toStrictEqual([PLACEMENT]);
   });
 
   test("keeps the further step of a quest", () => {

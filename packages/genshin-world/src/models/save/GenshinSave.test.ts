@@ -9,6 +9,7 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
@@ -131,6 +132,13 @@ describe("genshinSaveSchema", () => {
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
+      homePlacements: Array.from({ length: MAX_HOME_PLACEMENT_COUNT }, () => ({
+        areaId: maxNumber,
+        furnishingItemId: maxNumber,
+        position: { x: -Number.MAX_VALUE, y: -Number.MAX_VALUE, z: -Number.MAX_VALUE },
+        rotation: -Number.MAX_VALUE,
+        sceneId: maxNumber,
+      })),
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
           id: maxNumber - index,
@@ -235,6 +243,24 @@ describe("genshinSaveSchema", () => {
         ...EMPTY_GENSHIN_SAVE.puzzles,
         settledSeelieIds: Array.from({ length: MAX_SETTLED_SEELIE_COUNT + 1 }, (_value, index) => String(index)),
       },
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
+  // A save holding more placements than the realms' areas hold at their furnishing counts is refused, so the list
+  // Stays bounded
+  test("a save past the placement limit is refused", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      homePlacements: Array.from({ length: MAX_HOME_PLACEMENT_COUNT + 1 }, () => ({
+        areaId: 1,
+        furnishingItemId: 1,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: 0,
+        sceneId: 2001,
+      })),
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);

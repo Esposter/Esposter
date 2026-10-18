@@ -523,8 +523,8 @@ const {
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
   wallet,
 });
-// The Companionship EXP, the day's commissions, the statues, the solved puzzles and the Traveler's name no source changes
-// Yet, so they are carried as they were saved
+// The Companionship EXP, the day's commissions, the statues, the solved puzzles, the realm's placements and the
+// Traveler's name no source changes yet, so they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
@@ -540,6 +540,7 @@ useWorldSaveSync({
     craftingProgress: craftingProgress.value,
     foundOculusIds: savedState.foundOculusIds,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
+    homePlacements: savedState.homePlacements,
     inventory: inventory.value,
     openedChestIds: openedChestIds.value,
     party,
