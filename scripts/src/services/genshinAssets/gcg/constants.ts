@@ -26,8 +26,9 @@ export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Elem
 // The decks the duels run as opponents, each with the cards its skills create on the field, which a duel needs as cards of
 // Their own: the tutorial deck's Pyro Infusion, Inspiration Field, Reflection and Illusory Bubble; deck 3's Chonghua Frost
 // Field, Niwabi Enshou, Aurous Blaze and The Wolf Within; deck 4's Niwabi Enshou, Aurous Blaze and Shadowsword summons; deck
-// 11005's Cat-Claw Shield; and the Oceanic Mimics of decks 2, 4 and 11005, which the Oceanid Mimic (122010) that Rhodeia of
-// Loch's skills name stands for
+// 11005's Cat-Claw Shield; the Oceanic Mimics of decks 2, 4 and 11005, which the Oceanid Mimic (122010) that Rhodeia of
+// Loch's skills name stands for; and deck 13105's Shadowsword summons, Niwabi Enshou, Aurous Blaze and Oz, which its
+// Characters' skills create
 export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number, number[]>([
   [1, [113_011, 113_031, 112_031, 112_032]],
   [2, [113_021, 113_022, 114_011, 122_010, 122_011, 122_012, 122_013]],
@@ -38,6 +39,7 @@ export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number,
   [11_005, [111_021, 111_023, 115_021, 122_010, 122_011, 122_012, 122_013]],
   [11_105, [112_031, 112_032, 113_031, 114_011]],
   [12_005, [111_011, 111_012, 114_031, 116_011]],
+  [13_105, [113_051, 113_052, 114_011, 125_011, 125_012]],
   [30_111, [113_011, 111_031, 115_011]],
   [30_112, [113_031, 114_011, 111_031]],
 ]);
