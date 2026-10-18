@@ -5,6 +5,7 @@ import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -36,6 +37,11 @@ const CONSTELLATION_1_POINTS_ID = "iansan-constellation-1-points";
 // Constellation 4 needs the Surging Force stacks after another character's burst, which the kit does not read
 // Constellation 6 needs the Kinetic Energy Scale's extra 3 seconds and Extreme Force on overflow, not built
 export const createIansanKitBehaviour = (): KitBehaviour => ({
+  // The Electro Swift Stormflight plays in place of her charged attack while her blessing lasts
+  chargedAttackVariant: {
+    checkIsActive: ({ activeCombatant, kitEffectState }) =>
+      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+  },
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
     const { characterId, constellationCount } = combatant;
     if (
