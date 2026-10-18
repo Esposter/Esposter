@@ -27,13 +27,12 @@ const MAX_LOOP_ITERATIONS = 100;
 
 type GoScope = ReturnType<typeof createGoScope>;
 
-// A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, its variable's
-// Values and the braces of its body
+// A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, or over a constant
+// Slice, `for i, delay := range burstHitmarks {`, its iterations' variable values and the braces of its body
 interface ConstantLoop {
   bodyEnd: number;
   bodyStart: number;
-  values: number[];
-  variable: string;
+  iterations: Map<string, number>[];
 }
 
 // The position a queue call's attack pattern is read from: the argument itself, or where its bare local was assigned in
@@ -101,8 +100,52 @@ const readRangeLoop = (
     : {
         bodyEnd,
         bodyStart: bound.end,
-        values: Array.from({ length: Math.max(0, boundValue) }, (_, value) => value),
-        variable: variable?.text ?? "",
+        iterations: Array.from({ length: Math.max(0, boundValue) }, (_, value) =>
+          variable === undefined ? new Map<string, number>() : new Map([[variable.text, value]]),
+        ),
+      };
+};
+
+// The `for` loop opening at the position when it ranges over a constant slice, `for i, delay := range burstHitmarks {`,
+// Its iterations the slice's indexes and elements, and its body's braces, else Undefined
+const readSliceRangeLoop = (
+  tokens: readonly GoToken[],
+  forPosition: number,
+  resolveName: (name: string) => GoValue | undefined,
+): ConstantLoop | undefined => {
+  const [indexToken, valueToken] = [tokens[forPosition + 1], tokens[forPosition + 3]];
+  if (
+    indexToken?.kind !== GoTokenKind.Identifier ||
+    !checkIsGoPunctuation(tokens[forPosition + 2], ",") ||
+    valueToken?.kind !== GoTokenKind.Identifier ||
+    !checkIsGoPunctuation(tokens[forPosition + 4], ":=") ||
+    tokens[forPosition + 5]?.text !== "range"
+  )
+    return undefined;
+  // The slice is named alone, its brace opening the body rather than a composite literal
+  const sliceToken = tokens[forPosition + 6];
+  const slice = sliceToken?.kind === GoTokenKind.Identifier ? resolveName(sliceToken.text) : undefined;
+  const bodyStart = forPosition + 7;
+  if (
+    !checkIsGoPunctuation(tokens[bodyStart], "{") ||
+    !Array.isArray(slice) ||
+    slice.length > MAX_LOOP_ITERATIONS ||
+    !slice.every((element) => typeof element === "number")
+  )
+    return undefined;
+  const bodyEnd = findClosingBrace(tokens, bodyStart);
+  return bodyEnd === undefined
+    ? undefined
+    : {
+        bodyEnd,
+        bodyStart,
+        iterations: slice.map(
+          (element, index) =>
+            new Map<string, number>([
+              [indexToken.text, index],
+              [valueToken.text, element],
+            ]),
+        ),
       };
 };
 
@@ -115,6 +158,8 @@ const readConstantLoop = (
 ): ConstantLoop | undefined => {
   const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
   if (rangeLoop !== undefined) return rangeLoop;
+  const sliceLoop = readSliceRangeLoop(tokens, forPosition, resolveName);
+  if (sliceLoop !== undefined) return sliceLoop;
   const variable = tokens[forPosition + 1];
   if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
     return undefined;
@@ -153,7 +198,9 @@ const readConstantLoop = (
     values.push(value);
   }
   const bodyEnd = findClosingBrace(tokens, stepEnd);
-  return bodyEnd === undefined ? undefined : { bodyEnd, bodyStart: stepEnd, values, variable: variable.text };
+  return bodyEnd === undefined
+    ? undefined
+    : { bodyEnd, bodyStart: stepEnd, iterations: values.map((value) => new Map([[variable.text, value]])) };
 };
 
 // Each constant loop of a file, read at its `for` keyword
@@ -208,8 +255,10 @@ const readIterations = (loops: readonly ConstantLoop[], position: number): Map<s
   loops
     .filter(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd)
     .reduce<Map<string, number>[]>(
-      (iterations, { values, variable }) =>
-        iterations.flatMap((iteration) => values.map((value) => new Map(iteration).set(variable, value))),
+      (iterations, { iterations: loopIterations }) =>
+        iterations.flatMap((iteration) =>
+          loopIterations.map((loopIteration) => new Map([...iteration, ...loopIteration])),
+        ),
       [new Map()],
     );
 

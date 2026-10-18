@@ -553,6 +553,35 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("repeats a queue call in a loop ranging over a constant slice once per element, with the element as its delay", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package odette",
+          "",
+          "var burstHitmarks = []int{112, 112 + 16, 112 + 16 + 12}",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i, delay := range burstHitmarks {",
+          "\t\tc.QueueCharTask(func() { c.Core.QueueAttack(aiCopy, ap, 0, 0) }, delay)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ attackName, delay, line }) => [attackName, delay, line])).toStrictEqual([
+      ["aiCopy", 112, 7],
+      ["aiCopy", 128, 7],
+      ["aiCopy", 140, 7],
+    ]);
+  });
+
   test("adds a QueueCharTask closure's delay to a call in it, as it does a Tasks.Add closure's", () => {
     expect.hasAssertions();
 
