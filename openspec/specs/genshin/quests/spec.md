@@ -136,7 +136,7 @@ A quest's titles and words SHALL come from the game's own text, referenced by it
 
 ### Requirement: The world carries only the quests its inventory lists
 
-The world SHALL carry only the prologue's first two quests and The Seventh Samurai, read by their ids from the game's data.
+The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key.
 
 #### Scenario: Carried quests read
 
