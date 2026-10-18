@@ -1,10 +1,34 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTighnariKitBehaviour, TIGHNARI_CHARACTER_ID } from "#src/services/kit/characters/tighnariKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TIGHNARI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TIGHNARI_CHARACTER_ID);
+const createTighnariCombatant = (ascension: number, elementalMastery: number): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.ElementalMastery, value: elementalMastery },
+  ]),
+  characterId: TIGHNARI_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: TIGHNARI_KIT,
+  level: 90,
+  weaponType: WeaponType.Bow,
+});
 
 describe(createTighnariKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -50,5 +74,43 @@ describe(createTighnariKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(Math.round(takeOne(TIGHNARI_KIT.elementalSkill.hits).hitmarkSeconds * 60)).toBe(20);
+  });
+
+  describe("Ascension 4's damage bonus", () => {
+    const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const party = createParty([TIGHNARI_CHARACTER_ID]);
+    const getDamageBonus = (combatant: Combatant, attackTag: AttackTag): number =>
+      TIGHNARI_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: kitBody, combatant, hit: takeOne(TIGHNARI_KIT.chargedAttack.hits) },
+        enemy,
+        party,
+      ) ?? 0;
+
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createTighnariCombatant(4, 2000);
+
+      expect([
+        getDamageBonus(combatant, AttackTag.ChargedAttack),
+        getDamageBonus(combatant, AttackTag.ElementalBurst),
+        getDamageBonus(combatant, AttackTag.NormalAttack),
+      ]).toStrictEqual([0.6, 0.6, 0]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect([
+        getDamageBonus(createTighnariCombatant(3, 2000), AttackTag.ChargedAttack),
+        getDamageBonus(createTighnariCombatant(3, 2000), AttackTag.ElementalBurst),
+      ]).toStrictEqual([0, 0]);
+    });
+
+    test("the bonus is 0.06% for each point of Elemental Mastery", () => {
+      expect.hasAssertions();
+
+      expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
+    });
   });
 });
