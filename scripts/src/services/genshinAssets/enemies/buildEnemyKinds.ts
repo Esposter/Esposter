@@ -3,9 +3,8 @@ import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
-import { ANIMAL_CODEX_TYPE } from "#src/services/genshinAssets/archive/constants";
+import { ANIMAL_CODEX_TABLE_NAME, ANIMAL_CODEX_TYPE } from "#src/services/genshinAssets/archive/constants";
 import {
-  ANIMAL_CODEX_TABLE_NAME,
   BASE_ATTACK_PROPERTY,
   BASE_DEFENSE_PROPERTY,
   BASE_HEALTH_PROPERTY,

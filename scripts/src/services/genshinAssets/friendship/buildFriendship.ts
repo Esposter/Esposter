@@ -4,6 +4,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { toFriendshipLevels } from "#src/services/genshinAssets/friendship/toFriendshipLevels";
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
@@ -15,7 +16,7 @@ export const buildFriendship = (): Record<string, unknown> => {
   const namecards = toFriendshipNamecards(
     readExcelTable<ExcelFetterCharacterCardRow>("FetterCharacterCardExcelConfigData"),
     readRewardMap(),
-    readExcelTable<MaterialRow>("MaterialExcelConfigData"),
+    readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
   );
   return { [`${GameDataset.Friendship}/friendship`]: { levels, namecards } };
 };
