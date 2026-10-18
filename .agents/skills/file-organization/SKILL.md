@@ -1,13 +1,13 @@
 ---
 name: file-organization
-description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter's file and folder organisation — which folder and which package a file belongs in and what it may import; alias imports never relative, one export per file, one source of truth per constant, near-twin functions collapsed onto one primitive, and a rename that leaves no re-export alias.
+description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter's file and folder organisation — which folder and which package a file belongs in and what it may import; alias imports never relative, one function per file, one source of truth per constant, near-twin functions collapsed onto one primitive, and a rename that leaves no re-export alias.
 ---
 
 # File & Folder Organisation
 
 ## Settled — do not re-propose
 
-- **A plugin for one export per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
+- **A plugin for one function per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
 - **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
 - **Converting `apps/infra/src/azure/constants/` to named exports** — one PascalCase file per constant, each a default export, read that way at hundreds of sites; no rule names default exports either way, the tree is internally consistent, and the swap is dozens of files of churn.
 

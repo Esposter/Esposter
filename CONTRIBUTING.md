@@ -121,7 +121,7 @@ Pre-commit hooks run the formatter automatically via [nano-staged](https://githu
 
 - **TypeScript strict mode** — no `any`, no non-null assertions (`!`), no `Omit`.
 - **Immutability** — create new objects/arrays, never mutate in place.
-- **One export per file** — classes in `models/`, functions in `services/`, constants in `constants.ts`.
+- **One function per file** — classes in `models/`, functions in `services/`, constants in `constants.ts`.
 - **No comments** unless the _why_ is non-obvious (hidden constraints, workarounds).
 - **No `console.log`** in committed code.
 - Use `vp run lint:fix` — never fix lint errors by hand.
