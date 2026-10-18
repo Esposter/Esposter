@@ -14,3 +14,5 @@ export const ABYSS_MONOLITH_FULL_PERCENT = 100;
 // Outline in the catalogue, provisionally, until the wormhole's own place is read from the game's scene export
 export const ABYSS_ENTRANCE_INTERACTABLE_ID = "spiralAbyss";
 export const ABYSS_ENTRANCE_POSITION = { x: -483.6, z: 719.2 };
+// The radius, in world units, the monsters of a half stand round the arena's centre at, as the domain's stand-in does (PROVISIONAL)
+export const ABYSS_ARENA_SPREAD = 6;
