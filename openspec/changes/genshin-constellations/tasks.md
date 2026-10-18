@@ -6,7 +6,7 @@
 
 ## 2. Constellation effects
 
-- [x] 2.1 Write each constellation's switch in its character's kit module, applying only when active. Verify: tests named after the scenarios 'an active constellation's switch changes its character's kit' and 'an inactive constellation changes nothing', seen failing first.
+- [ ] 2.1 Write each constellation's switch in its character's kit module, applying only when active. Verify: tests named after the scenarios 'an active constellation's switch changes its character's kit' and 'an inactive constellation changes nothing', seen failing first. Blocked: most constellations have no switch yet. 72 of the 115 kit modules list a constellation as not built in their header, each naming the mechanic it waits on.
 
 ## 3. Traveler's sets
 
