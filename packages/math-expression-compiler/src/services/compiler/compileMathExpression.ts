@@ -6,7 +6,7 @@ import { collectMathExpressionAssignedNames } from "#src/services/compiler/colle
 import { compileMathExpressionNode } from "#src/services/compiler/compileMathExpressionNode";
 import { NO_LOCALS } from "#src/services/compiler/constants";
 import { getMathExpressionConstant } from "#src/services/compiler/getMathExpressionConstant";
-import { readMathExpressionOuterValue } from "#src/services/compiler/readMathExpressionOuterValue";
+import { getMathExpressionOuterValue } from "#src/services/compiler/getMathExpressionOuterValue";
 
 // Compiles a parsed formula into a function of the values of the variables named by `variableNames`, in that order.
 // A name the formula reads that is neither a variable, an assignment nor a constant is an error, which the function yields as NaN.
@@ -32,9 +32,7 @@ export const compileMathExpression = (
 
   return (values) => {
     const locals =
-      outerBindings.length === 0
-        ? NO_LOCALS
-        : outerBindings.map((outer) => readMathExpressionOuterValue(outer, values));
+      outerBindings.length === 0 ? NO_LOCALS : outerBindings.map((outer) => getMathExpressionOuterValue(outer, values));
     return compiled.evaluate(values, locals) ?? Number.NaN;
   };
 };

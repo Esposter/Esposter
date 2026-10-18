@@ -1,19 +1,9 @@
-import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
-
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
+import { parseNode } from "#src/services/compiler/parseNode.test";
 import { getMathExpressionNames } from "#src/services/names/getMathExpressionNames";
-import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { describe, expect, test } from "vitest";
 
 const SCOPE = { col0: 3, col1: -2.5 };
-
-const parseNode = (formula: string): MathExpressionNode =>
-  parseMathExpression(formula).match(
-    (node) => node,
-    (error) => {
-      throw error;
-    },
-  );
 
 const evaluateFormula = (formula: string, scope: Record<string, number> = {}): number =>
   compileMathExpression(parseNode(formula), Object.keys(scope))(Object.values(scope));

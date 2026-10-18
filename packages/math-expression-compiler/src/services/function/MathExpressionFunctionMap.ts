@@ -6,6 +6,8 @@ import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { checkIsPrime } from "#src/services/function/checkIsPrime";
 import { checkIsSmaller } from "#src/services/function/checkIsSmaller";
 import { computeBellNumber } from "#src/services/function/computeBellNumber";
+import { computeBitwiseAnd } from "#src/services/function/computeBitwiseAnd";
+import { computeBitwiseOr } from "#src/services/function/computeBitwiseOr";
 import { computeBernoulliNumber } from "#src/services/function/computeBernoulliNumber";
 import { computeCatalan } from "#src/services/function/computeCatalan";
 import { computeCombinations } from "#src/services/function/computeCombinations";
@@ -50,6 +52,7 @@ import { createBinarySignatures } from "#src/services/function/signature/createB
 import { createBitwiseFold } from "#src/services/function/signature/createBitwiseFold";
 import { createBitwisePair } from "#src/services/function/signature/createBitwisePair";
 import { createDigitSignatures } from "#src/services/function/signature/createDigitSignatures";
+import { createExtremeSignatures } from "#src/services/function/signature/createExtremeSignatures";
 import { createIdentitySignatures } from "#src/services/function/signature/createIdentitySignatures";
 import { createIntegerBinarySignatures } from "#src/services/function/signature/createIntegerBinarySignatures";
 import { createIntegerUnarySignatures } from "#src/services/function/signature/createIntegerUnarySignatures";
@@ -57,7 +60,6 @@ import { createListFirstCompute } from "#src/services/function/signature/createL
 import { createListPairSignature } from "#src/services/function/signature/createListPairSignature";
 import { createListSignature } from "#src/services/function/signature/createListSignature";
 import { createNonEmptyCompute } from "#src/services/function/signature/createNonEmptyCompute";
-import { createNumberFirstCompute } from "#src/services/function/signature/createNumberFirstCompute";
 import { createOrderedListSignatures } from "#src/services/function/signature/createOrderedListSignatures";
 import { createRangedSignatures } from "#src/services/function/signature/createRangedSignatures";
 import { createSignature } from "#src/services/function/signature/createSignature";
@@ -66,9 +68,6 @@ import { createUnarySignatures } from "#src/services/function/signature/createUn
 import { createVariadicSignatures } from "#src/services/function/signature/createVariadicSignatures";
 import { checkIsTruthy } from "#src/services/shared/checkIsTruthy";
 import { toNumber } from "#src/services/shared/toNumber";
-
-const computeBitwiseAnd = (left: number, right: number): number => left & right;
-const computeBitwiseOr = (left: number, right: number): number => left | right;
 
 // A function of the table is keyed by its mathjs name, and is the signatures it takes.
 // Each signature gives its parameter kinds, its arities and its computation.
@@ -201,16 +200,10 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   log2: createUnarySignatures(Math.log2),
   log10: createUnarySignatures(Math.log10),
   mad: createSpreadSignatures(1, createNonEmptyCompute(computeMedianAbsoluteDeviation)),
-  max: createSpreadSignatures(
-    1,
-    createNonEmptyCompute((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsLarger)),
-  ),
+  max: createExtremeSignatures(checkIsLarger),
   mean: createSpreadSignatures(1, createNonEmptyCompute(computeMean)),
   median: createSpreadSignatures(1, createNonEmptyCompute(computeMedian)),
-  min: createSpreadSignatures(
-    1,
-    createNonEmptyCompute((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsSmaller)),
-  ),
+  min: createExtremeSignatures(checkIsSmaller),
   mod: createBinarySignatures((left, right) => computeModulo(left, right)),
   multinomial: [createListSignature(computeMultinomial)],
   multiply: [
@@ -279,7 +272,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
       [MathExpressionParameterType.Number, MathExpressionParameterType.List],
       2,
       2,
-      createNumberFirstCompute((value, list) => list.filter((element) => element === value).length),
+      createListFirstCompute(([value = Number.NaN], list) => list.filter((element) => element === value).length),
     ),
   ],
   setSize: [createListSignature((values) => values.length)],

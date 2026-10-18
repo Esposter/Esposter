@@ -1,8 +1,6 @@
-import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
-
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
+import { parseNode } from "#src/services/compiler/parseNode.test";
 import { generateSumFormula } from "#src/services/parser/generateSumFormula.fixture";
-import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
@@ -20,13 +18,6 @@ const rows = Array.from({ length: ROW_COUNT }, (_row, index): [number, number, n
 ]);
 const results = new Float64Array(ROW_COUNT);
 
-const parseNode = (formula: string): MathExpressionNode =>
-  parseMathExpression(formula).match(
-    (node) => node,
-    (error) => {
-      throw error;
-    },
-  );
 const columnNode = parseNode(COLUMN_FORMULA);
 const sum1kNode = parseNode(SUM_1K_FORMULA);
 const sum100kNode = parseNode(SUM_100K_FORMULA);
