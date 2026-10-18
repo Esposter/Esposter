@@ -41,4 +41,70 @@ describe(readConstantLoops, () => {
       ],
     ]);
   });
+
+  test("reads a counting loop to a literal bound inclusively, one iteration per step up to and including the bound", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package xiangling",
+      "",
+      "func (c *char) burst() {",
+      "\tfor delay := 0; delay <= 8; delay += 4 {",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, delay)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(
+      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+    ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
+  });
+
+  test("reads a counting loop's bound from the local's base value, a constellation branch's reassignment left out", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package xiangling",
+      "",
+      "func (c *char) burst() {",
+      "\tmaxDuration := 10",
+      "\tif c.Base.Cons >= 4 {",
+      "\t\tmaxDuration = 14",
+      "\t}",
+      "\tfor delay := 0; delay <= maxDuration; delay += 4 {",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, delay)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(
+      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+    ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
+  });
+
+  test("reads no loop from a bound a branch that is no constellation branch reassigns", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package xiangling",
+      "",
+      "func (c *char) burst() {",
+      "\tmaxDuration := 10",
+      "\tif c.Core.Rand.Float64() < 0.5 {",
+      "\t\tmaxDuration = 14",
+      "\t}",
+      "\tfor delay := 0; delay <= maxDuration; delay += 4 {",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, delay)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
+  });
 });

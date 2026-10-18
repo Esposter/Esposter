@@ -287,6 +287,37 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("repeats a queue call in a loop bounded by a local a constellation branch raises, once per value at the base bound", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package xiangling",
+          "",
+          "func (c *char) burst() {",
+          "\tc.QueueCharTask(func() {",
+          "\t\tmaxDuration := 10",
+          "\t\tif c.Base.Cons >= 4 {",
+          "\t\t\tmaxDuration = 14",
+          "\t\t}",
+          "\t\tfor delay := 0; delay <= maxDuration; delay += 4 {",
+          "\t\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\t\tc.Core.QueueAttackWithSnap(burstHit, snap, ap, 0)",
+          "\t\t\t}, delay)",
+          "\t\t}",
+          "\t}, 5)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      5, 9, 13,
+    ]);
+  });
+
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
     expect.hasAssertions();
 

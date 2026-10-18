@@ -95,12 +95,14 @@ const readSliceRangeLoop = (
       };
 };
 
-// The `for` loop opening at the position when it counts a variable from a constant start up to a constant bound in
-// Constant steps, its values and its body's braces, else Undefined
+// The `for` loop opening at the position when it counts a variable from a constant start up to a bound in constant steps,
+// Its values and its body's braces, else Undefined. The bound is read in the base kit, so a constellation branch's `=`
+// To a local the bound names is left out
 const readConstantLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
+  resolveBaseName: (name: string) => GoValue | undefined,
 ): ConstantLoop | undefined => {
   const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
   if (rangeLoop !== undefined) return rangeLoop;
@@ -129,7 +131,7 @@ const readConstantLoop = (
   const stepEnd = step === undefined ? stepStart + 2 : step.end;
   if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
   const startValue = evaluateGoNumber(start.expression, resolveName);
-  const boundValue = evaluateGoNumber(bound.expression, resolveName);
+  const boundValue = evaluateGoNumber(bound.expression, resolveBaseName);
   const stepValue = step === undefined ? 1 : evaluateGoNumber(step.expression, resolveName);
   if (
     typeof startValue !== "number" ||
@@ -154,7 +156,12 @@ export const readConstantLoops = (tokens: readonly GoToken[], scope: GoScope): C
   const loops: ConstantLoop[] = [];
   for (const [position, token] of tokens.entries()) {
     if (token.kind !== GoTokenKind.Identifier || token.text !== "for") continue;
-    const loop = readConstantLoop(tokens, position, (name) => scope.resolveName(name, position));
+    const loop = readConstantLoop(
+      tokens,
+      position,
+      (name) => scope.resolveName(name, position),
+      (name) => scope.resolveBaseName(name, position),
+    );
     if (loop !== undefined) loops.push(loop);
   }
   return loops;
