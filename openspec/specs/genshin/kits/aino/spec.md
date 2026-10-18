@@ -1,6 +1,6 @@
 ## Purpose
 
-Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, Constellation 2's water ball on her teammates' hits, and Constellation 4's skill energy, and what is left waiting on the Moonsign and Lunar hooks.
+Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, Constellation 1's Elemental Mastery, Constellation 2's water ball on her teammates' hits, and Constellation 4's skill energy, and what is left waiting on the Moonsign and Lunar hooks.
 
 ## Requirements
 
@@ -103,6 +103,34 @@ At Ascension 4 each Water Ball SHALL add half of Aino's Elemental Mastery to its
 - **GIVEN** Aino is at Ascension 4 with Elemental Mastery
 - **WHEN** a Water Ball strikes
 - **THEN** its damage includes half of her Elemental Mastery
+
+### Requirement: Constellation 1 gives Elemental Mastery to Aino and to the member on the field
+
+From Constellation 1, Aino's skill or burst SHALL give her 80 Elemental Mastery for fifteen seconds, and while that runs the member a swap brings on the field SHALL have 80 Elemental Mastery too, for the seconds left of it.
+
+#### Scenario: Aino's skill gives her Elemental Mastery
+
+- **GIVEN** Aino has Constellation 1
+- **WHEN** she uses her skill
+- **THEN** she has 80 more Elemental Mastery for fifteen seconds
+
+#### Scenario: A member swapped in while the buff runs has it too
+
+- **GIVEN** Aino's Constellation 1 buff is running
+- **WHEN** another member comes on the field
+- **THEN** that member has 80 more Elemental Mastery for the seconds left, and loses it when it leaves the field
+
+#### Scenario: A member swapped in after the buff runs out has none
+
+- **GIVEN** fifteen seconds have passed since Aino's skill or burst
+- **WHEN** another member comes on the field
+- **THEN** that member has no Elemental Mastery from it
+
+#### Scenario: Below Constellation 1 no Elemental Mastery is gained
+
+- **GIVEN** Aino has Constellation 0
+- **WHEN** she uses her skill
+- **THEN** she gains no Elemental Mastery
 
 ### Requirement: Constellation 4 gives Aino energy on her skill's hits
 
