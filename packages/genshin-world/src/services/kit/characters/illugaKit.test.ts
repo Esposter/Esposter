@@ -1,19 +1,31 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createIllugaKitBehaviour, ILLUGA_CHARACTER_ID } from "#src/services/kit/characters/illugaKit";
 import { HAUNTED_NIGHT_STATUS_ID, NIGHTINGALE_SONG_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ILLUGA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ILLUGA_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const MAX_HEALTH = 10_000;
 
@@ -58,5 +70,44 @@ describe(createIllugaKitBehaviour, () => {
       findKitStatus(context.kitEffectState.effects, ILLUGA_CHARACTER_ID, HAUNTED_NIGHT_STATUS_ID)?.secondsRemaining,
     ).toBe(20);
     expect(countKitResource(context.kitEffectState.effects, ILLUGA_CHARACTER_ID, NIGHTINGALE_SONG_STATUS_ID)).toBe(21);
+  });
+
+  test("a Geo hit a nearby active party member deals spends a Nightingale's Song stack, and Illuga's own hits and other elements do not", () => {
+    expect.hasAssertions();
+    const illuga = createIllugaCombatant();
+    const traveler: Combatant = { ...illuga, characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
+    const enemy: Enemy = createEnemy(
+      enemyTables,
+      [],
+      { ...ENEMY_CAMP_MEMBER, id: "enemy", position: { x: 0, z: 0 } },
+      "",
+    );
+    const context = createKitTestContext(illuga, {
+      characterIdCombatantMap: new Map([
+        [ILLUGA_CHARACTER_ID, illuga],
+        [TRAVELER_CHARACTER_ID, traveler],
+      ]),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      party: createParty([ILLUGA_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+    });
+    const createEnemyHit = (element: Element, striker: Combatant): KitEvent => ({
+      element,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker,
+    });
+    const stacks = () =>
+      countKitResource(context.kitEffectState.effects, ILLUGA_CHARACTER_ID, NIGHTINGALE_SONG_STATUS_ID);
+
+    ILLUGA_KIT.elementalBurst.onStart?.(context);
+    context.activeCombatant = traveler;
+    emitKitEvent(createEnemyHit(Element.Geo, traveler), context);
+    expect(stacks()).toBe(20);
+    emitKitEvent(createEnemyHit(Element.Pyro, traveler), context);
+    expect(stacks()).toBe(20);
+    context.activeCombatant = illuga;
+    emitKitEvent(createEnemyHit(Element.Geo, illuga), context);
+    expect(stacks()).toBe(20);
   });
 });
