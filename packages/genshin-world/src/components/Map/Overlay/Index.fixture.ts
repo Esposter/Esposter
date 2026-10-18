@@ -11,5 +11,6 @@ export const props = {
   explorationAreas: [],
   gameText: ENGLISH_GAME_TEXT,
   landmarks: [],
+  openedChestCountMap: new Map(),
   wallet: EMPTY_WALLET,
 };

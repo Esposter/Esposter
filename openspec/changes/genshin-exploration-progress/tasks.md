@@ -6,7 +6,7 @@
 
 ## 2. Doings
 
-- [ ] 2.1 Count each chest and camp in its area once it is opened or cleared, kept with the player's progress. Verify: a test named after the scenario 'An opened chest adds its kind's weight to its area' written first and seen failing.
+- [ ] 2.1 Count each chest and camp in its area once it is opened or cleared, kept with the player's progress. Verify: a test named after the scenario 'An opened chest adds its kind's weight to its area' written first and seen failing. The chests' half is built, provisional, through genshin-chests 6.1 (the opened count per catalogue area, the first chest doings standing for the opened chests); the camps' half waits on their cleared record.
 - [x] 2.2 Count each waypoint once however often it is unlocked. Verify: a test named after the scenario 'A doing repeated adds its weight only once' written first and seen failing.
 - [ ] 2.3 Count each Oculus offered and each puzzle solved once offerings and puzzles record them. Verify: a test named after the scenario 'An opened chest adds its kind's weight to its area' extended to the Oculus and puzzle kinds, written first and seen failing.
 

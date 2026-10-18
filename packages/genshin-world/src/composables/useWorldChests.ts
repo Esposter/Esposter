@@ -5,6 +5,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
@@ -13,6 +14,7 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeChestInteractables } from "#src/services/chest/computeChestInteractables";
+import { computeOpenedChestCountMap } from "#src/services/chest/computeOpenedChestCountMap";
 import { openChest } from "#src/services/chest/openChest";
 import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
@@ -29,6 +31,7 @@ import { computed, shallowRef } from "vue";
 // Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
 // Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done
 export const useWorldChests = ({
+  catalogue,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -46,6 +49,7 @@ export const useWorldChests = ({
   wallet,
   waterLevel,
 }: {
+  catalogue: Catalogue;
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -64,18 +68,30 @@ export const useWorldChests = ({
   waterLevel: number;
 }) => {
   const chestPlaces = shallowRef<ChestPlace[]>([]);
+  // Whether the places are read, a failed read counting as none, so the opened chests are counted once they are known
+  const isChestPlacesLoaded = shallowRef(false);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readMondstadtChestPlaces(gameDataBaseUrl)).match(
     (places) => {
       chestPlaces.value = places;
+      isChestPlacesLoaded.value = true;
     },
     (error) => {
       console.error(error);
+      isChestPlacesLoaded.value = true;
     },
   );
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
   const worldChestPlaces = computed(() => [...chestPlaces.value, ...puzzleChestPlaces.value]);
+  // The chests opened in each area, which the map counts toward its exploration
+  const openedChestCountMap = computed(() =>
+    computeOpenedChestCountMap(
+      catalogue.regions.flatMap(({ areas }) => areas),
+      worldChestPlaces.value,
+      openedChestIds.value,
+    ),
+  );
   const chestInteractables = computed<Interactable[]>(() =>
     computeChestInteractables(
       worldChestPlaces.value,
@@ -124,5 +140,5 @@ export const useWorldChests = ({
       events.emit("chestOpened");
     }
   };
-  return { chestInteractables, digChestById, openChestById };
+  return { chestInteractables, digChestById, isChestPlacesLoaded, openChestById, openedChestCountMap };
 };

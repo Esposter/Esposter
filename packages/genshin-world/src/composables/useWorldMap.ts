@@ -32,6 +32,8 @@ export const useWorldMap = ({
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  isChestPlacesLoaded,
+  openedChestCountMap,
   regionDataBaseUrl,
   reputation,
   setReputation,
@@ -43,6 +45,8 @@ export const useWorldMap = ({
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
+  isChestPlacesLoaded: Readonly<Ref<boolean>>;
+  openedChestCountMap: Readonly<Ref<ReadonlyMap<string, number>>>;
   regionDataBaseUrl: string;
   reputation: Ref<ReputationProgress>;
   setReputation: (nextReputation: ReputationProgress) => void;
@@ -102,6 +106,7 @@ export const useWorldMap = ({
   // The unlocked landmarks whose exploration thresholds are paid: the saved ones, which paid when they were unlocked, and
   // The ones the settle below has counted. An unlock made before every read has landed waits outside this set
   let thresholdPaidLandmarkIds: ReadonlySet<string> = savedUnlockedLandmarkIds;
+  let thresholdPaidOpenedChestCountMap: ReadonlyMap<string, number> | undefined;
   // Each exploration threshold the nation's percentage passes since the last settle pays its Reputation EXP and wallet
   // Items once, and a threshold the percentage already held pays nothing. Nothing settles until the areas, the Reputation
   // And every region are in, so the percentage before the unlocks is the one the saved landmarks reach
@@ -119,19 +124,37 @@ export const useWorldMap = ({
     setWallet(nextWallet);
   };
   const settleExplorationThresholds = () => {
-    if (!mondstadtReputation.value || explorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
+    if (
+      !mondstadtReputation.value ||
+      explorationAreas.value.length === 0 ||
+      !isJumpLandmarksLoaded.value ||
+      !isChestPlacesLoaded.value
+    )
+      return;
     const { explores } = mondstadtReputation.value;
+    // The chests counted at the first settle are the ones paid for, so a save's own chests pay nothing on load
+    const paidOpenedChestCountMap = thresholdPaidOpenedChestCountMap ?? openedChestCountMap.value;
     const previousPercentage = computeNationExplorationPercentage(
       explorationAreas.value,
       jumpLandmarks.value.filter(({ id }) => thresholdPaidLandmarkIds.has(id)),
+      paidOpenedChestCountMap,
     );
-    const percentage = computeNationExplorationPercentage(explorationAreas.value, unlockedLandmarks.value);
+    const percentage = computeNationExplorationPercentage(
+      explorationAreas.value,
+      unlockedLandmarks.value,
+      openedChestCountMap.value,
+    );
     thresholdPaidLandmarkIds = unlockedLandmarkIds.value;
+    thresholdPaidOpenedChestCountMap = openedChestCountMap.value;
     for (const { reward } of computeReputationExploresReached(previousPercentage, percentage, explores))
       payReputationReward(reward);
   };
-  // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
-  watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
+  // The areas, the Reputation, the regions and the chests are read in the background, so the thresholds settle once all of
+  // Them are in, and again whenever an opened chest moves the count
+  watch(
+    [mondstadtReputation, explorationAreas, isChestPlacesLoaded, isJumpLandmarksLoaded, openedChestCountMap],
+    settleExplorationThresholds,
+  );
   // A finished quest pays the Reputation request it is, once: the event is emitted on the move that finishes it, and each
   // Request binds its quest once, so a quest the groups repeat pays its first row's reward
   events.on("finishQuest", (quest, progress, nextProgress) => {

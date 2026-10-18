@@ -44,6 +44,8 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
+  // The chests opened in each area, which the map counts toward its progress with the landmarks
+  openedChestCountMap: ReadonlyMap<string, number>;
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
   // The server's clock minus this machine's, which the Original Resin's regeneration is read against
   serverClockOffsetMs?: number;
@@ -56,6 +58,7 @@ const {
   explorationAreas,
   gameText,
   landmarks,
+  openedChestCountMap,
   serverClockOffsetMs = 0,
   wallet,
 } = defineProps<Props>();
@@ -132,13 +135,16 @@ const onZoomPointerMove = (event: PointerEvent) => {
 const onZoomPointerUp = () => {
   isSlidingZoom = false;
 };
-// Each counted area's progress line as the unlocked landmarks leave it, in the game's words and their colours, keyed by
-// Its catalogue area: a fully explored area's percentage turns gold
+// Each counted area's progress line as the unlocked landmarks and the opened chests leave it, in the game's words and their
+// Colours, keyed by its catalogue area: a fully explored area's percentage turns gold
 const progressSegmentsMap = computed(
   () =>
     new Map(
       explorationAreas.map((area) => {
-        const percentage = computeExplorationProgress(area, computeExploredDoingIds(area, landmarks));
+        const percentage = computeExplorationProgress(
+          area,
+          computeExploredDoingIds(area, landmarks, openedChestCountMap.get(area.areaId)),
+        );
         const text =
           gameText[percentage === 100 ? GameTextKey.ExplorationProgressComplete : GameTextKey.ExplorationProgress];
         return [area.areaId, splitGameTextColors(fillGameTextValues(text, percentage))];

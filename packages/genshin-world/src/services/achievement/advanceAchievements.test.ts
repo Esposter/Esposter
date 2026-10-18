@@ -245,20 +245,22 @@ describe(advanceAchievements, () => {
     });
   });
 
-  test("a two-slot trigger counts only a doing that matches both its target slot and its scope slot", () => {
+  test("a chest opened counts toward its region's chest achievement whichever id it has, the game's ids not matched", () => {
     expect.hasAssertions();
     const REGION_ID = "1";
     const OTHER_REGION_ID = "2";
+    const PLACED_CHEST_ID = "32";
     const chestInRegion: Achievement = {
       ...counted,
       progress: 1,
       trigger: { parameters: [[CHEST_ID], [REGION_ID]], type: "TRIGGER_OPEN_WORLD_CHEST" },
     };
+    // A placed chest's id is its map point, so the game's chest ids in the trigger's first slot are never matched
     const openChest = (scopeId: string) => ({
       kind: AchievementEventKind.ChestOpened,
       quantity: 1,
       scopeId,
-      targetId: CHEST_ID,
+      targetId: PLACED_CHEST_ID,
     });
     expect(advanceAchievements([chestInRegion], new Map(), openChest(OTHER_REGION_ID), EPOCH)).toStrictEqual({
       primogems: 0,

@@ -381,7 +381,8 @@ const chestLockSources = computed<ChestLockSource[]>(() => [
   ...timeTrialMarkers.map(({ id, position }) => ({ isDone: solvedPuzzleIds.value.has(id), positions: [position] })),
 ]);
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
-const { chestInteractables, digChestById, openChestById } = useWorldChests({
+const { chestInteractables, digChestById, isChestPlacesLoaded, openChestById, openedChestCountMap } = useWorldChests({
+  catalogue,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -571,6 +572,8 @@ const {
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  isChestPlacesLoaded,
+  openedChestCountMap,
   regionDataBaseUrl,
   reputation,
   setReputation: (nextReputation) => {
@@ -1032,6 +1035,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
+          :opened-chest-count-map="openedChestCountMap"
           :server-clock-offset-ms
           :wallet
           @close="screenKind = ScreenKind.World"

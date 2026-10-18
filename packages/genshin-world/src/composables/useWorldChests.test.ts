@@ -18,6 +18,7 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
   return {
     openedChestIds,
     ...useWorldChests({
+      catalogue: { regions: [] },
       events: createWorldEvents(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       gameDataBaseUrl: "",

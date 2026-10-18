@@ -55,6 +55,7 @@ describe(useWorldMap, () => {
   const REGION_ID = "first-region";
   const AREA_ID = "first-area";
   const WAYPOINT_ID = "40";
+  const CHEST_DOING_ID = "41";
   const WAYPOINT_WEIGHT = 40;
   const TOTAL = 100;
   const THRESHOLD = 40;
@@ -148,6 +149,7 @@ describe(useWorldMap, () => {
   const createWorldMap = (
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
     events = createWorldEvents(),
+    openedChestCountMap = shallowRef<ReadonlyMap<string, number>>(new Map()),
   ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
@@ -162,6 +164,8 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        isChestPlacesLoaded: shallowRef(true),
+        openedChestCountMap,
         regionDataBaseUrl: "region-data",
         reputation,
         setReputation: (nextReputation) => {
@@ -186,6 +190,45 @@ describe(useWorldMap, () => {
 
     expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+  });
+
+  // An area whose only doing is one chest, which is the threshold's whole reach
+  const CHEST_AREA_EXPLORATION: ExplorationArea[] = [
+    {
+      areaId: AREA_ID,
+      doings: [{ id: CHEST_DOING_ID, kind: ExplorationKind.Chest, weight: WAYPOINT_WEIGHT }],
+      reputationRatio: 0,
+      total: TOTAL,
+    },
+  ];
+
+  test("an opened chest pays the exploration threshold it reaches once", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readMondstadtExplorationAreas).mockResolvedValue(CHEST_AREA_EXPLORATION);
+    const openedChestCountMap = shallowRef<ReadonlyMap<string, number>>(new Map());
+    const { reputation, wallet } = createWorldMap(new Set(), createWorldEvents(), openedChestCountMap);
+    await waitForReads();
+
+    openedChestCountMap.value = new Map([[AREA_ID, 1]]);
+    await waitForReads();
+
+    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+  });
+
+  test("the chests a save holds pay no exploration threshold on load", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readMondstadtExplorationAreas).mockResolvedValue(CHEST_AREA_EXPLORATION);
+    const { reputation } = createWorldMap(
+      new Set(),
+      createWorldEvents(),
+      shallowRef<ReadonlyMap<string, number>>(new Map([[AREA_ID, 1]])),
+    );
+    await waitForReads();
+
+    expect(reputation.value).toStrictEqual({ exp: 0, level: 1 });
   });
 
   test("a finished request pays its reward once", async () => {

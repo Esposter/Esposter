@@ -6,7 +6,8 @@ import type { AchievementEventKind } from "#src/models/achievement/AchievementEv
 // A sum. A trigger that counts every doing of its kind, a monster defeated again included, counts each one, where the
 // Rest count each named id once. An AND trigger naming a list of ids is done once every named id is counted, rather than
 // At its progress. A two-slot trigger also names a scope in the slot its scopeSlot gives, which the doing's scopeId must
-// Match when that slot names one
+// Match when that slot names one. A region-only target is not matched to the ids it names, so the doing's scope alone
+// Decides, and each target id still counts once
 export interface AchievementTriggerWatch {
   countsEveryDoing?: boolean;
   countsQuantity: boolean;
@@ -14,5 +15,6 @@ export interface AchievementTriggerWatch {
   kind: AchievementEventKind;
   levelSlot?: number;
   scopeSlot?: number;
+  targetIsRegionOnly?: boolean;
   targetSlot: number;
 }
