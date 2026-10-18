@@ -15,11 +15,9 @@ import {
   SCHEMA_SUFFIX,
   TYPE_KINDS,
 } from "#src/services/sweeps/fileOrganization/constants";
+import { getNames } from "#src/services/sweeps/fileOrganization/getNames";
 import { basename, extname } from "node:path";
 
-const getNames = (text: string, regex: RegExp): string[] => [
-  ...new Set(Array.from(text.matchAll(regex), (match) => String(match.groups?.name))),
-];
 // The three shapes the file-organization skill states that a read of one file can decide, as candidates for the
 // Pass rather than findings in themselves — the skill's exceptions are a roster no scan can hold, so what is
 // Reported is what the pass then reads. A second export is a second concern only when it is not a companion of
