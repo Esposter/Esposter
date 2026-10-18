@@ -75,13 +75,13 @@ describe(createGildedDreamsSetModule, () => {
     });
 
     triggerReaction(wearer, context);
-    expect(getGildedBuffs(kitEffectState)).toEqual([
+    expect(getGildedBuffs(kitEffectState)).toStrictEqual([
       { amount: expect.closeTo(0.14), attribute: Attribute.AttackPercent },
       { amount: 100, attribute: Attribute.ElementalMastery },
     ]);
 
     stepKitSeconds(context, 8.1);
-    expect(getGildedBuffs(kitEffectState)).toEqual([]);
+    expect(getGildedBuffs(kitEffectState)).toStrictEqual([]);
   });
 
   test("a reaction a member other than the wearer strikes gives the wearer nothing, and leaves its cooldown unstarted", () => {
@@ -117,7 +117,7 @@ describe(createGildedDreamsSetModule, () => {
     const remainingSeconds = kitEffectState.effects.flatMap((effect) =>
       effect.kind === "buff" && effect.source === "Gilded Dreams" ? [effect.secondsRemaining] : [],
     );
-    expect(remainingSeconds).toEqual([expect.closeTo(4), expect.closeTo(4)]);
+    expect(remainingSeconds).toStrictEqual([expect.closeTo(4), expect.closeTo(4)]);
 
     stepKitSeconds(context, 4.1);
     triggerReaction(wearer, context);

@@ -61,18 +61,18 @@ describe(createPaleFlameSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.09), physical: 0 });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({ attack: expect.closeTo(0.09), physical: 0 });
 
     stepKitSeconds(context, 0.35);
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
       attack: expect.closeTo(0.18),
       physical: expect.closeTo(0.25),
     });
 
     stepKitSeconds(context, 0.35);
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
       attack: expect.closeTo(0.18),
       physical: expect.closeTo(0.25),
     });
@@ -106,13 +106,13 @@ describe(createPaleFlameSetModule, () => {
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
 
     stepKitSeconds(context, 6.9);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
       attack: expect.closeTo(0.18),
       physical: expect.closeTo(0.25),
     });
 
     stepKitSeconds(context, 0.2);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: 0, physical: 0 });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({ attack: 0, physical: 0 });
   });
 
   test("a hit after the stacks run out starts again from one stack", () => {
@@ -129,7 +129,7 @@ describe(createPaleFlameSetModule, () => {
     expect(getBonuses(wearer, kitEffectState).attack).toBe(0);
 
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.09), physical: 0 });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({ attack: expect.closeTo(0.09), physical: 0 });
   });
 
   test("only the wearer's Elemental Skill hits count, and only while the wearer stands on the field", () => {

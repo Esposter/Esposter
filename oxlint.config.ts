@@ -517,6 +517,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     ],
     "vitest/prefer-called-once": "off",
     "vitest/prefer-describe-function-title": "off",
+    "vitest/prefer-strict-equal": "error",
     "vitest/prefer-to-be-falsy": "off",
     "vitest/prefer-to-be-truthy": "off",
     "vitest/require-hook": "off",

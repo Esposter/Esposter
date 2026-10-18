@@ -63,16 +63,28 @@ describe(createMirroredNymphSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     hitEnemy(wearer, AttackTag.NormalAttack, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.07), hydro: expect.closeTo(0.04) });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
+      attack: expect.closeTo(0.07),
+      hydro: expect.closeTo(0.04),
+    });
 
     hitEnemy(wearer, AttackTag.ElementalSkill, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.16), hydro: expect.closeTo(0.09) });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
+      attack: expect.closeTo(0.16),
+      hydro: expect.closeTo(0.09),
+    });
 
     hitEnemy(wearer, AttackTag.ElementalBurst, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.25), hydro: expect.closeTo(0.15) });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
+      attack: expect.closeTo(0.25),
+      hydro: expect.closeTo(0.15),
+    });
 
     hitEnemy(wearer, AttackTag.ChargedAttack, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.25), hydro: expect.closeTo(0.15) });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
+      attack: expect.closeTo(0.25),
+      hydro: expect.closeTo(0.15),
+    });
   });
 
   test("a later hit of a kind refreshes its stack's eight seconds, and two hits of one kind count as one stack", () => {
@@ -105,7 +117,7 @@ describe(createMirroredNymphSetModule, () => {
     });
 
     hitEnemy(wearer, AttackTag.NormalAttack, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: 0, hydro: 0 });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({ attack: 0, hydro: 0 });
   });
 
   test("a hit another character strikes adds no stack", () => {
@@ -119,6 +131,6 @@ describe(createMirroredNymphSetModule, () => {
     });
 
     hitEnemy({ ...wearer, characterId: OTHER_CHARACTER_ID }, AttackTag.NormalAttack, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: 0, hydro: 0 });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({ attack: 0, hydro: 0 });
   });
 });

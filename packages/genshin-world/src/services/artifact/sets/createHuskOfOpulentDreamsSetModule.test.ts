@@ -82,12 +82,15 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     hitEnemy(wearer, Element.Geo, context);
-    expect(getBonuses(wearer, kitEffectState)).toEqual({ defense: expect.closeTo(0.06), geo: expect.closeTo(0.06) });
+    expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
+      defense: expect.closeTo(0.06),
+      geo: expect.closeTo(0.06),
+    });
 
     for (const stacks of [2, 3, 4, 4]) {
       stepHuskSeconds(context, 0.35);
       hitEnemy(wearer, Element.Geo, context);
-      expect(getBonuses(wearer, kitEffectState)).toEqual({
+      expect(getBonuses(wearer, kitEffectState)).toStrictEqual({
         defense: expect.closeTo(0.06 * stacks),
         geo: expect.closeTo(0.06 * stacks),
       });
