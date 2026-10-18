@@ -26,7 +26,7 @@ const createCombatant = (constellationCount: number): Combatant =>
     elementalResonances: [],
     kit: { getPassiveBonuses: undefined },
     level: 90,
-  }) as Combatant;
+  }) as unknown as Combatant;
 
 describe(createXianyunKitBehaviour, () => {
   test("a Skyladder press sets the Cloud Transmogrification state at one press", () => {
@@ -113,7 +113,7 @@ describe(createXianyunKitBehaviour, () => {
       behaviour.getStrikeCriticalDamageBonus?.(strike, {} as never, {} as never, context.kitEffectState.effects),
     ).toBe(0.35);
 
-    const elementalSkillStrike = { attackTag: AttackTag.ElementalArt, combatant } as KitStrike;
+    const elementalSkillStrike = { attackTag: AttackTag.ElementalSkill, combatant } as KitStrike;
     expect(
       behaviour.getStrikeCriticalDamageBonus?.(
         elementalSkillStrike,
