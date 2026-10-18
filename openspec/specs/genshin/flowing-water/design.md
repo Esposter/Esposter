@@ -26,7 +26,7 @@ flowchart TD
 
 **Built:** the flow on the water material, the river ribbon and its bend foam, the waterfall sheet and its streak material. Still water passes a zero flow in the [world's water](../water/design.md) component.
 
-**Fitted and drawn:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`, and drawn in the world by `World/Waterfalls`. A sheet with no drop or no width is not drawn, a placement repeated at one lip is drawn once, and a region whose witness export stands in leaves its sheets out.
+**Fitted and drawn:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`, and drawn in the world by `World/Waterfalls`. A sheet with no drop or no width is not drawn, a placement repeated at one lip is drawn once, and a region whose witness export stands in leaves its sheets out. The fit writes no sheet for a fall whose lip has no width, and a sheet's across is a unit direction within a hundredth, which its schema requires. The committed falls predate the fit's current placement transform, which mirrors Liyue's falls in z: `liyue.json` is kept as committed but for the one fall with no width, until the transform is settled and the falls are regenerated.
 
 **Not yet:** where rivers stand in each region, which needs the game's own water surfaces, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 

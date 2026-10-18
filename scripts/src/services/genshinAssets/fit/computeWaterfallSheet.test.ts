@@ -18,4 +18,10 @@ describe(computeWaterfallSheet, () => {
       width: 2,
     });
   });
+
+  test("has no sheet for a lip with no width, as a fall whose vertices stand over one point has no direction across it", () => {
+    expect.hasAssertions();
+
+    expect(computeWaterfallSheet([new Vector3(0, 5, 0), new Vector3(0, 0, 0)])).toBeUndefined();
+  });
 });
