@@ -256,6 +256,8 @@ const bannerLabelText = computed(() => {
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
   font-size: calc(var(--unit) * 36);
+  /* The card is drawn over the whole screen after the back mark, so the mark is raised above it to stay pressable */
+  z-index: 1;
 }
 
 /* The card is the plate's art, so only its words are drawn over it, each at the game's place on the banner */
