@@ -1,4 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
+import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -39,7 +40,11 @@ export interface Kit {
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
   // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
-  getPassiveBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
+  getPassiveBonuses?: (
+    combatant: Combatant,
+    healthShare: number,
+    deployedElements: readonly Element[],
+  ) => { amount: number; attribute: Attribute }[];
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it

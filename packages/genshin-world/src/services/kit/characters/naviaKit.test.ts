@@ -205,4 +205,18 @@ describe("undisclosed Distribution Channels", () => {
 
     expect(castShotInfusions(0)).toStrictEqual([]);
   });
+
+  test("the Ascension 4 ATK raises Navia 20% for each Pyro, Electro, Cryo or Hydro member, two at most", () => {
+    expect.hasAssertions();
+    const navia = { ...createNaviaCombatant(), ascension: 4 };
+    const bonusesOf = (deployedElements: Element[]) => NAVIA_KIT.getPassiveBonuses?.(navia, 1, deployedElements);
+    expect(bonusesOf([Element.Pyro, Element.Anemo])).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.AttackPercent },
+    ]);
+    expect(bonusesOf([Element.Pyro, Element.Electro, Element.Cryo, Element.Hydro])).toStrictEqual([
+      { amount: 0.4, attribute: Attribute.AttackPercent },
+    ]);
+    expect(bonusesOf([Element.Anemo, Element.Geo])).toStrictEqual([]);
+    expect(NAVIA_KIT.getPassiveBonuses?.(createNaviaCombatant(), 1, [Element.Pyro])).toStrictEqual([]);
+  });
 });

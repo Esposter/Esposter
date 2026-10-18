@@ -7,6 +7,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -19,6 +20,12 @@ import { takeOne } from "@esposter/shared";
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go, Surging Blade's circle centred ahead of the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/navia/skill.go
 const SURGING_BLADE_AHEAD_METRES = 3.6;
+
+// Measured: gcsim v2.47.2 (MIT) navia/asc.go, each Pyro, Electro, Cryo or Hydro party member adds 20% ATK to Navia, two at most
+const ASCENSION_4 = 4;
+const ASCENSION_4_ATK_PER_MEMBER = 0.2;
+const ASCENSION_4_MAXIMUM_STACKS = 2;
+const ASCENSION_4_ELEMENTS = new Set([Element.Pyro, Element.Electro, Element.Cryo, Element.Hydro]);
 
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go and burst.go, Crystal Shrapnel gained by a cannon hit at most once each
 // Cooldown, six at most, and Ceremonial Crystalshot clears them all but the excess a Constellation keeps
@@ -62,11 +69,10 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 
 // Navia's behaviour: Rosula Shardshot's press and hold each spend her Crystal Shrapnel and fire Surging Blade off its
 // Cooldown, and As the Sunlit Sky's Singing Salute casts Cannon Fire Support, the blast and the cannon's hits gaining
-// Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. Her Ascension 4 ATK from
-// The team's Pyro, Electro, Cryo and Hydro members is not built, as no passive reads the deployed team, nor are the
-// Shrapnel gained from party Crystallize shards and the shot's pellets past three stacks, as no step gives a shard's reach
-// To a hit. Constellation 4 is built, Constellation 6 keeps its excess Shrapnel, and the rest of her Constellations are
-// Not
+// Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. From Ascension 4 she gains
+// Each Pyro, Electro, Cryo and Hydro party member adds 20% ATK, two at most. The Shrapnel gained from party Crystallize
+// Shards and the shot's pellets past three stacks is not built, as no step gives a shard's reach to a hit. Constellation 4
+// Is built, Constellation 6 keeps its excess Shrapnel, and the rest of her Constellations are not built.
 export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shrapnelSeconds = readParameter("crystalShrapnelSeconds");
   const arkheIcdSeconds = readParameter("surgingBladeCooldownSeconds");
@@ -121,6 +127,15 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       hits: [cannonHitBehaviour],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, cannonHits),
+    },
+    getPassiveBonuses: (combatant, _healthShare, deployedElements) => {
+      const stacks = Math.min(
+        ASCENSION_4_MAXIMUM_STACKS,
+        deployedElements.filter((element) => ASCENSION_4_ELEMENTS.has(element)).length,
+      );
+      return combatant.ascension >= ASCENSION_4 && stacks > 0
+        ? [{ amount: ASCENSION_4_ATK_PER_MEMBER * stacks, attribute: Attribute.AttackPercent }]
+        : [];
     },
     skill: { onStart: castShot(takeOne(surgingBladeHits, 0)) },
     skillHolds: [{ onStart: castShot(takeOne(surgingBladeHits, 1)) }],

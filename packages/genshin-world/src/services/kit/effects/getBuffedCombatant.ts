@@ -8,6 +8,7 @@ import { computeAttack } from "#src/services/character/computeAttack";
 import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import { checkIsEnduringRock } from "#src/services/party/checkIsEnduringRock";
 import { ENDURING_ROCK_DAMAGE_BONUS } from "#src/services/party/constants";
+import { getDeployedElements } from "#src/services/party/getDeployedElements";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // The combatant as its hits are priced while the buffs on it are on and its passives read its HP in the party: every
@@ -18,13 +19,18 @@ export const getBuffedCombatant = (
   combatant: Combatant,
   effects: readonly KitEffect[],
   party: Party,
+  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   position?: GroundPoint,
 ): Combatant => {
   const buffs = effects.filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === combatant.characterId,
   );
   const passiveBonuses =
-    combatant.kit.getPassiveBonuses?.(combatant, getPartyMember(party, combatant.characterId).healthShare) ?? [];
+    combatant.kit.getPassiveBonuses?.(
+      combatant,
+      getPartyMember(party, combatant.characterId).healthShare,
+      getDeployedElements(party, characterIdCombatantMap),
+    ) ?? [];
   const enduringRockBonuses = checkIsEnduringRock(combatant, effects, party.lunarCrystallize.moondrifts, position)
     ? DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: ENDURING_ROCK_DAMAGE_BONUS, attribute }))
     : [];

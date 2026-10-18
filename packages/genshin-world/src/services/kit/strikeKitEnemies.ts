@@ -49,7 +49,13 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
-    const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, context.body.position);
+    const pricedCombatant = getBuffedCombatant(
+      combatant,
+      kitEffectState.effects,
+      party,
+      characterIdCombatantMap,
+      context.body.position,
+    );
     let isStruck = false;
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;

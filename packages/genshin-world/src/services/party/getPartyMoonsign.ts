@@ -29,7 +29,9 @@ export const getPartyMoonsign = (
     const benediction = combatant?.kit.moonsignBenediction;
     if (!combatant || !benediction) continue;
     const baseDamageBonus =
-      benediction.getBaseDamageBonus?.(getBuffedCombatant(combatant, effects, party, position)) ?? 0;
+      benediction.getBaseDamageBonus?.(
+        getBuffedCombatant(combatant, effects, party, characterIdCombatantMap, position),
+      ) ?? 0;
     for (const lunarReactionType of benediction.lunarReactionTypes) {
       lunarReactionTypes.add(lunarReactionType);
       baseDamageBonusMap[lunarReactionType] = (baseDamageBonusMap[lunarReactionType] ?? 0) + baseDamageBonus;

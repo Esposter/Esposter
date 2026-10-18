@@ -1,4 +1,3 @@
-import type { Element } from "#src/models/Element";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -7,7 +6,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { getDeployedElements } from "#src/services/party/getDeployedElements";
 
 // The Bogglecat Box stands 1.8 metres ahead of the body, as gcsim (MIT) lynette/burst.go sets it
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette
@@ -39,11 +38,7 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
       // Each tick strikes from the box's place, which holds as the burst starts
       onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) => {
         if (combatant.ascension >= ASCENSION_1) {
-          const elementTypeCount = new Set(
-            getDeployedCharacterIds(party)
-              .map((characterId) => characterIdCombatantMap.get(characterId)?.element)
-              .filter((element): element is Element => element !== undefined),
-          ).size;
+          const elementTypeCount = new Set(getDeployedElements(party, characterIdCombatantMap)).size;
           buffKitTeam(kitEffectState, party, {
             amount: SYNERGY_ATTACK_BONUS + (elementTypeCount - 1) * SYNERGY_ATTACK_BONUS_PER_EXTRA_TYPE,
             attribute: Attribute.AttackPercent,

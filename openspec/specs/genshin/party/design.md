@@ -72,6 +72,7 @@ The character on the field fights through its kit, which prices every character'
 | `packages/genshin-world/src/services/party/disbandPartyTeam.ts`                         | A team disbanded, the defaults and the deployed one kept                                                        |
 | `packages/genshin-world/src/services/party/renamePartyTeam.ts`                          | A team renamed, an empty name giving its own back                                                               |
 | `packages/genshin-world/src/services/party/getElementalResonances.ts`                   | The resonances a full team's elements give                                                                      |
+| `packages/genshin-world/src/services/party/getDeployedElements.ts`                      | The elements of the deployed members that have one, for a passive or action to count the team by                |
 | `packages/genshin-world/src/services/party/ElementalResonanceAttributeLinesMap.ts`      | The attribute lines each resonance adds to every member of the deployed team                                    |
 | `packages/genshin-world/src/services/party/checkIsEnduringRock.ts`                      | Enduring Rock holds: the deployed team's Geo resonance and a live shield                                        |
 | `packages/genshin-world/src/services/party/addEnduringRockStatus.ts`                    | The Geo RES an enemy struck under Enduring Rock loses, given before its damage is read                          |

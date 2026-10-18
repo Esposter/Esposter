@@ -23,10 +23,11 @@ export const changeKitMemberHealth = (
     damagePartyMember(party, characterId, -health / maxHealth, source.characterId);
     return;
   }
-  const healingBonus = getBuffedCombatant(source, effects, party).attributes.attributeTotalMap[Attribute.HealingBonus];
-  const incomingHealingBonus = getBuffedCombatant(member, effects, party).attributes.attributeTotalMap[
-    Attribute.IncomingHealingBonus
+  const healingBonus = getBuffedCombatant(source, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
+    Attribute.HealingBonus
   ];
+  const incomingHealingBonus = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes
+    .attributeTotalMap[Attribute.IncomingHealingBonus];
   healPartyMember(
     party,
     characterId,

@@ -7,7 +7,6 @@ Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, o
 - **Crystal Shrapnel from the party's Crystallize shards and Lunar-Crystallize.** Navia gains a Shrapnel when a party member obtains a shard or triggers Lunar-Crystallize. The framework has no kit event for a shard's creation or pickup, since `addCrystallizeShards` and `pickUpCrystallizeShards` write the team's effects without emitting one, and it has no event for a Lunar-Crystallize reaction. Waits on a kit event for shard creation and pickup, and on Lunar-Crystallize among the reactions a kit hears.
 - **Pulling shards to her during a hold.** gcsim draws each shard within 12 metres into Navia while the hold charges. Waits on a pickup that moves the shards toward the body, as `pickUpCrystallizeShards` reads a fixed reach round the body.
 - **The Shrapnel's DMG, extra pellets and CRIT past three stacks.** A shot's damage per stack past three, its pellets past three and its CRIT are not priced. Waits on a hit whose talent multiplier and DMG bonus read the team's effects as it prices, since a hit's `talentMultiplier` and `damageBonus` are static numbers and a variant exists only for a burst and a hold.
-- **Ascension 4's ATK for each Pyro, Electro, Cryo or Hydro party member.** Waits on `getPassiveBonuses` reading the deployed team, as it receives the combatant alone.
 - **Constellation 1's energy and burst cooldown.** Each Shrapnel a shot spends gives her energy and shortens her burst's cooldown by a second. Waits on a kit step that grants its striker energy and sets a burst cooldown, since the framework has neither.
 - **Constellation 2's CRIT Rate and the extra cannon shot at the struck enemy.** Waits on a per-hit CRIT Rate and on `onStrike` receiving the enemy it struck.
 - **Constellation 6's CRIT DMG.** Waits on a per-hit CRIT DMG on a `KitHit`.
@@ -19,6 +18,8 @@ Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, o
 - **Crystal Shrapnel is a status on Navia that her burst's hits gain and her shot spends.** The cannon's ticks are one summon with every shot placed at its tick, since the framework's field ticks on one fixed interval and gcsim's ticks alternate between 42 and 48 frames. Each shot consumes the Shrapnel at its start, as gcsim spends it at the shot's firing.
 - **The Crystal Shrapnel lasts the 300 seconds the skill table gives**, and a gain restarts it.
 - **Navia's charged attack is provisional.** gcsim gives her none, so `naviaKit.ts` takes Razor's charge timing: two hits at half a second and a second with the table's index 4 and 5, ending at 1.2 seconds, in a circle of 2.5 metres round her, her first strike's reach. A recording's hitmarks, length or reach would replace them.
+
+- **Ascension 4 reads the deployed team's elements as the passive's third argument.** `getPassiveBonuses` receives the elements of the deployed members that have one, from `getDeployedElements`, and Navia counts the Pyro, Electro, Cryo and Hydro among them, two at most, at 20% ATK each. gcsim v2.47.2 counts them once at init and this counts them each time the attack is priced, which agree while the deployed team is fixed.
 
 ## Key files
 

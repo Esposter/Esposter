@@ -97,9 +97,31 @@ From Ascension 1, for four seconds after Rosula Shardshot fires, Navia's normal 
 - **WHEN** Rosula Shardshot fires
 - **THEN** her normal attacks, charged attack and plunges deal Geo DMG with 40% more DMG for four seconds
 
+### Requirement: Navia's Ascension 4 raises her ATK for each Pyro, Electro, Cryo or Hydro member
+
+From Ascension 4 Navia's ATK SHALL raise her ATK percentage by 20% for each Pyro, Electro, Cryo or Hydro member of the deployed team, two members at most, and no other member's ATK SHALL rise.
+
+#### Scenario: Ascension 4 counts each Pyro, Electro, Cryo or Hydro member
+
+- **GIVEN** Navia is at Ascension 4 with a Pyro and a Hydro member in the deployed team
+- **WHEN** her attack is priced
+- **THEN** her ATK percentage is raised by 40%
+
+#### Scenario: Ascension 4 stops at two members
+
+- **GIVEN** Navia is at Ascension 4 and three Pyro, Electro, Cryo or Hydro members stand in the deployed team
+- **WHEN** her attack is priced
+- **THEN** her ATK percentage is raised by 40%, not 60%
+
+#### Scenario: Ascension 4 is not reached below Ascension 4
+
+- **GIVEN** Navia is at Ascension 3 with a Pyro member in the deployed team
+- **WHEN** her attack is priced
+- **THEN** her ATK percentage is not raised
+
 ### Requirement: Unbuilt Navia effects
 
-Crystal Shrapnel from shards and Lunar-Crystallize, pulling shards during a hold, the Shrapnel's extra damage, pellets and CRIT past three stacks, Ascension 4, Constellations 1, 2 and 6 CRIT, the shot's Geo particles and the Surging Blade's placement on an enemy SHALL NOT take effect.
+Crystal Shrapnel from shards and Lunar-Crystallize, pulling shards during a hold, the Shrapnel's extra damage, pellets and CRIT past three stacks, Constellations 1, 2 and 6 CRIT, the shot's Geo particles and the Surging Blade's placement on an enemy SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

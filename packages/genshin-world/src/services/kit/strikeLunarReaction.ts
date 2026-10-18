@@ -36,7 +36,13 @@ export const strikeLunarReaction = (
   const damages = getDeployedCharacterIds(party).flatMap((characterId) => {
     const combatant = characterIdCombatantMap.get(characterId);
     if (!combatant || !contributorIds.has(characterId)) return [];
-    const { attributes, level } = getBuffedCombatant(combatant, kitEffectState.effects, party, context.body.position);
+    const { attributes, level } = getBuffedCombatant(
+      combatant,
+      kitEffectState.effects,
+      party,
+      characterIdCombatantMap,
+      context.body.position,
+    );
     const { attributeTotalMap } = attributes;
     const damage = getLunarDamage(
       lunarReactionType,
