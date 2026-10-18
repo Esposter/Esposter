@@ -6,15 +6,15 @@
 
 ## 2. Node types
 
-- [ ] 2.1 Build the webpage types with their accessible output, declaring the survey invite's survey prop through `createResourceLinkSchema`. Verify: tests named after the scenarios 'An image without alternative text cannot be saved', 'A decorative image publishes marked as decorative', 'A video without a title cannot be saved', 'Tabs publish as tabs that move with the arrow keys', 'Typed text stands still for a reader who prefers reduced motion' and 'A countdown does not announce each tick'.
+- [x] 2.1 Build the webpage types with their accessible output, declaring the survey invite's survey prop through `createResourceLinkSchema`. Verify: tests named after the scenarios 'An image without alternative text cannot be saved', 'A decorative image publishes marked as decorative', 'A video without a title cannot be saved', 'Tabs publish as tabs that move with the arrow keys', 'Typed text stands still for a reader who prefers reduced motion' and 'A countdown does not announce each tick'.
 
 ## 3. Safe output
 
-- [ ] 3.1 Escape text and attributes, check every URL, and clean custom HTML through the shared sanitiser. Verify: tests named after the scenarios 'A button with a javascript link cannot be saved' and 'Custom HTML is cleaned before it is published'.
+- [x] 3.1 Escape text and attributes, check every URL, and clean custom HTML through the shared sanitiser. Verify: tests named after the scenarios 'A button with a javascript link cannot be saved' and 'Custom HTML is cleaned before it is published'.
 
 ## 4. Rendering
 
-- [ ] 4.1 Render a webpage document to one HTML document, as a pure function the browser can also run. Verify: a test named after the scenario 'A webpage document renders as one HTML document'.
+- [x] 4.1 Render a webpage document to one HTML document, as a pure function the browser can also run. Verify: a test named after the scenario 'A webpage document renders as one HTML document'.
 - [ ] 4.2 Add `mjml` at its version in the catalog and `apps/web/package.json`, the server's compile dependency, then compile an email document on the server by handing the MJML blocks' JSON form to its Node package, refusing an email that fails strict validation. Verify: tests named after the scenarios 'An email document with invalid markup is refused by the compile' and 'A valid email document compiles to email HTML'.
 
 ## 5. The record

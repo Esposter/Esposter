@@ -138,6 +138,7 @@
     "grapesjs-tui-image-editor": "catalog:",
     "grapesjs-typed": "catalog:",
     "grid-engine": "catalog:",
+    "headless-block-editor": "workspace:*",
     "js-beautify": "catalog:",
     "keyframe-store": "workspace:*",
     "livekit-client": "catalog:",
