@@ -17095,8 +17095,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -1160.3, "z": -851.02 },
       "rotation": -1.8186,
+      "areaId": "qiongji-estuary",
       "arrival": { "heightOffset": 13.31, "position": { "x": -1160.3, "z": -851.02 }, "rotation": -1.8186 },
-      "areaId": "sea-of-clouds",
       "heightOffset": 13.31
     },
     {
@@ -17106,8 +17106,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -2178.28, "z": -303.74 },
       "rotation": 2.0455,
-      "arrival": { "heightOffset": -16.57, "position": { "x": -2178.28, "z": -303.74 }, "rotation": 2.0455 },
       "areaId": "sea-of-clouds",
+      "arrival": { "heightOffset": -16.57, "position": { "x": -2178.28, "z": -303.74 }, "rotation": 2.0455 },
       "heightOffset": -16.57
     },
     {
@@ -17117,8 +17117,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -200.74, "z": -1652.99 },
       "rotation": -1.6108,
+      "areaId": "bishui-plain",
       "arrival": { "heightOffset": 57.05, "position": { "x": -200.74, "z": -1652.99 }, "rotation": -1.6108 },
-      "areaId": "sea-of-clouds",
       "heightOffset": 57.05
     },
     {
@@ -17128,8 +17128,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -599.46, "z": -2703.47 },
       "rotation": -2.9426,
+      "areaId": "minlin",
       "arrival": { "heightOffset": 55.31, "position": { "x": -599.46, "z": -2703.47 }, "rotation": -2.9426 },
-      "areaId": "sea-of-clouds",
       "heightOffset": 55.31
     },
     {
@@ -17139,9 +17139,20 @@
       "kind": "DomainEntrance",
       "position": { "x": -1226.95, "z": -2434.83 },
       "rotation": -0.7411,
+      "areaId": "minlin",
       "arrival": { "heightOffset": -74.1, "position": { "x": -1226.95, "z": -2434.83 }, "rotation": -0.7411 },
-      "areaId": "sea-of-clouds",
       "heightOffset": -74.1
+    },
+    {
+      "domainKind": "Blessing",
+      "entryId": 13,
+      "id": "domain-entrance-13",
+      "kind": "DomainEntrance",
+      "position": { "x": -416.07, "z": -945.62 },
+      "rotation": 1.5708,
+      "areaId": "bishui-plain",
+      "arrival": { "heightOffset": 5.03, "position": { "x": -416.07, "z": -945.62 }, "rotation": 1.5708 },
+      "heightOffset": 5.03
     },
     {
       "domainKind": "Blessing",
@@ -17150,8 +17161,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -2368.27, "z": -3169.39 },
       "rotation": -2.68,
+      "areaId": "the-chasm",
       "arrival": { "heightOffset": -33.99, "position": { "x": -2368.27, "z": -3169.39 }, "rotation": -2.68 },
-      "areaId": "sea-of-clouds",
       "heightOffset": -33.99
     }
   ],

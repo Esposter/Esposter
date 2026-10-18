@@ -4955,8 +4955,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -3762.56, "z": -9063.12 },
       "rotation": -2.0139,
+      "areaId": "coatepec-mountain",
       "arrival": { "heightOffset": -10.84, "position": { "x": -3762.56, "z": -9063.12 }, "rotation": -2.0139 },
-      "areaId": "toyac-springs",
       "heightOffset": -10.84
     },
     {
@@ -4966,8 +4966,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -3757.45, "z": -9446.56 },
       "rotation": 2.3908,
+      "areaId": "coatepec-mountain",
       "arrival": { "heightOffset": -96.7, "position": { "x": -3757.45, "z": -9446.56 }, "rotation": 2.3908 },
-      "areaId": "toyac-springs",
       "heightOffset": -96.7
     },
     {
@@ -4977,8 +4977,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -4318.71, "z": -10305.97 },
       "rotation": -1.2278,
-      "arrival": { "heightOffset": -1.9, "position": { "x": -4318.71, "z": -10305.97 }, "rotation": -1.2278 },
       "areaId": "toyac-springs",
+      "arrival": { "heightOffset": -1.9, "position": { "x": -4318.71, "z": -10305.97 }, "rotation": -1.2278 },
       "heightOffset": -1.9
     },
     {
@@ -4988,8 +4988,8 @@
       "kind": "DomainEntrance",
       "position": { "x": -5262.48, "z": -11815.18 },
       "rotation": 1.6245,
+      "areaId": "atocpan",
       "arrival": { "heightOffset": -25.75, "position": { "x": -5262.48, "z": -11815.18 }, "rotation": 1.6245 },
-      "areaId": "toyac-springs",
       "heightOffset": -25.75
     }
   ],
