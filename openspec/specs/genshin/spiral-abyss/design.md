@@ -47,7 +47,7 @@ flowchart TD
 - **The Corridor draws reward group 1.** Its floors 1 to 8 give the same rewards in reward groups 1, 2 and 13, so the group the Corridor reads does not change its rewards. The rewards slice holds every group, and a reader names the group it needs.
 - **The floor table's reward columns are not read.** Its three, six and nine-star columns agree with the reward table for the Corridor and differ for some Moon Spire floors, and its five, ten and fifteen-star columns repeat the three, six and nine on all but a few floors. The reward table names every floor's rewards.
 - **A monolith is not named.** A chamber has a monolith when one of its conditions reads a monolith, and the caller reports its health. The table's gadget and group ids for the monolith are not kept.
-- **A period starts at its first set of floors.** Each schedule row holds one set of floors with its start, and the next period's start is its end, so the close time is not read. A row with a second set of floors is refused rather than cut.
+- **A period starts at its first set of floors.** Each schedule row holds one set of floors with its start, and the next period's start is its end, so the close time is not read. A row with a second set of floors is refused rather than cut. A first set with no floors or no start is refused too, since a period cannot start at no time, and an empty later set is read as none.
 - **The period's star milestones are not built.** The schedule's forty-to-one-hundred-and-twenty-star rewards are zero in every row the table holds, so there is nothing to give.
 
 ## Key files

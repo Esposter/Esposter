@@ -49,7 +49,7 @@ export const createWitnessMaterial = (
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) {
-    // The mapped normal is a vector, which three types as any node
+    // Three's typings leave a normal map's output untyped, though it is a vec3, so the annotation is what the compiler cannot see
     const mappedNormal: Node = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it

@@ -23,19 +23,15 @@ export const toExpeditionPlaceRow = (
   let statuePointId = 0;
   let questId = "";
   for (const condition of row.MOOEHHLEOOB) {
-    // A rank condition is the table's default kind, which the dump leaves untyped
-    const kind = condition.type ?? EXPEDITION_RANK_CONDITION;
-    if (kind === EXPEDITION_RANK_CONDITION) rankLevel = Math.max(rankLevel, condition.AOCOBPPBOOL);
-    else if (kind === EXPEDITION_POINT_CONDITION) {
-      if (condition.OLDPDBIPNHD !== OPEN_WORLD_SCENE_ID)
-        throw new InvalidOperationError(
-          Operation.Read,
-          String(row.id),
-          `names a point in scene ${condition.OLDPDBIPNHD}`,
-        );
-      statuePointId = condition.AOCOBPPBOOL;
-    } else if (kind === EXPEDITION_QUEST_CONDITION) questId = String(condition.AOCOBPPBOOL);
-    else throw new InvalidOperationError(Operation.Read, String(row.id), `has a condition of kind ${kind}`);
+    // The table's default condition, the rank at zero, is written with no fields, and a rank is the default kind
+    const { AOCOBPPBOOL: value = 0, OLDPDBIPNHD: scene = 0, type = EXPEDITION_RANK_CONDITION } = condition;
+    if (type === EXPEDITION_RANK_CONDITION) rankLevel = Math.max(rankLevel, value);
+    else if (type === EXPEDITION_POINT_CONDITION) {
+      if (scene !== OPEN_WORLD_SCENE_ID)
+        throw new InvalidOperationError(Operation.Read, String(row.id), `names a point in scene ${scene}`);
+      statuePointId = value;
+    } else if (type === EXPEDITION_QUEST_CONDITION) questId = String(value);
+    else throw new InvalidOperationError(Operation.Read, String(row.id), `has a condition of kind ${type}`);
   }
   return {
     durations: row.PLLAFKOKDDE.map((duration) => {

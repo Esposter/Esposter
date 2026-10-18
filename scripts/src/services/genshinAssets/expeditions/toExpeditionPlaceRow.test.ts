@@ -55,6 +55,12 @@ describe(toExpeditionPlaceRow, () => {
     expect(toExpeditionPlaceRow(untypedRow, previews).rankLevel).toBe(RANK_LEVEL);
   });
 
+  test("should read an empty condition as the rank at zero, so a rank beside it stays a number", () => {
+    expect.hasAssertions();
+    const emptyRow: ExcelExpeditionDataRow = { ...row, MOOEHHLEOOB: [{ AOCOBPPBOOL: RANK_LEVEL }, {}] };
+    expect(toExpeditionPlaceRow(emptyRow, previews).rankLevel).toBe(RANK_LEVEL);
+  });
+
   test("should refuse a statue named in another scene", () => {
     expect.hasAssertions();
     const otherSceneRow: ExcelExpeditionDataRow = {
