@@ -25,6 +25,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
@@ -100,14 +101,12 @@ describe(strikeEnemy, () => {
     const resonatedEnemy = createCryoEnemy();
     const unresonatedEnemy = createCryoEnemy();
 
-    strikeEnemy(
-      enemyTables,
-      resonatedEnemy,
-      TRAVELER_KIT.plungeCollision,
-      createCriticalCombatant([Element.Cryo]),
-      () => ROLL,
-    );
-    strikeEnemy(enemyTables, unresonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
+    const resonatedCombatant = createCriticalCombatant([Element.Cryo]);
+    const resonatedContext = createKitTestContext(resonatedCombatant, { enemyTables, random: () => ROLL });
+    strikeEnemy(resonatedEnemy, TRAVELER_KIT.plungeCollision, resonatedCombatant, resonatedContext);
+    const unresonatedCombatant = createCriticalCombatant([]);
+    const unresonatedContext = createKitTestContext(unresonatedCombatant, { enemyTables, random: () => ROLL });
+    strikeEnemy(unresonatedEnemy, TRAVELER_KIT.plungeCollision, unresonatedCombatant, unresonatedContext);
 
     expect([resonatedEnemy.health, unresonatedEnemy.health]).toStrictEqual([
       resonatedEnemy.maxHealth - damage(true),
@@ -135,14 +134,17 @@ describe(strikeEnemy, () => {
       level: LEVEL,
     });
 
+    const boostedCombatant = createCombatantWithCriticalRate();
+    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: () => 0 });
     strikeEnemy(
-      enemyTables,
       boostedEnemy,
       { ...TRAVELER_KIT.plungeCollision, criticalDamageBonus: CRITICAL_DAMAGE_BONUS },
-      createCombatantWithCriticalRate(),
-      () => 0,
+      boostedCombatant,
+      boostedContext,
     );
-    strikeEnemy(enemyTables, plainEnemy, TRAVELER_KIT.plungeCollision, createCombatantWithCriticalRate(), () => 0);
+    const plainCombatant = createCombatantWithCriticalRate();
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: () => 0 });
+    strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, plainCombatant, plainContext);
 
     expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
   });
@@ -168,14 +170,17 @@ describe(strikeEnemy, () => {
     const boostedEnemy = createSturdyEnemy();
     const plainEnemy = createSturdyEnemy();
 
+    const boostedCombatant = createCombatantWithCriticalRate();
+    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: () => ROLL });
     strikeEnemy(
-      enemyTables,
       boostedEnemy,
       { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: CRITICAL_RATE_BONUS },
-      createCombatantWithCriticalRate(),
-      () => ROLL,
+      boostedCombatant,
+      boostedContext,
     );
-    strikeEnemy(enemyTables, plainEnemy, TRAVELER_KIT.plungeCollision, createCombatantWithCriticalRate(), () => ROLL);
+    const plainCombatant = createCombatantWithCriticalRate();
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: () => ROLL });
+    strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, plainCombatant, plainContext);
 
     expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
   });
@@ -205,14 +210,10 @@ describe(strikeEnemy, () => {
     const forcedEnemy = createSturdyEnemy();
     const unforcedEnemy = createSturdyEnemy();
 
-    strikeEnemy(
-      enemyTables,
-      forcedEnemy,
-      { ...TRAVELER_KIT.plungeCollision, isForcedCritical: true },
-      combatant,
-      NEVER_CRITICAL,
-    );
-    strikeEnemy(enemyTables, unforcedEnemy, TRAVELER_KIT.plungeCollision, combatant, NEVER_CRITICAL);
+    const forcedContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(forcedEnemy, { ...TRAVELER_KIT.plungeCollision, isForcedCritical: true }, combatant, forcedContext);
+    const unforcedContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(unforcedEnemy, TRAVELER_KIT.plungeCollision, combatant, unforcedContext);
 
     expect([forcedEnemy.health, unforcedEnemy.health]).toStrictEqual([
       forcedEnemy.maxHealth - damage(true),
@@ -238,7 +239,8 @@ describe(strikeEnemy, () => {
       const random = createSeededRandom(seed);
       return Array.from({ length: STRIKE_COUNT }, () => {
         const enemy = createSturdyEnemy();
-        strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, combatant, random);
+        const context = createKitTestContext(combatant, { enemyTables, random });
+        strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
         return enemy.maxHealth - enemy.health;
       });
     };
@@ -260,7 +262,9 @@ describe(strikeEnemy, () => {
       talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -287,7 +291,8 @@ describe(strikeEnemy, () => {
       ]),
     };
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, combatant, NEVER_CRITICAL);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -314,7 +319,8 @@ describe(strikeEnemy, () => {
       ]),
     };
 
-    strikeEnemy(enemyTables, enemy, kitHit, combatant, NEVER_CRITICAL);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -342,7 +348,8 @@ describe(strikeEnemy, () => {
       ]),
     };
 
-    strikeEnemy(enemyTables, enemy, kitHit, combatant, NEVER_CRITICAL);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -366,8 +373,10 @@ describe(strikeEnemy, () => {
       ]),
     };
 
-    strikeEnemy(enemyTables, plainEnemy, kitHit, plainCombatant, NEVER_CRITICAL);
-    strikeEnemy(enemyTables, boostedEnemy, kitHit, boostedCombatant, NEVER_CRITICAL);
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(plainEnemy, kitHit, plainCombatant, plainContext);
+    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(boostedEnemy, kitHit, boostedCombatant, boostedContext);
 
     expect(boostedEnemy.health).toBeCloseTo(plainEnemy.health);
   });
@@ -389,9 +398,13 @@ describe(strikeEnemy, () => {
     const plungingEnemy = createSturdyEnemy();
     const normalEnemy = createSturdyEnemy();
 
-    strikeEnemy(enemyTables, plainEnemy, normalHit, createCombatant(), NEVER_CRITICAL);
-    strikeEnemy(enemyTables, plungingEnemy, plungingHit, plungingBoostedCombatant, NEVER_CRITICAL);
-    strikeEnemy(enemyTables, normalEnemy, normalHit, plungingBoostedCombatant, NEVER_CRITICAL);
+    const plainCombatant = createCombatant();
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(plainEnemy, normalHit, plainCombatant, plainContext);
+    const plungingContext = createKitTestContext(plungingBoostedCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(plungingEnemy, plungingHit, plungingBoostedCombatant, plungingContext);
+    const normalContext = createKitTestContext(plungingBoostedCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(normalEnemy, normalHit, plungingBoostedCombatant, normalContext);
 
     expect(plungingEnemy.health).toBeLessThan(plainEnemy.health);
     expect(normalEnemy.health).toBeCloseTo(plainEnemy.health);
@@ -410,8 +423,11 @@ describe(strikeEnemy, () => {
         { attribute: Attribute.AllDamageBonus, value: 0.5 },
       ]),
     };
-    strikeEnemy(enemyTables, plainEnemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
-    strikeEnemy(enemyTables, boostedEnemy, kitHit, boostedCombatant, NEVER_CRITICAL);
+    const plainCombatant = createCombatant(Element.Pyro);
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(plainEnemy, kitHit, plainCombatant, plainContext);
+    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(boostedEnemy, kitHit, boostedCombatant, boostedContext);
 
     expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
   });
@@ -421,7 +437,9 @@ describe(strikeEnemy, () => {
 
     const enemy = createSturdyEnemy();
     const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Hydro };
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
+    const combatant = createCombatant(Element.Pyro);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, combatant, context);
 
     expect(enemy.elementalState.auras.has(AuraType.Hydro)).toBe(true);
     expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(false);
@@ -431,7 +449,9 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    strikeEnemy(enemyTables, enemy, elementlessSkillHit(), createCombatant(Element.Pyro), NEVER_CRITICAL);
+    const combatant = createCombatant(Element.Pyro);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, elementlessSkillHit(), combatant, context);
 
     expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(true);
     expect(
@@ -447,9 +467,13 @@ describe(strikeEnemy, () => {
       ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
       internalCooldownTag: InternalCooldownTag.FurinaChevalmarin,
     };
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+    const firstCombatant = createCombatant(Element.Hydro);
+    const firstContext = createKitTestContext(firstCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, firstCombatant, firstContext);
     enemy.elementalState.seconds = 3;
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+    const secondCombatant = createCombatant(Element.Hydro);
+    const secondContext = createKitTestContext(secondCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, secondCombatant, secondContext);
 
     expect(
       enemy.internalCooldownMap.get(`${CHARACTER_ID}${ID_SEPARATOR}${InternalCooldownTag.FurinaChevalmarin}`),
@@ -471,7 +495,9 @@ describe(strikeEnemy, () => {
     });
     const shatterDamage = getTransformativeDamage(ReactionType.Shattered, LEVEL, 0, kind.physicalResistance);
 
-    strikeEnemy(enemyTables, enemy, kitHit, { ...createCombatant(), weaponType: WeaponType.Sword }, NEVER_CRITICAL);
+    const combatant = { ...createCombatant(), weaponType: WeaponType.Sword };
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, combatant, context);
 
     expect(enemy.elementalState.auras.has(AuraType.Freeze)).toBe(false);
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage - shatterDamage);
@@ -481,13 +507,9 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    strikeEnemy(
-      enemyTables,
-      enemy,
-      takeOne(TRAVELER_KIT.elementalBurst.hits, 0),
-      createCombatant(Element.Pyro),
-      NEVER_CRITICAL,
-    );
+    const pyroCombatant = createCombatant(Element.Pyro);
+    const pyroContext = createKitTestContext(pyroCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, takeOne(TRAVELER_KIT.elementalBurst.hits, 0), pyroCombatant, pyroContext);
     const healthBeforeHydro = enemy.health;
     const hydroHit = elementlessSkillHit();
     const damage = getDamage({
@@ -499,7 +521,9 @@ describe(strikeEnemy, () => {
       talentMultiplier: hydroHit.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, hydroHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+    const hydroCombatant = createCombatant(Element.Hydro);
+    const hydroContext = createKitTestContext(hydroCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hydroHit, hydroCombatant, hydroContext);
 
     expect(healthBeforeHydro - enemy.health).toBeCloseTo(damage);
   });
@@ -520,7 +544,9 @@ describe(strikeEnemy, () => {
       talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -540,7 +566,9 @@ describe(strikeEnemy, () => {
       talentMultiplier: hit.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, hit, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -554,7 +582,9 @@ describe(strikeEnemy, () => {
       enemyStatus: () => ({ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }),
     };
 
-    strikeEnemy(enemyTables, enemy, hit, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context);
 
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
   });
@@ -578,7 +608,8 @@ describe(strikeEnemy, () => {
       talentMultiplier: hit.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -617,7 +648,8 @@ describe(strikeEnemy, () => {
         REACTION_BONUS,
       ) * getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro));
 
-    strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL, {
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context, {
       baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
       lunarReactionTypes: [LunarReactionType.LunarBloom],
       reactionBonus: REACTION_BONUS,
@@ -645,7 +677,9 @@ describe(strikeEnemy, () => {
       talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -670,7 +704,9 @@ describe(strikeEnemy, () => {
       talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -680,7 +716,9 @@ describe(strikeEnemy, () => {
 
     const enemy = createCryoEnemy();
     const electroHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Electro };
-    strikeEnemy(enemyTables, enemy, electroHit, createCombatant(), NEVER_CRITICAL);
+    const electroCombatant = createCombatant();
+    const electroContext = createKitTestContext(electroCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, electroHit, electroCombatant, electroContext);
     const healthBeforePhysical = enemy.health;
     const damage = getDamage({
       attackerLevel: LEVEL,
@@ -690,7 +728,9 @@ describe(strikeEnemy, () => {
       talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    const physicalCombatant = createCombatant();
+    const physicalContext = createKitTestContext(physicalCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, physicalCombatant, physicalContext);
 
     expect(healthBeforePhysical - enemy.health).toBeCloseTo(damage);
   });
@@ -702,8 +742,12 @@ describe(strikeEnemy, () => {
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const unreactedEnemy = createSturdyEnemy();
     const kitHit = { ...elementlessSkillHit(), poiseDamage: 0 };
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
-    strikeEnemy(enemyTables, unreactedEnemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
+    const enemyCombatant = createCombatant(Element.Electro);
+    const enemyContext = createKitTestContext(enemyCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, enemyCombatant, enemyContext);
+    const unreactedCombatant = createCombatant(Element.Electro);
+    const unreactedContext = createKitTestContext(unreactedCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(unreactedEnemy, kitHit, unreactedCombatant, unreactedContext);
 
     expect([enemy.poise, unreactedEnemy.poise]).toStrictEqual([0, createSturdyEnemy().poise]);
   });
@@ -730,7 +774,9 @@ describe(strikeEnemy, () => {
     );
     const shatterDamage = getTransformativeDamage(ReactionType.Shattered, LEVEL, 0, kind.physicalResistance);
 
-    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
+    const combatant = createCombatant(Element.Electro);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, combatant, context);
 
     expect(enemy.elementalState.auras.has(AuraType.Freeze)).toBe(false);
     expect(enemy.maxHealth - enemy.health).toBeCloseTo(hitDamage + overloadedDamage + shatterDamage);
@@ -759,10 +805,12 @@ describe(strikeEnemy, () => {
       kind.elementResistances[Element.Pyro],
     );
 
-    strikeEnemy(enemyTables, enemy, skillHit, combatant, NEVER_CRITICAL);
+    const skillContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, skillHit, combatant, skillContext);
     const healthBeforeBurst = enemy.health;
     enemy.elementalState.seconds = 0.2;
-    strikeEnemy(enemyTables, enemy, burstHit, combatant, NEVER_CRITICAL);
+    const burstContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, burstHit, combatant, burstContext);
 
     expect(enemy.maxHealth - healthBeforeBurst).toBeCloseTo(hitDamage(skillHit.talentMultiplier) + overloadedDamage);
     expect(healthBeforeBurst - enemy.health).toBeCloseTo(hitDamage(burstHit.talentMultiplier));
@@ -774,14 +822,10 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const combatant = createCombatant(Element.Anemo);
-    const first = strikeEnemy(enemyTables, enemy, elementlessSkillHit(), combatant, NEVER_CRITICAL);
-    const second = strikeEnemy(
-      enemyTables,
-      enemy,
-      takeOne(TRAVELER_KIT.elementalBurst.hits, 0),
-      combatant,
-      NEVER_CRITICAL,
-    );
+    const firstContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    const first = strikeEnemy(enemy, elementlessSkillHit(), combatant, firstContext);
+    const secondContext = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    const second = strikeEnemy(enemy, takeOne(TRAVELER_KIT.elementalBurst.hits, 0), combatant, secondContext);
 
     expect([first, second].map(({ reactions }) => reactions.map(({ reactionType }) => reactionType))).toStrictEqual([
       [ReactionType.Swirl],
@@ -793,20 +837,17 @@ describe(strikeEnemy, () => {
   test("a hit's CRIT Rate bonus raises the roll it is made against", () => {
     expect.hasAssertions();
 
+    const boostedCombatant = createCombatant();
+    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: () => 0.5 });
     const boosted = strikeEnemy(
-      enemyTables,
       createSturdyEnemy(),
       { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: 0.6 },
-      createCombatant(),
-      () => 0.5,
+      boostedCombatant,
+      boostedContext,
     );
-    const plain = strikeEnemy(
-      enemyTables,
-      createSturdyEnemy(),
-      TRAVELER_KIT.plungeCollision,
-      createCombatant(),
-      () => 0.5,
-    );
+    const plainCombatant = createCombatant();
+    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: () => 0.5 });
+    const plain = strikeEnemy(createSturdyEnemy(), TRAVELER_KIT.plungeCollision, plainCombatant, plainContext);
 
     expect(boosted.isCritical).toBe(true);
     expect(plain.isCritical).toBe(false);

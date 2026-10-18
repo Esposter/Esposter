@@ -8,12 +8,13 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Each deployed contributor's damage from the price of its level and attributes, priced alone with its own CRIT, in the
-// Order the team lists them, as a reaction's contributors are weighted. A Lunar reaction's CRIT Rate and CRIT DMG take the
-// Party reaction bonuses read for that contributor's own share of it, so a kit's bonus reaches whichever contributor it names
+// Order the team lists them, as a reaction's contributors are weighted. A Lunar reaction's CRIT Rate, CRIT DMG and DMG Bonus
+// Take the party reaction bonuses read for that contributor's own share of it, so a kit's bonus reaches whichever contributor
+// It names
 export const priceReactionContributors = (
   contributorIds: ReadonlySet<number>,
   context: KitContext,
-  price: (level: number, attributeTotalMap: Record<Attribute, number>) => number,
+  price: (level: number, attributeTotalMap: Record<Attribute, number>, damageBonus: number) => number,
   reactionType?: ReactionType,
 ): number[] => {
   const { characterIdCombatantMap, kitEffectState, party, random } = context;
@@ -29,11 +30,11 @@ export const priceReactionContributors = (
       context.body.position,
     );
     const { attributeTotalMap } = attributes;
-    const damage = price(level, attributeTotalMap);
     const bonuses =
       isLunar && reactionType !== undefined
         ? getDeployedReactionBonuses({ combatant, reactionType }, context)
         : undefined;
+    const damage = price(level, attributeTotalMap, bonuses?.damageBonus ?? 0);
     const criticalRate = attributeTotalMap[Attribute.CriticalRate] + (bonuses?.criticalRateBonus ?? 0);
     const criticalDamage = attributeTotalMap[Attribute.CriticalDamage] + (bonuses?.criticalDamageBonus ?? 0);
     return [random() < criticalRate ? damage * (1 + criticalDamage) : damage];

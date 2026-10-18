@@ -84,7 +84,7 @@ export const landReactionReach = (
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(context.enemyTables.enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage } =
-      priceEnemyReactions(kind, enemy, reactions, combatant, element);
+      priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
     const resistance = getEnemyResistance(kind, enemy, element);
     const reactionDamage =
       reactionType === TransformativeReactionType.Swirl && element === Element.Hydro
