@@ -31,3 +31,25 @@ export const NORMAL_BOSS_ADVENTURE_EXP = 200;
 // The Companionship EXP each character of the deployed team gets from a normal boss's Trounce Blossom at each World
 // Level, World Level 0 first, from the same tab. World Level 9 repeats World Level 8's, provisional like the Mora
 export const NORMAL_BOSS_COMPANIONSHIP_EXP: number[] = [30, 30, 30, 35, 35, 40, 40, 45, 45, 45];
+// The Mora a weekly boss's claim pays at each row of the wiki's Weekly Boss Rewards Basic Drops tab, Domain Level I to VI,
+// Whose boss levels run 40 to 90. The claim maps a World Level onto a row by clamping it into I to VI, provisional until a
+// Source gives the World Level's own row
+export const WEEKLY_BOSS_MORA: number[] = [6375, 6675, 7100, 7600, 8000, 8100];
+// The Companionship EXP each deployed character gets from a weekly boss's claim at each row, from the same tab
+export const WEEKLY_BOSS_COMPANIONSHIP_EXP: number[] = [55, 60, 60, 65, 70, 70];
+// The Adventure EXP a weekly boss's claim pays at every row, from the same tab
+export const WEEKLY_BOSS_ADVENTURE_EXP = 300;
+// Dvalin's Plume, Claw and Sigh, the talent materials a weekly boss's claim pays one of, which the wiki names as its exclusives
+export const WEEKLY_BOSS_TALENT_ITEM_IDS: number[] = [113003, 113004, 113005];
+// The talent count each row pays: its guaranteed count and the chance, as a fraction, of one more. Rows I to III pay none
+export const WEEKLY_BOSS_TALENT_DROPS: { chance: number; count: number }[] = [
+  { chance: 0, count: 0 },
+  { chance: 0, count: 0 },
+  { chance: 0, count: 0 },
+  { chance: 0, count: 1 },
+  { chance: 0.55, count: 1 },
+  { chance: 0.1, count: 2 },
+];
+// Dream Solvent, the other drop a weekly boss's claim pays, and the chance, as a fraction, of one, from the same tab
+export const WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID = 113021;
+export const WEEKLY_BOSS_DREAM_SOLVENT_CHANCE = 0.33;

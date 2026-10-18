@@ -10,7 +10,7 @@ A boss is an enemy whose reward is claimed, not dropped. A normal boss gives the
 - **A normal boss's claim pays its Mora and its own drop by World Level, from the wiki.** No table counts a normal boss's claim: its `RewardPreviewExcelConfigData` rows (such as `无相之风_90级`, the Anemo Hypostasis's) list its items with their counts mostly blank, and no blossom row names a boss. So the counts are the Basic Drops tab of the wiki's `Template:World_Boss_Rewards`, its normal branch: the Mora a fixed count, and the boss's own drop a guaranteed count plus one more at a chance. Its Adventure EXP column, 200, is the claim's 40 resin at five a point, and its Companionship EXP column is the grant's, so the claim's draw holds neither, as [Original Resin](../../specs/genshin/original-resin/design.md) decides. Its Character EXP column waits on the enemies' Character EXP, which the world does not give yet. The boss's gems and artifacts are the wiki's other tabs, read with the first boss. Read from the wiki's MediaWiki API: the rows of `Template:World_Boss_Rewards` (its Basic Drops tab, normal branch) for World Levels 0 to 8, with the boss levels cross-checked against the [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank) page's World Level table. The page titles are cited so a recording can measure them. World Level 9 has no row in the template, and the [Normal Boss](https://genshin-impact.fandom.com/wiki/Normal_Boss) page and the [Character Level-Up Material](https://genshin-impact.fandom.com/wiki/Character_Level-Up_Material) page give no World Level 9 Mora or drop counts, so World Level 9 repeats World Level 8's rows, provisional until a source gives its own. `drawNormalBossReward` refuses only a World Level the game does not have.
 - **A weekly boss waits in its trounce domain.** Its domain opens once the Archon or story quest that introduces it is done, every day of the week, and is entered as any [domain](../genshin-domains/design.md) is. Andrius alone is fought in the open world. From Adventure Rank 40, a locked one can be challenged from the handbook alone. Stormterror's domain opens once the eight quests of Prologue Act III, Song of the Dragon and Freedom, are done, read from the wiki's list of the act: provisional, since the dump leaves the domain's own condition empty. `services/bosses/checkIsWeeklyBossDomainOpen.ts` is that gate, and no domain list calls it yet, since the domain screen and its entries are not built.
 - **A weekly claim is once a week.** Each weekly boss's reward is claimed once a week, at the price [Original Resin](../../specs/genshin/original-resin/design.md) already gives. The week's count and its reset are built; the once-a-week gate for each boss is not.
-- **What a weekly boss gives.** Its talent materials, Adventure EXP, Mora, Companionship EXP, ascension gems and artifacts by World Level, with a 12% chance of a billet for forging and a 33% chance of a Dream Solvent, as the wiki gives them. Its highest difficulty's first clear also gives one of each of its materials, claimed in the handbook.
+- **What a weekly boss gives.** Its talent materials, Adventure EXP, Mora, Companionship EXP, ascension gems and artifacts by World Level, with a 12% chance of a billet for forging and a 33% chance of a Dream Solvent, as the wiki gives them. Its highest difficulty's first clear also gives one of each of its materials, claimed in the handbook. Provisional: the wiki's rows are by Domain Level I to VI, boss levels 40 to 90, so a World Level maps onto a row by clamping it into I to VI, World Level 0 and 1 reading I; each claim draws one of Dvalin's Plume, Claw and Sigh for its talent count, rows I to III paying none. The billet and the gems are not paid yet, their ids unread.
 
 ## How it works
 
@@ -50,19 +50,20 @@ packages/genshin-world/src/services/bosses/
 
 ## Key files
 
-| File                                                                        | Role after the change                                                               |
-| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/enemy/stepEnemy.ts`                    | Runs a boss's moves in turn from its moves argument, its states kept                |
-| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`      | A boss back by its claim's time, not at once                                        |
-| `packages/genshin-world/src/composables/useWorldTrounceBlossoms.ts`         | The blossoms by spawn: written on defeat, claimed at 40 resin, forgotten at respawn |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`             | Holds a boss until its claim's time or a teleport, reports each respawn             |
-| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`            | Still nothing for a boss, its reward the blossom's                                  |
-| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`           | Each boss's poise type and immunities                                               |
-| `packages/genshin-world/src/services/bosses/anemoHypostasis.ts`             | The first normal boss's moves and Second Wind threshold                             |
-| `packages/genshin-world/src/services/bosses/BossMovesMap.ts`                | Each boss kind's moves, which the enemies' step is passed                           |
-| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossDomainOpen.ts` | Whether a weekly boss's domain is open, once its introducing quests are done        |
-| `packages/genshin-world/src/services/enemy/displaceEnemy.ts`                | A strike's push, which a boss resists                                               |
-| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`             | Builds the bosses' kinds as it builds every camp's                                  |
+| File                                                                        | Role after the change                                                                 |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/enemy/stepEnemy.ts`                    | Runs a boss's moves in turn from its moves argument, its states kept                  |
+| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`      | A boss back by its claim's time, not at once                                          |
+| `packages/genshin-world/src/composables/useWorldTrounceBlossoms.ts`         | The blossoms by spawn: written on defeat, claimed at 40 resin, forgotten at respawn   |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`             | Holds a boss until its claim's time or a teleport, reports each respawn               |
+| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`            | Still nothing for a boss, its reward the blossom's                                    |
+| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`           | Each boss's poise type and immunities                                                 |
+| `packages/genshin-world/src/services/bosses/anemoHypostasis.ts`             | The first normal boss's moves and Second Wind threshold                               |
+| `packages/genshin-world/src/services/bosses/BossMovesMap.ts`                | Each boss kind's moves, which the enemies' step is passed                             |
+| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossDomainOpen.ts` | Whether a weekly boss's domain is open, once its introducing quests are done          |
+| `packages/genshin-world/src/services/bosses/drawWeeklyBossReward.ts`        | What a weekly boss's claim pays at a World Level: Mora, a talent count, Dream Solvent |
+| `packages/genshin-world/src/services/enemy/displaceEnemy.ts`                | A strike's push, which a boss resists                                                 |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`             | Builds the bosses' kinds as it builds every camp's                                    |
 
 ## Sources
 
