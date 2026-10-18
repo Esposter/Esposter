@@ -1064,7 +1064,7 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_STOVE_INTERACTABLE_ID
             ) {
-              cookingRecipe = openCookingStove(cookingRecipes);
+              cookingRecipe = openCookingStove(cookingRecipes.value);
               if (cookingRecipe) screenKind = ScreenKind.Cooking;
             } else if (
               interactable?.kind === InteractionKind.Activate &&
