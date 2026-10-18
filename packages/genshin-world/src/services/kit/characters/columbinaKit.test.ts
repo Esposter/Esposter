@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -11,6 +12,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -31,6 +33,27 @@ describe(createColumbinaKitBehaviour, () => {
   // The effects a skill's press adds, as the kit's effects hold them
   const startEffects = (kitEffectState: KitEffectState): void =>
     COLUMBINA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  // Two other members whose kits hold a Moonsign Benediction, declared here, to make a team at Ascendant Gleam with her
+  const MOONSIGN_KIT: Kit = { ...COLUMBINA_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  const MOONSIGN_CHARACTER_IDS = [1, 2];
+  // The reach of the hit a DoT tick summons, read with the team the characters make
+  const getTickRadius = (characterIds: number[]): number | undefined => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    startEffects(kitEffectState);
+    const [field] = kitEffectState.effects as KitField[];
+    const characterIdCombatantMap = new Map(
+      characterIds.map((characterId): [number, Combatant] => [
+        characterId,
+        { ...combatant, characterId, kit: characterId === COLUMBINA_CHARACTER_ID ? COLUMBINA_KIT : MOONSIGN_KIT },
+      ]),
+    );
+    field?.onTick(
+      createKitTestContext(combatant, { characterIdCombatantMap, kitEffectState, party: createParty(characterIds) }),
+      0,
+    );
+    const summon = kitEffectState.effects.find((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
+    return summon?.hits[0]?.hitArea.radius;
+  };
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -96,5 +119,15 @@ describe(createColumbinaKitBehaviour, () => {
     expect(summons).toHaveLength(1);
     expect(summons[0]?.combatant).toBe(combatant);
     expect(summons[0]?.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([0]);
+  });
+
+  test("a DoT tick reaches four from the field's centre while her team is short of Ascendant Gleam", () => {
+    expect.hasAssertions();
+    expect(getTickRadius([COLUMBINA_CHARACTER_ID])).toBe(4);
+  });
+
+  test("a DoT tick reaches six from the field's centre at Ascendant Gleam, with two other Moonsign characters", () => {
+    expect.hasAssertions();
+    expect(getTickRadius([COLUMBINA_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS])).toBe(6);
   });
 });

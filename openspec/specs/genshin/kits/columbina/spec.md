@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field, and the burst's hit, with her Lunar reactions, the Moonsign, Dew and her passives and constellations left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field, and the burst's hit, with her Lunar reactions, her Moonsign Benediction, Dew and her passives and constellations left waiting on their hooks.
 
 ## Requirements
 
@@ -40,19 +40,25 @@ Gravity Interference SHALL deal damage scaled to Columbina's max HP and SHALL se
 
 ### Requirement: Damage-over-time reach
 
-The damage-over-time field SHALL reach enemies within 4 metres, a provisional range until the Moonsign level is read.
+The damage-over-time field SHALL reach enemies within 4 metres, or within 6 metres while her team is at Ascendant Gleam, as gcsim reaches them from Moonsign level 2.
 
 #### Scenario: An enemy within 4 metres takes the field's damage
 
-- **GIVEN** the damage-over-time field is running
+- **GIVEN** the damage-over-time field is running and her team is short of Ascendant Gleam
 - **WHEN** an enemy stands within 4 metres of the field
 - **THEN** the enemy takes the field's damage on each tick
 
 #### Scenario: An enemy beyond 4 metres takes no field damage
 
-- **GIVEN** the damage-over-time field is running
+- **GIVEN** the damage-over-time field is running and her team is short of Ascendant Gleam
 - **WHEN** an enemy stands beyond 4 metres of the field
 - **THEN** the enemy takes no damage from the field
+
+#### Scenario: An enemy within 6 metres takes the field's damage at Ascendant Gleam
+
+- **GIVEN** the damage-over-time field is running and her team is at Ascendant Gleam
+- **WHEN** an enemy stands within 6 metres of the field
+- **THEN** the enemy takes the field's damage on each tick
 
 ### Requirement: Burst hit
 
