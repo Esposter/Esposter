@@ -13,15 +13,15 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Not built
 
-- **Her Shadow Dance's charges and exit are not built.** Her skill enters Shadow Dance for her record's seconds, where her charged attack is Phantasm Performance. The Verdant Dew a performance needs and spends, the three performances that end the state, and the burst's use of her charges wait on their rules, which her record does not carry.
+- **Her Shadow Dance starts with two Verdant Dew, and each Phantasm Performance spends one, the third ending the state.** The wiki gives two initial charges, that a performance needs at least one Verdant Dew, and that the first shade summon after each performance consumes one. The stance spends it as the performance starts, which approximates that summon's timing. Not built: the Verdant Dew the state gains, since the Slither's base gain is not in the wiki and the fourth passive's Lunar-Bloom gain needs that base; a performance with no Verdant Dew left still plays, since a stance action has no start gate; and the burst's use of charges, since the wiki's burst spends Veils of Falsehood, not Verdant Dew.
 - **The Phantasm Performance measurement is owed.** Its action frames, hitmarks and areas are spread or borrowed until her official showcase is measured; the coordinator adds that measurement to the recordings list.
 
 ## Key files
 
-| File                                                             | Role                                                |
-| :--------------------------------------------------------------- | :-------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/neferKit.ts` | `createNeferKitBehaviour`, her skill's Shadow Dance |
-| `packages/genshin-world/src/data/kits/nefer.json`                | Nefer's overlay                                     |
+| File                                                             | Role                                                                    |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/neferKit.ts` | `createNeferKitBehaviour`, her skill's Shadow Dance and its Verdant Dew |
+| `packages/genshin-world/src/data/kits/nefer.json`                | Nefer's overlay                                                         |
 
 ## Sources
 
