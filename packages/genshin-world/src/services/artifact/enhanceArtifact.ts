@@ -3,6 +3,7 @@ import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData
 
 import { EXPERIENCE_BONUS_WEIGHTS } from "#src/services/artifact/constants";
 import { enhanceMinorAffixes } from "#src/services/artifact/enhanceMinorAffixes";
+import { getArtifactMaxExperience } from "#src/services/artifact/getArtifactMaxExperience";
 import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { getFodderEnhancement } from "#src/services/artifact/getFodderEnhancement";
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
@@ -30,7 +31,7 @@ export const enhanceArtifact = ({
     materialExperience,
   );
   const experienceBonus = drawWeightedValue(EXPERIENCE_BONUS_WEIGHTS, random);
-  const totalExperience = rarityData.levelExperiences.reduce((total, levelExperience) => total + levelExperience, 0);
+  const totalExperience = getArtifactMaxExperience(rarityData);
   const experience = Math.min(artifact.experience + fedExperience * experienceBonus, totalExperience);
   let level = artifact.level;
   let levelExperience = rarityData.levelExperiences.slice(0, level).reduce((total, cost) => total + cost, 0);
