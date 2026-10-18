@@ -68,8 +68,8 @@ const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number 
   return (DECIDED_FRAMES + legalEvaluationFrames + JUDGEMENT_FRAMES + END_LAG_FRAMES) / KIT_FRAMES_PER_SECOND;
 };
 
-// Equitable Judgment's length, decided once its legal evaluation has run, the waves read from the record as it starts
-export const createEquitableJudgementLength = (readWaves: () => KitHit[]): DecideLength => ({
+// Equitable Judgment's length, decided once its legal evaluation has run over the waves its kit read as it was built
+export const createEquitableJudgementLength = (waves: KitHit[]): DecideLength => ({
   atSeconds: DECIDED_FRAMES / KIT_FRAMES_PER_SECOND,
-  decide: (context) => decideEquitableJudgement(context, readWaves()),
+  decide: (context) => decideEquitableJudgement(context, waves),
 });

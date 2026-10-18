@@ -107,6 +107,6 @@ export const createNeuvilletteKitBehaviour = ({
       });
     },
   },
-  chargedAttack: { decideLength: createEquitableJudgementLength(() => readHits("judgement")) },
+  chargedAttack: { decideLength: createEquitableJudgementLength(readHits("judgement")) },
   getPassiveBonuses,
 });
