@@ -65,6 +65,7 @@ export const stepActiveKit = (
     triggerReaction,
   }: ActiveKitControls,
 ): void => {
+  context.locomotionState = input.locomotionState;
   const {
     body,
     characterIdCombatantMap,
