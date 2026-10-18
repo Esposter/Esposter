@@ -25,11 +25,12 @@ A field _removed_ from a schema is not one: Zod's object parse drops the stale k
 
 ## Where persisted JSON lives
 
-| Store                               | Blobs                                                                                                      | Written by                     |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| `resource-assets`                   | `{resourceId}/content.json` — every resource's working copy, a Blueprint's captured entries inside its own | `saveResourceContent`          |
-| `clicker-assets`, `dungeons-assets` | `{userId}/save.json`                                                                                       | `createSaveBlobStateProcedure` |
-| `resource-assets`                   | `{resourceId}/objects/{hash}` — version snapshots, content-addressed keyframes and deltas                  | `writeSnapshotVersion`         |
+| Store                               | Blobs                                                                                                      | Written by                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `resource-assets`                   | `{resourceId}/content.json` — every resource's working copy, a Blueprint's captured entries inside its own | `saveResourceContent`                     |
+| `clicker-assets`, `dungeons-assets` | `{userId}/save.json`                                                                                       | `createSaveBlobStateProcedure`            |
+| `genshin-assets`                    | `{userId}/save.json`                                                                                       | `saveGenshin`, `writeGenshinSaveEnvelope` |
+| `resource-assets`                   | `{resourceId}/objects/{hash}` — version snapshots, content-addressed keyframes and deltas                  | `writeSnapshotVersion`                    |
 
 Every JSON blob is one zstd frame (`writeJsonBlob`): level `JSON_BLOB_COMPRESSION_LEVEL`, window `MAX_CONTENT_ENCODING_WINDOW_LOG`, served as `Content-Encoding: zstd`. A rewrite keeps all three.
 
