@@ -27,7 +27,7 @@ flowchart TD
 
 ### A quest
 
-A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, the talks it runs, and the talks that offer it, none for a quest that starts otherwise. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, a target and a count:
+A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, the talks it runs, the talks that offer it, none for a quest that starts otherwise, and the items its finish pays, which the finish grants to the bag and the wallet. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, a target and a count:
 
 | Kind     | What it asks                    | Its target, as the game's own condition names it |
 | :------- | :------------------------------ | :----------------------------------------------- |
@@ -73,7 +73,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 | File                                                                     | Role                                                                    |
 | :----------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps and talks, with its schema              |
+| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps, talks, finish rewards and schema       |
 | `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, target and count                |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step         |
 | `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk |

@@ -8,14 +8,27 @@ import { questStepSchema } from "#src/models/quest/QuestStep";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
+// One item a quest's finish pays: its id in the game's tables and how many of it
+export interface QuestRewardItem {
+  count: number;
+  itemId: number;
+}
+
+export const questRewardItemSchema = z.object({
+  count: z.int().positive(),
+  itemId: z.int().positive(),
+}) satisfies z.ZodType<QuestRewardItem>;
+
 // A quest by the game's own id: its kind, its title and description by text id, its steps in the order they are done,
-// And the talks it runs, which a talk-to objective or its offer names
+// The talks it runs, which a talk-to objective or its offer names, and the items its finish pays
 export interface Quest {
   descriptionTextId: string;
   id: string;
   kind: QuestKind;
   // The talks offering the quest, any one of which ending starts it, none for a quest that starts otherwise
   offerTalkIds: string[];
+  // The items the quest's reward rows pay on its finish, in the rows' order, none for a quest that pays nothing
+  rewards: QuestRewardItem[];
   steps: QuestStep[];
   talks: Talk[];
   titleTextId: string;
@@ -29,6 +42,7 @@ export const questSchema = z
     id: z.string().min(1),
     kind: z.enum(QuestKind) satisfies z.ZodType<QuestKind>,
     offerTalkIds: z.array(z.string().min(1)),
+    rewards: z.array(questRewardItemSchema),
     steps: createUniqueArraySchema(questStepSchema, "id").min(1),
     talks: createUniqueArraySchema(talkSchema, "id"),
     titleTextId: z.string().min(1),

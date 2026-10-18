@@ -80,6 +80,7 @@ export const props = {
     id: ALBEDO_QUEST_ID,
     kind: QuestKind.World,
     offerTalkIds: [],
+    rewards: [],
     steps: [
       { id: "albedo", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "albedoStep" },
     ],

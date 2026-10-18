@@ -69,6 +69,7 @@ import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
+import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
@@ -281,6 +282,17 @@ const {
   getWorldNow,
   savedAdventureExp: savedState.adventureExp,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+  setWallet,
+  wallet,
+});
+// The rewards each quest's finish pays into the bag, the wallet and the rank, as it finishes
+useWorldQuestRewards({
+  events,
+  gainAdventureExp: gainWorldAdventureExp,
+  inventory,
+  materialDataMap,
+  names: nameText,
+  setInventory,
   setWallet,
   wallet,
 });
