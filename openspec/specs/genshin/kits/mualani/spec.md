@@ -49,13 +49,29 @@ Mualani's plunge attacks SHALL land on the enemies within a provisional reach, w
 
 ### Requirement: Nightsoul Blessing and constellations not yet built
 
-Mualani's Sharky's Bite, its surfing, Ascension passives and constellations SHALL NOT take effect.
+Mualani's Sharky's Bite, its surfing, Ascension 1 and her constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Mualani has the Blessing, a passive or a constellation unlocked
+- **GIVEN** Mualani has the Blessing, Ascension 1 or a constellation unlocked
 - **WHEN** the player fights with Mualani
 - **THEN** those effects have no effect
+
+### Requirement: Ascension 4 spends Wavechaser's Exploits on her burst
+
+From Ascension 4, each Nightsoul Burst a party member triggers SHALL stack Wavechaser's Exploits on Mualani, up to three, and her burst SHALL spend the stacks it casts with, adding 0.15 of her Max HP to Boomsharka-laka's damage for each.
+
+#### Scenario: A fourth stack is not kept
+
+- **GIVEN** Mualani holds three stacks at Ascension 4
+- **WHEN** a party member triggers a Nightsoul Burst
+- **THEN** she still holds three stacks
+
+#### Scenario: A burst after the cast keeps its stacks for the next burst
+
+- **GIVEN** Mualani casts her burst with two stacks
+- **WHEN** a party member triggers a Nightsoul Burst before the hit lands
+- **THEN** the hit adds 0.30 of her Max HP, and the new stack waits for her next burst
 
 ### Requirement: Skill press enters the Nightsoul Blessing
 
