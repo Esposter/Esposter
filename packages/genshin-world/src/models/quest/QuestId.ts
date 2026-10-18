@@ -5,6 +5,7 @@ export enum QuestId {
   BirdsEyeView = "352",
   CandidatureAnalysis = "11019",
   ForegoneConclusion = "11026",
+  NewHorizonsOfAdventure = "22111",
   ReputationRequest7070001 = "7070001",
   ReputationRequest7070101 = "7070101",
   ReputationRequest7070201 = "7070201",
@@ -50,5 +51,6 @@ export const QuestIds: readonly QuestId[] = [
   QuestId.SevenStarSelection,
   QuestId.CandidatureAnalysis,
   QuestId.ForegoneConclusion,
+  QuestId.NewHorizonsOfAdventure,
   ...ReputationRequestQuestIds,
 ];
