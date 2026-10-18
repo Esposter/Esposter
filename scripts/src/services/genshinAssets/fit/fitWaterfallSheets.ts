@@ -4,11 +4,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 
 import { computeWaterfallSheet } from "#src/services/genshinAssets/fit/computeWaterfallSheet";
 import { readWitnessWorldMeshes } from "#src/services/genshinAssets/fit/readWitnessWorldMeshes";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { writeRegionKey } from "#src/services/genshinAssets/fit/writeRegionKey";
 
 const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 
@@ -25,11 +21,8 @@ export const fitWaterfallSheets = async (
     (vertices) => computeWaterfallSheet(vertices),
   );
   const waterfalls = sheets.filter((sheet) => sheet !== undefined);
-  const regionFile = join("regions", `${component}.json`);
-  const regionData = parseMachineJson<Record<string, unknown>>(
-    await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
-  );
-  const path = await writeWorldData(regionFile, { ...regionData, waterfalls }, { isDryRun });
-  const written = isDryRun ? ", nothing written" : "";
-  return { notes: [`${path}: ${waterfalls.length} waterfall sheets${written}`], objects: {} };
+  const note = await writeRegionKey(component, "waterfalls", waterfalls, `${waterfalls.length} waterfall sheets`, {
+    isDryRun,
+  });
+  return { notes: [note], objects: {} };
 };
