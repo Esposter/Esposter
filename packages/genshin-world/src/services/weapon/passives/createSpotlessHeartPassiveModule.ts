@@ -19,7 +19,7 @@ export const createSpotlessHeartPassiveModule = (params: number[]): WeaponPassiv
   const cooldownSeconds = takeOne(params, 2);
   const clearSeconds = takeOne(params, 3);
   return {
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects) => {
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (
         strike.attackTag !== AttackTag.ElementalSkill ||
         !checkIsKitStatusActive(effects, strike.combatant.characterId, SPOTLESS_HEART_ID)
@@ -27,7 +27,9 @@ export const createSpotlessHeartPassiveModule = (params: number[]): WeaponPassiv
         return 0;
       return (
         defenseShare *
-        getBuffedCombatant(strike.combatant, effects, party).attributes.attributeTotalMap[Attribute.Defense]
+        getBuffedCombatant(strike.combatant, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
+          Attribute.Defense
+        ]
       );
     },
     onKitEvent: (event, context, combatant) => {

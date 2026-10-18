@@ -57,22 +57,21 @@ export interface Kit {
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
-  // The CRIT Rate a strike of the kit's own adds as its CRIT roll is made against an enemy, if a constellation raises it
-  // Against some enemies only, given the enemy as it stands
-  getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands and the deployed team
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
-  // Stats, given the enemy as it stands, the deployed team and the effects on it
+  // Stats, given the enemy as it stands, the deployed team, the effects on it and the team's characters by ID, which a
+  // Buffed stat reads
   getStrikeAdditiveBaseDamageBonus?: (
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => number;
-  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive raises it on the strike,
-  // Given the enemy as it stands, the deployed team and the effects on it
+  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation
+  // Raises it against some enemies only or on the strike, given the enemy, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   highPlunge: KitAction;
   lowPlunge: KitAction;

@@ -90,7 +90,13 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       const pricedStrike = { ...strike, hit: enemyHit };
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
-        combatant.kit.getStrikeAdditiveBaseDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0;
+        combatant.kit.getStrikeAdditiveBaseDamageBonus?.(
+          pricedStrike,
+          enemy,
+          party,
+          kitEffectState.effects,
+          characterIdCombatantMap,
+        ) ?? 0;
       const pricedHit = {
         ...enemyHit,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,

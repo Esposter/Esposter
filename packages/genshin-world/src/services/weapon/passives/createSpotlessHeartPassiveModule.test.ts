@@ -11,6 +11,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -59,6 +60,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
     expect(
@@ -67,8 +69,36 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
+  });
+
+  test("the share is the wielder's DEF with its buffs on", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(wielder);
+    spotlessHeartPassiveModule.onKitEvent?.(SKILL_USED, context, wielder);
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: 0.5,
+      attribute: Attribute.DefensePercent,
+      secondsRemaining: 10,
+      source: "test",
+    });
+    const { attributeTotalMap } = wielder.attributes;
+    const buffedDefense =
+      attributeTotalMap[Attribute.BaseDefense] * (1 + attributeTotalMap[Attribute.DefensePercent] + 0.5) +
+      attributeTotalMap[Attribute.Defense];
+
+    expect(
+      spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+        createStrike(AttackTag.ElementalSkill),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+        context.characterIdCombatantMap,
+      ),
+    ).toBeCloseTo(0.4 * buffedDefense);
   });
 
   test("the effect stands until 0.1 seconds after the skill's last hit", () => {
@@ -85,6 +115,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
 
@@ -96,6 +127,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -115,6 +147,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
 
@@ -127,6 +160,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
   });
