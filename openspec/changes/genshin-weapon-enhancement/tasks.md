@@ -6,4 +6,4 @@
 ## 2. Passives as modules
 
 - [x] 2.1 Show each passive's name and each rank's description on the weapon. Verify: a test named after 'A weapon with a passive shows its description at its rank' and 'A weapon with no passive shows none'.
-- [ ] 2.2 Act each passive at its weapon's refinement rank as a module over the kits' shared effects, once the character kits hold them. Verify: tests named after 'A weapon at refinement rank one reads its first passive row' and 'Raising refinement changes the passive's effect'. Blocked until the character kits land.
+- [ ] 2.2 Act each passive at its weapon's refinement rank as a module over the kits' shared effects. Verify: tests named after 'A weapon at refinement rank one reads its first passive row' and 'Raising refinement changes the passive's effect'. Built: the weapon's module joins its wielder's kit at the rank it holds, and Full HP Critic Up is its first module. Open: the other 249 passives, each a module of its own (the timed ones over the shared effects, the pricing ones through the kit's pricing hook).
