@@ -5,6 +5,7 @@ The [original resin](../../specs/genshin/original-resin/design.md) page holds th
 ## Decisions
 
 - **A cleared challenge leaves its blossom, and F offers its claim.** A [ley line outcrop](../genshin-ley-line-outcrops/design.md)'s Ley Line Blossom, a [domain](../genshin-domains/design.md)'s Petrified Tree or a [boss](../genshin-bosses/design.md)'s Trounce Blossom. A challenge cleared but not claimed gives nothing. The offers and their prices are the [original resin](../../specs/genshin/original-resin/design.md) page's.
+- **Offers the holdings can pay.** `computeAffordableBlossomClaimOffers` keeps a resin offer while the Original Resin covers its price, and the Condensed Resin offer while the bag holds one, since that claim spends no Original Resin. A blossom whose offers the holdings cannot pay offers nothing.
 - **Fragile Resin is used from the bag.** Its use restores 60 Original Resin, the refill rule the [as-built page](../../specs/genshin/original-resin/design.md) already has, and it waits on the [inventory](../genshin-inventory/design.md)'s using of an item.
 
 ## How it works
@@ -21,7 +22,7 @@ flowchart TD
 
 **This still adds:** the claim's offer on F, its one step left. It waits on the ley line outcrops' blossom, which the world does not place yet.
 
-1. **The claim's offer on F**, with the first blossom a challenge places ([ley line outcrops](../genshin-ley-line-outcrops/design.md) or [bosses](../genshin-bosses/design.md)): its prompt row through `computeInteractionPrompts`, its offers from `computeBlossomClaimOffers` shown to choose from, Condensed Resin's among them at a ley line or a domain, and `claimBlossom` on the one chosen.
+1. **The claim's offer on F**, with the first blossom a challenge places ([ley line outcrops](../genshin-ley-line-outcrops/design.md) or [bosses](../genshin-bosses/design.md)): its prompt row through `computeInteractionPrompts`, its offers from `computeAffordableBlossomClaimOffers` shown to choose from, Condensed Resin's among them at a ley line or a domain, and `claimBlossom` on the one chosen.
 
 ## Key files
 
