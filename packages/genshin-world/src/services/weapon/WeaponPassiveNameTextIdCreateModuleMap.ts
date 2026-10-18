@@ -17,6 +17,7 @@ import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/cr
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
+import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
@@ -219,4 +220,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2660534475": createWolfishTrackerPassiveModule,
   // Black Wing (Skyward Spine)
   "2421341659": createBlackWingPassiveModule,
+  // Echoing Ballad (Skyward Harp)
+  "2971867387": createEchoingBalladPassiveModule,
 };
