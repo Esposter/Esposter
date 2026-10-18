@@ -178,6 +178,67 @@ describe("defect fixes", () => {
 
     expect(evaluateFormula(formula)).toBe(expected);
   });
+
+  test.each([
+    ["mod(1/0, 3)", Number.NaN],
+    ["mod(5, 1/0)", Number.NaN],
+    ["1/0 % 3", Number.NaN],
+    ["mod(1/0, 0)", Number.POSITIVE_INFINITY],
+  ])(
+    "a modulo of a non-finite operand is NaN, and a zero divisor keeps the dividend, as mathjs answers: %s",
+    (formula, expected) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(expected);
+    },
+  );
+
+  test.each([
+    ["invmod(4, -7)", -12],
+    ["invmod(-3, -7)", -12],
+    ["invmod(3, -7)", -9],
+  ])("an inverse under a negative modulus is reduced below it, as mathjs reduces it: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([
+    ["bernoulli(258) > 0", 1],
+    ["bernoulli(260)", Number.NEGATIVE_INFINITY],
+    ["bernoulli(300)", Number.NEGATIVE_INFINITY],
+  ])("a Bernoulli number past the recurrence's range is its closed form: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([["sum([-0, -0])"], ["add(-0, -0, -0)"]])(
+    "a sum of negative zeros is negative zero, as mathjs sums: %s",
+    (formula) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(-0);
+    },
+  );
+
+  test.each([
+    ["zeta(1/0)", 1],
+    ["zeta(-1/0)", Number.NaN],
+  ])("the zeta of plus infinity is one, and of minus infinity no value, as mathjs answers: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([["variance([1/0])"], ["std([1/0])"]])(
+    "a single infinite value has no variance, as mathjs answers: %s",
+    (formula) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(Number.NaN);
+    },
+  );
 });
 
 describe("counting and primality", () => {

@@ -4,6 +4,9 @@ export const MATH_EXPRESSION_RELATIVE_TOLERANCE = 1e-12;
 export const MATH_EXPRESSION_ABSOLUTE_TOLERANCE = 1e-15;
 // The square root of pi, which the error function and its inverse both divide by
 export const SQRT_PI: number = Math.sqrt(Math.PI);
+// The first even index whose Bernoulli number mathjs answers infinite, so parity does not bind from it up, and the closed form
+// Takes over there, since the recurrence overflows before the number itself does
+export const BERNOULLI_CLOSED_FORM_INDEX = 198;
 // The most digits a rounding function takes
 export const MAXIMUM_DIGITS = 15;
 // The work of a Stirling number is its count times the narrower of its band, the parts or the count less the parts.

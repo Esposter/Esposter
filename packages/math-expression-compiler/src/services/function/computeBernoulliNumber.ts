@@ -1,13 +1,17 @@
-// The first even index whose Bernoulli number is past the float range: the magnitude grows factorially, and this one is about
-// 1.8e308 in magnitude, so every even index from here on is infinite in the sign its index gives
-const OVERFLOW_INDEX = 260;
+import { BERNOULLI_CLOSED_FORM_INDEX } from "#src/services/function/constants";
 
-// The Bernoulli number of an index, by the recurrence that starts from one. Above one the odd ones are zero, which is
-// Exact rather than the rounding residue the recurrence leaves behind
+// The Bernoulli number of an index, by the recurrence that starts from one below the closed form's index. Above one the odd
+// Ones are zero, which is exact rather than the rounding residue the recurrence leaves behind
 export const computeBernoulliNumber = (index: number): number => {
   if (index === 1) return -0.5;
   if (index > 1 && index % 2 === 1) return 0;
-  if (index >= OVERFLOW_INDEX) return (index / 2) % 2 === 1 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+  if (index >= BERNOULLI_CLOSED_FORM_INDEX) {
+    // The even index 2n is (-1)^(n+1) 2 (2n)! zeta(2n) / (2 pi)^(2n), where zeta is one to double precision. The product stops
+    // Once it overflows, which is infinite in the sign the index gives
+    let product = 1;
+    for (let factor = 1; factor <= index && Number.isFinite(product); factor++) product *= factor / (2 * Math.PI);
+    return (index / 2) % 2 === 1 ? 2 * product : -2 * product;
+  }
 
   const numbers: number[] = [1];
   for (let current = 1; current <= index; current++) {
