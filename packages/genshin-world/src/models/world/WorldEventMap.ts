@@ -41,4 +41,6 @@ export interface WorldEventMap {
   teleport: [pose: WorldJumpPose];
   // A tip the world shows for the first time in the save, with the tip it shows
   tipShown: [tip: Tip];
+  // The World Level the player reaches, once for each level a rank or an ascension quest moves the World Level past
+  worldLevelUp: [worldLevel: number];
 }

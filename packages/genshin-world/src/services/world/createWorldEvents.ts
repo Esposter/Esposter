@@ -22,6 +22,7 @@ export const createWorldEvents = (): WorldEvents => {
     reactionTriggered: [],
     teleport: [],
     tipShown: [],
+    worldLevelUp: [],
   };
   return {
     emit: (eventName, ...payload) => {

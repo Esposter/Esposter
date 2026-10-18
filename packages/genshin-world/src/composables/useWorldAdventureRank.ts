@@ -1,6 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ComputedRef, Ref } from "vue";
 
 import { Currency } from "#src/models/inventory/Currency";
@@ -11,13 +12,14 @@ import { computeWorldLevel } from "#src/services/adventureRank/computeWorldLevel
 import { WORLD_LEVEL_LOWERING_MINIMUM } from "#src/services/adventureRank/constants";
 import { gainAdventureExp } from "#src/services/adventureRank/gainAdventureExp";
 import { toggleWorldLevelLowering } from "#src/services/adventureRank/toggleWorldLevelLowering";
-import { computed, shallowRef } from "vue";
+import { computed, shallowRef, watch } from "vue";
 
 // The Adventure EXP the session holds live, and the rank and World Level it stands at with the main quests done. A gain
 // That passes rank 60 is paid into the wallet as Mora, and the World Level the world plays at is that one less the
 // Step the player has lowered it by
 export const useWorldAdventureRank = ({
   adventureRankTables,
+  events,
   finishedMainQuestIds,
   getWorldNow,
   savedAdventureExp,
@@ -27,6 +29,7 @@ export const useWorldAdventureRank = ({
   wallet,
 }: {
   adventureRankTables: AdventureRankTables;
+  events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   getWorldNow: () => Temporal.Instant;
   savedAdventureExp: number;
@@ -44,6 +47,11 @@ export const useWorldAdventureRank = ({
     computeAdventureRankStanding(adventureRankTables, adventureExp.value, completedMainQuestIds.value),
   );
   const unlockedWorldLevel = computed(() => standing.value.worldLevel);
+  // Every World Level the unlocked one passes raises its event, so a step past several levels at once raises each of them
+  watch(unlockedWorldLevel, (newWorldLevel, previousWorldLevel) => {
+    for (let worldLevel = previousWorldLevel + 1; worldLevel <= newWorldLevel; worldLevel++)
+      events.emit("worldLevelUp", worldLevel);
+  });
   const adventureExpProgress = computed(() =>
     computeAdventureRankProgress(adventureRankTables, adventureExp.value, standing.value.rank),
   );

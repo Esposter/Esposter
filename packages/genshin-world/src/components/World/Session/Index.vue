@@ -386,6 +386,7 @@ const {
   worldLevelAdjustment,
 } = useWorldAdventureRank({
   adventureRankTables,
+  events,
   finishedMainQuestIds,
   getWorldNow,
   savedAdventureExp: savedState.adventureExp,

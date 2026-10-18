@@ -6,8 +6,9 @@ import { MAX_ADVENTURE_RANK, MORA_PER_EXCESS_ADVENTURE_EXP } from "#src/services
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
-import { describe, expect, test } from "vitest";
-import { computed, ref } from "vue";
+import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { describe, expect, test, vi } from "vitest";
+import { computed, nextTick, ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
@@ -17,11 +18,17 @@ describe(useWorldAdventureRank, () => {
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const GAIN = 100;
 
-  const createAdventureRank = (savedAdventureExp: number, finishedMainQuestIds: ReadonlySet<number>) => {
+  const createAdventureRank = (
+    savedAdventureExp: number,
+    finishedMainQuestIds: ReadonlySet<number>,
+    events = createWorldEvents(),
+  ) => {
     const wallet = ref(savedState.wallet);
+    const questIds = shallowRef(finishedMainQuestIds);
     const adventureRank = useWorldAdventureRank({
       adventureRankTables,
-      finishedMainQuestIds: computed(() => finishedMainQuestIds),
+      events,
+      finishedMainQuestIds: computed(() => questIds.value),
       getWorldNow: () => Temporal.Now.instant(),
       savedAdventureExp,
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
@@ -30,7 +37,13 @@ describe(useWorldAdventureRank, () => {
       },
       wallet,
     });
-    return { adventureRank, wallet };
+    return {
+      adventureRank,
+      setFinishedMainQuestIds: (nextFinishedMainQuestIds: ReadonlySet<number>) => {
+        questIds.value = nextFinishedMainQuestIds;
+      },
+      wallet,
+    };
   };
 
   test("a gain of 375 from none reaches rank 2", () => {
@@ -60,5 +73,23 @@ describe(useWorldAdventureRank, () => {
     adventureRank.gainWorldAdventureExp(GAIN);
 
     expect(wallet.value[Currency.Mora]).toBe(savedState.wallet[Currency.Mora] + GAIN * MORA_PER_EXCESS_ADVENTURE_EXP);
+  });
+
+  test("a world level reached raises its event once for each level", async () => {
+    expect.hasAssertions();
+
+    const events = createWorldEvents();
+    const worldLevelUps = vi.fn<(worldLevel: number) => void>();
+    events.on("worldLevelUp", worldLevelUps);
+    const { adventureRank, setFinishedMainQuestIds } = createAdventureRank(maxAdventureExp, new Set(), events);
+    const startingWorldLevel = adventureRank.worldLevel.value;
+    setFinishedMainQuestIds(ascensionQuestIds);
+    await nextTick();
+
+    const finalWorldLevel = adventureRank.worldLevel.value;
+    expect(finalWorldLevel).toBeGreaterThan(startingWorldLevel);
+    expect(worldLevelUps.mock.calls).toStrictEqual(
+      Array.from({ length: finalWorldLevel - startingWorldLevel }, (_, index) => [startingWorldLevel + index + 1]),
+    );
   });
 });
