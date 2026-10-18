@@ -43,9 +43,11 @@ const readSwitchCooldowns = (
   file: string,
   resolveName: (name: string) => GoValue | undefined,
 ): GcsimHoldCooldown[] => {
+  // The search stops at the call's own function, so a switch in an earlier function gives none
   let switchIndex = callIndex;
-  while (switchIndex >= 0 && tokens[switchIndex]?.text !== "switch") switchIndex--;
-  if (switchIndex < 0) return [];
+  while (switchIndex >= 0 && tokens[switchIndex]?.text !== "switch" && tokens[switchIndex]?.text !== "func")
+    switchIndex--;
+  if (switchIndex < 0 || tokens[switchIndex]?.text === "func") return [];
   const openIndex = tokens.findIndex((token, index) => index > switchIndex && checkIsGoPunctuation(token, "{"));
   const closeIndex = findClosing(tokens, openIndex, "{", "}") ?? tokens.length;
   const caseIndices = tokens.flatMap((token, index) =>
