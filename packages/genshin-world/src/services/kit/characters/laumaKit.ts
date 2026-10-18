@@ -39,6 +39,10 @@ export const LAUMA_CHARACTER_ID = 10_000_119;
 // For her Elemental Mastery. Not built yet: Pale Hymn's buff on Bloom and Lunar-Bloom hits, with the Moon Song Hymn of
 // Eternal Rest's Dew gives it; the Spirit Envoy state her charged attack's first press enters, which waits on a stance
 // That drains stamina; and her passives and constellations
+// Constellation 1 needs the Threads of Life state's effect on the active character, which the kit does not build
+// Constellation 2 needs the Pale Hymn stacks her burst gains and the Bloom bonus they give, which are not built
+// Constellation 4 needs the Frostgrove Sanctuary's attacks to report hits and grant the effect its text gives
+// Constellation 6 needs an extra Lunar-Bloom Dendro hit per Sanctuary attack, scaled by her Elemental Mastery
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");

@@ -33,8 +33,9 @@ export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 // Crowfeather the Ambush strikes, and from Constellation 2 a weaker crowfeather where she stands. Subjugation: Koukou
 // Sendou's Stormclusters, four bouts or six from Constellation 4. Her fully charged shot, Titanbreaker, the Ambushes and
 // The Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as each lands.
-// Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's energy and
-// Constellations 1 and 6 are not built, as no hit reads the party energy or the Electro DMG Bonus they need
+// Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's energy is not built
+// Constellation 1 needs the hits and ATK grants of Tengu Juurai as events, which the kit does not emit
+// Constellation 6 needs a strike hook that raises CRIT DMG on the Electro DMG of her ATK-buffed members, not built
 export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const atkBonusRatio = readParameter("atkBonusRatio");
   const atkBonusSeconds = readParameter("atkBonusSeconds");
