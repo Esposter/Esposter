@@ -3,6 +3,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 
 export const LAN_YAN_CHARACTER_ID = 10_000_108;
 
@@ -29,10 +30,10 @@ const LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE = 7.74;
 export const createLanYanKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour => ({
   burst: {
     hits: kit.elementalBurst.hits.map(() => ({
-      additiveBaseDamageBonus: ({ ascension, attributes }) =>
-        ascension < ASCENSION_4
+      additiveBaseDamageBonus: (striker) =>
+        striker.ascension < ASCENSION_4
           ? 0
-          : LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE * attributes.attributeTotalMap[Attribute.ElementalMastery],
+          : elementalMasteryMultiplier(striker, LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE),
     })),
     onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
       if (combatant.constellationCount < CONSTELLATION_4) return;

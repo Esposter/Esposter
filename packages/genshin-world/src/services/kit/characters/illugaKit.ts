@@ -19,6 +19,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { setKitNightingaleCount } from "#src/services/kit/effects/setKitNightingaleCount";
 import { startKitHauntedNight } from "#src/services/kit/effects/startKitHauntedNight";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
@@ -64,9 +65,9 @@ const LIGHTKEEPERS_OATH_MOONSIGN_SOURCE = "illuga-lightkeepers-oath-moonsign";
 // The Aedon hit Constellation 2 summons, priced from Illuga's Elemental Mastery and DEF. Its area is the burst's first hit's,
 // And its hitmark and poise are taken as none, since the talent's text gives no area or hitmark of its own
 const createAedonHit = (combatant: Combatant): KitHit => ({
-  additiveBaseDamageBonus: ({ attributes }) =>
-    attributes.attributeTotalMap[Attribute.ElementalMastery] * AEDON_ELEMENTAL_MASTERY_SHARE +
-    attributes.defense * AEDON_DEFENSE_SHARE,
+  additiveBaseDamageBonus: (striker) =>
+    elementalMasteryMultiplier(striker, AEDON_ELEMENTAL_MASTERY_SHARE) +
+    striker.attributes.defense * AEDON_DEFENSE_SHARE,
   attackTag: AttackTag.ElementalBurst,
   element: Element.Geo,
   hitArea: takeOne(combatant.kit.elementalBurst.hits).hitArea,
@@ -127,9 +128,7 @@ export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         }),
         ...(isNightingaleBonused && {
           additiveBaseDamageBonus:
-            nightingaleSongGeoDamageBonus *
-            combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-            NIGHTINGALE_SONG_STACKS_PER_HIT,
+            elementalMasteryMultiplier(combatant, nightingaleSongGeoDamageBonus) * NIGHTINGALE_SONG_STACKS_PER_HIT,
         }),
       };
     },

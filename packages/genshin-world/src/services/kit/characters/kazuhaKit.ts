@@ -2,7 +2,6 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -13,6 +12,7 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 
 // The Autumn Whirlwind's absorb check takes the first aura of Pyro, Hydro, Electro or Cryo an enemy within its reach
@@ -109,14 +109,9 @@ export const createKazuhaKitBehaviour = ({
         return;
       for (const { element, reactionType } of event.reactions) {
         if (reactionType !== ReactionType.Swirl || element === undefined) continue;
-        const { attributeTotalMap } = getBuffedCombatant(
-          combatant,
-          kitEffectState.effects,
-          party,
-          characterIdCombatantMap,
-        ).attributes;
+        const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         buffKitTeam(kitEffectState, party, {
-          amount: POETICS_ELEMENTAL_DAMAGE_BONUS_SHARE * attributeTotalMap[Attribute.ElementalMastery],
+          amount: elementalMasteryMultiplier(buffedCombatant, POETICS_ELEMENTAL_DAMAGE_BONUS_SHARE),
           attribute: ElementDamageBonusAttributeMap[element],
           secondsRemaining: POETICS_SECONDS,
           source: POETICS_SOURCE,
