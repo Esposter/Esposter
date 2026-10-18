@@ -14,18 +14,21 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - the chests opened, by chest id ([chests](../chests/design.md));
 - each achievement's count and the moment it finished, by achievement id;
 - the bench's recipes learned from instructions, and each recipe's crafted count, by recipe id ([crafting](../crafting/design.md));
-- each kind of wish's counters;
+- each kind of wish's counters, and the wish history: each draw's banner kind, item and moment, kept for the year ([wish](../wish/design.md));
+- the day's commissions: the four dealt, the moment they were dealt and the ones claimed ([commissions](../commissions/design.md));
+- each region's Statues of The Seven progress (the Oculi held toward its next level and the level reached), by region id, and the Oculi found, by id ([statues of the seven](../statues-of-the-seven/design.md));
+- the Seelies settled and the puzzles solved, by id ([puzzles](../puzzles/design.md));
+- the party: the teams set up in Party Setup, each with its name and its members by character id, and the team deployed ([party](../party/design.md));
 - Adventure EXP, Mondstadt's Reputation (its level and EXP) and each character's Companionship EXP, by character id;
 - the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](../adventure-rank/design.md)).
 - the name the player chose for the Traveler, empty while none is chosen, which the [HUD](../hud/design.md)'s party shows in place of the game's own.
 
 It does not hold:
 
-- the day's commissions, their counts and their claims ([commissions](../commissions/design.md));
 - the expeditions, each character sent and the moment it left ([expeditions](../expeditions/design.md));
 - the forge's queues and each game day's forge points ([forging](../forging/design.md));
 - each defeated enemy's respawn instant, so a reload brings every enemy back ([enemies](../enemies/design.md));
-- the exploration's chests, camps, Oculi and puzzles, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md));
+- the exploration's camps cleared, which are not recorded as done yet ([exploration progress](../exploration-progress/design.md));
 - the Archive's opened entries and each Living Being's defeat count, which a reload starts over ([archive](../archive/design.md)). The [archive change](../../../changes/genshin-archive/design.md) adds them as a slice.
 
 Some values are derived on load and never saved: a character's Friendship Level is read from its Companionship EXP, and a namecard is held by its character's level, so no save keeps it. The save holds what the player did and nothing derived.

@@ -272,7 +272,7 @@ The merge SHALL keep a character both saves hold as the copy further on by level
 
 ### Requirement: Systems not yet saved start fresh after a reload
 
-The save SHALL NOT hold commissions, expeditions, forge queues, enemy respawn times or exploration progress, and those SHALL start fresh after a reload.
+The save SHALL NOT hold expeditions, forge queues, enemy respawn times or the camps cleared, and those SHALL start fresh after a reload.
 
 #### Scenario: A defeated enemy returns after a reload
 
