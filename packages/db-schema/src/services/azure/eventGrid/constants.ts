@@ -9,8 +9,9 @@ export const EVENT_GRID_DATA_VERSION = "1.0";
 // Sides of it are in different packages: every subscription carries it as its `eventTimeToLiveInMinutes`
 // (AzureEventSubscriptionRetryPolicy), and it also bounds a consumer — any row a handler needs in order to apply
 // Its event must outlive this window, or the redelivery that finally succeeds finds nothing and the event is
-// Silently lost. The storage ledger is the one that obeys it (openspec/specs/resource/storage-quotas/design.md). Both readings come
-// Off the one duration, in the unit each end actually takes, so neither can drift from the other.
+// Silently lost. The storage ledger is the one that obeys it.
+// Design: openspec/specs/resource/storage-quotas/design.md
+// Both readings come off the one duration, in the unit each end actually takes, so neither can drift from the other.
 const EVENT_GRID_DELIVERY_TTL = Temporal.Duration.from({ hours: 1 });
 export const EVENT_GRID_DELIVERY_TTL_MINUTES: number = EVENT_GRID_DELIVERY_TTL.total("minutes");
 export const EVENT_GRID_DELIVERY_TTL_MS: number = EVENT_GRID_DELIVERY_TTL.total("milliseconds");

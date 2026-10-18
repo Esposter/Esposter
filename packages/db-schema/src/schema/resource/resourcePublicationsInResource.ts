@@ -4,7 +4,8 @@ import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { integer, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // A row exists iff the resource is currently published — this is the Publishable capability's state.
-// The version names the published channel's live `resourceVersions` row (openspec/specs/resource/resource-version-store/design.md).
+// The version names the published channel's live `resourceVersions` row.
+// Design: openspec/specs/resource/resource-version-store/design.md
 export const resourcePublicationsInResource = pgTable(
   "resourcePublications",
   {

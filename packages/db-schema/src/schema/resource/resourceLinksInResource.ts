@@ -7,7 +7,8 @@ import { index, primaryKey, uuid } from "drizzle-orm/pg-core";
 export const resourceLinkTypeEnum = resourceSchema.enum("resourceLinkType", ResourceLinkType);
 // Every cross-resource reference a resource's content holds, projected from that content on each save so "what
 // Points at this?" is one indexed lookup rather than a read of every blob. The content stays the source of
-// Truth: these rows are its index, rewritten whenever the set it projects changes (openspec/specs/architecture/resource-links/design.md)
+// Truth: these rows are its index, rewritten whenever the set it projects changes.
+// Design: openspec/specs/architecture/resource-links/design.md
 export const resourceLinksInResource = pgTable(
   "resourceLinks",
   {
