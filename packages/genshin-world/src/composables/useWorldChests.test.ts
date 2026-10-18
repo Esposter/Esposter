@@ -24,6 +24,7 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
       gameText: {},
       getGroundHeight: () => 0,
       inventory: ref({ ...EMPTY_INVENTORY }),
+      lockSources: ref([]),
       materialDataMap: new Map(),
       nameText: {},
       openedChestIds,
