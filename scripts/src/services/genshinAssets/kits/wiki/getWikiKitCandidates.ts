@@ -35,16 +35,20 @@ const toTitleWords = (title: string): string =>
     .replaceAll(/\b\d+-hit\b|\bdmg\b/gu, "")
     .replaceAll(/[^a-z]+/gu, " ")
     .trim();
+// A `hitFields` name as the words a row's title shares, `lunarBloom` as `Lunar Bloom`
+const toNameWords = (name: string): string => name.replaceAll(/([a-z])([A-Z])/gu, "$1 $2");
 
 // Every value the wiki's talent pages give a character's kit, by its path in the record, from each page's Advanced
 // Properties: a normal attack's rows by their titles, `Normal Attack 3-Hit B` the third strike's second hit, the
 // Charged attack's and the plunges' by theirs, and each of the skill's and burst's hits by the row titled as the table
 // Labels the hit's multiplier, `Swing DMG` for `1-Hit Swing DMG`. Each row gives its hit's poise, its ICD tag and, where
-// The hit is elemental, its gauge
+// The hit is elemental, its gauge. A single `hitFields` hit, named `lunarBloom`, joins the skill's or burst's row of the
+// Same name, its title's words matching the name's
 export const getWikiKitCandidates = (
   pages: readonly WikiTalentPage[],
   { weaponType }: Pick<KitTables, "weaponType">,
   hitLabelMap: ReadonlyMap<string, string>,
+  hitFieldNames: readonly string[] = [],
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   const addRow = (
@@ -93,12 +97,19 @@ export const getWikiKitCandidates = (
         } else if (plungePath !== undefined)
           addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
       }
-    else
+    else {
       for (const [hitPath, label] of hitLabelMap) {
         const property = checkIsTalentHitPath(hitPath, page.combatTalent)
           ? page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label))
           : undefined;
         if (property !== undefined) addRow(hitPath, property, page, true);
       }
+      if (page.combatTalent === CombatTalent.ElementalSkill || page.combatTalent === CombatTalent.ElementalBurst)
+        for (const name of hitFieldNames) {
+          const words = toTitleWords(toNameWords(name));
+          const property = page.properties.find(({ title }) => toTitleWords(title) === words);
+          if (property !== undefined) addRow(`hitFields.${name}`, property, page, true);
+        }
+    }
   return candidateMap;
 };

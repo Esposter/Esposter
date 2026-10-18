@@ -18,6 +18,7 @@ import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim
 import { readGcsimTagCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
+import { getKitHitFieldNames } from "#src/services/genshinAssets/kits/record/getKitHitFieldNames";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
 import { readKitTablesWithDonors } from "#src/services/genshinAssets/kits/tables/readKitTablesWithDonors";
@@ -97,7 +98,12 @@ export const readKitInputs = async ({
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
     const sourceCandidateMap = mergeKitSourceCandidates({
       gcsimCandidateMap,
-      wikiCandidateMap: getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
+      wikiCandidateMap: getWikiKitCandidates(
+        pages,
+        tables,
+        getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay),
+        getKitHitFieldNames(gcsimTableCandidateMap, overlay),
+      ),
       tableCandidateMap,
     });
     const stance = gcsimFolder === undefined ? undefined : findGcsimStanceNormalAttack(gcsimFolder);

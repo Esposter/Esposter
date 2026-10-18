@@ -182,4 +182,28 @@ describe(getWikiKitCandidates, () => {
     ).toStrictEqual([1]);
     expect(candidateMap.get("skillHolds.0.action.hits.0.poiseDamage")?.map(({ value }) => value)).toStrictEqual([20]);
   });
+  test("joins a hitFields entry to the skill's or burst's row of the same name, its words matching the row's title", () => {
+    expect.hasAssertions();
+
+    const jahoda: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [
+        { poise: 50, row: 1, title: "Meowball DMG" },
+        { poise: 80, row: 2, title: "Lunar Bloom" },
+      ],
+      revisionId: 1,
+      title: "Jahoda",
+    };
+    const candidateMap = getWikiKitCandidates([jahoda], { weaponType: WeaponType.Catalyst }, new Map(), [
+      "meowball",
+      "lunarBloom",
+      "frostflake",
+    ]);
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "hitFields.lunarBloom.poiseDamage": [80], "hitFields.meowball.poiseDamage": [50] });
+  });
 });
