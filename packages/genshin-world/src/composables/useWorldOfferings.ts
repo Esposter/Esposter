@@ -9,6 +9,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { getResultAsync } from "@esposter/shared";
@@ -61,14 +62,15 @@ export const useWorldOfferings = ({
         gainWorldAdventureExp(offer.adventureExp);
         placeWorldDrops(frostbearingTreePlace, offer.overflowItems);
         frostbearingTreeProgress.value = { heldCount: offer.progress.heldCount, level: offer.progress.level };
-        events.emit(
-          "achievementEvents",
-          Array.from({ length: offer.progress.level - previousLevel }, (_value, index) => ({
-            kind: AchievementEventKind.OfferingLevelReached,
-            quantity: 1,
-            targetId: String(previousLevel + index + 1),
-          })),
-        );
+        // The tree's level reached is one doing, its quantity the level, which a level trigger reads against its own
+        if (offer.progress.level > previousLevel)
+          events.emit("achievementEvents", [
+            {
+              kind: AchievementEventKind.OfferingLevelReached,
+              quantity: offer.progress.level,
+              targetId: String(FROSTBEARING_TREE_OFFERING_ID),
+            },
+          ]);
       },
       (error) => {
         console.error(error);

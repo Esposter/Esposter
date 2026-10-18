@@ -20,7 +20,12 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
   TRIGGER_FINISH_QUEST_AND: { countsQuantity: false, kind: AchievementEventKind.QuestFinished, targetSlot: 0 },
   TRIGGER_FINISH_QUEST_OR: { countsQuantity: false, kind: AchievementEventKind.QuestFinished, targetSlot: 0 },
   TRIGGER_OBTAIN_MATERIAL_NUM: { countsQuantity: true, kind: AchievementEventKind.MaterialObtained, targetSlot: 0 },
-  TRIGGER_OFFERING_LEVEL: { countsQuantity: false, kind: AchievementEventKind.OfferingLevelReached, targetSlot: 0 },
+  TRIGGER_OFFERING_LEVEL: {
+    countsQuantity: false,
+    kind: AchievementEventKind.OfferingLevelReached,
+    levelSlot: 1,
+    targetSlot: 0,
+  },
   TRIGGER_OPEN_WORLD_CHEST: { countsQuantity: false, kind: AchievementEventKind.ChestOpened, targetSlot: 0 },
   TRIGGER_UNLOCK_TRANS_POINT: { countsQuantity: false, kind: AchievementEventKind.TransPointUnlocked, targetSlot: 2 },
 };
