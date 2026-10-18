@@ -47,7 +47,7 @@ describe(createOdetteKitBehaviour, () => {
     burstCooldownSeconds: 15,
     chargedAttack: createActionRecord(),
     chargedAttackStamina: 20,
-    frames: { polestar: 360, polestarTick: 240, stellarVortex: 181 },
+    frames: { polestar: 420, polestarTick: 240, stellarVortex: 181 },
     normalAttacks: [createActionRecord()],
     plungeCollision: HIT_RECORD,
     plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
@@ -78,7 +78,7 @@ describe(createOdetteKitBehaviour, () => {
     return context.kitEffectState.effects;
   };
 
-  test("places a Polestar Field round the body where a Stellar-Conduct is triggered", () => {
+  test("a Stellar-Conduct sustains its Polestar Field for 7 seconds", () => {
     expect.hasAssertions();
 
     const effects = triggerReactions([{ element: Element.Cryo, reactionType: ReactionType.StellarConduct }]);
@@ -96,7 +96,7 @@ describe(createOdetteKitBehaviour, () => {
           : effect.kind,
       ),
     ).toStrictEqual([
-      { centre: { x: 3, z: 4 }, characterId: ODETTE_CHARACTER_ID, id: "polestar", radius: 15, secondsRemaining: 6 },
+      { centre: { x: 3, z: 4 }, characterId: ODETTE_CHARACTER_ID, id: "polestar", radius: 15, secondsRemaining: 7 },
     ]);
   });
 
@@ -118,7 +118,7 @@ describe(createOdetteKitBehaviour, () => {
 
     expect(
       context.kitEffectState.effects.map((effect) => (effect.kind === "field" ? effect.secondsRemaining : effect.kind)),
-    ).toStrictEqual([6]);
+    ).toStrictEqual([7]);
   });
 
   test("places a Stellar Vortex where a Stellar Swirl is triggered, and places nothing for any other reaction", () => {

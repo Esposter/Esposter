@@ -38,17 +38,17 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 
 ### Requirement: A Polestar Field on a Stellar-Conduct
 
-While Odette is deployed, a Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 6 seconds, and a standing field SHALL be refreshed rather than doubled.
+While Odette is deployed, a Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
 - **WHEN** a Stellar-Conduct is triggered while Odette is deployed and no Polestar Field stands
-- **THEN** a Polestar Field stands at the body for 6 seconds
+- **THEN** a Polestar Field stands at the body for 7 seconds
 
 #### Scenario: Stellar-Conduct refreshes a standing field
 
 - **WHEN** a Stellar-Conduct is triggered while a Polestar Field stands
-- **THEN** the field's time is set back to 6 seconds, and no second field stands
+- **THEN** the field's time is set back to 7 seconds, and no second field stands
 
 ### Requirement: A Stellar Vortex on a Stellar Swirl
 
