@@ -107,4 +107,19 @@ describe(createZibaiKitBehaviour, () => {
     playStride();
     expect(isShiftActive()).toBe(false);
   });
+
+  test("spirit steed's stride starts only with 70 radiance held", () => {
+    expect.hasAssertions();
+    const combatant = createZibaiCombatant();
+    const context = createKitTestContext(combatant);
+    const stride = () =>
+      findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID)?.combatant.kit.elementalSkill;
+
+    ZIBAI_KIT.elementalSkill.onStart?.(context);
+    ZIBAI_KIT.onStep?.(context, combatant, 6);
+    expect(stride()?.canStart?.(context)).toBe(false);
+
+    ZIBAI_KIT.onStep?.(context, combatant, 2);
+    expect(stride()?.canStart?.(context)).toBe(true);
+  });
 });
