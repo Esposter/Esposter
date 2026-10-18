@@ -9,7 +9,7 @@ The Paimon menu's shell, its pause of the world and its entries are built, and t
 Paimon floats beside the menu once an official model is held, and the profile card gains its fields as the systems behind them land.
 
 - Paimon appears to the right of the menu with her idle animations, drawn from an official model the reader holds, and the menu works whole without her.
-- Community and Feedback are drawn as disabled entries, and Training Guide is left out of the contents.
+- Community, Version Highlights, Feedback and Survey are drawn as disabled entries, and Training Guide is left out of the contents.
 - The profile card shows the signed-in account's name and avatar, or the default name Traveler when signed out.
 - The profile card gains Adventure Rank and World Level once the rank system lands, and its signature, namecard, birthday and UID each join when the system behind it lands.
 - The menu's side bar opens the Time, Settings and quit screens, which are their own proposals.

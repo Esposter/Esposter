@@ -10,4 +10,6 @@ x-touches:
     "packages/genshin-world/src/services/menu/**",
     "packages/genshin-world/src/components/World/Session/**",
     "packages/genshin-world/src/components/World/Windrise/**",
+    "packages/genshin-world/src/models/menu/**",
+    "packages/genshin-text/src/models/GameTextKey.ts",
   ]

@@ -37,7 +37,9 @@ export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
 export const PAIMON_MENU_LINKS: readonly { icon: MenuEntryIcon; labelKey: GameTextKey }[] = [
   { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
+  { icon: EntryIcon.VersionHighlights, labelKey: GameTextKey.VersionHighlights },
   { icon: EntryIcon.Feedback, labelKey: GameTextKey.Feedback },
+  { icon: EntryIcon.Survey, labelKey: GameTextKey.Survey },
 ];
 // The screens its side bar opens, in the game's order between its Back and its Quit Game
 export const PAIMON_MENU_SIDE_BAR: readonly { icon: MenuFrameIcon; screenKind: TitledScreenKind }[] = [

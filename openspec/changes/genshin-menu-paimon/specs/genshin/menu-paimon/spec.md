@@ -17,15 +17,21 @@ Paimon SHALL float to the right of the menu with her idle animations only when t
 - **THEN** the menu opens and works in full
 - **AND** Paimon is not drawn
 
-### Requirement: Community and Feedback are drawn disabled and Training Guide is left out
+### Requirement: The links out to web pages are drawn disabled and Training Guide is left out
 
-The Paimon menu SHALL draw Community and Feedback as disabled entries, and SHALL leave Training Guide out of its contents.
+The Paimon menu SHALL draw Community, Version Highlights, Feedback and Survey as disabled entries, and SHALL leave Training Guide out of its contents.
 
 #### Scenario: Community and Feedback show as disabled entries
 
 - **GIVEN** the reader opens the Paimon menu
 - **WHEN** the contents are drawn
 - **THEN** Community and Feedback are shown as disabled entries
+
+#### Scenario: Version Highlights and Survey show as disabled entries
+
+- **GIVEN** the reader opens the Paimon menu
+- **WHEN** the contents are drawn
+- **THEN** Version Highlights and Survey are shown as disabled entries
 
 #### Scenario: Training Guide is absent from the contents
 
