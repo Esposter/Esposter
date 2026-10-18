@@ -33,6 +33,7 @@ import { getAscensionMaterials } from "#src/services/character/getAscensionMater
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
 import { getTalentRows } from "#src/services/character/getTalentRows";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
@@ -262,9 +263,8 @@ const liftCharacter = () => {
 // Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
 // The table carries no cost for that phase yet
 const ascendRows = computed(() => {
-  const nextPhase =
-    character.value &&
-    statTables.characterDataMap.get(character.value.id)?.ascensionPhases[character.value.ascension + 1];
+  const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
+  const nextPhase = character.value && phases && getNextAscensionPhase(phases, character.value.ascension);
   if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return undefined;
   return [
     { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },
