@@ -17,7 +17,7 @@ const readBuffs = (effects: readonly KitEffect[]) =>
 describe(createDeathlyPactPassiveModule, () => {
   // Deathly Pact at its first rank: its CRIT DMG line is the table's. Each increase of the wielder's Bond of Life raises its
   // DMG by 16% for six seconds, up to three stacks
-  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0.2, 0.16, 6, 0, 0, 0, 0, 0]);
+  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0.2, 0.16, 6]);
   const wielder: Combatant = createWielderCombatant();
   const bondOfLifeIncreased = {
     bondOfLifeShare: 0.1,
