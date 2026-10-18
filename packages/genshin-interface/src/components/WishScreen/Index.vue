@@ -53,6 +53,8 @@ interface Props {
   // The Shop button's words
   shopLabel: string;
   title: string;
+  // The trial button's words, the name of the featured character the banner's trial is for, "undefined" on a banner with none
+  trialLabel?: string;
 }
 
 const bannerId = defineModel<string>("bannerId");
@@ -73,8 +75,9 @@ const {
   sets,
   shopLabel,
   title,
+  trialLabel,
 } = defineProps<Props>();
-const emit = defineEmits<{ buy: []; close: []; dismiss: []; wish: [count: number] }>();
+const emit = defineEmits<{ buy: []; close: []; dismiss: []; trial: []; wish: [count: number] }>();
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const isHistoryOpen = ref(false);
@@ -128,6 +131,9 @@ const bannerLabelText = computed(() => {
     </section>
     <div class="links">
       <GameButton class="link" :kind="GameButtonKind.Reply">{{ shopLabel }}</GameButton>
+      <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" @click="emit('trial')">{{
+        trialLabel
+      }}</GameButton>
       <GameButton class="link" :kind="GameButtonKind.Reply" @click="isDetailsOpen = true">{{
         detailsLabel
       }}</GameButton>
