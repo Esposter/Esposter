@@ -1,8 +1,8 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
+import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 
 export const MAVUIKA_CHARACTER_ID = 10_000_106;
 
@@ -28,7 +28,7 @@ export const createMavuikaKitBehaviour = (): KitBehaviour => ({
       const { activeCombatant, kitEffectState } = context;
       const { characterId, constellationCount } = activeCombatant;
       const maximum = constellationCount < CONSTELLATION_1 ? NIGHTSOUL_POINTS : NIGHTSOUL_POINTS_WITH_C1;
-      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
         generateKitNightsoulPoints(context, maximum, maximum);
       else
         enterKitNightsoulBlessing(kitEffectState, characterId, {

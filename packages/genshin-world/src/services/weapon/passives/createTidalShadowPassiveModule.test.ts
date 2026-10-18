@@ -28,6 +28,7 @@ const createHealthChanged = (characterId: number, healthShare: number): KitEvent
   characterId,
   healthShare,
   bondOfLifeShare: 0,
+  isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 });

@@ -10,10 +10,10 @@ import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
+import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
-import { isGiftBoxed } from "#src/services/mail/isGiftBoxed";
 import { MailExpiryGameTextKeyMap } from "#src/services/mail/MailExpiryGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { GameButton, GameButtonKind } from "genshin-interface";
@@ -69,7 +69,7 @@ const isConfirmingDeleteGift = ref(false);
 // The Mailbox tab lists the mails outside the Gift Mail Box, and the Gift Mail Box tab the mails inside it
 const isGiftBoxTab = ref(false);
 const visibleEntries = computed(() =>
-  sortedEntries.value.filter(({ mail, row }) => isGiftBoxed(mail, row, birthdayMailIds) === isGiftBoxTab.value),
+  sortedEntries.value.filter(({ mail, row }) => checkIsGiftBoxed(mail, row, birthdayMailIds) === isGiftBoxTab.value),
 );
 const selectedEntry = computed(
   () => visibleEntries.value.find(({ mail }) => mail.id === selectedMailId.value) ?? visibleEntries.value[0],
@@ -106,7 +106,7 @@ const getItemName = (itemId: number): string => {
 };
 // A mail in the Gift Mail Box is kept there and says so; any other mail shows its time left
 const getStatusText = ({ mail, row }: MailEntry): string => {
-  if (isGiftBoxed(mail, row, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
+  if (checkIsGiftBoxed(mail, row, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
   return fillGameTextValues(gameText[MailExpiryGameTextKeyMap[unit]], count);
 };
@@ -217,7 +217,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           {{ gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
         <GameButton
-          v-if="isGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
+          v-if="checkIsGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
           class="delete-gift"
           :kind="GameButtonKind.Pill"
           @click="isConfirmingDeleteGift = true"

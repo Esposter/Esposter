@@ -248,7 +248,7 @@ describe(stepKit, () => {
   test("starts a skill whose cooldown its kit waives while the cooldown runs", () => {
     expect.hasAssertions();
 
-    const { partyMember, step } = createFixture({ ...TRAVELER_KIT, isSkillCooldownWaived: () => true });
+    const { partyMember, step } = createFixture({ ...TRAVELER_KIT, checkIsSkillCooldownWaived: () => true });
     partyMember.skillCooldownSeconds = 5;
 
     expect(step({ isSkillPressed: true })).toBe(TRAVELER_KIT.elementalSkill);

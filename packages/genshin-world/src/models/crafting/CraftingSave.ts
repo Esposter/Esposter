@@ -8,7 +8,7 @@ import { z } from "zod";
 export const craftingSaveSchema = z.object({
   craftedCounts: z
     .record(numericSaveIdSchema, z.int().positive())
-    .refine((countMap) => Object.keys(countMap).length <= MAX_CRAFTING_RECIPE_COUNT, "Too many recipes"),
+    .refine((countMap) => Object.keys(countMap).length <= MAX_CRAFTING_RECIPE_COUNT, { error: "Too many recipes" }),
   learnedRecipeIds: createUniqueArraySchema(z.int().positive()).max(MAX_CRAFTING_RECIPE_COUNT),
 });
 

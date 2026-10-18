@@ -17,7 +17,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const TRIAL_WEAPON_LEVEL = 90;
 
 // The party member a trial fights with: its character at the trial's level, every combat talent at its template's talent
-// Level, the reliquaries its template names as the artifacts it wears, and the weapon its wiki build holds at level ninety.
+// level, the reliquaries its template names as the artifacts it wears, and the weapon its wiki build holds at level ninety.
 // None when no build is cited for the character, since a party member holds a weapon and there is none to give it
 export const createTrialCharacter = (
   trial: Trial,

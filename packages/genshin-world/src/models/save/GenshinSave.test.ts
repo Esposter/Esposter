@@ -87,6 +87,26 @@ describe("genshinSaveSchema", () => {
     const maxNumber = Number.MAX_SAFE_INTEGER;
     const epoch = Temporal.Instant.fromEpochMilliseconds(0);
     const maxInstant = epoch.add({ nanoseconds: 999_999_999 }).toString();
+    // A bag of artifacts at its cap, each at its longest, since an artifact is the longest entry the bag holds
+    const artifactItems = Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
+      artifact: {
+        experience: maxNumber,
+        isLocked: true,
+        level: maxNumber,
+        mainAffix: Attribute.StellarGlimmerReactionDamageBonus,
+        minorAffixes: Attributes.slice(0, MAX_MINOR_AFFIX_COUNT).map((attribute) => ({
+          attribute,
+          value: -Number.MAX_VALUE,
+        })),
+        rarity: maxNumber,
+        setId: maxNumber,
+        slot: ArtifactSlot.PlumeOfDeath,
+      },
+      id: maxNumber - index,
+      itemId: maxNumber - index,
+      kind: InventoryItemKind.Artifact,
+      quantity: 1,
+    }));
     const save = {
       achievements: Object.fromEntries(
         Array.from({ length: MAX_ACHIEVEMENT_COUNT }, (_value, index) => [
@@ -339,7 +359,10 @@ describe("genshinSaveSchema", () => {
       worldLevelAdjustment: { changedAt: maxInstant, isLowered: true },
     };
 
-    expect(genshinSaveSchema.safeParse(save).success).toBe(true);
+    expect([
+      genshinSaveSchema.safeParse(save).success,
+      genshinSaveSchema.safeParse({ ...save, inventory: { ...save.inventory, items: artifactItems } }).success,
+    ]).toStrictEqual([true, true]);
   });
 
   // A save holding more characters than the limit is refused, so none of them is read
@@ -381,7 +404,6 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
   // A save from before the mail list has no list, and is refused rather than read as an empty mailbox
   test("a save without its mails is refused", () => {
     expect.hasAssertions();
@@ -406,6 +428,7 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
+  // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
   test("a save without quick swap slots is refused", () => {
     expect.hasAssertions();
     const save = { ...EMPTY_GENSHIN_SAVE, inventory: { items: [], nextId: 0 } };

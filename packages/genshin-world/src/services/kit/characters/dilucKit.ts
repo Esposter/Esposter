@@ -155,7 +155,7 @@ const createNormalAttackStart =
   };
 
 // Constellation 6's bonus to a normal attack that is buffed, as its status runs for the attack
-const isConstellation6Buffed = (characterId: number, effects: readonly KitEffect[]): boolean =>
+const checkIsConstellation6Buffed = (characterId: number, effects: readonly KitEffect[]): boolean =>
   checkIsKitStatusActive(effects, characterId, CONSTELLATION_6_ATTACK_STATUS_ID);
 
 // Constellation 4's bonus, as the status a follow-up press leaves on Diluc runs, for his skill's strikes
@@ -252,7 +252,7 @@ export const createDilucKitBehaviour = ({
       activeCombatant.ascension >= DILUC_RELENTLESS_ASCENSION ? DILUC_RELENTLESS_STAMINA_MULTIPLIER : 1,
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
       activeCombatant.constellationCount >= CONSTELLATION_6 &&
-      isConstellation6Buffed(activeCombatant.characterId, kitEffectState.effects)
+      checkIsConstellation6Buffed(activeCombatant.characterId, kitEffectState.effects)
         ? CONSTELLATION_6_BONUS
         : 0,
     getStrikeDamageBonus: (strike, enemy, _party, effects = []) =>
@@ -263,7 +263,7 @@ export const createDilucKitBehaviour = ({
       getConstellation4DamageBonus(strike, effects) +
       (strike.combatant.constellationCount >= CONSTELLATION_6 &&
       strike.attackTag === AttackTag.NormalAttack &&
-      isConstellation6Buffed(strike.combatant.characterId, effects)
+      checkIsConstellation6Buffed(strike.combatant.characterId, effects)
         ? CONSTELLATION_6_BONUS
         : 0),
     // Constellation 6: a Searing Onslaught press does not interrupt the normal attack string, as gcsim's diluc Attack

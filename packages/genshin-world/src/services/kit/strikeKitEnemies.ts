@@ -10,7 +10,7 @@ import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { STELLAR_SWIRL_ANEMO_COEFFICIENT } from "#src/services/combat/damage/constants";
-import { hasEnemyWeakPoints } from "#src/services/enemy/hasEnemyWeakPoints";
+import { checkHasEnemyWeakPoints } from "#src/services/enemy/checkHasEnemyWeakPoints";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
@@ -91,7 +91,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         context.body.position,
       );
       // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
-      const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
+      const enemyHit = strike.isAimed && checkHasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
       // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
       const pricedStrike = { ...strike, combatant: pricedCombatant, hit: enemyHit };
       const deployedBonuses = getDeployedStrikeBonuses(

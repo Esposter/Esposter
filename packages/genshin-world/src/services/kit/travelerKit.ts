@@ -14,7 +14,7 @@ const CONSTELLATION_6_ANEMO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_6_SECONDS = 10;
 const CONSTELLATION_6_STATUS_ID = "traveler-constellation-6-anemo-resistance";
 
-const isAnemoTraveler = (combatant: Combatant, constellation: number): boolean =>
+const checkIsAnemoTraveler = (combatant: Combatant, constellation: number): boolean =>
   combatant.characterId === TRAVELER_CHARACTER_ID &&
   combatant.element === Element.Anemo &&
   combatant.constellationCount >= constellation;
@@ -33,7 +33,7 @@ export const createTravelerKitBehaviour = (): KitBehaviour => ({
     hits: [
       {
         enemyStatus: (combatant) =>
-          isAnemoTraveler(combatant, CONSTELLATION_6)
+          checkIsAnemoTraveler(combatant, CONSTELLATION_6)
             ? {
                 damageTakenBonus: 0,
                 id: CONSTELLATION_6_STATUS_ID,
@@ -45,7 +45,7 @@ export const createTravelerKitBehaviour = (): KitBehaviour => ({
     ],
   },
   getPassiveBonuses: (combatant) =>
-    isAnemoTraveler(combatant, CONSTELLATION_2)
+    checkIsAnemoTraveler(combatant, CONSTELLATION_2)
       ? [{ amount: CONSTELLATION_2_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge }]
       : [],
   skill: { hits: [{ takesWielderElement: true }] },

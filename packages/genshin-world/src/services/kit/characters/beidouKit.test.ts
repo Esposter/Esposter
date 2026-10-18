@@ -35,6 +35,7 @@ const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => (
   characterId,
   healthShare: -0.1,
   bondOfLifeShare: 0,
+  isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 });

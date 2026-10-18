@@ -12,6 +12,8 @@ export const MaterialTypeItemCategoryMap = {
   [MaterialType.Exchange]: ItemCategory.Material,
   [MaterialType.ExpFruit]: ItemCategory.CharacterDevelopmentItem,
   [MaterialType.FishBait]: ItemCategory.Material,
+  // The wiki files every fishing rod among the Gadgets
+  [MaterialType.FishRod]: ItemCategory.Gadget,
   [MaterialType.Flycloak]: ItemCategory.PreciousItem,
   [MaterialType.Food]: ItemCategory.Food,
   // A furniture formula is the blueprint of a furnishing, filed with the furnishings. The wiki gives the furnishing's

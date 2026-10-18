@@ -6,7 +6,10 @@ import { z } from "zod";
 export const numericSaveIdSchema = z
   .string()
   .max(MAX_SAVE_ID_LENGTH)
-  .refine((id) => {
-    const number = Number(id);
-    return Number.isSafeInteger(number) && number > 0 && String(number) === id;
-  }, "Not an id's own decimal");
+  .refine(
+    (id) => {
+      const number = Number(id);
+      return Number.isSafeInteger(number) && number > 0 && String(number) === id;
+    },
+    { error: "Not an id's own decimal" },
+  );

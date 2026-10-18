@@ -7,7 +7,9 @@ import { z } from "zod";
 export const offeringProgressSaveSchema = z.object({
   heldCounts: z
     .record(z.string().min(1).max(MAX_SAVE_ID_LENGTH), z.int().positive())
-    .refine((heldCounts) => Object.keys(heldCounts).length <= MAX_OFFERING_ITEM_KIND_COUNT, "Too many items"),
+    .refine((heldCounts) => Object.keys(heldCounts).length <= MAX_OFFERING_ITEM_KIND_COUNT, {
+      error: "Too many items",
+    }),
   level: z.int().nonnegative(),
 });
 

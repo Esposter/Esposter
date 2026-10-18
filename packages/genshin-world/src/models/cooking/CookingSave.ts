@@ -10,10 +10,12 @@ export const cookingSaveSchema = z.object({
   learnedRecipeIds: createUniqueArraySchema(z.int().positive()).max(MAX_COOKING_RECIPE_COUNT),
   processingJobs: z
     .record(numericSaveIdSchema, processingJobSaveSchema)
-    .refine((jobMap) => Object.keys(jobMap).length <= MAX_COOKING_RECIPE_COUNT, "Too many processings"),
+    .refine((jobMap) => Object.keys(jobMap).length <= MAX_COOKING_RECIPE_COUNT, { error: "Too many processings" }),
   proficiencies: z
     .record(numericSaveIdSchema, z.int().nonnegative())
-    .refine((proficiencyMap) => Object.keys(proficiencyMap).length <= MAX_COOKING_RECIPE_COUNT, "Too many recipes"),
+    .refine((proficiencyMap) => Object.keys(proficiencyMap).length <= MAX_COOKING_RECIPE_COUNT, {
+      error: "Too many recipes",
+    }),
 });
 
 export type CookingSave = z.infer<typeof cookingSaveSchema>;

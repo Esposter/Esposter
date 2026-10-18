@@ -19,9 +19,9 @@ export const rewardItemSchema = z
     maxCount: z.int().positive(),
     minCount: z.int().nonnegative(),
   })
-  .refine(({ maxCount, minCount }) => minCount <= maxCount, "Least count must not exceed most count")
+  .refine(({ maxCount, minCount }) => minCount <= maxCount, { error: "Least count must not exceed most count" })
   .refine(
     ({ averageCount, maxCount, minCount }) =>
       averageCount === undefined || (minCount <= averageCount && averageCount <= maxCount),
-    "Average count must lie between the least and most count",
+    { error: "Average count must lie between the least and most count" },
   ) satisfies z.ZodType<RewardItem>;

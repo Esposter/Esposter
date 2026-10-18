@@ -11,8 +11,8 @@ describe(deliverBirthdayMail, () => {
     .add({ hours: 12 })
     .toInstant();
   const BIRTHDAY_ROWS = [
-    { effectiveDate: "1970-01-01 08:00:00", mailId: 9 },
-    { effectiveDate: "1970-04-11 08:00:00", mailId: 35 },
+    { effectiveDate: Temporal.PlainDateTime.from("1970-01-01T08:00:00"), mailId: 9 },
+    { effectiveDate: Temporal.PlainDateTime.from("1970-04-11T08:00:00"), mailId: 35 },
   ];
 
   // The birthday mail in force on the birthday is delivered on it, the latest row taking effect by then

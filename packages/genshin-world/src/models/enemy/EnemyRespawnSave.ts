@@ -5,6 +5,8 @@ import { z } from "zod";
 // The server's clock. A boss's camp is not held, as its boss comes back on the next load
 export const enemyRespawnSaveSchema = z
   .record(z.string().min(1).max(MAX_SAVE_ID_LENGTH), z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH))
-  .refine((respawnMap) => Object.keys(respawnMap).length <= MAX_ENEMY_RESPAWN_COUNT, "Too many enemy respawns");
+  .refine((respawnMap) => Object.keys(respawnMap).length <= MAX_ENEMY_RESPAWN_COUNT, {
+    error: "Too many enemy respawns",
+  });
 
 export type EnemyRespawnSave = z.infer<typeof enemyRespawnSaveSchema>;

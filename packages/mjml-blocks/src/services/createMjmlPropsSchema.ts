@@ -19,7 +19,9 @@ export const createMjmlPropsSchema = <TContent>(
       shape.content = z.string();
       break;
     case MjmlContentKind.Raw:
-      shape.content = z.string().refine((html) => sanitizeHtml(html) === html, "holds HTML the sanitiser would change");
+      shape.content = z
+        .string()
+        .refine((html) => sanitizeHtml(html) === html, { error: "holds HTML the sanitiser would change" });
       break;
     case MjmlContentKind.RichText:
       shape.content = richText.schema;

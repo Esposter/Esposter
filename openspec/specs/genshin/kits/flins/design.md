@@ -23,10 +23,10 @@ Flins's kit is its record and one behaviour module, `createFlinsKitBehaviour`, o
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                      |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/flinsKit.ts` | `createFlinsKitBehaviour`, Flins's strikes, charged attack, provisional plunges, Manifest Flame's press and stance, and Cometh the Night's initial, middle and final hits |
-| `packages/genshin-world/src/services/kit/isAscendantGleam.ts`    | `isAscendantGleam`, the Moonsign check the middle hits and Zibai's fourth strike share                                                                                    |
+| File                                                               | Role                                                                                                                                                                      |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/flinsKit.ts`   | `createFlinsKitBehaviour`, Flins's strikes, charged attack, provisional plunges, Manifest Flame's press and stance, and Cometh the Night's initial, middle and final hits |
+| `packages/genshin-world/src/services/kit/checkIsAscendantGleam.ts` | `checkIsAscendantGleam`, the Moonsign check the middle hits and Zibai's fourth strike share                                                                               |
 
 ## Sources
 

@@ -3,11 +3,11 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 export const XILONEN_CHARACTER_ID = 10_000_103;
@@ -47,24 +47,27 @@ export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitB
     onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
-        if (event.previousCharacterId === characterId && hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+        if (
+          event.previousCharacterId === characterId &&
+          checkHasKitNightsoulBlessing(kitEffectState.effects, characterId)
+        )
           exitNightsoulBlessing(kitEffectState, characterId);
       } else if (
         event.kind === KitEventKind.NightsoulPointsConsumed &&
         event.characterId === characterId &&
-        !hasKitNightsoulBlessing(kitEffectState.effects, characterId)
+        !checkHasKitNightsoulBlessing(kitEffectState.effects, characterId)
       )
         removeBladeRollerStance(kitEffectState, characterId);
     },
     onSprint: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
-      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
         drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
     },
     skill: {
       onStart: ({ activeCombatant, kitEffectState }) => {
         const { characterId } = activeCombatant;
-        if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+        if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
           exitNightsoulBlessing(kitEffectState, characterId);
         else {
           enterKitNightsoulBlessing(kitEffectState, characterId, {

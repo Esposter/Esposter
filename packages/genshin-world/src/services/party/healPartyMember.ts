@@ -25,6 +25,7 @@ export const healPartyMember = (
     bondOfLifeShare,
     characterId,
     healthShare,
+    isFallRefused: false,
     overflowHealthShare: restoredHealthShare - healthShare,
     ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
   });

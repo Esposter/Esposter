@@ -10,9 +10,9 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
-const MIRRORED_NYMPH_ID = "mirroredNymph";
+const NYMPHS_DREAM_ID = "nymphsDream";
 // The attacks of the wearer's own that each keep a stack of their kind, which a later hit of the kind refreshes
-const MIRRORED_NYMPH_ATTACK_TAGS = [
+const NYMPHS_DREAM_ATTACK_TAGS = [
   AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
   AttackTag.PlungingAttack,
@@ -20,24 +20,25 @@ const MIRRORED_NYMPH_ATTACK_TAGS = [
   AttackTag.ElementalBurst,
 ];
 
-const getMirroredNymphStackId = (attackTag: AttackTag): string => `${MIRRORED_NYMPH_ID}${ID_SEPARATOR}${attackTag}`;
+const getNymphsDreamStackId = (attackTag: AttackTag): string => `${NYMPHS_DREAM_ID}${ID_SEPARATOR}${attackTag}`;
 
 // Counts the kinds of attack whose stack the wearer holds, each kind counting once however many hits it has landed
-const countMirroredNymphStacks = (effects: readonly KitEffect[], characterId: number): number =>
-  MIRRORED_NYMPH_ATTACK_TAGS.filter((attackTag) =>
-    checkIsKitStatusActive(effects, characterId, getMirroredNymphStackId(attackTag)),
+const countNymphsDreamStacks = (effects: readonly KitEffect[], characterId: number): number =>
+  NYMPHS_DREAM_ATTACK_TAGS.filter((attackTag) =>
+    checkIsKitStatusActive(effects, characterId, getNymphsDreamStackId(attackTag)),
   ).length;
 
-// Mirrored Nymph. Its four-piece bonus gives its wearer, while it stands on the field, a stack of the kind of attack for the first
-// Param's seconds on each hit of an enemy by its Normal, Charged or Plunging Attack, Elemental Skill or Elemental Burst. A later hit of
-// The same kind refreshes that stack, and the five kinds' stacks count separately. One, two and three or more stacks raise its ATK by
-// The second, third and fourth params, and its Hydro DMG by the fifth, sixth and seventh
-export const createMirroredNymphSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
+// Nymph's Dream. Its four-piece bonus gives its wearer, while it stands on the field, a stack of the kind of attack for
+// The first param's seconds on each hit of an enemy by its Normal, Charged or Plunging Attack, Elemental Skill or
+// Elemental Burst. A later hit of the same kind refreshes that stack, and the five kinds' stacks count separately. One,
+// Two and three or more stacks raise its ATK by the second, third and fourth params, and its Hydro DMG by the fifth,
+// Sixth and seventh
+export const createNymphsDreamSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(bonus.params, 0);
   return {
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => {
       const { characterId } = combatant;
-      const count = countMirroredNymphStacks(effects, characterId);
+      const count = countNymphsDreamStacks(effects, characterId);
       if (count === 0) return [];
       const tier = Math.min(count, 3) - 1;
       return [
@@ -52,12 +53,12 @@ export const createMirroredNymphSetModule = (bonus: ArtifactSetBonus): PassiveMo
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== characterId ||
         !event.attackTag ||
-        !MIRRORED_NYMPH_ATTACK_TAGS.includes(event.attackTag) ||
+        !NYMPHS_DREAM_ATTACK_TAGS.includes(event.attackTag) ||
         getActiveCharacterId(party) !== characterId
       )
         return;
       addKitStatus(kitEffectState, characterId, {
-        id: getMirroredNymphStackId(event.attackTag),
+        id: getNymphsDreamStackId(event.attackTag),
         secondsRemaining: seconds,
       });
     },

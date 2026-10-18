@@ -26,7 +26,7 @@ export const mjmlRootPropsSchema: z.ZodObject<
   styles: z
     .array(
       z.strictObject({
-        css: z.string().refine((css) => !css.includes("<"), "holds a < that could close its element"),
+        css: z.string().refine((css) => !css.includes("<"), { error: "holds a < that could close its element" }),
         inline: z.boolean(),
       }),
     )

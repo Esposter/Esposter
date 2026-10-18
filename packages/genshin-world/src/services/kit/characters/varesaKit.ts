@@ -3,10 +3,10 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 
 export const VARESA_CHARACTER_ID = 10_000_111;
 
@@ -22,7 +22,7 @@ const NIGHTSOUL_BLESSING_SECONDS = 15;
 // It, which her plunges and burst reach
 const enterNightsoulAtMaximum = (kitEffectState: KitEffectState, characterId: number): void => {
   if (
-    hasKitNightsoulBlessing(kitEffectState.effects, characterId) ||
+    checkHasKitNightsoulBlessing(kitEffectState.effects, characterId) ||
     countKitResource(kitEffectState.effects, characterId, NIGHTSOUL_POINTS_ID) !== NIGHTSOUL_MAXIMUM
   )
     return;
@@ -52,7 +52,7 @@ export const createVaresaKitBehaviour = (): KitBehaviour => ({
   burst: { onStart: fillNightsoulPoints },
   burstVariant: {
     checkIsActive: ({ activeCombatant, kitEffectState }) =>
-      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+      checkHasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
     onStart: fillNightsoulPoints,
   },
   plunges: {

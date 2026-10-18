@@ -15,8 +15,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
-import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
@@ -129,9 +129,9 @@ describe(createCitlaliKitBehaviour, () => {
     CITLALI_KIT.elementalSkill.onStart?.(context);
     expect(countKitResource(context.kitEffectState.effects, CITLALI_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(24);
     stepKitSeconds(context, 19.5);
-    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(true);
     stepKitSeconds(context, 0.6);
-    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(false);
   });
 
   test("the burst gains 24 Nightsoul points", () => {
@@ -191,7 +191,7 @@ describe(createCitlaliKitBehaviour, () => {
     expect(countPoints(context)).toBeCloseTo(64);
     stepFrames(context, 540);
     expect(countPoints(context)).toBe(0);
-    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, CITLALI_CHARACTER_ID)).toBe(true);
   });
 
   test("Itzpapa's Frostfall Storm strikes the enemies within 6 metres every 59 frames, the first 59 frames after Opal Fire takes effect", () => {

@@ -56,14 +56,14 @@ export const weaponDataSchema = z
   .refine(
     ({ passiveRankDescriptionTextIds, passiveRankParams }) =>
       passiveRankDescriptionTextIds.length === passiveRankParams.length,
-    "A passive names one description for each rank its numbers read",
+    { error: "A passive names one description for each rank its numbers read" },
   )
   .refine(
     ({ passiveRankAttributeLines, passiveRankParams }) => passiveRankAttributeLines.length === passiveRankParams.length,
-    "A passive gives its stats for each rank its numbers read",
+    { error: "A passive gives its stats for each rank its numbers read" },
   )
   .refine(
     ({ destroyReturnMaterial, destroyReturnMaterialCount, destroyRule }) =>
       destroyRule !== DestroyRule.ReturnMaterial || (destroyReturnMaterial > 0 && destroyReturnMaterialCount > 0),
-    "A weapon whose rule returns materials names no return",
+    { error: "A weapon whose rule returns materials names no return" },
   ) satisfies z.ZodType<WeaponData>;

@@ -16,7 +16,7 @@ While the state stands, a plunge plays a leap for the press count the state hold
 
 Constellation 4's heal reads the press count the leap's status holds, so the heal is one of 50%, 80% or 150% of Xianyun's ATK for one, two or three presses. It heals the active character, which is Xianyun, the one who makes the leap, and it has a five-second ICD. gcsim's C4 closure reads the press counter after the leap has reset it, so gcsim's heal indexes the first ratio's 0. That is not the game's text, and this kit reads the leap's own press count instead; the difference is named here.
 
-Constellation 6's burst gives eight presses that cost no cooldown for 16 seconds, as gcsim's `c6()` does. A press spends one through `consumeKitResource`, and its cooldown multiplier is zero while any remain. `isSkillCooldownWaived` lets such a press start while its cooldown runs, which the kit's readiness check reads before the cooldown. Constellation 6's CRIT DMG applies to the Driftcloud Wave's hit by the count the status holds, one to three presses at 15%, 35% and 70%, as gcsim's `c6mod` does with `skillCounter`.
+Constellation 6's burst gives eight presses that cost no cooldown for 16 seconds, as gcsim's `c6()` does. A press spends one through `consumeKitResource`, and its cooldown multiplier is zero while any remain. `checkIsSkillCooldownWaived` lets such a press start while its cooldown runs, which the kit's readiness check reads before the cooldown. Constellation 6's CRIT DMG applies to the Driftcloud Wave's hit by the count the status holds, one to three presses at 15%, 35% and 70%, as gcsim's `c6mod` does with `skillCounter`.
 
 ## Not built
 
@@ -39,7 +39,7 @@ From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 
 | `packages/genshin-world/src/services/kit/characters/xianyunKit.ts`            | `createXianyunKitBehaviour`, Xianyun's kit: Skyladder's presses, Driftcloud Wave, Constellations 1, 2, 4 and 6                                              |
 | `packages/genshin-world/src/services/kit/characters/xianyunSkyladder.test.ts` | The Skyladder count, the leap variants, the Constellation 4 heal and the Constellation 6 presses and CRIT DMG                                               |
 | `packages/genshin-world/src/services/kit/effects/consumeKitResource.ts`       | Spends an amount of a resource a character holds, for Constellation 6's presses                                                                             |
-| `packages/genshin-world/src/services/kit/startNextKitAction.ts`               | The skill's readiness, which `isSkillCooldownWaived` can waive                                                                                              |
+| `packages/genshin-world/src/services/kit/startNextKitAction.ts`               | The skill's readiness, which `checkIsSkillCooldownWaived` can waive                                                                                         |
 | `packages/genshin-world/src/data/kits/xianyun.json`                           | The overlay: the follow-up presses, the leaps and the chain window, cited to gcsim where the reader can evaluate the line, and `Unsourced` values elsewhere |
 
 ## Sources

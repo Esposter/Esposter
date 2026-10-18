@@ -37,6 +37,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burstVariant,
     chargedAttack,
     chargedAttackVariant,
+    checkIsSkillCooldownWaived,
     getChargedAttackStaminaMultiplier,
     getConversionBonuses,
     getNormalAttackExtraHit,
@@ -51,7 +52,6 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
     getStrikeDefenceIgnored,
-    isSkillCooldownWaived,
     jumpsSkillHoldToTop,
     keepsNormalAttackCombo,
     moonsignBenediction,
@@ -82,7 +82,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
-  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
+  if (checkIsSkillCooldownWaived) kit.checkIsSkillCooldownWaived = checkIsSkillCooldownWaived;
   if (jumpsSkillHoldToTop) kit.jumpsSkillHoldToTop = jumpsSkillHoldToTop;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;

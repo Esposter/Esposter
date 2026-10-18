@@ -76,7 +76,8 @@ const PERMUTATION_SECONDS = 20;
 const PERMUTATION_SOURCE = "ineffa-permutation";
 
 // Whether an enemy carries Ineffa's Punishment Edit mark
-const hasPunishmentEdit = (enemy: Enemy): boolean => enemy.statuses.some(({ id }) => id === PUNISHMENT_EDIT_STATUS_ID);
+const checkHasPunishmentEdit = (enemy: Enemy): boolean =>
+  enemy.statuses.some(({ id }) => id === PUNISHMENT_EDIT_STATUS_ID);
 
 // Takes the mark off an enemy and queues its Punishment Edit on it, and on the enemies its radius reaches about it
 const firePunishmentEdit = (context: KitContext, combatant: Combatant, enemy: Enemy, hit: KitHit): void => {
@@ -97,7 +98,7 @@ const markPunishmentEdit = (context: KitContext, combatant: Combatant, enemy: En
   });
   scheduleKitTask(context.kitEffectState, combatant.characterId, PUNISHMENT_EDIT_DELAY_SECONDS, (tickContext) => {
     for (const marked of tickContext.enemyMap.values())
-      if (hasPunishmentEdit(marked)) firePunishmentEdit(tickContext, combatant, marked, hit);
+      if (checkHasPunishmentEdit(marked)) firePunishmentEdit(tickContext, combatant, marked, hit);
   });
 };
 
@@ -246,11 +247,11 @@ export const createIneffaKitBehaviour = ({
       // Constellation 2 marks the first enemy the burst hits, and the mark's next hit, or 60 frames on, takes its Punishment
       // Edit. The mark is set after the hit's own event is read, so that hit does not take it
       if (event.kind === KitEventKind.EnemyHit && combatant.constellationCount >= CONSTELLATION_2)
-        if (hasPunishmentEdit(event.enemy)) firePunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
+        if (checkHasPunishmentEdit(event.enemy)) firePunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
         else if (
           event.striker.characterId === combatant.characterId &&
           event.attackTag === AttackTag.ElementalBurst &&
-          ![...context.enemyMap.values()].some((enemy) => hasPunishmentEdit(enemy))
+          ![...context.enemyMap.values()].some((enemy) => checkHasPunishmentEdit(enemy))
         )
           markPunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
       if (

@@ -35,6 +35,7 @@ describe(createAeonWavePassiveModule, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0.1,
+    isFallRefused: false,
     kind: KitEventKind.HealthChanged as const,
     overflowHealthShare: 0,
   };

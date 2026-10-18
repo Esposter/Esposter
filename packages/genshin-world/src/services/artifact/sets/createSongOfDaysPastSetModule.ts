@@ -25,7 +25,7 @@ const WAVES_ATTACK_TAGS: readonly AttackTag[] = [
   AttackTag.ElementalBurst,
 ];
 
-const isWavesAttackTag = (attackTag: AttackTag | undefined): boolean =>
+const checkIsWavesAttackTag = (attackTag: AttackTag | undefined): boolean =>
   attackTag !== undefined && WAVES_ATTACK_TAGS.includes(attackTag);
 
 // The Yearning is the team's one, opened by whichever wearer's heal came first, so it is found among the team's effects
@@ -57,7 +57,7 @@ export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveM
     if (
       charges === 0 ||
       strike.combatant.characterId !== getActiveCharacterId(party) ||
-      !isWavesAttackTag(strike.attackTag)
+      !checkIsWavesAttackTag(strike.attackTag)
     )
       return 0;
     return (findKitStatus(effects, starterCharacterId, SNAPSHOT_ID)?.stacks ?? 0) * damagePerRecord;
@@ -107,7 +107,7 @@ export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveM
       if (
         event.kind === KitEventKind.EnemyHit &&
         event.striker.characterId === getActiveCharacterId(party) &&
-        isWavesAttackTag(event.attackTag)
+        checkIsWavesAttackTag(event.attackTag)
       ) {
         const waves = findKitStatus(kitEffectState.effects, characterId, WAVES_ID);
         if (waves?.stacks) waves.stacks -= 1;

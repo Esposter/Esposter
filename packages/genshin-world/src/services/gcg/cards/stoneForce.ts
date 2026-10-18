@@ -11,7 +11,7 @@ const STONE_FORCE_BONUS = 1;
 // Stone Force, a status on the character it is attached to: its Physical DMG is converted to Geo DMG, and its first DMG of
 // Each round is one more. It is removed alongside the Stonehide its character holds, so it is taken off once none is left
 export const stoneForce: GcgCardModule = {
-  isSpent: (side, zoneCard) => {
+  checkIsSpent: (side, zoneCard) => {
     const owner = side.characters.find(({ statuses }) => statuses.includes(zoneCard));
     return !owner?.statuses.some(({ cardId }) => cardId === STONEHIDE_ID);
   },

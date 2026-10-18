@@ -4,7 +4,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { COMBAT_CLEAR_SECONDS, ENGAGED_ENEMY_STATES } from "#src/services/enemy/constants";
 
-const isAnyAggravated = (enemies: Iterable<Enemy>): boolean => {
+const checkIsAnyAggravated = (enemies: Iterable<Enemy>): boolean => {
   for (const { state } of enemies) if (ENGAGED_ENEMY_STATES.includes(state)) return true;
   return false;
 };
@@ -15,7 +15,7 @@ export const stepCombat = (
   enemies: Iterable<Enemy>,
   stepSeconds: number,
 ): CombatEvent | undefined => {
-  if (isAnyAggravated(enemies)) {
+  if (checkIsAnyAggravated(enemies)) {
     combat.clearSeconds = 0;
     if (combat.isInCombat) return undefined;
     combat.isInCombat = true;

@@ -10,8 +10,8 @@ export interface GcgSkillModule {
   // A passive hears its character take DMG and survive it, once the damage has landed, its skill named in the context
   afterDamageTaken?: (context: GcgEffectContext) => void;
   afterSkillUsed?: (context: GcgEffectContext) => void;
+  checkIsSwitchFast?: (context: GcgEffectContext) => boolean;
   getDamage?: (context: GcgEffectContext) => GcgDamage;
   getStandbyPiercing?: (context: GcgEffectContext) => number;
   getStartingStatuses?: () => GcgZoneCard[];
-  isSwitchFast?: (context: GcgEffectContext) => boolean;
 }

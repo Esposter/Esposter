@@ -75,7 +75,7 @@ const domeGeometry = new SphereGeometry(1, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2)
 const domeBounds = { bottom: 0, halfWidth: 1, height: 1 };
 let oakImpostor: Impostor | undefined;
 let treeGeometry: PlaneGeometry | undefined;
-const isTreePrefab = ({ name }: WindrisePlant): boolean => name.includes(TREE_PREFAB_NAME_PART);
+const checkIsTreePrefab = ({ name }: WindrisePlant): boolean => name.includes(TREE_PREFAB_NAME_PART);
 // Each place of a kind, composed where the game places it, the kind's prefabs' places flattened into one list
 const placeMatrices = (prefabs: WindrisePlant[], factor: Vector3): Matrix4[] =>
   prefabs.flatMap(({ places }) =>
@@ -109,7 +109,7 @@ const addPlantBatch = (
 };
 
 const domeMatrices = placeMatrices(
-  plants.filter((prefab) => !isTreePrefab(prefab)),
+  plants.filter((prefab) => !checkIsTreePrefab(prefab)),
   domeFactor,
 );
 if (domeMatrices.length > 0)
@@ -145,7 +145,7 @@ const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
   const cardGeometry = new PlaneGeometry(width, height).translate(0, bottom + height / 2, 0);
   treeGeometry = cardGeometry;
   const treeMatrices = placeMatrices(
-    plants.filter((prefab) => isTreePrefab(prefab)),
+    plants.filter((prefab) => checkIsTreePrefab(prefab)),
     new Vector3(1, 1, 1),
   );
   if (treeMatrices.length > 0)

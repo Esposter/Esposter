@@ -129,22 +129,25 @@ const getLongestMember = (members: readonly string[]): string =>
 const LONGEST_ATTRIBUTE = getLongestMember(Object.values(Attribute));
 const LONGEST_ARTIFACT_SLOT = getLongestMember(Object.values(ArtifactSlot));
 const LONGEST_BANNER_KIND = getLongestMember(Object.values(BannerKind));
+// An artifact at its longest: every number at its largest, every enum at its longest member, and each minor affix's value
+// At the longest a finite number is written
+const LONGEST_ARTIFACT = {
+  experience: MAX_SAVE_NUMBER,
+  isLocked: true,
+  level: MAX_SAVE_NUMBER,
+  mainAffix: LONGEST_ATTRIBUTE,
+  minorAffixes: Array.from({ length: MAX_MINOR_AFFIX_COUNT }, () => ({
+    attribute: LONGEST_ATTRIBUTE,
+    value: -Number.MAX_VALUE,
+  })),
+  rarity: MAX_SAVE_NUMBER,
+  setId: MAX_SAVE_NUMBER,
+  slot: LONGEST_ARTIFACT_SLOT,
+};
 // A character at its longest: every number at its largest, every enum at its longest member, an attribute's value at the
 // Longest a finite number is written, and every list at its cap
 const LONGEST_CHARACTER_SAVE = {
-  artifacts: Array.from({ length: Object.values(ArtifactSlot).length }, () => ({
-    experience: MAX_SAVE_NUMBER,
-    isLocked: true,
-    level: MAX_SAVE_NUMBER,
-    mainAffix: LONGEST_ATTRIBUTE,
-    minorAffixes: Array.from({ length: MAX_MINOR_AFFIX_COUNT }, () => ({
-      attribute: LONGEST_ATTRIBUTE,
-      value: -Number.MAX_VALUE,
-    })),
-    rarity: MAX_SAVE_NUMBER,
-    setId: MAX_SAVE_NUMBER,
-    slot: LONGEST_ARTIFACT_SLOT,
-  })),
+  artifacts: Array.from({ length: Object.values(ArtifactSlot).length }, () => LONGEST_ARTIFACT),
   ascension: MAX_SAVE_NUMBER,
   constellationCount: CONSTELLATION_COUNT,
   copyCount: MAX_SAVE_NUMBER,
@@ -169,9 +172,16 @@ const LONGEST_HOME_PLACEMENT = {
   rotation: -Number.MAX_VALUE,
   sceneId: MAX_SAVE_NUMBER,
 };
-// A bag entry at its longest: a weapon's, which holds its state beside its level, or a stack's at its largest count, the
-// Longer of the two
+// A bag entry at its longest: an artifact's, which holds the artifact as rolled beside its id and item id, a weapon's,
+// Which holds its state beside its level, or a stack's at its largest count, the longest of the three
 const LONGEST_INVENTORY_ITEM_LENGTH = Math.max(
+  getListEntryLength({
+    artifact: LONGEST_ARTIFACT,
+    id: MAX_SAVE_NUMBER,
+    itemId: MAX_SAVE_NUMBER,
+    kind: InventoryItemKind.Artifact,
+    quantity: 1,
+  }),
   getListEntryLength({
     id: MAX_SAVE_NUMBER,
     itemId: MAX_SAVE_NUMBER,

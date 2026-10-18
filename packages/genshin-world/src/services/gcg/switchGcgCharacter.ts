@@ -43,10 +43,10 @@ export const switchGcgCharacter = (
     active.character.skills.some(
       ({ effect, kind }) =>
         kind === GcgSkillKind.Passive &&
-        GcgEffectNameSkillModuleMap.get(effect)?.isSwitchFast?.({ duel, sideIndex }) === true,
+        GcgEffectNameSkillModuleMap.get(effect)?.checkIsSwitchFast?.({ duel, sideIndex }) === true,
     ) ||
     listGcgFieldCards(side, undefined).some(
-      (zoneCard) => GcgCardIdModuleMap.get(zoneCard.cardId)?.isSwitchFast?.({ duel, sideIndex }) === true,
+      (zoneCard) => GcgCardIdModuleMap.get(zoneCard.cardId)?.checkIsSwitchFast?.({ duel, sideIndex }) === true,
     );
   switchGcgActiveCharacter(duel, sideIndex, characterIndex);
   if (!isFast) passGcgTurn(duel, sideIndex);

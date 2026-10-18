@@ -10,6 +10,6 @@ export const questProgressSaveSchema = z
       stepIndex: z.int().nonnegative(),
     }),
   )
-  .refine((progressMap) => Object.keys(progressMap).length <= MAX_QUEST_COUNT, "Too many quests");
+  .refine((progressMap) => Object.keys(progressMap).length <= MAX_QUEST_COUNT, { error: "Too many quests" });
 
 export type QuestProgressSave = z.infer<typeof questProgressSaveSchema>;

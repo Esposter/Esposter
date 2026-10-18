@@ -19,7 +19,7 @@ export const statueProgressSaveSchema = z.object({
   foundOculusIds: createUniqueArraySchema(z.string().min(1).max(MAX_SAVE_ID_LENGTH)).max(MAX_FOUND_OCULUS_COUNT),
   regions: z
     .record(z.string().min(1).max(MAX_SAVE_ID_LENGTH), statueRegionProgressSaveSchema)
-    .refine((regionMap) => Object.keys(regionMap).length <= MAX_STATUE_REGION_COUNT, "Too many regions"),
+    .refine((regionMap) => Object.keys(regionMap).length <= MAX_STATUE_REGION_COUNT, { error: "Too many regions" }),
 });
 
 export type StatueProgressSave = z.infer<typeof statueProgressSaveSchema>;

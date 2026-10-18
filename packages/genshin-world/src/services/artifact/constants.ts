@@ -71,8 +71,8 @@ export const OCEAN_HUED_CLAM_ARTIFACT_SET_ID = 15_022;
 export const VERMILLION_HEREAFTER_ARTIFACT_SET_ID = 15_023;
 // Echoes of an Offering's id in the set table
 export const ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID = 15_024;
-// Mirrored Nymph's id in the set table
-export const MIRRORED_NYMPH_ARTIFACT_SET_ID = 15_029;
+// Nymph's Dream's id in the set table
+export const NYMPHS_DREAM_ARTIFACT_SET_ID = 15_029;
 // Long Night's Oath's id in the set table
 export const LONG_NIGHTS_OATH_ARTIFACT_SET_ID = 15_039;
 // Gilded Dreams's id in the set table

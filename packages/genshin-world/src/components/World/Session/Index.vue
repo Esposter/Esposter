@@ -145,6 +145,7 @@ import { computeProfileNamecardItemIds } from "#src/services/profile/computeProf
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
@@ -1690,7 +1691,11 @@ defineExpose({ jumpTo, readCameraPosition });
           // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing
           for (const attack of transitionAttacks)
             for (const enemy of kitContext.enemyMap.values())
-              startBossMove(enemy, BossMovesMap[enemy.enemyKindId] ?? [], attack);
+              startBossMove(
+                enemy,
+                checkIsEnemyKindId(enemy.enemyKindId) ? (BossMovesMap[enemy.enemyKindId] ?? []) : [],
+                attack,
+              );
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)

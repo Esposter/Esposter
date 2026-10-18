@@ -8,7 +8,7 @@ import { z } from "zod";
 export const archiveSaveSchema = z.object({
   kills: z
     .record(z.string().min(1).max(MAX_SAVE_ID_LENGTH), z.int().positive())
-    .refine((killMap) => Object.keys(killMap).length <= MAX_ARCHIVE_KILL_COUNT, "Too many Living Beings"),
+    .refine((killMap) => Object.keys(killMap).length <= MAX_ARCHIVE_KILL_COUNT, { error: "Too many Living Beings" }),
   progress: z.record(z.enum(ArchiveSection), createUniqueArraySchema(z.int().positive()).max(MAX_ARCHIVE_ENTRY_COUNT)),
 });
 
