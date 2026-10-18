@@ -63,6 +63,8 @@ export const SCHOLAR_ARTIFACT_SET_ID = 10_012;
 export const TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID = 15_017;
 // Bloodstained Chivalry's id in the set table
 export const BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID = 15_008;
+// Shimenawa's Reminiscence's id in the set table
+export const SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID = 15_019;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
