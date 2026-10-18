@@ -13,6 +13,7 @@ describe(computeQuestStepTargets, () => {
     id: "quest",
     kind: QuestKind.World,
     offerTalkIds: [],
+    parentQuestIds: [],
     rewards: [],
     steps: [
       { id: "first", objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetId: "9" }], textId: "first" },

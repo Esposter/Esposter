@@ -18,6 +18,7 @@ import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readParentQuestIds } from "#src/services/genshinText/readParentQuestIds";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
 import { readTalk } from "#src/services/genshinText/readTalk";
@@ -98,6 +99,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     );
     notes.push(...stepNotes);
     const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;
+    const parentQuestIds = readParentQuestIds(questBinary, mainQuest.id, subQuestMap).map(String);
     const talkIds = new Set([
       ...offerTalkIds.map(Number),
       ...steps.flatMap(({ objectives }) =>
@@ -109,12 +111,19 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       id: questId,
       kind: questKind,
       offerTalkIds,
+      parentQuestIds,
       rewards,
       steps,
       talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkTables)),
       titleTextId: String(mainQuest.titleTextMapHash),
     });
   });
+  const carriedQuestIds = new Set<string>(QuestIds);
+  const parentQuestIds = quests.flatMap((quest) => quest.parentQuestIds);
+  const uncarriedParentQuestIds = parentQuestIds.filter((parentQuestId) => !carriedQuestIds.has(parentQuestId));
+  notes.push(
+    `${quests.filter((quest) => quest.parentQuestIds.length > 0).length} quests wait on ${parentQuestIds.length} parent quests, and ${uncarriedParentQuestIds.length} of those name a quest the world does not carry, so those quests stay unstarted`,
+  );
   const chapters = buildQuestChapters();
   const textIds = new Set([
     ...quests.flatMap(({ descriptionTextId, steps, talks, titleTextId }) => [

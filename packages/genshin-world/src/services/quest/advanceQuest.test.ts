@@ -12,6 +12,7 @@ describe(advanceQuest, () => {
     id: "id",
     kind: QuestKind.World,
     offerTalkIds: [],
+    parentQuestIds: [],
     rewards: [],
     steps: [
       {
