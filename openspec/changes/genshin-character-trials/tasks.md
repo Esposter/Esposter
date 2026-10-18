@@ -2,12 +2,12 @@
 
 ## 1. Trial party
 
-- [ ] 1.1 Take a trial's talent level and artifacts from the highest template at or below its level. Verify: tests named after 'A trial takes its talent level and artifacts from the highest template at or below its level'.
-- [ ] 1.2 Build a trial's party member at its level with its talent level and artifacts, and no weapon until the trial weapon is mapped. Verify: tests named after 'A trial party member is at the trial's level with its artifacts'.
+- [x] 1.1 Pick a trial's template as the highest one at or below its level. Verify: findTrialTemplate.test.ts, 'a trial takes its talent level and artifacts from the highest template at or below its level' and 'a trial below every template has none'.
+- [ ] 1.2 Build a trial's party member at its level with its template's talent level and artifacts, and no weapon until the trial weapon is mapped. Verify: tests named after 'A trial party member is at the trial's level with its artifacts'.
 
 ## 2. Banners
 
-- [ ] 2.1 Match a banner's featured five-star to the trial of its character. Verify: tests named after 'A banner offers the trial of its featured character' and 'A banner with no trial offers no trial button'.
+- [x] 2.1 Match a banner's featured five-star to the trial of its character. Verify: findBannerTrial.test.ts, 'a banner offers the trial of its featured character' and 'a banner with no trial offers none'.
 - [ ] 2.2 Show the trial button on a matched banner, and open the trial's domain from it. Verify: the Wish screen's browser test, run by the main session.
 
 ## 3. Fight and reward
