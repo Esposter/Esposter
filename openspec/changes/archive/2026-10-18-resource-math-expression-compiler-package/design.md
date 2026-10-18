@@ -4,7 +4,7 @@ A sheet's math column holds a formula such as `col0 * (1 - col1)`, with each `co
 
 ## Why not keep the engine
 
-mathjs is on the [dependency admission](../../specs/architecture/dependency-admission/design.md) stop list as an engine, and that verdict holds for the engine's product: units, matrices, complex numbers, big numbers, fractions and symbolic algebra. The column uses none of it. It evaluates a formula over numbers, and any value that is not a finite number becomes an empty cell. A recursive descent parser over mathjs's numeric syntax, with a table of its numeric functions, is static code with nothing in it to maintain against a moving platform. The engine it replaces is one of the heaviest packages the browser loads, because the column's schema is shared with the client and imports the parser. Loading it later was the other way to pay less, and it lost: the sheet editor would still fetch the whole engine on its first math column, to use its arithmetic.
+mathjs is on the [dependency admission](../../../specs/architecture/dependency-admission/design.md) stop list as an engine, and that verdict holds for the engine's product: units, matrices, complex numbers, big numbers, fractions and symbolic algebra. The column uses none of it. It evaluates a formula over numbers, and any value that is not a finite number becomes an empty cell. A recursive descent parser over mathjs's numeric syntax, with a table of its numeric functions, is static code with nothing in it to maintain against a moving platform. The engine it replaces is one of the heaviest packages the browser loads, because the column's schema is shared with the client and imports the parser. Loading it later was the other way to pay less, and it lost: the sheet editor would still fetch the whole engine on its first math column, to use its arithmetic.
 
 ## A package of its own
 
@@ -107,7 +107,7 @@ Two other shapes lost. A parse cache keyed by the formula's text would stop the 
 
 ## Notes
 
-- **The value model is numbers alone, on purpose, and a second consumer gets a compiler of its own.** A survey runner on the editor core ([deferred](../../deferred/resource/survey-on-editor-core/design.md)) would need SurveyJS's condition language: strings, booleans and arrays, `{name}` references bound to answers, `=` as equality, and list operators such as `contains`. That is a different grammar over a different value model, so it would be its own parser and compiler, reusing this one's numeric function table and its error wording. Widening this language to it would put a type check back into every operator of every sheet cell, the per-row dispatch the compiler exists to remove.
+- **The value model is numbers alone, on purpose, and a second consumer gets a compiler of its own.** A survey runner on the editor core ([deferred](../../../deferred/resource/survey-on-editor-core/design.md)) would need SurveyJS's condition language: strings, booleans and arrays, `{name}` references bound to answers, `=` as equality, and list operators such as `contains`. That is a different grammar over a different value model, so it would be its own parser and compiler, reusing this one's numeric function table and its error wording. Widening this language to it would put a type check back into every operator of every sheet cell, the per-row dispatch the compiler exists to remove.
 
 ## Upstream
 
