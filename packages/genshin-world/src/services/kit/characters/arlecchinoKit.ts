@@ -11,8 +11,12 @@ export const ARLECCHINO_CHARACTER_ID = 10_000_096;
 
 // Arlecchino's behaviour: none of her own, since her six strikes, charged attack, plunges, All Is Ash's Spike and Cleave
 // And Balemoon Rising are her record's alone. The Bond of Life's Pyro variant of each strike, Blood-Debt Directive, the
-// Skill's cooldown reset by the burst and her constellations are not built. Her Ascension 1 passive waits on the HP-debt
-// Hook, and her Ascension 4 passive's RES, which gcsim v2.47.2 does not model, is not built
+// Skill's cooldown reset by the burst is not built. Her Ascension 1 passive waits on the HP-debt hook, which its
+// Blood-Debt Directives read, and her Ascension 4 passive's RES, which gcsim v2.47.2 does not model, is not built
+// Constellation 1 needs the Masque of the Red Death or a Blood-Debt Directive's absorption, not recorded by the kit
+// Constellation 2 needs a Blood-Debt Directive's absorption, which the kit does not record
+// Constellation 4 needs a Blood-Debt Directive's absorption, which the kit does not record
+// Constellation 6 needs Bond of Life's percentage, which the kit does not hold
 export const createArlecchinoKitBehaviour = (): KitBehaviour => ({
   getPassiveBonuses: () => [{ amount: PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }],
 });
