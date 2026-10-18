@@ -68,6 +68,7 @@ const gcsim: GcsimCharacter = {
   folder: "iansan",
   holdCooldowns: [],
   queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+  talentArrayMap: new Map(),
   talentFile: "iansan.go",
   talentParameterMap: new Map([
     ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
