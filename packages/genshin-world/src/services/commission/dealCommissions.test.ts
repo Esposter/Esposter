@@ -20,7 +20,7 @@ const commissionOf = (id: number, centerPosition: string): Commission => ({
   preferredRegion: "mondstadt",
   questId: "",
   rewardTier: 2,
-  titleTextId: 1,
+  nameTextId: "1",
 });
 
 describe(dealCommissions, () => {
