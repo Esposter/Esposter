@@ -8,7 +8,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TALENT_START_LEVELS } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -55,6 +57,11 @@ const createCitlaliCombatantAt = (ascension: number, elementalMastery = 0): Comb
 });
 
 const CITLALI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CITLALI_CHARACTER_ID);
+// Citlali with her skill at level 15, whose Opal Shield reads the proud group's higher share and flat health
+const CITLALI_SKILL_LEVEL_15_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CITLALI_CHARACTER_ID, {
+  ...TALENT_START_LEVELS,
+  [CombatTalent.ElementalSkill]: 15,
+});
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ENEMY_HEALTH = 1e9;
 // A frame of the world's seconds, the step the team's effects run on at sixty frames a second
@@ -331,5 +338,18 @@ describe(createCitlaliKitBehaviour, () => {
     expect(context.kitEffectState.effects.some((effect) => effect.kind === "shield")).toBe(true);
     stepKitSeconds(context, toKitSeconds(60));
     expect(context.kitEffectState.effects.some((effect) => effect.kind === "shield")).toBe(false);
+  });
+
+  test("the Opal Shield at skill level 15 grows its Elemental Mastery share to 13.68 and its flat health to 4380, from 5.76 and 1386.7 at level 1", () => {
+    expect.hasAssertions();
+    const shieldHealth = (combatant: Combatant) => {
+      const context = createKitTestContext(combatant);
+      CITLALI_SKILL_LEVEL_15_KIT.elementalSkill.onStart?.(context);
+      stepFrames(context, 37);
+      return context.kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield")?.health;
+    };
+    // Without Elemental Mastery the shield is its flat health alone, and with 1000 it adds the share times the mastery
+    expect(shieldHealth(createCitlaliCombatantAt(0, 0))).toBeCloseTo(4380.0005);
+    expect(shieldHealth(createCitlaliCombatantAt(0, 1000))).toBeCloseTo(13.68 * 1000 + 4380.0005);
   });
 });
