@@ -45,6 +45,10 @@ const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, at
 // Marks the first five enemies it strikes with Snappy Silhouette, each tick of which is a hit on that enemy alone. Still
 // Photo casts Kamera's strikes, heals the whole party as its hit lands, and each Kamera tick heals the character on the
 // Field within the circle it was cast at
+// Constellation 1 needs a heal every two seconds for six seconds on the healed character, which no status carries
+// Constellation 2 needs Framing's Monsieur Verite hits counted per enemy, which the hold does not build
+// Constellation 4 needs the hold's Focused Impression mark, which is not built, for Still Photo's hits to read
+// Constellation 6 needs the hold's Focused Impression mark, which is not built, and the active character's hits on it
 export const createCharlotteKitBehaviour = ({
   kit,
   readHit,
