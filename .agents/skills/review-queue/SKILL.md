@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, every change committed on `ai/queue` itself in the main checkout (no branch of its own), and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, every change committed on `ai/queue` itself in the main checkout (no branch of its own), and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
 ---
 
 # Review Queue
@@ -59,7 +59,7 @@ A rebase conflict stops the loop on the commit it stopped on, and the agent that
 
 A rebase conflict is always one of the agent's own commits meeting what `ai/queue` gained since: another agent's commit or Renovate's. The agent that made the commit settles it, since it knows its change. The rules are in `references/pull-conflicts.md`: keep both sides merged by hand, never take one side whole, then `git rebase --continue` and push.
 
-## CI on the queue and on main
+## CI on the queue
 
 Whoever pushed a red typecheck or lint fixes it after the verify request (`AGENTS.md`, step 6): reproduce it with that one check and push the fix behind it. The review never waits on CI, and `main` is never repaired in place (`openspec/specs/infra/review/design.md`, "CI on the queue").
 

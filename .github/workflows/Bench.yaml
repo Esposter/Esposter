@@ -4,8 +4,9 @@ name: 🏎️ Bench
 
 on:
   push:
-    branches:
-      - "**"
+    # `main` only takes commits `ai/queue` already runs (monorepo-tooling.md → ### What a CI proposal has to beat)
+    branches-ignore:
+      - main
 
 permissions:
   contents: read
