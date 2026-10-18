@@ -7,12 +7,18 @@ The [quests](../../specs/genshin/quests/design.md) page holds the quest model, i
 - **A go-to's place is its own location guide.** A go-to step's guide names where to go. In the dump's quest file (`BinOutput/Quest/<id>.json`, field names obfuscated), a sub-quest's guide of type `QUEST_GUIDE_LOCATION` carries a dummy point name as its parameter, such as `Q351ClimbEnd` for Wanderer's Trail's first step (quest 351). The client's `scene3_dummy_points.lua`, decoded by `pnpm -C scripts genshin:assets scene-scripts`, places that point, and it held all four such names checked on 2026-10-12. A `QUEST_GUIDE_NPC` guide places the step at that NPC. The go-to's radius is an estimate, marked provisional.
 - **A go-to's place is placed in region data.** A region's data places each go-to the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 - **A go-to is reached on stepping in.** The character's ground point is read as it moves, and each go-to place it steps into raises its trigger's go-to event once. Standing within a radius raises nothing, so a step held in a radius raises no second event, and a place reached before the quest starts raises none for it.
-- **A series' later quest waits on the one before it.** `startQuests` takes the series' order from the chapter table's quests, so a quest whose predecessor is not carried is never offered, since it could not finish. The world hands no series yet, so the order holds for no quest until the chapters are read (section 2.1, not yet built): `useWorldQuests` calls `startQuests` with no chapters, so 2.1 wires the chapter table into that call as well as into the screen.
+- **A series' later quest waits on the one before it.** `startQuests` takes the series' order from the chapter table's quests, so a quest whose predecessor is not carried is never offered, since it could not finish. The chapter table now hands the carried series its order (section 2.1), so the order holds for the carried quests.
 
 ## What is left
 
 1. **The go-to places.** Each carried go-to's guide is read from its quest file: a dummy point is placed from the client's dummy points, and an NPC from the residents' places. Its place is written into its region's data with its provisional radius, reaching it being the go-to event.
 2. **The world quest series.** A carried world quest's series is the quest screen's `QuestChapter`, which the screen lists the quest under once the world hands it the series. The chapter table (`ChapterExcelConfigData`, in the dump at the install's build) names each series by the main quest's `chapterId`: its title, its region by `cityId`, and its first quest. Its words are already in the community dump's English text maps for 399 of its 430 titles and 332 of its numbers (`chapterNumTextMapHash`), so a series' journal waits on nothing, and one with no words shows empty, as a dialog line does. The Seventh Samurai, the one world quest carried, belongs to none, so this step carries one series whole: the first whose first quest a placed resident offers, found by the check The Seventh Samurai was picked by ([quests](../../specs/genshin/quests/design.md)). A series' quests unlock one after another, so `startQuests` gains that order, offering each once the one before it is finished.
+
+- **The carried series is chapter 2029.** Each of the 336 chapters with a main quest was checked by its first quest's offer talk against the talks the placed residents begin. Only chapter 2029 (Calculated Gambit, Liyue) matched: quest 11018's offer talk 1101801 is begun by NPC 2029, placed in `liyue.json`. The Seventh Samurai's offer talk matched no placed resident's talk, so its series belongs to none.
+- **A series' journal is its title's words.** The dump's chapter table names no journal text of its own, so the journal line reads the title's text. A series with no words shows its journal empty, and the screen's chapter line leaves out a missing number. The journal's own English text is still to be checked against the English still.
+- **A series' rewards are its last quest's.** The series' reward list is the items its last quest's reward row gives, each with the rarity its material row names. The dump does not split the series' rewards across its quests, so the last quest's row is the one read.
+- **A talk-to objective whose talk holds no lines is left out and noted.** Quest 11019's talk-to step names talk 1101955, a scripted performance (`QuestDialogue/LQ/Yelan1_11019/Q1101955`) with no dialog rows in the dump. The step is left out and noted, as a shown step that asks nothing of the Traveler is, and the talk offers no quest.
+
 3. **The clues.** The quests' objectives' places are what [Elemental Sight](../genshin-elemental-sight/design.md) draws its quest trails to, and what [companionship](../genshin-companionship/design.md)'s story waits name, once item 1 places them.
 
 The commissions are dealt by [commissions](../../specs/genshin/commissions/design.md), and their wiring is that proposal's. The finished quests the world level reads are [Adventure Rank](../genshin-adventure-rank/design.md)'s.
@@ -26,12 +32,14 @@ These need the English PC client at 1080 high, published screenshots and recordi
 
 ## Key files
 
-| File                                                            | Role after the change                                                |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Session/Index.vue` | Starts the quests, hands each doing to them and reports the finishes |
-| `packages/genshin-world/src/models/world/RegionData.ts`         | Gains the go-to places the carried quests name                       |
-| `packages/genshin-world/src/models/quest/QuestId.ts`            | Grows by a line for each quest carried                               |
-| `packages/genshin-world/src/services/quest/QuestLoaderMap.ts`   | Gains a line for each quest carried                                  |
+| File                                                             | Role after the change                                                     |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/World/Session/Index.vue`  | Starts the quests, hands each doing to them and reports the finishes      |
+| `packages/genshin-world/src/models/world/RegionData.ts`          | Gains the go-to places the carried quests name                            |
+| `packages/genshin-world/src/models/quest/QuestId.ts`             | Grows by a line for each quest carried                                    |
+| `packages/genshin-world/src/services/quest/QuestLoaderMap.ts`    | Gains a line for each quest carried                                       |
+| `packages/genshin-world/src/services/quest/readQuestChapters.ts` | Reads the chapters the dump builds, for the screen and the starts         |
+| `scripts/src/services/genshinText/buildQuestChapters.ts`         | Builds the carried series from the chapter, city, quest and reward tables |
 
 ## Sources
 

@@ -3,6 +3,7 @@ import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest } from "genshin-world";
 
+import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import {
   GIVING_TABLE_NAME,
@@ -71,7 +72,12 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       notes: stepNotes,
       offerTalkIds: readOfferTalkIds,
       steps,
-    } = readQuestSteps(questBinary, Number(questId), (hash) => englishTextMap.has(String(hash)));
+    } = readQuestSteps(
+      questBinary,
+      Number(questId),
+      (hash) => englishTextMap.has(String(hash)),
+      (talkId) => readTalk(Number(talkId), talkTables).lines.length > 0,
+    );
     notes.push(...stepNotes);
     const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;
     const talkIds = new Set([
@@ -90,24 +96,27 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       titleTextId: String(mainQuest.titleTextMapHash),
     });
   });
-  const textIds = new Set(
-    quests.flatMap(({ descriptionTextId, steps, talks, titleTextId }) => [
+  const chapters = buildQuestChapters();
+  const textIds = new Set([
+    ...quests.flatMap(({ descriptionTextId, steps, talks, titleTextId }) => [
       descriptionTextId,
       titleTextId,
       ...steps.map(({ textId }) => textId),
       ...talks.flatMap((talk) => getTalkTextIds(talk)),
     ]),
-  );
+    ...chapters.flatMap(({ numberTextId, regionTextId, titleTextId }) => [numberTextId, regionTextId, titleTextId]),
+  ]);
   textIds.delete("");
-  const { notes: textNotes, objects: textObjects } = buildTextChunks(GameDataset.QuestText, [...textIds].toSorted());
+  const { notes: textNotes, objects: textObjects } = buildTextChunks(GameDataset.QuestText, [...textIds]);
   notes.push(
     ...textNotes,
-    `${quests.length} quests, and ${textIds.size} of their words, written in ${GameLanguages.length} languages`,
+    `${quests.length} quests in ${chapters.length} series, and ${textIds.size} of their words, written in ${GameLanguages.length} languages`,
   );
   return {
     notes,
     objects: {
       ...Object.fromEntries(quests.map((quest) => [`${GameDataset.Quests}/${quest.id}`, quest])),
+      [`${GameDataset.Quests}/chapters`]: chapters,
       ...textObjects,
     },
   };

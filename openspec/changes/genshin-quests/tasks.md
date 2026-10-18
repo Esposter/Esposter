@@ -5,7 +5,7 @@
 
 ## 2. World quest series
 
-- [ ] 2.1 Add the chapter table to the dump tables, and list the series whose first quest a placed resident offers under its title and number. Verify: a test named after the scenario 'A chapter lists its title and number', written first and seen failing.
+- [x] 2.1 Add the chapter table to the dump tables, and list the series whose first quest a placed resident offers under its title and number. Verify: a test named after the scenario 'A chapter lists its title and number', written first and seen failing.
 - [ ] 2.2 Show an empty journal for a series with no words. Verify: a test named after the scenario 'A chapter with no words shows an empty journal'.
 - [x] 2.3 Unlock a series' quests one after another. Verify: tests named after the scenarios 'The next quest is offered once the one before is finished' and 'A later quest is not offered early'.
 

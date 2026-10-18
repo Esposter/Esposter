@@ -16,6 +16,7 @@ export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
   checkIsText: (hash: number) => boolean,
+  checkIsPlayableTalk: (talkId: string) => boolean = () => true,
 ): { notes: string[]; offerTalkIds: string[]; steps: QuestStep[] } => {
   const subQuests = Object.values(questBinary).find(
     (field): field is Record<string, unknown>[] =>
@@ -50,16 +51,22 @@ export const readQuestSteps = (
     orderKey ? Number(firstSubQuest[orderKey]) - Number(secondSubQuest[orderKey]) : 0,
   );
   const [firstSubQuest] = sortedSubQuests;
+  const notes: string[] = [];
+  // A talk the dump holds no lines for is a scripted performance, which the Traveler takes no part in, so it is left out
+  const checkTalkIsPlayable = (talkId: string): boolean => {
+    if (checkIsPlayableTalk(talkId)) return true;
+    notes.push(`${questId}'s talk ${talkId} holds no lines in the dump, a scripted performance, so it is left out`);
+    return false;
+  };
   const offerTalkIds =
     firstSubQuest && readTextHash(firstSubQuest) === undefined
       ? readFinishConditions(firstSubQuest).flatMap(({ parameters, type }) => {
           const questContentObjective = QuestContentObjectiveMap[type];
-          return questContentObjective?.kind === QuestObjectiveKind.TalkTo
-            ? [String(parameters[questContentObjective.targetIndex] ?? "")]
-            : [];
+          if (questContentObjective?.kind !== QuestObjectiveKind.TalkTo) return [];
+          const talkId = String(parameters[questContentObjective.targetIndex] ?? "");
+          return checkTalkIsPlayable(talkId) ? [talkId] : [];
         })
       : [];
-  const notes: string[] = [];
   const steps = sortedSubQuests.flatMap((subQuest) => {
     const numbers = Object.values(subQuest).filter((value) => typeof value === "number");
     const id = numbers.find((value) => Math.floor(value / 100) === questId);
@@ -69,14 +76,10 @@ export const readQuestSteps = (
       const questContentObjective = QuestContentObjectiveMap[type];
       if (!questContentObjective) return [];
       const { kind, targetIndex } = questContentObjective;
+      const targetId = String(parameters[targetIndex] ?? "");
+      if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
       const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat].includes(kind);
-      return [
-        {
-          count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1,
-          kind,
-          targetId: String(parameters[targetIndex] ?? ""),
-        },
-      ];
+      return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetId }];
     });
     if (objectives.length === 0) {
       notes.push(`${questId}'s step ${id} asks nothing of the Traveler its conditions name`);

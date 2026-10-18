@@ -1,5 +1,6 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestChapter } from "#src/models/quest/QuestChapter";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
@@ -11,6 +12,7 @@ import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
+import { readQuestChapters } from "#src/services/quest/readQuestChapters";
 import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
 import { getResultAsync } from "@esposter/shared";
@@ -31,6 +33,7 @@ export const useWorldQuests = ({
   savedQuestProgressMap: ReadonlyMap<string, QuestProgress>;
 }) => {
   const quests = shallowRef<Quest[]>([]);
+  const questChapters = shallowRef<QuestChapter[]>([]);
   const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(savedQuestProgressMap);
   const questsInProgress = computed(() =>
     quests.value.filter((quest) => {
@@ -65,10 +68,11 @@ export const useWorldQuests = ({
       : "",
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readQuests(gameDataBaseUrl)).match(
-    (newQuests) => {
+  getResultAsync(() => Promise.all([readQuests(gameDataBaseUrl), readQuestChapters(gameDataBaseUrl)])).match(
+    ([newQuests, newQuestChapters]) => {
       quests.value = newQuests;
-      questProgressMap.value = startQuests(newQuests, questProgressMap.value);
+      questChapters.value = newQuestChapters;
+      questProgressMap.value = startQuests(newQuests, questProgressMap.value, undefined, newQuestChapters);
     },
     (error) => {
       console.error(error);
@@ -95,7 +99,7 @@ export const useWorldQuests = ({
       if (checkIsQuestFinished(quest, nextProgress) && !checkIsQuestFinished(quest, progress))
         events.emit("finishQuest", quest, progress, nextProgress);
     }
-    questProgressMap.value = startQuests(quests.value, nextProgressMap, questEvent);
+    questProgressMap.value = startQuests(quests.value, nextProgressMap, questEvent, questChapters.value);
     events.emit("achievementEvents", achievementEvents);
     if (achievementEvents.some(({ kind }) => kind === AchievementEventKind.ParentQuestFinished))
       events.emit("parentQuestFinish");
@@ -103,6 +107,7 @@ export const useWorldQuests = ({
   events.on("questEvent", doQuestEvent);
   return {
     finishedMainQuestIds,
+    questChapters,
     questProgressMap,
     quests,
     questsInProgress,

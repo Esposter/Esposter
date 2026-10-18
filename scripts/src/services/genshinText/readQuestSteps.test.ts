@@ -77,6 +77,21 @@ describe(readQuestSteps, () => {
     });
   });
 
+  test("leaves out a talk-to objective whose talk the dump holds no lines for, noting it", () => {
+    expect.hasAssertions();
+
+    const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] }] }] };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText, () => false)).toStrictEqual({
+      notes: [
+        "1's talk 0 holds no lines in the dump, a scripted performance, so it is left out",
+        "1's step 100 asks nothing of the Traveler its conditions name",
+      ],
+      offerTalkIds: [],
+      steps: [],
+    });
+  });
+
   test("notes a shown step whose conditions ask nothing of the Traveler", () => {
     expect.hasAssertions();
 

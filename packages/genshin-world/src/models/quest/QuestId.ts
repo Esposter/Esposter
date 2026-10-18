@@ -3,6 +3,9 @@
 // Run of it
 export enum QuestId {
   BirdsEyeView = "352",
+  CandidatureAnalysis = "11019",
+  ForegoneConclusion = "11026",
+  SevenStarSelection = "11018",
   TheSeventhSamurai = "72154",
   WanderersTrail = "351",
   ReputationRequest7070001 = "7070001",
@@ -38,10 +41,14 @@ export const ReputationRequestQuestIds: readonly QuestId[] = [
 
 // The carried quests in the order the world reads them. The prologue begins the game, so its first quests come first, in
 // The order the Archon quests run, which the enum's members, sorted by name, do not keep, then the world quests a
-// Talk offers, then the Reputation requests the keeper offers
+// Talk offers, the series the world carries whole, each quest in the order its series runs, then the Reputation
+// Requests the keeper offers
 export const QuestIds: readonly QuestId[] = [
   QuestId.WanderersTrail,
   QuestId.BirdsEyeView,
   QuestId.TheSeventhSamurai,
+  QuestId.SevenStarSelection,
+  QuestId.CandidatureAnalysis,
+  QuestId.ForegoneConclusion,
   ...ReputationRequestQuestIds,
 ];
