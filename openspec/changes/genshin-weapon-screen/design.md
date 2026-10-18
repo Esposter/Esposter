@@ -10,7 +10,11 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 - **Refine is not offered where it cannot apply.** One- and two-star weapons and a weapon at rank five show no Refine; the service keeps the same limits as its own refusal.
 - **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen shows them once they land. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
 - **The words are the game's.** Enhance, Ascend and Refine take their labels from the game text by their text ids, never written into the component.
-- **Measured look.** The frame is measured from the game's own screen like the character screen's, and its look is judged against the weapon-levelling clip held by the weapon enhancement change. Until a measure is taken, its look is provisional.
+- **Measured look.** The frame is measured from the English PC client's weapon-levelling clip `jXrYcFHiVnI` (Enhance at 2 seconds, the level cap at 53 seconds, Refine at 92 seconds). The sizes are read by eye off the frame, so the placement is provisional until the parity compare runs.
+- **The EXP rules are the wiki's.** Ore EXP (400, 2,000 and 10,000), 10 EXP per Mora and the 80% returned from a fodder are read from the wiki's Weapon EXP page (`api.php?action=parse&page=Weapon_EXP&prop=wikitext`). Its fodder base EXP by star (600, 1,200, 1,800, 50,000 and 300,000) differs from the published `baseExp` the model reads; the model keeps the table's value, and the difference is open.
+- **Provisional: an ore the bag cannot take is dropped.** An Enhance returns the EXP past the cap as ores, and `addInventoryItem` reports what does not fit; the screen does not yet show that overflow.
+- **Provisional: Refine spends the refinement material.** A copy raising the rank waits on the bag's weapon entries holding a refinement, so until then Refine is offered only for the material.
+- **Provisional: refusals are logged, with no Mora preview.** A refused action goes to `console.error` and changes nothing. The Mora an Enhance would cost is not previewed yet, an open follow-up.
 
 ## How it works
 
@@ -52,4 +56,4 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 
 ## Reference
 
-The screen's reference is the weapon-levelling clip held by the [weapon enhancement change](../genshin-weapon-enhancement/design.md), the Weapons tab on the English PC client, which this screen is compared against.
+The screen's reference is the English PC client's weapon-levelling clip `jXrYcFHiVnI` ("Ver7.1 Event Weapon Silver Light Upgrading Lv1 - 90", 115 seconds, 1920 by 864 pixels). The clip and its frames live outside the repository in `~/Esposter/genshin-parity/captures/` and `~/Esposter/genshin-parity/references/weapon-screen/`, and none is committed. The measured frames are 2 seconds (the Enhance tab at level one), 53 seconds (the level cap, "Max level reached") and 92 seconds (the Refine tab). The Ascend tab appears around 52 to 56 seconds and is not yet measured at full resolution.
