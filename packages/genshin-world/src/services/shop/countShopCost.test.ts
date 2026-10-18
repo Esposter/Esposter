@@ -3,11 +3,11 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
-import { countShopPrice } from "#src/services/shop/countShopPrice";
+import { countShopCost } from "#src/services/shop/countShopCost";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-describe(countShopPrice, () => {
+describe(countShopCost, () => {
   const FISH_ITEM_ID = 9001;
   const FISH_HELD = 3;
   const fishDefinition: ItemDefinition = {
@@ -25,23 +25,23 @@ describe(countShopPrice, () => {
     quickSwapItemIds: [],
   };
 
-  test("counts a currency price from the wallet", () => {
+  test("counts a currency cost from the wallet", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: MORA_HELD };
-    expect(countShopPrice(inventoryWithFish, wallet, MORA_ITEM_ID)).toBe(MORA_HELD);
+    expect(countShopCost(inventoryWithFish, wallet, MORA_ITEM_ID)).toBe(MORA_HELD);
   });
 
-  test("counts an item price from the bag, whatever the wallet holds", () => {
+  test("counts an item cost from the bag, whatever the wallet holds", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: MORA_HELD };
-    expect(countShopPrice(inventoryWithFish, wallet, FISH_ITEM_ID)).toBe(FISH_HELD);
+    expect(countShopCost(inventoryWithFish, wallet, FISH_ITEM_ID)).toBe(FISH_HELD);
   });
 
-  test("counts zero for an item price the bag does not hold", () => {
+  test("counts zero for an item cost the bag does not hold", () => {
     expect.hasAssertions();
 
-    expect(countShopPrice(EMPTY_INVENTORY, EMPTY_WALLET, FISH_ITEM_ID)).toBe(0);
+    expect(countShopCost(EMPTY_INVENTORY, EMPTY_WALLET, FISH_ITEM_ID)).toBe(0);
   });
 });
