@@ -17,6 +17,9 @@ export interface KitAction {
   // Picks up
   decideLength?: { atSeconds: number; decide: (context: KitContext) => number };
   seconds: number;
+  // The seconds of its charge a charge skip takes off its start, if it has a charge to skip: the action starts that far in,
+  // So its hitmarks and its end come that much sooner
+  chargeSeconds?: number;
   // The stamina the action drains each second it plays, if it drains any
   staminaPerSecond?: number;
   targetingArea: AttackArea;

@@ -112,6 +112,9 @@ export interface Kit {
   // Constellation's exception to the actions that break it
   keepsNormalAttackCombo?: (context: KitContext, action: KitAction) => boolean;
   lowPlunge: KitAction;
+  // The plunges a character's skill state turns its plunge into while each one's check holds, the first holding one playing
+  // In place of the standard plunge when the body lands, as Xianyun's Driftcloud Wave does at each Skyladder press
+  plungeVariants?: KitVariant[];
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
   moonsignBenediction?: KitMoonsignBenediction;
   normalAttacks: KitAction[];

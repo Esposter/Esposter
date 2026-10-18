@@ -10,8 +10,9 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEulaKitBehaviour, EULA_CHARACTER_ID } from "#src/services/kit/characters/eulaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -117,6 +118,32 @@ describe(createEulaKitBehaviour, () => {
     if (explosion?.kind !== "summon") throw new Error("the swap casts no explosion");
     expect(explosion.hits[0]?.hitmarkSeconds).toBeCloseTo(35 / 60);
   });
+
+  test.each([
+    [6, 0.49, 7],
+    [6, 0.5, 6],
+    [5, 0.49, 1],
+  ])(
+    "at constellation %d, a roll of %d leaves the Lightfall Sword with %d stacks after one gain",
+    (constellationCount, roll, stacks) => {
+      expect.hasAssertions();
+      const combatant = createEulaCombatant(constellationCount);
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(combatant, { kitEffectState, random: () => roll });
+      EULA_KIT.elementalBurst.onStart?.(context);
+      stepKitSeconds(context, 2);
+      const press = EULA_KIT.elementalSkill.hits[0];
+      if (!press?.onStrike) throw new Error("Icetide Vortex's press has no Lightfall Sword stack on hit");
+
+      press.onStrike(
+        context,
+        { body: context.body, combatant, hit: press },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
+
+      expect(countKitResource(kitEffectState.effects, EULA_CHARACTER_ID, "eula-lightfall-stacks")).toBe(stacks);
+    },
+  );
 
   test("the Ascension 1 passive, Roiling Rime, takes effect at its ascension phase", () => {
     expect.hasAssertions();

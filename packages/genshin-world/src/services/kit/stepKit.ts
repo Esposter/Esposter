@@ -81,7 +81,10 @@ export const stepKit = (
 
   if (wasPlunging && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
     const drop = kitState.plungeStartHeight - height;
-    return startKitAction(kitState, drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge, landedHits);
+    // The first plunge variant whose check holds on the landing plays in place of the standard plunge
+    const plungeVariant = kit.plungeVariants?.find((variant) => variant.checkIsActive(context));
+    const standardPlunge = drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge;
+    return startKitAction(kitState, plungeVariant?.action ?? standardPlunge, landedHits);
   }
 
   let isStrikeEnded = false;
