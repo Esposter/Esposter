@@ -10,6 +10,7 @@ import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
+import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
@@ -33,6 +34,8 @@ export const genshinSaveSchema = z
     inventory: inventorySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
+    // The Seelies settled in their courts and the puzzles solved, each by its id
+    puzzles: puzzleProgressSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     // The statues' progress in each region, and the Oculi found

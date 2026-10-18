@@ -19,6 +19,8 @@ import {
   MAX_OPENED_CHEST_COUNT,
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
+  MAX_SETTLED_SEELIE_COUNT,
+  MAX_SOLVED_PUZZLE_COUNT,
   MAX_STATUE_REGION_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
@@ -121,6 +123,14 @@ describe("genshinSaveSchema", () => {
       openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
+      puzzles: {
+        settledSeelieIds: Array.from({ length: MAX_SETTLED_SEELIE_COUNT }, (_value, index) =>
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+        ),
+        solvedPuzzleIds: Array.from({ length: MAX_SOLVED_PUZZLE_COUNT }, (_value, index) =>
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+        ),
+      },
       quests: Object.fromEntries(
         Array.from({ length: MAX_QUEST_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -176,6 +186,20 @@ describe("genshinSaveSchema", () => {
     const save = {
       ...EMPTY_GENSHIN_SAVE,
       characters: Array.from({ length: MAX_CHARACTER_COUNT + 1 }, (_value, index) => ({ ...CHARACTER, id: index + 1 })),
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
+  // A save holding more settled Seelies than the limit is refused, as every id slice is bounded
+  test("a save past the settled Seelie limit is refused", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      puzzles: {
+        ...EMPTY_GENSHIN_SAVE.puzzles,
+        settledSeelieIds: Array.from({ length: MAX_SETTLED_SEELIE_COUNT + 1 }, (_value, index) => String(index)),
+      },
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);

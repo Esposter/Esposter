@@ -12,12 +12,12 @@ import type { WishPity } from "#src/models/wish/WishPity";
 import type { BannerKind } from "genshin-interface/save";
 
 // The systems a save holds as the world reads them: the bag, the wallet, the ids of the chests opened, each carried quest's
-// Progress by its id, the ids of the landmarks resonated with, each achievement's progress by its id, the Adventure EXP, Mondstadt's Reputation, each
-// Character's Companionship EXP by its id, the characters held with each one's copy count by its id, the day's
-// Commissions with the moment they were dealt, each kind of wish's Counters, the bench's learned recipes and each recipe's
-// Crafted count by its id, the Frostbearing Tree's offering Progress, each region's Statues of The Seven progress by the
-// Region's id, the ids of the Oculi found, the World Level adjustment and the name chosen for The Traveler. The save's
-// Slices convert to and from these
+// Progress by its id, the ids of the landmarks resonated with, each achievement's progress by its id, the Adventure EXP,
+// Mondstadt's Reputation, each Character's Companionship EXP by its id, the characters held with each one's copy count by
+// Its id, the day's Commissions with the moment they were dealt, each kind of wish's Counters, the bench's learned recipes
+// And each recipe's Crafted count by its id, the Frostbearing Tree's offering Progress, each region's Statues of The Seven
+// Progress by the Region's id, the ids of the Oculi found, the ids of the Seelies settled and the puzzles solved, the World
+// Level adjustment and the name chosen for The Traveler. The save's Slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -34,6 +34,8 @@ export interface GenshinSaveState {
   quests: ReadonlyMap<string, QuestProgress>;
   regionStatueProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   reputation: ReputationProgress;
+  settledSeelieIds: ReadonlySet<string>;
+  solvedPuzzleIds: ReadonlySet<string>;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;

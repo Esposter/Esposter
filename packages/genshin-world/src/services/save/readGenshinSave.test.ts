@@ -37,6 +37,9 @@ describe(readGenshinSave, () => {
   const STATUE_REGION_ID = "1";
   const STATUE_REGION_PROGRESS = { heldCount: 1, level: 2 };
   const FOUND_OCULUS_ID = "2";
+  // A Seelie settled in its court and a puzzle solved, each by its id
+  const SETTLED_SEELIE_ID = "seelie-1";
+  const SOLVED_PUZZLE_ID = "puzzle-1";
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const FORGED_WEAPON_ID = 13_401;
   const FORGED_NAME_TEXT_ID = "1";
@@ -151,6 +154,7 @@ describe(readGenshinSave, () => {
     },
     offerings: { frostbearingTree: FROSTBEARING_TREE_PROGRESS },
     openedChests: [CHEST_ID],
+    puzzles: { settledSeelieIds: [SETTLED_SEELIE_ID], solvedPuzzleIds: [SOLVED_PUZZLE_ID] },
     quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 1 } },
     reputation: REPUTATION,
     statues: { foundOculusIds: [FOUND_OCULUS_ID], regions: { [STATUE_REGION_ID]: STATUE_REGION_PROGRESS } },
