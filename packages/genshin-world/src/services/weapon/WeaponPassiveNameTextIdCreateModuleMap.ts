@@ -105,6 +105,7 @@ import { createUnbendingPassiveModule } from "#src/services/weapon/passives/crea
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
+import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
@@ -428,4 +429,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3882258923": createLegacyOfLangGanPassiveModule,
   // Kagura Dance of the Sacred Sakura (Kagura's Verity)
   "3901432203": createKaguraDanceOfTheSacredSakuraPassiveModule,
+  // Whitehill's Bestowal (Azurelight)
+  "1741516147": createWhitehillsBestowalPassiveModule,
 };
