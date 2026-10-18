@@ -30,44 +30,47 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                    | Role                                                                                                 |
-| :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/time/constants.ts`                                 | The server's zone, the 04:00 hour, the Monday weekday, the first of the month and the days in a week |
-| `packages/genshin-world/src/services/time/computeGameDay.ts`                            | The game day a moment belongs to, the date after four hours are taken off in UTC+8                   |
-| `packages/genshin-world/src/services/time/computeLastDailyReset.ts`                     | The last 04:00 at or before a moment                                                                 |
-| `packages/genshin-world/src/services/time/computeNextDailyReset.ts`                     | The 04:00 a day after the last daily reset                                                           |
-| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`                    | The Monday 04:00 at or before a moment                                                               |
-| `packages/genshin-world/src/services/time/computeNextWeeklyReset.ts`                    | The Monday 04:00 a week after the last weekly reset                                                  |
-| `packages/genshin-world/src/services/time/computeLastMonthlyReset.ts`                   | The first of the month's 04:00 at or before a moment                                                 |
-| `packages/genshin-world/src/services/time/computeNextMonthlyReset.ts`                   | The first of the next month's 04:00                                                                  |
-| `packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`                    | The last refresh of a shop's kind, read from the reset module                                        |
-| `packages/genshin-world/src/services/shop/computeNextShopRefreshTime.ts`                | The next refresh of a shop's kind, read from the reset module                                        |
-| `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`                   | The bargains' month, the game day's month                                                            |
-| `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | The Primogem refill's game day                                                                       |
-| `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`            | The forge cap, counted over the game day                                                             |
-| `packages/genshin-world/src/services/investigation/countInvestigationsToday.ts`         | The investigations made since the last daily reset                                                   |
-| `packages/genshin-world/src/services/commission/checkIsCommissionDayCurrent.ts`         | Whether the kept day is still current against the last daily reset                                   |
-| `packages/genshin-world/src/services/commission/computeCommissionDay.ts`                | The day's four, dealt again when the kept day is no longer current                                   |
-| `packages/genshin-world/src/services/leyLine/checkIsOutcropDayCurrent.ts`               | Whether an outcrop's day is still current                                                            |
-| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`           | A mined outcrop stands until the next 04:00 reset after its mining                                   |
-| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                  | An elite camp's member returns at the next daily reset                                               |
-| `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`                  | A normal boss's respawn instant, five seconds after its claim                                        |
-| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossClaimable.ts`              | Whether a weekly boss is claimable, counting the claims since the last weekly reset                  |
-| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims made since the last weekly reset                                                          |
-| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | The reputation weekly limit, counted from the last weekly reset                                      |
-| `packages/genshin-world/src/services/spiralAbyss/findAbyssPeriodAt.ts`                  | The Moon Spire period that began latest, read in the server's zone                                   |
-| `packages/genshin-world/src/services/spiralAbyss/pickAbyssBenedictionList.ts`           | The Moon Spire blessing list's day, counted from the game epoch on the server's clock                |
-| `packages/genshin-world/src/services/shared/findLatestBegun.ts`                         | The latest season begun before a moment, read in the server's zone                                   |
-| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`              | The gathering midnight, read in the server's zone                                                    |
-| `packages/genshin-world/src/composables/useWorldFishing.ts`                             | The fishing day's hours, read in the server's zone                                                   |
-| `packages/genshin-world/src/composables/useWorldCommissions.ts`                         | The commissions' moment, from the world clock                                                        |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`                         | The enemies' moment, compared against the reset from the module                                      |
-| `packages/genshin-world/src/models/bosses/TrounceBlossom.ts`                            | The claim's instant as a `Temporal.Instant`                                                          |
+| File                                                                                    | Role                                                                                                       |
+| :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/time/constants.ts`                                 | The server's zone, the 04:00 hour, the Monday weekday, the first of the month and the days in a week       |
+| `packages/genshin-world/src/services/time/computeGameDay.ts`                            | The game day a moment belongs to, the date after four hours are taken off in UTC+8                         |
+| `packages/genshin-world/src/services/time/computeLastDailyReset.ts`                     | The last 04:00 at or before a moment                                                                       |
+| `packages/genshin-world/src/services/time/computeNextDailyReset.ts`                     | The 04:00 a day after the last daily reset                                                                 |
+| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`                    | The Monday 04:00 at or before a moment                                                                     |
+| `packages/genshin-world/src/services/time/computeNextWeeklyReset.ts`                    | The Monday 04:00 a week after the last weekly reset                                                        |
+| `packages/genshin-world/src/services/time/computeLastMonthlyReset.ts`                   | The first of the month's 04:00 at or before a moment                                                       |
+| `packages/genshin-world/src/services/time/computeNextMonthlyReset.ts`                   | The first of the next month's 04:00                                                                        |
+| `packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`                    | The last refresh of a shop's kind, read from the reset module                                              |
+| `packages/genshin-world/src/services/shop/computeNextShopRefreshTime.ts`                | The next refresh of a shop's kind, read from the reset module                                              |
+| `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`                   | The bargains' month, the game day's month                                                                  |
+| `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | The Primogem refill's game day                                                                             |
+| `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`            | The forge cap, counted over the game day                                                                   |
+| `packages/genshin-world/src/services/investigation/countInvestigationsToday.ts`         | The investigations made since the last daily reset                                                         |
+| `packages/genshin-world/src/services/commission/checkIsCommissionDayCurrent.ts`         | Whether the kept day is still current against the last daily reset                                         |
+| `packages/genshin-world/src/services/commission/computeCommissionDay.ts`                | The day's four, dealt again when the kept day is no longer current                                         |
+| `packages/genshin-world/src/services/leyLine/checkIsOutcropDayCurrent.ts`               | Whether an outcrop's day is still current                                                                  |
+| `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`           | A mined outcrop stands until the next 04:00 reset after its mining                                         |
+| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                  | An elite camp's member returns at the next daily reset                                                     |
+| `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`                  | A normal boss's respawn instant, five seconds after its claim                                              |
+| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossClaimable.ts`              | Whether a weekly boss is claimable, counting the claims since the last weekly reset                        |
+| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims made since the last weekly reset                                                                |
+| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | The reputation weekly limit, counted from the last weekly reset                                            |
+| `packages/genshin-world/src/services/spiralAbyss/findAbyssPeriodAt.ts`                  | The Moon Spire period that began latest, read in the server's zone                                         |
+| `packages/genshin-world/src/services/spiralAbyss/pickAbyssBenedictionList.ts`           | The Moon Spire blessing list's day, counted from the game epoch on the server's clock                      |
+| `packages/genshin-world/src/services/shared/findLatestBegun.ts`                         | The latest season begun before a moment, read in the server's zone                                         |
+| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`              | The gathering midnight, read in the server's zone                                                          |
+| `packages/genshin-world/src/composables/useWorldFishing.ts`                             | The fishing day's hours, read in the server's zone                                                         |
+| `packages/genshin-world/src/composables/useWorldCommissions.ts`                         | The commissions' moment, from the world clock                                                              |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`                         | The enemies' defeats, jumps and claims on the world clock, each respawn checked by `checkIsEnemyRespawned` |
+| `packages/genshin-world/src/services/enemy/checkIsEnemyRespawned.ts`                    | Whether a defeated camp member is back at a moment, on the respawn time its camp gives                     |
+| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenOnDay.ts`             | The game day of a moment, which opens a domain kind on its set days and every Sunday                       |
+| `packages/genshin-world/src/services/domains/checkIsDomainLevelOpen.ts`                 | Whether a domain level is open at a moment, by the Adventure Rank and the game day of the moment           |
+| `packages/genshin-world/src/models/bosses/TrounceBlossom.ts`                            | The claim's instant as a `Temporal.Instant`                                                                |
 
 ## Notes
 
-- The Enemies component takes the moment it compares from the device clock, as it did before, and the reset it compares against is the server's. Session passes a `getWorldNow` to Windrise, which does not forward it to the enemies, so threading the world clock through is a follow-up.
-- `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take a day from the caller as a date. `checkIsDomainLevelOpen` has no caller outside its tests, so the domains are not rewired to the module here.
+- The Enemies component times its defeats, jumps and claims on `getWorldNow`, the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
+- `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` has no caller outside its tests until the domain screen is built.
 - Deleted: `computeDailyResetTime`, `computeWeeklyResetTime`, `computeMiningOutcropRespawn`, which its one rule moved into `checkIsMiningOutcropStanding`, the weekly constants module, and the zone and hour constants in the Original Resin, shop and enemy modules.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.
 
