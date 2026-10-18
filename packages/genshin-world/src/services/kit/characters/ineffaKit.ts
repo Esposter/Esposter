@@ -5,13 +5,22 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
 export const INEFFA_CHARACTER_ID = 10_000_116;
+
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_COOLDOWN_ID = "ineffa-constellation-4-cooldown";
+const CONSTELLATION_4_ENERGY = 5;
+const CONSTELLATION_4_SECONDS = 4;
 
 // Birgitta discharges ten times while she stands, with no poise, as gcsim (MIT, main) ineffa/skill.go gives her. Her
 // Electro Particles, which gcsim gives on an internal cooldown, wait on the particle hook
@@ -27,7 +36,11 @@ const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
 // Ineffa's behaviour: Cleaning Mode places its shield by a task and summons Birgitta after its hit, and Cyclonic
 // Exterminator summons her again at its hit, ending the one on the field. Her Moonsign Benediction adds its Base DMG
-// Bonus by her ATK
+// Bonus by her ATK. Her Constellation 4 energy is built, from any Lunar-Charged reaction of her party, once every 4
+// Seconds, as gcsim (MIT, main) ineffa/cons.go gives it
+// Constellation 1 needs the Carrier Flow Composite team status and its Lunar-Charged DMG bonus, not built
+// Constellation 2 needs the Punishment Edict status on a hit opponent and its delayed effect, not built
+// Constellation 6 needs the Carrier Flow Composite status and the thunderclouds' bursts, not built
 export const createIneffaKitBehaviour = ({
   kit,
   readArea,
@@ -76,6 +89,18 @@ export const createIneffaKitBehaviour = ({
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         summonBirgitta(kitEffectState, body, combatant, burstBirgittaSpawnSeconds, burstBirgittaDischarges),
+    },
+    // The Edictless Path, from Constellation 4: a Lunar-Charged reaction of the party restores 5 energy to Ineffa, once
+    // Every 4 seconds
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+      if (
+        event.kind !== KitEventKind.ReactionTriggered ||
+        combatant.constellationCount < CONSTELLATION_4 ||
+        !event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarCharged)
+      )
+        return;
+      if (startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_4_COOLDOWN_ID, CONSTELLATION_4_SECONDS))
+        gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
     },
     moonsignBenediction: {
       getBaseDamageBonus: ({ attributes }) =>

@@ -1,6 +1,6 @@
 ## Purpose
 
-Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Lunar-Charged passives and constellations are not built yet.
+Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Lunar-Charged passives and Constellations 1 and 6 are not built yet, and her Constellation 4 energy is built.
 
 ## Requirements
 
@@ -108,3 +108,25 @@ Ineffa's Moonsign Benediction SHALL turn the party's Electro-Charged reactions i
 - **WHEN** a Lunar-Charged reaction occurs in the party
 - **THEN** the party's Lunar-Charged Base DMG Bonus rises 0.7% for each 100 of her ATK
 - **AND** the rise stops at 14%
+
+### Requirement: Constellation 4 energy on Lunar-Charged
+
+From Constellation 4, a Lunar-Charged reaction in Ineffa's party SHALL restore 5 Energy to her, once every 4 seconds.
+
+#### Scenario: Constellation 4 restores energy
+
+- **GIVEN** Ineffa has Constellation 4
+- **WHEN** a Lunar-Charged reaction occurs in the party
+- **THEN** Ineffa gains 5 Energy
+
+#### Scenario: The energy waits out its cooldown
+
+- **GIVEN** Ineffa has just gained energy from a Lunar-Charged reaction at Constellation 4
+- **WHEN** another Lunar-Charged reaction occurs within 4 seconds
+- **THEN** no energy is gained
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Ineffa has Constellation 3
+- **WHEN** a Lunar-Charged reaction occurs in the party
+- **THEN** no energy is gained

@@ -5,19 +5,28 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { Reaction } from "#src/models/combat/Reaction";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const INEFFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, INEFFA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createIneffaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),
@@ -28,6 +37,21 @@ const createIneffaCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Polearm,
 });
+
+// The energy Ineffa holds after the same reactions land on her party the given number of times
+const readEnergyAfterReactions = (constellationCount: number, reactions: Reaction[], times: number): number => {
+  const combatant = { ...createIneffaCombatant(), constellationCount };
+  const party = createParty([INEFFA_CHARACTER_ID]);
+  const event = {
+    enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions,
+    striker: combatant,
+  };
+  const context = createKitTestContext(combatant, { party });
+  for (let index = 0; index < times; index++) INEFFA_KIT.onKitEvent?.(event, context, combatant);
+  return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
+};
 
 describe(createIneffaKitBehaviour, () => {
   const BIRGITTA_ID = "birgitta";
@@ -135,5 +159,25 @@ describe(createIneffaKitBehaviour, () => {
       baseDamageBonuses: [expect.closeTo(0.07), 0.14],
       lunarReactionTypes: [LunarReactionType.LunarCharged],
     });
+  });
+
+  test("a constellation 4 Lunar-Charged reaction restores 5 energy to Ineffa once, until its cooldown ends", () => {
+    expect.hasAssertions();
+
+    expect(readEnergyAfterReactions(4, [{ reactionType: LunarReactionType.LunarCharged }], 3)).toBe(5);
+  });
+
+  test("a constellation 3 Lunar-Charged reaction restores no energy to Ineffa", () => {
+    expect.hasAssertions();
+
+    expect(readEnergyAfterReactions(3, [{ reactionType: LunarReactionType.LunarCharged }], 1)).toBe(0);
+  });
+
+  test("a constellation 4 reaction that is not Lunar restores no energy to Ineffa", () => {
+    expect.hasAssertions();
+
+    expect(
+      readEnergyAfterReactions(4, [{ element: Element.Electro, reactionType: ReactionType.Superconduct }], 1),
+    ).toBe(0);
   });
 });

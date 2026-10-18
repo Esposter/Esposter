@@ -4,7 +4,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Lunar-Charged passives and constellations are not built.** Ascension 1 and 4 and Constellations 1, 4 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, Energy on Lunar-Charged, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass.
+- **Her Lunar-Charged passives and Constellations 1 and 6 are not built.** Constellation 4's Energy is built, see the Decisions. Ascension 1 and 4 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, Energy on Lunar-Charged, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass.
 - **Constellation 2 is not built.** It places a shield 37 frames after the burst, which the passives' step adds once the shield's amount is set against the framework.
 - **Birgitta's Electro particles wait on the particle hook.** gcsim gives her particles an internal cooldown, and the framework produces none yet, so her energy goes ungenerated.
 
@@ -16,6 +16,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 - **Birgitta's discharges.** Each lands 42 frames after her spawn and every 119 frames after, ten in all, on a circle the framework centres on the targeted enemy with a radius of 4 metres. She stands for 1,200 frames from her spawn.
 - **The plunges are borrowed.** There is no gcsim plunge file for Ineffa; her plunges take the standard reach, timing and poise of [how a kit is read](../README.md#how-a-kit-is-read), the manual verification list holding the question.
 - **Her strikes, charged attack and burst have no poise.** gcsim gives them none, so each reads 0.
+- **Constellation 4's energy goes to Ineffa herself, on her party's reactions.** gcsim's `cons.go` gives her 5 Energy on any Lunar-Charged reaction on an enemy, with a 4 second internal cooldown, and her own reactions count. The hook reads the reactions of any party member, her own included, and holds the cooldown as a status.
 
 ## Key files
 
