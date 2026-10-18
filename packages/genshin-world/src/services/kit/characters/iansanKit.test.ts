@@ -77,6 +77,16 @@ describe(createIansanKitBehaviour, () => {
     ).toBeUndefined();
   });
 
+  test("the Electro Swift Stormflight replaces her charged attack while the blessing lasts", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIansanCombatant());
+    expect(IANSAN_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+    IANSAN_KIT.elementalSkill.onStart?.(context);
+    expect(IANSAN_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
+    stepKitSeconds(context, 17);
+    expect(IANSAN_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+  });
+
   test("a Constellation 1 blessing gives Iansan 15 energy for each 6 points consumed, then waits 18 seconds for the next", () => {
     expect.hasAssertions();
     const combatant = createIansanCombatant(1);
