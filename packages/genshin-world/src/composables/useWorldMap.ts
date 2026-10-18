@@ -203,6 +203,7 @@ export const useWorldMap = ({
   const jumpPose = shallowRef<WorldJumpPose>();
   const jumpTo = (pose: WorldJumpPose) => {
     jumpPose.value = pose;
+    events.emit("teleport", pose);
   };
   return {
     activateLandmark,

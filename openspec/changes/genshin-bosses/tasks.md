@@ -1,8 +1,8 @@
 ## 1. Normal boss claim
 
 - [x] 1.1 Draw a normal boss's Mora and drop for each World Level from the wiki's table. Verify: a test named after the scenario 'a normal boss's claim pays Mora and its own drop for the World Level', seen failing first.
-- [ ] 1.2 Leave a Trounce Blossom at the first normal boss's place on defeat and charge 40 Original Resin to claim it. Verify: tests named after the scenarios 'a defeated normal boss leaves a Trounce Blossom at its place' and 'a claim with less than 40 Original Resin is refused', seen failing first.
-- [ ] 1.3 Return a normal boss five seconds after its blossom is claimed, and hold it defeated until a teleport while unclaimed. Verify: tests named after the scenarios 'a normal boss returns five seconds after its blossom is claimed' and 'an unclaimed blossom keeps the boss defeated until the player teleports away', seen failing first.
+- [x] 1.2 Leave a Trounce Blossom at the first normal boss's place on defeat and charge 40 Original Resin to claim it. Verify: tests named after the scenarios 'a defeated normal boss leaves a Trounce Blossom at its place' and 'a claim with less than 40 Original Resin is refused', seen failing first.
+- [x] 1.3 Return a normal boss five seconds after its blossom is claimed, and hold it defeated until a teleport while unclaimed. Verify: tests named after the scenarios 'a normal boss returns five seconds after its blossom is claimed' and 'an unclaimed blossom keeps the boss defeated until the player teleports away', seen failing first.
 
 ## 2. Boss fights
 

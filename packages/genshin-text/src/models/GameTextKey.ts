@@ -624,6 +624,8 @@ export enum GameTextKey {
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Trishiraite = "239145148",
+  // The blossom a defeated normal boss leaves for its Original Resin claim, by its English name
+  TrounceBlossom = "UI_WORLD_WEEKLYBOSS_TIPS_TITLE",
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
