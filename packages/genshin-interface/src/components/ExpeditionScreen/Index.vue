@@ -3,10 +3,9 @@ import type { ExpeditionNation } from "#src/models/ExpeditionNation";
 import type { ExpeditionPin } from "#src/models/ExpeditionPin";
 import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
 
-import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
-
 import ItemTile from "#src/components/ItemTile/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
+import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 interface Props {
   // The way out of the screen in the reader's language, read to assistive technology in place of its cross
@@ -89,7 +88,7 @@ const act = () => {
         </li>
       </ul>
     </section>
-    <button v-if="detail" class="action" type="button" @click="act">
+    <button v-if="detail" class="action" type="button" @click="act()">
       <span class="ring" aria-hidden="true" />
       <span>{{ detail.actionLabel }}</span>
     </button>

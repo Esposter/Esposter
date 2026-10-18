@@ -7,8 +7,8 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -116,16 +116,6 @@ export const createRazorKitBehaviour = ({
         effect.hits.some((hit) => lupusFulgurisHits.includes(hit)),
     );
   return {
-    // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      removeKitEffects(
-        kitEffectState,
-        (effect) =>
-          (effect.kind === "field" && effect.id === WOLF_WITHIN_ID && effect.characterId === combatant.characterId) ||
-          checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
-      );
-    },
     // Its sigils are cleared into energy after the burst's cost is spent, and the Wolf Within stands from its hit
     burst: {
       onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
@@ -160,6 +150,16 @@ export const createRazorKitBehaviour = ({
         },
       };
     }),
+    // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
+      removeKitEffects(
+        kitEffectState,
+        (effect) =>
+          (effect.kind === "field" && effect.id === WOLF_WITHIN_ID && effect.characterId === combatant.characterId) ||
+          checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
+      );
+    },
     // The press gains its Electro Sigil as it starts
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
