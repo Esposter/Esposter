@@ -20,7 +20,7 @@ flowchart TD
   STORE --> SAVE["the generic debounced autosave: the whole document"]
 ```
 
-- **One history per open resource**, in the page builder's store, keyed by the resource's id as the sheet's is by its open sheet: the history and the future, and the undo and redo labels the command bar shows.
+- **One history per open resource**, in the page builder's store, keyed by the resource's id: the history and the future, and the undo and redo labels the command bar shows. The sheet's history is a single unkeyed store, so the page builder's keying is its own rule, not a copy of the sheet's.
 - **An interaction** is one pointer drag, one held key, or one text session: a slider passes the core one interaction id from its first change to its `end`, so ten steps of a drag coalesce into one entry, and leaving a text node commits one entry, as the [canvas](../resource-page-builder-canvas/design.md) says.
 - **A restore clears the history**, since its entries describe a document that is gone. The page builder's store registers on `ResourceContentHookMap.Reload`, the hook every Vue-rendered type's store already takes, and clears the resource's history there. That is the only restore hook the new editors need, because the canvas renders the content ref and a restore replaces the ref ([third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md)).
 - **The editor's patches never leave the browser.** A save is still the whole document through the one door, which [delta content saves](../../specs/resource/delta-content-saves/design.md) already make cheap; [JSON Patch content saves](../../rejected/resource/json-patch-content-saves/design.md) stay rejected.
