@@ -23,7 +23,7 @@ A signed-in player's save SHALL be held as one record under the session that mos
 
 ### Requirement: The save holds what the player did and nothing derived
 
-The save SHALL hold the player's characters with their copies, wallet, bag, carried quest progress, unlocked landmarks, opened chests, achievement progress, learned recipes, wish counters, Adventure EXP, Reputation, the bounty taken and the week's bounty claims, Companionship EXP, World Level setting and chosen name, and SHALL hold nothing that is derived on load.
+The save SHALL hold the player's characters with their copies, wallet, bag, carried quest progress, unlocked landmarks, opened chests, achievement progress, learned recipes, wish counters, Adventure EXP, Reputation, the bounty taken, the week's bounty claims and the week's request claims, Companionship EXP, World Level setting and chosen name, and SHALL hold nothing that is derived on load.
 
 #### Scenario: Items bought before a reload are still in the bag
 
