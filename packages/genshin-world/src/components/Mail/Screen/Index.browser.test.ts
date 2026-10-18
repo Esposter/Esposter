@@ -7,6 +7,7 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
+import { defineComponent, h } from "vue";
 
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
 
@@ -107,6 +108,19 @@ describe("mailScreen", () => {
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
 
     await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).toBeVisible();
+  });
+
+  // The date line gives the date the mail was received, which NuxtTime formats in the reader's locale
+  test("should show the date a mail was received", () => {
+    expect.hasAssertions();
+
+    const NuxtTimeStub = defineComponent({
+      props: { datetime: { required: true, type: String } },
+      setup: (componentProps) => () => h("time", { datetime: componentProps.datetime }),
+    });
+    render(MailScreen, { ...props, global: { stubs: { NuxtTime: NuxtTimeStub } }, mails: [mail(false)] });
+
+    expect(document.querySelector("time")?.getAttribute("datetime")).toBe(DELIVERED_AT);
   });
 
   // The star pressed on the selected mail gives its id back to the screen's owner

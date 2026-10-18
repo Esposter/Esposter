@@ -73,6 +73,8 @@ const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
 );
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows).length < mails.length);
+// The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
+const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
 const selectMail = (mailId: number) => {
   selectedMailId.value = mailId;
   emit("read", mailId);
@@ -96,8 +98,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
        every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. A star
-       puts a mail in the Gift Mail Box, the tab beside the Mailbox. Not yet built: the mail's Date line, and the look the
-       English client draws -->
+       puts a mail in the Gift Mail Box, the tab beside the Mailbox. Its date is the date it was received. Not yet built:
+       the look the English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
     <template #tabs>
       <GameButton
@@ -155,6 +157,12 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <p class="sender">
           {{ fillGameTextValues(gameText[GameTextKey.MailSender], textMap[selectedEntry.row.senderTextId]) }}
         </p>
+        <p class="date">
+          {{ dateLine[0]
+          }}<NuxtTime :datetime="selectedEntry.mail.deliveredAt" date-style="medium" time-style="short" />{{
+            dateLine[1]
+          }}
+        </p>
         <p class="body">{{ textMap[selectedEntry.row.contentTextId] }}</p>
         <ul v-if="selectedEntry.row.items.length > 0" class="items">
           <li v-for="item of selectedEntry.row.items" :key="item.itemId">
@@ -189,6 +197,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 }
 
 .sender,
+.date,
 .status,
 .notice,
 .claimed {

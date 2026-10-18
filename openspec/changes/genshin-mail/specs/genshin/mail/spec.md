@@ -103,3 +103,13 @@ The Mail screen SHALL let the player star a held mail into the Gift Mail Box, wh
 - **GIVEN** the player has starred a read mail whose attachment is claimed
 - **WHEN** the player presses Delete Read
 - **THEN** the mail is kept
+
+### Requirement: A mail shows the date it was received
+
+The Mail screen SHALL show, on an opened mail, the date the mail was received, in the reader's locale.
+
+#### Scenario: An opened mail shows the date it was received
+
+- **GIVEN** the player holds a mail delivered at a given moment
+- **WHEN** the player opens the mail
+- **THEN** its date line shows that date in the reader's locale
