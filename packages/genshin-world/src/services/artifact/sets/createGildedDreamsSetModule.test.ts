@@ -77,7 +77,7 @@ describe(createGildedDreamsSetModule, () => {
       party: createParty([SAME_ELEMENT_CHARACTER_ID, TRAVELER_CHARACTER_ID, PYRO_CHARACTER_ID, CRYO_CHARACTER_ID]),
     });
 
-    triggerReaction(members[2], context);
+    triggerReaction(wearer, context);
     expect(getGildedBuffs(kitEffectState)).toEqual([
       { amount: expect.closeTo(0.14), attribute: Attribute.AttackPercent },
       { amount: 100, attribute: Attribute.ElementalMastery },
@@ -85,6 +85,23 @@ describe(createGildedDreamsSetModule, () => {
 
     stepKitSeconds(context, 8.1);
     expect(getGildedBuffs(kitEffectState)).toEqual([]);
+  });
+
+  test("a reaction a member other than the wearer strikes gives the wearer nothing, and leaves its cooldown unstarted", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      characterIdCombatantMap,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID, SAME_ELEMENT_CHARACTER_ID, PYRO_CHARACTER_ID, CRYO_CHARACTER_ID]),
+    });
+
+    triggerReaction(members[2], context);
+    expect(getGildedBuffs(kitEffectState)).toStrictEqual([]);
+
+    triggerReaction(wearer, context);
+    expect(getGildedBuffs(kitEffectState)).toHaveLength(2);
   });
 
   test("a reaction within eight seconds of the last gives nothing new, and one after them does", () => {
