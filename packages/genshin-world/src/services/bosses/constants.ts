@@ -1,5 +1,9 @@
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+
 // A normal boss comes back this long after its Trounce Blossom is claimed, and not until then while it is unclaimed
 export const BOSS_RESPAWN_AFTER_CLAIM_DURATION: Temporal.Duration = Temporal.Duration.from({ seconds: 5 });
+// The enemy kinds a weekly boss is, whose defeat leaves a weekly Trounce Blossom rather than a normal boss's
+export const WEEKLY_BOSS_ENEMY_KIND_IDS: readonly EnemyKindId[] = [EnemyKindId.StormterrorDvalin];
 // The Mora a normal boss's Trounce Blossom pays at each World Level, World Level 0 first. World Level 0 to 8 are read from
 // The Basic Drops tab of the wiki's Template:World_Boss_Rewards; World Level 9 has no row there, so it repeats World Level
 // 8's until a source gives its own, all provisional until a recording measures them
