@@ -2,7 +2,8 @@ import type { ArchiveCandidate } from "#src/models/genshinAssets/archive/Archive
 import type { ExcelMaterialCodexRow } from "#src/models/genshinAssets/archive/ExcelMaterialCodexRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
-import { MATERIAL_CODEX_TABLE_NAME, MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { MATERIAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The materials the Materials section lists, each in the codex's order and named by its row in the material table

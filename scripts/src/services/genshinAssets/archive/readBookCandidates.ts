@@ -8,9 +8,9 @@ import {
   BOOKS_CODEX_TABLE_NAME,
   DOCUMENT_TABLE_NAME,
   LOCALIZATION_TABLE_NAME,
-  MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/archive/constants";
 import { toBookCandidates } from "#src/services/genshinAssets/archive/toBookCandidates";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The books the Books section lists, each in the codex's order, named by its material's row and read from the body its

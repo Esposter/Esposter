@@ -8,7 +8,7 @@ import {
   UNLOCK_COOK_RECIPE_USE_OP,
 } from "#src/services/genshinAssets/cooking/constants";
 import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRecipe";
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";

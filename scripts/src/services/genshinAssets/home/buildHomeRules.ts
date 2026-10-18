@@ -3,7 +3,6 @@ import type { ExcelFurnitureMakeRow } from "#src/models/genshinAssets/home/Excel
 import type { ExcelHomeworldLevelRow } from "#src/models/genshinAssets/home/ExcelHomeworldLevelRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
 import {
   COMFORT_LEVEL_TABLE_NAME,
   FURNITURE_MAKE_TABLE_NAME,
@@ -11,6 +10,7 @@ import {
   UNLOCK_FURNITURE_USE_OP,
 } from "#src/services/genshinAssets/home/constants";
 import { toHomeBlueprint } from "#src/services/genshinAssets/home/toHomeBlueprint";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";

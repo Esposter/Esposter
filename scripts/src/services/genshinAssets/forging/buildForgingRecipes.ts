@@ -2,13 +2,13 @@ import type { ExcelForgeRandomRow } from "#src/models/genshinAssets/forging/Exce
 import type { ExcelForgeRow } from "#src/models/genshinAssets/forging/ExcelForgeRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
 import {
   FORGE_RANDOM_TABLE_NAME,
   FORGE_TABLE_NAME,
   UNLOCK_FORGE_USE_OP,
 } from "#src/services/genshinAssets/forging/constants";
 import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";

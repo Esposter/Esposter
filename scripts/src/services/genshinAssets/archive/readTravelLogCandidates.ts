@@ -2,7 +2,8 @@ import type { ExcelQuestCodexRow } from "#src/models/genshinAssets/archive/Excel
 import type { TravelLogCandidate } from "#src/models/genshinAssets/archive/TravelLogCandidate";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 
-import { MAIN_QUEST_TABLE_NAME, QUEST_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { QUEST_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
+import { MAIN_QUEST_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The quests the Travel Log lists, each in the codex's order. A quest is named by the main quest it is filed under, whose

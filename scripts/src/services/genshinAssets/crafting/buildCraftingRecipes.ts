@@ -1,12 +1,9 @@
 import type { ExcelCombineRow } from "#src/models/genshinAssets/crafting/ExcelCombineRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
-import {
-  COMBINE_TABLE_NAME,
-  MATERIAL_TABLE_NAME,
-  UNLOCK_COMBINE_USE_OP,
-} from "#src/services/genshinAssets/crafting/constants";
+import { COMBINE_TABLE_NAME, UNLOCK_COMBINE_USE_OP } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";

@@ -2,7 +2,6 @@ import { CraftingRecipeKind } from "genshin-world";
 
 // The game's combine and material tables in the dump, read by their names
 export const COMBINE_TABLE_NAME = "CombineExcelConfigData";
-export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
 // The recipe type of a craft at the bench. The convert rows, which turn one boss material into another, and the
 // Homeworld's rows are other kinds of recipe and are not kept
 export const COMBINE_RECIPE_TYPE = "RECIPE_TYPE_COMBINE";
