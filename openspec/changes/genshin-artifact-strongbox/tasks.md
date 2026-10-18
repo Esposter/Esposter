@@ -21,4 +21,4 @@
 
 ## 5. Words
 
-- [ ] 5.1 Add the offering's `GameTextKey` members, each by its text id. Verify: a test named after the scenario 'the offering's tip fills its artifact counts', seen failing first.
+- [x] 5.1 Add the offering's `GameTextKey` members, each by its text id. Verify: a test named after the scenario 'the offering's tip fills its artifact counts', seen failing first. The six members are in `GameTextKey` already, each by its `UI_MELTING_*` text id, and the tip and the confirm both fill through `computeMysticOfferingText`.
