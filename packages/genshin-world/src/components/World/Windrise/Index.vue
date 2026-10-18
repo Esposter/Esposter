@@ -2,6 +2,7 @@
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -164,6 +165,8 @@ interface Props {
   oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
+  // The camps of the ley line outcrops whose fights run, which the world's enemies spawn whole as each fight starts
+  outcropCamps?: EnemyCamp[];
   qualityTier: QualityTier;
   // The navigated quest's objective, by the target its condition names, which a beam rises over, "" with none
   questTargetId: string;
@@ -208,6 +211,7 @@ const {
   landmarkCollider,
   oculusPlaces,
   origin,
+  outcropCamps,
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
@@ -544,6 +548,7 @@ onUnmounted(() => {
       :is-held
       :jump-pose="jumpPose"
       :light-uniforms
+      :outcrop-camps="outcropCamps"
       :ramp-texture
       :region-data-map
       :sight-scene
