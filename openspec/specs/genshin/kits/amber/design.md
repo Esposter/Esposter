@@ -11,6 +11,7 @@ Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, a
 ## Not built
 
 - **Amber's A4 is left.** Its ATK bonus after a weak-point hit has no weak spot to strike: the enemies here have none, so there is no hit for the bonus to follow.
+- **Amber's Constellation 2 is left.** Its manual detonation needs a charged attack that reports the bunny it lands on: `ChargedAttackLanded` names no target, and `damageKitTaunt` has no caller, so no shot reaches the bunny.
 
 ## Key files
 

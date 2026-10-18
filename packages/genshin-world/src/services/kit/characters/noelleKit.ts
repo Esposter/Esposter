@@ -1,7 +1,10 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
+import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -26,6 +29,17 @@ const COMBAT_MAID_CONSTELLATION = 2;
 const COMBAT_MAID_CHARGED_ATTACK_STAMINA_MULTIPLIER = 0.8;
 const COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS = 0.15;
 
+// Must Be Spotless, from Constellation 6: Sweeping Time's ATK bonus takes an additional 50% of her DEF, and every enemy
+// Noelle defeats during it adds a second to its duration, 10 seconds in all. gcsim v2.47.2 (MIT) noelle/burst.go gives the bonus,
+// And takes the extension as a parameter at its full 10 seconds, not per enemy defeated
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/burst.go
+const MUST_BE_SPOTLESS_CONSTELLATION = 6;
+const MUST_BE_SPOTLESS_DEFENSE_SHARE = 0.5;
+const MUST_BE_SPOTLESS_SECONDS_PER_DEFEAT = 1;
+const MUST_BE_SPOTLESS_MAX_SECONDS = 10;
+const MUST_BE_SPOTLESS_STATUS_ID = "noelle-must-be-spotless";
+const SWEEPING_TIME_SOURCE = "noelle-sweeping-time";
+
 // Devotion, from Ascension 1, shields the active character with 4 times Noelle's DEF for 20 seconds when a drain takes it
 // Under 30% HP, once every 60 seconds, as gcsim v2.47.2 (MIT) noelle/asc.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/asc.go
@@ -47,10 +61,9 @@ export const NOELLE_CHARACTER_ID = 10_000_034;
 
 // Noelle's behaviour: Breastplate's heal on a hit of her attacks and her press while the shield stands rolls at the
 // Table's chance, certain from one constellation under Sweeping Time. Breastplate shields her from her DEF for the
-// Table's seconds, exploding as it ends from four constellations, and Sweeping Time adds a share of her DEF to her ATK
-// Constellation 6's extra seconds for each enemy Noelle defeats wait on the enemy-defeated event no kit event reports yet,
-// And its ATK half waits with them
-// And converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and Ascension 4's
+// Table's seconds, exploding as it ends from four constellations, and Sweeping Time adds a share of her DEF to her ATK,
+// Which Constellation 6 raises by half her DEF again, and extends by a second for each enemy she defeats, 10 seconds at most.
+// It converts her attacks to Geo for the table's seconds past its start. Ascension 1's Devotion shield and Ascension 4's
 // Skill cooldown cut are built. The charged attack is one cycle of its spin and its final slash
 // The count an attack adds to Ascension 4's, which a fourth one spends on the skill's cooldown
 const countAttack = ({ kitEffectState, party }: KitContext, characterId: number): void => {
@@ -74,6 +87,31 @@ const countAttack = ({ kitEffectState, party }: KitContext, characterId: number)
       0,
       partyMember.skillCooldownSeconds - ASCENSION_4_SKILL_COOLDOWN_REDUCTION_SECONDS,
     );
+};
+
+// Must Be Spotless: an enemy Noelle defeats during Sweeping Time adds a second to its buff and its Geo infusion, and the
+// Seconds added so far are counted on her status, which the burst's start clears, so the extension stops at 10 seconds
+const extendSweepingTime = (kitEffectState: KitEffectState, characterId: number): void => {
+  const buff = kitEffectState.effects.find(
+    (effect): effect is KitBuff =>
+      effect.kind === "buff" && effect.characterId === characterId && effect.source === SWEEPING_TIME_SOURCE,
+  );
+  const infusion = kitEffectState.effects.find(
+    (effect): effect is KitInfusion =>
+      effect.kind === "infusion" &&
+      effect.characterId === characterId &&
+      effect.isConverted === true &&
+      effect.element === Element.Geo,
+  );
+  const extendedSeconds = findKitStatus(kitEffectState.effects, characterId, MUST_BE_SPOTLESS_STATUS_ID)?.stacks ?? 0;
+  if (!buff || !infusion || extendedSeconds >= MUST_BE_SPOTLESS_MAX_SECONDS) return;
+  buff.secondsRemaining += MUST_BE_SPOTLESS_SECONDS_PER_DEFEAT;
+  infusion.secondsRemaining += MUST_BE_SPOTLESS_SECONDS_PER_DEFEAT;
+  addKitStatus(kitEffectState, characterId, {
+    id: MUST_BE_SPOTLESS_STATUS_ID,
+    secondsRemaining: Number.POSITIVE_INFINITY,
+    stacks: extendedSeconds + MUST_BE_SPOTLESS_SECONDS_PER_DEFEAT,
+  });
 };
 
 // An attack's hits, each counting once toward Ascension 4 on the first enemy it strikes, which the attack's start clears
@@ -119,11 +157,21 @@ export const createNoelleKitBehaviour = ({
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        const hasMustBeSpotless = combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION;
         buffKitMember(kitEffectState, combatant.characterId, {
-          amount: sweepingTimeDefenseShare * combatant.attributes.defense,
+          amount:
+            sweepingTimeDefenseShare * combatant.attributes.defense +
+            (hasMustBeSpotless ? MUST_BE_SPOTLESS_DEFENSE_SHARE * combatant.attributes.defense : 0),
           attribute: Attribute.Attack,
           secondsRemaining: sweepingTimeSeconds,
+          source: SWEEPING_TIME_SOURCE,
         });
+        if (hasMustBeSpotless)
+          addKitStatus(kitEffectState, combatant.characterId, {
+            id: MUST_BE_SPOTLESS_STATUS_ID,
+            secondsRemaining: Number.POSITIVE_INFINITY,
+            stacks: 0,
+          });
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Geo,
@@ -136,6 +184,14 @@ export const createNoelleKitBehaviour = ({
     chargedAttack: createCountedAttack(breastplateHealBehaviour, kit.chargedAttack.hits.length),
     normalAttacks: kit.normalAttacks.map(({ hits }) => createCountedAttack(breastplateHealBehaviour, hits.length)),
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+      if (event.kind === KitEventKind.EnemyDefeated) {
+        if (
+          combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION &&
+          event.striker.characterId === combatant.characterId
+        )
+          extendSweepingTime(kitEffectState, combatant.characterId);
+        return;
+      }
       // A drain by a kit, unlike an enemy's strike, names its source, as Devotion's drain does
       if (
         event.kind !== KitEventKind.HealthChanged ||

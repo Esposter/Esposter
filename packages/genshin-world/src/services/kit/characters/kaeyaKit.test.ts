@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -63,6 +64,21 @@ const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthSh
 };
 
 const getShields = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "shield");
+
+const getSummons = (kitEffectState: KitEffectState) =>
+  kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
+// An enemy Kaeya's team defeats with a strike, as the kit hears it
+const defeatEnemy = (combatant: Combatant, context: KitContext) =>
+  KAEYA_KIT.onKitEvent?.(
+    {
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.EnemyDefeated,
+      striker: combatant,
+    },
+    context,
+    combatant,
+  );
 
 describe("kaeya kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -182,5 +198,54 @@ describe("kaeya kit", () => {
     drainKaeya(combatant, context, 0.15);
 
     expect(getShields(context.kitEffectState)).toStrictEqual([]);
+  });
+
+  test("constellation 2 extends Glacial Waltz by 2.5 seconds for each enemy defeated during it", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 2 };
+    const context = createKitTestContext(combatant);
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+    const startSeconds = takeOne(getSummons(context.kitEffectState)).secondsRemaining;
+
+    defeatEnemy(combatant, context);
+    expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBe(startSeconds + 2.5);
+
+    defeatEnemy(combatant, context);
+    expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBe(startSeconds + 5);
+  });
+
+  test("constellation 2 holds Glacial Waltz to 15 seconds in all, so the defeats after the third add nothing", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 2 };
+    const context = createKitTestContext(combatant);
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+
+    for (let defeat = 0; defeat < 4; defeat++) defeatEnemy(combatant, context);
+
+    expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBeCloseTo(15);
+  });
+
+  test("constellation 1 leaves Glacial Waltz's duration as it is when an enemy is defeated", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 1 };
+    const context = createKitTestContext(combatant);
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+    const startSeconds = takeOne(getSummons(context.kitEffectState)).secondsRemaining;
+
+    defeatEnemy(combatant, context);
+
+    expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBe(startSeconds);
+  });
+
+  test("constellation 2 does not extend Glacial Waltz once it has ended", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 2 };
+    const context = createKitTestContext(combatant);
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(9, context);
+
+    defeatEnemy(combatant, context);
+
+    expect(getSummons(context.kitEffectState)).toStrictEqual([]);
   });
 });

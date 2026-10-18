@@ -21,6 +21,7 @@ import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { sendKitOutbox } from "#src/services/kit/sendKitOutbox";
+import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
@@ -86,6 +87,7 @@ export const stepActiveKit = (
   sendKitOutbox(context);
   stepKitEffects(stepSeconds, context);
   for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  stepDeployedKits(context, stepSeconds);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
   pickUpCrystallizeShards(kitEffectState, position);

@@ -1,4 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -8,6 +10,7 @@ import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -27,6 +30,15 @@ const strikeFieryRain = (ascension: number) => {
   const context = createKitTestContext({ ...createAmberCombatant(), ascension });
   AMBER_KIT.elementalBurst.onStart?.(context);
   return stepKitTestEffects(4, context);
+};
+
+const OTHER_CHARACTER_ID = 10_000_999;
+// One aimed shot of Amber's, its charged attack's hit striking the given number of opponents
+const fireAimedShot = (combatant: Combatant, context: KitContext, opponents: number): void => {
+  AMBER_KIT.chargedAttack.onStart?.(context);
+  const hit = takeOne(AMBER_KIT.chargedAttack.hits);
+  for (let opponent = 0; opponent < opponents; opponent++)
+    hit.onStrike?.(context, { body: context.body, combatant, hit });
 };
 
 describe("amber kit", () => {
@@ -113,5 +125,71 @@ describe("amber kit", () => {
         ({ combatant }) => combatant.attributes.attributeTotalMap[Attribute.CriticalRate] === baseCriticalRate,
       ),
     ).toBe(true);
+  });
+
+  test("constellation 1 fires a second arrow of 20% of the first arrow's DMG with each aimed shot", () => {
+    expect.hasAssertions();
+    const combatant = createAmberCombatant(1);
+    const context = createKitTestContext(combatant);
+
+    fireAimedShot(combatant, context, 1);
+
+    expect(context.strikes).toHaveLength(1);
+    expect(takeOne(context.strikes).hit.talentMultiplier).toBeCloseTo(
+      0.2 * takeOne(AMBER_KIT.chargedAttack.hits).talentMultiplier,
+    );
+  });
+
+  test("constellation 1 fires one second arrow per aimed shot, however many opponents the first arrow strikes", () => {
+    expect.hasAssertions();
+    const combatant = createAmberCombatant(1);
+    const context = createKitTestContext(combatant);
+
+    fireAimedShot(combatant, context, 3);
+
+    expect(context.strikes).toHaveLength(1);
+  });
+
+  test("constellation 0 fires no second arrow", () => {
+    expect.hasAssertions();
+    const combatant = createAmberCombatant(0);
+    const context = createKitTestContext(combatant);
+
+    fireAimedShot(combatant, context, 2);
+
+    expect(context.strikes).toStrictEqual([]);
+  });
+
+  test("constellation 6 raises each party member's Movement SPD and ATK by 15% for 10 seconds with Fiery Rain", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createAmberCombatant(6), {
+      party: createParty([AMBER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+
+    AMBER_KIT.elementalBurst.onStart?.(context);
+
+    const buffs = context.kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+    expect(
+      buffs.map(({ amount, attribute, characterId, secondsRemaining }) => [
+        characterId,
+        attribute,
+        amount,
+        secondsRemaining,
+      ]),
+    ).toStrictEqual([
+      [AMBER_CHARACTER_ID, Attribute.MovementSpeed, 0.15, 10],
+      [OTHER_CHARACTER_ID, Attribute.MovementSpeed, 0.15, 10],
+      [AMBER_CHARACTER_ID, Attribute.AttackPercent, 0.15, 10],
+      [OTHER_CHARACTER_ID, Attribute.AttackPercent, 0.15, 10],
+    ]);
+  });
+
+  test("constellation 5 gives no party member Fiery Rain's Movement SPD and ATK", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createAmberCombatant(5), { party: createParty([AMBER_CHARACTER_ID]) });
+
+    AMBER_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
 });

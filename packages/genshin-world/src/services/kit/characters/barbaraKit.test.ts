@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { Party } from "#src/models/party/Party";
@@ -9,13 +10,16 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -62,11 +66,32 @@ const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitE
     combatant,
   );
 
+// The kit's steps as the world runs them: the team's effects step, their expiries are heard, then each deployed member's
+// Kit steps on the step
+const stepBarbaraSeconds = (context: KitContext, seconds: number): void => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+    stepDeployedKits(context, FIXED_STEP_SECONDS);
+  }
+};
+
+// One charged attack of Barbara's, each of the given number of opponents struck by its hit
+const chargedAttackStrikes = (combatant: Combatant, context: KitContext, opponents: number): void => {
+  BARBARA_KIT.chargedAttack.onStart?.(context);
+  const hit = takeOne(BARBARA_KIT.chargedAttack.hits);
+  for (let opponent = 0; opponent < opponents; opponent++)
+    hit.onStrike?.(context, { body: context.body, combatant, hit });
+};
+
 describe(createBarbaraKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
   const createBarbaraCombatant = (constellationCount: number): Combatant => ({
     ascension: 0,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+      { attribute: Attribute.EnergyRecharge, value: 1 },
+    ]),
     characterId: BARBARA_CHARACTER_ID,
     constellationCount,
     elementalResonances: [],
@@ -262,5 +287,51 @@ describe(createBarbaraKitBehaviour, () => {
     collectParticles(1, context, combatant);
 
     expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 5);
+  });
+
+  test("constellation 1 regenerates 1 Energy every 10 seconds while she stands in the party", () => {
+    expect.hasAssertions();
+    const party = createParty([BARBARA_CHARACTER_ID]);
+    const context = createKitTestContext(createBarbaraCombatant(1), { party });
+
+    stepBarbaraSeconds(context, 10.5);
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(1);
+
+    stepBarbaraSeconds(context, 10);
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(2);
+  });
+
+  test("constellation 0 regenerates no Energy over the same seconds", () => {
+    expect.hasAssertions();
+    const party = createParty([BARBARA_CHARACTER_ID]);
+    const context = createKitTestContext(createBarbaraCombatant(0), { party });
+
+    stepBarbaraSeconds(context, 25);
+
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(0);
+  });
+
+  test("constellation 4 regenerates 1 Energy for each opponent her charged attack strikes, 5 at most per attack", () => {
+    expect.hasAssertions();
+    const party = createParty([BARBARA_CHARACTER_ID]);
+    const combatant = createBarbaraCombatant(4);
+    const context = createKitTestContext(combatant, { party });
+
+    chargedAttackStrikes(combatant, context, 7);
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(5);
+
+    chargedAttackStrikes(combatant, context, 3);
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(8);
+  });
+
+  test("constellation 3 regenerates no Energy for the opponents her charged attack strikes", () => {
+    expect.hasAssertions();
+    const party = createParty([BARBARA_CHARACTER_ID]);
+    const combatant = createBarbaraCombatant(3);
+    const context = createKitTestContext(combatant, { party });
+
+    chargedAttackStrikes(combatant, context, 7);
+
+    expect(getPartyMember(party, BARBARA_CHARACTER_ID).energy).toBe(0);
   });
 });

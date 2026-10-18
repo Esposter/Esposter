@@ -20,7 +20,9 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
+import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -29,7 +31,10 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const LISA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LISA_CHARACTER_ID);
 const createLisaCombatant = (): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.EnergyRecharge, value: 1 },
+  ]),
   characterId: LISA_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
@@ -47,6 +52,14 @@ const countConductiveStacks = (enemy: Enemy): number =>
 // A character taking the field over another, as the party's swap reports it to Lisa's kit
 const swapCharacter = (combatant: Combatant, context: KitContext, characterId: number, previousCharacterId: number) =>
   LISA_KIT.onKitEvent?.({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context, combatant);
+
+// Each enemy one of Violet Arc's hold hits strikes, as the hit's strike reports it to the kit
+const strikeHoldEnemies = (combatant: Combatant, context: KitContext, count: number) => {
+  const hold = takeOne(LISA_KIT.elementalSkillHolds ?? []).action;
+  const hit = takeOne(hold.hits);
+  for (let enemy = 0; enemy < count; enemy++) hit.onStrike?.(context, { body: context.body, combatant, hit });
+  return hold;
+};
 
 describe("lisa kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -192,5 +205,55 @@ describe("lisa kit", () => {
     expect([countConductiveStacks(enemyAtConstellation6), countConductiveStacks(enemyAtConstellation5)]).toStrictEqual([
       0, 0,
     ]);
+  });
+
+  test("constellation 1 regenerates 2 Energy for each opponent Violet Arc's hold hits", () => {
+    expect.hasAssertions();
+    const party = createParty([LISA_CHARACTER_ID]);
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 1 };
+    const context = createKitTestContext(combatant, { party });
+    takeOne(LISA_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+
+    strikeHoldEnemies(combatant, context, 3);
+
+    expect(getPartyMember(party, LISA_CHARACTER_ID).energy).toBe(6);
+  });
+
+  test("constellation 1 holds the Energy a hold regenerates to 10, so the hits past five give none", () => {
+    expect.hasAssertions();
+    const party = createParty([LISA_CHARACTER_ID]);
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 1 };
+    const context = createKitTestContext(combatant, { party });
+    takeOne(LISA_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+
+    strikeHoldEnemies(combatant, context, 7);
+
+    expect(getPartyMember(party, LISA_CHARACTER_ID).energy).toBe(10);
+  });
+
+  test("constellation 1 regenerates again on the next hold, which starts its own count", () => {
+    expect.hasAssertions();
+    const party = createParty([LISA_CHARACTER_ID]);
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 1 };
+    const context = createKitTestContext(combatant, { party });
+    takeOne(LISA_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+    strikeHoldEnemies(combatant, context, 5);
+    takeOne(LISA_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+
+    strikeHoldEnemies(combatant, context, 5);
+
+    expect(getPartyMember(party, LISA_CHARACTER_ID).energy).toBe(20);
+  });
+
+  test("constellation 1 regenerates no Energy below Constellation 1", () => {
+    expect.hasAssertions();
+    const party = createParty([LISA_CHARACTER_ID]);
+    const combatant: Combatant = { ...createLisaCombatant(), constellationCount: 0 };
+    const context = createKitTestContext(combatant, { party });
+    takeOne(LISA_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+
+    strikeHoldEnemies(combatant, context, 3);
+
+    expect(getPartyMember(party, LISA_CHARACTER_ID).energy).toBe(0);
   });
 });

@@ -23,6 +23,7 @@ export interface KitBehaviour extends Partial<
     | "getStrikeDamageBonus"
     | "onKitEvent"
     | "onSprint"
+    | "onStep"
   >
 > {
   burst?: KitActionBehaviour;
