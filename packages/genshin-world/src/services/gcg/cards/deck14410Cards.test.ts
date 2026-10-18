@@ -764,6 +764,22 @@ describe("shimenawa's Reminiscence", () => {
 
     expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(hp);
   });
+
+  test("a Character's Elemental Skill spends one Elemental Die less for the artifact on another character", () => {
+    expect.hasAssertions();
+
+    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    const lector = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    lector.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
+    const duel = createDuel([
+      createSideState([sara, lector], [Element.Electro, Element.Electro]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    const costs: GcgCost[] = [{ count: 3, element: Element.Electro, kind: GcgCostKind.Dice }];
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 0 }, 0, { skill: TENGU_STORMCALL }, costs, [0, 1])).toBe(true);
+    expect(takeOne(duel.sides, 0).usedCardIds).toStrictEqual([SHIMENAWAS_REMINISCENCE_ID]);
+  });
 });
 
 describe("chinju Forest", () => {

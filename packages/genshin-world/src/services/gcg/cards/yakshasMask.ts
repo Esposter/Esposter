@@ -2,6 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
 
@@ -27,10 +28,10 @@ export const yakshasMask: GcgCardModule = {
   onCostPaid: ({ duel, sideIndex }) => {
     takeOne(duel.sides, sideIndex).usedCardIds.push(YAKSHAS_MASK_ID);
   },
-  reduceCost: ({ characterIndex, duel, sideIndex }, subject) => {
-    const side = takeOne(duel.sides, sideIndex);
+  reduceCost: (context, subject) => {
+    const side = takeOne(context.duel.sides, context.sideIndex);
     return checkIsGcgSwitchCost(subject) &&
-      characterIndex === side.activeIndex &&
+      checkIsGcgActiveHolder(context) &&
       !side.usedCardIds.includes(YAKSHAS_MASK_ID)
       ? { count: 1 }
       : undefined;

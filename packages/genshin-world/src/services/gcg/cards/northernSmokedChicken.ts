@@ -3,6 +3,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 
 const NORTHERN_SMOKED_CHICKEN_ID = 333_004;
@@ -18,7 +19,8 @@ export const northernSmokedChicken: GcgCardModule = {
   },
   play: (context, targetIndex) =>
     addGcgZoneCardToCharacter(context, targetIndex, NORTHERN_SMOKED_CHICKEN_ID, northernSmokedChicken),
-  reduceCost: (_context, subject) =>
+  reduceCost: (context, subject) =>
+    checkIsGcgActiveHolder(context) &&
     subject.skill?.kind === GcgSkillKind.NormalAttack &&
     subject.costs.some(({ kind }) => kind === GcgCostKind.Unaligned)
       ? { count: 1, element: undefined }

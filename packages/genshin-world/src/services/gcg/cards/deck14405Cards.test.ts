@@ -155,7 +155,7 @@ describe("capricious Visage", () => {
       createSideState([createCharacterState(YAE_MIKO_ID, Element.Electro)]),
       createSideState([]),
     ]);
-    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
     const zoneCard = createZoneCard(CAPRICIOUS_VISAGE_ID);
     const subject: GcgCostSubject = { card: TALENT_CARD, costs: [{ ...ELECTRO_DIE }], element: Element.Electro };
     expect(capriciousVisage.reduceCost?.(context, subject, zoneCard)).toStrictEqual({
@@ -174,7 +174,11 @@ describe("capricious Visage", () => {
     ]);
     const subject: GcgCostSubject = { costs: [{ ...ELECTRO_DIE }], element: Element.Electro, skill: ELEMENTAL_SKILL };
     expect(
-      capriciousVisage.reduceCost?.({ duel, sideIndex: 0 }, subject, createZoneCard(CAPRICIOUS_VISAGE_ID)),
+      capriciousVisage.reduceCost?.(
+        { characterIndex: 0, duel, sideIndex: 0 },
+        subject,
+        createZoneCard(CAPRICIOUS_VISAGE_ID),
+      ),
     ).toStrictEqual({ count: 1, kind: GcgCostKind.Dice });
   });
 
@@ -192,7 +196,11 @@ describe("capricious Visage", () => {
       createSideState([]),
     ]);
     expect(
-      capriciousVisage.reduceCost?.({ duel, sideIndex: 0 }, subject, createZoneCard(CAPRICIOUS_VISAGE_ID)),
+      capriciousVisage.reduceCost?.(
+        { characterIndex: 0, duel, sideIndex: 0 },
+        subject,
+        createZoneCard(CAPRICIOUS_VISAGE_ID),
+      ),
     ).toBeUndefined();
   });
 });
@@ -537,7 +545,7 @@ describe("superlative Superstrength", () => {
       element: Element.Geo,
       skill: ITTO_NORMAL_ATTACK,
     };
-    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
     expect(
       superlativeSuperstrength.reduceCost?.(context, subject, {
         ...createGcgZoneCard(SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength),

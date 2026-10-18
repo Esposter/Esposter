@@ -2,11 +2,12 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-const MINTY_MEAT_ROLLS_ID = 333_008;
+export const MINTY_MEAT_ROLLS_ID = 333_008;
 
 // Minty Meat Rolls: until the round ends, the target character's next three Normal Attacks cost one Unaligned die less, as
 // A status the target holds, and it eats no other food this round
@@ -21,8 +22,8 @@ export const mintyMeatRolls: GcgCardModule = {
     const character = targetIndex === undefined ? undefined : takeOne(duel.sides, sideIndex).characters.at(targetIndex);
     character?.statuses.push(createGcgZoneCard(MINTY_MEAT_ROLLS_ID, mintyMeatRolls));
   },
-  reduceCost: (_context, subject, zoneCard) =>
-    subject.skill?.kind === GcgSkillKind.NormalAttack && zoneCard.usages > 0
+  reduceCost: (context, subject, zoneCard) =>
+    checkIsGcgActiveHolder(context) && subject.skill?.kind === GcgSkillKind.NormalAttack && zoneCard.usages > 0
       ? { count: 1, element: undefined, kind: GcgCostKind.Unaligned }
       : undefined,
 };

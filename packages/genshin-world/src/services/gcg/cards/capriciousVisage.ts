@@ -3,6 +3,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { takeOne } from "@esposter/shared";
 
 export const CAPRICIOUS_VISAGE_ID = 312_013;
@@ -13,8 +14,9 @@ export const capriciousVisage: GcgCardModule = {
   onCostPaid: ({ duel, sideIndex }) => {
     takeOne(duel.sides, sideIndex).usedCardIds.push(CAPRICIOUS_VISAGE_ID);
   },
-  reduceCost: ({ duel, sideIndex }, subject) => {
-    if (takeOne(duel.sides, sideIndex).usedCardIds.includes(CAPRICIOUS_VISAGE_ID)) return undefined;
+  reduceCost: (context, subject) => {
+    if (!checkIsGcgActiveHolder(context)) return undefined;
+    if (takeOne(context.duel.sides, context.sideIndex).usedCardIds.includes(CAPRICIOUS_VISAGE_ID)) return undefined;
     const isTalentOrElementalSkill =
       subject.card?.kind === GcgCardKind.Talent || subject.skill?.kind === GcgSkillKind.ElementalSkill;
     if (!isTalentOrElementalSkill || !subject.costs.some((cost) => cost.kind === GcgCostKind.Dice)) return undefined;

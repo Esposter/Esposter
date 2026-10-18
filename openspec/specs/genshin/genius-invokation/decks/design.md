@@ -43,6 +43,7 @@ Each built deck's characters, their skills and their action cards has a module, 
 - **A skill prepared for a side runs as its turn begins.** A skill's after-effect may prepare another skill for its user. The side's prepared skills run at its turn's start, before its before-action hooks, each for a preparer still standing; a skill prepared while they run waits for the following turn.
 - **A card on one side may surcharge the other side's switch.** A card's `surchargeCost` adds dice to the opposing side's switch cost before the cost is taken, and hears the payment once it is made. Chains of Warding Thunder does so once a round.
 - **A depleted shield is answered by the card attached to its character.** A hit that takes a character's shield to 0 calls each attached card's `onShieldDepleted`, and the piercing DMG it names reaches every opposing character: the active one through a hit, and those on standby through the standby piercing. Aegis of Abyssal Flame answers once with 1 DMG. A character the hit defeats has its cards discarded first, so the depletion answers only a character still standing.
+- **Shimenawa's Reminiscence reduces from any character's equipment.** Its game text names the side, so the artifact on a standby character still reduces the active character's Elemental Skill. The wiki's Equipment Card page reads "the character" instead, so the side reading is provisional, and the cards whose text names their holder reduce only while the holder is active (see the rules design).
 
 ## Opponent decks
 

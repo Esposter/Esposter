@@ -263,3 +263,13 @@ A hit that takes a standing character's shield to 0 SHALL call each card attache
 - **GIVEN** Abyss Lector has 2 shield points and Aegis of Abyssal Flame attached, and the opposing side's only character stands at 1 HP
 - **WHEN** a 12 Physical hit defeats Abyss Lector
 - **THEN** the Aegis is discarded with her, no piercing DMG reaches the opposing side, and the opposing side wins the duel
+
+### Requirement: Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character
+
+Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact. Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill"). The wiki's Equipment Card page reads "the character", so this reading is provisional.
+
+#### Scenario: The artifact on a standby character reduces the active character's Elemental Skill
+
+- **GIVEN** Shimenawa's Reminiscence is attached to Abyss Lector, who is standby, and Kujou Sara is active
+- **WHEN** Sara pays for an Elemental Skill
+- **THEN** it costs one Elemental Die less, and the artifact is used for the round

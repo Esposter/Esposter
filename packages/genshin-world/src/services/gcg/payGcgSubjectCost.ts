@@ -30,7 +30,7 @@ export const payGcgSubjectCost = (
   if (character.energy < energyCost) return false;
   let reducedCosts = costs;
   const appliedReductions: GcgZoneCard[] = [];
-  for (const zoneCard of listGcgCostCards(side, characterIndex, subject.switchTo)) {
+  for (const zoneCard of listGcgCostCards(side, characterIndex)) {
     const module = GcgCardIdModuleMap.get(zoneCard.cardId);
     const reduction = module?.reduceCost?.(
       listGcgCardContext(context, side, zoneCard),
@@ -73,15 +73,15 @@ export const payGcgSubjectCost = (
   return true;
 };
 
-// The cards a cost's reductions are read from: the field of the character paying, and for a switch, the cards attached to
-// The character it brings in
-const listGcgCostCards = (side: GcgSideState, characterIndex: number, switchTo: number | undefined): GcgZoneCard[] => {
-  const incoming = switchTo === undefined ? undefined : side.characters.at(switchTo);
-  return [
-    ...listGcgFieldCards(side, characterIndex),
-    ...(incoming ? [...incoming.equipments, ...incoming.statuses] : []),
-  ];
-};
+// The cards a cost's reductions are read from: the field of the character paying, then every other character's equipments
+// And statuses, since a side-wide card reduces a cost whoever pays it (a switch's incoming character among them). A card that
+// Reduces only its own holder's costs checks that the holder is the active character, the one paying
+const listGcgCostCards = (side: GcgSideState, characterIndex: number): GcgZoneCard[] => [
+  ...listGcgFieldCards(side, characterIndex),
+  ...side.characters.flatMap((character, index) =>
+    index === characterIndex ? [] : [...character.equipments, ...character.statuses],
+  ),
+];
 
 // The context a card's reduction is read in, naming the character the card is attached to when it is one's
 const listGcgCardContext = (

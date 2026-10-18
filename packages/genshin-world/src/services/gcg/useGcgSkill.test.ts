@@ -10,6 +10,8 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { MINTY_MEAT_ROLLS_ID, mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
@@ -125,5 +127,25 @@ describe(useGcgSkill, () => {
     const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
 
     expect(useGcgSkill(duel, 0, BURST_ID, [])).toBe(GcgActionResult.Unpayable);
+  });
+
+  test("should leave a standby character's status out of its active character's Normal Attack cost", () => {
+    expect.hasAssertions();
+
+    const unalignedAttack: GcgSkill = { ...normalAttack, costs: [{ count: 1, kind: GcgCostKind.Unaligned }] };
+    const active = createCharacterState([unalignedAttack]);
+    const minty = createGcgZoneCard(MINTY_MEAT_ROLLS_ID, mintyMeatRolls);
+    const standby = { ...createCharacterState([]), statuses: [minty] };
+    const attacker = { ...createSideState(active, [Element.Pyro]), characters: [active, standby] };
+    const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
+    const usagesBefore = minty.usages;
+
+    const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
+
+    expect({ dice: attacker.dice, mintyUsages: minty.usages, result }).toStrictEqual({
+      dice: [],
+      mintyUsages: usagesBefore,
+      result: GcgActionResult.Done,
+    });
   });
 });

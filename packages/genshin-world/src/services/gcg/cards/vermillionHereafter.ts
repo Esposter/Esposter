@@ -2,6 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
@@ -34,9 +35,10 @@ export const vermillionHereafter: GcgCardModule = {
       vermillionHereafterBonus,
     );
   },
-  reduceCost: ({ duel, sideIndex }, subject) =>
+  reduceCost: (context, subject) =>
+    checkIsGcgActiveHolder(context) &&
     (subject.skill?.kind === GcgSkillKind.NormalAttack || subject.card?.kind === GcgCardKind.Talent) &&
-    !takeOne(duel.sides, sideIndex).usedCardIds.includes(VERMILLION_HEREAFTER_ID)
+    !takeOne(context.duel.sides, context.sideIndex).usedCardIds.includes(VERMILLION_HEREAFTER_ID)
       ? { count: 1 }
       : undefined,
 };
