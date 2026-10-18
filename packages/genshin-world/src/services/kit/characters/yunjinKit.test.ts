@@ -47,14 +47,19 @@ const createYunjinCombatant = (): Combatant => ({
   ]),
   characterId: YUNJIN_CHARACTER_ID,
   constellationCount: 0,
+  element: Element.Geo,
   elementalResonances: [],
   kit: YUNJIN_KIT,
   level: 90,
   weaponType: WeaponType.Polearm,
 });
-// A teammate of Yun Jin's, with Yun Jin's kit standing in for its own, which none of these tests reads
+// A teammate of Yun Jin's in the element given, with Yun Jin's kit standing in for its own, which none of these tests reads
 const OTHER_CHARACTER_ID = 1;
-const createTeammate = (): Combatant => ({ ...createYunjinCombatant(), characterId: OTHER_CHARACTER_ID });
+const createTeammate = (characterId: number, element?: Element): Combatant => ({
+  ...createYunjinCombatant(),
+  characterId,
+  element,
+});
 
 const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitEffectState => {
   const context = createKitTestContext(combatant);
@@ -263,9 +268,15 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
   const NORMAL_ATTACK_HIT = takeOne(takeOne(YUNJIN_KIT.normalAttacks).hits);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([YUNJIN_CHARACTER_ID]);
-  // The flat base damage a strike of hers adds as it is priced against the enemy, with the effects on the team given
-  const getIncrease = (strike: KitStrike, kitEffectState: KitEffectState) =>
-    YUNJIN_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, kitEffectState.effects);
+  // The flat base damage a strike of hers adds as it is priced against the enemy, with the effects on the team given, and
+  // The team's combatants by id, which default to Yun Jin alone
+  const getIncrease = (
+    strike: KitStrike,
+    kitEffectState: KitEffectState,
+    team = party,
+    characterIdCombatantMap = new Map([[strike.combatant.characterId, strike.combatant]]),
+  ) =>
+    YUNJIN_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, team, kitEffectState.effects, characterIdCombatantMap);
   const strikeOf = (combatant: Combatant, hit: KitHit, attackTag: AttackTag): KitStrike => ({
     attackTag,
     body: createKitTestContext(combatant).body,
@@ -372,7 +383,7 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
   test("a teammate's normal attack takes the banner's increase while it stands", () => {
     expect.hasAssertions();
     const combatant = createYunjinCombatant();
-    const teammate = createTeammate();
+    const teammate = createTeammate(OTHER_CHARACTER_ID);
     const characterIdCombatantMap = new Map([
       [YUNJIN_CHARACTER_ID, combatant],
       [OTHER_CHARACTER_ID, teammate],
@@ -388,7 +399,7 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
   test("each enemy a teammate's normal attack damages spends one of the banner's 30 stacks", () => {
     expect.hasAssertions();
     const combatant = createYunjinCombatant();
-    const teammate = createTeammate();
+    const teammate = createTeammate(OTHER_CHARACTER_ID);
     const characterIdCombatantMap = new Map([
       [YUNJIN_CHARACTER_ID, combatant],
       [OTHER_CHARACTER_ID, teammate],
@@ -423,23 +434,59 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     }
   });
 
+  // Yun Jin with the teammates given, each drawn in its element, at the ascension given, with the team's combatants by id
+  const createYunjinTeam = (ascension: number, teammateElements: Element[]) => {
+    const combatant: Combatant = { ...createYunjinCombatant(), ascension };
+    const teammates = teammateElements.map((element, index) => createTeammate(OTHER_CHARACTER_ID + index, element));
+    return {
+      characterIdCombatantMap: new Map(
+        [combatant, ...teammates].map((member): [number, Combatant] => [member.characterId, member]),
+      ),
+      combatant,
+      party: createParty([YUNJIN_CHARACTER_ID, ...teammates.map(({ characterId }) => characterId)]),
+    };
+  };
+  // The flat base damage a normal attack of Yun Jin's adds while the banner stands, on the team given
+  const getTeamIncrease = ({ characterIdCombatantMap, combatant, party }: ReturnType<typeof createYunjinTeam>) =>
+    getIncrease(
+      strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack),
+      castStart(YUNJIN_KIT.elementalBurst, combatant),
+      party,
+      characterIdCombatantMap,
+    );
+
+  test("with one Elemental Type on the team, however many members draw it, Ascension 4 adds 2.5% of her DEF", () => {
+    expect.hasAssertions();
+    const team = createYunjinTeam(4, [Element.Geo]);
+
+    expect(getTeamIncrease(team)).toBeCloseTo((0.3216 + 0.025) * team.combatant.attributes.defense);
+  });
+
+  test("with two Elemental Types on the team, Ascension 4 adds 5% of her DEF", () => {
+    expect.hasAssertions();
+    const team = createYunjinTeam(4, [Element.Pyro]);
+
+    expect(getTeamIncrease(team)).toBeCloseTo((0.3216 + 0.05) * team.combatant.attributes.defense);
+  });
+
+  test("with three Elemental Types on the team, Ascension 4 adds 7.5% of her DEF", () => {
+    expect.hasAssertions();
+    const team = createYunjinTeam(4, [Element.Pyro, Element.Hydro]);
+
+    expect(getTeamIncrease(team)).toBeCloseTo((0.3216 + 0.075) * team.combatant.attributes.defense);
+  });
+
   test("with four Elemental Types on the team, Ascension 4 adds 11.5% of her DEF to the banner's increase", () => {
     expect.hasAssertions();
-    const combatant: Combatant = {
-      ...createYunjinCombatant(),
-      ascension: 4,
-      deployedElements: [Element.Geo, Element.Pyro, Element.Hydro, Element.Electro],
-    };
-    const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+    const team = createYunjinTeam(4, [Element.Pyro, Element.Hydro, Element.Electro]);
 
-    expect(getIncrease(strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack), kitEffectState)).toBeCloseTo(
-      (0.3216 + 0.115) * combatant.attributes.defense,
-    );
-    expect(
-      getIncrease(
-        strikeOf(combatant, takeOne(YUNJIN_KIT.elementalSkill.hits), AttackTag.ElementalSkill),
-        kitEffectState,
-      ),
-    ).toBe(0);
+    expect(getTeamIncrease(team)).toBeCloseTo((0.3216 + 0.115) * team.combatant.attributes.defense);
+  });
+
+  test("below Ascension 4, the team's Elemental Types add nothing to the banner's increase", () => {
+    expect.hasAssertions();
+    const team = createYunjinTeam(3, [Element.Pyro, Element.Hydro, Element.Electro]);
+
+    expect(getTeamIncrease(team)).toBeCloseTo(0.3216 * team.combatant.attributes.defense);
   });
 });

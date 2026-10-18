@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -19,6 +20,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { openKitCounterWindow } from "#src/services/kit/effects/openKitCounterWindow";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { takeOne } from "@esposter/shared";
 
 export const YUNJIN_CHARACTER_ID = 10_000_064;
@@ -58,21 +60,32 @@ const spendBannerStack = (effects: readonly KitEffect[], characterId: number): v
   if (banner) banner.stacks = countKitResource(effects, characterId, BANNER_STATUS_ID) - 1;
 };
 
-// Ascension 4's share of her DEF for the Elemental Types the deployed team holds, as her combatant reads the team
-// As it stands
-const getAscension4DefenseShare = ({ ascension, deployedElements = [] }: Combatant): number => {
-  if (ascension < ASCENSION_4) return 0;
-  const elementCount = new Set(deployedElements.flatMap((element) => (element === undefined ? [] : [element]))).size;
-  return ASCENSION_4_DEFENSE_SHARES[elementCount - 1] ?? 0;
+// Ascension 4's share of Yun Jin's DEF for the Elemental Types the deployed team holds, each member's element as the team
+// Stands, read from the party and the team's built combatants by id
+const getAscension4DefenseShare = (
+  banner: Combatant,
+  party: Party,
+  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
+): number => {
+  if (banner.ascension < ASCENSION_4) return 0;
+  const elements = getDeployedCombatants(party, characterIdCombatantMap).flatMap(({ element }) =>
+    element === undefined ? [] : [element],
+  );
+  return ASCENSION_4_DEFENSE_SHARES[new Set(elements).size - 1] ?? 0;
 };
 
 // The banner's flat base damage on a normal attack, its share of Yun Jin's DEF with Ascension 4's share on top
-const getBannerIncrease = (banner: Combatant): number =>
-  (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(banner)) * banner.attributes.defense;
+const getBannerIncrease = (
+  banner: Combatant,
+  party: Party,
+  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
+): number =>
+  (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(banner, party, characterIdCombatantMap)) *
+  banner.attributes.defense;
 
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
 // Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take it through
-// her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental Types on top
+// Her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental Types on top
 // Ascension 1's counter window is built.
 // Constellation 4's DEF is built, from her own Crystallize
 // Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
@@ -136,15 +149,15 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
       });
     },
     // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
       strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
-        ? getBannerIncrease(strike.combatant)
+        ? getBannerIncrease(strike.combatant, party, characterIdCombatantMap)
         : 0,
     // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
     getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};
       const buffedMember = getBuffedCombatant(member, effects, party, characterIdCombatantMap);
-      return { additiveBaseDamageBonus: getBannerIncrease(buffedMember) };
+      return { additiveBaseDamageBonus: getBannerIncrease(buffedMember, party, characterIdCombatantMap) };
     },
     // While the window stands, her skill's release plays its top level, whatever seconds it was held
     jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>

@@ -87,12 +87,14 @@ export interface Kit {
   // Reads for a bonus its kit's actions set going
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
-  // Stats, given the enemy as it stands, the deployed team and the effects on it
+  // Stats, given the enemy as it stands, the deployed team, the effects on it and the team's built combatants by id, which
+  // A share of the team's elements is read from
   getStrikeAdditiveBaseDamageBonus?: (
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => number;
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
