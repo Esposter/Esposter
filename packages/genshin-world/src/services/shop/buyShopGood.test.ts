@@ -266,4 +266,44 @@ describe(buyShopGood, () => {
       buyShopGood(wallet, fullBag, getGroceryItemDefinition, [], groceryGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
+  const FISH_ITEM_ID = 9001;
+  const fishDefinition: ItemDefinition = {
+    category: ItemCategory.Material,
+    id: FISH_ITEM_ID,
+    name: "Fish",
+    rank: 1,
+    rarity: 1,
+    stackLimit: 99,
+  };
+  // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
+  const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, priceCount: 2, priceItemId: FISH_ITEM_ID };
+
+  test("a good priced in a fish is paid from the bag and gives its item", () => {
+    expect.hasAssertions();
+
+    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 2 }], nextId: 1 };
+    const result = buyShopGood(
+      EMPTY_WALLET,
+      inventory,
+      getGroceryItemDefinition,
+      [],
+      fishPricedGood,
+      ADVENTURE_RANK,
+      NOW,
+    );
+
+    expect(result?.inventory.items).toStrictEqual([
+      { definition: getGroceryItemDefinition(GROCERY_ITEM_ID), id: 1, quantity: 1 },
+    ]);
+  });
+
+  test("a good priced in a fish the bag lacks is refused", () => {
+    expect.hasAssertions();
+
+    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 1 }], nextId: 1 };
+
+    expect(
+      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
+    ).toBeUndefined();
+  });
 });

@@ -4,16 +4,16 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
-import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
+import { giveShopGood } from "#src/services/shop/giveShopGood";
 import { payShopGood } from "#src/services/shop/payShopGood";
+import { payShopGoodFromBag } from "#src/services/shop/payShopGoodFromBag";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
-// The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, its price
-// Taken and its item given: into the wallet when the item is a currency this rule trades in, otherwise into the bag as
-// `getGoodItemDefinition` defines it, which the bag must hold whole. Undefined where the good is not offered: below its
-// Rank, outside its dates, sold out this refresh, or unaffordable, where its price is no currency this rule trades in,
-// Or where the bag cannot take the item whole
+// The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, its price taken and
+// Its item given. A price in a currency this rule trades in is paid from the wallet; any other price is an item the bag holds,
+// And is paid from the bag. Undefined where the good is not offered: below its Rank, outside its dates, sold out this refresh,
+// Unaffordable, or where the bag cannot take the item whole
 export const buyShopGood = (
   wallet: Wallet,
   inventory: Inventory,
@@ -23,18 +23,16 @@ export const buyShopGood = (
   adventureRank: number,
   now: Temporal.Instant,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
+  if (!checkIsShopGoodOffered(good, adventureRank, now)) return undefined;
   const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
-  const itemCurrency = ShopItemCurrencyMap[good.itemId];
-  if (priceCurrency === undefined || !checkIsShopGoodOffered(good, adventureRank, now)) return undefined;
+  if (priceCurrency === undefined) {
+    const paid = payShopGoodFromBag(inventory, purchases, good, now);
+    if (!paid) return undefined;
+    const given = giveShopGood(wallet, paid.inventory, getGoodItemDefinition, good);
+    return given && { ...given, purchases: paid.purchases };
+  }
   const paid = payShopGood(wallet, purchases, good, priceCurrency, now);
   if (!paid) return undefined;
-  if (itemCurrency !== undefined)
-    return {
-      inventory,
-      purchases: paid.purchases,
-      wallet: { ...paid.wallet, [itemCurrency]: paid.wallet[itemCurrency] + good.itemCount },
-    };
-  const addition = addInventoryItem(inventory, getGoodItemDefinition(good.itemId), good.itemCount);
-  if (addition.overflow > 0) return undefined;
-  return { inventory: addition.inventory, purchases: paid.purchases, wallet: paid.wallet };
+  const given = giveShopGood(paid.wallet, inventory, getGoodItemDefinition, good);
+  return given && { ...given, purchases: paid.purchases };
 };

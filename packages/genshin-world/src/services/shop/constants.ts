@@ -27,4 +27,5 @@ export const SHOP_GOODS_KEYS: readonly (readonly [number, Extract<GameDataKey, `
   [1015, "shops/mondstadtBrook"],
   [1017, "shops/mondstadtDraff"],
   [1018, "shops/mondstadtChloris"],
+  [1064, "shops/mondstadtFishing"],
 ];
