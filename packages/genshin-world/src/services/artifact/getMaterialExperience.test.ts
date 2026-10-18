@@ -1,15 +1,22 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { getMaterialExperience } from "#src/services/artifact/getMaterialExperience";
-import { describe, expect, test } from "vitest";
+import { readStatTables } from "#src/services/character/readStatTables";
+import { assert, describe, expect, test } from "vitest";
+
+const { artifactExpMaterialMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(getMaterialExperience, () => {
-  test("sums each enhancement material's EXP, Sanctifying Unction at 2,500 and Sanctifying Essence at 10,000, times its count", () => {
+  test("sums each enhancement material's EXP from the game's table, times its count", () => {
     expect.hasAssertions();
 
+    const unction = artifactExpMaterialMap.get(105_002);
+    const essence = artifactExpMaterialMap.get(105_003);
+    assert(unction !== undefined && essence !== undefined);
     expect(
-      getMaterialExperience([
+      getMaterialExperience(artifactExpMaterialMap, [
         { count: 2, id: 105_002 },
         { count: 1, id: 105_003 },
       ]),
-    ).toBe(15_000);
+    ).toBe(unction.experience * 2 + essence.experience);
   });
 });

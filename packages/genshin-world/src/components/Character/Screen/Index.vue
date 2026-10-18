@@ -30,7 +30,6 @@ import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetail
 import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
 import { getEnhancementMoraCost } from "#src/services/artifact/getEnhancementMoraCost";
 import { getMaterialExperience } from "#src/services/artifact/getMaterialExperience";
-import { ItemIdExperienceMap } from "#src/services/artifact/ItemIdExperienceMap";
 import { takeFodderArtifacts } from "#src/services/artifact/takeFodderArtifacts";
 import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharacterArtifactLock";
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
@@ -396,7 +395,7 @@ const enhanceFodderOptions = computed(() =>
 );
 const enhanceMaterialOptions = computed(() =>
   inventory.value.items
-    .filter(({ definition }) => ItemIdExperienceMap.has(definition.id))
+    .filter(({ definition }) => statTables.artifactExpMaterialMap.has(definition.id))
     .map(({ definition, quantity }) => ({
       count: quantity,
       id: String(definition.id),
@@ -407,7 +406,9 @@ const enhanceMaterialOptions = computed(() =>
 const enhanceMaterialItemCounts = computed(() =>
   Object.entries(enhanceMaterialCounts.value).flatMap(([id, count]) => (count > 0 ? [{ count, id: Number(id) }] : [])),
 );
-const enhanceMaterialExperience = computed(() => getMaterialExperience(enhanceMaterialItemCounts.value));
+const enhanceMaterialExperience = computed(() =>
+  getMaterialExperience(statTables.artifactExpMaterialMap, enhanceMaterialItemCounts.value),
+);
 const enhanceMoraCost = computed(() =>
   getEnhancementMoraCost({
     artifactRarityDataMap: statTables.artifactRarityDataMap,
