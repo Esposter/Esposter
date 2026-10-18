@@ -217,6 +217,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
+  reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
   reputationBountyHunt: {
     bountyId: MAX_SAVE_NUMBER,
     isTargetDefeated: true,
@@ -353,6 +354,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
   reputationBountyClaimedAts: [],
+  reputationRequestClaimedAts: [],
   namecardItemId: 0,
   shopPurchases: [],
   spiralAbyss: {},

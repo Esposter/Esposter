@@ -238,6 +238,7 @@ describe("genshinSaveSchema", () => {
       ),
       reputation: { exp: maxNumber, level: maxNumber },
       reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
+      reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
       spiralAbyss: Object.fromEntries(
         Array.from({ length: MAX_ABYSS_CYCLE_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

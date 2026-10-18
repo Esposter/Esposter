@@ -210,8 +210,9 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
 // Bought in both copies keeps the purchase made later. Each dish keeps the higher proficiency of its two copies, the
 // Learned dishes union, and each processing's queue keeps the copy started later
-// The bounty claims of both copies, each moment once, the latest of the week's limit kept: the older claims are no longer counted
-const mergeReputationBountyClaimedAts = (account: string[], guest: string[]): string[] =>
+// The claims of one kind, bounties or requests, from both copies: each moment once, the latest of the week's limit kept, the
+// Older claims no longer counted
+const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): string[] =>
   [...new Set([...account, ...guest])]
     .toSorted((claimedAt, than) =>
       Temporal.Instant.compare(Temporal.Instant.from(claimedAt), Temporal.Instant.from(than)),
@@ -219,9 +220,13 @@ const mergeReputationBountyClaimedAts = (account: string[], guest: string[]): st
     .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
 
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
-  const reputationBountyClaimedAts = mergeReputationBountyClaimedAts(
+  const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
     account.reputationBountyClaimedAts,
     guest.reputationBountyClaimedAts,
+  );
+  const reputationRequestClaimedAts = mergeWeeklyReputationClaimedAts(
+    account.reputationRequestClaimedAts,
+    guest.reputationRequestClaimedAts,
   );
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
@@ -314,6 +319,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     reputationBountyClaimedAts,
+    reputationRequestClaimedAts,
     ...(reputationBountyHunt && { reputationBountyHunt }),
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),

@@ -98,6 +98,10 @@ export const genshinSaveSchema = z
       .max(REPUTATION_WEEKLY_CLAIM_LIMIT),
     // The Mondstadt bounty the player has taken and not yet claimed, absent while none is taken
     reputationBountyHunt: reputationBountyHuntSaveSchema.optional(),
+    // The moments the request claims were made, the ones before the week's reset no longer counted
+    reputationRequestClaimedAts: z
+      .array(z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH))
+      .max(REPUTATION_WEEKLY_CLAIM_LIMIT),
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
     shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT),
     // The Spiral Abyss's progress by cycle: the Corridor's one cycle, and each Moon Spire period by its id
