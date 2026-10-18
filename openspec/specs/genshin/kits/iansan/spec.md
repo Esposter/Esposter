@@ -89,3 +89,25 @@ Iansan's skill press SHALL enter her Nightsoul Blessing with 54 Nightsoul points
 - **GIVEN** Iansan is in the Nightsoul Blessing
 - **WHEN** nine seconds pass with no point gained
 - **THEN** she is no longer in the blessing
+
+### Requirement: Constellation 1 energy
+
+From Constellation 1, each 6 Nightsoul points her blessing consumes SHALL restore Iansan 15 energy, and then her Constellation 1 cooldown of 18 seconds SHALL start, during which the points consumed SHALL NOT count toward the next 6.
+
+#### Scenario: Six points restore energy
+
+- **GIVEN** Iansan has Constellation 1 and is in the Nightsoul Blessing
+- **WHEN** six points are consumed
+- **THEN** she gains 15 energy
+
+#### Scenario: Points consumed during the cooldown do not count
+
+- **GIVEN** Iansan's Constellation 1 cooldown is running
+- **WHEN** her blessing consumes points
+- **THEN** no energy is gained until the cooldown ends
+
+#### Scenario: Constellation 0 gains nothing
+
+- **GIVEN** Iansan has no constellation
+- **WHEN** her blessing consumes six points
+- **THEN** she gains no energy
