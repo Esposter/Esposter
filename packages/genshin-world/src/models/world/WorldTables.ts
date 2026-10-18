@@ -11,6 +11,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
+import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
@@ -43,6 +44,8 @@ export interface WorldTables {
   monumentPlaces: PuzzlePlace[];
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
+  // The characters and weapons Paimon's Bargains offers in turn, which its screen reads each month's pair and set from
+  paimonsBargainsRotation: PaimonsBargainsRotation;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
   // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of

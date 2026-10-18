@@ -30,6 +30,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.Map]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Notices]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.PaimonMenu]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.PaimonsBargains]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.PartySetup]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.PhotoMode]: { isHeld: false, isHudHidden: true, isPointerReleased: false },
   [ScreenKind.Quests]: MENU_SCREEN_BEHAVIOUR,

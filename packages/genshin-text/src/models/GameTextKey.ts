@@ -392,6 +392,8 @@ export enum GameTextKey {
   Padisarah = "200162340",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
+  // Paimon's Bargains, the shop the Paimon menu's Shop entry opens, which sells the Fates and the month's rotation
+  PaimonsBargains = "SHOP_TYPE_PAIMON",
   // The four teams every player starts with, each named Party 1 to 4 until it is renamed
   PartyDefaultName1 = "UI_TEAM_DEFAULT_NAME1",
   PartyDefaultName2 = "UI_TEAM_DEFAULT_NAME2",

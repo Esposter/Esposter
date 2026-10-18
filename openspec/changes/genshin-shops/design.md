@@ -22,7 +22,7 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
 
 ## Scope and order
 
-**Today:** the wallet holds the currencies. Paimon's Bargains' Fates and the Mondstadt grocery's Mora-priced goods are offered by the rule, with no screen. The grocery's goods give ingredients the bag does not hold yet, so the rule refuses them until it does.
+**Today:** the wallet holds the currencies. Paimon's Bargains opens from the Paimon menu's Shop entry on its own screen, offering the Fates and the month's pair and weapon set, each bought at its rotation's price and limit: a character joins the roster, or gains a Stella Fortuna when held, and a weapon goes into the bag. Its tab labels are not built yet, since each has several text ids in the game text, so its goods share one grid. The Mondstadt grocery's Mora-priced goods are offered by the rule, with no screen. The grocery's goods give ingredients the bag does not hold yet, so the rule refuses them until it does.
 
 **This adds, in order:**
 
@@ -41,17 +41,20 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
 
 ## Key files
 
-| File                                                                       | Role after the change                                        |
-| :------------------------------------------------------------------------- | :----------------------------------------------------------- |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                  | Gains each region's Sigils                                   |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                   | `Shop`, filled in                                            |
-| `packages/genshin-world/src/models/world/Resident.ts`                      | A vendor, whose talk opens their shop                        |
-| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`            | Each city vendor's shop, by the vendor's NPC id              |
-| `packages/genshin-world/src/components/Shop/Screen/Index.vue`              | Opens a vendor's shop from their talk and buys its goods     |
-| `packages/genshin-interface/src/components/ShopScreen/Index.vue`           | The Shop screen's pieces, placed from a public clip          |
-| `packages/genshin-world/src/services/menu/constants.ts`                    | The Paimon menu's Shop entry, which opens Paimon's Bargains  |
-| `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`      | The pair and the weapon set a game-time month offers         |
-| `scripts/src/services/genshinAssets/shops/buildPaimonsBargainsRotation.ts` | Publishes the rotation's pairs and weapon sets from the dump |
+| File                                                                       | Role after the change                                                              |
+| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                  | Gains each region's Sigils                                                         |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                   | `Shop`, filled in                                                                  |
+| `packages/genshin-world/src/models/world/Resident.ts`                      | A vendor, whose talk opens their shop                                              |
+| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`            | Each city vendor's shop, by the vendor's NPC id                                    |
+| `packages/genshin-world/src/components/Shop/Screen/Index.vue`              | Opens a vendor's shop from their talk and buys its goods                           |
+| `packages/genshin-interface/src/components/ShopScreen/Index.vue`           | The Shop screen's pieces, placed from a public clip                                |
+| `packages/genshin-world/src/services/menu/constants.ts`                    | The Paimon menu's Shop entry, which opens Paimon's Bargains                        |
+| `packages/genshin-world/src/components/PaimonsBargains/Screen/Index.vue`   | Paimon's Bargains' screen: the Fates and the month's rotation over the shop screen |
+| `packages/genshin-world/src/services/shop/buyPaimonsBargainsCharacter.ts`  | Buys a character of the rotation into the roster, or a Stella Fortuna for one held |
+| `packages/genshin-world/src/services/shop/buyPaimonsBargainsWeapon.ts`     | Buys a weapon of the rotation into the bag, its price taken first                  |
+| `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`      | The pair and the weapon set a game-time month offers                               |
+| `scripts/src/services/genshinAssets/shops/buildPaimonsBargainsRotation.ts` | Publishes the rotation's pairs and weapon sets from the dump                       |
 
 ## Sources
 
