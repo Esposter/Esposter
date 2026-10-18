@@ -1,6 +1,7 @@
 import type { Music } from "genshin-engine";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
+import { readFileResponse } from "#src/services/shared/readFileResponse";
 
 // Every recording a piece's voices play, fetched from `baseUrl` and decoded once, by file. A context decodes at its
 // Own rate and a buffer source resamples whatever it plays, so any context the piece plays or renders through can
@@ -16,9 +17,7 @@ export const loadMusicRecordings = async (
   const entries = await Promise.all(
     Array.from(files, async (file): Promise<[string, AudioBuffer]> => {
       const url = `/${baseUrl}/${file}`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
+      const response = await readFileResponse(url, DATA_FETCH_TIMEOUT_MS);
       return [file, await context.decodeAudioData(await response.arrayBuffer())];
     }),
   );
