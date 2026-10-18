@@ -1,3 +1,4 @@
+import { computeDotProduct } from "#src/services/function/computeDotProduct";
 import { computeSum } from "#src/services/function/computeSum";
 
 // The Pearson correlation of two lists, by the sums that mathjs takes, in its order, so the rounding is the same
@@ -7,7 +8,7 @@ export const computeCorrelation = (left: readonly number[], right: readonly numb
   const count = left.length;
   const sumLeft = computeSum(left);
   const sumRight = computeSum(right);
-  const sumProducts = left.reduce((total, value, index) => total + value * (right[index] ?? Number.NaN), 0);
+  const sumProducts = computeDotProduct(left, right) ?? Number.NaN;
   const sumLeftSquares = computeSum(left.map((value) => value ** 2));
   const sumRightSquares = computeSum(right.map((value) => value ** 2));
   const numerator = count * sumProducts - sumLeft * sumRight;
