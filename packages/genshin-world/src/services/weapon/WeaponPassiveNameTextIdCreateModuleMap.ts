@@ -44,6 +44,7 @@ import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/pass
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
+import { createSkywardBladePassiveModule } from "#src/services/weapon/passives/createSkywardBladePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
@@ -225,4 +226,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2971867387": createEchoingBalladPassiveModule,
   // Falcon's Defiance (Aquila Favonia)
   "1362579531": createAquilaFavoniaPassiveModule,
+  // Sky-Piercing Fang (Skyward Blade)
+  "2711925235": createSkywardBladePassiveModule,
 };
