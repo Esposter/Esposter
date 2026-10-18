@@ -11,8 +11,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
-// White Cruising Wave at its first rank: twenty-four per cent ATK for eight seconds after the wielder is healed
-const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.24, 8, 0, 0]);
+// Synthetic params, not the weapon's row: a quarter ATK for three seconds after the wielder is healed
+const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.25, 3, 0, 0]);
 const createHealthChanged = (characterId: number, healthShare: number): KitEvent => ({
   characterId,
   healthShare,
@@ -30,11 +30,11 @@ describe(createTidalShadowPassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.24,
+        amount: 0.25,
         attribute: Attribute.AttackPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 8,
+        secondsRemaining: 3,
         source: "tidalShadow",
       },
     ]);

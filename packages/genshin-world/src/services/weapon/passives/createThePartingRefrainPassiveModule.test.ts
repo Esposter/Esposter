@@ -24,10 +24,10 @@ const readBuffed = (context: KitContext, wielder: Combatant, attribute: Attribut
     .attributeTotalMap[attribute];
 
 describe(createThePartingRefrainPassiveModule, () => {
-  // The Parting Refrain at its first rank: 60 Elemental Mastery, and a Sigil of Remembrance from each Elemental Skill or Burst
-  // Hit every 0.2 seconds. At four Sigils, Farewell Song lasts 12 seconds on the team with 100 Elemental Mastery and 20% ATK,
-  // And no Sigil is gained for 20 seconds after it
-  const thePartingRefrainPassiveModule = createThePartingRefrainPassiveModule([60, 0.2, 12, 100, 0.2, 20]);
+  // Synthetic params, not the weapon's row: 5 Elemental Mastery, and a Sigil of Remembrance from each Elemental Skill
+  // Or Burst hit every 0.1 seconds. At four Sigils, Farewell Song lasts 2 seconds on the team with 10 Elemental Mastery
+  // And 25% ATK, and no Sigil is gained for 4 seconds after it
+  const thePartingRefrainPassiveModule = createThePartingRefrainPassiveModule([5, 0.1, 2, 10, 0.25, 4]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
@@ -44,11 +44,11 @@ describe(createThePartingRefrainPassiveModule, () => {
     expect.hasAssertions();
 
     expect(thePartingRefrainPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 60, attribute: Attribute.ElementalMastery },
+      { amount: 5, attribute: Attribute.ElementalMastery },
     ]);
   });
 
-  test("four Sigils from Elemental Skill and Burst hits raise the team's Elemental Mastery and ATK for twelve seconds", () => {
+  test("four Sigils from Elemental Skill and Burst hits raise the team's Elemental Mastery and ATK for two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
@@ -62,10 +62,10 @@ describe(createThePartingRefrainPassiveModule, () => {
       stepKitSeconds(context, 0.3);
     }
 
-    expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(100);
-    expect(readBuffed(context, wielder, Attribute.AttackPercent)).toBe(0.2);
+    expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(10);
+    expect(readBuffed(context, wielder, Attribute.AttackPercent)).toBe(0.25);
 
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 2.1);
 
     expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(0);
     expect(readBuffed(context, wielder, Attribute.AttackPercent)).toBe(0);
@@ -85,7 +85,7 @@ describe(createThePartingRefrainPassiveModule, () => {
     expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(0);
   });
 
-  test("no Sigil is gained for twenty seconds after Farewell Song", () => {
+  test("no Sigil is gained for four seconds after Farewell Song", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
@@ -99,7 +99,7 @@ describe(createThePartingRefrainPassiveModule, () => {
       stepKitSeconds(context, 0.3);
     }
 
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 2.1);
 
     for (const attackTag of [
       AttackTag.ElementalSkill,

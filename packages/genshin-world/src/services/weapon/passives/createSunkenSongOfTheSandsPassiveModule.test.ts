@@ -28,10 +28,10 @@ const readMemberBuffs = (effects: readonly KitEffect[], characterId: number) =>
   );
 
 describe(createSunkenSongOfTheSandsPassiveModule, () => {
-  // Key of Khaj-Nisut at its first rank: its HP line is the table's. Each Elemental Skill hit adds a stack of 0.12% of the
-  // Wielder's Max HP as Elemental Mastery, up to three, and the third stack gives each other deployed member 0.2% of it for
-  // Twenty seconds, restarted by a trigger at three stacks
-  const sunkenSongOfTheSandsPassiveModule = createSunkenSongOfTheSandsPassiveModule([0.2, 0.0012, 20, 0.3, 0.002, 20]);
+  // Synthetic params, not the weapon's row, and a first param the module does not read: each Elemental Skill hit
+  // Adds a stack of 1% of the wielder's Max HP as Elemental Mastery, up to three, once every 0.4 seconds, and
+  // The third stack gives each other deployed member 2% of it for two seconds, restarted by a trigger at three stacks
+  const sunkenSongOfTheSandsPassiveModule = createSunkenSongOfTheSandsPassiveModule([0.1, 0.01, 3, 0.4, 0.02, 2]);
   const otherMemberCharacterId = -1;
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
   const maximumHealth = wielder.attributes.maxHealth;
@@ -59,10 +59,10 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     const context = createContext();
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
 
-    expect(readElementalMastery(context)).toBe(0.0012 * maximumHealth);
+    expect(readElementalMastery(context)).toBe(0.01 * maximumHealth);
   });
 
-  test("an Elemental Skill hit within 0.3 seconds of the last adds no stack", () => {
+  test("an Elemental Skill hit within 0.4 seconds of the last adds no stack", () => {
     expect.hasAssertions();
 
     const context = createContext();
@@ -70,7 +70,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     stepKitSeconds(context, 0.1);
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
 
-    expect(readElementalMastery(context)).toBe(0.0012 * maximumHealth);
+    expect(readElementalMastery(context)).toBe(0.01 * maximumHealth);
   });
 
   test("the stacks stop at three", () => {
@@ -85,7 +85,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     stepKitSeconds(context, 0.5);
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
 
-    expect(readElementalMastery(context)).toBe(3 * 0.0012 * maximumHealth);
+    expect(readElementalMastery(context)).toBe(3 * 0.01 * maximumHealth);
   });
 
   test("a Normal Attack hit adds no stack", () => {
@@ -97,7 +97,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     expect(readElementalMastery(context)).toBe(0);
   });
 
-  test("the third stack gives each other deployed member Elemental Mastery of 0.2% of the wielder's Max HP", () => {
+  test("the third stack gives each other deployed member Elemental Mastery of 2% of the wielder's Max HP", () => {
     expect.hasAssertions();
 
     const context = createContext();
@@ -111,7 +111,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
       readMemberBuffs(context.kitEffectState.effects, otherMemberCharacterId),
       readMemberBuffs(context.kitEffectState.effects, TRAVELER_CHARACTER_ID),
     ]).toStrictEqual([
-      [{ amount: 0.002 * maximumHealth, attribute: Attribute.ElementalMastery, secondsRemaining: 20 }],
+      [{ amount: 0.02 * maximumHealth, attribute: Attribute.ElementalMastery, secondsRemaining: 2 }],
       [],
     ]);
   });
@@ -125,20 +125,20 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
     stepKitSeconds(context, 0.5);
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
-    stepKitSeconds(context, 10);
+    stepKitSeconds(context, 1);
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
 
     expect(readMemberBuffs(context.kitEffectState.effects, otherMemberCharacterId)).toStrictEqual([
-      { amount: 0.002 * maximumHealth, attribute: Attribute.ElementalMastery, secondsRemaining: 20 },
+      { amount: 0.02 * maximumHealth, attribute: Attribute.ElementalMastery, secondsRemaining: 2 },
     ]);
   });
 
-  test("the stacks end twenty seconds after they are gained", () => {
+  test("the stacks end three seconds after they are gained", () => {
     expect.hasAssertions();
 
     const context = createContext();
     sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
-    stepKitSeconds(context, 20.1);
+    stepKitSeconds(context, 3.1);
 
     expect(readElementalMastery(context)).toBe(0);
   });

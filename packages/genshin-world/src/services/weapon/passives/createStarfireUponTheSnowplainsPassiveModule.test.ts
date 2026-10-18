@@ -17,9 +17,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Starfire Upon the Snowplains at its first rank: sixteen per cent ATK for twelve seconds after a reaction, and sixteen per cent
-// Stellar Glimmer reaction DMG for twelve seconds after a Stellar Glimmer reaction
-const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.16, 12, 0.16, 12]);
+// Synthetic params, not the weapon's row: a quarter ATK for three seconds after a reaction, and half Stellar
+// Glimmer reaction DMG for two seconds after a Stellar Glimmer reaction
+const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.25, 3, 0.5, 2]);
 const getBuffs = (effects: readonly KitEffect[]) => effects.filter(({ kind }) => kind === "buff");
 
 describe(createStarfireUponTheSnowplainsPassiveModule, () => {
@@ -35,11 +35,11 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
 
     expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.25,
         attribute: Attribute.AttackPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "starfireUponTheSnowplains",
       },
     ]);
@@ -57,19 +57,19 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
 
     expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.25,
         attribute: Attribute.AttackPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "starfireUponTheSnowplains",
       },
       {
-        amount: 0.16,
+        amount: 0.5,
         attribute: Attribute.StellarGlimmerReactionDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 2,
         source: "starfireUponTheSnowplains",
       },
     ]);

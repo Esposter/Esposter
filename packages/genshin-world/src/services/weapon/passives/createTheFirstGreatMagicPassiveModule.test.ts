@@ -30,11 +30,11 @@ const createMember = (characterId: number, element: Element): DeployedCombatant 
 });
 
 describe(createTheFirstGreatMagicPassiveModule, () => {
-  // The First Great Magic at its first rank: 16% Charged Attack DMG, 16%, 32% and 48% ATK for one, two and three or more
-  // Gimmick stacks of the wielder's Elemental Type, and 4%, 7% and 10% Movement SPD for one, two and three or more
-  // Theatrics stacks of other Elemental Types
+  // Synthetic params, not the weapon's row: half Charged Attack DMG, a tenth, a fifth and three tenths ATK for one,
+  // Two and three or more Gimmick stacks of the wielder's Elemental Type, a twentieth, a tenth and three twentieths
+  // Movement SPD for one, two and three or more Theatrics stacks of other Elemental Types
   const theFirstGreatMagicPassiveModule = createTheFirstGreatMagicPassiveModule([
-    0.16, 0.16, 0.32, 0.48, 0.04, 0.07, 0.1, 0,
+    0.5, 0.1, 0.2, 0.3, 0.05, 0.1, 0.15, 0,
   ]);
   const wielder: Combatant = {
     ascension: 0,
@@ -61,7 +61,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
 
     expect(
       theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
-    ).toBe(0.16);
+    ).toBe(0.5);
     expect(
       theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
@@ -78,8 +78,8 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     ];
 
     expect(theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
-      { amount: 0.32, attribute: Attribute.AttackPercent },
-      { amount: 0.07, attribute: Attribute.MovementSpeed },
+      { amount: 0.2, attribute: Attribute.AttackPercent },
+      { amount: 0.1, attribute: Attribute.MovementSpeed },
     ]);
   });
 
@@ -94,7 +94,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     ];
 
     expect(theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
-      { amount: 0.48, attribute: Attribute.AttackPercent },
+      { amount: 0.3, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.MovementSpeed },
     ]);
   });
@@ -105,7 +105,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     expect(
       theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []),
     ).toStrictEqual([
-      { amount: 0.16, attribute: Attribute.AttackPercent },
+      { amount: 0.1, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.MovementSpeed },
     ]);
   });

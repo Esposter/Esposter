@@ -25,9 +25,9 @@ const readBuffs = (effects: readonly KitEffect[]) =>
     .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining }));
 
 describe(createTravelersPathPassiveModule, () => {
-  // Traveler's Path at its first rank, on the Traveler: a hit raises ATK by 16% for 8 seconds, and
-  // It regenerates 3 Energy, once every 5 seconds
-  const travelersPathPassiveModule = createTravelersPathPassiveModule([0.16, 8, 0, 3, 5]);
+  // Synthetic params, not the weapon's row, on the Traveler: a hit raises ATK by a quarter for three seconds, and
+  // It regenerates two Energy, once every two seconds
+  const travelersPathPassiveModule = createTravelersPathPassiveModule([0.25, 3, 0, 2, 2]);
   const wielder: Combatant = createWielderCombatant();
   const damageTaken = {
     attackTag: AttackTag.NormalAttack,
@@ -39,7 +39,7 @@ describe(createTravelersPathPassiveModule, () => {
     striker: wielder,
   };
 
-  test("a hit by the Traveler raises ATK for eight seconds and regenerates three Energy", () => {
+  test("a hit by the Traveler raises ATK for three seconds and regenerates two Energy", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -48,7 +48,7 @@ describe(createTravelersPathPassiveModule, () => {
     expect([
       readBuffs(context.kitEffectState.effects),
       getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy,
-    ]).toStrictEqual([[{ amount: 0.16, attribute: Attribute.AttackPercent, secondsRemaining: 8 }], 3]);
+    ]).toStrictEqual([[{ amount: 0.25, attribute: Attribute.AttackPercent, secondsRemaining: 3 }], 2]);
   });
 
   test("a second hit inside the cooldown regenerates no Energy", () => {
@@ -58,18 +58,18 @@ describe(createTravelersPathPassiveModule, () => {
     travelersPathPassiveModule.onKitEvent?.(damageTaken, context, wielder);
     travelersPathPassiveModule.onKitEvent?.(damageTaken, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(3);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(2);
   });
 
-  test("a hit after the five-second cooldown regenerates Energy again", () => {
+  test("a hit after the two-second cooldown regenerates Energy again", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     travelersPathPassiveModule.onKitEvent?.(damageTaken, context, wielder);
-    stepKitSeconds(context, 5.1);
+    stepKitSeconds(context, 2.1);
     travelersPathPassiveModule.onKitEvent?.(damageTaken, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(6);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
   });
 
   test("a wielder other than the Traveler obtains nothing", () => {

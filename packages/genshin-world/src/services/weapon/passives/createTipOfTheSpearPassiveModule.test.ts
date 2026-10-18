@@ -10,8 +10,8 @@ import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant();
-// Rightful Reward, Tip of the Spear at its first rank: eight Energy for a heal of the wielder, once every ten seconds
-const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([8, 10, 0, 0]);
+// Synthetic params, not the weapon's row: three Energy for a heal of the wielder, once every two seconds
+const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([3, 2, 0, 0]);
 const healthGained: KitEvent = {
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0.5,
@@ -27,21 +27,21 @@ describe(createTipOfTheSpearPassiveModule, () => {
     const context = createKitTestContext(wielder);
     tipOfTheSpearPassiveModule.onKitEvent?.(healthGained, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(3);
   });
 
-  test("a second heal inside the ten-second cooldown restores nothing, and one after it does", () => {
+  test("a second heal inside the two-second cooldown restores nothing, and one after it does", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     tipOfTheSpearPassiveModule.onKitEvent?.(healthGained, context, wielder);
     tipOfTheSpearPassiveModule.onKitEvent?.(healthGained, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(3);
 
-    stepKitSeconds(context, 10.5);
+    stepKitSeconds(context, 2.5);
     tipOfTheSpearPassiveModule.onKitEvent?.(healthGained, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(16);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(6);
   });
 });
