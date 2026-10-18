@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
+import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -8,6 +9,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -35,10 +37,19 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createHealthLossEvent = (characterId: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   characterId,
   healthShare: -0.1,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
 });
+// A shield owned by one party member takes part of an enemy's strike on another, a tenth of the struck member's Max HP
+const createShieldAbsorbedEvent = (characterId: number, struckCharacterId: number): KitShieldAbsorbedEvent => ({
+  amount: 0.1,
+  characterId,
+  kind: KitEventKind.ShieldAbsorbed,
+  struckCharacterId,
+});
+
 // The bonus the team's buffs give an attribute as they stand
 const getAttributeBonus = (kitEffectState: KitEffectState, attribute: Attribute): number =>
   kitEffectState.effects.reduce(
@@ -75,6 +86,7 @@ describe(createDilucKitBehaviour, () => {
       { body: createKitTestContext(combatant).body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
       { ...enemy, health: healthShare * enemy.maxHealth },
       createParty([DILUC_CHARACTER_ID]),
+      [],
     );
   };
 
@@ -152,21 +164,21 @@ describe(createDilucKitBehaviour, () => {
     isSkillPressed: false,
     locomotionState: LocomotionState.Idle,
   };
-  const createFixture = () => {
+  const createFixture = (combatant: Combatant = DILUC_COMBATANT) => {
     const kitState: KitState = createKitState();
     const partyMember = createPartyMember();
     const stamina = createStamina(STAMINA_MAX);
-    const step = (isSkillPressed = false) => {
+    const step = (isSkillPressed = false, isAttackPressed = false) => {
       const landedHits: never[] = [];
       return stepKit(
         kitState,
         DILUC_KIT,
-        { ...IDLE_INPUT, isSkillPressed },
+        { ...IDLE_INPUT, isAttackPressed, isSkillPressed },
         partyMember,
         stamina,
         STEP_SECONDS,
         landedHits,
-        createKitTestContext(DILUC_COMBATANT),
+        createKitTestContext(combatant),
       );
     };
     // Steps with no press until the action playing has run its seconds
@@ -207,6 +219,26 @@ describe(createDilucKitBehaviour, () => {
     expect(partyMember.skillCooldownSeconds).toBeGreaterThan(0);
   });
 
+  test("constellation 6 keeps the normal attack string through searing onslaught, so the next normal attack continues it", () => {
+    expect.hasAssertions();
+    const { playOut, step } = createFixture({ ...DILUC_COMBATANT, constellationCount: 6 });
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
+    playOut();
+    expect(step(true)).toBe(DILUC_KIT.elementalSkill);
+    playOut();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[1]);
+  });
+
+  test("searing onslaught starts the normal attack string over without constellation 6", () => {
+    expect.hasAssertions();
+    const { playOut, step } = createFixture();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
+    playOut();
+    expect(step(true)).toBe(DILUC_KIT.elementalSkill);
+    playOut();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
+  });
+
   test("dawn's phoenix launches at the slash, travels 14 metres a second from a metre ahead, and explodes 24.8 metres on", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createCombatant(0));
@@ -240,7 +272,10 @@ describe(createDilucKitBehaviour, () => {
     const context = createKitTestContext(combatant, { kitEffectState });
     const takeHit = (characterId = DILUC_CHARACTER_ID, sourceCharacterId?: number) =>
       DILUC_KIT.onKitEvent?.(createHealthLossEvent(characterId, sourceCharacterId), context, combatant);
-    return { combatant, kitEffectState, context, takeHit };
+    // A shield of the given owner takes an enemy's strike on the struck member whole or in part
+    const absorbHit = (struckCharacterId = DILUC_CHARACTER_ID, ownerCharacterId = OTHER_CHARACTER_ID) =>
+      DILUC_KIT.onKitEvent?.(createShieldAbsorbedEvent(ownerCharacterId, struckCharacterId), context, combatant);
+    return { combatant, kitEffectState, context, absorbHit, takeHit };
   };
 
   test("constellation 2 raises diluc's atk by 10% and atk spd by 5% when he takes damage", () => {
@@ -289,6 +324,28 @@ describe(createDilucKitBehaviour, () => {
     expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
   });
 
+  test("constellation 2 takes a stack from a hit on Diluc that a shield takes whole, whoever owns the shield", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit } = createConstellation2Fixture();
+    absorbHit(DILUC_CHARACTER_ID);
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+  });
+
+  test("constellation 2 raises nothing for a shield absorbing a hit on a teammate", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit } = createConstellation2Fixture();
+    absorbHit(OTHER_CHARACTER_ID, DILUC_CHARACTER_ID);
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  test("constellation 2 takes one stack for a hit that a shield takes in part and Diluc's HP takes the rest", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit, takeHit } = createConstellation2Fixture();
+    absorbHit(DILUC_CHARACTER_ID);
+    takeHit();
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+  });
+
   test("constellation 2 raises nothing before its constellation", () => {
     expect.hasAssertions();
     const combatant = createCombatant(0);
@@ -299,5 +356,156 @@ describe(createDilucKitBehaviour, () => {
       combatant,
     );
     expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  // Constellation 4's bonus is read at the damage hook against an enemy under half its HP, where Constellation 1's does not add
+  const createConstellation4Fixture = (constellationCount = 4) => {
+    const combatant = { ...createCombatant(0), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const presses = [DILUC_KIT.elementalSkill, ...(DILUC_KIT.elementalSkillChain?.followUps ?? [])];
+    const press = (index: number) => presses[index]?.onStart?.(context);
+    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const getBonus = (attackTag: AttackTag) =>
+      DILUC_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
+        { ...enemy, health: enemy.maxHealth * 0.4 },
+        createParty([DILUC_CHARACTER_ID]),
+        kitEffectState.effects,
+      );
+    return { getBonus, press, wait };
+  };
+
+  test("constellation 4 adds 40% to a searing onslaught press that comes two seconds after the one before it, for two seconds", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBeCloseTo(0.4);
+    wait(1.5);
+    expect(getBonus(AttackTag.ElementalSkill)).toBeCloseTo(0.4);
+    wait(0.5);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a searing onslaught press that comes within two seconds of the one before it", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(1);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to the first press of a searing onslaught chain", () => {
+    expect.hasAssertions();
+    const { getBonus, press } = createConstellation4Fixture();
+    press(0);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a third press that comes within two seconds of the bonused second press", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    wait(0.5);
+    press(2);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a normal attack that lands while the bonus runs", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+  });
+
+  test("constellation 3 adds nothing to a searing onslaught press that comes two seconds after the one before it", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture(3);
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  // Constellation 6's two normal attacks are read at the damage hook and the speed bonus, as each attack of the combo starts
+  const createConstellation6Fixture = (constellationCount = 6) => {
+    const combatant = { ...createCombatant(0), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const press = () => DILUC_KIT.elementalSkill.onStart?.(context);
+    const attack = (index: number) => DILUC_KIT.normalAttacks[index]?.onStart?.(context);
+    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const getBonus = (attackTag: AttackTag) =>
+      DILUC_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
+        { ...enemy, health: enemy.maxHealth * 0.4 },
+        createParty([DILUC_CHARACTER_ID]),
+        kitEffectState.effects,
+      );
+    const getSpeedBonus = () => DILUC_KIT.getNormalAttackSpeedBonus?.(context);
+    return { attack, getBonus, getSpeedBonus, press, wait };
+  };
+
+  test("constellation 6 adds 30% DMG and ATK SPD to the next two normal attacks after a searing onslaught press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, getSpeedBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+    expect(getSpeedBonus()).toBeCloseTo(0.3);
+    attack(1);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+    expect(getSpeedBonus()).toBeCloseTo(0.3);
+    attack(2);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+    expect(getSpeedBonus()).toBe(0);
+  });
+
+  test("constellation 6's two normal attacks must come within six seconds of the press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press, wait } = createConstellation6Fixture();
+    press();
+    wait(6);
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+  });
+
+  test("constellation 6 adds nothing to a charged attack or a skill strike", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.ChargedAttack)).toBe(0);
+    expect(getBonus(AttackTag.ElementalBurst)).toBe(0);
+  });
+
+  test("pressing searing onslaught again re-arms the two normal attacks", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    attack(1);
+    attack(2);
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+  });
+
+  test("constellation 5 adds nothing to a normal attack after a searing onslaught press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, getSpeedBonus, press } = createConstellation6Fixture(5);
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+    expect(getSpeedBonus()).toBe(0);
   });
 });

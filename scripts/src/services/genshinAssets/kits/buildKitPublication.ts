@@ -21,8 +21,18 @@ export const buildKitPublication = (
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
-  for (const { characterId, name, publishedRecord } of inputs) {
-    const { record, sources } = buildKitRecordWithDonors(characterId, inputMap, builtMap);
+  for (const { characterId, name, publishedRecord, tables } of inputs) {
+    let built: BuiltKit;
+    try {
+      built = buildKitRecordWithDonors(characterId, inputMap, builtMap);
+    } catch (error) {
+      throw new InvalidOperationError(
+        Operation.Create,
+        name,
+        `its record cannot be built: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    const { record, sources } = built;
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;
@@ -30,7 +40,7 @@ export const buildKitPublication = (
       failures.push(`${name}: has no published kit`);
       continue;
     }
-    const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord);
+    const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap);
     if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
   }
   if (failures.length > 0)

@@ -15,6 +15,8 @@ export enum GameTextKey {
   AcquaintFate = "1444439468",
   // The Constellation tab's button that activates the next constellation
   Activate = "UI_TALENT_UNLOCK",
+  // The Adventure Encounters panel's heading over the Encounter Points stage rewards, on the Commissions tab
+  AdventureEncounterRewards = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_REWARD",
   // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
   AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
   AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
@@ -37,9 +39,15 @@ export enum GameTextKey {
   // Takes the worn one off
   ArtifactActionEnhance = "UI_EQUIP_PAGE_LEVEL_UP",
   ArtifactActionEquip = "UI_EQUIP_BUTTON",
+  // The lock button's words: Lock keeps a worn or bag artifact out of fodder, and Unlock lets it be fodder again
+  ArtifactActionLock = "EQUIP_LOCK_TIP_1",
   ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
+  ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
   // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
   // Is active
+  ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
+  ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
+  ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
@@ -443,6 +451,8 @@ export enum GameTextKey {
   LoginUserLabel = "2272745789",
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
+  // The count of Long-Term Encounter Points stored past the daily points, under the stage rewards
+  LongTermEncounterPointsStored = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM_POINT",
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
@@ -579,6 +589,16 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
+  // The Realm Depot's tab of furnishing blueprints
+  RealmDepotBlueprints = "2594539160",
+  // The Realm Depot's tab of creatures of the realm
+  RealmDepotCreatures = "346464176",
+  // The Realm Depot's tab of riches of the realm
+  RealmDepotRiches = "3882361568",
+  // The Realm Depot's tab of realm treasures
+  RealmDepotTreasures = "2009922312",
+  // The Realm Depot's tab of wood
+  RealmDepotWood = "2474820128",
   // A domain level's recommended Adventure Rank, filled with the rank
   RecommendedLevel = "UI_QUEST_RECOMMEND_LEVEL",
   RedBerryshroom = "1096616044",
@@ -682,6 +702,8 @@ export enum GameTextKey {
   SettingsVolume = "UI_SETTING_AUDIO_CONFIG",
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
+  // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's
+  SheerCold = "694190546",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
   // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
   ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
@@ -770,6 +792,8 @@ export enum GameTextKey {
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that converts a Long-Term Encounter Point for Original Resin on the Commissions tab, by its English name
+  UseLongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM",
   // The offer that spends Original Resin on a challenge's claim, by its English name
   UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
@@ -797,6 +821,7 @@ export enum GameTextKey {
   WishDetails = "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath = "UI_GACHA_WISH",
   WishFatePoint = "UI_GACHA_WISH_POINT",
+  WishGoToTrial = "UI_REUNIONV2_GOTO_AVARTARTRIAL",
   WishHistory = "UI_GUIDE_BUTTON_HISTORY",
   WishProbabilityUp = "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp = "UI_GACHA_SHOW_PANEL_DETAIL_03",

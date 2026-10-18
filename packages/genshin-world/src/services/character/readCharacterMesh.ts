@@ -4,6 +4,7 @@ import type { BufferGeometry, SkinnedMesh } from "three";
 
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
+import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import {
   checkTransparentTexels,
@@ -19,10 +20,15 @@ import {
 // Sphere map and its toon ramp where the file names one in the model's list, each decoded for each role it is drawn in,
 // As a colour and as a toon ramp, since a toon is read differently. A material's shared toon ramp is the world's own, so
 // No file of it is read. A texture the pack does not hold draws its material without it, logged once for the model, and
-// A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all
+// A file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all. The model stands at its
+// Character's unit of metres, which its id gives
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
-  { lightUniforms, rampTexture }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
+  {
+    characterId,
+    lightUniforms,
+    rampTexture,
+  }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture"> & { characterId: number },
 ): ReturnType<typeof getResultAsync<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>> =>
   getResultAsync(async () => {
     const modelBlob = await characterPackReader.readFile(CHARACTER_MODEL_PATH);
@@ -80,5 +86,5 @@ export const readCharacterMesh = (
         toonTexture: pmxMaterial.isToonShared ? undefined : toonTextures[pmxMaterial.toonIndex],
       }),
     );
-    return createPmxMesh(pmxModel, materials);
+    return createPmxMesh(pmxModel, materials, getCharacterPmxUnitMetres(characterId));
   });

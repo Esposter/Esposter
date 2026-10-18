@@ -10,7 +10,7 @@ Each surface's detail is drawn at its own texture's scale, and the ground draws 
 
 - Each surface's detail is drawn at the metres its own texture spans per texel, measured from the faces that read it, in place of one shared constant.
 - The ground's detail comes from each splat layer's own texture, tiled at the layer's repeat, and not from the base map.
-- Windrise's ground draws each layer's detail weighted by the layers' weights on the terrain. How the weights reach the terrain is left open for a decision.
+- Windrise's ground draws each layer's detail weighted by the layers' weights on the terrain. The weights reach the terrain as one vertex attribute per layer, blended per pixel.
 - Each other region's ground is built in its own layers once its base maps are exported.
 
 ## Capabilities
@@ -20,7 +20,6 @@ Each surface's detail is drawn at its own texture's scale, and the ground draws 
 ## Waiting on
 
 - Each other region's base maps are exported, since only Windrise's component exports its tiles' base maps.
-- A decision on how the layers' weights reach the terrain material.
 
 ## Impact
 

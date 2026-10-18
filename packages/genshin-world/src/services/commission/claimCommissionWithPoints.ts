@@ -32,7 +32,6 @@ export const claimCommissionWithPoints = ({
   names,
   now,
   party,
-  rank,
   random,
   slice,
   wallet,
@@ -50,20 +49,19 @@ export const claimCommissionWithPoints = ({
   names: Readonly<Record<string, string>>;
   now: Temporal.Instant;
   party: Party;
-  rank: number;
   random: () => number;
   slice: CommissionSlice;
   wallet: Wallet;
 }): CommissionClaimOutcome | undefined => {
   const points = readEncounterPoints(encounterPoints, now);
   const wholePoints = Math.floor(points.halfPoints / HALF_POINTS_PER_ENCOUNTER_POINT);
-  const claim = claimCommissionReward(commissionDay, wholePoints, commissionId, slice, rank, random);
+  const claim = claimCommissionReward(commissionDay, wholePoints, commissionId, slice, random);
   if (!claim) return undefined;
   const routing = routeCommissionClaim(
     adventureRankTables,
     adventureExp,
     characters,
-    claim,
+    claim.rewards,
     completedMainQuestIds,
     friendshipLevels,
     inventory,

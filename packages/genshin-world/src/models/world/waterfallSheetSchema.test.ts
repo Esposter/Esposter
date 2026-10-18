@@ -1,7 +1,7 @@
 import { waterfallSheetSchema } from "#src/models/world/waterfallSheetSchema";
 import { describe, expect, test } from "vitest";
 
-describe(waterfallSheetSchema, () => {
+describe("waterfallSheetSchema", () => {
   test("reads a sheet whose across is a unit direction and refuses one whose across is none", () => {
     expect.hasAssertions();
 

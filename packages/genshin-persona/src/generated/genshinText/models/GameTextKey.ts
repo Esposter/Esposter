@@ -16,6 +16,8 @@ export enum GameTextKey {
   AcquaintFate = "1444439468",
   // The Constellation tab's button that activates the next constellation
   Activate = "UI_TALENT_UNLOCK",
+  // The Adventure Encounters panel's heading over the Encounter Points stage rewards, on the Commissions tab
+  AdventureEncounterRewards = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_REWARD",
   // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
   AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
   AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
@@ -34,6 +36,28 @@ export enum GameTextKey {
   ArchiveMaterials = "UI_CODEX_MATERIAL",
   ArchiveTravelLog = "UI_CODEX_QUEST",
   ArchiveTutorials = "UI_CODEX_TIPS",
+  // The Artifacts tab's buttons: Enhance raises a worn artifact's level, Equip puts one on an empty slot and Unequip
+  // Takes the worn one off
+  ArtifactActionEnhance = "UI_EQUIP_PAGE_LEVEL_UP",
+  ArtifactActionEquip = "UI_EQUIP_BUTTON",
+  // The lock button's words: Lock keeps a worn or bag artifact out of fodder, and Unlock lets it be fodder again
+  ArtifactActionLock = "EQUIP_LOCK_TIP_1",
+  ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
+  ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
+  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
+  // Is active
+  ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
+  ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
+  ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
+  ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
+  ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
+  ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
+  // The five artifact slots under the names the game gives them, in the order it lists them
+  ArtifactSlotCircletOfLogos = "EQUIP_DRESS",
+  ArtifactSlotFlowerOfLife = "EQUIP_BRACER",
+  ArtifactSlotGobletOfEonothem = "EQUIP_RING",
+  ArtifactSlotPlumeOfDeath = "EQUIP_NECKLACE",
+  ArtifactSlotSandsOfEon = "EQUIP_SHOES",
   // The button that lifts a character past its level cap with Masterless Stella Fortuna
   AscensionLimit = "UI_TEXT_ACTIVITY_LEVEL_UP",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
@@ -71,6 +95,8 @@ export enum GameTextKey {
   AttributePyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
   AttributePyroResistance = "FIGHT_PROP_FIRE_SUB_HURT",
   AttributeShieldStrength = "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
+  // A level above the player's Adventure Rank, the rank the game asks for in its place
+  AvailableAtAdventureRank = "QUEST_DIALOG_DETAIL_PLAYER_LEVEL_NEED",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
   BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
@@ -80,10 +106,19 @@ export enum GameTextKey {
   BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The same confirm line for the twenty-ninth of February, which names that date itself
+  BirthdayConfirmLeapDayTip = "Birthday_CONFIRM_TIPS_02",
+  // The Set Birthday dialog's confirm line once a date is picked, its month and day filled in
+  BirthdayConfirmTip = "Birthday_CONFIRM_TIPS_01",
+  // The warning under the confirm line that the birthday cannot be edited once it is confirmed
+  BirthdayConfirmWarning = "UI_FRIEND_BIRTHDAY_EDIT_WARNING",
+  // The profile's button that opens the birthday dialog while the Traveler's birthday is not set
+  BirthdaySet = "UI_FRIEND_BIRTHDAY_EDIT",
   // The blossom of an outcrop that gives Character EXP materials, by its English name
   BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
   // The blossom of an outcrop that gives Mora, by its English name
   BlossomOfWealth = "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
+  BossQuickChallenge = "UI_BOSS_QUICKSTART_TITLE",
   BrilliantChrysanthemum = "2302571844",
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
@@ -95,6 +130,8 @@ export enum GameTextKey {
   Cecilia = "3828726124",
   // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
   ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
+  // The namecard picker's title, the Change Namecard the Paimon profile opens with
+  ChangeNamecard = "3755125824",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
@@ -111,7 +148,10 @@ export enum GameTextKey {
   Chest = "219181593",
   // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
   CityReputation = "81370119",
+  ClaimRewards = "UI_ACTIVITY_GET_RWARD",
   ClearwaterJade = "2720928108",
+  // A domain closed on the day, named as a closed hall or event names it
+  Closed = "UI_BEYOND_HALL_LIST_HALL_LEFTTIME_CLOSE",
   // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
   CombineTypeBait = "COMBINE_TYPE_NAME10",
   CombineTypeCharacterAscension = "COMBINE_TYPE_NAME5",
@@ -120,6 +160,7 @@ export enum GameTextKey {
   CombineTypeEnhancement = "COMBINE_TYPE_NAME1",
   CombineTypeFood = "COMBINE_TYPE_NAME12",
   CombineTypePotion = "COMBINE_TYPE_NAME4",
+  CombineTypeTransfiguredDreams = "COMBINE_TYPE_NAME9",
   CombineTypeWeaponAscension = "COMBINE_TYPE_NAME2",
   // The Common Chest, the most common kind, as the game names it
   CommonChest = "3953934758",
@@ -136,6 +177,10 @@ export enum GameTextKey {
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
+  // The Petrified Tree a cleared domain raises, the tree the claim prompt names
+  PetrifiedTree = "UI_ABYSSUS_CHEST_OPEN_TITLE",
+  // The realm's word for placing a furnishing, which the game shows as Place
+  HomeDeploy = "UI_HOMEWORLD_DEPLOY",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
@@ -163,9 +208,57 @@ export enum GameTextKey {
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
   // The Dig prompt on the ground of a buried chest, as the game names it
   Dig = "102754774",
-  // A domain's entrance, as its map pin and its entry screen title it
-  DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
+  // The button that goes into an open domain from its entry screen
+  DomainEnter = "UI_DUNGEON_ENTRY_47",
+  // The button that leaves the domain the player is in, as the game's leave prompt names it
+  DomainLeave = "INFO_AVATAR_TRANSPORT_DUNGEON_TITLE",
+  // The question the leave prompt asks before the player leaves a domain
+  DomainLeavePrompt = "UI_STC_Intee_DungeonExit",
+  // The title of a domain's entry screen
+  DomainTitle = "4043227537",
+  // A domain's entrance, named as its entry's own title text id names it, the one name every entrance's map pin shows
+  DomainEntrance1142 = "UI_DUNGEON_ENTRY_1142",
+  DomainEntrance1151 = "UI_DUNGEON_ENTRY_1151",
+  DomainEntrance1186 = "UI_DUNGEON_ENTRY_1186",
+  DomainEntrance1188 = "UI_DUNGEON_ENTRY_1188",
+  DomainEntrance1190 = "UI_DUNGEON_ENTRY_1190",
+  DomainEntrance1191 = "UI_DUNGEON_ENTRY_1191",
+  DomainEntrance1690 = "UI_DUNGEON_ENTRY_1690",
+  DomainEntrance1692 = "UI_DUNGEON_ENTRY_1692",
+  DomainEntrance1694 = "UI_DUNGEON_ENTRY_1694",
+  DomainEntrance1811 = "UI_DUNGEON_ENTRY_1811",
+  DomainEntrance2003 = "UI_DUNGEON_ENTRY_2003",
+  DomainEntrance2074 = "UI_DUNGEON_ENTRY_2074",
+  DomainEntrance2075 = "UI_DUNGEON_ENTRY_2075",
+  DomainEntrance2106 = "UI_DUNGEON_ENTRY_2106",
+  DomainEntrance221 = "UI_DUNGEON_ENTRY_221",
+  DomainEntrance24 = "UI_DUNGEON_ENTRY_24",
+  DomainEntrance27 = "UI_DUNGEON_ENTRY_27",
+  DomainEntrance282 = "UI_DUNGEON_ENTRY_282",
+  DomainEntrance29 = "UI_DUNGEON_ENTRY_29",
+  DomainEntrance310 = "UI_DUNGEON_ENTRY_310",
+  DomainEntrance35 = "UI_DUNGEON_ENTRY_35",
+  DomainEntrance361 = "UI_DUNGEON_ENTRY_361",
+  DomainEntrance368 = "UI_DUNGEON_ENTRY_368",
+  DomainEntrance37 = "UI_DUNGEON_ENTRY_37",
+  DomainEntrance433 = "UI_DUNGEON_ENTRY_433",
+  DomainEntrance46 = "UI_DUNGEON_ENTRY_46",
+  DomainEntrance48 = "UI_DUNGEON_ENTRY_48",
+  DomainEntrance50 = "UI_DUNGEON_ENTRY_50",
+  DomainEntrance505 = "UI_DUNGEON_ENTRY_505",
+  DomainEntrance507 = "UI_DUNGEON_ENTRY_507",
+  DomainEntrance509 = "UI_DUNGEON_ENTRY_509",
+  DomainEntrance516 = "UI_DUNGEON_ENTRY_516",
+  DomainEntrance52 = "UI_DUNGEON_ENTRY_52",
+  DomainEntrance54 = "UI_DUNGEON_ENTRY_54",
+  DomainEntrance758 = "UI_DUNGEON_ENTRY_758",
+  DomainEntrance803 = "UI_DUNGEON_ENTRY_803",
+  DomainEntrance859 = "UI_DUNGEON_ENTRY_859",
+  DomainEntrance865 = "UI_DUNGEON_ENTRY_865",
+  DomainEntrance982 = "UI_DUNGEON_ENTRY_982",
   Dracolite = "2859410932",
+  // The enemies' level on a domain's entry screen, filled with the level
+  EnemyLevel = "669745132",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
   ElectroSigil = "1061302548",
@@ -359,6 +452,8 @@ export enum GameTextKey {
   LoginUserLabel = "2272745789",
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
+  // The count of Long-Term Encounter Points stored past the daily points, under the stage rewards
+  LongTermEncounterPointsStored = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM_POINT",
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
@@ -367,6 +462,27 @@ export enum GameTextKey {
   LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
   Mail = "UI_PLAYER_PROFILE_MAIL",
+  MailBox = "UI_MAIL_TITLE",
+  MailCancelStar = "UI_MAIL_CANCEL_STAR",
+  MailClaim = "UI_MAIL_GET_BUTTON",
+  MailClaimAll = "UI_MAIL_GET_ALL_BUTTON",
+  MailClaimed = "UI_MAIL_HAS_GET_TIP",
+  MailDelete = "UI_MAIL_DELETE_BUTTON",
+  MailDeleteRead = "UI_PLAYER_PROFILE_MAIL_DELETE",
+  MailDeleteReadConfirm = "UI_MAIL_DELETE_ALL_DESC",
+  MailDetailDate = "MAIL_DETAIL_DATE",
+  MailExpiresInDay = "MAIL_EXPIRE_TIME_DAY",
+  MailExpiresInHour = "MAIL_EXPIRE_TIME_HOUR",
+  MailExpiresInLessThanMinute = "MAIL_EXPIRE_TIME_WITHIN_ONE_MINUTE",
+  MailExpiresInMinute = "MAIL_EXPIRE_TIME_MINUTE",
+  MailFull = "UI_MAIL_FULL",
+  MailGiftBox = "UI_MAIL_FAVORITES_TITLE_1",
+  MailGiftDeleteWarning = "UI_MAIL_FAVORITES_WARNING_DESC",
+  MailGiftDeleteWarningTitle = "UI_MAIL_FAVORITES_WARNING_TITLE",
+  MailNoMail = "UI_MAIL_NO_MAIL_TIP_TITLE",
+  MailNoMailDescription = "UI_MAIL_NO_MAIL_TIP_DESC",
+  MailSender = "MAIL_DETAIL_SENDER",
+  MailStar = "UI_MAIL_STAR",
 
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
@@ -388,6 +504,14 @@ export enum GameTextKey {
   MoveRight = "CONTROL_MOVE_RIGHT",
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
+  // The Mystic Offering at the Crafting Bench: its title, the Create button, the tip naming how many five-star artifacts make
+  // A strongbox, the tip that it needs five-star artifacts, the tip that the choice falls short, and the confirm dialog
+  MysticOffering = "UI_MELTING_TITLE_A",
+  MysticOfferingConfirm = "UI_MELTING_TIPS_F",
+  MysticOfferingCreate = "UI_MELTING_BUTTON_A",
+  MysticOfferingNotEnough = "UI_MELTING_TIPS_C",
+  MysticOfferingRequirement = "UI_MELTING_TIPS_B",
+  MysticOfferingRequiresFiveStar = "UI_MELTING_DETAILS_TIPS_B",
   NakuWeed = "3623663804",
   Natlan = "Natlan",
   NilotpalaLotus = "774700468",
@@ -466,6 +590,18 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
+  // The Realm Depot's tab of furnishing blueprints
+  RealmDepotBlueprints = "2594539160",
+  // The Realm Depot's tab of creatures of the realm
+  RealmDepotCreatures = "346464176",
+  // The Realm Depot's tab of riches of the realm
+  RealmDepotRiches = "3882361568",
+  // The Realm Depot's tab of realm treasures
+  RealmDepotTreasures = "2009922312",
+  // The Realm Depot's tab of wood
+  RealmDepotWood = "2474820128",
+  // A domain level's recommended Adventure Rank, filled with the rank
+  RecommendedLevel = "UI_QUEST_RECOMMEND_LEVEL",
   RedBerryshroom = "1096616044",
   // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
   RemarkableChest = "26276094",
@@ -473,8 +609,14 @@ export enum GameTextKey {
   ReputationMondstadtMerchantDiscounts = "1610612133",
   ReputationMondstadtOutcropSearch = "1452899589",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
+  // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
+  ReputationRequestAccept = "REPUTATION_REQUEST_BUTTON_1",
   ReputationReward = "REPUTATION_CITY_REWARD",
   // The game over screen's button that revives the team at the nearest teleport waypoint
+  // The notice a furnishing shows when the realm's area already holds its count of furnishings
+  RetHomeFurnitureArrangeLimit = "RetHomeFurnitureArrangeLimit",
+  // The notice a furnishing shows when the realm's area would pass its load
+  RetHomeFurnitureExceedLimit = "RetHomeFurnitureExceedLimit",
   Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
@@ -484,6 +626,8 @@ export enum GameTextKey {
   SaurianClawSucculent = "19028052",
   SeaGanoderma = "4094014932",
   Seagrass = "2121074820",
+  // The Serenitea Pot, as the map names its tab and a prompt names the gadget
+  SereniteaPot = "UI_MAP_TABBUTTON_TAB_HOMEWORLD",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   // The settings' tabs, the Graphics and Audio tabs' headings and rows, and the words their values take: a quality tier
   // The device was given is filled into the default's words, and a resolution's width, height and mode into its own
@@ -559,6 +703,8 @@ export enum GameTextKey {
   SettingsVolume = "UI_SETTING_AUDIO_CONFIG",
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
+  // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's
+  SheerCold = "694190546",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
   // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
   ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
@@ -568,6 +714,8 @@ export enum GameTextKey {
   ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
   // The Refreshes in line a shop's good shows, its countdown filled in
   ShopRefresh = "UI_MALL_REFRESH_COUNTDOWN",
+  // The name of a Shrine of Depths, as the game names it, on the prompt of a shrine a key opens
+  ShrineOfDepths = "2995753270",
   SilkFlower = "1404683740",
   // The dialogue's button that runs on to the next reply or the end
   Skip = "UI_SKIP_BUTTON",
@@ -591,6 +739,8 @@ export enum GameTextKey {
   Starconch = "1463427132",
   Starshroom = "2119751124",
   Starsilver = "1269908988",
+  // The title of a Statue of The Seven's Blessing screen, which F on a resonated statue opens
+  StatueBlessing = "3126052466",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   StormbearerMountains = "490004829",
@@ -624,6 +774,10 @@ export enum GameTextKey {
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
   TimeConfirm = "UI_STC_LEVELUP_DIALOG_OK",
+  // The tip popup's heading, the game's own word for a tutorial
+  TipHeading = "UI_PUSHTIPS_NEW_TIP",
+  // The tip popup's button that closes it, in the game's own words for Got it
+  TipDismiss = "507052072",
   // The label over the hour the Time screen's dial points at, before the player confirms it
   TimeWaitUntil = "UI_CLOCK_PAGE_TO_TIME",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
@@ -634,9 +788,13 @@ export enum GameTextKey {
   Trishiraite = "239145148",
   // The blossom a defeated normal boss leaves for its Original Resin claim, by its English name
   TrounceBlossom = "UI_WORLD_WEEKLYBOSS_TIPS_TITLE",
+  // Tubby, the realm's steward, named by the name text of his NPC row
+  Tubby = "3432976792",
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that converts a Long-Term Encounter Point for Original Resin on the Commissions tab, by its English name
+  UseLongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM",
   // The offer that spends Original Resin on a challenge's claim, by its English name
   UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
@@ -664,6 +822,7 @@ export enum GameTextKey {
   WishDetails = "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath = "UI_GACHA_WISH",
   WishFatePoint = "UI_GACHA_WISH_POINT",
+  WishGoToTrial = "UI_REUNIONV2_GOTO_AVARTARTRIAL",
   WishHistory = "UI_GUIDE_BUTTON_HISTORY",
   WishProbabilityUp = "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp = "UI_GACHA_SHOW_PANEL_DETAIL_03",
@@ -673,7 +832,7 @@ export enum GameTextKey {
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
-  // the restoring's tips and label
+  // The restoring's tips and label
   WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in

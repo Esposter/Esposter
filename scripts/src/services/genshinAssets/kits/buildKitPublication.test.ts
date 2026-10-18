@@ -1,6 +1,8 @@
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitActionRecord, KitHitRecord, KitRecord } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
@@ -41,7 +43,7 @@ describe(buildKitPublication, () => {
     ]),
   );
   // The same values, with the first strike's hitmark as another donor's gcsim gives it
-  const DONOR_CANDIDATE_MAP = new Map([
+  const DONOR_CANDIDATE_MAP = new Map<string, KitCandidate[]>([
     ...SOURCE_CANDIDATE_MAP,
     [HITMARK_PATH, [{ provenance: { file: "donor.go", line: 1, source: KitSource.Gcsim } as const, value: 99 }]],
   ]);
@@ -50,6 +52,15 @@ describe(buildKitPublication, () => {
     [CombatTalent.ElementalSkill]: 1,
     [CombatTalent.NormalAttack]: 1,
   };
+  // A kit built from those values, its tables as the build reads them
+  const createTables = (characterId: number): KitTables => ({
+    characterId,
+    labelMap: new Map(),
+    name: String(characterId),
+    talentGroupIdMap,
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Sword,
+  });
   const borrowFrom = (characterId: number): KitOverlayEntry => ({
     cause: KitProvisionalCause.BorrowedFromDonor,
     donor: { characterId, path: HITMARK_PATH },
@@ -59,27 +70,23 @@ describe(buildKitPublication, () => {
     characterId: number,
     isPublished: boolean,
     overlay: KitOverlay = {},
-    sourceCandidateMap = SOURCE_CANDIDATE_MAP,
-  ): KitInput => ({
-    characterId,
-    name: String(characterId),
-    namedHitCandidateMap: new Map(),
-    notes: [],
-    overlay,
-    overlayName: "",
-    ...(isPublished && {
-      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), new Map(), talentGroupIdMap).record,
-    }),
-    sourceCandidateMap,
-    tables: {
+    sourceCandidateMap: Map<string, KitCandidate[]> = SOURCE_CANDIDATE_MAP,
+  ): KitInput => {
+    const tables = createTables(characterId);
+    return {
       characterId,
-      labelMap: new Map(),
       name: String(characterId),
-      talentGroupIdMap,
-      talentMultiplierMap: {},
-      weaponType: WeaponType.Sword,
-    },
-  });
+      namedHitCandidateMap: new Map(),
+      notes: [],
+      overlay,
+      overlayName: "",
+      ...(isPublished && {
+        publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), new Map(), tables, true).record,
+      }),
+      sourceCandidateMap,
+      tables,
+    };
+  };
 
   test("builds a kit yet to be published that the publish names, beside the published ones", () => {
     expect.hasAssertions();
@@ -97,6 +104,16 @@ describe(buildKitPublication, () => {
       [InvalidOperationError: Invalid operation: Create, name: buildKitPublication, the records differ from their published ones, so name each kit meant to change in --only:
       2: has no published kit]
     `);
+  });
+  test("names the kit and the record path of a talent reference its sources do not read", () => {
+    expect.hasAssertions();
+
+    // Amber's first overlay entry sourced from gcsim is a reference to a talent group none of the sources give
+    expect(() =>
+      buildKitPublication([{ ...createInput(1, false), name: "Amber", overlayName: "amber" }]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.multiplier, has no Gcsim value for the overlay to choose]`,
+    );
   });
 
   test("builds a borrower after its donor, so the value it borrows is the donor's own resolved one", () => {

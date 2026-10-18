@@ -30,6 +30,7 @@ export const openParityPage = async ({
   height,
   isClockFaked,
   isFrameRateUnlimited,
+  isOpenedAtLoad,
   motion,
   pageRoot,
   props,
@@ -95,7 +96,7 @@ export const openParityPage = async ({
     if (isClockFaked) await page.clock.install({ time: 0 });
     await page.goto(
       `${pageRoot ?? PARITY_PAGE_ROOT}?screen=${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`,
-      { waitUntil: "networkidle" },
+      { waitUntil: isOpenedAtLoad ? "load" : "networkidle" },
     );
     // The page is drawn once it is ready, or never once a failure nothing caught has stopped it
     const readPageState = () =>

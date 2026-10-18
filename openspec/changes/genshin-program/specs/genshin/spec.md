@@ -60,11 +60,11 @@ A character SHALL be drawn only from an official HoYoverse model that the reader
 - **WHEN** the character is shown in the world
 - **THEN** the character is drawn from that model
 
-#### Scenario: A reader without the official model sees no character
+#### Scenario: A reader without the official model sees the capsule
 
 - **GIVEN** the reader does not hold an official model for a character
 - **WHEN** the character is shown in the world
-- **THEN** the character is not drawn
+- **THEN** the character is drawn as its capsule and no model is drawn, as the [built drawing spec](../../../../specs/genshin/characters/drawing/spec.md) draws a character with no pack ("No pack shows the capsule")
 - **AND** the rest of the world still works
 
 ### Requirement: A region is laid out from the game's own terrain

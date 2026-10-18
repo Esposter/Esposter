@@ -9,22 +9,24 @@ Chasca's kit is its record and one behaviour module, `createChascaKitBehaviour`,
 - **Her collision and low plunge are gcsim's.** The collision lands at 44 frames, a circle of radius 1.5 on her. The low plunge lands at 50 frames of 80, with the plunge radius of 3.
 - **Galesplitting Soulseeker Shell is the burst's first hit, at 96 frames of its 114.** It is an Anemo circle of radius 6 on the primary target. Its cost is 60 energy and its cooldown 15 seconds, both from the table.
 - **Spirit Reins' Resonance lands at 3 frames, a circle of radius 5.5 round her.** Its press lets the next action start 6 frames later, gcsim's earliest cancel, and its cooldown is the table's 6.5 seconds. gcsim runs that cooldown from the end of the Blessing, which is not built, and a press here starts it at once instead.
+- **Spirit Reins' press enters the Nightsoul Blessing with 80 points.** They drain eight a second, 0.8 each six frames, and a sprint in the Blessing drains 13.3 more. The points ending at zero end the Blessing, as gcsim's `checkNS` does, which the step does. The Blessing's values are gcsim's `enterNightsoul` and `reduceNightsoulPoints` (skill.go) and its sprint drain is `dash.go`.
 - **The high plunge is provisional.** gcsim gives its multiplier but no hitmark, so it lands with the low plunge's 50 frames in the high plunge's radius of 5. The [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks whether it lands there.
 
 ## Not built
 
-- **The Nightsoul Blessing is not built.** The skill's press would start it, replacing her strikes and Aimed Shot with the Blessing's own until its Nightsoul points end it; the index lists the framework gaps it waits on.
+- **The Blessing's press exit strikes, and its cooldown, are not built.** gcsim's press in the Blessing leaves it with no strike and a 6.5-second cooldown from the exit. The kit plays one action per press, so Resonance still strikes on that press, and the cooldown the exit sets is not held.
 - **The Blessing's flight and its Shadowhunt Shells are not built.** While in the Blessing she flies and fires Shadowhunt Shells at her aim. The framework's locomotion has Jump and Fall but no flight state, so the flight and the shells wait on a flight hook.
-- **The five shells after Galesplitting are not built.** Each of the burst's Soulseeker and Radiant Shells is Anemo or the party's element, the Radiant ones taking the team's elements in turn. A kit step cannot read the party's elements yet, so only the first hit is built.
+- **The five shells after Galesplitting are not built.** Each of the burst's Soulseeker and Radiant Shells is Anemo or the party's element, the Radiant ones taking the team's elements in turn, and each strikes one enemy round-robin. The kit can read the party's elements, but two gaps hold the shells back: the builder does not read gcsim's `burstSecondaryHitmark` array, so the shells' hitmarks are not in the record, and a kit hit strikes every enemy in its area, not one enemy in turn.
 - **Ascension passives and constellations are not built.** They are the passives of the [character kits proposal](../../../../changes/genshin-character-kits/design.md) and the [constellations](../../../../changes/genshin-constellations/design.md) page's.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                  |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/chascaKit.ts` | `createChascaKitBehaviour`, Chasca's kit with her strikes, fully-charged Aimed Shot, plunges, Resonance and Galesplitting's first hit |
+| File                                                              | Role                                                                                                                                                                     |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/chascaKit.ts` | `createChascaKitBehaviour`, Chasca's kit with her strikes, fully-charged Aimed Shot, plunges, Resonance, the Nightsoul Blessing it enters, and Galesplitting's first hit |
 
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chasca), MIT: the kit's hitmarks, animations, reach and the plunges' radii, and the proud group indices behind each multiplier.
+- [gcsim skill.go and dash.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chasca), MIT: the Blessing's 80 points, its drain and its sprint drain.
 - [Hosted game data](../../hosted-game-data/design.md): the avatar's talent groups 10431, 10432 and 10439, read from the talent and skill kit tables.

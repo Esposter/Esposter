@@ -29,7 +29,7 @@ describe(obtainForgeOrder, () => {
     unlockItemIds: [],
   };
   const order = { count: 1, queueId: 1, recipeId: recipe.id, startedAt: epoch, unitSeconds: UNIT_SECONDS };
-  const inventory = { items: [], nextId: 1 };
+  const inventory = { items: [], nextId: 1, quickSwapItemIds: [] };
   const obtainArguments = {
     adventureExp: 0,
     adventureRankTables,

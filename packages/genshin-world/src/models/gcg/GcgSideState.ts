@@ -15,6 +15,8 @@ export interface GcgSideState {
   deckCardIds: number[];
   dice: (Element | GcgDieFace)[];
   drawPile: number[];
+  // The rerolls a card grants the side past its one in the roll phase, each spent by a reroll of named dice
+  extraRerolls?: number;
   hand: number[];
   hasDeclaredEnd: boolean;
   hasDefeatedCharacter?: boolean;

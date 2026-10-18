@@ -90,7 +90,10 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const { gapPaths, overlayFailures } = getResult(() =>
       buildKitRecordWithDonors(characterId, inputMap, builtMap),
     ).match(
-      ({ record }) => ({ gapPaths: getMismatchedKitPaths(record, publishedRecord), overlayFailures: [] as string[] }),
+      ({ record }) => ({
+        gapPaths: getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap),
+        overlayFailures: [] as string[],
+      }),
       (error) => ({
         gapPaths: [] as string[],
         overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
@@ -119,7 +122,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       committedOverlay,
       donorRecordMap,
       namedHitCandidateMap,
-      tables.talentGroupIdMap,
+      tables,
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);

@@ -5,12 +5,13 @@ import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSour
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
-import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -23,7 +24,8 @@ export const resolveKitValues = (
   overlay: KitOverlay,
   donorCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
+  isGcsimModelled: boolean,
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
   const provenanceMap = new Map<string, KitValueSource>();
@@ -47,7 +49,7 @@ export const resolveKitValues = (
       const candidate = candidates?.find(
         ({ provenance, value }) =>
           provenance.source === entry.source &&
-          (entry.value === undefined || checkIsKitValueEqual(value, entry.value)) &&
+          (entry.value === undefined || checkIsKitValueResolvedEqual(value, entry.value, tables.talentMultiplierMap)) &&
           (!("file" in entry) || checkIsCitedBy(provenance, entry)),
       );
       if (candidate === undefined)
@@ -55,6 +57,13 @@ export const resolveKitValues = (
       valueMap.set(path, candidate.value);
       provenanceMap.set(path, candidate.provenance);
     } else if (entry.donor === undefined) {
+      // A cause saying gcsim has no folder for the character is refused where it has one, which can read the value
+      if (entry.cause === KitProvisionalCause.NoGcsimUnit && isGcsimModelled)
+        throw new InvalidOperationError(
+          Operation.Read,
+          path,
+          "names NoGcsimUnit, but gcsim has a folder for the character",
+        );
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     } else {
@@ -65,12 +74,12 @@ export const resolveKitValues = (
       valueMap.set(path, candidate.value);
       provenanceMap.set(path, candidate.provenance);
     }
-  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, talentGroupIdMap);
+  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap);
   chooseDefaults(sourceCandidateMap);
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   chooseDefaults(namedHitKitCandidateMap);
-  const ruleCandidateMap = getRuleKitCandidates(valueMap);
+  const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
   chooseDefaults(ruleCandidateMap);
   return {
     candidateMap: mergeKitCandidateSources({

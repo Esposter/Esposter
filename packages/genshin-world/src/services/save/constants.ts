@@ -15,10 +15,19 @@ import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
-import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
+import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
+import {
+  MAX_HOME_BLUEPRINT_COUNT,
+  MAX_HOME_COMPANION_COUNT,
+  MAX_HOME_ORDER_COUNT,
+  MAX_HOME_PLACEMENT_COUNT,
+  MAX_HOME_PLANTING_COUNT,
+  MAX_HOME_REWARD_CLAIM_COUNT,
+} from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import {
   DEFAULT_PARTY_TEAM_COUNT,
   PARTY_TEAM_MAX_COUNT,
@@ -195,12 +204,15 @@ const LONGEST_ABYSS_CYCLE_SAVE = {
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  cardGameExp: MAX_SAVE_NUMBER,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
   clearedDomains: [],
-  commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
+  commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [], isBonusClaimed: false },
+  investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: MAX_SAVE_INSTANT },
   encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
   companionshipExp: {},
@@ -208,6 +220,18 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   enemyRespawns: {},
   homePlacements: [],
+  homePlantings: [],
+  homeProgress: {
+    accruedAt: MAX_SAVE_INSTANT,
+    claimedRewardIds: [],
+    companionIds: [],
+    learnedBlueprintIds: [],
+    madeBlueprintIds: [],
+    orders: [],
+    realmBounty: MAX_SAVE_NUMBER,
+    realmCurrency: MAX_SAVE_NUMBER,
+    trustExp: MAX_SAVE_NUMBER,
+  },
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER, quickSwapItemIds: [] },
   offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
   openedChests: [],
@@ -247,6 +271,8 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   ),
   worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
+// The longest planting a save holds: its plot and seed at the largest number, and its instant at the longest
+const LONGEST_HOME_PLANTING = { plantedAt: MAX_SAVE_INSTANT, plotId: MAX_SAVE_NUMBER, seedItemId: MAX_SAVE_NUMBER };
 // The longest mail a save holds, its flags at their longer value of false
 const LONGEST_MAIL_SAVE = {
   deliveredAt: MAX_SAVE_INSTANT,
@@ -264,6 +290,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_CHARACTER_TRIAL_STAGE_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  GCG_REWARDABLE_GAME_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ADVENTURE_RANK * getListEntryLength(MAX_ADVENTURE_RANK) +
   COMMISSIONS_PER_DAY *
@@ -277,6 +304,11 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
+  MAX_HOME_PLANTING_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
+  MAX_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_HOME_ORDER_COUNT * getListEntryLength({ blueprintId: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT }) +
+  MAX_HOME_BLUEPRINT_COUNT * 2 * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_HOME_REWARD_CLAIM_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ABYSS_CYCLE_COUNT * getRecordEntryLength(LONGEST_ABYSS_CYCLE_SAVE) +
   MAX_MAIL_COUNT * getListEntryLength(LONGEST_MAIL_SAVE) +
   MAX_QUEST_COUNT *
@@ -327,13 +359,21 @@ export const EMPTY_PARTY_SAVE: PartySave = {
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  cardGameExp: 0,
+  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
   clearedDomains: [],
-  commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
+  commissionDay: {
+    claimedCommissionIds: [],
+    dealtAt: "1970-01-01T00:00:00Z",
+    dealtCommissions: [],
+    isBonusClaimed: false,
+  },
+  investigationDay: { count: 0, dayKey: "" },
   encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
   longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
   companionshipExp: {},
@@ -341,6 +381,18 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   enemyRespawns: {},
   homePlacements: [],
+  homePlantings: [],
+  homeProgress: {
+    accruedAt: "1970-01-01T00:00:00Z",
+    claimedRewardIds: [],
+    companionIds: [],
+    learnedBlueprintIds: [],
+    madeBlueprintIds: [],
+    orders: [],
+    realmBounty: 0,
+    realmCurrency: 0,
+    trustExp: 0,
+  },
   inventory: EMPTY_INVENTORY_SAVE,
   mails: [],
   offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },

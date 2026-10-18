@@ -4,6 +4,7 @@ import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { WaterUniforms } from "genshin-engine";
 
 import { getDrawnWaterfalls } from "#src/services/world/getDrawnWaterfalls";
+import { getOwnRegionData } from "#src/services/world/getOwnRegionData";
 import { createWaterfallGeometry, createWaterfallMaterial } from "genshin-engine";
 
 interface Props {
@@ -19,8 +20,7 @@ const { regionDataMap, sceneExportMap, waterUniforms } = defineProps<Props>();
 const waterfallMaterial = createWaterfallMaterial(waterUniforms);
 // Rebuilt as the regions in reach arrive or go, so the sheets of a region that leaves are freed with it
 const waterfallGeometries = computed(() => {
-  const ownRegions = [...regionDataMap].filter(([regionId]) => !sceneExportMap.has(regionId));
-  const regionWaterfalls = ownRegions.flatMap(([, { waterfalls }]) => waterfalls);
+  const regionWaterfalls = getOwnRegionData(regionDataMap, sceneExportMap).flatMap(({ waterfalls }) => waterfalls);
   const drawnWaterfalls = getDrawnWaterfalls(regionWaterfalls);
   return drawnWaterfalls.map((waterfall) => createWaterfallGeometry(waterfall));
 });

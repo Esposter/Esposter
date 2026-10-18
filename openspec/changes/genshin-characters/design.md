@@ -5,9 +5,9 @@ This page builds on [characters](../../specs/genshin/characters/README.md) as bu
 ## Decisions
 
 - **Its motion is fitted to the game's own locomotion clips** in the [recreation passes](../genshin-recreation-passes/design.md)' motion pass, so only the fitted parameters ship, never a motion file. How far and how fast the body moves is the controller's, and how it is seen is the [follow camera](../../specs/genshin/follow-camera/design.md)'s.
-- **Its scale is the game's.** MMD's unit stands at the community's reckoning of eight centimetres until the game's own model of the character measures it: that model's height in the exports over the PMX's height in units.
+- **Its scale is the game's.** MMD's unit stands at the community's reckoning of eight centimetres until the game's own model of the character measures it: that model's height in the exports over the PMX's height in units. The Traveler's is measured, 0.0909 metres a unit (1.5667 metres over 17.2332 units), and is wired per character by id in `CHARACTER_PMX_UNIT_METRES`. Every other character keeps the reckoned 0.08 metres, **provisional** until its own game model is extracted from the exports, as the Traveler's was through the asset index's prefab for it, and its pack's PMX is measured with `genshin:assets measure`.
 - **The Traveler is fitted first.** The world plays the Traveler (`TRAVELER_CHARACTER_ID`, 10000007, the medium female body), whose `Ani_Avatar_Girl_` clips the controller already reads for its speeds, so its standing, walk, run and sprint cycles in `00/00035183.blk` are the first clips the motion pass fits.
-- **Its terms are shown where it is chosen.** The terms view already shows a pack's terms with their credit; the party's screens, which choose a character, mount it beside the character.
+- **Its terms are shown beside the character the Character screen shows.** The terms view already shows a pack's terms with their credit; the loader at the Character screen's foot mounts it beside the character, in place of the dialog its button opened. Party Setup has no chosen character, so the party's screens take no part.
 
 ## How it works
 
@@ -38,7 +38,7 @@ packages/genshin-world/src/components/Character/Model/Index.reference.ts
    - The entry is data and the printout is its proof, so no unit test is owed.
 2. **Its motion.** The motion pass reads the character's locomotion clips, exported from the game's blocks under `~/Esposter/genshin-parity/extracted/` and decoded by `genshin:assets clips` once the character's component names their pattern, and the pack's model. It writes the fitted parameters as data beside the character's in `genshin-world`. Each bone's track is judged against its clip's, as the motion pass judges any track. It goes to the [compute queue](../genshin-roadmap/tasks.md) once its inputs are named (below), and reads the Traveler's official pack, which the user has extracted under `~/Esposter/character-packs/extracted/10000007/`.
 3. **Its scale**, measured from the game's own model of the character, replacing MMD's reckoned unit. The Traveler's model prefab is `Avatar_Girl_Sword_PlayerGirl_Model`, whose Animator the asset index places in `00/02666572.blk`. It is the body `PlayerGirl`'s entry in `DerivedAssetComponentMap` already roots, so the Traveler reads that root rather than a second component's, and the scale needs the pack's height as well.
-4. **Its terms where it is chosen**, on the party's screens, once the [party](../genshin-party/design.md) builds Party Setup's.
+4. **Its terms beside the character**, shown by the Character screen's loader without a button, and the loader's terms button and dialog removed.
 
 ## Open questions
 

@@ -1,13 +1,6 @@
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
-import type { QuestObjective } from "#src/models/quest/QuestObjective";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
-
-// The targets an objective is met by: its own, and a group's other items when it is a collect any one of them meets
-const getObjectiveTargetIds = ({ alternativeTargetIds = [], targetId }: QuestObjective): string[] => [
-  targetId,
-  ...alternativeTargetIds,
-];
 
 // What the Traveler's doing does to a quest: each objective of the current step the event names is met once more, up
 // To its count, and once every objective is done the quest moves on to its next step with nothing met. A finished
@@ -17,7 +10,7 @@ export const advanceQuest = (quest: Quest, progress: QuestProgress, questEvent: 
   if (!questStep) return progress;
   const objectiveCounts = questStep.objectives.map((objective, index) => {
     const objectiveCount = progress.objectiveCounts[index] ?? 0;
-    return objective.kind === questEvent.kind && getObjectiveTargetIds(objective).includes(questEvent.targetId)
+    return objective.kind === questEvent.kind && objective.targetIds.includes(questEvent.targetId)
       ? Math.min(objectiveCount + 1, objective.count)
       : objectiveCount;
   });

@@ -85,7 +85,7 @@ describe(strikePartyMember, () => {
     expect([...getPartyMember(party, 1).elementalState.auras.keys()]).toStrictEqual([AuraType.Cryo]);
   });
 
-  test("reports to the shield's owner the damage the shield absorbed from the strike", () => {
+  test("reports to the shield's owner the damage the shield absorbed, and the member the strike was on", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
@@ -97,7 +97,7 @@ describe(strikePartyMember, () => {
     };
 
     expect(strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState)).toStrictEqual([
-      { amount: shieldHealth, characterId: 2, kind: KitEventKind.ShieldAbsorbed },
+      { amount: shieldHealth, characterId: 2, kind: KitEventKind.ShieldAbsorbed, struckCharacterId: 1 },
     ]);
   });
 });

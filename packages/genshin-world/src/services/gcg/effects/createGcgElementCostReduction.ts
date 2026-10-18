@@ -5,19 +5,22 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { takeOne } from "@esposter/shared";
 
 // A once-per-round reduction of one die of an element, spent by the first talent card played or skill used in a round that
-// Costs such a die. Its card is marked as used in the round once the cost is paid
+// Costs such a die, or, given a skill kind, by the first skill of that kind alone. Its card is marked as used in the round once
+// The cost is paid
 export const createGcgElementCostReduction = (
   cardId: number,
   element: Element,
+  skillKind?: GcgSkillKind,
 ): Pick<GcgCardModule, "onCostPaid" | "reduceCost"> => ({
   onCostPaid: (context: GcgEffectContext) => {
     takeOne(context.duel.sides, context.sideIndex).usedCardIds.push(cardId);
   },
   reduceCost: (context: GcgEffectContext, subject: GcgCostSubject) => {
-    if (!checkIsGcgReductionDue(context, subject, cardId, element)) return undefined;
+    if (!checkIsGcgReductionDue(context, subject, cardId, element, skillKind)) return undefined;
     return { count: 1, element };
   },
 });
@@ -27,10 +30,14 @@ const checkIsGcgReductionDue = (
   subject: GcgCostSubject,
   cardId: number,
   element: Element,
+  skillKind: GcgSkillKind | undefined,
 ): boolean => {
   const side = takeOne(context.duel.sides, context.sideIndex);
   if (side.usedCardIds.includes(cardId)) return false;
-  const isSkillOrTalent = subject.skill !== undefined || subject.card?.kind === GcgCardKind.Talent;
+  const isSkillOrTalent =
+    skillKind === undefined
+      ? subject.skill !== undefined || subject.card?.kind === GcgCardKind.Talent
+      : subject.skill?.kind === skillKind;
   const isOfElement = subject.costs.some(
     (cost) =>
       (cost.kind === GcgCostKind.Dice && cost.element === element) ||

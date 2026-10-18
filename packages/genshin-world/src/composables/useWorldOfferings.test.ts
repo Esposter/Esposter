@@ -63,7 +63,11 @@ describe(useWorldOfferings, () => {
       wallet,
     });
     const offer = offerFrostbearingTree(frostbearingTreePlace);
-    inventory.value = { items: [{ definition, id: 0, quantity: offeringItem.itemCount }], nextId: 1 };
+    inventory.value = {
+      items: [{ definition, id: 0, quantity: offeringItem.itemCount }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const {
       adventureExp,
       inventory: offeredInventory,

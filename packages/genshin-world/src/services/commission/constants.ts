@@ -2,6 +2,9 @@
 export const COMMISSIONS_PER_DAY = 4;
 // The Adventure Rank commissions open at, with the quest that introduces them, which the world does not carry yet
 export const COMMISSION_UNLOCK_RANK = 12;
+// The Adventure Rank the Adventure Encounters panel opens at on the Commissions tab, where its Encounter Points are spent. The
+// Wiki gives it; the dump's text names no rank for the panel
+export const ADVENTURE_ENCOUNTERS_UNLOCK_RANK = 24;
 // The Adventure Ranks each band of the game's commission tables spans, and how many bands there are: ranks 1 to 5 are the
 // First band, and 56 to 60 the twelfth
 export const COMMISSION_RANK_BAND_SIZE = 5;

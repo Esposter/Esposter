@@ -4,9 +4,9 @@ import type { RegionGroundFit } from "#src/services/genshinAssets/fit/fitRegionG
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
+import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
-import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
 import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
@@ -32,41 +32,66 @@ const readRegionGroundFits = async (
   );
 };
 
+// A fit's records, given the names of the fits to run (none, for all) and whether it is a dry run, which writes no
+// Region data file and publishes nothing
+type DerivedAssetFit = (only: readonly string[], options: { isDryRun: boolean }) => Promise<GameDataBuild>;
+
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
 // Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
-export const DerivedAssetFitMap: Partial<
-  Record<DerivedAssetComponent, (only?: readonly string[]) => Promise<GameDataBuild>>
-> = {
-  [DerivedAssetComponent.Fontaine]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Fontaine), only),
+export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAssetFit>> = {
+  [DerivedAssetComponent.Fontaine]: async (only, options) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Fontaine), only, options),
   [DerivedAssetComponent.Hud]: fitHud,
-  [DerivedAssetComponent.Inazuma]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Inazuma), only),
-  [DerivedAssetComponent.Liyue]: async (only = []) =>
+  [DerivedAssetComponent.Inazuma]: async (only, options) =>
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Inazuma)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
+      },
+      only,
+      options,
+    ),
+  [DerivedAssetComponent.Liyue]: async (only, options) =>
     runFits(
       {
         ...(await readRegionGroundFits(DerivedAssetComponent.Liyue)),
-        rivers: () => fitRiverCourses(DerivedAssetComponent.Liyue),
-        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Liyue),
+        rivers: (fitOptions) => fitRiverCourses(DerivedAssetComponent.Liyue, fitOptions),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Liyue, fitOptions),
       },
       only,
+      options,
     ),
   [DerivedAssetComponent.Login]: fitLoginScene,
-  [DerivedAssetComponent.Mondstadt]: async (only = []) =>
+  [DerivedAssetComponent.Mondstadt]: async (only, options) =>
     runFits(
       {
         ...(await readRegionGroundFits(DerivedAssetComponent.Mondstadt)),
-        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Mondstadt),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Mondstadt, fitOptions),
       },
       only,
+      options,
     ),
-  [DerivedAssetComponent.Natlan]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Natlan), only),
-  [DerivedAssetComponent.NodKrai]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.NodKrai), only),
-  [DerivedAssetComponent.Snezhnaya]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Snezhnaya), only),
-  [DerivedAssetComponent.Sumeru]: async (only = []) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Sumeru), only),
+  [DerivedAssetComponent.Natlan]: async (only, options) =>
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Natlan)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Natlan, fitOptions),
+      },
+      only,
+      options,
+    ),
+  [DerivedAssetComponent.NodKrai]: async (only, options) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.NodKrai), only, options),
+  [DerivedAssetComponent.Snezhnaya]: async (only, options) =>
+    runFits(await readRegionGroundFits(DerivedAssetComponent.Snezhnaya), only, options),
+  [DerivedAssetComponent.Sumeru]: async (only, options) =>
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Sumeru)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Sumeru, fitOptions),
+      },
+      only,
+      options,
+    ),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };

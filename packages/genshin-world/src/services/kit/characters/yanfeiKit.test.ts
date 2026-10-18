@@ -16,6 +16,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYanfeiKitBehaviour, YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -31,8 +32,6 @@ const createYanfeiCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
-
-const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 // The hits of the summons a charged attack of Yanfei's at the ascension casts once its hit lands the CRIT hits given on an
 // Enemy, the charged attack's own first, as [element, talent multiplier, attack tag, radius]
 const landCriticalChargedAttack = (ascension: number, criticalHitCount = 1) => {
@@ -75,6 +74,8 @@ const getCriticalRateBonus = (constellationCount: number, healthShare: number): 
         hit: takeOne(YANFEI_KIT.chargedAttack.hits),
       },
       { ...enemy, health: healthShare * enemy.maxHealth },
+      createParty([YANFEI_CHARACTER_ID]),
+      [],
     ) ?? 0
   );
 };

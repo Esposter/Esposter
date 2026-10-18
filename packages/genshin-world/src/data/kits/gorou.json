@@ -1,6 +1,5 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5539 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.generalsWarBannerFirstTick": { "cause": "Unsourced", "value": 51 },
   "frames.bannerTick": { "file": "skill.go", "line": 127, "source": "Gcsim", "value": 18 },
   "frames.generalsGloryFirstTick": { "cause": "Unsourced", "value": 48 },
@@ -10,13 +9,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.crystalCollapse.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "hits.crystalCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5539 } },
   "hits.crystalCollapse.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.generalsWarBannerDefenseBonus": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5532 }
@@ -24,8 +18,7 @@
   "parameters.crunchGeoDamageBonus": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5532 } },
   "parameters.bannerSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 5532 } },
   "parameters.juugaSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5539 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
+  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": { "index": 3, "proudSkillGroupId": 5532 } }
 }

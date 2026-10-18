@@ -1,7 +1,7 @@
 import { mailSaveSchema } from "#src/models/mail/MailSave";
 import { describe, expect, test } from "vitest";
 
-describe(mailSaveSchema, () => {
+describe("mailSaveSchema", () => {
   const DELIVERED_AT = new Date(0).toISOString();
 
   // A mail claimed before a save is reloaded, its claim read back from the saved text, so it is still claimed after

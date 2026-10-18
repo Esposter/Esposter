@@ -22,7 +22,7 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import { StandInShape } from "#src/models/world/StandInShape";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
-import type { GrassTrail, LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
+import type { GrassTrail, LandmarkCollider, Locomotion, LocomotionPhase, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
@@ -35,6 +35,7 @@ import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldStandIns from "#src/components/World/StandIns/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
+import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
@@ -49,6 +50,7 @@ import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useResidentSpots } from "#src/composables/useResidentSpots";
 import { useSceneExports } from "#src/composables/useSceneExports";
+import { useSheerCold } from "#src/composables/useSheerCold";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
@@ -127,6 +129,9 @@ interface Props {
   characterBody?: Object3D;
   // How the character on the field moves, whose body's capsule is drawn where it has no pack
   characterLocomotion?: Locomotion;
+  // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
+  getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
+  getAntiColdRatio: () => number;
   // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
   // Capsule where it has none or its model fails to load
   characterPackReader?: CharacterPackReader;
@@ -209,6 +214,8 @@ const {
   enemyTables,
   frostbearingTreePlaces,
   gameDataBaseUrl,
+  getAntiColdRatio,
+  getCharacter,
   getGroundHeight,
   getWorldNow,
   grassTrail,
@@ -239,10 +246,12 @@ const emit = defineEmits<{
   campCleared: [camp: ClearedCamp];
   campLocks: [locks: ChestLockSource[]];
   charge: [];
+  coldDamage: [damage: number];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   respawn: [spawnKey: string];
   saveRespawn: [spawnKey: string, respawnAt: string];
+  sheerCold: [value: number];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -262,11 +271,11 @@ const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => active
   lightUniforms,
   rampTexture,
 });
-const { baseGround, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
+const { baseGrounds, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
 // The ground's quadtree, which the terrain streams and the grass reads, bounded by Windrise's ground, which every
 // Region's ground laid over it stands within, and the records each terrain worker computes its tiles over
-const terrainOptions = createWindriseTerrainOptions([baseGround]);
-const terrainWorkerGround: TerrainWorkerGround = { baseGround, groundLayers, surfaces, waterLevel: water.level };
+const terrainOptions = createWindriseTerrainOptions(baseGrounds);
+const terrainWorkerGround: TerrainWorkerGround = { baseGrounds, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
 const treeSpeciesOptionsMap = createTreeSpeciesOptionsMap(oak);
 // The paving stones round the statue, cut from the stone the statue is made of
@@ -389,6 +398,19 @@ const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const groundCapture = createGroundCapture(GRASS_CAPTURE_SIZE, GRASS_CAPTURE_RESOLUTION);
 // The weather of the area the camera stands in, which Windrise's is clear in, as its reference screenshots are
 const areaWeather = useAreaWeather(origin, catalogue);
+// The Sheer Cold gauge of the character on the field, which the HUD reads from the value emitted each change. No campfire
+// Is placed in the world yet, so no heat source drains it
+const sheerCold = useSheerCold(
+  catalogue,
+  () => {
+    const character = getCharacter();
+    return characterBody && character ? { ...character, position: characterBody.position } : undefined;
+  },
+  () => [],
+  getAntiColdRatio,
+  (damage) => emit("coldDamage", damage),
+);
+watch(sheerCold, (value) => emit("sheerCold", value));
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
@@ -474,7 +496,6 @@ onUnmounted(() => {
       <TresGroup :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground }">
         <WorldTerrain
           :create-terrain-worker
-          :detail="surfaces.Ground.detail"
           :draws="terrainDraws"
           :is-ground-settled="isRegionDataSettled"
           :light-uniforms
@@ -529,6 +550,7 @@ onUnmounted(() => {
     />
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldWaterfalls :region-data-map :scene-export-map :water-uniforms />
+    <WorldRivers :light-uniforms :region-data-map :scene-export-map :sky-uniforms :water-uniforms />
     <WorldLandmarks
       :get-ground-height
       :hidden-kinds="hiddenLandmarkKinds"
@@ -649,6 +671,7 @@ onUnmounted(() => {
       <CharacterModel
         v-else-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
         :key="characterPackReader.key"
+        :character-id="activeCharacterId"
         :character-pack-reader
         :light-uniforms
         :ramp-texture

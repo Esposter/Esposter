@@ -30,6 +30,7 @@ describe(startHomeMake, () => {
   };
   const progress: HomeProgress = {
     accruedAt: EPOCH,
+    claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [blueprint.id],
     madeBlueprintIds: [],

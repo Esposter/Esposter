@@ -172,6 +172,7 @@ describe(buildItems, () => {
               reward: { exp: 0, items: [{ count: 1, id: REPUTATION_REWARD_ITEM_ID }] },
             },
           ],
+          quests: [],
           requests: [],
         });
       return Promise.resolve([]);

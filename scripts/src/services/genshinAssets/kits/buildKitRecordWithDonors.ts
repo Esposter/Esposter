@@ -45,7 +45,8 @@ export const buildKitRecordWithDonors = (
     input.overlay,
     readDonorRecordMap(characterId, input.overlay, inputMap, builtMap, [...chain, characterId]),
     input.namedHitCandidateMap,
-    input.tables.talentGroupIdMap,
+    input.tables,
+    input.gcsimFolder !== undefined,
   );
   builtMap.set(characterId, result);
   return result;

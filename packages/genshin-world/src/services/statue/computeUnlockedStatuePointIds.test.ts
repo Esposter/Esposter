@@ -1,5 +1,6 @@
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { checkIsExpeditionPlaceOpen } from "#src/services/expedition/checkIsExpeditionPlaceOpen";
 import { computeUnlockedStatuePointIds } from "#src/services/statue/computeUnlockedStatuePointIds";
 import { GameTextKey } from "genshin-text";
@@ -14,6 +15,7 @@ describe(computeUnlockedStatuePointIds, () => {
     nameTextId: GameTextKey.Windrise,
     questId: "",
     rankLevel: RANK_LEVEL,
+    region: ExpeditionRegion.Mondstadt,
     statuePointId: STATUE_POINT_ID,
   };
   const isPlaceOpen = (regions: StatueProgressSave["regions"]) =>

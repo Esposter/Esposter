@@ -60,6 +60,6 @@ describe(keepCommittedKitCause, () => {
   ])("keeps the committed cause when %s", (_case, entry, committedEntry, value, expected) => {
     expect.hasAssertions();
 
-    expect(keepCommittedKitCause(entry, committedEntry, value)).toStrictEqual(expected);
+    expect(keepCommittedKitCause(entry, committedEntry, value, {})).toStrictEqual(expected);
   });
 });

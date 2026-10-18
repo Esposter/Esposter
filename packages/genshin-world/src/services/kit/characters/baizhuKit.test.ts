@@ -1,15 +1,19 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { BAIZHU_CHARACTER_ID, createBaizhuKitBehaviour } from "#src/services/kit/characters/baizhuKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -44,6 +48,7 @@ const getDendroStrikeDamageBonus = (ascension: number, activeHealthShare: number
     { body: createKitTestContext(combatant).body, combatant, hit },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     party,
+    [],
   );
 };
 
@@ -163,5 +168,95 @@ describe("five Fortunes Forever", () => {
     expect.hasAssertions();
 
     expect(getDendroStrikeDamageBonus(1, 0.49)).toBe(0);
+  });
+});
+
+// Gossamer Sprite: Splice is priced once the hit the active member takes reaches Baizhu's kit as an event, which is how
+// The party's kits read them, so a test sends the event as the party's kit does
+const BAIZHU_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+// Baizhu stands in the team beside his teammate, and the teammate's hits are the ones the kit reads, as the active member's
+const createSpliceTeam = (constellationCount: number) => {
+  const baizhu: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: BAIZHU_CHARACTER_ID,
+    constellationCount,
+    elementalResonances: [],
+    kit: BAIZHU_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  };
+  const teammate = { ...baizhu, characterId: ACTIVE_CHARACTER_ID };
+  const context = createKitTestContext(teammate, {
+    characterIdCombatantMap: new Map<number, Combatant>([
+      [BAIZHU_CHARACTER_ID, baizhu],
+      [ACTIVE_CHARACTER_ID, teammate],
+    ]),
+    party: createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]),
+  });
+  return { baizhu, context, teammate };
+};
+
+// The kit takes a hit of the striker's on the enemy, the event the party's kits take, with Baizhu's combatant as the kit's own
+const strikeSpliceEnemy = (context: KitContext, striker: Combatant, baizhu: Combatant): void => {
+  BAIZHU_KIT.onKitEvent?.(
+    {
+      enemy: BAIZHU_ENEMY,
+      hit: takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits),
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker,
+    },
+    context,
+    baizhu,
+  );
+};
+
+describe("constellation 2's Gossamer Sprite: Splice", () => {
+  test("an active constellation's switch queues a Splice on an enemy his active member hits", () => {
+    expect.hasAssertions();
+    const { baizhu, context, teammate } = createSpliceTeam(2);
+    strikeSpliceEnemy(context, teammate, baizhu);
+
+    expect(
+      context.strikes.map(({ hit, target }) => [target, hit.attackTag, hit.element, hit.talentMultiplier]),
+    ).toStrictEqual([[BAIZHU_ENEMY, AttackTag.ElementalSkill, Element.Dendro, 2.5]]);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const { baizhu, context, teammate } = createSpliceTeam(1);
+    strikeSpliceEnemy(context, teammate, baizhu);
+
+    expect(context.strikes).toHaveLength(0);
+  });
+
+  test("a hit Baizhu lands himself while he is on the field also queues a Splice, as gcsim's trigger reads the active character", () => {
+    expect.hasAssertions();
+    const { baizhu, context } = createSpliceTeam(2);
+    const onField = { ...context, activeCombatant: baizhu };
+    strikeSpliceEnemy(onField, baizhu, baizhu);
+
+    expect(context.strikes).toHaveLength(1);
+  });
+
+  test("the Splice fires once every five seconds", () => {
+    expect.hasAssertions();
+    const { baizhu, context, teammate } = createSpliceTeam(2);
+    // A step clears the strikes queued before it, so each read counts the Splices queued on the enemy since the last step
+    const countQueuedSplices = (): number => context.strikes.filter(({ target }) => target === BAIZHU_ENEMY).length;
+    strikeSpliceEnemy(context, teammate, baizhu);
+    strikeSpliceEnemy(context, teammate, baizhu);
+    const countBeforeCooldown = countQueuedSplices();
+    stepKitSeconds(context, 4);
+    strikeSpliceEnemy(context, teammate, baizhu);
+    const countWhileCoolingDown = countQueuedSplices();
+    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the Splice is read once a step past five
+    stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
+    strikeSpliceEnemy(context, teammate, baizhu);
+
+    expect([countBeforeCooldown, countWhileCoolingDown, countQueuedSplices()]).toStrictEqual([1, 0, 1]);
   });
 });

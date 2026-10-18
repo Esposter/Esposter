@@ -122,15 +122,48 @@ describe(readGcsimQueuedAttacks, () => {
     const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
 
     expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
-      [11, 78],
+      [11, 114],
+      [11, 204],
+      [11, 294],
+      [11, 384],
+      [11, 474],
+      [11, 564],
+      [11, 654],
+      [11, 744],
       [15, 5],
+    ]);
+  });
+
+  test("adds a Tasks.Add closure's delay to the queue call in its body, once per iteration, with the call's own delay", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package venti",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := range 3 {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.Core.QueueAttackWithSnap(ai, snap, ap, 0, cb)",
+          "\t\t}, 106+24*i)",
+          "\t}",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 5, 9, cb)",
+          "\t}, 40)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, delayLine, line }) => [line, delayLine, delay])).toStrictEqual([
+      [6, 7, 106],
+      [6, 7, 130],
+      [6, 7, 154],
+      [10, 11, 49],
     ]);
   });
 
@@ -253,6 +286,40 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
       64, 88,
+    ]);
+  });
+
+  test("repeats a queue call in a loop ranging over a constant count, `for i := range 3` and `for range 2`, once per count", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package ayaka",
+          "",
+          "const burstHitmark = 104",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := range 3 {",
+          "\t\tc.Core.QueueAttack(ai, ap, burstHitmark, burstHitmark+i*15, cb)",
+          "\t}",
+          "\tfor range 2 {",
+          "\t\tc.Core.QueueAttack(aiC2, ap, burstHitmark, burstHitmark, cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
+      [7, 104],
+      [7, 119],
+      [7, 134],
+      [10, 104],
+      [10, 104],
     ]);
   });
 });

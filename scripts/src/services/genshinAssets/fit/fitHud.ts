@@ -11,7 +11,7 @@ import { join } from "node:path";
 
 // The HUD's interface as the rects its markup nests, fitted from the tree `genshin:assets interface` exported, as the
 // Record `hud/interfaceRects`
-export const fitHud = (only: readonly string[] = []): Promise<GameDataBuild> => {
+export const fitHud = (only: readonly string[], options: { isDryRun: boolean }): Promise<GameDataBuild> => {
   const { root } = getComponentDirectory(DerivedAssetComponent.Hud);
   return runFits(
     {
@@ -23,5 +23,6 @@ export const fitHud = (only: readonly string[] = []): Promise<GameDataBuild> => 
       },
     },
     only,
+    options,
   );
 };

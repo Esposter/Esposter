@@ -41,17 +41,36 @@ Each built task names the test it was written first in, and each test is a scena
 
 - [x] 5.3 The picked artifact's main and sub stats under the details pill, provisional. The stats take the Details list's
       row pitch from the registered frame and their place is not measured, since no reference frame shows a picked piece.
-      The sub stats are read from the piece's minor affixes; the main stat's name is read from its main affix, and its
-      value waits on the main affix pools (6.3). Tests: `getArtifactDetailStats.test.ts`, and the visual suite's `worn`
-      variant, which the main session runs.
+      The sub stats are read from the piece's minor affixes; the main stat's name and its value are read from its main
+      affix and its level's curve (6.3). Tests: `getArtifactDetailStats.test.ts`, and the visual suite's `worn` variant,
+      which the main session runs.
 
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       Waits on a browser run.
 
 ## 6. Not built
 
-- [ ] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. Waits on the
-      character-screen agent's change (`agent/w6-character-screen`), which lands first; this change builds
-      against the `Artifact` type that change uses.
-- [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 6.1.
-- [ ] 6.3 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.
+- [x] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. The character-screen
+      change has landed on `eye`: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.
+      Covered by `addInventoryArtifact.test.ts`'s "takes each artifact in as an entry of its own holding the artifact it
+      was rolled as".
+- [x] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Built: the Artifacts tab's Equip opens the
+      bag's pieces for the slot, listed highest rarity first and then highest level, and the player chooses one; the piece
+      worn goes back to the bag. Unequip returns the worn piece to the bag, and with a full bag it shows the artifact
+      inventory's full notice and leaves the piece worn. Equip is disabled where the bag holds no piece for the slot. The
+      fodder service `takeFodderArtifacts` takes unlocked artifacts out of the bag. The Enhance picker lists the bag's unlocked artifacts and the EXP ores, takes
+      Auto Add (provisional, see the design), shows the level reached at the base EXP bonus and the Mora, and on Confirm
+      enhances the worn piece and takes the chosen fodder and ores out of the bag. Tests: `getBagArtifactsForSlot.test.ts`,
+      `equipBagArtifact.test.ts`, `unequipArtifactToBag.test.ts`, `takeFodderArtifacts.test.ts`, `getAutoAddFodders.test.ts`,
+      `getMaterialExperience.test.ts`.
+- [x] 6.3 The main affix pools and the main stat's value. Each slot's pool is the attributes its main prop depot lists
+      that the wiki's Artifact/Distribution page weighs for it, and the drop reads the pools through `rollPieceArtifact`.
+      The main stat's value is the attribute's curve at the artifact's rarity and level (`getArtifactMainAffixValue`),
+      the lookup `getCharacterAttributeLines` now shares. Tests: `getArtifactMainAffixPools.test.ts`,
+      `getArtifactMainAffixValue.test.ts`, and `getArtifactDetailStats.test.ts`. The published pools change once
+      `genshin:assets stats` republishes, which the main session runs.
+- [x] 6.4 The artifact lock, in the bag and on the Artifacts tab. A lock is the artifact's saved `isLocked`, so the
+      slot's Lock button on the panel and the bag's Lock button on a selected artifact toggle it, and fodder refuses a
+      locked artifact. Tests: `toggleCharacterArtifactLock.test.ts`, `toggleInventoryArtifactLock.test.ts`,
+      `getArtifactDetailStats.test.ts`. The lock's words are `ArtifactActionLock` and `ArtifactActionUnlock`, whose chunks
+      the main session writes.

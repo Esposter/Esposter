@@ -31,6 +31,8 @@ describe(readGenshinSave, () => {
   const ARCHIVE_KILL_COUNT = 1;
   const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const ADVENTURE_EXP = 1200;
+  const CARD_GAME_EXP = 1250;
+  const REWARDED_GAME_IDS = [1021, 1103];
   const CHARACTER_ID = 6;
   const CHARACTER_COPY_COUNT = 2;
   const CHARACTER_LEVEL = 5;
@@ -61,6 +63,20 @@ describe(readGenshinSave, () => {
   const SOLVED_PUZZLE_ID = "puzzle-1";
   // A furnishing placed in the realm: its item, the area of its scene it stands in and where, and the turn it faces
   const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
+  // The realm's progress and a seed in its garden, each instant as the save holds it, at a made-up moment after the epoch
+  const REALM_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
+  const HOME_PROGRESS_SAVE = {
+    accruedAt: REALM_AT,
+    claimedRewardIds: [6],
+    companionIds: [7],
+    learnedBlueprintIds: [8],
+    madeBlueprintIds: [8],
+    orders: [{ blueprintId: 8, startedAt: REALM_AT }],
+    realmBounty: 9,
+    realmCurrency: 10,
+    trustExp: 11,
+  };
+  const PLANTING_SAVE = { plantedAt: REALM_AT, plotId: 4, seedItemId: 5 };
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const EQUIPPED_GADGET_ID = 1001;
   const FORGED_WEAPON_ID = 13_401;
@@ -178,11 +194,15 @@ describe(readGenshinSave, () => {
     ...EMPTY_GENSHIN_SAVE,
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
+    cardGameExp: CARD_GAME_EXP,
+    cardGameRewardedGameIds: REWARDED_GAME_IDS,
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     cooking: COOKING_SAVE,
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     homePlacements: [PLACEMENT],
+    homePlantings: [PLANTING_SAVE],
+    homeProgress: HOME_PROGRESS_SAVE,
     inventory: {
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
@@ -331,6 +351,7 @@ describe(readGenshinSave, () => {
       commissionDay: {
         claimedCommissionIds: [1],
         dealtAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+        isBonusClaimed: false,
         dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
           commissionId: index + 1,
           count: 0,

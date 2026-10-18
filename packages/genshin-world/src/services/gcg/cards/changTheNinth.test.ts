@@ -73,7 +73,7 @@ const hearSkill = (side: GcgSideState, zoneCard: GcgZoneCard, dealt: GcgDealtDam
   changTheNinth.onAnySkillUsed?.(context, SKILL, zoneCard, dealt);
 };
 
-describe(changTheNinth, () => {
+describe("changTheNinth", () => {
   test("should gain an Inspiration when the skill deals Physical damage", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);

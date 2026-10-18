@@ -1,6 +1,6 @@
 ## Purpose
 
-Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, A1's phantom, A4's Hydro bonus and Constellation 2's Charged Attack follow-up, with her plunges' reach provisional and Constellations 1, 4 and 6 left out.
+Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, A1's phantom, A4's Hydro bonus and Constellation 2's Charged Attack follow-up and Constellation 6's sprint stacks on her Charged Attack, with her plunges' reach provisional and Constellations 1 and 4 left out.
 
 ## Requirements
 
@@ -96,9 +96,37 @@ From Constellation 2, a normal attack's last hit SHALL have a 20% chance to be f
 - **WHEN** a normal attack's last hit lands
 - **THEN** no follow-up lands
 
+### Requirement: Constellation 6's sprint stacks on her Charged Attack
+
+From Constellation 6, each second of sprint SHALL give her next Charged Attack 60% more DMG, up to three seconds' worth, for eight seconds from the last stack. A Charged Attack that strikes SHALL reset the stacks, as gcsim v2.47.2's `cons.go` gives them.
+
+#### Scenario: Each sprinted second adds a stack, up to three
+
+- **GIVEN** Mona has Constellation 6
+- **WHEN** she sprints for 3.5 seconds and then lands a Charged Attack
+- **THEN** that attack deals 180% more DMG, from three stacks
+
+#### Scenario: The stacks reset when a Charged Attack strikes
+
+- **GIVEN** Mona has Constellation 6 and has sprinted for 2.5 seconds
+- **WHEN** her Charged Attack strikes
+- **THEN** the stacks are gone and the next Charged Attack gains nothing
+
+#### Scenario: Stacks run out eight seconds after the last one
+
+- **GIVEN** Mona has Constellation 6 and has sprinted for 1.5 seconds
+- **WHEN** eight seconds pass without a new stack
+- **THEN** the bonus is gone
+
+#### Scenario: Below Constellation 6 nothing is added
+
+- **GIVEN** Mona has Constellation 5
+- **WHEN** she sprints and lands a Charged Attack
+- **THEN** the attack gains nothing
+
 ### Requirement: Unbuilt Mona effects
 
-Constellations 1, 4 and 6, and Hexerei's post-burst follow-up, SHALL NOT take effect.
+Constellations 1 and 4, and Hexerei's post-burst follow-up, SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

@@ -62,7 +62,7 @@ const createDuel = (side: GcgSideState): GcgDuel => ({
   sides: [side, createSide()],
 });
 
-describe(mushroomPizza, () => {
+describe("mushroomPizza", () => {
   test("should heal the target character for one HP on play", () => {
     expect.hasAssertions();
     const side = createSide();

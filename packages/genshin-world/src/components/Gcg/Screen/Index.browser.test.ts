@@ -4,8 +4,9 @@ import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 import GcgScreen from "#src/components/Gcg/Screen/Index.vue";
 import { props as screenFixtureProps } from "#src/components/Gcg/Screen/Index.fixture";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import { GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
+import { GCG_OPPONENT_SIDE_INDEX, GCG_PLAYER_SIDE_INDEX, GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -73,5 +74,37 @@ describe("gcgScreen", () => {
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
 
     expect(onPlayCard).not.toHaveBeenCalled();
+  });
+
+  test("should leave the ended duel with the player's win once its confirm is pressed", async () => {
+    expect.hasAssertions();
+
+    const onLeave = vi.fn<(won: boolean) => void>();
+    render(GcgScreen, {
+      props: {
+        ...screenFixtureProps,
+        duel: { ...duel, phase: GcgPhase.Ended, winnerSideIndex: GCG_PLAYER_SIDE_INDEX },
+        onLeave,
+      },
+    });
+    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
+
+    expect(onLeave.mock.calls).toStrictEqual([[true]]);
+  });
+
+  test("should leave the ended duel with the player's loss when the opponent won", async () => {
+    expect.hasAssertions();
+
+    const onLeave = vi.fn<(won: boolean) => void>();
+    render(GcgScreen, {
+      props: {
+        ...screenFixtureProps,
+        duel: { ...duel, phase: GcgPhase.Ended, winnerSideIndex: GCG_OPPONENT_SIDE_INDEX },
+        onLeave,
+      },
+    });
+    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
+
+    expect(onLeave.mock.calls).toStrictEqual([[false]]);
   });
 });
