@@ -1,70 +1,67 @@
 {
-  "burst.animationFrames": { "cause": "Unclassified", "value": 50 },
-  "burst.hits.length": { "cause": "Unclassified", "value": 1 },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "burst.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 3.8057 },
-  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 102 },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "burst.animationFrames": { "cause": "NoGcsimUnit", "value": 50 },
+  "burst.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
+  "burst.hits.0.area": { "cause": "NoGcsimUnit", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
+  "burst.hits.0.element": { "cause": "NoGcsimUnit", "value": "Rock" },
+  "burst.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 18 },
+  "burst.hits.0.multiplier": { "cause": "NoGcsimUnit", "value": 3.805672 },
+  "burst.hits.0.scalingAttribute": { "cause": "NoGcsimUnit", "value": "FIGHT_PROP_DEFENSE" },
+  "chargedAttack.animationFrames": { "cause": "NoGcsimUnit", "value": 102 },
+  "chargedAttack.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
   },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
-  "normalAttacks.length": { "cause": "Unclassified", "value": 4 },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 160 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 24 },
+  "normalAttacks.length": { "cause": "NoGcsimUnit", "value": 4 },
+  "normalAttacks.0.animationFrames": { "cause": "NoGcsimUnit", "value": 160 },
+  "normalAttacks.0.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.06 }
   },
-  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 186 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 2 },
+  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 12 },
+  "normalAttacks.1.animationFrames": { "cause": "NoGcsimUnit", "value": 186 },
+  "normalAttacks.1.hits.length": { "cause": "NoGcsimUnit", "value": 2 },
   "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.06 }
   },
-  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 11 },
   "normalAttacks.1.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.35 }
   },
-  "normalAttacks.1.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
-  "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 198 },
-  "normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 1 },
+  "normalAttacks.1.hits.1.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 18 },
+  "normalAttacks.2.animationFrames": { "cause": "NoGcsimUnit", "value": 198 },
+  "normalAttacks.2.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.35 }
   },
-  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
-  "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 206 },
-  "normalAttacks.3.hits.length": { "cause": "Unclassified", "value": 1 },
+  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 5 },
+  "normalAttacks.3.animationFrames": { "cause": "NoGcsimUnit", "value": 206 },
+  "normalAttacks.3.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.35 }
   },
-  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
-  "plungeCollision.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
-  },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 102 },
-  "plunges.high.hits.length": { "cause": "Unclassified", "value": 1 },
+  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 21 },
+  "plungeCollision.area": { "cause": "NoGcsimUnit", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 } },
+  "plunges.high.animationFrames": { "cause": "NoGcsimUnit", "value": 102 },
+  "plunges.high.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "plunges.high.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 18 },
-  "plunges.low.hits.length": { "cause": "Unclassified", "value": 1 },
+  "plunges.high.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 46 },
+  "plunges.low.animationFrames": { "cause": "NoGcsimUnit", "value": 18 },
+  "plunges.low.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "plunges.low.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 45 },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 48 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 45 },
+  "skill.animationFrames": { "cause": "NoGcsimUnit", "value": 48 },
+  "skill.hits.length": { "cause": "NoGcsimUnit", "value": 0 }
 }
