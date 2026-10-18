@@ -7,6 +7,7 @@ import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -17,13 +18,15 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import {
-  ICY_QUILL_STATUS_ID,
   createShenheKitBehaviour,
+  ICY_QUILL_STATUS_ID,
   SHENHE_CHARACTER_ID,
+  SKYFROST_MANTRA_STATUS_ID,
 } from "#src/services/kit/characters/shenheKit";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -91,10 +94,16 @@ const createQuillContext = (kitEffectState: KitEffectState, shenhe: Combatant, m
     party: createParty([shenhe.characterId, member.characterId]),
   });
 // The party strike bonus Shenhe's kit gives a hit of the given element that the striker lands on an enemy
-const priceStrike = (context: KitContext, shenhe: Combatant, striker: Combatant, element: Element) =>
+const priceStrike = (
+  context: KitContext,
+  shenhe: Combatant,
+  striker: Combatant,
+  element: Element,
+  attackTag: AttackTag | undefined = AttackTag.ElementalSkill,
+) =>
   SHENHE_KIT.getPartyStrikeBonus?.(
     shenhe,
-    { body: context.body, combatant: striker, hit: { ...takeOne(SHENHE_KIT.elementalSkill.hits), element } },
+    { attackTag, body: context.body, combatant: striker, hit: { ...takeOne(SHENHE_KIT.elementalSkill.hits), element } },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     context.party,
     context.kitEffectState.effects,
@@ -317,5 +326,127 @@ describe(createShenheKitBehaviour, () => {
     expect(findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)?.stacks).toBe(1);
     emitKitEvent(hit(Element.Cryo), context);
     expect(findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)).toBeUndefined();
+  });
+
+  test("a Cryo hit a quilled member strikes from an attack kind adds the Icy Quill's bonus, whichever kind it is", () => {
+    expect.hasAssertions();
+    const shenhe = createShenheWithAttack();
+    const member = createMemberCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
+    const context = createQuillContext(kitEffectState, shenhe, member);
+
+    for (const attackTag of Object.values(AttackTag))
+      expect(priceStrike(context, shenhe, member, Element.Cryo, attackTag)?.additiveBaseDamageBonus).toBeCloseTo(
+        1000 * 0.45656,
+        6,
+      );
+  });
+
+  test("a Cryo hit a quilled member strikes from no attack kind adds no Icy Quill bonus and spends no trigger", () => {
+    expect.hasAssertions();
+    const shenhe = createShenheWithAttack();
+    const member = createMemberCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
+    const context = createQuillContext(kitEffectState, shenhe, member);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(priceStrike(context, shenhe, member, Element.Cryo, undefined)?.additiveBaseDamageBonus).toBeUndefined();
+    emitKitEvent({ element: Element.Cryo, enemy, kind: KitEventKind.EnemyHit, striker: member }, context);
+    expect(findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)?.stacks).toBe(5);
+  });
+
+  test("at Constellation 6 a normal or charged attack's trigger does not spend the quota, while a skill's does", () => {
+    expect.hasAssertions();
+    const shenhe = { ...createShenheWithAttack(), constellationCount: 6 };
+    const member = createMemberCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
+    const context = createQuillContext(kitEffectState, shenhe, member);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const hit = (attackTag: AttackTag) => ({
+      attackTag,
+      element: Element.Cryo,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: member,
+    });
+    const stacks = () => findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)?.stacks;
+
+    emitKitEvent(hit(AttackTag.NormalAttack), context);
+    emitKitEvent(hit(AttackTag.ChargedAttack), context);
+    expect(stacks()).toBe(5);
+
+    emitKitEvent(hit(AttackTag.ElementalSkill), context);
+    expect(stacks()).toBe(4);
+  });
+
+  test("at Constellation 4 each trigger gives Shenhe a Skyfrost Mantra stack, up to fifty, and none below it", () => {
+    expect.hasAssertions();
+    const member = createMemberCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const hit = {
+      attackTag: AttackTag.ElementalSkill,
+      element: Element.Cryo,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: member,
+    } as const;
+    const mantra = () =>
+      findKitStatus(kitEffectState.effects, SHENHE_CHARACTER_ID, SKYFROST_MANTRA_STATUS_ID)?.stacks ?? 0;
+
+    const constellationThree = { ...createShenheWithAttack(), constellationCount: 3 };
+    emitKitEvent(hit, createQuillContext(kitEffectState, constellationThree, member));
+    expect(mantra()).toBe(0);
+
+    const shenhe = { ...createShenheWithAttack(), constellationCount: 4 };
+    addKitStatus(kitEffectState, shenhe.characterId, {
+      id: SKYFROST_MANTRA_STATUS_ID,
+      secondsRemaining: 60,
+      stacks: 50,
+    });
+    addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
+    emitKitEvent(hit, createQuillContext(kitEffectState, shenhe, member));
+    expect(mantra()).toBe(50);
+
+    removeKitEffects(kitEffectState, (effect) => effect.kind === "status" && effect.id === SKYFROST_MANTRA_STATUS_ID);
+    emitKitEvent(hit, createQuillContext(kitEffectState, shenhe, member));
+    expect(mantra()).toBe(1);
+  });
+
+  test("her Spring Spirit Summoning consumes the Skyfrost Mantra stacks, each adding 5% DMG to her skill's hits", () => {
+    expect.hasAssertions();
+    const shenhe = { ...createShenheWithAttack(), constellationCount: 4 };
+    const member = createMemberCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, shenhe.characterId, {
+      id: SKYFROST_MANTRA_STATUS_ID,
+      secondsRemaining: 60,
+      stacks: 3,
+    });
+    const context = createQuillContext(kitEffectState, shenhe, member);
+    const skillStrike = {
+      attackTag: AttackTag.ElementalSkill,
+      body: context.body,
+      combatant: shenhe,
+      hit: takeOne(SHENHE_KIT.elementalSkill.hits),
+    };
+    const damageBonus = () =>
+      SHENHE_KIT.getStrikeDamageBonus?.(
+        skillStrike,
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        context.party,
+        kitEffectState.effects,
+      );
+
+    expect(damageBonus()).toBe(0);
+
+    SHENHE_KIT.elementalSkill.onStart?.(context);
+
+    expect(findKitStatus(kitEffectState.effects, shenhe.characterId, SKYFROST_MANTRA_STATUS_ID)).toBeUndefined();
+    expect(damageBonus()).toBeCloseTo(0.15, 6);
   });
 });
