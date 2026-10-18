@@ -5,9 +5,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
-import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { emitKitEnemyDefeated } from "#src/services/kit/emitKitEnemyDefeated";
 
 // Damage a kit's own tick or Lunar hit deals an enemy, written into it in place, and the energy it drops, through the damage
 // Point. A standing Enemy that this damage takes to no health is sent to the team's kits as defeated, from the combatant
@@ -21,7 +20,6 @@ export const damageKitEnemy = (
 ): EnergyDrop[] => {
   const isStanding = enemy.state !== EnemyState.Dead;
   const energyDrops = dealKitEnemyDamage(enemy, hit, isElemental, owner, context);
-  if (isStanding && enemy.state === EnemyState.Dead)
-    emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: owner }, context);
+  if (isStanding) emitKitEnemyDefeated(enemy, owner, context);
   return energyDrops;
 };

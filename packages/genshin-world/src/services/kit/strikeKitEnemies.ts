@@ -22,6 +22,7 @@ import { getElementCriticalDamageBonus } from "#src/services/kit/effects/getElem
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
+import { emitKitEnemyDefeated } from "#src/services/kit/emitKitEnemyDefeated";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedStrikeBonuses } from "#src/services/kit/getDeployedStrikeBonuses";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
@@ -199,7 +200,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         },
         context,
       );
-      if (isDefeatedByStrike) emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
+      if (isDefeatedByStrike) emitKitEnemyDefeated(enemy, combatant, context);
     }
     if (target === undefined && hit.targetIndex === undefined)
       for (const wildlife of strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops))
