@@ -89,6 +89,7 @@ export const NINGGUANG_CHARACTER_ID = 10_000_027;
 // And spends no stamina from Ascension 1 while she holds one. Jade Screen stands ahead of her, and a recast or Starshatter
 // Shatters it, setting Shock Effect going from two constellations. Starshatter's gems land from a summon where she
 // Stands, a standing screen adding its own, and from six constellations she holds 7 Star Jades
+// Constellation 4 needs an Elemental RES bonus for nearby characters, which the Attribute enum does not carry
 export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const gems = readHits("strikeGem");
   const piercingFragmentsGems = readHits("piercingFragmentsStrikeGem");
