@@ -68,7 +68,10 @@ export const startNextKitAction = (
   }
 
   // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set
-  const isSkillReady = getSkillReadySeconds(kit, context.activeCombatant, partyMember.skillCooldownSeconds) <= 0;
+  // A skill whose cooldown the kit's effects waive starts whatever it is, as a constellation's status lets Xianyun do
+  const isSkillReady =
+    kit.isSkillCooldownWaived?.(context) === true ||
+    getSkillReadySeconds(kit, context.activeCombatant, partyMember.skillCooldownSeconds) <= 0;
   const isChaining = kitState.skillChainCount > 0;
   const isSkillTriggered = kit.elementalSkillHolds ? kitState.skillReleasedSeconds > 0 : isSkillPressed;
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {

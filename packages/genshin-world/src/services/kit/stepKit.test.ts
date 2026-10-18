@@ -194,6 +194,24 @@ describe(stepKit, () => {
     expect(step({ isSkillPressed: true })).toBeUndefined();
   });
 
+  test("starts a skill whose cooldown its kit waives while the cooldown runs", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture({ ...TRAVELER_KIT, isSkillCooldownWaived: () => true });
+    partyMember.skillCooldownSeconds = 5;
+
+    expect(step({ isSkillPressed: true })).toBe(TRAVELER_KIT.elementalSkill);
+  });
+
+  test("keeps a skill's cooldown while its kit does not waive it", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture();
+    partyMember.skillCooldownSeconds = 5;
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+  });
+
   test("shortens a skill's cooldown by 5% under Impetuous Winds, composed with the kit's own multiplier", () => {
     expect.hasAssertions();
 
