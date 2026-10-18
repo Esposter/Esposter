@@ -5,14 +5,47 @@ import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BAIZHU_CHARACTER_ID, createBaizhuKitBehaviour } from "#src/services/kit/characters/baizhuKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const BAIZHU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BAIZHU_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+// A member on the field beside Baizhu
+const ACTIVE_CHARACTER_ID = 10_000_050;
+// The DMG Bonus Baizhu's first strike, a Dendro hit, takes from Baizhu at the ascension while the character on the field
+// Stands at the share of their HP
+const getDendroStrikeDamageBonus = (ascension: number, activeHealthShare: number): number | undefined => {
+  const combatant: Combatant = {
+    ascension,
+    attributes: computeCharacterAttributes([]),
+    characterId: BAIZHU_CHARACTER_ID,
+    constellationCount: 0,
+    element: Element.Dendro,
+    elementalResonances: [],
+    kit: BAIZHU_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  };
+  const party = createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]);
+  getPartyMember(party, ACTIVE_CHARACTER_ID).healthShare = activeHealthShare;
+  const hit = takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits);
+  return BAIZHU_KIT.getStrikeDamageBonus?.(
+    { body: createKitTestContext(combatant).body, combatant, hit },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    party,
+  );
+};
 
 describe(createBaizhuKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
@@ -81,5 +114,25 @@ describe(createBaizhuKitBehaviour, () => {
       (effect): effect is KitShield => effect.kind === "shield",
     );
     expect(shield?.health).toBeCloseTo(0.008 * MAX_HEALTH + 77.03752, 6);
+  });
+});
+
+describe("five Fortunes Forever", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getDendroStrikeDamageBonus(1, 0.5)).toBe(0.25);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getDendroStrikeDamageBonus(0, 1)).toBe(0);
+  });
+
+  test("the Dendro DMG Bonus waits while the character on the field is below half HP", () => {
+    expect.hasAssertions();
+
+    expect(getDendroStrikeDamageBonus(1, 0.49)).toBe(0);
   });
 });
