@@ -1,12 +1,13 @@
+import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCodexRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerBuffRow";
 import type { ExcelTowerLevelRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerLevelRow";
 import type { ExcelTowerRewardRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerRewardRow";
 import type { ExcelTowerScheduleRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerScheduleRow";
 
+import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { MONSTER_TABLE_NAME } from "#src/services/genshinAssets/enemies/constants";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { toRewardItemsById } from "#src/services/genshinAssets/rewards/toRewardItemsById";
 import {
   TOWER_BUFF_TABLE_NAME,
   TOWER_LEVEL_TABLE_NAME,
@@ -20,6 +21,7 @@ import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAby
 import { toAbyssFloorReward } from "#src/services/genshinAssets/spiralAbyss/toAbyssFloorReward";
 import { toAbyssPeriod } from "#src/services/genshinAssets/spiralAbyss/toAbyssPeriod";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { GameDataset } from "genshin-world";
 
 // The Spiral Abyss's floors with their chambers, its rewards, the Moon Spire's periods and the Benedictions each chamber offers,
@@ -64,7 +66,7 @@ export const buildSpiralAbyss = (): Record<string, unknown> => {
   return {
     [`${GameDataset.SpiralAbyss}/benedictionChoices`]: benedictionChoices,
     [`${GameDataset.SpiralAbyss}/enemyKinds`]: toAbyssEnemyKinds(
-      readAbyssDescribeIds(),
+      readAbyssDescribeIds(floors, readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME)),
       readExcelTable<MonsterRow>(MONSTER_TABLE_NAME),
     ),
     [`${GameDataset.SpiralAbyss}/floors`]: floors,
@@ -72,7 +74,7 @@ export const buildSpiralAbyss = (): Record<string, unknown> => {
     [`${GameDataset.SpiralAbyss}/rewards`]: {
       floorRewards,
       rewardItems: Object.fromEntries(
-        Array.from(rewardIds, (rewardId) => [rewardId, toRewardItemsById(rewardId, rewardMap)]),
+        Array.from(rewardIds, (rewardId) => [rewardId, toQuestRewardItems([rewardId], rewardMap)]),
       ),
     },
   };

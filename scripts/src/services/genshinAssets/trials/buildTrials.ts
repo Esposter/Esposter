@@ -8,11 +8,11 @@ import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/Ex
 import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/TrialReliquaryPiece";
 import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
 
-import { toRewardItemsById } from "#src/services/genshinAssets/rewards/toRewardItemsById";
 import { toTrialAvatar } from "#src/services/genshinAssets/trials/toTrialAvatar";
 import { toTrialReliquary } from "#src/services/genshinAssets/trials/toTrialReliquary";
 import { toTrialStage } from "#src/services/genshinAssets/trials/toTrialStage";
 import { toTrialTemplate } from "#src/services/genshinAssets/trials/toTrialTemplate";
+import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { GameDataset } from "genshin-world";
 
 // The character trials' records, each published under the dataset's key: the stages by id, the trial avatars by id, the
@@ -63,7 +63,7 @@ export const buildTrials = ({
         .map((reliquary) => [reliquary.id, reliquary]),
     ),
     [`${GameDataset.CharacterTrials}/rewards`]: Object.fromEntries(
-      [...rewardIds].map((rewardId) => [rewardId, toRewardItemsById(rewardId, rewardMap)]),
+      [...rewardIds].map((rewardId) => [rewardId, toQuestRewardItems([rewardId], rewardMap)]),
     ),
     [`${GameDataset.CharacterTrials}/stages`]: Object.fromEntries(stages.map((stage) => [stage.id, stage])),
     [`${GameDataset.CharacterTrials}/templates`]: templateRows

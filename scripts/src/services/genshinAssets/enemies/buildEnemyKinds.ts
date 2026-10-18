@@ -22,6 +22,7 @@ import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reput
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
 import { readAbyssDescribeIds } from "#src/services/genshinAssets/spiralAbyss/readAbyssDescribeIds";
+import { readAbyssFloors } from "#src/services/genshinAssets/spiralAbyss/readAbyssFloors";
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -59,15 +60,9 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const bountyKindIds = Object.values(MONDSTADT_BOUNTY_TARGET_NAMES).flatMap((names) =>
     toBountyTargetIds(names, monsterNames),
   );
-  // A describe the archive does not list is left out, as its kind has no archive entry to publish with: the Moon Spire
-  // Lists some of these, and none of the Corridor's
-  const abyssDescribeIds = readAbyssDescribeIds().filter((describeId) =>
-    animalCodexRows.some(
-      ({ describeId: codexDescribeId, type = ANIMAL_CODEX_TYPE }) =>
-        type === MONSTER_CODEX_TYPE && codexDescribeId === describeId,
-    ),
+  const abyssEnemyKindIds = Object.values(
+    toAbyssEnemyKinds(readAbyssDescribeIds(readAbyssFloors(), animalCodexRows), monsterRows),
   );
-  const abyssEnemyKindIds = Object.values(toAbyssEnemyKinds(abyssDescribeIds, monsterRows));
   const extraKindIds = [...bountyKindIds, ...WEEKLY_BOSS_KIND_IDS, ...abyssEnemyKindIds];
   const enemyKinds = collectEnemyKindIds(regionDatas, extraKindIds).map((enemyKindId) => {
     const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
