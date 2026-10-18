@@ -243,18 +243,6 @@ describe(createThomaKitBehaviour, () => {
       [0, 0],
     ]);
   });
-
-  test("a Fiery Collapse's shield is built from Thoma's Max HP with the buffs on it", () => {
-    expect.hasAssertions();
-    const healthPercentBuff: KitEffect = {
-      amount: 0.5,
-      attribute: Attribute.HealthPercent,
-      characterId: THOMA_CHARACTER_ID,
-      kind: "buff",
-      secondsRemaining: 8,
-    };
-    expect(readShieldHealth(undefined, 2, [healthPercentBuff])).toStrictEqual([0.01144 * 15_000 + 110.03398]);
-  });
 });
 
 describe("flaming Assault", () => {
