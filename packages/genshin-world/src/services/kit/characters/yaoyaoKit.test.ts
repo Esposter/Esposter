@@ -5,6 +5,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -28,6 +29,11 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const SKILL_RADISH_HEAL_SHARE = 0.017143;
 const SKILL_RADISH_FLAT_HEAL = 165.07991;
 const MAX_HEALTH = 10_000;
+// Measured: the dump's table for Moonjade Descent at level 1 (proud skill group 7739), the same two numbers for its radishes
+const BURST_RADISH_HEAL_SHARE = 0.020168;
+const BURST_RADISH_FLAT_HEAL = 194.21231;
+const MEMBER_ID = 10_000_032;
+const MEMBER_MAX_HEALTH = 20_000;
 // Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the throw.
 // The engine's field counts down its ticks by summing steps of a frame, which leaves a countdown of an exact frame count
 // A hair above zero, so each tick lands in the step after its frame; the tests bracket each timing by the steps either side
@@ -71,6 +77,12 @@ const findYuegui = (context: KitContext): KitField | undefined =>
 
 const findRadish = (context: KitContext): KitSummon | undefined =>
   context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+// The Yuegui Moonjade Descent spawns behind her, each one of its spawns adding one to those on the field
+const findJumpingYuegui = (context: KitContext): KitField[] =>
+  context.kitEffectState.effects.filter(
+    (effect): effect is KitField => effect.kind === "field" && effect.id === "yaoyao-jumping-yuegui",
+  );
 
 describe(createYaoyaoKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
@@ -173,5 +185,86 @@ describe(createYaoyaoKitBehaviour, () => {
 
     stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + 1);
     expect(findRadish(context)?.body.position.z).toBeCloseTo(0);
+  });
+
+  test("moonjade descent spawns a Yuegui behind her at 104, 162 and 221 frames, while the burst lasts", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    // Each spawn lands in the step after its frame, the engine's float sum leaving a countdown of 104, 162 and 221 frames a hair above zero
+    stepFrames(context, 103);
+    expect(findJumpingYuegui(context)).toHaveLength(0);
+    stepFrames(context, 2);
+    expect(findJumpingYuegui(context)).toHaveLength(1);
+    expect(findJumpingYuegui(context)[0]?.centre.z).toBeCloseTo(2);
+    stepFrames(context, 56);
+    expect(findJumpingYuegui(context)).toHaveLength(1);
+    stepFrames(context, 2);
+    expect(findJumpingYuegui(context)).toHaveLength(2);
+    stepFrames(context, 58);
+    expect(findJumpingYuegui(context)).toHaveLength(2);
+    stepFrames(context, 2);
+    expect(findJumpingYuegui(context)).toHaveLength(3);
+  });
+
+  test("a jumping Yuegui's first radish lands 29 frames after it spawns and heals the whole team", () => {
+    expect.hasAssertions();
+    const yaoyao = createYaoyaoCombatant();
+    const member = {
+      ...createYaoyaoCombatant(),
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MEMBER_MAX_HEALTH }]),
+      characterId: MEMBER_ID,
+    };
+    const party = createParty([YAOYAO_CHARACTER_ID, MEMBER_ID]);
+    for (const characterId of [YAOYAO_CHARACTER_ID, MEMBER_ID]) getPartyMember(party, characterId).healthShare = 0.5;
+    const context = createKitTestContext(yaoyao, {
+      characterIdCombatantMap: new Map([
+        [YAOYAO_CHARACTER_ID, yaoyao],
+        [MEMBER_ID, member],
+      ]),
+      party,
+    });
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    // The first spawn lands at frame 105, so its first throw lands at 135, with the radish's heal 14 frames after it
+    stepFrames(context, 132);
+    expect(findRadish(context)).toBeUndefined();
+    stepFrames(context, 3);
+    expect(findRadish(context)).toBeDefined();
+    stepFrames(context, RADISH_HITMARK_FRAMES);
+    expect(getPartyMember(context.party, MEMBER_ID).healthShare).toBe(0.5);
+    stepFrames(context, 2);
+    const healing = BURST_RADISH_HEAL_SHARE * MAX_HEALTH + BURST_RADISH_FLAT_HEAL;
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + healing / MAX_HEALTH, 4);
+    expect(getPartyMember(context.party, MEMBER_ID).healthShare).toBeCloseTo(0.5 + healing / MEMBER_MAX_HEALTH, 4);
+  });
+
+  test("a swap ends Moonjade Descent and the Yuegui it spawned, which throws no radish", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+    stepFrames(context, 105);
+    expect(findJumpingYuegui(context)).toHaveLength(1);
+
+    YAOYAO_KIT.onKitEvent?.(
+      { characterId: MEMBER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: YAOYAO_CHARACTER_ID },
+      context,
+      context.activeCombatant,
+    );
+    stepFrames(context, 40);
+    expect(findJumpingYuegui(context)).toHaveLength(0);
+    expect(findRadish(context)).toBeUndefined();
+  });
+
+  test("the Yuegui spawned at 221 frames lasts until the burst ends, six seconds from the cast", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    stepFrames(context, 222);
+    expect(findJumpingYuegui(context).at(-1)?.secondsRemaining).toBeCloseTo(6 - 222 / 60, 1);
+    stepFrames(context, 140);
+    expect(findJumpingYuegui(context)).toHaveLength(0);
   });
 });

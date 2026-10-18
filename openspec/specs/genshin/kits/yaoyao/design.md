@@ -2,21 +2,22 @@
 
 Yaoyao's kit is its record and one behaviour module, `createYaoyaoKitBehaviour`, on avatar 10000077: four strikes, the third of two hits, a charged attack, then a collision and two plunges after it, her skill's cast and Moonjade Descent's initial hit. Her multipliers are read from proud skill groups 7731, 7732 and 7739; the charged attack's stamina, the skill's cooldown, and its cooldown and energy cost come from the same groups. The first strike is a box of 1.2 by 3 metres, the second and third fans of 270 degrees, and the fourth a circle of radius 2.2. Her skill's cast takes 52 frames and cools down for 15 seconds, and Moonjade Descent costs 80 energy with a 20-second cooldown.
 
-Her skill spawns a Yuegui two metres ahead of her, 63 frames after the cast, which throws a White Jade Radish 29 frames after it spawns and then on its throw interval. Each radish lands 13 frames after its throw, where the throw picks its target: a random enemy within 8 metres of the Yuegui while the active character stands above 70% of her Max HP, and her own position otherwise, as gcsim's yuegui.go picks it. The radish's heal goes to the active character from her Max HP at landing, and reaches her only while the body stands in the radish's two-metre circle as it lands, so the radish is a summon of its hit and a one-tick field of its heal. Her burst's Yuegui and the Mega Radish are not built, nor is Moonjade Descent's team heal. Her passives and constellations are not built either. Her plunge timings are provisional.
+Her skill spawns a Yuegui two metres ahead of her, 63 frames after the cast, which throws a White Jade Radish 29 frames after it spawns and then on its throw interval. Each radish lands 13 frames after its throw, where the throw picks its target: a random enemy within 8 metres of the Yuegui while the active character stands above 70% of her Max HP, and her own position otherwise, as gcsim's yuegui.go picks it. The radish's heal goes to the active character from her Max HP at landing, and reaches her only while the body stands in the radish's two-metre circle as it lands, so the radish is a summon of its hit and a one-tick field of its heal. Moonjade Descent spawns its Yuegui behind her at 104, 162 and 221 frames, while the burst lasts, and each one's radishes heal the whole team from her Max HP as thrown. Her Mega Radish, her passives and her constellations are not built. Her plunge timings are provisional.
 
 ## Decisions
 
+- **A swap off Yaoyao ends the Yuegui her burst spawned with the burst.** Her burst's status ends on the swap, so the kit removes the Yuegui it spawned with it, rather than letting it run out its own seconds with no radish to throw.
 - **A radish's heal is priced from Yaoyao's Max HP when the radish is thrown, and reaches the active character.** The kit prices a summon's heal at its cast, as Bake-Kurage's heal is priced from its cast's Max HP in Kokomi's kit.
 - **Yaoyao's fourth strike reaches 2.7 metres ahead of the body.** gcsim's code gives the strike a circle of radius 2.2 at an offset of 0.5, which the kit prices as 2.7; its config's 1.5 offset would reach 3.7.
 - **Yaoyao's plunges land 0.4 seconds after they start.** her plunges take Ganyu's reaches and landing, as gcsim gives her plunges none.
 
 ## Key files
 
-| File                                                                     | Role                                                                                                                                       |
-| :----------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/yaoyaoKit.ts`        | `createYaoyaoKitBehaviour`, Yaoyao's kit with her strikes, charged attack and plunges, her skill's cast and Moonjade Descent's initial hit |
-| `packages/genshin-world/src/services/kit/selectRandomKitEnemy.ts`        | Picks a random living enemy within a radius of a point, by the world's random source, for a Yuegui's throw                                 |
-| `packages/genshin-world/src/services/kit/effects/changeKitTeamHealth.ts` | Heals each member of the deployed team by the same amount, as gcsim's heal of every character (Target -1) does                             |
+| File                                                                     | Role                                                                                                                                                                                |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/yaoyaoKit.ts`        | `createYaoyaoKitBehaviour`, Yaoyao's kit with her strikes, charged attack and plunges, her skill's Yuegui and radishes, and Moonjade Descent's Yuegui, whole-team radishes and swap |
+| `packages/genshin-world/src/services/kit/selectRandomKitEnemy.ts`        | Picks a random living enemy within a radius of a point, by the world's random source, for a Yuegui's throw                                                                          |
+| `packages/genshin-world/src/services/kit/effects/changeKitTeamHealth.ts` | Heals each member of the deployed team by the same amount, as gcsim's heal of every character (Target -1) does                                                                      |
 
 ## Sources
 
