@@ -23,6 +23,7 @@ import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
 import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudQuickSwap from "#src/components/Hud/QuickSwap/Index.vue";
+import HudSheerCold from "#src/components/Hud/SheerCold/Index.vue";
 import HudShortcuts from "#src/components/Hud/Shortcuts/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
@@ -111,10 +112,10 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
        The minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
        Right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
-       Stamina meter where it places itself, and on a touch screen the stick at the bottom left, the touch layout's
-       Action buttons beside the skill and burst and the look's drag under them all. Everything between the pieces lets
-       The pointer through to the world, and a press on a piece stays the piece's, never reaching the world's input as
-       An attack -->
+       Stamina meter where it places itself, the Sheer Cold gauge across the top, and on a touch screen the stick at the
+       bottom left, the touch layout's Action buttons beside the skill and burst and the look's drag under them all.
+       Everything between the pieces lets The pointer through to the world, and a press on a piece stays the piece's,
+       never reaching the world's input as An attack -->
   <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
@@ -190,6 +191,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
          Middle, since the recordings show it beside the character wherever the character stands -->
     <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <HudStamina :frame :game-text :max-stamina />
+    <HudSheerCold :frame />
     <slot name="prompts" />
   </GameScreen>
 </template>

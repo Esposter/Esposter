@@ -253,6 +253,10 @@ defineExpose({
     emit("clearKitEffects");
     followCamera?.reset(yaw);
   },
+  // The locomotion phase the Sheer Cold gauge reads its swimming off
+  get phase() {
+    return characterController.phase;
+  },
   stamina: characterController.stamina,
 });
 </script>
