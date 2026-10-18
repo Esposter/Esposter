@@ -2,11 +2,11 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
 import { runGcgOnSkillUsed } from "#src/services/gcg/effects/runGcgOnSkillUsed";
+import { runGcgSkillEffect } from "#src/services/gcg/effects/runGcgSkillEffect";
 import { takeOne } from "@esposter/shared";
 
 // Runs the skills a side prepared on an earlier turn, as its turn begins and before the cards on its field deal theirs. Each
@@ -23,8 +23,7 @@ export const runGcgPreparedSkills = (duel: GcgDuel, sideIndex: number): void => 
     const skillModule = GcgEffectNameSkillModuleMap.get(skill.effect);
     const damage = parseGcgDamageEffect(skill.effect) ?? skillModule?.getDamage?.(context);
     const fieldCards = listGcgFieldCards(side, characterIndex);
-    const dealt = damage ? applyGcgDamage(duel, sideIndex, damage, duel.rule, context) : [];
-    skillModule?.afterDamage?.(context);
+    const dealt = runGcgSkillEffect(context, skill, damage);
     // The holder's prepared skill is a use by the holder, so the cards on its field hear it as they hear a skill used
     runGcgOnSkillUsed(context, fieldCards, skill, dealt);
   }

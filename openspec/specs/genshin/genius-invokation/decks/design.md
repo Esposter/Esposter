@@ -83,6 +83,8 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 | `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                    | A skill's effect run for its active character, with its plunging flag, then its field's on-use hooks and its passives' hooks |
 | `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`                    | A hit's shield, the defeat answers a character's cards make, the shield depletion they answer, and the standby piercing      |
 | `packages/genshin-world/src/services/gcg/runGcgPreparedSkills.ts`              | The skills prepared for a side, run as its turn begins, each for a preparer still standing                                   |
+| `packages/genshin-world/src/services/gcg/effects/runGcgSkillEffect.ts`         | A skill's effect as it lands: its damage, its standby piercing, then its after-effect, for a skill used or prepared          |
+| `packages/genshin-world/src/services/gcg/effects/runGcgOnSkillUsed.ts`         | The on-use hooks of a field's cards for a skill its character used, and the damage those hooks return                        |
 | `packages/genshin-world/src/services/gcg/effects/modifyGcgDamageDealt.ts`      | The field's bonuses and doublings on one damage its side deals, run once per event for a spread or a piercing                |
 | `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                 | A skill's or card's costs, reduced by the field, paid from the dice chosen                                                   |
 | `packages/genshin-world/src/services/gcg/findGcgAdjacentCharacterIndex.ts`     | The standing character one step away, forward or back, round the side                                                        |

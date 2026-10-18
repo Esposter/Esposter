@@ -1,15 +1,14 @@
-import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
 import { runGcgOnSkillUsed } from "#src/services/gcg/effects/runGcgOnSkillUsed";
+import { runGcgSkillEffect } from "#src/services/gcg/effects/runGcgSkillEffect";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -34,12 +33,7 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
     sideState,
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
-  const dealt: GcgDealtDamage[] = damage
-    ? applyGcgDamage(context.duel, context.sideIndex, damage, context.duel.rule, context)
-    : [];
-  const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
-  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
-  skillModule?.afterDamage?.(context);
+  const dealt = runGcgSkillEffect(context, skill, damage);
   side.usedSkillIds.push(skill.id);
   runGcgOnSkillUsed(context, fieldCards, skill, dealt);
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
