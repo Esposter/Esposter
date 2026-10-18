@@ -27,6 +27,7 @@ flowchart TD
 - **Levels follow the table's costs, and EXP past the top is lost.** A level's cost is the table's EXP for it, the artifact levels as far as its total EXP reaches, and EXP beyond its highest level is wasted.
 - **Every fourth level adds or raises a minor affix.** At each affix level it passes, an artifact holding fewer than four minor affixes gains one from the rarity's pool, by weight from those it lacks. One holding four raises one of them, chosen evenly, by a tier of its value.
 - **A locked artifact is never fodder.** A fodder's lock is refused by `getFodderEnhancement`, and an artifact worn by a character is not a bag entry, so the bag's fodder list never holds one.
+- **A character wears one piece of each slot.** Equipping a piece returns the piece it replaces, and unequipping a slot with no piece in it is refused. Both are services over the character alone, so the bag is the caller's to write ([artifact screen](../../../changes/genshin-artifact-screen/design.md)).
 
 ## Decisions
 
@@ -67,7 +68,7 @@ flowchart TD
 - `stats/artifactExpMaterials`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
 - `stats/artifactSets`: per set in `ReliquarySetExcelConfigData`, each bonus's piece count, the attributes its affix adds, and the numbers its effect reads, the affix's `paramList` in `EquipAffixExcelConfigData` with its trailing zeros cut.
 
-The set table is read with the world's stat tables, since a worn set's bonuses are summed into its wearer. The first three are read by nothing yet: nothing in the world rolls or enhances an artifact, so they are left out of the stat tables the world reads before it opens, and wait for the screen that does.
+The set table is read with the world's stat tables, since a worn set's bonuses are summed into its wearer. The rarity and EXP tables are read by the same stat tables for a worn artifact's enhancement, and the main affix pools wait on the drop that rolls an artifact, whose change reads them ([artifact screen](../../../changes/genshin-artifact-screen/design.md)).
 
 The weights are not in the tables. They are the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
 
@@ -84,6 +85,11 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`                     | Feeding EXP, the bonus, levels and the affix levels passed                                        |
 | `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`                 | The minor affix added or raised at an affix level                                                 |
 | `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`                | A fodder's EXP and Mora, refusing a locked artifact                                               |
+| `packages/genshin-world/src/services/artifact/enhanceCharacterArtifact.ts`            | A worn piece enhanced with materials and fodders, refused when the wallet lacks the Mora          |
+| `packages/genshin-world/src/services/artifact/equipCharacterArtifact.ts`              | A worn piece replaced in its slot, the piece it replaced returned                                 |
+| `packages/genshin-world/src/services/artifact/unequipCharacterArtifact.ts`            | A worn piece taken off its slot, refusing an empty slot                                           |
+| `packages/genshin-world/src/services/artifact/getActiveArtifactSetBonuses.ts`         | Each set bonus the worn pieces reach by piece count, read by the attribute sum and the set block  |
+| `packages/genshin-world/src/models/artifact/ActiveArtifactSetBonus.ts`                | A set bonus a character's artifacts reach, named by its set                                       |
 | `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`              | The Mora an enhancement costs                                                                     |
 | `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                      | A set's bonus: its attributes, its numbers and its piece count                                    |
 | `packages/genshin-world/src/models/artifact/ArtifactSetModule.ts`                     | What a set's bonus that waits on combat adds to its wearer's pricing and the events it answers    |
