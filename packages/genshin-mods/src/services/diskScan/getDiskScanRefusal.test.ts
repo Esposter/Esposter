@@ -22,6 +22,7 @@ describe(getDiskScanRefusal, () => {
     ["grep -R from the home folder", "grep -R needle ~"],
     ["grep -rn with the root after a pattern flag", "grep -rn -e needle /c"],
     ["ls -R from the root", "ls -R /"],
+    ["ls --recursive from the home folder", "ls --recursive ~"],
     ["a scan behind a pipe", "ls packages | xargs find /"],
     ["a scan behind an AND", "cd packages && du -s ~"],
     ["a scan inside a shell command", 'bash -c "find / -name yt-dlp"'],

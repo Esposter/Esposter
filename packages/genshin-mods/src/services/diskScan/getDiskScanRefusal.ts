@@ -22,8 +22,8 @@ const isRoot = (token: string) => ROOT_REGEX.test(normalizePath(token));
 // A flag group holding r or R: `-R`, `-rn`, `-lR`, `--recursive`
 const isRecursiveFlag = (token: string) => /^-[a-zA-Z]*[rR]/u.test(token) || token === "--recursive";
 
-// The ls flag recurses on the capital R alone, since its lowercase r sorts in reverse
-const isUpperRecursiveFlag = (token: string) => /^-[a-zA-Z]*R/u.test(token);
+// The ls flag recurses on the capital R alone, since its lowercase r sorts in reverse, and on its long form
+const isLsRecursiveFlag = (token: string) => /^-[a-zA-Z]*R/u.test(token) || token === "--recursive";
 
 // A flag that gives grep its pattern as the next argument, or as the rest of the same one
 const SEPARATE_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef]$|^--(?:regexp|file)$/u;
@@ -55,7 +55,7 @@ const readGrepArguments = (args: string[]): { flags: string[]; paths: string[] }
 const getScanRefusal = (name: string, args: string[]): string | undefined => {
   if (name === "find" || name === "du") return args.some((arg) => isRoot(arg)) ? name : undefined;
   if (name === "ls")
-    return args.some((arg) => isUpperRecursiveFlag(arg)) && args.some((arg) => isRoot(arg)) ? name : undefined;
+    return args.some((arg) => isLsRecursiveFlag(arg)) && args.some((arg) => isRoot(arg)) ? name : undefined;
   const { flags, paths } = readGrepArguments(args);
   return flags.some((flag) => isRecursiveFlag(flag)) && paths.some((path) => isRoot(path)) ? name : undefined;
 };
