@@ -16,6 +16,7 @@ import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/read
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
 
@@ -43,6 +44,7 @@ getResultAsync(() =>
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -58,6 +60,7 @@ getResultAsync(() =>
     catalogue,
     wildlifePlaces,
     frostbearingTreePlaces,
+    wishSchedule,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -71,6 +74,7 @@ getResultAsync(() =>
       statTables,
       wildlifePlaces,
       windriseData,
+      wishSchedule,
     };
   },
   (error) => {
