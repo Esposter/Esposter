@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [resource]
 x-model: claude-opus-5-5
-x-waiting: "resource/page-builder/canvas and resource/page-builder/style-panel, whose frame, shell and field components the email editor draws with"
+x-waiting: "resource/page-builder/document-model, whose node types and renderer contract the email editor is built over and whose email registry is not built yet; resource/page-builder/canvas and resource/page-builder/style-panel, whose frame, shell and field components the email editor draws with"
