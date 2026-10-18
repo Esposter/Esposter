@@ -6,7 +6,7 @@
 
 ## 2. Wheel limits
 
-- [ ] 2.1 Stop the wheel at the game's nearest and furthest distances. Verify: a test named after the scenario 'The wheel stops at the nearest and furthest distances' written first and seen failing.
+- [x] 2.1 Stop the wheel at the game's nearest and furthest distances. Verify: a test named after the scenario 'The wheel stops at the nearest and furthest distances' written first and seen failing.
 
 ## 3. Settings
 
