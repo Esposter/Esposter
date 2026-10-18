@@ -52,8 +52,16 @@ const domainEntrance: DomainEntranceLandmark = {
   titleTextKey: GameTextKey.DomainEntrance24,
 };
 
-// The Stormterror level a rank of 40 enters, made up with the one enemy its fight needs
+// The challenge levels the tests enter, made up with the one enemy each fight needs: the weekly boss's at rank 40, and
+// the Domain of Forgery's at rank 15 that the day tests open
 const domainChallengeLevels: DomainChallengeLevelMap = {
+  "2": {
+    "15": {
+      defeatTarget: 1,
+      timeLimitSeconds: Number.POSITIVE_INFINITY,
+      waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+    },
+  },
   "1006": {
     "40": {
       defeatTarget: 1,
