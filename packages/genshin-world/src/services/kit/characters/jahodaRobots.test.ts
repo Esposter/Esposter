@@ -13,6 +13,7 @@ import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -25,6 +26,7 @@ const BURST_SECONDS = 790 / 60;
 const SETTINGS = {
   absorbArea: { angle: 2 * Math.PI, height: 5, radius: 5 },
   absorbFirstSeconds: 6 * FRAME_SECONDS,
+  absorbEnergy: 0,
   absorbIntervalSeconds: 46 * FRAME_SECONDS,
   absorbSpacingSeconds: 41 * FRAME_SECONDS,
   robotCount: 2,
@@ -113,5 +115,16 @@ describe(startJahodaRobots, () => {
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, SETTINGS);
     const strikeFrames = readStrikes(context, 800).map(({ frame }) => frame);
     expect(strikeFrames).toStrictEqual([47, 88, 187, 228, 327, 368, 467, 508, 607, 648, 747, 788]);
+  });
+});
+
+describe("Jahoda's robots and Constellation 4", () => {
+  test("an absorb gives her the energy the settings name", () => {
+    const context = createRobotContext([createEnemyAt(1, 0, Element.Hydro)]);
+    const { characterId } = COMBATANT;
+    const before = getPartyMember(context.party, characterId).energy;
+    startJahodaRobots(context, COMBATANT, BURST_SECONDS, { ...SETTINGS, absorbEnergy: 4, robotCount: 1 });
+    for (let frame = 0; frame < 10; frame++) stepKitTestEffects(FRAME_SECONDS, context);
+    expect(getPartyMember(context.party, characterId).energy).toBe(before + 4);
   });
 });
