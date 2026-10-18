@@ -1,5 +1,7 @@
 // A builder rule that gives a value of a kit's record no source reads
 export enum KitRule {
+  // A value a character borrows from the donor its overlay names, read from the donor's own record in the same build
+  BorrowedFromDonor = "BorrowedFromDonor",
   // A plunge's collision strikes as the plunge falls, so its hit lands as the fall starts
   CollisionHitmark = "CollisionHitmark",
   // A talent whose hits its module spawns as a named list has no hits of its own, whatever gcsim's list gives

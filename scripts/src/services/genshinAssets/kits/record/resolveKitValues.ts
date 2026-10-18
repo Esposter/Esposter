@@ -21,6 +21,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const resolveKitValues = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
+  donorCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   namedHitCandidateMap: NamedHitCandidateMap,
   talentGroupIdMap: KitTables["talentGroupIdMap"],
 ): ResolvedKitValues => {
@@ -53,9 +54,16 @@ export const resolveKitValues = (
         throw new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
       valueMap.set(path, candidate.value);
       provenanceMap.set(path, candidate.provenance);
-    } else {
+    } else if (entry.donor === undefined) {
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
+    } else {
+      // A borrowed value takes the candidate its donor's record gives at the path the entry names
+      const candidate = donorCandidateMap.get(path)?.[0];
+      if (candidate === undefined)
+        throw new InvalidOperationError(Operation.Read, path, "has no donor value to borrow");
+      valueMap.set(path, candidate.value);
+      provenanceMap.set(path, candidate.provenance);
     }
   const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap);
