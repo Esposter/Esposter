@@ -86,6 +86,7 @@ const tables: KitTables = {
     [CombatTalent.NormalAttack]: 11031,
   },
   talentMultiplierMap: {},
+  weaponType: WeaponType.Catalyst,
 };
 
 describe(addGcsimChargedAttackCandidates, () => {
