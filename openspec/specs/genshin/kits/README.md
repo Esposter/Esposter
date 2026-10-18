@@ -489,7 +489,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Kuki](kuki/design.md)                     | Grass Ring of Sanctification                                                                                  |
 | [Lan Yan](lan-yan/design.md)               | Four strikes, the charged attack and Lustrous Moonrise                                                        |
 | [Lauma](lauma/design.md)                   | Three strikes, the charged attack and Hymn of Hunting                                                         |
-| [Layla](layla/design.md)                   | Nights of Formal Focus and Starlight Slug                                                                     |
+| [Layla](layla/design.md)                   | Nights of Formal Focus, Starlight Slug, Night Stars and Shooting Stars                                        |
 | [Linnea](linnea/design.md)                 | Three strikes, a charged shot, the plunges, Lumi's four skill hits; her burst is a heal                       |
 | [Lisa](lisa/design.md)                     | Violet Arc and Lightning Rose                                                                                 |
 | [Lohen](lohen/design.md)                   | Five strikes, the charged attack, the plunges and the six-hit burst; his skill not built                      |
