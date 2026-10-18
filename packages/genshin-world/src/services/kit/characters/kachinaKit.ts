@@ -14,6 +14,10 @@ const WEIGHT_OF_STONE_DEFENSE_SHARE = 0.2;
 // Kachina's behaviour: her strikes, charged attack, plunges and burst's hit are her record's alone, and from Ascension 4
 // Turbo Twirly's hits add 20% of her DEF. Her skill's Turbo Twirly, her Nightsoul's Blessing and her other passives wait on
 // Their hooks, and her record's frames and areas are provisional, read from Xiangling's gcsim hitmarks and the clips' durations
+// Constellation 1 needs Turbo Twirly to absorb nearby Crystallize shards, and the shard pickups, which are not built
+// Constellation 2 needs Nightsoul points and Turbo Twirly's return, which wait on the Nightsoul hook
+// Constellation 4 needs the count of opponents in Turbo Drill Field and the buff it gives the active character
+// Constellation 6 needs the active character's shield replaced or destroyed, and an AoE Geo hit, not built
 export const createKachinaKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour => ({
   skill: {
     hits: kit.elementalSkill.hits.map(() => ({

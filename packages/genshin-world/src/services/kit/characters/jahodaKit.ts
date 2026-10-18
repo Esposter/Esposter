@@ -52,6 +52,10 @@ const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, hei
 // From the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and its
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Moonsign's robots and Meowball, Constellations 1, 2, 4 and 6, and Ascension 1 and 4 are not built yet
+// Constellation 1 needs the Fluffy Meowball fired by the Purr-loined Treasure Flask, which is not built
+// Constellation 2 needs Moonsign: Ascendant Gleam's element tracking in Plan to Get Paid, not built
+// Constellation 4 needs the Purrsonal Coordinated Assistance Robot's gadget, which is not built
+// Constellation 6 needs Moonsign: Ascendant Gleam and the flask's recovery, which are not built
 export const createJahodaKitBehaviour = ({
   readArea,
   readHitFields,

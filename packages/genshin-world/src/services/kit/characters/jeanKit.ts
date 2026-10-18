@@ -58,6 +58,9 @@ export const JEAN_CHARACTER_ID = 10_000_003;
 // More plays Spiraling Tempest's from one constellation, adding its DMG bonus to her Anemo DMG Bonus for the blast's
 // Animation, the hit it lands within. Dandelion Breeze casts its field where she stands, healing the character on it at
 // Its activation and each second after, and its entering and exiting damage, priced by her as she stood then
+// Constellation 2 needs Movement SPD and ATK SPD buffs for the party on each orb or particle Jean picks up
+// Constellation 4 needs the Anemo RES cut on enemies inside Dandelion Breeze's field, which the field does not apply
+// Constellation 6 needs the 35% incoming DMG cut inside the field and after leaving it, which the kit does not apply
 export const createJeanKitBehaviour = ({
   kit,
   readHits,
