@@ -8,14 +8,12 @@ import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave
 import type { GameLanguage } from "genshin-text";
 import type { Ref } from "vue";
 
-import { GameDataset } from "#src/models/data/GameDataset";
-import { birthdayMailRowsSchema } from "#src/models/mail/MailData";
-import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
 import { claimMail } from "#src/services/mail/claimMail";
 import { deleteGiftMail } from "#src/services/mail/deleteGiftMail";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
+import { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
@@ -59,13 +57,7 @@ export const useWorldMail = ({
   const isBagFull = shallowRef(false);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(async () => {
-    const indexKey = `${GameDataset.Mail}/mail` as const;
-    const birthdayMailRows = await readGameDataEntry(
-      gameDataBaseUrl,
-      indexKey,
-      "birthdayMails",
-      birthdayMailRowsSchema,
-    );
+    const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);
     const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
     const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
     const [mailRows, textMap] = await Promise.all([
