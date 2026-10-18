@@ -2,8 +2,9 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-// A character's kit with passive modules answering beside it: each hook the kit has runs first and then each module's, so
-// the kit's own passives come before a weapon's or a set's. A module hears only the events `answersEvent` takes
+// A character's kit with passive modules answering beside it: each hook the kit has runs first and then each module's,
+// Its step among them, so the kit's own passives come before a weapon's or a set's. A module hears only the events
+// `answersEvent` takes
 export const getPassiveKit = (
   kit: Kit,
   passiveModules: readonly PassiveModule[],
@@ -74,5 +75,9 @@ export const getPassiveKit = (
     kit.onKitEvent?.(event, context, combatant);
     if (!answersEvent(event)) return;
     for (const { onKitEvent } of passiveModules) onKitEvent?.(event, context, combatant);
+  },
+  onStep: (context, combatant, stepSeconds) => {
+    kit.onStep?.(context, combatant, stepSeconds);
+    for (const { onStep } of passiveModules) onStep?.(context, combatant, stepSeconds);
   },
 });

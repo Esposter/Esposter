@@ -37,7 +37,7 @@ flowchart TD
 
 ## Set bonuses in combat
 
-A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, a `PassiveModule` (the type a weapon's passive shares), which adds bonuses to its wearer's pricing, multiplies its wearer's charged attack stamina by its factor, and answers the events of combat as a kit's passive does, read as its wearer's own. `getPassiveKit` composes each factor by product, so two passives that each lower a stamina cost multiply, and a kit with none keeps a factor of one. A bonus that is only attributes is never a module, even where its params repeat its value (the eleven two-piece bonuses that carry both): the attribute pipeline counts it alone.
+A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, a `PassiveModule` (the type a weapon's passive shares), which adds bonuses to its wearer's pricing, multiplies its wearer's charged attack stamina by its factor, and answers the events of combat as a kit's passive does, read as its wearer's own, and may keep a clock of its own on each step (`onStep`), the kit's own step run first, as a weapon's passive that pauses its status off the field does. `getPassiveKit` composes each factor by product, so two passives that each lower a stamina cost multiply, and a kit with none keeps a factor of one. A bonus that is only attributes is never a module, even where its params repeat its value (the eleven two-piece bonuses that carry both): the attribute pipeline counts it alone.
 
 ```mermaid
 flowchart TD
@@ -129,7 +129,7 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 | `packages/genshin-world/src/models/artifact/ActiveArtifactSetBonus.ts`                                   | A set bonus a character's artifacts reach, named by its set                                                    |
 | `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`                                 | The Mora an enhancement costs                                                                                  |
 | `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                                         | A set's bonus: its attributes, its numbers and its piece count                                                 |
-| `packages/genshin-world/src/models/kit/PassiveModule.ts`                                                 | What a passive, a weapon's or a set's, adds to its wielder's or wearer's pricing and the events it answers     |
+| `packages/genshin-world/src/models/kit/PassiveModule.ts`                                                 | What a passive adds to its wielder's or wearer's pricing, the events it answers and the clock it steps         |
 | `packages/genshin-world/src/services/artifact/ArtifactSetIdCreateModuleMap.ts`                           | Each set with a module, by its id                                                                              |
 | `packages/genshin-world/src/services/artifact/getArtifactSetKit.ts`                                      | A character's kit with its sets' modules answering after it                                                    |
 | `packages/genshin-world/src/services/kit/getPassiveKit.ts`                                               | A kit with passive modules composed beside it, each hook, and the events the modules hear                      |

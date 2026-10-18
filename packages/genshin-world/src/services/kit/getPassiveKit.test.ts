@@ -33,4 +33,17 @@ describe(getPassiveKit, () => {
     expect(getPassiveKit(halvingKit, [halvingModule]).getChargedAttackStaminaMultiplier?.(context)).toBe(0.25);
     expect(getPassiveKit(KIT, []).getChargedAttackStaminaMultiplier?.(context)).toBe(1);
   });
+
+  test("steps the kit's own clock and then each module's, with the member's combatant and the step's seconds", () => {
+    expect.hasAssertions();
+
+    const steps: string[] = [];
+    const steppingKit = { ...KIT, onStep: () => steps.push("kit") };
+    const steppingModule: PassiveModule = {
+      onStep: (_context, { characterId }, stepSeconds) => steps.push(`module ${characterId} ${stepSeconds}`),
+    };
+    getPassiveKit(steppingKit, [steppingModule]).onStep?.(context, combatant, 0.5);
+
+    expect(steps).toStrictEqual(["kit", `module ${TRAVELER_CHARACTER_ID} 0.5`]);
+  });
 });
