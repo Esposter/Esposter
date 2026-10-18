@@ -471,6 +471,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Varka](varka/design.md)                   | Five strikes, the charged attack, and the skill and burst's Anemo hits                                        |
 | [Venti](venti/design.md)                   | Skyward Sonnet, Wind Domain and Stormeye                                                                      |
 | [Vesna](vesna/design.md)                   | Six strikes, the charged attack, the plunges, The Art of Victory and For the Tsaritsa!                        |
+| [Vodyanitsa](vodyanitsa/design.md)         | Four strikes, the charged attack, the plunges, Rechitativ: Sonorous Dawn and Koda: Sink With Thee             |
 | [Wanderer](wanderer/design.md)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays                                                   |
 | [Wriothesley](wriothesley/design.md)       | Darkgold Wolfbite and Icefang Rush                                                                            |
 | [Xiangling](xiangling/design.md)           | Guoba, Pyronado and Oil Meets Fire                                                                            |
