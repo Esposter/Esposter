@@ -97,6 +97,7 @@ import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/
 import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/createStaffOfHomaPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { createSunkenSongOfTheSandsPassiveModule } from "#src/services/weapon/passives/createSunkenSongOfTheSandsPassiveModule";
+import { createSunsetReignitesTheDawnPassiveModule } from "#src/services/weapon/passives/createSunsetReignitesTheDawnPassiveModule";
 import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
 import { createThePartingRefrainPassiveModule } from "#src/services/weapon/passives/createThePartingRefrainPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
@@ -443,4 +444,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2741602795": createLabyrinthLordsInstructionPassiveModule,
   // Mournful Tribute (Bloodsoaked Ruins)
   "867694867": createMournfulTributePassiveModule,
+  // Sunset Reignites the Dawn (A Thousand Blazing Suns)
+  "3945977923": createSunsetReignitesTheDawnPassiveModule,
 };
