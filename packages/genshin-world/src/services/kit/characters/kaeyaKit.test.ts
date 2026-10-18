@@ -11,6 +11,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { SAME_ELEMENT_PARTICLE_ENERGY } from "#src/services/combat/energy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -293,7 +294,7 @@ describe("ascension 4's Glacial Heart particles", () => {
   test("a Frostgnaw that freezes an opponent drops a particle at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(getEnergyAfterFreezes(4, 1)).toBeGreaterThan(getEnergyAfterFreezes(4, 0));
+    expect(getEnergyAfterFreezes(4, 1)).toBe(SAME_ELEMENT_PARTICLE_ENERGY);
   });
 
   test("a passive does not take effect below its ascension phase", () => {
@@ -306,7 +307,7 @@ describe("ascension 4's Glacial Heart particles", () => {
     expect.hasAssertions();
 
     expect(getEnergyAfterFreezes(4, 3)).toBe(getEnergyAfterFreezes(4, 2));
-    expect(getEnergyAfterFreezes(4, 2)).toBeGreaterThan(getEnergyAfterFreezes(4, 1));
+    expect(getEnergyAfterFreezes(4, 2)).toBe(2 * SAME_ELEMENT_PARTICLE_ENERGY);
   });
 
   test("a freeze by another attack drops no particle", () => {
