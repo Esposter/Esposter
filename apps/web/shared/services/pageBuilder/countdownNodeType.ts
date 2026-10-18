@@ -5,9 +5,33 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { z } from "zod";
 
 // A date, or a date and a time, in the form the editor's inputs write
-const ENDS_AT_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2})?$/u;
+const ENDS_AT_REGEX = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:T(?<hour>\d{2}):(?<minute>\d{2}))?$/u;
 
-const countdownFormSchema = z.strictObject({ endsAt: z.string().regex(ENDS_AT_REGEX), endText: z.string() });
+// Whether the value names a real calendar date and time: Date rolls an impossible one over into a later one,
+// So its parts are read back and compared with what was asked
+const checkIsRealEndsAt = (endsAt: string): boolean => {
+  const groups = ENDS_AT_REGEX.exec(endsAt)?.groups;
+  if (!groups) return false;
+
+  const year = Number(groups.year);
+  const month = Number(groups.month);
+  const day = Number(groups.day);
+  const hour = Number(groups.hour ?? 0);
+  const minute = Number(groups.minute ?? 0);
+  const moment = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  return (
+    moment.getUTCFullYear() === year &&
+    moment.getUTCMonth() === month - 1 &&
+    moment.getUTCDate() === day &&
+    moment.getUTCHours() === hour &&
+    moment.getUTCMinutes() === minute
+  );
+};
+
+const countdownFormSchema = z.strictObject({
+  endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, "is not a real date and time"),
+  endText: z.string(),
+});
 const countdownPropsSchema = z.strictObject({ ...countdownFormSchema.shape, id: z.string() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local

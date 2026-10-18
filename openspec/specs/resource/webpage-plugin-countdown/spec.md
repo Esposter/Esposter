@@ -56,6 +56,16 @@ The Start and End text traits SHALL set the countdown's start date and end text,
 - **WHEN** the owner changes its Start trait
 - **THEN** the countdown updates to count down to the new start
 
+### Requirement: A countdown refuses a date that is not on the calendar
+
+A start date SHALL name a real calendar date and time, so an impossible one is refused rather than rolled over into a later day.
+
+#### Scenario: Start date that does not exist
+
+- **GIVEN** a stored or submitted start of a day the month does not have, or a month or hour out of range
+- **WHEN** the countdown's props are parsed
+- **THEN** the start is refused
+
 ### Requirement: A re-rendered countdown stops its earlier timer
 
 A countdown SHALL stop counting once it is removed from the page or re-rendered, leaving no timer running.

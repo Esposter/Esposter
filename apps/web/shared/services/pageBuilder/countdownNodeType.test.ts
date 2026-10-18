@@ -21,6 +21,10 @@ const createCountdown = (endsAt: string, endText = TEST_LABEL) => ({
   type: WebpageNodeType.Countdown,
 });
 
+// Whether a countdown's stored end date is accepted, so a test names a value by its text
+const isAcceptedEndsAt = (endsAt: string) =>
+  countdownNodeType.propsSchema.safeParse(createCountdown(endsAt).props).success;
+
 // Mounts a countdown as the page does: its markup in the document, then its script run over the page
 const mountCountdown = (endsAt: string, endText?: string) => {
   document.body.innerHTML = serializeHtml([countdownNodeType.render(createCountdown(endsAt, endText))]);
@@ -46,6 +50,17 @@ describe("countdownNodeType", () => {
     expect(serializeHtml([countdownNodeType.render(createCountdown(endsAt))]).split(">")[0]).toStrictEqual(
       `<div aria-atomic="false" aria-live="off" class="countdown" data-end-text="${TEST_LABEL}" data-ends-at="${endsAt}" role="timer"`,
     );
+  });
+
+  test("a countdown refuses a date and time that is not on the calendar", () => {
+    expect.hasAssertions();
+
+    expect(["1970-02-31", "1970-13-01", "1970-02-28T24:00"].map((endsAt) => isAcceptedEndsAt(endsAt))).toStrictEqual([
+      false,
+      false,
+      false,
+    ]);
+    expect(isAcceptedEndsAt("1970-02-28T23:59")).toBe(true);
   });
 
   test("a countdown reads a date-only value as local midnight", () => {
