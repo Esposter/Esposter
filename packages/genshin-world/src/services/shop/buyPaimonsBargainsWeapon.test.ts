@@ -3,7 +3,13 @@ import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotati
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import {
+  EMPTY_INVENTORY,
+  EMPTY_WALLET,
+  WEAPON_START_ASCENSION,
+  WEAPON_START_EXPERIENCE,
+  WEAPON_START_REFINEMENT,
+} from "#src/services/inventory/constants";
 import { buyPaimonsBargainsWeapon } from "#src/services/shop/buyPaimonsBargainsWeapon";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -41,7 +47,20 @@ describe(buyPaimonsBargainsWeapon, () => {
     const result = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], good, getWeaponDefinition, NOW);
 
     expect(result).toStrictEqual({
-      inventory: { items: [{ definition, id: 0, level: 1, quantity: 1 }], nextId: 1 },
+      inventory: {
+        items: [
+          {
+            ascension: WEAPON_START_ASCENSION,
+            definition,
+            experience: WEAPON_START_EXPERIENCE,
+            id: 0,
+            level: 1,
+            quantity: 1,
+            refinement: WEAPON_START_REFINEMENT,
+          },
+        ],
+        nextId: 1,
+      },
       purchases: [{ count: 1, goodsId: good.goodsId, lastPurchasedAt: NOW }],
       wallet: { ...wallet, [Currency.MasterlessStarglitter]: WEAPON_PRICE },
     });

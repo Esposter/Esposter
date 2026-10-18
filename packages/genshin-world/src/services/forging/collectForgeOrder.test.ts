@@ -10,6 +10,11 @@ import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { collectForgeOrder } from "#src/services/forging/collectForgeOrder";
 import { FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
+import {
+  WEAPON_START_ASCENSION,
+  WEAPON_START_EXPERIENCE,
+  WEAPON_START_REFINEMENT,
+} from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -176,6 +181,7 @@ describe(collectForgeOrder, () => {
 
     expect(result.inventory.items).toStrictEqual([
       {
+        ascension: WEAPON_START_ASCENSION,
         definition: {
           category: ItemCategory.Weapon,
           destroyReturnMaterial: ORE_ID,
@@ -187,9 +193,11 @@ describe(collectForgeOrder, () => {
           rarity: 1,
           stackLimit: 1,
         },
+        experience: WEAPON_START_EXPERIENCE,
         id: 1,
         level: 1,
         quantity: 1,
+        refinement: WEAPON_START_REFINEMENT,
       },
     ]);
   });
