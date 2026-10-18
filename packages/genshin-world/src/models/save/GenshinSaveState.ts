@@ -8,10 +8,12 @@ import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { MailSave } from "#src/models/mail/MailSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
@@ -43,6 +45,7 @@ export interface GenshinSaveState {
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];
   inventory: Inventory;
+  mails: MailSave[];
   openedChestIds: ReadonlySet<string>;
   party: Party;
   quests: ReadonlyMap<string, QuestProgress>;
@@ -51,6 +54,7 @@ export interface GenshinSaveState {
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
   solvedPuzzleIds: ReadonlySet<string>;
+  travelerBirthday: TravelerBirthdaySave | undefined;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;

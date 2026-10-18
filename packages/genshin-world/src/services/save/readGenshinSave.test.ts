@@ -207,6 +207,19 @@ describe(readGenshinSave, () => {
     );
   });
 
+  // The Traveler's birthday and the mails held come back as they were saved
+  test("a traveler birthday and the mails held survive a reload", () => {
+    expect.hasAssertions();
+
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: new Date(0).toISOString(), id: 35, isClaimed: false, isRead: false }],
+      travelerBirthday: { day: 13, month: 10 },
+    };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+  });
+
   test("the deployed team and member on field return after a visit", () => {
     expect.hasAssertions();
     const { party } = visit({ ...EMPTY_GENSHIN_SAVE, party: PARTY_SAVE });
