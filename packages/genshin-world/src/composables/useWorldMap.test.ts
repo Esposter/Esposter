@@ -86,7 +86,7 @@ describe(useWorldMap, () => {
   const REPUTATION_QUEST_EXP = 120;
   const REPUTATION_QUEST_MORA = 700;
   // A Mondstadt reputation quest's parent the world carries, by its game id, bound to its own reward
-  const REPUTATION_PARENT_ID = Number(QuestId.ReputationParent70078);
+  const REPUTATION_PARENT_ID = Number(QuestId.ReputationParent70123);
   const REPUTATION_PARENT_EXP = 90;
   const REPUTATION_PARENT_MORA = 400;
   const requestQuest = createQuest(REQUEST_QUEST_ID);
@@ -279,7 +279,7 @@ describe(useWorldMap, () => {
   test("a finished Mondstadt reputation quest the world carries pays its reward once", async () => {
     expect.hasAssertions();
 
-    expect(QuestIds).toContain(QuestId.ReputationParent70078);
+    expect(QuestIds).toContain(QuestId.ReputationParent70123);
 
     const { events, reputation, wallet } = createWorldMap();
     await waitForReads();
