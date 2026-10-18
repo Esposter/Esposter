@@ -12,6 +12,10 @@ export interface KitAction {
   isAimed?: true;
   // Run as the action starts, played by the character on the field at the enemy it targets, if it targets one
   onStart?: (context: KitContext, target?: Enemy) => void;
+  // The length the action plays, if it is decided as it runs: once its seconds reach `atSeconds`, `decide` returns the
+  // Seconds it plays from then on, from the state the team holds then, such as the Sourcewater Droplets a charge
+  // Picks up
+  decideLength?: { atSeconds: number; decide: (context: KitContext) => number };
   seconds: number;
   // The stamina the action drains each second it plays, if it drains any
   staminaPerSecond?: number;
