@@ -6,8 +6,10 @@ import { describe, expect, test } from "vitest";
 describe(offerReputationRequest, () => {
   const REWARD = { exp: 80, items: [{ count: 20_000, id: 202 }] };
   const CITY: ReputationCity = {
+    bountyTargets: [],
     bounties: [],
     explores: [],
+    huntingRegions: [],
     levels: [
       { functionIds: [], goodsIds: [], level: 1, nextLevelExp: 10, requestGroupId: 1, reward: REWARD },
       { functionIds: [], goodsIds: [], level: 2, nextLevelExp: 0, requestGroupId: 2, reward: REWARD },
