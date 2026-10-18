@@ -16,6 +16,9 @@ export const HEAL_BUFF_DESCRIPTION_REGEX = /^(?<percent>\d+)%\+(?<flat>\d+)(?:�
 // The ability a dish's revive buff names, whose description writes the HP it restores to a fallen character
 export const REVIVE_BUFF_ABILITY_NAME = "revive_buff";
 export const REVIVE_BUFF_DESCRIPTION_REGEX = /^恢复(?<flat>\d+)HP$/u;
+// The buff an anti-cold dish gives the team, whose description writes the ratio the fill is held down by, as ratio-0.3
+export const ANTI_COLD_ABILITY_NAME = "Anti_Cold_Food_Buff";
+export const ANTI_COLD_DESCRIPTION_REGEX = /ratio(?<ratio>-\d+(?:\.\d+)?)$/u;
 // The percent a heal's share and a bonus's percentage are out of
 export const PERCENT_TOTAL = 100;
 // The abilities a dish's bonus buff names. Each of the attack and the defence writes a flat amount first, which is the

@@ -126,6 +126,25 @@ describe(eatDish, () => {
     expect(getPartyMember(party, ALLY_ID).healthShare).toBe(0.5);
   });
 
+  test("an anti-cold dish holds the team's anti-cold for its seconds, restarting the one it holds", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty([EATER_ID]);
+    const eat = (antiCold: { ratio: number; seconds: number }) =>
+      eatDish(
+        createInventory(2),
+        DISH_ID,
+        { antiCold, target: DishTarget.Party },
+        { eaterId: EATER_ID, getMaxHealth, kitEffectState, party },
+      );
+
+    eat({ ratio: -0.3, seconds: 900 });
+    eat({ ratio: -0.5, seconds: 1500 });
+
+    expect(kitEffectState.effects).toStrictEqual([{ kind: "antiCold", ratio: -0.5, secondsRemaining: 1500 }]);
+  });
+
   test("a bonus dish lasts as its description says", () => {
     expect.hasAssertions();
 

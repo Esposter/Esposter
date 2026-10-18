@@ -32,6 +32,12 @@ The gauge SHALL fill while the character stands in the subzero climate, and SHAL
 - **WHEN** time passes
 - **THEN** the gauge fills faster than it does on foot
 
+#### Scenario: Suppress the fill with an anti-cold dish
+
+- **GIVEN** the character stands in the subzero climate and the team holds an anti-cold from a dish
+- **WHEN** time passes
+- **THEN** the gauge fills at the rate the dish's ratio leaves, and does not drain where the ratio stops the fill
+
 ### Requirement: Heat drains the gauge
 
 A lit campfire near the character SHALL drain the gauge wherever the character stands, and an unlit one SHALL heat nothing.

@@ -107,6 +107,7 @@ import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#s
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -915,6 +916,7 @@ const getCharacter = () => {
   const maxHealth = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.maxHealth;
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
+const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
 const hudFrame = reactive<HudFrame>({
@@ -1167,6 +1169,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"
         :get-character="getCharacter"
+        :get-anti-cold-ratio="getAntiColdRatio"
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
         :kit-effect-state="kitContext.kitEffectState"

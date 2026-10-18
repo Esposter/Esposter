@@ -18,13 +18,14 @@ interface SheerColdCharacter {
 }
 
 // The Sheer Cold gauge of the character, stepped each frame: the subzero climate of the area the character stands in
-// Fills it, a lit heat source near it drains it wherever it stands, and swimming fills it faster. Full, it hands each
+// Fills it, a lit heat source near it drains it wherever it stands, and swimming fills it faster, and an anti-cold holds the fill down. Full, it hands each
 // Interval's damage to onDamage. The area is rechecked only once the character has moved a stretch, as an
 // Area's weather is. The gauge's value is returned
 export const useSheerCold = (
   catalogue: Catalogue,
   getCharacter: () => SheerColdCharacter | undefined,
   getHeatSources: () => readonly HeatSource[],
+  getAntiColdRatio: () => number,
   onDamage: (damage: number) => void,
 ) => {
   const { onBeforeRender } = useLoop();
@@ -50,7 +51,13 @@ export const useSheerCold = (
     const isSwimming = phase.state === LocomotionState.Swim || phase.state === LocomotionState.SwimDash;
     const step = stepSheerCold(
       sheerCold,
-      { isHeated: isHeatedBy(x, z, getHeatSources()), isInCold, isSwimming, maxHealth },
+      {
+        antiColdRatio: getAntiColdRatio(),
+        isHeated: isHeatedBy(x, z, getHeatSources()),
+        isInCold,
+        isSwimming,
+        maxHealth,
+      },
       delta,
     );
     sheerCold = step.sheerCold;
