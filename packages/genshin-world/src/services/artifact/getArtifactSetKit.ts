@@ -5,6 +5,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ArtifactSetIdCreateModuleMap } from "#src/services/artifact/ArtifactSetIdCreateModuleMap";
 import { WILDLIFE_ANSWERING_ARTIFACT_SET_IDS } from "#src/services/artifact/constants";
+import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -16,25 +17,20 @@ export const getArtifactSetKit = (
   artifacts: readonly Artifact[],
   artifactSetDataMap: ReadonlyMap<number, ArtifactSetData>,
 ): Kit => {
-  const artifactSetModules = Array.from(
-    Map.groupBy(artifacts, ({ setId }) => setId),
-    ([setId, setArtifacts]) => {
-      const createModule = ArtifactSetIdCreateModuleMap[setId];
-      if (!createModule) return [];
-      const artifactSetData = artifactSetDataMap.get(setId);
-      if (!artifactSetData) throw new InvalidOperationError(Operation.Read, getArtifactSetKit.name, `${setId}`);
-      // A bonus that is only attributes is counted by the attribute pipeline, its params repeating its value, so it builds no module
-      return artifactSetData.bonuses
-        .filter(
-          ({ attributeLines, params, pieceCount }) =>
-            params.length > 0 && attributeLines.length === 0 && pieceCount <= setArtifacts.length,
-        )
-        .map((bonus) => ({
-          isWildlifeAnswering: WILDLIFE_ANSWERING_ARTIFACT_SET_IDS.includes(setId),
-          module: createModule(bonus),
-        }));
-    },
-  ).flat();
+  // A set with no module builds nothing, so its data is not read for it: a set the table lacks throws only where it
+  // Builds one
+  const artifactSetModules = getActiveArtifactSetBonuses(
+    artifacts.filter(({ setId }) => ArtifactSetIdCreateModuleMap[setId] !== undefined),
+    artifactSetDataMap,
+  ).flatMap((bonus) => {
+    const createModule = ArtifactSetIdCreateModuleMap[bonus.setId];
+    // A bonus that is only attributes is counted by the attribute pipeline, its params repeating its value, so it
+    // Builds no module
+    if (!createModule || bonus.params.length === 0 || bonus.attributeLines.length > 0) return [];
+    return [
+      { isWildlifeAnswering: WILDLIFE_ANSWERING_ARTIFACT_SET_IDS.includes(bonus.setId), module: createModule(bonus) },
+    ];
+  });
   if (artifactSetModules.length === 0) return kit;
   // A hit on wildlife triggers a weapon's passive, and an artifact set's only where it is one of those sets; the rest hear none of it
   const wildlifeKit = getPassiveKit(
