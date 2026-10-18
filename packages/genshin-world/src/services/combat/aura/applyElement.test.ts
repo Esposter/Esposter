@@ -194,6 +194,17 @@ describe(applyElement, () => {
     expect(state.auras.has(AuraType.Hydro)).toBe(false);
   });
 
+  test("frozen does not freeze a boss", () => {
+    expect.hasAssertions();
+
+    const state = createElementalState(true);
+    applyElement(state, Element.Hydro, 1);
+    applyElement(state, Element.Cryo, 2);
+
+    expect(state.auras.has(AuraType.Freeze)).toBe(false);
+    expect(state.auras.has(AuraType.Hydro)).toBe(false);
+  });
+
   test("melts only the Freeze over a Hydro with Pyro, the Hydro hidden and the Pyro left as no aura", () => {
     expect.hasAssertions();
 

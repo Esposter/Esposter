@@ -14,6 +14,8 @@ export interface ElementalState {
   burningSeconds: number;
   crystallizeSeconds: number;
   electroChargedSeconds: number;
+  // Whether the target is immune to Frozen, so a Frozen reaction on it leaves no Freeze, as a boss is
+  isFrozenImmune: boolean;
   // Whether the Electro and Hydro lying on it together are Lunar-Charged, which ticks no Electro-Charged, and when a
   // Lunar-Charged hit last struck it
   isLunarCharged: boolean;

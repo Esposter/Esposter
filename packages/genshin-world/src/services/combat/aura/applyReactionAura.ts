@@ -15,7 +15,8 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 // What a reaction leaves on a target or takes from it beyond the gauge it consumed, written in place. Frozen leaves a
 // Freeze, kept at the larger gauge over one already there; Quicken leaves its aura, replacing a smaller one; Burning
-// Lights its aura and starts its ticks; Shattered takes its gauge from the Freeze; and Crystallize starts its cooldown
+// Lights its aura and starts its ticks; Shattered takes its gauge from the Freeze; and Crystallize starts its cooldown.
+// A target immune to Frozen gets no Freeze from it
 export const applyReactionAura = (state: ElementalState, reactionType: ReactionType, consumedGauge: number): void => {
   const { auras, seconds } = state;
   switch (reactionType) {
@@ -42,6 +43,7 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
       state.crystallizeSeconds = seconds;
       return;
     case ReactionType.Frozen: {
+      if (state.isFrozenImmune) return;
       const gauge = FREEZE_GAUGE_PER_CONSUMED_GAUGE * consumedGauge;
       const freeze = auras.get(AuraType.Freeze);
       if (freeze) freeze.gauge = Math.max(freeze.gauge, gauge);

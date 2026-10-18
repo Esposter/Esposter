@@ -7,7 +7,7 @@
 ## 2. Boss fights
 
 - [ ] 2.1 Write the first normal boss's attacks and phases from its wiki page, timings provisional until measured. Verify: a test named after the scenario 'a boss is not displaced by a strike that would push it', seen failing first.
-- [ ] 2.2 Keep bosses immune to Frozen. Verify: a test named after the scenario 'Frozen does not freeze a boss', seen failing first.
+- [x] 2.2 Keep bosses immune to Frozen. Verify: a test named after the scenario 'Frozen does not freeze a boss', seen failing first.
 - [ ] 2.3 Write each later boss's attacks and phases as its region is built. Verify: the immunity scenarios above pass for every boss written.
 
 ## 3. Weekly bosses
