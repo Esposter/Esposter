@@ -3,6 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -62,6 +63,11 @@ const CITLALI_SKILL_LEVEL_15_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_U
   ...TALENT_START_LEVELS,
   [CombatTalent.ElementalSkill]: 15,
 });
+// Citlali with her burst at level 15, whose Spirit Vessel skulls read the proud group's higher multiplier
+const CITLALI_BURST_LEVEL_15_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CITLALI_CHARACTER_ID, {
+  ...TALENT_START_LEVELS,
+  [CombatTalent.ElementalBurst]: 15,
+});
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ENEMY_HEALTH = 1e9;
 // A frame of the world's seconds, the step the team's effects run on at sixty frames a second
@@ -97,6 +103,34 @@ const createOpalFireContext = (enemies: Enemy[], combatant = createCitlaliCombat
   CITLALI_KIT.elementalBurst.onStart?.(context);
   CITLALI_KIT.elementalBurst.onStart?.(context);
   return context;
+};
+
+// Citlali's burst at the body's origin on the given enemies, each random draw taken in order as the press takes one for each
+// Skull it summons, as gcsim draws each skull's delay at the press. Her skill's press may come first, to be in the Blessing
+// Her points are held in, which a burst outside it does not keep
+const createSkullContext = (enemies: Enemy[], draws: number[], { isInBlessing = false, kit = CITLALI_KIT } = {}) => {
+  const queuedDraws = [...draws];
+  const context = createKitTestContext(createCitlaliCombatant(), {
+    enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
+    enemyTables,
+    random: () => queuedDraws.shift() ?? 0,
+  });
+  if (isInBlessing) kit.elementalSkill.onStart?.(context);
+  kit.elementalBurst.onStart?.(context);
+  return context;
+};
+
+// Steps the team the given frames as stepFrames does, recording each strike that lands with the frame it lands on
+const stepFrameLandings = (context: KitContext, frames: number) => {
+  const landings: { frame: number; strike: KitStrike }[] = [];
+  for (let frame = 1; frame <= frames; frame++) {
+    stepKitEffects(FRAME_SECONDS, context);
+    for (const enemy of context.enemyMap.values()) enemy.elementalState.seconds += FRAME_SECONDS;
+    for (const strike of context.strikes) landings.push({ frame, strike });
+    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+    context.strikes.length = 0;
+  }
+  return landings;
 };
 
 describe(createCitlaliKitBehaviour, () => {
@@ -351,5 +385,66 @@ describe(createCitlaliKitBehaviour, () => {
     // Without Elemental Mastery the shield is its flat health alone, and with 1000 it adds the share times the mastery
     expect(shieldHealth(createCitlaliCombatantAt(0, 0))).toBeCloseTo(4380.0005);
     expect(shieldHealth(createCitlaliCombatantAt(0, 1000))).toBeCloseTo(13.68 * 1000 + 4380.0005);
+  });
+
+  test("the burst's Spirit Vessel skulls summon on the first three enemies within 7 metres, each landing at its own draw 87 to 117 frames after the Ice Storm hit", () => {
+    expect.hasAssertions();
+    // The enemy 11 metres off is out of reach, and the one 6 metres off comes fourth, past the three summoned on
+    const enemies = [
+      createSturdyEnemy(-11),
+      createSturdyEnemy(-6),
+      createSturdyEnemy(0),
+      createSturdyEnemy(6),
+      { ...createSturdyEnemy(0), position: { x: 0, z: 6 } },
+    ];
+    const landings = stepFrameLandings(createSkullContext(enemies, [0, 0.5, 0.999]), 235);
+    expect(landings.map(({ frame }) => frame)).toEqual([205, 220, 235]);
+    expect(landings.map(({ strike }) => enemies.findIndex((enemy) => enemy === strike.target))).toEqual([1, 2, 3]);
+  });
+
+  test("each Spirit Vessel skull gives Citlali three Nightsoul points as it lands, on top of the burst's 24", () => {
+    expect.hasAssertions();
+    const context = createSkullContext(
+      [createSturdyEnemy(-6), createSturdyEnemy(0), createSturdyEnemy(6)],
+      [0, 0.5, 0.999],
+      { isInBlessing: true },
+    );
+    expect(countPoints(context)).toBe(48);
+    stepFrames(context, 205);
+    expect(countPoints(context)).toBe(51);
+    stepFrames(context, 15);
+    expect(countPoints(context)).toBe(54);
+    stepFrames(context, 15);
+    expect(countPoints(context)).toBe(57);
+  });
+
+  test("a Spirit Vessel skull strikes the enemies within 3.5 metres of its enemy where they stand as it lands, not where they stood at the press", () => {
+    expect.hasAssertions();
+    // The enemy summoned on is 6 metres off at the press, and the one 9 metres off is out of reach until the enemy steps up to it
+    const enemy = createSturdyEnemy(-6);
+    const bystander = createSturdyEnemy(9);
+    const context = createSkullContext([enemy, bystander], [0]);
+    enemy.position = { x: 7.5, z: 0 };
+    const landings = stepFrameLandings(context, 205);
+    expect(landings.map(({ frame }) => frame)).toEqual([205, 205]);
+    expect(
+      landings.map(({ strike }) => [enemy, bystander].findIndex((candidate) => candidate === strike.target)),
+    ).toEqual([0, 1]);
+  });
+
+  test("a Spirit Vessel skull is a Cryo hit at its talent multiplier of 1.344 at burst level 1", () => {
+    expect.hasAssertions();
+    const [landing] = stepFrameLandings(createSkullContext([createSturdyEnemy(0)], [0]), 205);
+    expect(landing?.strike.hit.element).toBe(Element.Cryo);
+    expect(landing?.strike.hit.talentMultiplier).toBeCloseTo(1.344);
+  });
+
+  test("the Spirit Vessel skull's multiplier grows with the burst's talent level, to 3.192 at level 15 from 1.344 at level 1", () => {
+    expect.hasAssertions();
+    const [landing] = stepFrameLandings(
+      createSkullContext([createSturdyEnemy(0)], [0], { kit: CITLALI_BURST_LEVEL_15_KIT }),
+      205,
+    );
+    expect(landing?.strike.hit.talentMultiplier).toBeCloseTo(3.192);
   });
 });

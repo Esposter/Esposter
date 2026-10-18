@@ -1,6 +1,9 @@
+import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
@@ -20,6 +23,7 @@ import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { takeOne } from "@esposter/shared";
 
 export const CITLALI_CHARACTER_ID = 10_000_107;
 
@@ -46,6 +50,15 @@ const OPAL_FIRE_DRAIN_FRAMES = 6;
 const FROSTFALL_STORM_FRAMES = 59;
 export const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 
+// Ice Storm summons a Spirit Vessel skull on each of the first three enemies within 7 metres of Citlali, each giving her three
+// Points as it lands, and each draws its delay as the press is made: 30 to 60 frames after the 57 its record holds, as gcsim
+// (MIT) citlali/burst.go lines 27 to 29 and 79 to 88 do
+const SPIRIT_VESSEL_TARGET_AREA: AttackArea = { angle: 2 * Math.PI, height: 2, radius: 7 };
+const SPIRIT_VESSEL_TARGET_LIMIT = 3;
+const SPIRIT_VESSEL_POINTS = 3;
+const SPIRIT_VESSEL_RANDOM_MINIMUM_FRAMES = 30;
+const SPIRIT_VESSEL_RANDOM_FRAMES = 31;
+
 // The flat base damage a hit adds from a share of its striker's Elemental Mastery, from Ascension 4
 const createElementalMasteryFlatDamage =
   (share: number) =>
@@ -54,12 +67,17 @@ const createElementalMasteryFlatDamage =
 
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
-// Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit
-// Not built: Ascension 1 and Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below
-// 50 points and outlast its points, and the skulls her burst summons on enemies within 7 metres, which the burst's start
-// Cannot place since it reads no enemies but its target
+// Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit,
+// and the Spirit Vessel skulls her burst summons on the first three enemies within 7 metres. Not built: Ascension 1 and
+// Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below 50 points and outlast its points
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
-export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createCitlaliKitBehaviour = ({
+  kit,
+  readFrames,
+  readHit,
+  readParameter,
+  readSeconds,
+}: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
   const frostfallStormHit = readHit("frostfallStorm", {
     additiveBaseDamageBonus: createElementalMasteryFlatDamage(FROSTFALL_STORM_ELEMENTAL_MASTERY_SHARE),
@@ -70,13 +88,47 @@ export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds 
   const opalShieldFlatHealth = readParameter("opalShieldFlatHealth");
   const opalShieldSeconds = readParameter("opalShieldSeconds");
   const opalShieldStartSeconds = readSeconds("opalShield");
+  // The Spirit Vessel skull as her record holds it, the strike each skull lands on the enemies in its circle, and the frames
+  // Its summon takes after the Ice Storm's hitmark, which her burst's record holds
+  const spiritVesselSkullHit = readHit("spiritVesselSkull");
+  const spiritVesselSkullFrames = readFrames("spiritVesselSkull");
+  const iceStormHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
 
-  // Strikes every living enemy in the Frostfall Storm's circle round the body, the circle gcsim centres on the player
-  const strikeFrostfallStorm = (context: KitContext, combatant: Combatant) => {
-    const { body, enemyMap } = context;
-    for (const enemy of enemyMap.values())
-      if (enemy.health > 0 && checkIsInAttackArea(frostfallStormHit.hitArea, body, enemy))
-        queueKitPassiveHit(context, combatant, frostfallStormHit, enemy);
+  // Strikes every living enemy within a hit's area round a body, as the circle or fan the hit reaches them in
+  const strikeEnemiesInArea = (context: KitContext, combatant: Combatant, hit: KitHit, body: KitBody) => {
+    for (const enemy of context.enemyMap.values())
+      if (enemy.health > 0 && checkIsInAttackArea(hit.hitArea, body, enemy))
+        queueKitPassiveHit(context, combatant, hit, enemy);
+  };
+
+  // Summons a skull on each of the first three living enemies within 7 metres of the body as the burst is cast, each drawing
+  // Its delay now, as gcsim's burst does. A skull lands where its enemy stands then: it gives Citlali her points and strikes
+  // Every living enemy within its circle, centred on the enemy, as gcsim reads the enemy's position when the task runs
+  const summonSpiritVesselSkulls = (context: KitContext) => {
+    const { activeCombatant, body, enemyMap, kitEffectState, random } = context;
+    const { characterId } = activeCombatant;
+    const enemies = [...enemyMap.values()]
+      .filter((enemy) => enemy.health > 0 && checkIsInAttackArea(SPIRIT_VESSEL_TARGET_AREA, body, enemy))
+      .slice(0, SPIRIT_VESSEL_TARGET_LIMIT);
+    for (const enemy of enemies) {
+      const drawnFrames = Math.floor(random() * SPIRIT_VESSEL_RANDOM_FRAMES);
+      const delayFrames = spiritVesselSkullFrames + SPIRIT_VESSEL_RANDOM_MINIMUM_FRAMES + drawnFrames;
+      scheduleKitTask(
+        kitEffectState,
+        characterId,
+        iceStormHitmarkSeconds + toKitSeconds(delayFrames),
+        (tickContext) => {
+          generateKitNightsoulPoints(tickContext, SPIRIT_VESSEL_POINTS, NIGHTSOUL_MAXIMUM, characterId);
+          const combatant = tickContext.characterIdCombatantMap.get(characterId);
+          if (combatant === undefined) return;
+          strikeEnemiesInArea(tickContext, combatant, spiritVesselSkullHit, {
+            facing: 0,
+            height: 0,
+            position: enemy.position,
+          });
+        },
+      );
+    }
   };
 
   // Puts the Opal Fire on the team's effects once Citlali is in the Blessing with 50 points or more and it is not on already,
@@ -111,7 +163,8 @@ export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds 
             return;
           }
           const frame = tickIndex + 1;
-          if (frame % FROSTFALL_STORM_FRAMES === 0) strikeFrostfallStorm(tickContext, activeCombatant);
+          if (frame % FROSTFALL_STORM_FRAMES === 0)
+            strikeEnemiesInArea(tickContext, activeCombatant, frostfallStormHit, tickContext.body);
           if (frame % OPAL_FIRE_DRAIN_FRAMES !== 0) return;
           drainKitNightsoulPoints(tickContext.kitEffectState, characterId, OPAL_FIRE_DRAIN_POINTS);
           if (countKitResource(tickContext.kitEffectState.effects, characterId, NIGHTSOUL_POINTS_ID) === 0)
@@ -129,6 +182,7 @@ export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds 
       onStart: (context) => {
         generateKitNightsoulPoints(context, NIGHTSOUL_BURST_POINTS, NIGHTSOUL_MAXIMUM);
         enterOpalFire(context);
+        summonSpiritVesselSkulls(context);
       },
     },
     // Ascension 4 gives points on each Nightsoul burst that goes off anywhere on the team, on the field or off it, as gcsim's

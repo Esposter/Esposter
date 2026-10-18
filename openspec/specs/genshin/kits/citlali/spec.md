@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. The Spirit Vessel skulls and her passives wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, the Opal Fire with Itzpapa's Frostfall Storm, the Opal Shield and the Spirit Vessel skulls. Her Ascension 1 and constellations wait on their hooks.
 
 ## Requirements
 
@@ -158,7 +158,7 @@ At Ascension 4 Citlali SHALL gain four Nightsoul points on each Nightsoul burst 
 
 ### Requirement: The Opal Shield
 
-Citlali's skill press SHALL cast the Opal Shield 37 frames after it, as a Cryo shield of her Elemental Mastery times 5.76 plus 1386.7 health at talent level 1, lasting 20 seconds.
+Citlali's skill press SHALL cast the Opal Shield 37 frames after it, as a Cryo shield of her Elemental Mastery times its share plus its flat health, lasting 20 seconds: at talent level 1 that is 5.76 times Elemental Mastery plus 1386.7, and at level 15 it is 13.68 times plus 4380.
 
 #### Scenario: The Opal Shield comes 37 frames after the press
 
@@ -175,6 +175,41 @@ Citlali's skill press SHALL cast the Opal Shield 37 frames after it, as a Cryo s
 - **THEN** the shield is still on the team
 - **WHEN** another second passes
 - **THEN** the shield has ended
+
+### Requirement: The Spirit Vessel skulls
+
+Ice Storm SHALL summon a Spirit Vessel skull on each of the first three enemies within 7 metres of Citlali as it is cast. Each skull SHALL land 205 to 235 frames after the press, give Citlali three Nightsoul points, and strike the enemies in its 3.5-metre circle where they stand as it lands.
+
+#### Scenario: Ice Storm summons skulls on the first three enemies within 7 metres
+
+- **GIVEN** four enemies stand within 7 metres of Citlali and a fifth stands 11 metres off
+- **WHEN** the player casts Ice Storm
+- **THEN** a skull is summoned on each of the first three enemies in reach
+- **AND** none is summoned on the fourth or the fifth
+
+#### Scenario: Each skull lands at its own draw, 205 to 235 frames after the press
+
+- **GIVEN** three skulls are summoned, with their draws at the start, the middle and the end of their range
+- **WHEN** 205, 220 and 235 frames pass
+- **THEN** each skull lands in turn on its own enemy
+
+#### Scenario: Each skull gives three Nightsoul points as it lands
+
+- **GIVEN** Citlali is in the Blessing with 48 points
+- **WHEN** three skulls land
+- **THEN** she holds 57 points
+
+#### Scenario: A skull strikes the enemies in its circle where they stand as it lands
+
+- **GIVEN** a skull is summoned on an enemy 6 metres off, and a second enemy stands 9 metres off
+- **WHEN** the first enemy steps to 1.5 metres from the second before the skull lands
+- **THEN** the skull strikes both enemies
+
+#### Scenario: A skull's multiplier grows with the burst's talent level
+
+- **GIVEN** Citlali's burst is at talent level 15
+- **WHEN** a skull lands
+- **THEN** its multiplier is 3.192, from 1.344 at level 1
 
 ### Requirement: Strikes and charged attack deal no poise
 

@@ -2,6 +2,7 @@
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.opalShield": { "file": "skill.go", "line": 72, "source": "Gcsim", "value": 37 },
+  "frames.spiritVesselSkull": { "file": "burst.go", "line": 20, "source": "Gcsim", "value": 57 },
   "hits.frostfallStorm.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -12,6 +13,16 @@
   "hits.frostfallStorm.internalCooldownTag": { "cause": "Unclassified", "value": "CitlaliFrostfallStorm" },
   "hits.frostfallStorm.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 10732 } },
   "hits.frostfallStorm.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.spiritVesselSkull.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
+  },
+  "hits.spiritVesselSkull.element": { "cause": "Unclassified", "value": "Ice" },
+  "hits.spiritVesselSkull.gauge": { "cause": "Unclassified", "value": 25 },
+  "hits.spiritVesselSkull.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "hits.spiritVesselSkull.internalCooldownTag": { "cause": "Unclassified", "value": "CitlaliSpiritVessel" },
+  "hits.spiritVesselSkull.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10739 } },
+  "hits.spiritVesselSkull.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
