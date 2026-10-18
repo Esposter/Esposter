@@ -75,22 +75,6 @@ const castBurstInTeam = (ascension: number, characterIds: number[]) => {
   return { context, field, kitEffectState };
 };
 
-// Strikes one of the skill's hits on the enemy, the kit taking the event as the party's kit does
-const strikeSkillHit = (context: KitContext, hit: KitHit): void => {
-  AINO_KIT.onKitEvent?.(
-    {
-      enemy: AINO_ENEMY,
-      hit,
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker: context.activeCombatant,
-    },
-    context,
-    context.activeCombatant,
-  );
-};
-
 // Aino's burst is cast with a teammate in the team, and the teammate is the one on the field: the context her kit reads
 // The teammate's hits in, with the zone the burst left standing
 const createTeammateTeam = (constellationCount: number) => {
@@ -108,17 +92,16 @@ const createTeammateTeam = (constellationCount: number) => {
   AINO_KIT.elementalBurst.onStart?.(context);
   return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
 };
-// The kit reads a hit of the striker's on the enemy, as the party's kits take each event
-const strikeEnemy = (context: KitContext, striker: Combatant, combatant: Combatant): void => {
+// The kit reads a hit of the striker's on the enemy, as the party's kits take each event. The hit defaults to the
+// Skill's first hit
+const strikeEnemy = (
+  context: KitContext,
+  striker: Combatant,
+  combatant: Combatant,
+  hit: KitHit = takeOne(AINO_KIT.elementalSkill.hits),
+): void => {
   AINO_KIT.onKitEvent?.(
-    {
-      enemy: AINO_ENEMY,
-      hit: takeOne(AINO_KIT.elementalSkill.hits),
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
+    { enemy: AINO_ENEMY, hit, isCritical: false, isDefeated: false, kind: KitEventKind.DamageTaken, striker },
     context,
     combatant,
   );
@@ -240,12 +223,12 @@ describe(createAinoKitBehaviour, () => {
       const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
       const energy = (): number => getPartyMember(party, AINO_CHARACTER_ID).energy;
       const energies: number[] = [];
-      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
       energies.push(energy());
-      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits.slice(1)));
+      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits.slice(1)));
       energies.push(energy());
       stepKitTestEffects(10, context);
-      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
       energies.push(energy());
 
       expect(energies).toStrictEqual([10, 10, 20]);
@@ -256,7 +239,7 @@ describe(createAinoKitBehaviour, () => {
       const combatant = { ...createAinoCombatant(0), constellationCount: 3 };
       const party = createParty([AINO_CHARACTER_ID]);
       const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
-      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
 
       expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
     });
