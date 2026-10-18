@@ -9,7 +9,7 @@
 
 ## 3. Tutorials
 
-- [ ] 3.1 Open a tutorial's entry when its tip is first shown, once a tip is shown by the world. Verify: a test named after the scenario 'a tutorial's entry opens when its tip is first shown', and a test named after the scenario 'a tutorial's entry stays as it was when its tip is shown again', seen failing first.
+- [x] 3.1 Open a tutorial's entry when its tip is first shown, once a tip is shown by the world. Verify: a test named after the scenario 'a tutorial's entry opens when its tip is first shown', and a test named after the scenario 'a tutorial's entry stays as it was when its tip is shown again', seen failing first.
 
 ## 4. Progress
 

@@ -21,6 +21,7 @@ import { getArchiveArtifacts } from "#src/services/archive/getArchiveArtifacts";
 import { openArchiveArtifactSets } from "#src/services/archive/openArchiveArtifactSets";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
+import { openTipArchiveEntry } from "#src/services/archive/openTipArchiveEntry";
 import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
 import { readArchiveEntries } from "#src/services/archive/readArchiveEntries";
 import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
@@ -140,6 +141,10 @@ export const useWorldArchive = ({
   events.on("bagChange", (nextInventory) => {
     archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
     openHeldArtifactSets(nextInventory.items);
+  });
+  // A tutorial's entry opens the first time the world shows its tip, and stays as it is when the tip is shown again
+  events.on("tipShown", (tip) => {
+    archiveProgressMap.value = openTipArchiveEntry(archiveProgressMap.value, tip);
   });
   // A defeated enemy's entry is opened and its defeat counted
   events.on("defeatEnemy", (enemy) => {
