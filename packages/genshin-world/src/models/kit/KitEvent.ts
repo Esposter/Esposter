@@ -8,6 +8,7 @@ import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEven
 import type { KitMoraPickedUpEvent } from "#src/models/kit/KitMoraPickedUpEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
+import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
 import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent";
 
@@ -23,5 +24,6 @@ export type KitEvent =
   | KitMoraPickedUpEvent
   | KitNormalAttackLandedEvent
   | KitReactionTriggeredEvent
+  | KitShieldAbsorbedEvent
   | KitStatusTickedEvent
   | KitTauntDamagedEvent;

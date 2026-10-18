@@ -2,25 +2,38 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
 import type { Party } from "#src/models/party/Party";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
 // An enemy's strike on a party member: its damage is first taken by the team's shields, and what none of them absorbs is
-// Taken from the member as the share of its Max HP it is
+// Taken from the member as the share of its Max HP it is. Each shield that took any of it is returned for its owner, as
+// The damage it took
 export const strikePartyMember = (
   enemyTables: EnemyTables,
   party: Party,
   enemy: Enemy,
   combatant: Combatant,
   kitEffectState: KitEffectState,
-): void => {
+): KitShieldAbsorbedEvent[] => {
+  const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
+  const healths = shields.map((shield) => shield.health);
   const overflow = absorbKitShield(
     kitEffectState.effects,
     combatant,
     computeEnemyStrikeDamage(enemyTables, enemy, combatant),
   );
   damagePartyMember(party, combatant.characterId, overflow / combatant.attributes.maxHealth);
+  return shields
+    .map((shield, index): KitShieldAbsorbedEvent => ({
+      amount: healths[index] - shield.health,
+      characterId: shield.characterId,
+      kind: KitEventKind.ShieldAbsorbed,
+    }))
+    .filter(({ amount }) => amount > 0);
 };

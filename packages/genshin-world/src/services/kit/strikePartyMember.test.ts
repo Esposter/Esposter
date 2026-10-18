@@ -3,6 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -61,5 +62,21 @@ describe(strikePartyMember, () => {
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (damage - shieldHealth) / MAX_HEALTH);
     expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
+  });
+
+  test("reports to the shield's owner the damage the shield absorbed from the strike", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
+    const shieldHealth = damage / 2;
+    const kitEffectState: KitEffectState = {
+      effects: [{ characterId: 2, health: shieldHealth, kind: "shield", secondsRemaining: 12 }],
+    };
+
+    expect(strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState)).toStrictEqual([
+      { amount: shieldHealth, characterId: 2, kind: KitEventKind.ShieldAbsorbed },
+    ]);
   });
 });
