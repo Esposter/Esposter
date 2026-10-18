@@ -3,6 +3,7 @@ import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Ref } from "vue";
 
+import { checkIsGadgetReady } from "#src/services/gadget/checkIsGadgetReady";
 import { checkIsQuickSwapOpen } from "#src/services/gadget/checkIsQuickSwapOpen";
 import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
@@ -34,10 +35,11 @@ export const useWorldGadgets = ({
   const cooldownGroupReadyAtMap = shallowRef<CooldownGroupReadyAtMap>(new Map());
   const equippedGadget = computed(() => gadgetRows.value.find(({ id }) => id === inventory.value.equippedGadgetItemId));
   // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is returned,
-  // None when no gadget is equipped
+  // None when no gadget is equipped or its cooldown refuses the use
   const quickUseEquippedGadget = (now: Temporal.Instant): GadgetRow | undefined => {
     const gadget = equippedGadget.value;
-    if (gadget) cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, gadget, now);
+    if (!gadget || !checkIsGadgetReady(cooldownGroupReadyAtMap.value, gadget, now)) return undefined;
+    cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, gadget, now);
     return gadget;
   };
   // The seconds left of the equipped gadget's cooldown at `now`, none when no gadget is equipped
