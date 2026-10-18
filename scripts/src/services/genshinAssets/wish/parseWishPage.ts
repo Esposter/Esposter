@@ -5,11 +5,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { sliceWikiTemplate } from "genshin-persona/src/services/sliceWikiTemplate.ts";
 
 const TEMPLATE_START = "{{Wish\n";
-const SUMMARY_HEADING = "===Summary===";
+const SUMMARY_HEADING_REGEX = /^===\s*Summary\s*===/mu;
 const NEXT_HEADING_REGEX = /\n==/u;
-const BULLET_PREFIX = "* ";
+const BULLET_PREFIX = "*";
 const WISH_ITEM_REGEX = /\{\{Wish Item\|(?<names>[^}]*)\}\}/gu;
-const OFFSET_REGEX = /^GMT(?<sign>[+-])(?<hours>\d{1,2})$/u;
+const OFFSET_REGEX = /^(?:GMT|UTC)(?<sign>[+-])(?<hours>\d{1,2})$/u;
 // The wiki's `type` for each event banner. Chronicled Wish and the standard wishes are not read by the schedule
 const WikiTypeWishEventKindMap: Partial<Record<string, WishEventKind>> = {
   "Character Event": WishEventKind.CharacterEvent,
@@ -36,7 +36,7 @@ const readParameter = (parameters: Map<string, string>, name: string): string =>
   return value;
 };
 
-// The GMT offset a page writes its times at, as the zone it names: `GMT+8` is `+08:00`
+// The GMT or UTC offset a page writes its times at, as the zone it names: `GMT+8` and `UTC+8` are `+08:00`
 const readTimeZone = (value: string): string => {
   const groups = OFFSET_REGEX.exec(value)?.groups;
   if (groups?.sign === undefined || groups.hours === undefined)
@@ -51,10 +51,10 @@ const readEpochMilliseconds = (value: string, timeZone: string): number =>
 
 // The bullet lines of the Summary, its section running to the next heading or to the end of the page
 const readSummaryBullets = (wikitext: string): string[] => {
-  const summaryStart = wikitext.indexOf(SUMMARY_HEADING);
-  if (summaryStart === -1) throw new InvalidOperationError(Operation.Read, SUMMARY_HEADING, "is not on the page");
+  const summaryHeading = SUMMARY_HEADING_REGEX.exec(wikitext);
+  if (summaryHeading === null) throw new InvalidOperationError(Operation.Read, "Summary", "is not on the page");
 
-  const section = wikitext.slice(summaryStart + SUMMARY_HEADING.length);
+  const section = wikitext.slice(summaryHeading.index + summaryHeading[0].length);
   const sectionEnd = section.search(NEXT_HEADING_REGEX);
   return section
     .slice(0, sectionEnd === -1 ? undefined : sectionEnd)
@@ -66,7 +66,8 @@ const readSummaryBullets = (wikitext: string): string[] => {
 const readWishItemNames = (bullet: string): string[] =>
   Array.from(bullet.matchAll(WISH_ITEM_REGEX), ({ groups }) => groups?.names ?? "")
     .flatMap((names) => names.split(";"))
-    .map((name) => name.trim());
+    .map((name) => name.trim())
+    .filter((name) => name !== "");
 
 // An event banner page read into its kind, its window and the names of its featured items. The first bullet of the
 // Summary names the promotional five-stars and the second the featured four-stars. A page of another kind is not read
@@ -83,7 +84,8 @@ export const parseWishPage = (wikitext: string): WishEventPage | undefined => {
   if (fiveStarBullet === undefined || fourStarBullet === undefined)
     throw new InvalidOperationError(Operation.Read, SUMMARY_HEADING, "has no two bullets of featured items");
 
-  const timeZone = readTimeZone(readParameter(parameters, "time_start_offset"));
+  // A page naming no offset, as the older banner pages do, is read at the Asia server's GMT+8
+  const timeZone = readTimeZone(parameters.get("time_start_offset") ?? "GMT+8");
   return {
     endTime: readEpochMilliseconds(readParameter(parameters, "time_end"), timeZone),
     fiveStarNames: readWishItemNames(fiveStarBullet),

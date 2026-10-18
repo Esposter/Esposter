@@ -63,6 +63,7 @@ import { transPointsCommand } from "#src/services/genshinAssets/commands/transPo
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { waypointsCommand } from "#src/services/genshinAssets/commands/waypointsCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
+import { wishScheduleCommand } from "#src/services/genshinAssets/commands/wishScheduleCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
 
@@ -129,6 +130,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     shops: shopsCommand,
     materialSources: materialSourcesCommand,
     wildlife: wildlifeCommand,
+    "wish-schedule": wishScheduleCommand,
     reputation: reputationCommand,
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
