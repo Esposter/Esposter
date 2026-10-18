@@ -24,7 +24,9 @@ import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalRes
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
@@ -113,7 +115,9 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
+  [11_054, kamisatoArtSenho],
   [111_051, frostflakeSekiNoTo],
+  [111_052, cryoElementalInfusion],
   [112_021, rainSword],
   [112_022, rainbowBladework],
   [112_031, reflection],

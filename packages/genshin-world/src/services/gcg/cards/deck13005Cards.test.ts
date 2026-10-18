@@ -8,11 +8,17 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { kamisatoArtSenho, SENHO_STATUS_ID } from "#src/services/gcg/cards/kamisatoArtSenho";
+import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -102,5 +108,82 @@ describe("kamisato Art: Soumetsu", () => {
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([FROSTFLAKE_SEKI_NO_TO_ID]);
+  });
+});
+
+describe("cryo Elemental Infusion", () => {
+  test("it converts its character's Physical DMG to Cryo DMG, and lasts until the Round ends", () => {
+    expect.hasAssertions();
+    const context = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion);
+
+    expect(
+      cryoElementalInfusion.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Cryo, value: 2 });
+    expect(zoneCard.rounds).toBe(1);
+  });
+});
+
+describe("kamisato Art: Senho", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const SENHO_PASSIVE: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_11054",
+    energyGain: 0,
+    id: 11_054,
+    kind: GcgSkillKind.Passive,
+  };
+  // Ayaka holds Senho from the battle's start, so she is the second character of the side
+  const createAyakaDuel = (): GcgDuel =>
+    createDuel([
+      createSideState([
+        createCharacterState(1202),
+        { ...createCharacterState(1105), statuses: [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)] },
+      ]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+  test("the passive is held from the battle's start", () => {
+    expect.hasAssertions();
+    const ayaka = { ...createCharacterState(1105).character, skills: [SENHO_PASSIVE] };
+
+    expect(listGcgStartingStatuses(ayaka).map(({ cardId }) => cardId)).toStrictEqual([SENHO_STATUS_ID]);
+    expect(kamisatoArtSenhoSkill.getStartingStatuses?.()).toHaveLength(1);
+  });
+
+  test("when switched to, Ayaka gains Cryo Elemental Infusion, and her next Normal Attack deals 1 more DMG", () => {
+    expect.hasAssertions();
+    const duel = createAyakaDuel();
+
+    switchGcgActiveCharacter(duel, 0, 1);
+    expect(takeOne(duel.sides, 0).characters[1]?.statuses.map(({ cardId }) => cardId)).toStrictEqual([
+      SENHO_STATUS_ID,
+      CRYO_ELEMENTAL_INFUSION_ID,
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
+  });
+
+  test("it triggers twice per Round, so a third switch in the Round gives no further bonus", () => {
+    expect.hasAssertions();
+    const duel = createAyakaDuel();
+    const switchTo = (characterIndex: number) => switchGcgActiveCharacter(duel, 0, characterIndex);
+
+    switchTo(1);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    switchTo(0);
+    switchTo(1);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+    switchTo(0);
+    switchTo(1);
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([2]);
   });
 });
