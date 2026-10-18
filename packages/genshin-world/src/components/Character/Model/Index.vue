@@ -14,16 +14,20 @@ interface Props {
 }
 
 const { characterPackReader, lightUniforms, rampTexture } = defineProps<Props>();
-const emit = defineEmits<{ error: [] }>();
+const emit = defineEmits<{ error: []; loaded: [] }>();
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
-// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, leaving what holds
-// The model to draw something in its place, and a model arriving after its character has gone is released at once
+// The character's model from its pack, drawn once it has all arrived and emitted as loaded, so what stands in for it gives way
+// A failure is logged and emitted, leaving what holds the model to draw something in its place, and a model arriving after
+// Its character has gone is released at once
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
 readCharacterMesh(characterPackReader, { lightUniforms, rampTexture }).match(
   (characterMesh) => {
     if (isUnmounted) disposeCharacterMesh(characterMesh);
-    else mesh.value = characterMesh;
+    else {
+      mesh.value = characterMesh;
+      emit("loaded");
+    }
   },
   (error) => {
     console.error(error);
