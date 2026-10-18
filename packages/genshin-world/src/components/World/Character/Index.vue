@@ -41,7 +41,7 @@ import {
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
-  findSkinnedMesh,
+  createSkinnedMeshFinder,
   FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
@@ -199,11 +199,14 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   );
 });
 const pivot = new Vector3();
+// The body's skinned mesh, found again only when its tree changes, as a model arrives or is taken away. The body is the
+// Screen's one group for the character's whole life, so the finder is made once for it
+const findBodySkinnedMesh = createSkinnedMeshFinder(body);
 // Ahead of the floating origin's shift, whatever order it mounts in: the frame's look turns the camera once, the steps
 // Move the body, and the body is drawn and the camera follows it at its place between its last two steps, by how far
 // The frame has come into the next. A held body stays drawn where it stands, and only an orbit turns its camera
 onBeforeRender(({ delta }) => {
-  const skinnedMesh = findSkinnedMesh(body);
+  const skinnedMesh = findBodySkinnedMesh();
   if (skinnedMesh !== posedMesh) {
     posedMesh = skinnedMesh;
     poser = skinnedMesh && createCharacterPoser(skinnedMesh);
