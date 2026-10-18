@@ -1,14 +1,14 @@
 ## 1. Parser and compiler
 
-- [ ] 1.1 Write the tree model, the parser and the compiler in `@esposter/shared` over every operator in the design's language table, each rule read off mathjs's `parse.js` first, with the nesting limit at a depth of 64. The compiler resolves each name to its slot, each function to its implementation and folds each constant subtree, keeping `and`, `or`, `&`, `|` and the conditional lazy. Verify: tests named after the scenarios 'Power binds tighter than a sign', 'Modulo takes the sign of the divisor', 'A trailing percent sign is a percentage of the left side', 'A name beside a number multiplies it', 'A bare comparison has a value', 'A chained comparison holds only when each pair does' and 'Nesting beyond the limit'.
-- [ ] 1.2 Write the constant table and the function table, every mathjs function that maps numbers to a number or a boolean at some arity, enumerated by probing the installed mathjs. Verify: tests named after the scenarios 'Rounding goes half away from zero' and 'An unknown function'.
-- [ ] 1.3 Return a positioned error from the parse in mathjs's words, and resolve names only as own entries. Verify: tests named after the scenarios 'An unclosed parenthesis' and 'A prototype member's name is unknown'.
-- [ ] 1.4 Generate `mathExpressionParity.snapshot.json` with mathjs over the corpus, with every allowed difference listed by formula, and add the parity test. Verify: a test named after the scenario 'The parity corpus matches mathjs's recorded answers'.
+- [x] 1.1 Write the tree model, the parser and the compiler in `@esposter/shared` over every operator in the design's language table, each rule read off mathjs's `parse.js` first, with the nesting limit at a depth of 64. The compiler resolves each name to its slot, each function to its implementation and folds each constant subtree, keeping `and`, `or`, `&`, `|` and the conditional lazy. Verify: tests named after the scenarios 'Power binds tighter than a sign', 'Modulo takes the sign of the divisor', 'A trailing percent sign is a percentage of the left side', 'A name beside a number multiplies it', 'A bare comparison has a value', 'A chained comparison holds only when each pair does' and 'Nesting beyond the limit'.
+- [x] 1.2 Write the constant table and the function table, every mathjs function that maps numbers to a number or a boolean at some arity, enumerated by probing the installed mathjs. Verify: tests named after the scenarios 'Rounding goes half away from zero' and 'An unknown function'.
+- [x] 1.3 Return a positioned error from the parse in mathjs's words, and resolve names only as own entries. Verify: tests named after the scenarios 'An unclosed parenthesis' and 'A prototype member's name is unknown'.
+- [x] 1.4 Generate `mathExpressionParity.snapshot.json` with mathjs over the corpus, with every allowed difference listed by formula, and add the parity test. Verify: a test named after the scenario 'The parity corpus matches mathjs's recorded answers'.
 
 ## 2. Upstream triage
 
 - [x] 2.1 Give every mathjs issue in the design's triage scope a verdict in the Upstream table, each with its evidence. Verify: every row names a verdict and the reproduction, the owner or the answering link behind it.
-- [ ] 2.2 Fix each in-scope defect and build each in-scope feature in the language, and list each in the parity snapshot as a fix. Verify: each has a regression test whose title names its issue and which fails against mathjs, and the parity test passes.
+- [x] 2.2 Fix each in-scope defect and build each in-scope feature in the language, and list each in the parity snapshot as a fix. Verify: each has a regression test whose title names its issue and which fails against mathjs, and the parity test passes.
 
 ## 3. Swap
 
