@@ -1,4 +1,5 @@
-import { readHandWrittenPages } from "#src/workspace/readHandWrittenPages.test";
+import { getLineMatches } from "#src/services/workspace/getLineMatches";
+import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { describe, expect, test } from "vitest";
 
 describe("getToolchainVersionRestatements", () => {
@@ -11,20 +12,8 @@ describe("getToolchainVersionRestatements", () => {
   const TOOLCHAIN_VERSION_REGEX =
     /(?<restatement>(?:node(?:\.?js)?|pnpm)(?:\]\([^)\s]*\))?[ `*(’']{0,3}(?:v|>=?)?(?:\^\d+(?:\.\d+)*|~\d+(?:\.\d+)*|\d+(?:\.\d+)+))/giu;
   // Every `<path>:<line> → <text>` where a page states a version instead of naming the field that declares it.
-  // Nothing outside this suite calls it, so it stays here rather than in a module the build would ship for one caller.
   const getToolchainVersionRestatements = (files: { markdown: string; path: string }[]): string[] =>
-    files
-      .flatMap(({ markdown, path }) =>
-        markdown
-          .split("\n")
-          .flatMap((line, index) =>
-            Array.from(
-              line.matchAll(TOOLCHAIN_VERSION_REGEX),
-              (match) => `${path}:${index + 1} → ${match.groups?.restatement ?? ""}`,
-            ),
-          ),
-      )
-      .toSorted();
+    getLineMatches(files, TOOLCHAIN_VERSION_REGEX, "restatement");
 
   test.each([
     ["a caret range", "Install Node.js `^1.0.0` before anything else.", "Node.js `^1.0.0"],

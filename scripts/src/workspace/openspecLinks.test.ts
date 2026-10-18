@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { readHandWrittenPages } from "#src/workspace/readHandWrittenPages.test";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, expect, test } from "vitest";

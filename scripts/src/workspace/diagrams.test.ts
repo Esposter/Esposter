@@ -1,4 +1,4 @@
-import { readHandWrittenPages } from "#src/workspace/readHandWrittenPages.test";
+import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { describe, expect, test } from "vitest";
 
 const pages = await readHandWrittenPages();

@@ -1,5 +1,5 @@
+import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { readHandWrittenPages } from "#src/workspace/readHandWrittenPages.test";
 import { basename, dirname } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -14,7 +14,7 @@ describe("openspecIndexes", () => {
     expect.hasAssertions();
 
     const pages = await readHandWrittenPages();
-    const markdownByPath = new Map(pages.map(({ markdown, path }) => [path, markdown]));
+    const pathMarkdownMap = new Map(pages.map(({ markdown, path }) => [path, markdown]));
     const capabilityDirectories = new Set(
       pages.filter(({ path }) => CAPABILITY_PAGE_REGEX.test(path)).map(({ path }) => dirname(path)),
     );
@@ -22,7 +22,7 @@ describe("openspecIndexes", () => {
       .filter((directory) => {
         const parent = dirname(directory);
         if (parent === SPECS_DIRECTORY) return false;
-        const index = markdownByPath.get(`${parent}/README.md`) ?? markdownByPath.get(`${parent}/design.md`) ?? "";
+        const index = pathMarkdownMap.get(`${parent}/README.md`) ?? pathMarkdownMap.get(`${parent}/design.md`) ?? "";
         const name = basename(directory);
         return !index.includes(`](${name}/`) && !index.includes(`](./${name}/`);
       })

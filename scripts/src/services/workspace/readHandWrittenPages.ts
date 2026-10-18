@@ -2,7 +2,6 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_DIRECTORY } from "@esposter/configuration";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { describe } from "vitest";
 
 // The hand-written markdown of the repo, each under its repository-relative path: the root set, the agent tree — its
 // Own pages, the skills and the ledgers, but never the machine-local worktrees — one README per workspace member and
@@ -12,7 +11,7 @@ import { describe } from "vitest";
 const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
 const ARCHIVE_PATH_PREFIX = "openspec/changes/archive/";
 
-export const readHandWrittenPages = async () => {
+export const readHandWrittenPages = async (): Promise<{ markdown: string; path: string }[]> => {
   const globbedPaths = await Array.fromAsync(
     glob(
       [
@@ -34,5 +33,3 @@ export const readHandWrittenPages = async () => {
     paths.map(async (path) => ({ markdown: await readFile(join(REPOSITORY_ROOT, path), "utf8"), path })),
   );
 };
-
-describe.todo("readHandWrittenPages");

@@ -30,7 +30,7 @@ The proposals report (`pnpm ai:proposals:report`) ranks the open changes. A chan
 | `scripts/src/services/openspec/readSpecFindings.ts`       | The scenario check: each scenario's steps in GIVEN, WHEN, THEN order with nothing else between them |
 | `scripts/src/workspace/openspecLinks.test.ts`             | Every relative link in the tree resolves                                                            |
 | `scripts/src/workspace/openspecIndexes.test.ts`           | Every capability is linked from the area README, or the capability's design, above it               |
-| `scripts/src/workspace/readHandWrittenPages.test.ts`      | The pages every prose check reads: the tree short of its archive, the agent tree and the READMEs    |
+| `scripts/src/services/workspace/readHandWrittenPages.ts`  | The pages every prose check reads: the tree short of its archive, the agent tree and the READMEs    |
 | `scripts/src/services/openspec/getOpenSpecOwners.ts`      | The capability or change a page belongs to, so the pages of one owner may share text                |
 | `scripts/src/services/proposals/readProposalSummaries.ts` | The open changes the proposals report reads, each with its area and metadata                        |
 

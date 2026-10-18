@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -59,26 +60,14 @@ describe("getPreciseCounts", () => {
   ];
   // The adjectives between the number and its noun are what the page reached for the last time it drifted — it
   // Claimed "three pre-release packages" over a table naming two — so a count is read through them rather than
-  // Only where the two sit adjacent.
+  // Only where the two sit adjacent. `of` and `the` never count as adjectives: `one of the skills` is a pronoun.
   const PRECISE_COUNT_REGEX = new RegExp(
-    String.raw`(?<count>\b(?:\d+|${NUMBER_WORDS.join("|")})(?: [a-z][\w-]*){0,2} (?:${COUNTABLE_NOUNS.join("|")})\b)`,
+    String.raw`(?<count>\b(?:\d+|${NUMBER_WORDS.join("|")})(?: (?!(?:of|the)\b)[a-z][\w-]*){0,2} (?:${COUNTABLE_NOUNS.join("|")})\b)`,
     "giu",
   );
   // Every `<path>:<line> → <text>` where the page measures instead of stating a magnitude.
-  // Nothing outside this suite calls it, so it stays here rather than in a module the build would ship for one caller.
   const getPreciseCounts = (files: { markdown: string; path: string }[]): string[] =>
-    files
-      .flatMap(({ markdown, path }) =>
-        markdown
-          .split("\n")
-          .flatMap((line, index) =>
-            Array.from(
-              line.matchAll(PRECISE_COUNT_REGEX),
-              (match) => `${path}:${index + 1} → ${match.groups?.count ?? ""}`,
-            ),
-          ),
-      )
-      .toSorted();
+    getLineMatches(files, PRECISE_COUNT_REGEX, "count");
 
   test.each([
     ["a digit count", "The repo has 17 packages.", "17 packages"],
@@ -98,6 +87,7 @@ describe("getPreciseCounts", () => {
     ["an enumeration standing in for its count", "The workflows are CI, Bench and Release."],
     ["a score", "Architecture 20 / 20."],
     ["a count of something the repo cannot count", "Retries three times before quarantining."],
+    ["a pronoun standing for a noun", "Each one of the skills is reviewed."],
   ])("leaves %s alone", (_label, markdown) => {
     expect.hasAssertions();
 
