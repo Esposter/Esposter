@@ -4,6 +4,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { Party } from "#src/models/party/Party";
 import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
+import type { GroundPoint } from "genshin-engine";
 
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -19,6 +20,7 @@ export const getPartyMoonsign = (
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   effects: readonly KitEffect[],
   party: Party,
+  position?: GroundPoint,
 ): PartyMoonsign => {
   const baseDamageBonusMap: Partial<Record<LunarReactionType, number>> = {};
   const lunarReactionTypes = new Set<LunarReactionType>();
@@ -26,7 +28,8 @@ export const getPartyMoonsign = (
     const combatant = characterIdCombatantMap.get(characterId);
     const benediction = combatant?.kit.moonsignBenediction;
     if (!combatant || !benediction) continue;
-    const baseDamageBonus = benediction.getBaseDamageBonus?.(getBuffedCombatant(combatant, effects, party)) ?? 0;
+    const baseDamageBonus =
+      benediction.getBaseDamageBonus?.(getBuffedCombatant(combatant, effects, party, position)) ?? 0;
     for (const lunarReactionType of benediction.lunarReactionTypes) {
       lunarReactionTypes.add(lunarReactionType);
       baseDamageBonusMap[lunarReactionType] = (baseDamageBonusMap[lunarReactionType] ?? 0) + baseDamageBonus;

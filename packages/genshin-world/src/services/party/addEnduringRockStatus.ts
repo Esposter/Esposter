@@ -1,6 +1,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { Moondrift } from "#src/models/party/Moondrift";
+import type { GroundPoint } from "genshin-engine";
 
 import { Element } from "#src/models/Element";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
@@ -13,8 +15,14 @@ import {
 
 // Gives an enemy a hit under Enduring Rock strikes its Geo RES drop, before the hit's damage is taken, as a hit's own
 // Status is given: the enemy's RES falls for the seconds the status runs, and each hit under it restarts them
-export const addEnduringRockStatus = (enemy: Enemy, combatant: Combatant, effects: readonly KitEffect[]): void => {
-  if (!checkIsEnduringRock(combatant, effects)) return;
+export const addEnduringRockStatus = (
+  enemy: Enemy,
+  combatant: Combatant,
+  effects: readonly KitEffect[],
+  moondrifts?: readonly Moondrift[],
+  position?: GroundPoint,
+): void => {
+  if (!checkIsEnduringRock(combatant, effects, moondrifts, position)) return;
   addEnemyStatus(enemy, {
     damageTakenBonus: 0,
     id: ENDURING_ROCK_STATUS_ID,

@@ -18,4 +18,4 @@
 
 - [ ] 4.1 Shorten afflictions under the matching Resonance, once resonances reach element application. Verify: a test named after the scenario 'Fervent Flames shortens a Cryo affliction on a member'.
 - [ ] 4.2 Drop High Voltage's particle on a five-second cooldown, once reactions give energy and the team keeps a cooldown. Verify: tests named after the scenarios 'A listed reaction drops a particle once the cooldown has passed' and 'A reaction within the cooldown drops no particle'.
-- [ ] 4.3 Give a Moondrift the shield's defence, once Moonsign is built. Verify: a test named after the scenario 'A Moondrift formed nearby gives a shield's defence'.
+- [x] 4.3 Give a Moondrift the shield's defence, once Moonsign is built. Verify: a test named after the scenario 'A Moondrift formed nearby gives a shield's defence'.

@@ -32,11 +32,11 @@ export const strikeLunarReaction = (
   context: KitContext,
 ): boolean => {
   const { characterIdCombatantMap, enemyTables, kitEffectState, party, random } = context;
-  const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
+  const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const damages = getDeployedCharacterIds(party).flatMap((characterId) => {
     const combatant = characterIdCombatantMap.get(characterId);
     if (!combatant || !contributorIds.has(characterId)) return [];
-    const { attributes, level } = getBuffedCombatant(combatant, kitEffectState.effects, party);
+    const { attributes, level } = getBuffedCombatant(combatant, kitEffectState.effects, party, context.body.position);
     const { attributeTotalMap } = attributes;
     const damage = getLunarDamage(
       lunarReactionType,

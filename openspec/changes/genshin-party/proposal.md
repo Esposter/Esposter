@@ -22,7 +22,6 @@ Party Setup opens as a screen of its own, the player chooses the next member aft
 
 - Afflictions: party members hold no elemental state and enemies' strikes apply none to them, so the resonances must reach element application first.
 - High Voltage's particle: no reaction gives energy yet, and no cooldown is kept for the team.
-- Moondrift: Moonsign is not built.
 - Sprawling Greenery's Hyperbloom and Burgeon: no strike triggers them yet.
 
 ## Impact
