@@ -1,9 +1,7 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
@@ -20,21 +18,12 @@ export const createInfusionScrollPassiveModule = (params: number[]): PassiveModu
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
-      const { characterId } = combatant;
-      const held = findKitStatus(kitEffectState.effects, characterId, INFUSION_SCROLL_STATUS_ID)?.stacks ?? 0;
-      const stacks = Math.min(held + 1, INFUSION_SCROLL_MAXIMUM_STACKS);
-      addKitStatus(kitEffectState, characterId, {
+      addPassiveStack(kitEffectState, combatant.characterId, {
         id: INFUSION_SCROLL_STATUS_ID,
-        secondsRemaining: INFUSION_SCROLL_SECONDS,
-        stacks,
+        maximumStacks: INFUSION_SCROLL_MAXIMUM_STACKS,
+        perStackBonuses: ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: bonusPerStack, attribute })),
+        seconds: INFUSION_SCROLL_SECONDS,
       });
-      for (const attribute of ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES)
-        buffKitMember(kitEffectState, characterId, {
-          amount: stacks * bonusPerStack,
-          attribute,
-          secondsRemaining: INFUSION_SCROLL_SECONDS,
-          source: INFUSION_SCROLL_STATUS_ID,
-        });
     },
   };
 };
