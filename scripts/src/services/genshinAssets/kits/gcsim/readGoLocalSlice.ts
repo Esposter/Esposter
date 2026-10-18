@@ -17,6 +17,15 @@ export const readGoLocalSlice = (
     const token = tokens[declaration];
     // A declaration in an earlier function is not the one the position reads, so a `func` above it ends the search
     if (token?.text === "func") return undefined;
+    // A plain assignment after the declaration, `ele = ...` in a branch, may leave the declared value unset, so the local
+    // Reads as unknown rather than as its declaration
+    if (
+      token?.kind === GoTokenKind.Identifier &&
+      token.text === name &&
+      checkIsGoPunctuation(tokens[declaration + 1], "=") &&
+      !checkIsGoPunctuation(tokens[declaration - 1], ".")
+    )
+      return undefined;
     if (
       token?.kind !== GoTokenKind.Identifier ||
       token.text !== name ||
