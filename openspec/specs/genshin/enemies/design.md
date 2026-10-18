@@ -13,9 +13,9 @@ stateDiagram-v2
   Chase --> Windup: target within attack range, cooldown over
   Windup --> Recovery: windup passes, striking a target in reach
   Recovery --> Chase: recovery passes, cooldown starts
-  Chase --> Stagger: poise broken
-  Windup --> Stagger: poise broken
-  Recovery --> Stagger: poise broken
+  Chase --> Stagger: poise or shield broken
+  Windup --> Stagger: poise or shield broken
+  Recovery --> Stagger: poise or shield broken
   Stagger --> Chase: stagger passes
   Chase --> Return: past the leash, or no target
   Return --> Idle: home, healed to full

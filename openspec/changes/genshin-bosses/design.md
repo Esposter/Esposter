@@ -55,43 +55,43 @@ packages/genshin-world/src/services/bosses/
 
 ## Key files
 
-| File                                                                                     | Role after the change                                                                                           |
-| :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/enemy/stepEnemy.ts`                                 | Runs a boss's moves in turn from its moves argument, its states kept                                            |
-| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                   | A boss back by its claim's time, not at once                                                                    |
-| `packages/genshin-world/src/composables/useWorldTrounceBlossoms.ts`                      | The blossoms by spawn: written on defeat, claimed at 40 resin, forgotten at respawn                             |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`                          | Holds a boss until its claim's time or a teleport, reports each respawn and each poise break                    |
-| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`                         | Still nothing for a boss, its reward the blossom's                                                              |
-| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`                        | Each boss's poise type and immunities                                                                           |
-| `packages/genshin-world/src/services/bosses/anemoHypostasis.ts`                          | The first normal boss's moves and Second Wind threshold                                                         |
-| `packages/genshin-world/src/services/bosses/BossMovesMap.ts`                             | Each boss kind's moves, which the enemies' step is passed                                                       |
-| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossDomainOpen.ts`              | Whether a weekly boss's domain is open, once its introducing quests are done                                    |
-| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossEntryOpen.ts`               | Whether a weekly boss's Trounce Domain entrance is open: its introducing quests are done                        |
-| `packages/genshin-world/src/services/bosses/drawWeeklyBossReward.ts`                     | What a weekly boss's claim pays at a World Level: Mora, talent, billet, gems, Dream Solvent                     |
-| `scripts/src/services/genshinAssets/domains/toWeeklyBossDomains.ts`                      | Each weekly boss's trounce domain, its levels read from the entry's dungeons                                    |
-| `packages/genshin-world/src/services/bosses/stormterror.ts`                              | Stormterror's moves, phases, shield and wind currents, from the wiki                                            |
-| `packages/genshin-world/src/composables/useWorldDomains.ts`                              | Steps the arena each frame, counting poise breaks into Stormterror's fight and returning its transition attacks |
-| `packages/genshin-world/src/services/bosses/startBossMove.ts`                            | Starts a named move as a boss's next, while the boss is chasing                                                 |
-| `packages/genshin-world/src/services/bosses/stepStormterrorFight.ts`                     | Steps Stormterror's five phases by time and shield breaks, naming each transition attack                        |
-| `packages/genshin-world/src/services/bosses/computeStormterrorWindCurrentPlaces.ts`      | The wind currents' stand-in places on a ring beyond Dvalin's camp, PROVISIONAL                                  |
-| `packages/genshin-world/src/models/bosses/TrounceBlossom.ts`                             | A blossom's claim times by kind: a normal boss's one claim, a weekly boss's one a week                          |
-| `packages/genshin-world/src/services/bosses/checkIsTrounceBlossomClaimable.ts`           | Whether a blossom can be claimed at a time, by its kind's rule                                                  |
-| `packages/genshin-world/src/services/handbook/toHandbookDomains.ts`                      | The Domains tab's rows: each domain's lock, its quick challenge and its first clear to claim                    |
-| `packages/genshin-world/src/services/bosses/markWeeklyBossTopClear.ts`                   | The `<entryId>:top` mark a weekly boss's highest tier leaves in the cleared set                                 |
-| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossFirstClaimable.ts`          | Whether a weekly boss's first clear is claimable: its top mark and no claim yet                                 |
-| `packages/genshin-world/src/services/bosses/computeWeeklyBossQuickChallengeDungeonId.ts` | The tier a weekly boss's quick challenge enters, the highest its rank reaches, from Adventure Rank 40           |
-| `packages/genshin-world/src/services/domains/toWeeklyBossSchedule.ts`                    | A weekly boss's trounce domain as a schedule: every day open, no tree or resin                                  |
-| `packages/genshin-world/src/services/domains/readWeeklyBossDomains.ts`                   | The weekly bosses' trounce domains from the hosted data, none before a publish writes them                      |
-| `packages/genshin-world/src/models/domains/WeeklyBossDomain.ts`                          | A weekly boss domain's levels as the domains dataset writes them                                                |
-| `packages/genshin-world/src/models/domains/DomainKind.ts`                                | The challenge domains' kinds, with Trounce for a weekly boss's domain                                           |
-| `packages/genshin-world/src/models/world/DomainEntranceLandmark.ts`                      | A domain entrance's kind, its entry and the title its name is read from                                         |
-| `packages/genshin-world/src/services/map/computeJumpLandmarkTextKey.ts`                  | A domain entrance's jump name: its own title                                                                    |
-| `packages/genshin-world/src/services/map/checkIsWeeklyBossEntrance.ts`                   | Whether a landmark is a weekly boss's entrance, which opens by its quests, not resonance                        |
-| `packages/genshin-text/src/models/GameTextKey.ts`                                        | The 39 domain entrance titles, `DomainEntrance<N>` for `UI_DUNGEON_ENTRY_<N>`                                   |
-| `packages/genshin-world/src/services/enemy/displaceEnemy.ts`                             | A strike's push, which a boss resists                                                                           |
-| `scripts/src/services/genshinAssets/domains/getDomainEntryKind.ts`                       | A domain entry's kind: Trounce for a weekly boss's entry, else its entry type's                                 |
-| `scripts/src/services/genshinAssets/domains/toDomainEntrance.ts`                         | A domain entrance's kind, place and title, read from its entry and its point                                    |
-| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`                          | Builds the bosses' kinds as it builds every camp's                                                              |
+| File                                                                                     | Role after the change                                                                                            |
+| :--------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/enemy/stepEnemy.ts`                                 | Runs a boss's moves in turn from its moves argument, its states kept                                             |
+| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                   | A boss back by its claim's time, not at once                                                                     |
+| `packages/genshin-world/src/composables/useWorldTrounceBlossoms.ts`                      | The blossoms by spawn: written on defeat, claimed at 40 resin, forgotten at respawn                              |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`                          | Holds a boss until its claim's time or a teleport, reports each respawn and each shield break                    |
+| `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`                         | Still nothing for a boss, its reward the blossom's                                                               |
+| `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`                        | Each boss's poise type and immunities                                                                            |
+| `packages/genshin-world/src/services/bosses/anemoHypostasis.ts`                          | The first normal boss's moves and Second Wind threshold                                                          |
+| `packages/genshin-world/src/services/bosses/BossMovesMap.ts`                             | Each boss kind's moves, which the enemies' step is passed                                                        |
+| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossDomainOpen.ts`              | Whether a weekly boss's domain is open, once its introducing quests are done                                     |
+| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossEntryOpen.ts`               | Whether a weekly boss's Trounce Domain entrance is open: its introducing quests are done                         |
+| `packages/genshin-world/src/services/bosses/drawWeeklyBossReward.ts`                     | What a weekly boss's claim pays at a World Level: Mora, talent, billet, gems, Dream Solvent                      |
+| `scripts/src/services/genshinAssets/domains/toWeeklyBossDomains.ts`                      | Each weekly boss's trounce domain, its levels read from the entry's dungeons                                     |
+| `packages/genshin-world/src/services/bosses/stormterror.ts`                              | Stormterror's moves, phases, shield and wind currents, from the wiki                                             |
+| `packages/genshin-world/src/composables/useWorldDomains.ts`                              | Steps the arena each frame, counting shield breaks into Stormterror's fight and returning its transition attacks |
+| `packages/genshin-world/src/services/bosses/startBossMove.ts`                            | Starts a named move as a boss's next, while the boss is chasing                                                  |
+| `packages/genshin-world/src/services/bosses/stepStormterrorFight.ts`                     | Steps Stormterror's five phases by time and shield breaks, naming each transition attack                         |
+| `packages/genshin-world/src/services/bosses/computeStormterrorWindCurrentPlaces.ts`      | The wind currents' stand-in places on a ring beyond Dvalin's camp, PROVISIONAL                                   |
+| `packages/genshin-world/src/models/bosses/TrounceBlossom.ts`                             | A blossom's claim times by kind: a normal boss's one claim, a weekly boss's one a week                           |
+| `packages/genshin-world/src/services/bosses/checkIsTrounceBlossomClaimable.ts`           | Whether a blossom can be claimed at a time, by its kind's rule                                                   |
+| `packages/genshin-world/src/services/handbook/toHandbookDomains.ts`                      | The Domains tab's rows: each domain's lock, its quick challenge and its first clear to claim                     |
+| `packages/genshin-world/src/services/bosses/markWeeklyBossTopClear.ts`                   | The `<entryId>:top` mark a weekly boss's highest tier leaves in the cleared set                                  |
+| `packages/genshin-world/src/services/bosses/checkIsWeeklyBossFirstClaimable.ts`          | Whether a weekly boss's first clear is claimable: its top mark and no claim yet                                  |
+| `packages/genshin-world/src/services/bosses/computeWeeklyBossQuickChallengeDungeonId.ts` | The tier a weekly boss's quick challenge enters, the highest its rank reaches, from Adventure Rank 40            |
+| `packages/genshin-world/src/services/domains/toWeeklyBossSchedule.ts`                    | A weekly boss's trounce domain as a schedule: every day open, no tree or resin                                   |
+| `packages/genshin-world/src/services/domains/readWeeklyBossDomains.ts`                   | The weekly bosses' trounce domains from the hosted data, none before a publish writes them                       |
+| `packages/genshin-world/src/models/domains/WeeklyBossDomain.ts`                          | A weekly boss domain's levels as the domains dataset writes them                                                 |
+| `packages/genshin-world/src/models/domains/DomainKind.ts`                                | The challenge domains' kinds, with Trounce for a weekly boss's domain                                            |
+| `packages/genshin-world/src/models/world/DomainEntranceLandmark.ts`                      | A domain entrance's kind, its entry and the title its name is read from                                          |
+| `packages/genshin-world/src/services/map/computeJumpLandmarkTextKey.ts`                  | A domain entrance's jump name: its own title                                                                     |
+| `packages/genshin-world/src/services/map/checkIsWeeklyBossEntrance.ts`                   | Whether a landmark is a weekly boss's entrance, which opens by its quests, not resonance                         |
+| `packages/genshin-text/src/models/GameTextKey.ts`                                        | The 39 domain entrance titles, `DomainEntrance<N>` for `UI_DUNGEON_ENTRY_<N>`                                    |
+| `packages/genshin-world/src/services/enemy/displaceEnemy.ts`                             | A strike's push, which a boss resists                                                                            |
+| `scripts/src/services/genshinAssets/domains/getDomainEntryKind.ts`                       | A domain entry's kind: Trounce for a weekly boss's entry, else its entry type's                                  |
+| `scripts/src/services/genshinAssets/domains/toDomainEntrance.ts`                         | A domain entrance's kind, place and title, read from its entry and its point                                     |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`                          | Builds the bosses' kinds as it builds every camp's                                                               |
 
 ## Sources
 
