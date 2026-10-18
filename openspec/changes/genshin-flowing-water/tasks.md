@@ -8,3 +8,4 @@
 
 - [x] 2.1 Fit each river's ribbon to the centreline, width and level of its water mesh once the water prefabs are exported. Verify: a test named after the scenario 'A river's ribbon follows the game's centreline' written first and seen failing.
 - [ ] 2.2 Fit the falls outside the capitals' witnesses the same way, once their meshes are exported. Verify: a test named after the scenario 'A fall stands at the game's lip' written first and seen failing, against a fall outside the capitals.
+- [x] 2.3 Draw each fitted river's ribbon in the water's material, beside the still water, in each region its game export does not stand in. Verify: a test named after the scenario 'A region the game's export stands in draws no river or fall of its own' written first and seen failing; the ribbon is checked by eye at integration against Liyue's river, the scenario 'A river's ribbon is drawn along its course'.

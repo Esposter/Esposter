@@ -33,6 +33,7 @@ import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldOculi from "#src/components/World/Oculi/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
+import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
@@ -531,6 +532,7 @@ onUnmounted(() => {
     />
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldWaterfalls :region-data-map :scene-export-map :water-uniforms />
+    <WorldRivers :light-uniforms :region-data-map :scene-export-map :sky-uniforms :water-uniforms />
     <WorldLandmarks
       :get-ground-height
       :hidden-kinds="hiddenLandmarkKinds"
