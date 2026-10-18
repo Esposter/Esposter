@@ -2,9 +2,13 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
 import { createRazorKitBehaviour, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -17,6 +21,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const RAZOR_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, RAZOR_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createRazorCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 200 }]),
@@ -26,6 +31,23 @@ const createRazorCombatant = (ascension: number, constellationCount: number): Co
   kit: RAZOR_KIT,
   level: 90,
 });
+
+// The CRIT Rate a normal attack of Razor's gets from an enemy at a share of its health, at a constellation count
+const readCriticalRateBonus = (constellationCount: number, healthShare: number): number => {
+  const combatant = createRazorCombatant(0, constellationCount);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  return (
+    RAZOR_KIT.getStrikeCriticalRateBonus?.(
+      {
+        attackTag: AttackTag.NormalAttack,
+        body: createKitTestContext(combatant).body,
+        combatant,
+        hit: takeOne(takeOne(RAZOR_KIT.normalAttacks).hits),
+      },
+      { ...enemy, health: healthShare * enemy.maxHealth },
+    ) ?? 0
+  );
+};
 
 describe(createRazorKitBehaviour, () => {
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
@@ -162,4 +184,16 @@ describe(createRazorKitBehaviour, () => {
       );
     },
   );
+
+  test("a Constellation 2 switch adds 10% CRIT Rate to his strikes on an enemy below 30% HP", () => {
+    expect.hasAssertions();
+
+    expect(readCriticalRateBonus(2, 0.2)).toBe(0.1);
+  });
+
+  test("a Constellation 1 switch, or an enemy at 30% HP, adds no CRIT Rate to his strikes", () => {
+    expect.hasAssertions();
+
+    expect([readCriticalRateBonus(1, 0.2), readCriticalRateBonus(2, 0.3)]).toStrictEqual([0, 0]);
+  });
 });
