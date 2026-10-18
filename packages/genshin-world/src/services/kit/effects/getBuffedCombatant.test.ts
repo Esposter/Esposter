@@ -81,6 +81,41 @@ describe(getBuffedCombatant, () => {
     expect(buffed.attributes.defense).toBeCloseTo(250);
   });
 
+  test("a buff on Max HP raises the buffed combatant's max health, as a percentage of it does", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: DILUC_KIT,
+      level: 90,
+    };
+    const flatBuffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 500, attribute: Attribute.Health, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+    expect(flatBuffed.attributes.maxHealth).toStrictEqual(1500);
+    const percentBuffed = getBuffedCombatant(
+      combatant,
+      [
+        {
+          amount: 0.5,
+          attribute: Attribute.HealthPercent,
+          characterId: CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 1,
+        },
+      ],
+      party,
+      new Map(),
+    );
+    expect(percentBuffed.attributes.maxHealth).toStrictEqual(1500);
+  });
+
   test("raises a Geo team's hits by 15% while a shield holds it, so a hit deals 1.15 times its damage", () => {
     expect.hasAssertions();
 

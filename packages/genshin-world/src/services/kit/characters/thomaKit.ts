@@ -10,6 +10,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a normal
@@ -58,9 +59,15 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
         striker.ascension >= FLAMING_ASSAULT_ASCENSION
           ? FLAMING_ASSAULT_MAX_HEALTH_SHARE * striker.attributes.maxHealth
           : 0,
-      onStrike: ({ kitEffectState }, { combatant: { attributes, characterId } }) => {
+      onStrike: ({ characterIdCombatantMap, kitEffectState, party }, { combatant }) => {
         if (isShielded) return;
         isShielded = true;
+        const { attributes, characterId } = getBuffedCombatant(
+          combatant,
+          kitEffectState.effects,
+          party,
+          characterIdCombatantMap,
+        );
         const standingHealth =
           kitEffectState.effects.find(
             (effect): effect is KitShield =>

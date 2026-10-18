@@ -12,9 +12,10 @@ import { ENDURING_ROCK_DAMAGE_BONUS } from "#src/services/party/constants";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
-// The combatant as its hits are priced while the buffs on it are on and its passives read its HP in the party: each bonus
-// Adds to its attribute total, and its ATK and DEF are built from their totals again, so a percentage raises them too.
-// Enduring Rock's DMG dealt raises every Element's DMG Bonus and the Physical DMG Bonus while a shield holds the team
+// The combatant as its hits are priced while the buffs on it are on and its passives read its HP in the party: each
+// Bonus adds to its attribute total, and its Max HP, ATK and DEF are built from their totals again, so a percentage
+// Raises them too. Enduring Rock's DMG dealt raises every Element's DMG Bonus and the Physical DMG Bonus while a shield
+// Holds the team
 export const getBuffedCombatant = (
   combatant: Combatant,
   effects: readonly KitEffect[],
@@ -46,6 +47,7 @@ export const getBuffedCombatant = (
       attack: computeStatTotal(attributeTotalMap, Attribute.BaseAttack, Attribute.AttackPercent, Attribute.Attack),
       attributeTotalMap,
       defense: computeStatTotal(attributeTotalMap, Attribute.BaseDefense, Attribute.DefensePercent, Attribute.Defense),
+      maxHealth: computeStatTotal(attributeTotalMap, Attribute.BaseHealth, Attribute.HealthPercent, Attribute.Health),
     },
   };
 };

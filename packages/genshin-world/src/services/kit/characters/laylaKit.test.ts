@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -115,5 +116,23 @@ describe(createLaylaKitBehaviour, () => {
       radius: field?.radius,
       tickIntervalFrames: Math.round((field?.tickIntervalSeconds ?? 0) * 60),
     }).toStrictEqual({ nextTickFrames: 36, radius: 12, tickIntervalFrames: 90 });
+  });
+
+  test("starlight Slug's damage is priced from the Max HP of the striker it hits, with its buffs on", () => {
+    expect.hasAssertions();
+    const kitEffectState = castAction(LAYLA_KIT.elementalBurst);
+    const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+    field?.onTick(createKitTestContext(createLaylaCombatant(), { kitEffectState }), 0);
+    const slugStrike = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon")?.hits[0];
+    const buffedStriker: Combatant = {
+      ...createLaylaCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+        { attribute: Attribute.HealthPercent, value: 0.5 },
+      ]),
+    };
+    const damageBonusOf = (striker: Combatant) => slugStrike?.additiveBaseDamageBonus?.(striker) ?? 0;
+
+    expect(damageBonusOf(buffedStriker)).toBeCloseTo(1.5 * damageBonusOf(createLaylaCombatant()));
   });
 });

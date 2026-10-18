@@ -1,9 +1,9 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -37,14 +37,14 @@ export const createLaylaKitBehaviour = ({ readHit, readParameter, readSeconds }:
   const starlightSlugStartSeconds = readSeconds("starlightSlugStart");
   const starlightSlugSeconds = readSeconds("starlightSlugDuration");
   const starlightSlugTickIntervalSeconds = readSeconds("starlightSlugTickInterval");
-  const createStarlightSlugStrike = ({ attributes: { maxHealth } }: Combatant): KitHit => ({
+  const createStarlightSlugStrike = (): KitHit => ({
     ...starlightSlugBaseStrike,
-    additiveBaseDamageBonus: () => starlightSlugMaxHealthShare * maxHealth,
+    additiveBaseDamageBonus: createMaxHealthScaledBonus(starlightSlugMaxHealthShare),
   });
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        const starlightSlugStrike = createStarlightSlugStrike(combatant);
+        const starlightSlugStrike = createStarlightSlugStrike();
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: starlightSlugStartSeconds,
           onTick: ({ kitEffectState: tickEffectState }) =>
