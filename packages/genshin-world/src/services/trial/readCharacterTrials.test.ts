@@ -1,50 +1,21 @@
-import type { readGameData } from "#src/services/data/readGameData";
-
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readGameData } from "#src/services/data/readGameData";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
-import { describe, expect, test, vi } from "vitest";
-
-const { TABLES } = vi.hoisted(() => ({
-  TABLES: {
-    "characterTrials/avatars": { 1022: { characterId: 10_000_022, level: 90, trialAvatarId: 1022 } },
-    "characterTrials/builds": {
-      10_000_022: { characterId: 10_000_022, constellation: 0, refinement: 1, weaponId: 11_301 },
-    },
-    "characterTrials/reliquaries": {
-      91: {
-        id: 91,
-        level: 4,
-        mainAffix: "FIGHT_PROP_ATTACK_PERCENT",
-        minorAffixes: [{ attribute: "FIGHT_PROP_ATTACK", value: 4.67 }],
-        rarity: 5,
-        setId: 15_021,
-        slot: "EQUIP_BRACER",
-      },
-    },
-    "characterTrials/rewards": { 480_001: [{ count: 5, itemId: 201 }] },
-    "characterTrials/stages": {
-      51_001: { dungeonId: 6131, id: 51_001, rewardId: 480_001, trialAvatarId: 1022, trialAvatarIndexId: 1 },
-    },
-    "characterTrials/templates": [{ level: 85, reliquaryIds: [91], talentLevel: 8 }],
-  },
-}));
-
-vi.mock(import("#src/services/data/readGameData"), () => ({
-  readGameData: ((_gameDataBaseUrl: string, key: string) =>
-    Promise.resolve(TABLES[key as keyof typeof TABLES])) as typeof readGameData,
-}));
+import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 describe(readCharacterTrials, () => {
   // Each table comes back under its own field, so a swapped key would hand one table's records to another
   test("reads each character trial table under its own published key", async () => {
     expect.hasAssertions();
 
-    await expect(readCharacterTrials("https://example.invalid/")).resolves.toStrictEqual({
-      avatars: TABLES["characterTrials/avatars"],
-      builds: TABLES["characterTrials/builds"],
-      reliquaries: TABLES["characterTrials/reliquaries"],
-      rewards: TABLES["characterTrials/rewards"],
-      stages: TABLES["characterTrials/stages"],
-      templates: TABLES["characterTrials/templates"],
+    expect(await readCharacterTrials(GAME_DATA_LOCAL_BASE_URL)).toStrictEqual({
+      avatars: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/avatars", z.unknown()),
+      builds: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/builds", z.unknown()),
+      reliquaries: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/reliquaries", z.unknown()),
+      rewards: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/rewards", z.unknown()),
+      stages: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/stages", z.unknown()),
+      templates: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/templates", z.unknown()),
     });
   });
 });
