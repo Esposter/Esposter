@@ -15,4 +15,11 @@ export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
 export const SHOP_GOODS_KEYS: readonly (readonly [number, Extract<GameDataKey, `shops/${string}`>])[] = [
   [1002, "shops/souvenirMondstadt"],
   [1004, "shops/mondstadtGeneralGoods"],
+  [1011, "shops/mondstadtFlora"],
+  [1012, "shops/mondstadtCharles"],
+  [1013, "shops/mondstadtShiliu"],
+  [1014, "shops/mondstadtSchulz"],
+  [1015, "shops/mondstadtBrook"],
+  [1017, "shops/mondstadtDraff"],
+  [1018, "shops/mondstadtChloris"],
 ];
