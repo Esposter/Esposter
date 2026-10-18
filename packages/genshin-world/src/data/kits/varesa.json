@@ -22,5 +22,14 @@
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11132 } },
   "skillCharges": { "cause": "Unsourced", "value": 2 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" },
+  "stances.fieryPassion.skill.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
+  },
+  "burstVariant.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.5 }
+  },
+  "burstVariant.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 }
 }

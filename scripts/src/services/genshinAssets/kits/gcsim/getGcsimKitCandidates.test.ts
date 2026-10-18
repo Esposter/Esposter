@@ -32,6 +32,7 @@ const KIT_TABLES: KitTables = {
   weaponType: WeaponType.Sword,
 };
 const attackConstant = (value: GoValue, line: number, file = "attack.go") => ({ elementLines: {}, file, line, value });
+const toConstantAt = (file: string, line: number, value: GoValue) => ({ elementLines: {}, file, line, value });
 const createCharacterFixture = (
   folder: string,
   {
@@ -639,6 +640,75 @@ describe(getGcsimKitCandidates, () => {
     ]);
     expect(candidateMap.get("stances.blessing.normalAttacks.1.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
       createBoxReach(-0.5, 5, 3.7),
+    ]);
+  });
+
+  test("gives Fiery Passion's skill the rush's frames and multiplier, and its flying kick the burst variant's", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("varesa", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArt",
+          durability: 25,
+          element: "attributes.Electro",
+          fieldLineMap: {},
+          file: "skill.go",
+          internalCooldownTag: "attacks.ICDTagVaresaCombatCycle",
+          line: 47,
+          talentVariable: "rush",
+          variableName: "ai",
+        },
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          durability: 25,
+          element: "attributes.Electro",
+          fieldLineMap: {},
+          file: "burst.go",
+          internalCooldownTag: "attacks.ICDTagNone",
+          line: 48,
+          talentVariable: "kick",
+          variableName: "ai",
+        },
+      ],
+      constants: [
+        ["fierySkillFrames", toConstantAt("skill.go", 33, frames(52))],
+        ["fierySkillHitmark", attackConstant(2, 19, "skill.go")],
+        ["burstFrames", toConstantAt("burst.go", 27, frames(122))],
+        ["burstHitmark", attackConstant(88, 18, "burst.go")],
+      ],
+      talentParameters: [
+        ["skill|Fiery Passion Rush DMG", { indexes: [0], line: 3 }],
+        ["burst|Fiery Passion Flying Kick DMG", { indexes: [0], line: 4 }],
+      ],
+      talentVariables: [
+        {
+          leaves: [{ path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: "skill" } }],
+          name: "fieryRush",
+        },
+        {
+          leaves: [{ path: [], reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: "burst" } }],
+          name: "fieryKick",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect([
+      valuesAt("stances.fieryPassion.skill.animationFrames"),
+      valuesAt("stances.fieryPassion.skill.hits.0.hitmarkFrames"),
+      valuesAt("stances.fieryPassion.skill.hits.0.multiplier"),
+      valuesAt("burstVariant.animationFrames"),
+      valuesAt("burstVariant.hits.0.hitmarkFrames"),
+      valuesAt("burstVariant.hits.0.multiplier"),
+    ]).toStrictEqual([
+      [52],
+      [2],
+      [{ index: 0, proudSkillGroupId: 2 }],
+      [122],
+      [88],
+      [{ index: 0, proudSkillGroupId: 1 }],
     ]);
   });
 });
