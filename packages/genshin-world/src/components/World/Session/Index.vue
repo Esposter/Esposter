@@ -1172,6 +1172,7 @@ useWorldSaveSync({
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
     mails: mails.value,
+    minedOutcrops: minedOutcrops.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
     party: playerRoster.value?.party ?? party,
@@ -1234,12 +1235,13 @@ const crafting = computed(() =>
 // The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
-const { refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
+const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
   breakOre,
   gameDataBaseUrl,
   getWorldNow,
   rank,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
+  savedMinedOutcrops: savedState.minedOutcrops,
 });
 const {
   chooseOutcropClaim,

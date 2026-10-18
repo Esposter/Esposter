@@ -23,6 +23,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - Adventure EXP, Mondstadt's Reputation (its level and EXP), the bounty taken (optional, absent while none is taken), the week's bounty and request claims (`[]` while none is held, and a save written before they were added is backfilled to `[]`) and each character's Companionship EXP, by character id;
 - the ranks whose Katheryne reward is claimed, from rank 2, as a list (`adventureRankRewardsClaimed`) ([adventure rank](../adventure-rank/design.md));
 - the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](../adventure-rank/design.md)).
+- the mining outcrops mined since the last reset, each by its place's id with the instant it was mined, absent while none is mined, so a reload keeps them gone until their respawn ([mining outcrops](../mining-outcrops/design.md));
 - the name the player chose for the Traveler, empty while none is chosen, which the [HUD](../hud/design.md)'s party shows in place of the game's own.
 
 It does not hold:

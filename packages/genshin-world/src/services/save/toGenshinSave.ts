@@ -48,6 +48,7 @@ export const toGenshinSave = ({
   inventory,
   investigationDay,
   mails,
+  minedOutcrops,
   namecardItemId,
   openedChestIds,
   party,
@@ -101,6 +102,9 @@ export const toGenshinSave = ({
   inventory: toInventorySave(inventory),
   investigationDay: toInvestigationDaySave(investigationDay),
   mails,
+  ...(minedOutcrops.length > 0 && {
+    minedOutcrops: minedOutcrops.map(({ id, minedAt }) => ({ id, minedAt: minedAt.toString() })),
+  }),
   namecardItemId,
   offerings: { frostbearingTree: frostbearingTreeProgress },
   openedChests: [...openedChestIds],

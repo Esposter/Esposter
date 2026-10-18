@@ -62,6 +62,9 @@ export const MAX_CLEARED_DOMAIN_COUNT = 64;
 export const MAX_FOUND_OCULUS_COUNT = 4096;
 // The camps a player clears once each, bounded by the enemy camps the regions' data holds: 4795 of them, counted on 2026-10-18
 export const MAX_CLEARED_CAMP_COUNT = 4795;
+// The mined outcrops a save holds, each once by its place: a mining prunes the ones whose respawn has come, so the bound is
+// The day's draws across the regions with room to spare
+export const MAX_MINED_OUTCROP_COUNT = 256;
 // The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
 // Mapped regions, counted from the official map's point list the puzzles build places on 2026-10-18
 export const MAX_SETTLED_SEELIE_COUNT = 547;
@@ -330,6 +333,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_CLEARED_CAMP_COUNT *
     getListEntryLength({ id: MAX_SAVE_ID, position: { x: MAX_SAVE_NUMBER, z: MAX_SAVE_NUMBER } }) +
+  MAX_MINED_OUTCROP_COUNT * getListEntryLength({ id: MAX_SAVE_ID, minedAt: MAX_SAVE_INSTANT }) +
   MAX_CLEARED_DOMAIN_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_SETTLED_SEELIE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_SOLVED_PUZZLE_COUNT * getListEntryLength(MAX_SAVE_ID) +

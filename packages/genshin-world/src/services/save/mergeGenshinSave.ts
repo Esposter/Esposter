@@ -8,6 +8,7 @@ import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTer
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { MinedOutcropSave } from "#src/models/gathering/MinedOutcropSave";
 import type { InvestigationDaySave } from "#src/models/investigation/InvestigationDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
@@ -212,6 +213,22 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
   }
   return enemyRespawns;
 };
+// A mined outcrop both copies hold is the later mining of the two, since the later one keeps it gone the longer
+const mergeMinedOutcrops = (account: MinedOutcropSave[], guest: MinedOutcropSave[]): MinedOutcropSave[] => {
+  const minedOutcropMap = new Map<string, MinedOutcropSave>();
+  for (const minedOutcrop of [...account, ...guest]) {
+    const heldMinedOutcrop = minedOutcropMap.get(minedOutcrop.id);
+    if (
+      heldMinedOutcrop === undefined ||
+      Temporal.Instant.compare(
+        Temporal.Instant.from(minedOutcrop.minedAt),
+        Temporal.Instant.from(heldMinedOutcrop.minedAt),
+      ) > 0
+    )
+      minedOutcropMap.set(minedOutcrop.id, minedOutcrop);
+  }
+  return [...minedOutcropMap.values()];
+};
 // A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
 // Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
 // And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
@@ -239,6 +256,7 @@ const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): st
     .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
 
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: Temporal.Instant): GenshinSave => {
+  const minedOutcrops = mergeMinedOutcrops(account.minedOutcrops ?? [], guest.minedOutcrops ?? []);
   const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
     account.reputationBountyClaimedAts,
     guest.reputationBountyClaimedAts,
@@ -340,6 +358,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: 
       solvedPuzzleIds: [...new Set([...account.puzzles.solvedPuzzleIds, ...guest.puzzles.solvedPuzzleIds])],
     },
     mails,
+    ...(minedOutcrops.length > 0 && { minedOutcrops }),
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,

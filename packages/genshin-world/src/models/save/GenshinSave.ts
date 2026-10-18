@@ -13,6 +13,7 @@ import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
 import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
+import { minedOutcropSaveSchema } from "#src/models/gathering/MinedOutcropSave";
 import { cardGameExpSaveSchema } from "#src/models/gcg/CardGameExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { homePlantingSaveSchema } from "#src/models/home/HomePlantingSave";
@@ -44,6 +45,7 @@ import {
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
+  MAX_MINED_OUTCROP_COUNT,
   MAX_SHOP_PURCHASE_COUNT,
   MAX_SAVE_INSTANT_LENGTH,
   MAX_TRAVELER_NAME_LENGTH,
@@ -94,6 +96,8 @@ export const genshinSaveSchema = z
     homePlantings: homePlantingSaveSchema,
     // The mails the player holds, each once by its id, with when it was delivered and whether it was claimed and read
     mails: createUniqueArraySchema(mailSaveSchema, "id").max(MAX_MAIL_COUNT),
+    // The mining outcrops mined since the last reset, each once by its place's id, absent while none is mined
+    minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
     inventory: inventorySaveSchema,
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)

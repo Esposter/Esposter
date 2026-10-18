@@ -33,6 +33,7 @@ describe("useMiningOutcrops", () => {
       getWorldNow: () => now.value,
       rank: ref(30),
       regionIds: ref<string[]>([]),
+      savedMinedOutcrops: [],
     });
     mining.placesMap.value = new Map([["mondstadt", places]]);
     return { breakOre, mining, now };
@@ -45,6 +46,25 @@ describe("useMiningOutcrops", () => {
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
     mining.strikeMiningOutcrops(body, claymoreHit, () => 0.5);
     expect(breakOre.mock.calls.map(([place]) => place)).toStrictEqual([places[0]]);
+    mining.refreshMiningOutcrops(now.value, () => 0.5);
+    expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
+    now.value = resetDay2;
+    mining.refreshMiningOutcrops(now.value, () => 0.5);
+    expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
+  });
+
+  test("a reload keeps a mined outcrop gone until the next reset", () => {
+    expect.hasAssertions();
+    const now = { value: resetDay1.add({ hours: 6 }) };
+    const mining = useMiningOutcrops({
+      breakOre: () => {},
+      gameDataBaseUrl: "https://example.test",
+      getWorldNow: () => now.value,
+      rank: ref(30),
+      regionIds: ref<string[]>([]),
+      savedMinedOutcrops: [{ id: "a", minedAt: resetDay1.add({ hours: 5 }) }],
+    });
+    mining.placesMap.value = new Map([["mondstadt", places]]);
     mining.refreshMiningOutcrops(now.value, () => 0.5);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
     now.value = resetDay2;
