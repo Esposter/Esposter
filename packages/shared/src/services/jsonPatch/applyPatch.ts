@@ -1,7 +1,9 @@
 import type { ApplyPatchesResult } from "#src/models/jsonPatch/ApplyPatchesResult";
 import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { Operation } from "#src/models/shared/Operation";
 import { addJsonValue } from "#src/services/jsonPatch/addJsonValue";
 import { parseJsonPointer } from "#src/services/jsonPatch/parseJsonPointer";
 import { readJsonValue } from "#src/services/jsonPatch/readJsonValue";
@@ -9,8 +11,6 @@ import { removeJsonValue } from "#src/services/jsonPatch/removeJsonValue";
 import { updateJsonValue } from "#src/services/jsonPatch/updateJsonValue";
 import { checkIsDeepEqual } from "#src/util/object/checkIsDeepEqual";
 import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 
 export const applyPatch = (document: unknown, operation: JsonPatchOperation): ApplyPatchesResult<unknown> => {
   switch (operation.op) {
@@ -19,8 +19,10 @@ export const applyPatch = (document: unknown, operation: JsonPatchOperation): Ap
     case JsonPatchOperationType.Copy:
       return addJsonValue(document, operation.path, readJsonValue(document, parseJsonPointer(operation.from)));
     case JsonPatchOperationType.Move: {
-      if (operation.from === operation.path) return { document, inverses: [] };
-      else if (operation.path.startsWith(`${operation.from}/`))
+      if (operation.from === operation.path) {
+        readJsonValue(document, parseJsonPointer(operation.from));
+        return { document, inverses: [] };
+      } else if (operation.path.startsWith(`${operation.from}/`))
         throw new InvalidOperationError(Operation.Update, operation.path, "a value cannot move into itself");
 
       const removed = removeJsonValue(document, operation.from);

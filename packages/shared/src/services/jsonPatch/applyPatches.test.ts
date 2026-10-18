@@ -1,9 +1,9 @@
 import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
-import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
-import { applyPatches } from "#src/services/jsonPatch/applyPatches";
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
 import { Operation } from "#src/models/shared/Operation";
+import { applyPatches } from "#src/services/jsonPatch/applyPatches";
 import { describe, expect, test } from "vitest";
 
 describe(applyPatches, () => {
@@ -107,6 +107,16 @@ describe(applyPatches, () => {
       applyPatches(document, [{ op: JsonPatchOperationType.Replace, path: "/c/e", value: 0 }]),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "/c/e", "no such member").message}]`,
+    );
+  });
+
+  test("refuses a move onto itself from a missing key", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      applyPatches(document, [{ from: "/b", op: JsonPatchOperationType.Move, path: "/b" }]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "/b", "no such member").message}]`,
     );
   });
 
