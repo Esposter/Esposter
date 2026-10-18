@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe(checkIsVendorShopOpen, () => {
   const OTHER_SHOP_ID = 1004;
-  const levels: OfferingLevel[] = [1, 2].map((level) => ({ itemCount: 1, itemId: 1, level, rewards: [] }));
+  const levels: OfferingLevel[] = [1, 2].map((level) => ({ items: [{ itemCount: 1, itemId: 1 }], level, rewards: [] }));
 
   test("a Souvenir Shop of Mondstadt stays closed until the Frostbearing Tree is at its last level", () => {
     expect.hasAssertions();

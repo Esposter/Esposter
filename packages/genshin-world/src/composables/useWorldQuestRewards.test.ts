@@ -38,7 +38,7 @@ const QUEST: Quest = {
     { count: 2, itemId: 202 },
     { count: 3, itemId: ITEM_ID },
     { count: 40, itemId: ADVENTURE_EXP_ITEM_ID },
-    { count: CHARACTER_EXP_TO_NEXT_LEVEL[0], itemId: CHARACTER_EXP_ITEM_ID },
+    { count: CHARACTER_EXP_TO_NEXT_LEVEL[0] ?? 0, itemId: CHARACTER_EXP_ITEM_ID },
   ],
   steps: [],
   talks: [],

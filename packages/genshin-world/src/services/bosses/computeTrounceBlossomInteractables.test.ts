@@ -16,7 +16,7 @@ describe(computeTrounceBlossomInteractables, () => {
     expect.hasAssertions();
 
     const unclaimed: TrounceBlossom = { place, uniqueDropId: 1 };
-    const claimedAt = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
+    const claimedAt = Temporal.Instant.fromEpochMilliseconds(0);
 
     expect(
       computeTrounceBlossomInteractables(new Map([[SPAWN_KEY, unclaimed]]), gameText, getGroundHeight),

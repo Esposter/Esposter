@@ -178,7 +178,9 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        placedDoings: ref([]),
         questStepTargets,
+        recordedDoingIds: ref(new Set<string>()),
         regionDataBaseUrl: "region-data",
         reputation,
         setReputation: (nextReputation) => {

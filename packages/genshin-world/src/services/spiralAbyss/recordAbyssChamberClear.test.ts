@@ -6,6 +6,7 @@ import type { AbyssFloorReward } from "#src/models/spiralAbyss/AbyssFloorReward"
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 
 import { AbyssStarConditionKind } from "#src/models/spiralAbyss/AbyssStarConditionKind";
+import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
 import { describe, expect, test } from "vitest";
 
@@ -142,8 +143,26 @@ describe(recordAbyssChamberClear, () => {
     expect.hasAssertions();
 
     const party = new Map<number, PartyMember>([
-      [1, { burstCooldownSeconds: 0, energy: 40, healthShare: 0.5, skillCooldownSeconds: 0 }],
-      [2, { burstCooldownSeconds: 0, energy: 0, healthShare: 0.25, skillCooldownSeconds: 0 }],
+      [
+        1,
+        {
+          burstCooldownSeconds: 0,
+          elementalState: createElementalState(),
+          energy: 40,
+          healthShare: 0.5,
+          skillCooldownSeconds: 0,
+        },
+      ],
+      [
+        2,
+        {
+          burstCooldownSeconds: 0,
+          elementalState: createElementalState(),
+          energy: 0,
+          healthShare: 0.25,
+          skillCooldownSeconds: 0,
+        },
+      ],
     ]);
 
     expect(

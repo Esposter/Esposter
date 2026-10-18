@@ -34,6 +34,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      travelerBonusLines: shallowRef([]),
       travelerElement: shallowRef<Element>(),
       wildlifePlaces: [],
     });
@@ -56,6 +57,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      travelerBonusLines: shallowRef([]),
       travelerElement: shallowRef<Element>(),
       wildlifePlaces: [],
     });
@@ -69,6 +71,7 @@ describe(useWorldCombat, () => {
     const onPartyDown = vi.fn<() => void>();
     const onPartyRevived = vi.fn<() => void>();
     const { party, respawnParty, reviveFallenParty } = useWorldCombat({
+      characterIdConstellationsMap: shallowRef(new Map()),
       enemyTables,
       events: createWorldEvents(),
       gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
@@ -79,6 +82,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      travelerBonusLines: shallowRef([]),
       travelerElement: shallowRef<Element>(),
       wildlifePlaces: [],
     });

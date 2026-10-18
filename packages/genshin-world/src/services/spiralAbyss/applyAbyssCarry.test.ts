@@ -1,11 +1,13 @@
 import type { PartyMember } from "#src/models/party/PartyMember";
 
+import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { applyAbyssCarry } from "#src/services/spiralAbyss/applyAbyssCarry";
 import { takeAbyssCarry } from "#src/services/spiralAbyss/takeAbyssCarry";
 import { describe, expect, test } from "vitest";
 
 const createMember = (energy: number, healthShare: number): PartyMember => ({
   burstCooldownSeconds: 0,
+  elementalState: createElementalState(),
   energy,
   healthShare,
   skillCooldownSeconds: 0,

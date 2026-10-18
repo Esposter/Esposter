@@ -33,7 +33,11 @@ describe(computeEnemyRespawnTime, () => {
     expect.hasAssertions();
 
     expect(
-      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { claimedAt: epoch, place })?.toString(),
+      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, {
+        claimedAt: epoch,
+        place,
+        uniqueDropId: 1,
+      })?.toString(),
     ).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
   });
 
@@ -42,12 +46,24 @@ describe(computeEnemyRespawnTime, () => {
 
     const teleportedAt = epoch.add({ seconds: 1 });
 
-    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place })).toBeUndefined();
     expect(
-      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place }, epoch.subtract({ seconds: 1 })),
+      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place, uniqueDropId: 1 }),
     ).toBeUndefined();
-    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, { place }, teleportedAt)?.toString()).toBe(
-      teleportedAt.toString(),
-    );
+    expect(
+      computeEnemyRespawnTime(
+        [EnemyType.Elite, EnemyType.Boss],
+        epoch,
+        { place, uniqueDropId: 1 },
+        epoch.subtract({ seconds: 1 }),
+      ),
+    ).toBeUndefined();
+    expect(
+      computeEnemyRespawnTime(
+        [EnemyType.Elite, EnemyType.Boss],
+        epoch,
+        { place, uniqueDropId: 1 },
+        teleportedAt,
+      )?.toString(),
+    ).toBe(teleportedAt.toString());
   });
 });

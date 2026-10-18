@@ -22,7 +22,7 @@ const CHARACTER: Character = {
 describe(raiseCharacterByExp, () => {
   test("a character is raised a level for each level's EXP its EXP covers", () => {
     expect.hasAssertions();
-    const [firstLevelExp, secondLevelExp] = CHARACTER_EXP_TO_NEXT_LEVEL;
+    const [firstLevelExp = 0, secondLevelExp = 0] = CHARACTER_EXP_TO_NEXT_LEVEL;
     expect(raiseCharacterByExp(CHARACTER, firstLevelExp + secondLevelExp - 1, MAX_LEVEL)).toStrictEqual({
       ...CHARACTER,
       level: 2,

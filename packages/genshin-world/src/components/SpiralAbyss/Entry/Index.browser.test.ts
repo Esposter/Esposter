@@ -10,7 +10,12 @@ describe("spiralAbyssEntry", () => {
 
     render(SpiralAbyssEntry, { props });
 
-    await expect.element(page.getByText(props.nameText[String(props.blessing.nameTextHash)])).toBeVisible();
-    await expect.element(page.getByText(props.nameText[String(props.blessing.descriptionTextHash)])).toBeVisible();
+    const nameTextOf = (textHash: number): string => {
+      const text = props.nameText[String(textHash)];
+      if (text === undefined) throw new Error(`No name text for ${textHash}`);
+      return text;
+    };
+    await expect.element(page.getByText(nameTextOf(props.blessing.nameTextHash))).toBeVisible();
+    await expect.element(page.getByText(nameTextOf(props.blessing.descriptionTextHash))).toBeVisible();
   });
 });
