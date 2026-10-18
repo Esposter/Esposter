@@ -187,7 +187,7 @@ const weaponPanel = computed(() => {
 const artifactSlotStats = computed(() =>
   ARTIFACT_SLOT_ORDER.map((slot) => {
     const artifact = character.value?.artifacts.find((wornArtifact) => wornArtifact.slot === slot);
-    return artifact ? getArtifactDetailStats(artifact, gameText) : undefined;
+    return artifact ? getArtifactDetailStats(artifact, gameText, statTables.artifactMainAffixCurves) : undefined;
   }),
 );
 // The artifact slots' names in the game's order

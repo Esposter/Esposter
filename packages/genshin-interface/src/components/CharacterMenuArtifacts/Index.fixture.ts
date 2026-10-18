@@ -19,7 +19,7 @@ export const variants = {
     setBonusLines: ["2-Piece Set: Attack +18%"],
     slotStats: [
       {
-        mainStat: { label: "Max HP", value: "+4,780" },
+        mainStat: { label: "Max HP", value: "+4780" },
         subStats: [
           { label: "ATK", value: "+19" },
           { label: "CRIT Rate", value: "+3.1%" },

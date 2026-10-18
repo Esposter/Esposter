@@ -10,7 +10,7 @@ interface ArtifactStatLine {
   value: string;
 }
 
-// A worn artifact's stats: its main stat, whose value is empty while the table it comes from is unread, and its minor affixes
+// A worn artifact's stats: its main stat with its value, and its minor affixes
 interface ArtifactSlotStats {
   mainStat: ArtifactStatLine;
   subStats: ArtifactStatLine[];
