@@ -6,7 +6,6 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 - [ ] [AI-native resources](../architecture-ai-native-resources-program/design.md) — beyond the content tools every type has, an open editor adopting an agent's save, the lifecycle as tools, the schema fixes and typed commands, wired once at the resource layer rather than per editor
 - [ ] [Flowchart shapes](../resource-flowchart-shapes/design.md) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place; waits on the [flowchart's future](../../deferred/resource/flowchart-on-editor-core/design.md), since a rebuild or a removal discards Vue Flow work
-- [ ] [Dashboard live canvas](../resource-dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it
 - [ ] [Dashboard card and table visuals](../resource-dashboard-card-and-table-visuals/design.md) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Note images](../resource-note-images/design.md) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
 - [ ] [Note Markdown portability](../resource-note-markdown-portability/design.md) — import and export a Note as a `.md` file

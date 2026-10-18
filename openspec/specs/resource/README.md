@@ -61,6 +61,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Published view analytics](published-view-analytics/design.md) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](dashboard-data-binding/design.md) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Dashboard duplicate visual](dashboard-duplicate-visual/design.md) — Duplicate on a tile's corner copies its chart settings and binding
+- [Dashboard live canvas](dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data, not a stock icon
 - [Dashboard chart interaction](dashboard-chart-interaction/design.md) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
 - [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: pure placement functions, Pointer Events, one write per gesture
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
