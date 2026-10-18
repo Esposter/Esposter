@@ -20,6 +20,7 @@
   "hits.fieldDamage.1.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.fieldDamage.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 339 } },
   "hits.fieldDamage.1.poiseDamage": { "cause": "Unclassified", "value": 50 },
+  "hits.fieldDamage.1.hitmarkFrames": { "cause": "Unsourced", "value": 640 },
   "normalAttacks.0.hits.0.healParty.attackShare": { "cause": "Unclassified", "value": 0.15 },
   "normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
