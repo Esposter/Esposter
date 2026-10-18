@@ -1,18 +1,19 @@
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 
 export const mjAccordionTitle: MjmlComponentSpecification = {
   allowedAttributes: {
     "background-color": "color",
     color: "color",
-    "font-size": "unit(px)",
     "font-family": "string",
+    "font-size": "unit(px)",
     "font-weight": "string",
+    padding: "unit(px,%){1,4}",
     "padding-bottom": "unit(px,%)",
     "padding-left": "unit(px,%)",
     "padding-right": "unit(px,%)",
     "padding-top": "unit(px,%)",
-    padding: "unit(px,%){1,4}",
   },
   children: [],
   contentKind: MjmlContentKind.Label,

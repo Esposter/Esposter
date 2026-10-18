@@ -1,4 +1,5 @@
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 
 export const mjText: MjmlComponentSpecification = {
@@ -14,11 +15,11 @@ export const mjText: MjmlComponentSpecification = {
     height: "unit(px,%)",
     "letter-spacing": "unitWithNegative(px,em)",
     "line-height": "unit(px,%,)",
+    padding: "unit(px,%){1,4}",
     "padding-bottom": "unit(px,%)",
     "padding-left": "unit(px,%)",
     "padding-right": "unit(px,%)",
     "padding-top": "unit(px,%)",
-    padding: "unit(px,%){1,4}",
     "text-decoration": "string",
     "text-transform": "string",
     "vertical-align": "enum(top,bottom,middle)",

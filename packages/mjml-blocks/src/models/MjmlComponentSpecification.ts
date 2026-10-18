@@ -4,7 +4,7 @@ import type { MjmlContentKind } from "#src/models/MjmlContentKind";
 export interface MjmlComponentSpecification {
   allowedAttributes: Record<string, string>;
   children: string[];
-  contentKind: MjmlContentKind | undefined;
+  contentKind?: MjmlContentKind;
   defaultAttributes: Record<string, string>;
   hasAlternativeText: boolean;
   type: string;

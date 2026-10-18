@@ -1,4 +1,5 @@
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 
 export const mjRaw: MjmlComponentSpecification = {

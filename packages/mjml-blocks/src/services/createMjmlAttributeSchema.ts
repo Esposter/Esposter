@@ -1,8 +1,8 @@
 import type { MjmlAttributeType } from "#src/models/MjmlAttributeType";
 
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
-import { MJML_COLOR_MATCHERS, ALLOWED_URL_SCHEMES } from "#src/services/constants";
 import { checkIsMjmlAddressAttribute } from "#src/services/checkIsMjmlAddressAttribute";
+import { ALLOWED_URL_SCHEMES, MJML_COLOR_MATCHERS } from "#src/services/constants";
 import { checkIsAllowedUrl, exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
 
@@ -20,7 +20,7 @@ const createUnitPattern = (units: string[], allowsNegative: boolean, minCount: n
 const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
   switch (type.kind) {
     case MjmlAttributeKind.Boolean:
-      return z.string().refine((value) => ["true", "false"].includes(value));
+      return z.string().refine((value) => ["false", "true"].includes(value));
     case MjmlAttributeKind.Color:
       return z.string().refine((value) => MJML_COLOR_MATCHERS.some((matcher) => matcher.test(value)));
     case MjmlAttributeKind.Enum:

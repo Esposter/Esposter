@@ -20,7 +20,7 @@ export const renderMjmlNode = <TContent>(
   }));
 
   return (node, slots) => {
-    const attributes: Record<string, string | boolean> = {};
+    const attributes: Record<string, boolean | string> = {};
     for (const { name, type } of attributeTypes) {
       const value = node.props[name];
       if (typeof value === "string")
@@ -32,14 +32,14 @@ export const renderMjmlNode = <TContent>(
     if (specification.children.length > 0) return { ...element, children: slots.children ?? [] };
 
     switch (specification.contentKind) {
-      case undefined:
-        return element;
       case MjmlContentKind.Label:
         return { ...element, content: escapeText(z.string().parse(node.props.content)) };
       case MjmlContentKind.Raw:
         return { ...element, content: z.string().parse(node.props.content) };
       case MjmlContentKind.RichText:
         return { ...element, content: richText.renderHtml(richText.schema.parse(node.props.content)) };
+      case undefined:
+        return element;
       default:
         return exhaustiveGuard(specification.contentKind);
     }

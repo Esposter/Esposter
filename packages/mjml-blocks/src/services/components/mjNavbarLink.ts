@@ -1,4 +1,5 @@
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 
 export const mjNavbarLink: MjmlComponentSpecification = {
@@ -9,16 +10,16 @@ export const mjNavbarLink: MjmlComponentSpecification = {
     "font-style": "string",
     "font-weight": "string",
     href: "string",
-    name: "string",
-    target: "string",
-    rel: "string",
     "letter-spacing": "unitWithNegative(px,em)",
     "line-height": "unit(px,%,)",
+    name: "string",
+    padding: "unit(px,%){1,4}",
     "padding-bottom": "unit(px,%)",
     "padding-left": "unit(px,%)",
     "padding-right": "unit(px,%)",
     "padding-top": "unit(px,%)",
-    padding: "unit(px,%){1,4}",
+    rel: "string",
+    target: "string",
     "text-decoration": "string",
     "text-transform": "string",
   },

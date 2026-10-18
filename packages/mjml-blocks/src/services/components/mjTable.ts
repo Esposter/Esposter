@@ -1,4 +1,5 @@
 import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 
 export const mjTable: MjmlComponentSpecification = {
@@ -7,17 +8,17 @@ export const mjTable: MjmlComponentSpecification = {
     border: "string",
     cellpadding: "integer",
     cellspacing: "integer",
-    "container-background-color": "color",
     color: "color",
+    "container-background-color": "color",
     "font-family": "string",
     "font-size": "unit(px)",
     "font-weight": "string",
     "line-height": "unit(px,%,)",
+    padding: "unit(px,%){1,4}",
     "padding-bottom": "unit(px,%)",
     "padding-left": "unit(px,%)",
     "padding-right": "unit(px,%)",
     "padding-top": "unit(px,%)",
-    padding: "unit(px,%){1,4}",
     role: "enum(none,presentation)",
     "table-layout": "enum(auto,fixed,initial,inherit)",
     "vertical-align": "enum(top,bottom,middle)",

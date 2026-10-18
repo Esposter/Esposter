@@ -8,7 +8,6 @@ export const mjGroup: MjmlComponentSpecification = {
     width: "unit(px,%)",
   },
   children: ["mj-column", "mj-raw"],
-  contentKind: undefined,
   defaultAttributes: { direction: "ltr" },
   hasAlternativeText: false,
   type: "mj-group",

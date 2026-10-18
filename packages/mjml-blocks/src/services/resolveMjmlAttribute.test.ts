@@ -18,7 +18,7 @@ describe(resolveMjmlAttribute, () => {
     expect.hasAssertions();
 
     const definition = getBlockTypeDefinition(TEST_REGISTRY, "mj-text");
-    const text = { props: { "font-size": "15px", content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" };
+    const text = { props: { content: "Hi", "font-size": "15px", id: TEST_TEXT_ID }, type: "mj-text" };
     expect(
       definition &&
         resolveMjmlAttribute(definition, { attributes: { "mj-text": { "font-size": "20px" } } }, text, "font-size"),

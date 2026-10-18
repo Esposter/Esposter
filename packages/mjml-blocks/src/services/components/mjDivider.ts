@@ -2,6 +2,7 @@ import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecif
 
 export const mjDivider: MjmlComponentSpecification = {
   allowedAttributes: {
+    align: "enum(left,center,right)",
     "border-color": "color",
     "border-style": "string",
     "border-width": "unit(px)",
@@ -12,17 +13,15 @@ export const mjDivider: MjmlComponentSpecification = {
     "padding-right": "unit(px,%)",
     "padding-top": "unit(px,%)",
     width: "unit(px,%)",
-    align: "enum(left,center,right)",
   },
   children: [],
-  contentKind: undefined,
   defaultAttributes: {
+    align: "center",
     "border-color": "#000000",
     "border-style": "solid",
     "border-width": "4px",
     padding: "10px 25px",
     width: "100%",
-    align: "center",
   },
   hasAlternativeText: false,
   type: "mj-divider",

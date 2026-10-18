@@ -1,6 +1,6 @@
-import { EXCLUDED_MJML_TAGS, MJML_COMPONENT_SPECIFICATIONS, MJML_BODY_CHILDREN } from "#src/services/constants";
-import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
+import { EXCLUDED_MJML_TAGS, MJML_BODY_CHILDREN, MJML_COMPONENT_SPECIFICATIONS } from "#src/services/constants";
 import { TEST_RICH_TEXT } from "#src/services/constants.test";
+import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createRequire } from "node:module";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
