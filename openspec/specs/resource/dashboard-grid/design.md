@@ -31,6 +31,7 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 - **Rendering compacts; it does not write back.** A saved layout can overlap: a new visual is placed at a fixed cell without checking its neighbours, so rendering a fitted layout can draw a visual above or below its saved row while the store keeps the saved cell. Writing the compacted layout back to the store on render was rejected: it would write on every open.
 - **A drag previews in the grid until release.** Writing each intermediate position to the store during a drag was rejected. The preview lives in the package's state until release, so a cancelled drag leaves no trace.
 - **Touch is captured only where the page is edited.** Setting `touch-action: none` on every tile was rejected, since it stops a phone from scrolling a published dashboard through its visuals. The published grid leaves touch alone, and the editor claims it for dragging.
+- **The look is the dashboard's own style.** `grid-layout-plus` shipped its CSS inside its JavaScript and wrote it into the page at runtime, which was rejected: the app's build never sees CSS a script writes, so it could not be prefixed, transpiled or minified with the rest ([grid-layout-plus#26](https://github.com/qmhc/grid-layout-plus/issues/26)), and the tiles would wear the library's class names and colours rather than the UI library's tokens. The package ships no styles, and the scoped style block in `Grid.vue` draws the tiles, the corner handle and the placeholder.
 
 ## Key files
 
