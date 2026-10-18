@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -44,12 +45,14 @@ describe(createUsedActionTeamBuffSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     module.onKitEvent?.(event, createKitTestContext(wearer, { kitEffectState, party }), wearer);
     expect(
-      kitEffectState.effects.map(({ amount, attribute, characterId, secondsRemaining }) => ({
-        amount,
-        attribute,
-        characterId,
-        secondsRemaining,
-      })),
+      kitEffectState.effects
+        .filter((effect): effect is KitBuff => effect.kind === "buff")
+        .map(({ amount, attribute, characterId, secondsRemaining }) => ({
+          amount,
+          attribute,
+          characterId,
+          secondsRemaining,
+        })),
     ).toStrictEqual([
       {
         amount: 0.2,
