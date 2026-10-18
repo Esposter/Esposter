@@ -8,6 +8,7 @@ import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
+import { computeQuestStepTargets } from "#src/services/quest/computeQuestStepTargets";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -45,6 +46,8 @@ export const useWorldQuests = ({
   const questsOffered = computed(() =>
     quests.value.filter(({ id, offerTalkIds }) => offerTalkIds.length > 0 && !questProgressMap.value.has(id)),
   );
+  // The Interact targets the quests name, and those their reached steps name, which hide a listed transport point
+  const questStepTargets = computed(() => computeQuestStepTargets(quests.value, questProgressMap.value));
   const questTextMap = shallowRef<Readonly<Record<string, string>>>({});
   // The main quests done, by id. The Archive opens once the quest it opens after is among them
   const finishedMainQuestIds = computed(
@@ -121,6 +124,7 @@ export const useWorldQuests = ({
     quests,
     questsInProgress,
     questsOffered,
+    questStepTargets,
     questTargetId,
     questTextMap,
     trackedQuestId,

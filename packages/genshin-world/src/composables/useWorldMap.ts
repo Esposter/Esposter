@@ -2,6 +2,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
+import type { TransPointUnlock } from "#src/models/transPoint/TransPointUnlock";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -20,8 +21,10 @@ import { getFinishedReputationRewards } from "#src/services/reputation/getFinish
 import { getReputationRequestBindings } from "#src/services/reputation/getReputationRequestBindings";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
+import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHiddenTransPointIds";
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
+import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { computed, shallowRef, watch } from "vue";
 
@@ -32,6 +35,7 @@ export const useWorldMap = ({
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  questStepTargets,
   regionDataBaseUrl,
   reputation,
   setReputation,
@@ -43,6 +47,7 @@ export const useWorldMap = ({
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
+  questStepTargets: Readonly<Ref<{ named: ReadonlySet<string>; reached: ReadonlySet<string> }>>;
   regionDataBaseUrl: string;
   reputation: Ref<ReputationProgress>;
   setReputation: (nextReputation: ReputationProgress) => void;
@@ -70,11 +75,35 @@ export const useWorldMap = ({
       console.error(error);
     },
   );
+  // The transport points the open world's unlock table lists, read as the world opens. One a quest step names stays hidden
+  // From the map and the prompt list until that step is reached
+  const transPointUnlocks = shallowRef<TransPointUnlock[]>([]);
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
+    (unlocks) => {
+      transPointUnlocks.value = unlocks;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+  const hiddenTransPointIds = computed(() =>
+    computeHiddenTransPointIds(
+      transPointUnlocks.value.map(({ pointId }) => pointId),
+      questStepTargets.value.named,
+      questStepTargets.value.reached,
+    ),
+  );
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
   const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
-  // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
+  // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to.
+  // A waypoint the game hides until its step is left out of them
   const lockedJumpLandmarks = computed(() =>
-    jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
+    jumpLandmarks.value.filter(({ id }) => {
+      if (unlockedLandmarkIds.value.has(id)) return false;
+      const pointId = computeLandmarkPointId(id);
+      return pointId === undefined || !hiddenTransPointIds.value.has(pointId);
+    }),
   );
   // The domain entrances the player has yet to unlock, which the prompt list offers to resonate with, as it does a waypoint
   const lockedDomainEntranceLandmarks = computed(() =>

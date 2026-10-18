@@ -22,6 +22,7 @@ import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
+import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,6 +31,7 @@ import { computed, ref, shallowRef } from "vue";
 vi.mock(import("#src/services/exploration/readMondstadtExplorationAreas"));
 vi.mock(import("#src/services/reputation/readMondstadtReputation"));
 vi.mock(import("#src/services/transPoint/readOpenWorldTransPointRewards"));
+vi.mock(import("#src/services/transPoint/readOpenWorldTransPointUnlocks"));
 vi.mock(import("#src/services/world/readRegionData"));
 
 // The reads the composable makes are in the background, so they settle on the next turn of the event loop
@@ -48,6 +50,7 @@ describe(useWorldMap, () => {
     vi.mocked(readMondstadtExplorationAreas).mockResolvedValue(explorationAreas);
     vi.mocked(readMondstadtReputation).mockResolvedValue(reputationCity);
     vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([]);
+    vi.mocked(readOpenWorldTransPointUnlocks).mockResolvedValue([]);
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -158,6 +161,7 @@ describe(useWorldMap, () => {
   const createWorldMap = (
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
     events = createWorldEvents(),
+    questStepTargets = shallowRef({ named: new Set<string>(), reached: new Set<string>() }),
   ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
@@ -180,6 +184,7 @@ describe(useWorldMap, () => {
         setWallet: (nextWallet) => {
           wallet.value = nextWallet;
         },
+        questStepTargets,
         unlockedLandmarkIds,
         wallet,
       }),
@@ -350,6 +355,22 @@ describe(useWorldMap, () => {
     await waitForReads();
 
     expect(unlockedLandmarks.value).toStrictEqual([waypoint]);
+  });
+
+  test("a hidden waypoint is not offered before its step", async () => {
+    expect.hasAssertions();
+
+    // The unlock table lists the waypoint's point and a quest step names it, so the waypoint is hidden until that step is reached
+    vi.mocked(readOpenWorldTransPointUnlocks).mockResolvedValue([{ pointId: TRANS_POINT_ID, sceneId: 3 }]);
+    const questStepTargets = shallowRef({ named: new Set([String(TRANS_POINT_ID)]), reached: new Set<string>() });
+    const { lockedJumpLandmarks } = createWorldMap(new Set(), createWorldEvents(), questStepTargets);
+    await waitForReads();
+
+    expect(lockedJumpLandmarks.value.map(({ id }) => id)).not.toContain(waypoint.id);
+
+    questStepTargets.value = { named: new Set([String(TRANS_POINT_ID)]), reached: new Set([String(TRANS_POINT_ID)]) };
+
+    expect(lockedJumpLandmarks.value.map(({ id }) => id)).toContain(waypoint.id);
   });
 
   test("a locked waypoint is not offered as a place to revive", async () => {

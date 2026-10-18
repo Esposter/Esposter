@@ -23,24 +23,28 @@ flowchart TD
 
 ## Key files
 
-| File                                                                               | Role                                                                            |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/map/computeFilledAreaIds.ts`                  | The areas that unlocked landmarks stand in, which are the filled ones           |
-| `packages/genshin-world/src/services/map/computeAreaLabels.ts`                     | Names only the filled areas, at their outline or their unlocked landmarks       |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`                      | Draws the outlines of filled areas and the marks of the unlocked landmarks      |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                    | Holds the unlocked ids, offers the locked landmarks as rows, and unlocks on F   |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept     |
-| `packages/genshin-world/src/composables/useWorldMap.ts`                            | Unlocks a landmark, pays its first unlock, and tells the quests its scene point |
-| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`         | A landmark's scene point, by its statue or its waypoint id                      |
-| `packages/genshin-world/src/services/map/computeJumpLandmarkTextKey.ts`            | The game name a jump landmark's row and jump list entry carry                   |
-| `scripts/src/services/genshinAssets/transPoints/buildTransPointRewards.ts`         | Builds the open world's transport point rewards, for publishing                 |
-| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Fetches the slice by its key, checking it against its shape as it arrives       |
+| File                                                                               | Role                                                                                                                            |
+| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/map/computeFilledAreaIds.ts`                  | The areas that unlocked landmarks stand in, which are the filled ones                                                           |
+| `packages/genshin-world/src/services/map/computeAreaLabels.ts`                     | Names only the filled areas, at their outline or their unlocked landmarks                                                       |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`                      | Draws the outlines of filled areas and the marks of the unlocked landmarks                                                      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                    | Holds the unlocked ids, offers the locked landmarks as rows, and unlocks on F                                                   |
+| `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept                                                     |
+| `packages/genshin-world/src/composables/useWorldMap.ts`                            | Unlocks a landmark, pays its first unlock, tells the quests its scene point, and keeps a hidden waypoint out of the locked ones |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`         | A landmark's scene point, by its statue or its waypoint id                                                                      |
+| `packages/genshin-world/src/services/map/computeJumpLandmarkTextKey.ts`            | The game name a jump landmark's row and jump list entry carry                                                                   |
+| `scripts/src/services/genshinAssets/transPoints/buildTransPointRewards.ts`         | Builds the open world's transport point rewards, for publishing                                                                 |
+| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Fetches the slice by its key, checking it against its shape as it arrives                                                       |
+| `packages/genshin-world/src/services/transPoint/computeHiddenTransPointIds.ts`     | The listed points a step names and no step has reached, which the map keeps out                                                 |
+| `packages/genshin-world/src/services/quest/computeQuestStepTargets.ts`             | The Interact targets the quests name, and those their reached steps name                                                        |
+| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointUnlocks.ts` | Fetches the unlock record by its key, checking it against its shape                                                             |
+| `scripts/src/services/genshinAssets/transPoints/buildTransPointUnlocks.ts`         | Builds the open world's unlock record, for publishing                                                                           |
 
 ## Notes
 
 - **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a published clip ([roadmap](../../../changes/genshin-roadmap/tasks.md), References sought), so the unlock is instant here.
 - **Waypoints pay nothing on their first unlock.** A Teleport Waypoint is unlocked on F as a statue is, and the pointer marks it while it is locked. The first unlock's reward is looked up by the point id `LandmarkIdStatuePointIdMap` names, which holds Windrise's statue alone, so a waypoint pays nothing until its point is named there. The slice already holds every open-world point's reward, so a waypoint needs only that id.
-- **Two waypoint rules are not built.** A waypoint the game hides is not yet kept out, and no quest step unlocks one outright. A domain entrance is not yet a jump: the fit must give each one an arrival pose first, as the change's design decides.
+- **A waypoint the game hides stays out until its step is reached.** A listed transport point that a quest step names is kept out of the map and the prompt list until that step is reached, from the `transPoints/unlock` record; a point no step names is shown. **One waypoint rule is not built:** no quest step unlocks a waypoint outright, since the one unlock step names point 7, a statue's point. A domain entrance is not yet a jump: the fit must give each one an arrival pose first, as the change's design decides.
 
 ## Sources
 

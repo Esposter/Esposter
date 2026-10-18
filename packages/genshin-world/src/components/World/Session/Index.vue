@@ -222,6 +222,7 @@ const {
   quests,
   questsInProgress,
   questsOffered,
+  questStepTargets,
   questTargetId,
   questTextMap,
   trackedQuestId,
@@ -576,6 +577,7 @@ const {
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  questStepTargets,
   regionDataBaseUrl,
   reputation,
   setReputation: (nextReputation) => {
