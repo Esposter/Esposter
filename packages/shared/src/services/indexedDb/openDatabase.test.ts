@@ -102,7 +102,7 @@ describe(openDatabase, () => {
     );
   });
 
-  test("a thrown upgrade failure is logged once", async () => {
+  test("a thrown upgrade failure is logged once, with its own message", async () => {
     expect.hasAssertions();
 
     const upgradeError = new Error("upgrade failed");
@@ -122,27 +122,6 @@ describe(openDatabase, () => {
       `[AbortError: The transaction was aborted]`,
     );
     expect(console.error).toHaveBeenCalledTimes(1);
-  });
-
-  test("a thrown upgrade failure keeps its message", async () => {
-    expect.hasAssertions();
-
-    const upgradeError = new Error("upgrade failed");
-    vi.spyOn(console, "error").mockReturnValue(undefined);
-    const upgradeTransactions: { done: Promise<void> }[] = [];
-    const open = openDatabase<Schema>("thrownMessage", 1, {
-      upgrade: (_database, _oldVersion, _newVersion, transaction) => {
-        upgradeTransactions.push(transaction);
-        throw upgradeError;
-      },
-    });
-
-    await expect(open).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
-    );
-    await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AbortError: The transaction was aborted]`,
-    );
     expect(console.error).toHaveBeenLastCalledWith(upgradeError);
   });
 
@@ -158,7 +137,7 @@ describe(openDatabase, () => {
         upgradeTransactions.push(transaction);
         store.put({ id: 1, name: "a" });
         // The second name fails its request, which aborts the transaction, so its rejection is handled as it is made
-        getResultAsync(() => store.put({ id: 2, name: "a" })).match(noop, noop);
+        getResultAsync(() => store.put({ id: 2, name: "a" })).match(noop, console.error);
       },
     });
 
@@ -166,7 +145,8 @@ describe(openDatabase, () => {
       `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
     );
     await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(`[ConstraintError]`);
-    expect(console.error).toHaveBeenCalledTimes(1);
+    // The rejected request is logged by its own handler, then the aborted upgrade by openDatabase
+    expect(console.error).toHaveBeenCalledTimes(2);
   });
 
   test("#190 a shortcut write rejects with the request's own error", async () => {
