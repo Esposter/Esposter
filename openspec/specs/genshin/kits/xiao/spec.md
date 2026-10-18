@@ -1,6 +1,6 @@
 ## Purpose
 
-Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, Constellation 1's extra charge, and what is left of his third charge, jump and the other constellations.
+Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, Constellation 1's extra charge, Constellation 4's DEF Bonus, and what is left of his third charge, jump and the other constellations.
 
 ## Requirements
 

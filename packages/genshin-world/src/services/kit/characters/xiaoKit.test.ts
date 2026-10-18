@@ -136,4 +136,23 @@ describe(createXiaoKitBehaviour, () => {
 
     expect(XIAO_KIT.getSkillChargeBonus?.({ ...createXiaoCombatant(0), constellationCount: 0 })).toBe(0);
   });
+
+  test("a Constellation 4 switch gives Xiao a 100% DEF Bonus while his HP is under half", () => {
+    expect.hasAssertions();
+    const combatant = { ...createXiaoCombatant(0), constellationCount: 4 };
+
+    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 0.4)).toStrictEqual([
+      { amount: 1, attribute: Attribute.DefensePercent },
+    ]);
+  });
+
+  test("a Constellation 3 switch, or Xiao at half HP, gives no DEF Bonus", () => {
+    expect.hasAssertions();
+    const combatant = { ...createXiaoCombatant(0), constellationCount: 3 };
+
+    expect([
+      XIAO_KIT.getPassiveBonuses?.(combatant, 0.4),
+      XIAO_KIT.getPassiveBonuses?.({ ...combatant, constellationCount: 4 }, 0.5),
+    ]).toStrictEqual([[], []]);
+  });
 });
