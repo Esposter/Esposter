@@ -75,8 +75,8 @@ const castBurstInTeam = (ascension: number, characterIds: number[]) => {
   return { context, field, kitEffectState };
 };
 
-// Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in, and
-// The zone her burst leaves standing, unless the test skips the burst
+// Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in,
+// And the zone her burst leaves standing, unless the test skips the burst
 const createTeammateTeam = (constellationCount: number, { isBurstCast = true }: { isBurstCast?: boolean } = {}) => {
   const aino = { ...createAinoCombatant(0), constellationCount };
   const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
