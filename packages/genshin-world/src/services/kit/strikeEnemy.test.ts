@@ -690,62 +690,6 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("a direct Lunar hit takes the party's reaction bonuses its Lunar reaction takes: the DMG Bonus adds to the reaction bonus, and the CRIT Rate and CRIT DMG bonuses reach its roll and its CRIT", () => {
-    expect.hasAssertions();
-
-    const ELEMENTAL_MASTERY = 400;
-    const BASE_DAMAGE_BONUS = 0.07;
-    const REACTION_BONUS = 0.18;
-    const PARTY_DAMAGE_BONUS = 0.2;
-    const PARTY_CRITICAL_DAMAGE_BONUS = 0.5;
-    const enemy = createSturdyEnemy();
-    const combatant: Combatant = {
-      ...createCombatant(),
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
-      ]),
-      kit: {
-        ...TRAVELER_KIT,
-        getPartyReactionBonus: () => ({
-          criticalDamageBonus: PARTY_CRITICAL_DAMAGE_BONUS,
-          criticalRateBonus: 1,
-          damageBonus: PARTY_DAMAGE_BONUS,
-        }),
-      },
-    };
-    const hit: KitHit = {
-      element: Element.Dendro,
-      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
-      hitmarkSeconds: 0,
-      lunarHit: {
-        getScalingStat: ({ attributes }) => attributes.attributeTotalMap[Attribute.ElementalMastery],
-        lunarReactionType: LunarReactionType.LunarBloom,
-      },
-      poiseDamage: 0,
-      talentMultiplier: 2,
-    };
-    const damage =
-      getLunarDamage(
-        LunarReactionType.LunarBloom,
-        2 * ELEMENTAL_MASTERY,
-        ELEMENTAL_MASTERY,
-        BASE_DAMAGE_BONUS,
-        REACTION_BONUS + PARTY_DAMAGE_BONUS,
-      ) *
-      getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro)) *
-      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS);
-
-    const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
-    strikeEnemy(enemy, hit, combatant, context, {
-      baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
-      lunarReactionTypes: [LunarReactionType.LunarBloom],
-      reactionBonus: REACTION_BONUS,
-    });
-
-    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
-  });
-
   test("a direct Lunar hit takes the party reaction bonuses its Lunar reaction takes and its own CRIT DMG bonus, with its Elevation last", () => {
     expect.hasAssertions();
 
