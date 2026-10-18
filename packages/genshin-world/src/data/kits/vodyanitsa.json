@@ -3,7 +3,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.length" }
   },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 198 },
+  "normalAttacks.0.animationFrames": { "cause": "NoGcsimUnit", "value": 198 },
   "normalAttacks.0.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.0.hits.length" }
@@ -20,7 +20,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.0.hits.0.hitmarkFrames" }
   },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 162 },
+  "normalAttacks.1.animationFrames": { "cause": "NoGcsimUnit", "value": 162 },
   "normalAttacks.1.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.1.hits.length" }
@@ -37,7 +37,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.1.hits.0.hitmarkFrames" }
   },
-  "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 232 },
+  "normalAttacks.2.animationFrames": { "cause": "NoGcsimUnit", "value": 232 },
   "normalAttacks.2.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.2.hits.length" }
@@ -54,7 +54,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.2.hits.0.hitmarkFrames" }
   },
-  "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 256 },
+  "normalAttacks.3.animationFrames": { "cause": "NoGcsimUnit", "value": 256 },
   "normalAttacks.3.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.3.hits.length" }
@@ -71,7 +71,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "normalAttacks.3.hits.0.hitmarkFrames" }
   },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 35 },
+  "chargedAttack.animationFrames": { "cause": "NoGcsimUnit", "value": 35 },
   "chargedAttack.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "chargedAttack.hits.length" }
@@ -84,7 +84,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000014, "path": "chargedAttack.hits.0.element" }
   },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 41 },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 41 },
   "plungeCollision.area": {
     "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
@@ -94,7 +94,7 @@
     "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
+  "plunges.high.hits.0.element": { "cause": "NoGcsimUnit", "value": "Water" },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 38 },
   "plunges.low.hits.length": { "cause": "NoActionFile", "value": 1 },
   "plunges.low.hits.0.area": {
@@ -102,7 +102,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 36 },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 40 },
+  "skill.animationFrames": { "cause": "NoGcsimUnit", "value": 40 },
   "skill.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000125, "path": "skill.hits.length" }
@@ -119,9 +119,9 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000125, "path": "skill.hits.0.hitmarkFrames" }
   },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 14032 } },
-  "skill.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "burst.animationFrames": { "cause": "Unclassified", "value": 98 },
+  "skill.hits.0.multiplier": { "cause": "NoGcsimUnit", "value": { "index": 0, "proudSkillGroupId": 14032 } },
+  "skill.hits.0.scalingAttribute": { "cause": "NoGcsimUnit", "value": "FIGHT_PROP_HP" },
+  "burst.animationFrames": { "cause": "NoGcsimUnit", "value": 98 },
   "burst.hits.length": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000041, "path": "burst.hits.length" }
@@ -138,5 +138,5 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000041, "path": "burst.hits.0.hitmarkFrames" }
   },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 14039 } }
+  "burst.hits.0.multiplier": { "cause": "NoGcsimUnit", "value": { "index": 0, "proudSkillGroupId": 14039 } }
 }

@@ -4,11 +4,12 @@ Vodyanitsa's kit is its record and one behaviour module, `createVodyanitsaKitBeh
 
 ## Decisions
 
-- **Vodyanitsa borrows Barbara's strikes and charged attack, Columbina's skill and Mona's burst, provisional.** Her four Hydro strikes take Barbara's four, each one hit, and her charged attack takes Barbara's single hit's area and element. Her charged attack's hitmark is not Barbara's 55 frames: it stays the overlay's `Unclassified` 41. Her skill takes Columbina's single Hydro hit, and her burst takes Mona's.
+- **Vodyanitsa borrows Barbara's strikes and charged attack, Columbina's skill and Mona's burst, provisional.** Her four Hydro strikes take Barbara's four, each one hit, and her charged attack takes Barbara's single hit's area and element. Her charged attack's hitmark is not Barbara's 55 frames: it is 41, which no source gives, so it names `NoGcsimUnit`. Her skill takes Columbina's single Hydro hit, and her burst takes Mona's.
 - **Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.** Her high plunge's impact is Hydro, as the wiki gives it, so that hit is Water; her low plunge is Physical. Her plunges' frames are read from her own clips.
 - **Her skill scales with Max HP.** The wiki gives Rechitativ: Sonorous Dawn as 3.27% of Max HP at level 1, which is the talent multiplier of its proud group, so its hit reads `FIGHT_PROP_HP`.
 - **Her frames are her clips' durations at 60 a second.** Her strikes read `Attack_01` to `Attack_04`, her charged attack `ExtraAttack`, her skill `ElementalArt_Strike`, her burst `ElementalBurst`, and her plunges `FallingAttack_Strike` and `FallingAttack_Strike_AS`.
 - **Her strikes and charged attack are Hydro.**
+- **Values no source gives are `NoGcsimUnit`, the unit gcsim does not model.** gcsim has no folder for Vodyanitsa, so every value her overlay holds with no source names that cause in place of `Unclassified`: her frames, her charged attack's hitmark, her high plunge's element, her skill's and burst's multipliers and her skill's scaling attribute. The wiki states the high plunge's Hydro impact and Rechitativ's Max HP scaling, but the wiki and table readers join a hit to its row by the label its gcsim candidate gives, and a kit with no folder has none.
 
 ## Not built
 
