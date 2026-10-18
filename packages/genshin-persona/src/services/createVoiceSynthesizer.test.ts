@@ -34,6 +34,8 @@ class TestTensor {
   }
 }
 
+// Speech with no pause in it at all, which a whole sentence's check would refuse
+const continuous = () => 1;
 const concatenate = (parts: Float32Array[]) => {
   const joined = new Float32Array(parts.reduce((total, part) => total + part.length, 0));
   let offset = 0;
@@ -210,11 +212,12 @@ describe(createVoiceSynthesizer, () => {
   const label = "reply m, line 1";
   const seamSamples = VOICE_SAMPLE_RATE * CHUNK_CROSSFADE_SECONDS;
   const signalAt = (index: number) => (Math.floor(index / SAMPLES_PER_TOKEN) % 2 === 0 ? 1 : QUIET);
-  const getSignal = (count: number) => Float32Array.from({ length: count }, (_value, index) => signalAt(index));
+  const getSignal = (count: number, signal: (index: number) => number = signalAt) =>
+    Float32Array.from({ length: count }, (_value, index) => signal(index));
   const getQuiet = (count: number) => Float32Array.from({ length: count }, () => QUIET);
 
   // The engine's generation, streaming one token a step
-  const streamTokens = async (inputs: Parameters<VoiceModel["generate"]>[0]) => {
+  const streamTokens = async (inputs: Parameters<VoiceModel["generate"]>[0], signal: (index: number) => number) => {
     const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
     put([[0n]]);
     for (let token = 1; token <= streamTokenCount; token += 1) {
@@ -225,12 +228,12 @@ describe(createVoiceSynthesizer, () => {
       });
     }
     end();
-    return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN) };
+    return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN, signal) };
   };
 
   // The engine's generation streams one token a step, the decoder vocodes the tokens it is handed, and the decoder
   // Goes silent from its `silentFrom`-th run on, so a chunk after that is not speech
-  const getStreamRuntime = (silentFrom: number) => {
+  const getStreamRuntime = (silentFrom: number, signal: (index: number) => number = signalAt) => {
     let decodeCount = 0;
     // The order the generation settles and the model is disposed in, so a model is never disposed under its generation
     const events: string[] = [];
@@ -242,11 +245,11 @@ describe(createVoiceSynthesizer, () => {
       const data =
         decodeCount >= silentFrom
           ? getQuiet(passLength * SAMPLES_PER_TOKEN)
-          : concatenate([getSignal(speechLength), getQuiet(SILENCE_TOKEN_COUNT * SAMPLES_PER_TOKEN)]);
+          : concatenate([getSignal(speechLength, signal), getQuiet(SILENCE_TOKEN_COUNT * SAMPLES_PER_TOKEN)]);
       return Promise.resolve({ waveform: { data } });
     });
     const generate = vi.fn<VoiceModel["generate"]>(async (inputs) => {
-      const [outcome] = await Promise.allSettled([streamTokens(inputs)]);
+      const [outcome] = await Promise.allSettled([streamTokens(inputs, signal)]);
       events.push("settled");
       if (outcome?.status !== "fulfilled") throw outcome?.reason;
       return outcome.value;
@@ -280,6 +283,18 @@ describe(createVoiceSynthesizer, () => {
 
     expect(chunks.length).toBeGreaterThan(1);
     expect(concatenate(chunks)).toStrictEqual(getSignal(streamTokenCount * SAMPLES_PER_TOKEN));
+    expect(onFallback).toHaveBeenCalledTimes(0);
+  });
+
+  test("keeps every chunk of speech that runs on with no pause, which a whole sentence would have", async () => {
+    expect.hasAssertions();
+
+    const { onFallback, runtime } = getStreamRuntime(Number.POSITIVE_INFINITY, continuous);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
+
+    await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
+      getSignal(streamTokenCount * SAMPLES_PER_TOKEN, continuous),
+    );
     expect(onFallback).toHaveBeenCalledTimes(0);
   });
 
