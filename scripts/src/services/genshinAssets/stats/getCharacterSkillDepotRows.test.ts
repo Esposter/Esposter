@@ -35,9 +35,21 @@ describe(getCharacterSkillDepotRows, () => {
       },
     ],
   ]);
-  const OWN_DEPOT: ExcelSkillDepotRow = { id: 1, skills: [] };
-  const FIRE_DEPOT: ExcelSkillDepotRow = { energySkill: FIRE_BURST_ID, id: 2, skills: [] };
-  const WIND_DEPOT: ExcelSkillDepotRow = { energySkill: WIND_BURST_ID, id: 3, skills: [] };
+  const OWN_DEPOT: ExcelSkillDepotRow = { energySkill: 0, id: 1, LLEFDMDOMGG: [], skills: [], talents: [] };
+  const FIRE_DEPOT: ExcelSkillDepotRow = {
+    energySkill: FIRE_BURST_ID,
+    id: 2,
+    LLEFDMDOMGG: [],
+    skills: [],
+    talents: [],
+  };
+  const WIND_DEPOT: ExcelSkillDepotRow = {
+    energySkill: WIND_BURST_ID,
+    id: 3,
+    LLEFDMDOMGG: [],
+    skills: [],
+    talents: [],
+  };
 
   test("takes a Traveler's set of its form element first, ahead of the sets listed before it", () => {
     expect.hasAssertions();

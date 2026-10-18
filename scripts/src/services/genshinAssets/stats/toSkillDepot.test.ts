@@ -14,7 +14,15 @@ describe(toSkillDepot, () => {
   const skillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
     [
       BURST_ID,
-      { cdTime: 15, costElemType: "Wind", costElemVal: 60, id: BURST_ID, maxChargeNum: 1, nameTextMapHash: 0 },
+      {
+        cdTime: 15,
+        costElemType: "Wind",
+        costElemVal: 60,
+        id: BURST_ID,
+        maxChargeNum: 1,
+        nameTextMapHash: 0,
+        proudSkillGroupId: 0,
+      },
     ],
     [
       ELEMENTLESS_BURST_ID,
@@ -25,14 +33,32 @@ describe(toSkillDepot, () => {
         id: ELEMENTLESS_BURST_ID,
         maxChargeNum: 1,
         nameTextMapHash: 0,
+        proudSkillGroupId: 0,
       },
     ],
-    [SKILL_ID, { cdTime: 5, costElemType: "None", costElemVal: 0, id: SKILL_ID, maxChargeNum: 1, nameTextMapHash: 0 }],
+    [
+      SKILL_ID,
+      {
+        cdTime: 5,
+        costElemType: "None",
+        costElemVal: 0,
+        id: SKILL_ID,
+        maxChargeNum: 1,
+        nameTextMapHash: 0,
+        proudSkillGroupId: 0,
+      },
+    ],
   ]);
 
   test("reads the skill slot and the energy skill, with the burst's element", () => {
     expect.hasAssertions();
-    const row: ExcelSkillDepotRow = { energySkill: BURST_ID, id: DEPOT_ID, skills: [0, SKILL_ID, 0, 0] };
+    const row: ExcelSkillDepotRow = {
+      energySkill: BURST_ID,
+      id: DEPOT_ID,
+      LLEFDMDOMGG: [],
+      skills: [0, SKILL_ID, 0, 0],
+      talents: [],
+    };
 
     expect(toSkillDepot(row, skillMap)).toStrictEqual({
       burst: { cooldownSeconds: 15, element: Element.Anemo, energyCost: 60 },
@@ -43,7 +69,13 @@ describe(toSkillDepot, () => {
 
   test("leaves out the burst's element when its energy names none", () => {
     expect.hasAssertions();
-    const row: ExcelSkillDepotRow = { energySkill: ELEMENTLESS_BURST_ID, id: DEPOT_ID, skills: [0, 0, 0, 0] };
+    const row: ExcelSkillDepotRow = {
+      energySkill: ELEMENTLESS_BURST_ID,
+      id: DEPOT_ID,
+      LLEFDMDOMGG: [],
+      skills: [0, 0, 0, 0],
+      talents: [],
+    };
 
     expect(toSkillDepot(row, skillMap)).toStrictEqual({
       burst: { cooldownSeconds: 10, energyCost: 0 },
@@ -53,14 +85,26 @@ describe(toSkillDepot, () => {
 
   test("leaves out the burst when the set has no energy skill", () => {
     expect.hasAssertions();
-    const row: ExcelSkillDepotRow = { id: DEPOT_ID, skills: [0, SKILL_ID, 0, 0] };
+    const row: ExcelSkillDepotRow = {
+      energySkill: 0,
+      id: DEPOT_ID,
+      LLEFDMDOMGG: [],
+      skills: [0, SKILL_ID, 0, 0],
+      talents: [],
+    };
 
     expect(toSkillDepot(row, skillMap)).toStrictEqual({ depotId: DEPOT_ID, skill: { charges: 1, cooldownSeconds: 5 } });
   });
 
   test("returns undefined for a set with neither a skill nor a burst", () => {
     expect.hasAssertions();
-    const row: ExcelSkillDepotRow = { energySkill: 0, id: DEPOT_ID, skills: [0, 0, 0, 0] };
+    const row: ExcelSkillDepotRow = {
+      energySkill: 0,
+      id: DEPOT_ID,
+      LLEFDMDOMGG: [],
+      skills: [0, 0, 0, 0],
+      talents: [],
+    };
 
     expect(toSkillDepot(row, skillMap)).toBeUndefined();
   });

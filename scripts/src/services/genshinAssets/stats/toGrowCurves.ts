@@ -9,7 +9,7 @@ export const toGrowCurves = (rows: readonly ExcelCurveRow[], curves: ReadonlySet
     Array.from(curves, (curve) => [
       curve,
       sortedRows.map(({ curveInfos, level }) => {
-        const multiplier = curveInfos.find(({ type }) => type === curve)?.value;
+        const multiplier = curveInfos.find(({ type }) => type === curve)?.GGKIEIJLCJJ;
         if (multiplier === undefined)
           throw new InvalidOperationError(Operation.Read, curve, `no multiplier at level ${level}`);
         return multiplier;

@@ -6,7 +6,7 @@ import type { WeaponData } from "genshin-world";
 export const toWeaponPassive = (
   affixRows: ExcelEquipAffixRow[],
 ): Pick<WeaponData, "passiveNameTextId" | "passiveRankDescriptionTextIds" | "passiveRankParams"> => {
-  const rankRows = affixRows.toSorted((firstRow, secondRow) => (firstRow.level ?? 0) - (secondRow.level ?? 0));
+  const rankRows = affixRows.toSorted((firstRow, secondRow) => firstRow.level - secondRow.level);
   const [firstRankRow] = rankRows;
   if (!firstRankRow) return { passiveNameTextId: "", passiveRankDescriptionTextIds: [], passiveRankParams: [] };
 

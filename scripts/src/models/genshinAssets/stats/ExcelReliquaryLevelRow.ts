@@ -5,5 +5,5 @@ export interface ExcelReliquaryLevelRow {
   addProps: ExcelProperty[];
   exp: number;
   level: number;
-  rank?: number;
+  rank: number;
 }

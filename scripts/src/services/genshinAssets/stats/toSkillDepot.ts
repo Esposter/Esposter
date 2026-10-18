@@ -6,7 +6,7 @@ import { ElementNameSet } from "#src/services/genshinAssets/stats/constants";
 import { skillDepotSchema } from "genshin-world";
 
 // One skill set as the game's tables hold it: its skill, the second of its slots, and its burst, its energy skill. Each
-// Is read from the skill table by its id, a zero or missing id leaving it out. A burst's element is its energy's, where
+// Is read from the skill table by its id, a zero id leaving it out. A burst's element is its energy's, where
 // The game names one of the seven, and none where it names none
 export const toSkillDepot = (
   { energySkill, id, skills }: ExcelSkillDepotRow,
@@ -14,7 +14,7 @@ export const toSkillDepot = (
 ): SkillDepot | undefined => {
   const [, skillId = 0] = skills;
   const skillRow = skillMap.get(skillId);
-  const burstRow = energySkill === undefined ? undefined : skillMap.get(energySkill);
+  const burstRow = energySkill === 0 ? undefined : skillMap.get(energySkill);
   if (skillRow === undefined && burstRow === undefined) return undefined;
   const element = burstRow?.costElemType;
   return skillDepotSchema.parse({

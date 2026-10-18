@@ -33,11 +33,11 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
   return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
     .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
     .map((row) => {
-      const energySkill = skillDepotMap.get(row.skillDepotId)?.energySkill;
-      const costElemType = energySkill === undefined ? undefined : skillMap.get(energySkill)?.costElemType;
+      const energySkill = skillDepotMap.get(row.skillDepotId)?.energySkill ?? 0;
+      const costElemType = energySkill === 0 ? undefined : skillMap.get(energySkill)?.costElemType;
       const association = avatarIdAssociationMap.get(row.id);
       const promoteRows = (promoteIdRowsMap.get(row.avatarPromoteId) ?? []).toSorted(
-        (firstRow, secondRow) => (firstRow.promoteLevel ?? 0) - (secondRow.promoteLevel ?? 0),
+        (firstRow, secondRow) => firstRow.promoteLevel - secondRow.promoteLevel,
       );
       const baseMap: Record<string, number> = {
         [Attribute.BaseAttack]: row.attackBase,
