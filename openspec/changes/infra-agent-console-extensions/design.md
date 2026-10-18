@@ -68,7 +68,7 @@ apps/web/app/components/AgentConsole/Pane/
   McpApp.vue                     ← a ui resource in a sandboxed frame, the postMessage bridge
 apps/web/app/services/agentConsole/
   AgentConsoleViewMap.ts         ← the first-party views
-packages/agent-console-server/src/services/
+packages/agent-console-server/src/services/drivers/claudeAgentSdk/
   readMcpAppResource.ts          ← the ui resource, read from the server that declared it
 ```
 
