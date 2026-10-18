@@ -67,6 +67,8 @@ export const BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID = 15_008;
 export const SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID = 15_019;
 // Ocean-Hued Clam's id in the set table
 export const OCEAN_HUED_CLAM_ARTIFACT_SET_ID = 15_022;
+// The id a Sea-Dyed Foam is cast under, so the foam standing is found by it and its suite counts the same one
+export const OCEAN_HUED_CLAM_FOAM_ID = "oceanHuedClamFoam";
 // Vermillion Hereafter's id in the set table
 export const VERMILLION_HEREAFTER_ARTIFACT_SET_ID = 15_023;
 // Echoes of an Offering's id in the set table

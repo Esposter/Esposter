@@ -4,7 +4,7 @@ import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { OCEAN_HUED_CLAM_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { OCEAN_HUED_CLAM_ARTIFACT_SET_ID, OCEAN_HUED_CLAM_FOAM_ID } from "#src/services/artifact/constants";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -27,7 +27,6 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
-const FOAM_ID = "oceanHuedClamFoam";
 const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
 // Sturdy, so no hit is clamped to the health the camp member starts with, and standing at the wearer's feet unless placed
 const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
@@ -62,7 +61,7 @@ const createHeal = (healthShare: number, sourceCharacterId: number): KitEvent =>
   sourceCharacterId,
 });
 const countFoams = (kitEffectState: KitEffectState) =>
-  kitEffectState.effects.filter((effect) => effect.kind === "field" && effect.id === FOAM_ID).length;
+  kitEffectState.effects.filter((effect) => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID).length;
 
 describe(createOceanHuedClamSetModule, () => {
   test("a heal its wearer gives builds a foam that, three seconds on, deals 90% of the HP healed to each standing enemy as Physical DMG", () => {

@@ -8,6 +8,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { OCEAN_HUED_CLAM_FOAM_ID } from "#src/services/artifact/constants";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -19,7 +20,6 @@ import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { takeOne } from "@esposter/shared";
 
 const OCEAN_HUED_CLAM_COOLDOWN_ID = "oceanHuedClamCooldown";
-const OCEAN_HUED_CLAM_FOAM_ID = "oceanHuedClamFoam";
 // The status a wearer's heals gather on while no foam takes them, which the next foam takes and its burst empties
 const OCEAN_HUED_CLAM_GATHERED_HP_ID = "oceanHuedClamGatheredHp";
 // The radius about the active character that the foam's burst reaches, as gcsim draws the burst about the player
