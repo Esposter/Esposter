@@ -1526,6 +1526,18 @@ const stepShortcutWheel = (isHeld: boolean, x: number, y: number): void => {
   shortcutWheelPickedIndex.value = shortcutWheelStep.pickedIndex;
   if (shortcutWheelStep.openedScreenKind !== undefined) screenKind.value = shortcutWheelStep.openedScreenKind;
 };
+// A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does not
+// Open on the world's first frame after the screen
+const closeShortcutWheel = (): void => {
+  shortcutWheelStep = {
+    isOpen: false,
+    move: shortcutWheelStep.move,
+    openedScreenKind: undefined,
+    pickedIndex: undefined,
+  };
+  isShortcutWheelOpen.value = false;
+  shortcutWheelPickedIndex.value = undefined;
+};
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
@@ -1669,6 +1681,7 @@ defineExpose({ jumpTo, readCameraPosition });
               inputState.moveRight,
               -inputState.moveForward,
             );
+          else if (screenKind !== ScreenKind.World) closeShortcutWheel();
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
           if (!isPaused && screenKind === ScreenKind.World)
