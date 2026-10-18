@@ -113,6 +113,8 @@ const emit = defineEmits<{
   // The party entering combat once an enemy is aggravated on it, and leaving it once none has been for the grace period
   enterCombat: [];
   leaveCombat: [];
+  // An enemy whose poise a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
+  poiseBreak: [enemy: Enemy];
   // A boss comes back at its spawn, so the blossom it left is gone
   respawn: [spawnKey: string];
   // A defeated member of a camp with no boss comes back at this instant, which the save keeps
@@ -131,6 +133,8 @@ const loadedCampIds = new Set<string>();
 // The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
 // Emits them
 let emittedCampLocksKey = "";
+// The enemies the last step saw staggered, so a stagger that is still on counts as one break and not one for each step
+const staggeredEnemies = new WeakSet<Enemy>();
 const getCampLocks = (): ChestLockSource[] =>
   computeCampLockSources(
     [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps),
@@ -187,6 +191,12 @@ watchImmediate(
 const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   let isAnyDefeated = false;
   for (const enemy of enemyMap.values()) {
+    // Only a hit that breaks poise staggers an enemy, so a stagger the step sees that it did not see before is a break
+    if (enemy.state !== EnemyState.Stagger) staggeredEnemies.delete(enemy);
+    else if (!staggeredEnemies.has(enemy)) {
+      staggeredEnemies.add(enemy);
+      emit("poiseBreak", enemy);
+    }
     // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
     advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
     const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);

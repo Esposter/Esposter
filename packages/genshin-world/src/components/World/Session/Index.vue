@@ -100,7 +100,9 @@ import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
+import { startBossMove } from "#src/services/bosses/startBossMove";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
@@ -1389,7 +1391,7 @@ defineExpose({ jumpTo, readCameraPosition });
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
           if (!isPaused && screenKind === ScreenKind.World) drawDayOutcrops(getWorldNow(), kitContext.random);
-          stepDomainChallenge({
+          const transitionAttacks = stepDomainChallenge({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
             partyDown: false,
@@ -1400,6 +1402,10 @@ defineExpose({ jumpTo, readCameraPosition });
             partyDown: false,
           });
           if (!isPaused && screenKind === ScreenKind.World) refreshMiningOutcrops(getWorldNow(), kitContext.random);
+          // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing
+          for (const attack of transitionAttacks)
+            for (const enemy of kitContext.enemyMap.values())
+              startBossMove(enemy, BossMovesMap[enemy.enemyKindId] ?? [], attack);
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
@@ -1636,6 +1642,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @enter-combat="events.emit('enterCombat')"
         @leave-combat="events.emit('leaveCombat')"
+        @poise-break="(enemy) => events.emit('poiseBreak', enemy)"
         @ready="emit('ready')"
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
