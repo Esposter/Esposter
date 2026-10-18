@@ -8,7 +8,9 @@
 ## 2. Upstream triage
 
 - [x] 2.1 Give every mathjs issue in the design's triage scope a verdict in the Upstream table, each with its evidence. Verify: every row names a verdict and the reproduction, the owner or the answering link behind it.
-- [x] 2.2 Fix each in-scope defect and build each in-scope feature in the language, and list each in the parity snapshot as a fix. Verify: each has a regression test whose title names its issue and which fails against mathjs, and the parity test passes.
+- [ ] 2.2 Fix each in-scope defect and build each in-scope feature in the language, and list each in the parity snapshot as a fix. Verify: each has a regression test whose title names its issue and which fails against mathjs, and the parity test passes.
+- [ ] 2.3 Decide each of the 34 snapshot fix rows with an empty `issue`: either the divergence from mathjs is a defect with a named issue, which gets its regression test and a `tolerance` where the value is a special function's series, or the formula is a syntax error the parser refuses, which the snapshot records as an error rather than a number. A blanket tolerance over the rows is rejected, since it hides which divergences are intended. Verify: no fix row has an empty `issue`, and each special-function row carries `tolerance`.
+- [ ] 2.4 Make a parse failure fail the parity test for every entry the snapshot does not record as an error. `evaluateFormula` maps a parse failure to `NaN`, so an entry expecting `NaN` passes when the parser rejects its formula, such as `0 / 0`. Depends on 2.3, which settles the two rows (`3% (2` and `1 ? 2 : 3 : 4`) that turn red. Verify: a test named after the scenario 'A parser refusing a formula recorded as NaN fails the parity corpus'.
 
 ## 3. Swap
 
