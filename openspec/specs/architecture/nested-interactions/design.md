@@ -25,7 +25,7 @@ flowchart TD
 
 - **The container decides, never a wall around each control.** Whatever opens on a click asks `checkIsNestedInteraction(event)` first. It finds the nearest link, button, field, `summary`, `label`, dialog, menu, or element with an interactive role between the click and the container, and if that element sits inside the container the click is not the container's. A control nobody thought to wall off — a link in rendered HTML above all — is covered because nobody has to think of it.
 - **A region that is its own control without being one says so.** A table's selection cell and a dashboard tile's action corner are not buttons themselves, but a click on their padding must not open the row or the tile, so each carries `data-nested-interaction`, which the guard treats as a control.
-- **Ending a selection is not a click.** A reader dragging across a row's text to copy it releases the pointer on the row; a non-empty text selection at that moment means nothing opens.
+- **Ending a selection is not a click.** A reader dragging across a row's text to copy it releases the pointer on the row; a non-empty text selection at that moment means nothing opens. A press that may become a drag, a dashboard tile's, asks `checkIsNestedControl(event)` instead, the same guard without the selection, since a selection left on the page says nothing about the press that follows it.
 - **A bare `@click.stop` is banned.** A wall around each control, remembered by hand, can never cover the link inside rendered HTML. The `vue/no-restricted-syntax` entry in `restrictedEventSyntaxes.js` fails a template that builds one.
 - **Nested interactive content is still never built.** A row that is itself a button or a link holds nothing interactive inside it, since the browser gives the whole row's activation to the outer element; its controls sit beside it (`UiList`'s actions slot, the `vue-page-composition` skill's list shells). A todo's row keeps its notes in the dialog for the same reason: rendered notes inside the row's button would put their links inside a button.
 - **A preview is inert.** A message drawn as a preview — a search result, a thread in the threads list — takes no pointer inside its body, so the whole card is one target that jumps to the message, and a link inside it is not a second target.
@@ -45,7 +45,8 @@ flowchart TD
 
 | File                                                        | Role                                                                                        |
 | :---------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/shared/src/util/dom/checkIsNestedInteraction.ts`  | Whether a click belongs to something inside its container, by `NESTED_INTERACTION_SELECTOR` |
+| `packages/shared/src/util/dom/checkIsNestedControl.ts`      | Whether a press belongs to a control inside its container, by `NESTED_INTERACTION_SELECTOR` |
+| `packages/shared/src/util/dom/checkIsNestedInteraction.ts`  | Whether a click belongs to something inside its container: a control, or a text selection   |
 | `apps/web/app/services/ui/constants.ts`                     | The context menu's browser selector and the drag-ignore selector                            |
 | `apps/web/app/components/Ui/DataTable.vue`                  | A row that opens on a click, through the guard                                              |
 | `apps/web/app/composables/onClickExceptDrag.ts`             | A click that was not a drag's end, through the guard                                        |
