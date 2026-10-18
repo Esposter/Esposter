@@ -4,15 +4,18 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createIfaKitBehaviour, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
-import { castKitAction } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
 
-const createIfaCombatant = (constellationCount: number): Combatant => ({
+const createIfaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: IFA_CHARACTER_ID,
@@ -91,5 +94,18 @@ describe(createIfaKitBehaviour, () => {
         (effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
       ),
     ).toBeUndefined();
+  });
+
+  test("the skill's press enters the Nightsoul Blessing with 80 points, which drain eight a second, and a press in it leaves it", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIfaCombatant());
+    IFA_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 5);
+    expect(countKitResource(context.kitEffectState.effects, IFA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(40);
+    IFA_KIT.elementalSkill.onStart?.(context);
+    expect(
+      findKitStatus(context.kitEffectState.effects, IFA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
+    ).toBeUndefined();
+    expect(countKitResource(context.kitEffectState.effects, IFA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 });
