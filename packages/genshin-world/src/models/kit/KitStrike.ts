@@ -13,4 +13,6 @@ export interface KitStrike {
   hit: KitHit;
   // The one enemy the hit lands on, instead of each enemy its area reaches, if it lands on one
   target?: Enemy;
+  // Whether the hit is an aimed shot's, which takes an enemy's weak point when the enemy has one
+  isAimed?: true;
 }

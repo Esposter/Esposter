@@ -5,6 +5,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { hasEnemyWeakPoints } from "#src/services/enemy/hasEnemyWeakPoints";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
@@ -70,8 +71,11 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         party.lunarCrystallize.moondrifts,
         context.body.position,
       );
-      const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
-      const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
+      // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
+      const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
+      const damageBonus = combatant.kit.getStrikeDamageBonus?.({ ...strike, hit: enemyHit }, enemy, party) ?? 0;
+      const pricedHit =
+        damageBonus === 0 ? enemyHit : { ...enemyHit, damageBonus: (enemyHit.damageBonus ?? 0) + damageBonus };
       const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,
@@ -91,21 +95,21 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       addDendroCores(kitEffectState, enemy, pricedCombatant, reactions, random);
       startPartyLunarReactions(party, reactions);
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
-      strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
-      healKitStriker(context, combatant, pricedCombatant, hit);
-      hit.onStrike?.(context, strike);
-      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, hit);
+      strikeKitBubble(kitEffectState, enemy, pricedCombatant, enemyHit);
+      healKitStriker(context, combatant, pricedCombatant, enemyHit);
+      enemyHit.onStrike?.(context, strike);
+      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
       if (reactions.length > 0)
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
-      const element = getKitHitElement(hit, combatant);
+      const element = getKitHitElement(enemyHit, combatant);
       if (element !== undefined)
         emitKitEvent({ element, enemy, kind: KitEventKind.ElementalHit, striker: combatant }, context);
-      if (hit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
+      if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {
           attackTag,
           enemy,
-          hit,
+          hit: enemyHit,
           isCritical,
           isDefeated: enemy.state === EnemyState.Dead,
           kind: KitEventKind.DamageTaken,

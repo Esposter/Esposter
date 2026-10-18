@@ -6,6 +6,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -102,5 +103,41 @@ describe(strikeKitEnemies, () => {
       kind: KitEventKind.EnemyDefeated,
       striker: combatant,
     });
+  });
+
+  test("an aimed hit on an enemy with weak points takes one, which the team's kits see", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), enemyFamily: EnemyFamily.Automatons };
+    const combatant = createCombatant(onKitEvent);
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, isAimed: true, target: enemy }], context);
+    const events = onKitEvent.mock.calls.map(([event]) => event);
+    const damageTaken = events.find((event) => event.kind === KitEventKind.DamageTaken);
+
+    expect(events.map((event) => event.kind)).toContain(KitEventKind.WeakPointHit);
+    expect(damageTaken?.kind === KitEventKind.DamageTaken && damageTaken.hit.weakPoint).toBe(true);
+  });
+
+  test("an aimed hit on an enemy with no weak points takes none", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const combatant = createCombatant(onKitEvent);
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, isAimed: true, target: enemy }], context);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.WeakPointHit);
+  });
+
+  test("a hit that is not aimed takes no weak point, even on an enemy that has them", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), enemyFamily: EnemyFamily.Automatons };
+    const combatant = createCombatant(onKitEvent);
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, target: enemy }], context);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.WeakPointHit);
   });
 });
