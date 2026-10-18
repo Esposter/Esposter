@@ -21,7 +21,7 @@ export const WRIOTHESLEY_CHARACTER_ID = 10_000_086;
 
 // Icefang Rush's ten seconds and a frame, as gcsim v2.47.2 (MIT) internal/characters/wriothesley/skill.go gives the status
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/wriothesley/skill.go
-const ICEFANG_RUSH_ID = "wriothesley-icefang-rush";
+export const ICEFANG_RUSH_ID = "wriothesley-icefang-rush";
 const ICEFANG_RUSH_SECONDS = toKitSeconds(10 * 60 + 1);
 // The enhancement holds only while his HP is above half of his Max HP, as skill.go's skillBuffActive reads it
 const ENHANCEMENT_HEALTH_SHARE = 0.5;
@@ -36,7 +36,7 @@ const CHILLING_PENALTY_COOLDOWN_SECONDS = toKitSeconds(6);
 // At the default ParticleDelay, as skill.go's particleCB and particleICD give it
 const PARTICLE_COOLDOWN_ID = "wriothesley-particle-cooldown";
 const PARTICLE_COOLDOWN_SECONDS = toKitSeconds(2 * 60);
-const PARTICLE_DELAY_ID = "wriothesley-particle";
+export const PARTICLE_DELAY_ID = "wriothesley-particle";
 const PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 const PARTICLE_ENERGY = 1;
 
@@ -44,7 +44,7 @@ const PARTICLE_ENERGY = 1;
 // While Icefang Rush holds and he is on the field, adds a stack up to five, and each stack raises his ATK by 6% for as long
 // As the skill does. Recasting the skill resets the stacks
 const ASCENSION_4 = 4;
-const PROSECUTION_EDICT_ID = "wriothesley-prosecution-edict";
+export const PROSECUTION_EDICT_ID = "wriothesley-prosecution-edict";
 const PROSECUTION_EDICT_MAX_STACKS = 5;
 const PROSECUTION_EDICT_ATTACK_SHARE = 0.06;
 
