@@ -24,6 +24,7 @@ import {
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
+import { createTileHolders } from "#src/services/world/createTileHolders";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
@@ -111,7 +112,7 @@ const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
   worker.postMessage(message);
   return worker;
 });
-let requestCount = 0;
+const tileHolders = createTileHolders(workers.length);
 // The tiles asked for again while the streamer still held them, each built over a ground that arrived under it since,
 // Counted from the start of the latest refresh
 let rebuiltTileCount = 0;
@@ -153,8 +154,7 @@ const tileStreamer = createTileStreamer<Mesh | number>({
       kind: TerrainWorkerMessageKind.Tile,
       request: { cellsPerSide, finestTileSize, key },
     };
-    workers[requestCount % workers.length]?.postMessage(message);
-    requestCount++;
+    workers[tileHolders.assign(key)]?.postMessage(message);
   },
 });
 // When the latest refresh began, until every tile round the eye is settled over its ground, measured then as the load
@@ -232,23 +232,26 @@ const receiveTile = async (terrainTile: PlantedTerrainTile) => {
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
 };
-const receiveWorkerMessage = (event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
+const receiveWorkerMessage = (workerIndex: number, event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
   const { data } = event;
+  if (!tileHolders.checkIsHeldBy(data.key, workerIndex)) return;
+  tileHolders.release(data.key);
   if ("kind" in data) {
     failTile(data.key);
     return;
   }
   receiveTile(data);
 };
-// A worker that errors, or cannot read a message, has lost the tiles it was asked for, so each pending tile is failed
-const failPendingTiles = (event: Event) => {
+// A worker that errors, or cannot read a message, has lost the tiles it holds, so each of those is failed
+// The other workers keep generating
+const failHeldTiles = (workerIndex: number, event: Event) => {
   console.error("A terrain worker failed", event);
-  for (const key of tileStreamer.pendingKeys()) failTile(key);
+  for (const key of tileHolders.takeHeldKeys(workerIndex)) failTile(key);
 };
-for (const worker of workers) {
-  worker.addEventListener("message", receiveWorkerMessage);
-  worker.addEventListener("error", failPendingTiles);
-  worker.addEventListener("messageerror", failPendingTiles);
+for (const [workerIndex, worker] of workers.entries()) {
+  worker.addEventListener("message", (event) => receiveWorkerMessage(workerIndex, event));
+  worker.addEventListener("error", (event) => failHeldTiles(workerIndex, event));
+  worker.addEventListener("messageerror", (event) => failHeldTiles(workerIndex, event));
 }
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
