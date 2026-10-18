@@ -150,6 +150,11 @@ describe("weaponScreen", () => {
       ascension: 1,
     });
     expect(onUpdateWallet).toHaveBeenCalledWith(EMPTY_WALLET);
+    const nextPhaseItems = weaponData.ascensionPhases[1]?.costItems ?? [];
+    const writtenItems = onUpdateInventory.mock.calls[0]?.[0].items ?? [];
+    expect(nextPhaseItems.map(({ id }) => countInventoryItem(writtenItems, id))).toStrictEqual(
+      nextPhaseItems.map(() => 0),
+    );
   });
 
   // The Adventure Rank below the next phase's requirement: the bag is not written back
@@ -157,12 +162,20 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
     render(WeaponScreenContainer, {
-      props: { ...props, ...variants.ascend, adventureRank: 0, "onUpdate:inventory": onUpdateInventory },
+      props: {
+        ...props,
+        ...variants.ascend,
+        adventureRank: 0,
+        "onUpdate:inventory": onUpdateInventory,
+        "onUpdate:wallet": onUpdateWallet,
+      },
     });
 
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }).last().click();
     expect(onUpdateInventory).not.toHaveBeenCalled();
+    expect(onUpdateWallet).not.toHaveBeenCalled();
   });
 
   // Refine with a copy picked: the copy leaves the bag, the weapon gains the copy's rank, and that rank's Mora is spent
