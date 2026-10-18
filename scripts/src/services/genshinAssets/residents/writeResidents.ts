@@ -2,7 +2,9 @@ import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { MONDSTADT_CRAFTING_KEEPER_NPC_ID } from "#src/services/genshinAssets/crafting/constants";
 import { findCraftingBenchMember } from "#src/services/genshinAssets/crafting/findCraftingBenchMember";
+import { toCraftingKeeperPlace } from "#src/services/genshinAssets/crafting/toCraftingKeeperPlace";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import {
   REPUTATION_KEEPER_NPC_ID_MAP,
@@ -31,6 +33,11 @@ import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
   const { origin, regionFiles, regionMapPoints } = await readFittedRegions();
   const sceneGroups = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
+  const craftingBench = findCraftingBenchMember(sceneGroups);
+  // The keeper beside the bench has no birth in the scene group record, so his place is the bench's, moved beside it
+  const craftingKeeperPlaces: [number, SceneGroupPlace][] = craftingBench?.place
+    ? [[MONDSTADT_CRAFTING_KEEPER_NPC_ID, toCraftingKeeperPlace(craftingBench.place)]]
+    : [];
   const npcPlaces = [
     ...Object.values(sceneGroups.groups).flatMap((members) =>
       members.flatMap(({ kind, objectId, place }): [number, SceneGroupPlace][] =>
@@ -41,6 +48,7 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
       const keeperNpcId = REPUTATION_KEEPER_NPC_ID_MAP.get(name);
       return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
     }),
+    ...craftingKeeperPlaces,
   ];
   const reputationKeeperIds = new Set(Array.from(REPUTATION_KEEPER_NPC_ID_MAP.values(), String));
   const placements = npcPlaces.flatMap(([npcId, place]) => {
@@ -55,7 +63,6 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
   const talkConfigs = await readTalkConfigs();
   const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
-  const craftingBench = findCraftingBenchMember(sceneGroups);
   const craftingBenchNpcIds = new Set(craftingBench ? [craftingBench.objectId] : []);
   const residentJoin = joinResidents(
     placements,

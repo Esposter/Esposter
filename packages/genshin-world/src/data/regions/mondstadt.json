@@ -16108,6 +16108,13 @@
       "id": "30001",
       "nameTextId": "2205569333",
       "talkId": "4100101"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 379.27, "z": -377.57 }, "rotation": 1.142 },
+      "id": "9706",
+      "nameTextId": "1531907536",
+      "talkId": "6970601"
     }
   ],
   "waterfalls": [
