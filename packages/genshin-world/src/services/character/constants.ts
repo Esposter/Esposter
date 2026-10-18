@@ -58,14 +58,23 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
 export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
+// The Attributes tab's base attributes, the Details list's first group, and the game's name for each, in the order it lists them
+export const BASE_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
+  [Attribute.BaseHealth, GameTextKey.AttributeBaseHealth],
+  [Attribute.BaseAttack, GameTextKey.AttributeBaseAttack],
+  [Attribute.BaseDefense, GameTextKey.AttributeBaseDefense],
+];
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
   [Attribute.CriticalDamage, GameTextKey.AttributeCriticalDamage],
   [Attribute.HealingBonus, GameTextKey.AttributeHealingBonus],
+  [Attribute.IncomingHealingBonus, GameTextKey.AttributeIncomingHealingBonus],
   [Attribute.EnergyRecharge, GameTextKey.AttributeEnergyRecharge],
+  [Attribute.CooldownReduction, GameTextKey.AttributeCooldownReduction],
+  [Attribute.ShieldStrength, GameTextKey.AttributeShieldStrength],
 ];
-// The Attributes tab's damage bonuses and the game's name for each, in the order its details list them
+// The Attributes tab's damage bonuses and resistances and the game's name for each, in the order its details list them
 export const ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.PyroDamageBonus, GameTextKey.AttributePyroDamageBonus],
   [Attribute.HydroDamageBonus, GameTextKey.AttributeHydroDamageBonus],
@@ -75,6 +84,14 @@ export const ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, 
   [Attribute.CryoDamageBonus, GameTextKey.AttributeCryoDamageBonus],
   [Attribute.GeoDamageBonus, GameTextKey.AttributeGeoDamageBonus],
   [Attribute.PhysicalDamageBonus, GameTextKey.AttributePhysicalDamageBonus],
+  [Attribute.PyroResistance, GameTextKey.AttributePyroResistance],
+  [Attribute.HydroResistance, GameTextKey.AttributeHydroResistance],
+  [Attribute.DendroResistance, GameTextKey.AttributeDendroResistance],
+  [Attribute.ElectroResistance, GameTextKey.AttributeElectroResistance],
+  [Attribute.AnemoResistance, GameTextKey.AttributeAnemoResistance],
+  [Attribute.CryoResistance, GameTextKey.AttributeCryoResistance],
+  [Attribute.GeoResistance, GameTextKey.AttributeGeoResistance],
+  [Attribute.PhysicalResistance, GameTextKey.AttributePhysicalResistance],
 ];
 // The attributes the game writes whole rather than as a percentage: the bases, the flats and Elemental Mastery
 export const WHOLE_ATTRIBUTES: readonly Attribute[] = [

@@ -10,7 +10,7 @@
 
 ## 3. Details
 
-- [ ] 3.1 Open Details from the Attributes tab with every attribute in three groups. Verify: tests named after the scenarios 'Details lists the advanced and elemental attributes beyond the summary' and 'pressing Details again closes the list', seen failing first.
+- [x] 3.1 Open Details from the Attributes tab with every attribute in three groups. Verify: tests named after the scenarios 'Details lists the advanced and elemental attributes beyond the summary' and 'pressing Details again closes the list', seen failing first.
 
 ## 4. Levelling and ascension
 
