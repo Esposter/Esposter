@@ -6,7 +6,10 @@ import { Element } from "genshin-world";
 export const GCG_STANDARD_RULE_ID = 2;
 // The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
 // Published beside the standard rule
-export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values()];
+// The normal challengers' duels whose enemy decks are built: games 1011 and 1012 play deck 11105, and game 1083 plays deck
+// 12005. A challenger's other games wait for their decks, since a game whose enemy deck has no slice is refused
+export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083];
+export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS];
 // The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
 export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;
@@ -31,6 +34,8 @@ export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number,
   [7, [113_011, 111_031, 115_011]],
   [11_002, [133_021, 134_061]],
   [11_005, [111_023, 115_021]],
+  [11_105, [112_031, 112_032, 113_031, 114_011]],
+  [12_005, [111_011, 111_012, 114_031, 116_011]],
   [30_111, [113_011, 111_031, 115_011]],
   [30_112, [113_031, 114_011, 111_031]],
 ]);
