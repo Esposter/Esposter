@@ -17,7 +17,7 @@ export const computeChestInteractables = (
   gameText: Readonly<Record<string, string>>,
   getGroundHeight: (x: number, z: number) => number,
 ): Interactable[] =>
-  chestPlaces.flatMap(({ id, kind, position: { x, z } }) => {
+  chestPlaces.flatMap(({ id, kind, position: { x, z } }): Interactable[] => {
     if (openedChestIds.has(id)) return [];
     const position = { x, y: getGroundHeight(x, z), z };
     if (kind === ChestKind.Buried && !dugChestIds.has(id))

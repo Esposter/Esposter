@@ -48,12 +48,14 @@ describe(openChest, () => {
     expect.hasAssertions();
 
     const luxuriousChest = { ...commonChest, kind: ChestKind.Luxurious };
-    expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, false)).toStrictEqual({
+    expect(
+      openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, Currency.AnemoSigil, false),
+    ).toStrictEqual({
       adventureExp: 30,
       bagDrops: [],
       drops: [{ count: 3, itemId: 104_003 }],
       openedChestIds: new Set([CHEST_ID]),
-      wallet: { ...EMPTY_WALLET, [Currency.Primogem]: 10 },
+      wallet: { ...EMPTY_WALLET, [Currency.AnemoSigil]: 10, [Currency.Primogem]: 10 },
     });
   });
 
@@ -61,7 +63,9 @@ describe(openChest, () => {
     expect.hasAssertions();
 
     const remarkableChest = { ...commonChest, kind: ChestKind.Remarkable };
-    expect(openChest(remarkableChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, false)).toStrictEqual({
+    expect(
+      openChest(remarkableChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, Currency.AnemoSigil, false),
+    ).toStrictEqual({
       adventureExp: 30,
       bagDrops: [],
       drops: [],
@@ -103,7 +107,7 @@ describe(openChest, () => {
     expect.hasAssertions();
 
     const dugChest = { ...commonChest, kind: ChestKind.Buried };
-    expect(openChest(dugChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, false)).toStrictEqual({
+    expect(openChest(dugChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil, false)).toStrictEqual({
       adventureExp: 0,
       bagDrops: [],
       drops: [],
