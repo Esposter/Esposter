@@ -1,3 +1,4 @@
+import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
@@ -8,8 +9,8 @@ import { MenuEntryIcon as EntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { MenuFrameIcon as FrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { MINUTES_PER_DAY } from "genshin-engine";
-import { GameTextKey } from "genshin-text";
+import { MINUTES_PER_DAY, QualityTier } from "genshin-engine";
+import { GameLanguage, GameTextKey } from "genshin-text";
 
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is
 // Not among them, since no still of the menu the references hold shows it
@@ -84,3 +85,19 @@ export const MENU_LIST_CLOSE_GLYPH: MenuIconGlyph = {
   x: -6,
   y: -5,
 };
+
+// The levels a volume row's slider runs between, from its lowest to its highest
+export const VOLUME_LEVEL_MINIMUM = 1;
+export const VOLUME_LEVEL_MAXIMUM = 10;
+// The key the settings are kept under on this device, as the game keeps its settings per device
+export const GENSHIN_SETTINGS_STORAGE_KEY = "genshin-settings";
+// The settings a device starts from before it has kept any of its own
+export const GENSHIN_SETTINGS_DEFAULTS: GenshinSettings = {
+  language: GameLanguage.English,
+  musicVolume: VOLUME_LEVEL_MAXIMUM,
+  qualityTier: QualityTier.High,
+  sfxVolume: VOLUME_LEVEL_MAXIMUM,
+  volume: VOLUME_LEVEL_MAXIMUM,
+};
+// The quality tiers the Graphics Quality row lists, from the lowest to the highest, as the wiki's Graphics list orders them
+export const GRAPHICS_QUALITY_TIERS: readonly QualityTier[] = [QualityTier.Low, QualityTier.Medium, QualityTier.High];

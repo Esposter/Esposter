@@ -1,41 +1,147 @@
 <script setup lang="ts">
+import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
+import type { SettingsRow } from "#src/models/menu/SettingsRow";
+import type { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import type { QualityTier } from "genshin-engine";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import { SETTINGS_TABS } from "#src/services/menu/constants";
+import {
+  GRAPHICS_QUALITY_TIERS,
+  SETTINGS_TABS,
+  VOLUME_LEVEL_MAXIMUM,
+  VOLUME_LEVEL_MINIMUM,
+} from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
+import { getVolumeLevelAt } from "#src/services/menu/getVolumeLevelAt";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { QualityTierGameTextKeyMap } from "#src/services/menu/QualityTierGameTextKeyMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
+import { getResultAsync } from "@esposter/shared";
 import { useResizeObserver } from "@vueuse/core";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import {
+  fillGameTextValues,
+  GameLanguages,
+  GameTextKey,
+  GameTextLoaderMap,
+  getLanguageDisplayName,
+} from "genshin-text";
 
 interface Props {
   // The quality tier the device was given, which the row's words mark as the default
   defaultQualityTier: QualityTier;
   // The game's words in the reader's language
   gameText: GameText;
-  // The quality tier the world renders at
-  qualityTier: QualityTier;
+  // The reader's own game language, whose words the game text given is
+  language: GameLanguage;
 }
 
+// The settings the screen shows and changes, which the host keeps on this device
+const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
-const { defaultQualityTier, gameText, qualityTier } = defineProps<Props>();
-const emit = defineEmits<{ close: []; quality: [] }>();
+const { defaultQualityTier, gameText, language } = defineProps<Props>();
+const emit = defineEmits<{ close: [] }>();
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
 const sections = computed(() => SettingsTabSectionsMap[tab.value] ?? []);
-const qualityValue = computed(() => {
-  const words = gameText[QualityTierGameTextKeyMap[qualityTier]];
-  return qualityTier === defaultQualityTier ? fillGameTextValues(gameText[GameTextKey.SettingsDefault], words) : words;
+// The labels show the words of the language chosen here. The reader's own language's are the game text given, and any
+// Other is its chunk, loaded when it is chosen and kept only if it is still the choice when it arrives
+const chosenGameText = shallowRef<GameText>();
+const shownGameText = computed(() => chosenGameText.value ?? gameText);
+watch(
+  () => settings.value.language,
+  (newLanguage) => {
+    if (newLanguage === language) {
+      chosenGameText.value = undefined;
+      return;
+    }
+
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
+    getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
+      (loadedGameText) => {
+        if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;
+      },
+      (error) => console.error(error),
+    );
+  },
+  { immediate: true },
+);
+// The Graphics Quality and Game Language rows each open a list, one at a time, and a change of tab closes it
+const openedList = shallowRef<SettingsRowKind>();
+watch(tab, () => {
+  openedList.value = undefined;
 });
+const getQualityTierWords = (qualityTier: QualityTier): string => {
+  const words = shownGameText.value[QualityTierGameTextKeyMap[qualityTier]];
+  return qualityTier === defaultQualityTier
+    ? fillGameTextValues(shownGameText.value[GameTextKey.SettingsDefault], words)
+    : words;
+};
+const qualityValue = computed(() => getQualityTierWords(settings.value.qualityTier));
+const languageValue = computed(() => getLanguageDisplayName(settings.value.language, settings.value.language));
+// The options the open list offers, each with whether it is the setting now and the choice that sets it
+const openedOptions = computed(() => {
+  if (openedList.value === SettingsRowKind.Language)
+    return GameLanguages.map((gameLanguage) => ({
+      choose: () => {
+        settings.value = { ...settings.value, language: gameLanguage };
+        openedList.value = undefined;
+      },
+      isSelected: gameLanguage === settings.value.language,
+      label: getLanguageDisplayName(gameLanguage, gameLanguage),
+    }));
+  if (openedList.value === SettingsRowKind.Quality)
+    return GRAPHICS_QUALITY_TIERS.map((qualityTier) => ({
+      choose: () => {
+        settings.value = { ...settings.value, qualityTier };
+        openedList.value = undefined;
+      },
+      isSelected: qualityTier === settings.value.qualityTier,
+      label: getQualityTierWords(qualityTier),
+    }));
+  return [];
+});
+const isListRow = (row: SettingsRow): boolean =>
+  row.kind === SettingsRowKind.Quality || row.kind === SettingsRowKind.Language;
+const toggleList = (kind: SettingsRowKind): void => {
+  openedList.value = openedList.value === kind ? undefined : kind;
+};
+// A volume row's level: the setting the world backs it with, or the level an unbacked slider is drawn at
+type VolumeRow = Extract<SettingsRow, { kind: SettingsRowKind.Slider | SettingsRowKind.Volume }>;
+const getVolumeLevel = (row: VolumeRow): number =>
+  row.kind === SettingsRowKind.Volume ? settings.value[row.setting] : row.volume;
+const setVolume = (setting: VolumeSetting, level: number): void => {
+  settings.value = { ...settings.value, [setting]: level };
+};
+// A volume follows the pointer while its button is held, the pointer captured at the press so a drag past the track's
+// Ends keeps setting it, where the level stops at its limit
+const dragVolume = (event: PointerEvent, setting: VolumeSetting): void => {
+  if (!(event.currentTarget instanceof HTMLElement) || event.buttons === 0) return;
+
+  const { left, width } = event.currentTarget.getBoundingClientRect();
+  setVolume(setting, getVolumeLevelAt((event.clientX - left) / width));
+};
+const startVolumeDrag = (event: PointerEvent, setting: VolumeSetting): void => {
+  if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
+  dragVolume(event, setting);
+};
+// The arrow keys step a volume by one level, held within its range as a drag is
+const stepVolume = (event: KeyboardEvent, setting: VolumeSetting): void => {
+  const level = settings.value[setting];
+  if (event.key === "ArrowLeft" || event.key === "ArrowDown")
+    setVolume(setting, Math.max(level - 1, VOLUME_LEVEL_MINIMUM));
+  else if (event.key === "ArrowRight" || event.key === "ArrowUp")
+    setVolume(setting, Math.min(level + 1, VOLUME_LEVEL_MAXIMUM));
+  else return;
+
+  event.preventDefault();
+};
 // The scroll thumb's share of the track and how far down it stands, from the page's scroll as it stands
 const scrollThumb = shallowRef({ offset: 0, share: 1 });
 const updateScrollThumb = () => {
@@ -59,10 +165,10 @@ onMounted(() => {
 <template>
   <!-- The game's settings over the blurred world: the breadcrumb of the screen's name and its tab in the header, the tabs
        Down the left and the open tab's rows on the right under their headings, scrolling under the header with a thumb
-       Beside them. A row is its label with its value, the choice its caret opens, the page its action opens or a volume's
-       Slider. Only the Graphics and Audio tabs are built, and only the graphics quality is the world's: every other row
-       Draws the value the clip shows, disabled -->
-  <GameScreen class="settings" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Settings]">
+       Beside them. A row is its label with its value: the graphics quality and the game language open a list of the
+       World's own, a volume the world backs sets its level, and every other row is drawn disabled at the value the clip
+       Shows -->
+  <GameScreen class="settings" role="dialog" aria-modal="true" :aria-label="shownGameText[GameTextKey.Settings]">
     <div class="header" />
     <svg class="small-gear" aria-hidden="true" viewBox="0 0 27 27">
       <path
@@ -70,10 +176,12 @@ onMounted(() => {
       />
     </svg>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.SettingsGear]" class="gear" />
-    <p class="breadcrumb">{{ gameText[GameTextKey.Settings] }} / {{ gameText[SettingsTabGameTextKeyMap[tab]] }}</p>
+    <p class="breadcrumb">
+      {{ shownGameText[GameTextKey.Settings] }} / {{ shownGameText[SettingsTabGameTextKeyMap[tab]] }}
+    </p>
     <GameButton
       class="close"
-      :aria-label="gameText[GameTextKey.Back]"
+      :aria-label="shownGameText[GameTextKey.Back]"
       :kind="GameButtonKind.Disc"
       :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close])"
       @click="emit('close')"
@@ -96,58 +204,97 @@ onMounted(() => {
           <path class="arrow" d="M 12 9 L 17.5 14 L 12 19 Z" />
         </svg>
         <span v-else class="bullet" />
-        <span class="name">{{ gameText[SettingsTabGameTextKeyMap[settingsTab]] }}</span>
+        <span class="name">{{ shownGameText[SettingsTabGameTextKeyMap[settingsTab]] }}</span>
       </GameButton>
     </div>
     <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
       <div ref="content" class="content">
         <template v-for="{ headingKey, rows } of sections" :key="headingKey">
-          <p class="heading" role="heading" aria-level="2">{{ gameText[headingKey] }}</p>
-          <div v-for="row of rows" :key="row.labelKey" class="row">
-            <span class="label">{{ gameText[row.labelKey] }}</span>
-            <template v-if="row.kind === SettingsRowKind.Slider">
-              <svg class="speaker" aria-hidden="true" viewBox="0 0 36 30">
-                <path d="M 3 10 L 9 10 L 18 3 L 18 27 L 9 20 L 3 20 Z" />
-                <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
-              </svg>
-              <span class="volume">{{ row.volume }}</span>
-              <div
-                class="slider"
-                role="slider"
-                :aria-label="gameText[row.labelKey]"
-                aria-disabled="true"
-                aria-valuemax="10"
-                aria-valuemin="0"
-                :aria-valuenow="row.volume"
+          <p class="heading" role="heading" aria-level="2">{{ shownGameText[headingKey] }}</p>
+          <template v-for="row of rows" :key="row.labelKey">
+            <div class="row">
+              <span class="label">{{ shownGameText[row.labelKey] }}</span>
+              <template v-if="row.kind === SettingsRowKind.Slider || row.kind === SettingsRowKind.Volume">
+                <svg class="speaker" aria-hidden="true" viewBox="0 0 36 30">
+                  <path d="M 3 10 L 9 10 L 18 3 L 18 27 L 9 20 L 3 20 Z" />
+                  <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
+                </svg>
+                <span class="volume">{{ getVolumeLevel(row) }}</span>
+                <div
+                  v-if="row.kind === SettingsRowKind.Volume"
+                  class="slider"
+                  role="slider"
+                  tabindex="0"
+                  :aria-label="shownGameText[row.labelKey]"
+                  :aria-valuemax="VOLUME_LEVEL_MAXIMUM"
+                  :aria-valuemin="VOLUME_LEVEL_MINIMUM"
+                  :aria-valuenow="getVolumeLevel(row)"
+                  @keydown="stepVolume($event, row.setting)"
+                  @pointerdown="startVolumeDrag($event, row.setting)"
+                  @pointermove="dragVolume($event, row.setting)"
+                >
+                  <span class="knob" :style="{ left: `${(getVolumeLevel(row) / VOLUME_LEVEL_MAXIMUM) * 100}%` }" />
+                </div>
+                <div
+                  v-else
+                  class="slider"
+                  role="slider"
+                  aria-disabled="true"
+                  :aria-label="shownGameText[row.labelKey]"
+                  :aria-valuemax="VOLUME_LEVEL_MAXIMUM"
+                  :aria-valuemin="VOLUME_LEVEL_MINIMUM"
+                  :aria-valuenow="getVolumeLevel(row)"
+                >
+                  <span class="knob" :style="{ left: `${(getVolumeLevel(row) / VOLUME_LEVEL_MAXIMUM) * 100}%` }" />
+                </div>
+              </template>
+              <button
+                v-else
+                class="choice"
+                :aria-label="shownGameText[row.labelKey]"
+                :aria-expanded="isListRow(row) ? openedList === row.kind : undefined"
+                :disabled="!isListRow(row)"
+                type="button"
+                @click="toggleList(row.kind)"
               >
-                <span class="knob" :style="{ left: `${row.volume * 10}%` }" />
-              </div>
-            </template>
-            <button
-              v-else
-              class="choice"
-              :disabled="row.kind !== SettingsRowKind.Quality"
-              type="button"
-              @click="emit('quality')"
+                <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
+                  <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
+                </svg>
+                <svg class="star faint" aria-hidden="true" viewBox="0 0 48 48">
+                  <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
+                </svg>
+                <span class="value">
+                  <template v-if="row.kind === SettingsRowKind.Quality">{{ qualityValue }}</template>
+                  <template v-else-if="row.kind === SettingsRowKind.Language">{{ languageValue }}</template>
+                  <template v-else-if="row.kind === SettingsRowKind.Action">{{ shownGameText[row.valueKey] }}</template>
+                  <template v-else>{{ row.getValue(shownGameText, settings.language) }}</template>
+                </span>
+                <svg v-if="row.kind === SettingsRowKind.Action" class="go" aria-hidden="true" viewBox="0 0 25 25">
+                  <circle cx="12.5" cy="12.5" r="12.5" />
+                  <path class="arrow" d="M 8.5 7 L 17 12.5 L 8.5 18 L 10.5 12.5 Z" />
+                </svg>
+                <span v-else class="caret" />
+              </button>
+            </div>
+            <div
+              v-if="openedList === row.kind"
+              class="options"
+              role="listbox"
+              :aria-label="shownGameText[row.labelKey]"
             >
-              <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
-                <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
-              </svg>
-              <svg class="star faint" aria-hidden="true" viewBox="0 0 48 48">
-                <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
-              </svg>
-              <span class="value">
-                <template v-if="row.kind === SettingsRowKind.Quality">{{ qualityValue }}</template>
-                <template v-else-if="row.kind === SettingsRowKind.Action">{{ gameText[row.valueKey] }}</template>
-                <template v-else>{{ row.getValue(gameText) }}</template>
-              </span>
-              <svg v-if="row.kind === SettingsRowKind.Action" class="go" aria-hidden="true" viewBox="0 0 25 25">
-                <circle cx="12.5" cy="12.5" r="12.5" />
-                <path class="arrow" d="M 8.5 7 L 17 12.5 L 8.5 18 L 10.5 12.5 Z" />
-              </svg>
-              <span v-else class="caret" />
-            </button>
-          </div>
+              <button
+                v-for="option of openedOptions"
+                :key="option.label"
+                class="option"
+                role="option"
+                type="button"
+                :aria-selected="option.isSelected"
+                @click="option.choose()"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -513,5 +660,41 @@ onMounted(() => {
   width: calc(var(--unit) * 7);
   border-radius: calc(var(--unit) * 3.5) calc(var(--unit) * 3.5) 0 0;
   background: rgb(217 216 212 / 0.8);
+}
+/* The list an open row shows under it, each option a row's glass and the chosen one a tan panel. Provisional: the list's
+   Place and the chosen option's colour, which the clip shows only with the list closed */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 8);
+}
+
+.option {
+  height: calc(var(--unit) * 56);
+  padding: 0 calc(var(--unit) * 29);
+  border: none;
+  border-radius: calc(var(--unit) * 28);
+  background: rgb(239 231 221 / 0.78);
+  color: #4b4d54;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(var(--unit) * 27);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1);
+  text-align: start;
+}
+
+.option[aria-selected="true"] {
+  background: rgb(216 203 183 / 0.86);
+}
+
+/* A volume's line takes the pointer, which sets its level, and the arrow keys once it has the focus */
+.slider {
+  touch-action: none;
+}
+
+.slider:focus-visible {
+  outline: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.9);
+  outline-offset: calc(var(--unit) * 4);
 }
 </style>
