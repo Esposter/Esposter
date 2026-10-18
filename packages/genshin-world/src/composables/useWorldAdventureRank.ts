@@ -62,6 +62,7 @@ export const useWorldAdventureRank = ({
   return {
     adventureExp,
     adventureExpProgress,
+    completedMainQuestIds,
     gainWorldAdventureExp,
     isWorldLevelAdjustable,
     rank: computed(() => standing.value.rank),

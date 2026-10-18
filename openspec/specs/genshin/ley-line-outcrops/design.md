@@ -37,19 +37,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role                                                                                |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/leyLine/writeLeyLineTables.ts`       | writes each city's region slice from the dump's three tables                        |
-| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`         | each city's kinds, places and ordered sections from the tables                      |
-| `scripts/src/services/genshinAssets/leyLine/constants.ts`                | the refresh types and the two conditions the kinds open by                          |
-| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`               | the Revelation and the Wealth                                                       |
-| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`           | a kind's Adventure Rank and the nations whose areas it needs unlocked               |
-| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`             | a region's kinds, sections and places, as its slice is written                      |
-| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`  | whether a kind is open at a rank with the listed areas unlocked                     |
-| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`            | the Ley Line Blossoms of the official map written into each region's outcrop places |
-| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`       | the camp a touch spawns at an outcrop's place, of provisional size and kinds        |
-| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`     | the blossom reveals once every enemy of its place's camp is down                    |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` | the nearest other fitted place, or none where no place is free                      |
+| File                                                                         | Role                                                                                |
+| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/leyLine/writeLeyLineTables.ts`           | writes each city's region slice from the dump's three tables                        |
+| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                      |
+| `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                          |
+| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                       |
+| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`               | a kind's Adventure Rank and the nations whose areas it needs unlocked               |
+| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`                 | a region's kinds, sections and places, as its slice is written                      |
+| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`      | whether a kind is open at a rank with the listed areas unlocked                     |
+| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                | the Ley Line Blossoms of the official map written into each region's outcrop places |
+| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`           | the camp a touch spawns at an outcrop's place, of provisional size and kinds        |
+| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`         | the blossom reveals once every enemy of its place's camp is down                    |
+| `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                       |
+| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer    |
+| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                 |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free                      |
 
 ## Sources
 
