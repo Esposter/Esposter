@@ -17,8 +17,8 @@ import {
 import { applyBlockEdit } from "headless-block-editor";
 
 // Each open resource's undo and redo over its document in the page builder's document store. An edit is recorded with
-// The inverses that undo it, and an edit in the same interaction that only sets the paths the newest entry set merges
-// Into that entry, so a drag of a value is one entry
+// The inverses that undo it, and an edit in the same interaction that overwrites the values the newest entry overwrote
+// Merges into that entry, so a drag of a value is one entry
 export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument, setDocument } = pageBuilderDocumentStore;
