@@ -1,9 +1,14 @@
 import type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";
 import type { AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
-import type { CharacterMaterialKind, CharacterShadingInputs, ShadingRegionColours } from "genshin-engine";
+import type {
+  CharacterMaterialKind,
+  CharacterShadingInputs,
+  OutlineWidthKnots,
+  ShadingRegionColours,
+} from "genshin-engine";
 import type { Texture, Vector3Tuple, Vector4Tuple } from "three";
 
-import { createFaceDraw } from "genshin-engine";
+import { createFaceDraw, UNIT_OUTLINE_WIDTH_KNOTS } from "genshin-engine";
 
 type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number]["slot"];
 
@@ -25,6 +30,15 @@ const readColour = (colors: Readonly<Record<string, Vector4Tuple>>, name: string
 const readKnots = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): undefined | Vector3Tuple => {
   const knots = colors[name];
   return knots && [knots[0], knots[1], knots[2]];
+};
+
+// An outline's width knots as one value, or none where the material names neither. A material that names one of the two
+// Keeps the unit knots for the other
+const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): undefined | OutlineWidthKnots => {
+  const depths = readKnots(colors, "_OutlineWidthAdjustZs");
+  const scales = readKnots(colors, "_OutlineWidthAdjustScales");
+  if (!depths && !scales) return undefined;
+  return { depths: depths ?? UNIT_OUTLINE_WIDTH_KNOTS.depths, scales: scales ?? UNIT_OUTLINE_WIDTH_KNOTS.scales };
 };
 
 // An outline's offset along the view ray, "_MaxOutlineZOffset" times 0.01, with the block-B flag the vertex's blue is read
@@ -96,13 +110,12 @@ export const createAvatarShadingInputs = (
     metalDarkColor: readColour(colors, "_MTMapDarkColor"),
     metalLightColor: readColour(colors, "_MTMapLightColor"),
     metalTexture: slotTextureMap.get("_MTMap"),
-    outlineDepths: readKnots(colors, "_OutlineWidthAdjustZs"),
     outlineOffset: readOutlineOffset(nameFloatMap),
     outlineRegions: {
       colors: readRegionColors(colors, "_OutlineColor", BLACK),
       intensities: readRegionFloats(nameFloatMap, "_OutLineIntensity"),
     },
-    outlineScales: readKnots(colors, "_OutlineWidthAdjustScales"),
+    outlineWidthKnots: readOutlineWidthKnots(colors),
     rampTexture: slotTextureMap.get("_PackedShadowRampTex"),
     rampWidth: nameFloatMap.get("_ShadowRampWidth"),
     // A region the material holds no colour for takes the material's own, as a region with no tint of its own does

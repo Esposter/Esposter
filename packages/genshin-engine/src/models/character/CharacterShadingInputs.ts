@@ -5,6 +5,7 @@ import type { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import type { RampLayout } from "#src/models/character/RampLayout";
 import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
+import type { OutlineWidthKnots } from "#src/models/nodes/OutlineWidthKnots";
 import type { Texture, Vector3Tuple } from "three";
 
 // The inputs the character shading reads, in the shape of the Inputs table on the shading page. Every one takes its default
@@ -53,13 +54,12 @@ export interface CharacterShadingInputs {
   metalDarkColor: Vector3Tuple;
   metalLightColor: Vector3Tuple;
   metalTexture?: Texture;
-  // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales"
-  outlineDepths: Vector3Tuple;
   // The outline's offset along the view ray, from the game's "_MaxOutlineZOffset", where a game model has one
   outlineOffset?: { blockBChannel: number; size: number };
   // A game model's outline colours by region, read per pixel; a pack's outline is its edge's one colour
   outlineRegions?: OutlineRegions;
-  outlineScales: Vector3Tuple;
+  // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales", as the outline reads them
+  outlineWidthKnots: OutlineWidthKnots;
   // The packed shadow ramp "_PackedShadowRampTex", read as its row, and the layout it is read by: the game's and the
   // World's shared ramps are rows, and a pack's own toon is a column
   rampLayout: RampLayout;

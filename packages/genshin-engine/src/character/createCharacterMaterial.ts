@@ -82,7 +82,7 @@ export const createCharacterMaterial = ({
           isVertexWeighted: shadingInputs.isOutlineVertexWeighted,
           offset: shadingInputs.outlineOffset,
           size: edgeSize,
-          widthKnots: { depths: shadingInputs.outlineDepths, scales: shadingInputs.outlineScales },
+          widthKnots: shadingInputs.outlineWidthKnots,
         }
       : undefined,
   );
