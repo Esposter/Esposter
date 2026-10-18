@@ -53,10 +53,16 @@ const addAscension1PyroDamageBonus = (kitEffectState: KitEffectState, characterI
   });
 };
 
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_ATTACK_BONUS = 0.2;
+const CONSTELLATION_1_ATTACK_SECONDS = 20;
+const CONSTELLATION_1_AUROUS_BLAZE_SECONDS = 4;
+const CONSTELLATION_1_SOURCE = "yoimiya-constellation-1";
+
 // Yoimiya's behaviour: Niwabi Fire-Dance's stance of Blazing Arrows for the table's seconds, ending as she leaves the
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
-// Member's hits set off. Ascension 1's Pyro DMG Bonus count is built, and her constellations are not built yet
-// Constellation 1 needs Aurous Blaze's extra 4 seconds and its defeat effect, which the kit does not build
+// Member's hits set off, and Constellation 1 extends it and raises her ATK on a defeat. Ascension 1's Pyro DMG Bonus
+// count is built. Her Ascension 4 passive and Constellations 2, 4 and 6 are not built yet
 // Constellation 4 needs Aurous Blaze's explosions to cut Niwabi Fire-Dance's cooldown, which the kit does not build
 // Constellation 6 needs the Niwabi Fire-Dance Normal Attacks' extra arrow chance, which the kit does not build
 export const createYoimiyaKitBehaviour = ({
@@ -86,7 +92,19 @@ export const createYoimiyaKitBehaviour = ({
     onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind !== KitEventKind.DamageTaken) return;
-      const { attackTag, enemy, hit, striker } = event;
+      const { attackTag, enemy, hit, isDefeated, striker } = event;
+      // Agate Ryuukin, from Constellation 1: a marked enemy defeated within Aurous Blaze raises Yoimiya's ATK by 20%
+      if (
+        isDefeated &&
+        combatant.constellationCount >= CONSTELLATION_1 &&
+        enemy.statuses.some(({ id }) => id === AUROUS_BLAZE_STATUS_ID)
+      )
+        buffKitMember(kitEffectState, characterId, {
+          amount: CONSTELLATION_1_ATTACK_BONUS,
+          attribute: Attribute.AttackPercent,
+          secondsRemaining: CONSTELLATION_1_ATTACK_SECONDS,
+          source: CONSTELLATION_1_SOURCE,
+        });
       if (striker.characterId === characterId) {
         if (
           combatant.ascension >= ASCENSION_1 &&
@@ -107,7 +125,9 @@ export const createYoimiyaKitBehaviour = ({
         addEnemyStatus(enemy, {
           damageTakenBonus: 0,
           id: AUROUS_BLAZE_STATUS_ID,
-          secondsRemaining: aurousBlazeSeconds,
+          secondsRemaining:
+            aurousBlazeSeconds +
+            (combatant.constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_AUROUS_BLAZE_SECONDS : 0),
         });
         return;
       }
