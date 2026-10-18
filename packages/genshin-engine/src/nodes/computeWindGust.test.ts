@@ -1,13 +1,12 @@
-import { computeWindGust } from "#src/services/mondstadt/computeWindGust";
-import { createMondstadtWindUniforms } from "#src/services/mondstadt/createMondstadtWindUniforms";
+import { computeWindGust } from "#src/nodes/computeWindGust";
 import { describe, expect, test } from "vitest";
 
-describe(createMondstadtWindUniforms, () => {
+describe(computeWindGust, () => {
   test("gusts roll across the meadows", () => {
     expect.hasAssertions();
 
-    const { gustSpeed, gustStrength, gustWidth } = createMondstadtWindUniforms();
-    const wind = { gustSpeed: gustSpeed.value, gustStrength: gustStrength.value, gustWidth: gustWidth.value };
+    // Made-up gust: a band 4 long that travels at 1 and swells to 2
+    const wind = { gustSpeed: 1, gustStrength: 2, gustWidth: 4 };
     const period = wind.gustWidth / wind.gustSpeed;
     const samples = Array.from({ length: 20 }, (_, index) => (index * period) / 20);
     const gusts = samples.map((seconds) => computeWindGust(0, seconds, wind));

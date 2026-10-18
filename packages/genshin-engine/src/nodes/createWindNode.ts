@@ -8,6 +8,7 @@ const TURBULENCE_SPEED = 0.4;
 // The wind at a point on the ground, as how far it pushes along the ground: the base wind, gusts travelling
 // Downwind as bands that swell and fall, and a little turbulence so neighbouring plants never move in step. A field
 // Of grass therefore leans together and waves roll across it, as Genshin's meadows do
+// Its gust band is the GPU form of computeWindGust, the reference a change to the gust lands in beside this node
 export const createWindNode = (
   { direction, gustSpeed, gustStrength, gustWidth, strength }: WindUniforms,
   groundPosition: Node<"vec2">,

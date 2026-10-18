@@ -18,7 +18,7 @@ flowchart TD
   K -->|no| X[Shrunk to nothing]
 ```
 
-- **One wind field.** The wind at a point on the ground (`createWindNode`) is the region's base breeze along its direction, gust bands travelling downwind that swell and fall, and a little noise so neighbouring plants never move in step. It is a TSL function of world position, so every sampler reads the same field: the grass, the trees' leaves, and the clouds, which drift downwind by its strength. Its direction, strength and gusts are `WindUniforms`, which a region sets. Mondstadt's is a steady breeze from the west with gusts every half minute.
+- **One wind field.** The wind at a point on the ground (`createWindNode`) is the region's base breeze along its direction, gust bands travelling downwind that swell and fall, and a little noise so neighbouring plants never move in step. It is a TSL function of world position, so every sampler reads the same field: the grass, the trees' leaves, and the clouds, which drift downwind by its strength. Its direction, strength and gusts are `WindUniforms`, which a region sets. Mondstadt's is a steady breeze from the west with gusts every half minute. The gust band has a CPU reference, `computeWindGust`, which the node is the GPU form of: a change to the gust lands in both, as the outline offset pair does.
 - **Grass is blades generated in the vertex stage.** A ring is one draw of the same blade shape (`computeGrassBlade`), once per cell of a square grid around the camera (`createGrassMaterial`). A blade's instance index is its cell. The grid moves with the camera in whole cells, so a blade stays where it grew. A hash of the cell jitters the blade within it, turns it, sizes it and decides whether the quality tier grows it, so no blade is stored.
 - **Two rings, then the ground.** The near ring is dense and fine under the eye. The middle ring is sparse, with taller, wider blades, and grows from where the near ring fades. Past it the terrain's own green carries the field, and since a blade takes the ground's colour, the rings fade into it with no seam (`GrassRing`).
 - **Blades stand on a capture of the ground.** A camera looking straight down draws only the terrain's layer into a small half-float target: the ground's colour, and its height in alpha (`createGroundCapture`, `renderGroundCapture`). A blade reads its footing and its colour there. It grows only on green ground, never on rock or sand, and only above the water. The capture camera culls by its own frustum and the terrain draws its tiles all round the eye, so the capture holds the ground under its whole square whichever way the view looks. The scene creates it and the grass redraws it; the rain's splashes stand on it too. It is redrawn only when the camera has crossed part of it or a tile drawn under it has come or gone (`checkTerrainDrawsChanged`), never on a tile arriving elsewhere, and never on a turn of the camera, which changes nothing the terrain draws.
@@ -35,20 +35,21 @@ flowchart TD
 
 ## Key files
 
-| File                                                            | Role                                                                |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-engine/src/nodes/createWindNode.ts`           | The wind at a point on the ground: breeze, gusts and turbulence     |
-| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` | A ring's blades placed, grown, bent and shaded in the vertex stage  |
-| `packages/genshin-engine/src/vegetation/createGrassCell.ts`     | A grid cell's place, jitter, turn, size and whether it grows        |
-| `packages/genshin-engine/src/vegetation/createGrassCulling.ts`  | The cells a ring's compute pass keeps in view                       |
-| `packages/genshin-engine/src/culling/createInstanceCulling.ts`  | The per-instance compute pass and its indirect draw                 |
-| `packages/genshin-engine/src/vegetation/stepGrassTrail.ts`      | The trail of bends the character leaves, stepped each fixed step    |
-| `packages/genshin-engine/src/nodes/sampleGrassTrail.ts`         | The trail's bend at a point of the ground, read in the vertex stage |
-| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                  |
-| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above         |
-| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                        |
-| `packages/genshin-world/src/components/World/Grass/Index.vue`   | The rings, their tier's density, and when the capture is redrawn    |
-| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                         |
+| File                                                            | Role                                                                        |
+| :-------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWindNode.ts`           | The wind at a point on the ground: breeze, gusts and turbulence             |
+| `packages/genshin-engine/src/nodes/computeWindGust.ts`          | The gust band at a point on the CPU, the reference for the wind node's gust |
+| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` | A ring's blades placed, grown, bent and shaded in the vertex stage          |
+| `packages/genshin-engine/src/vegetation/createGrassCell.ts`     | A grid cell's place, jitter, turn, size and whether it grows                |
+| `packages/genshin-engine/src/vegetation/createGrassCulling.ts`  | The cells a ring's compute pass keeps in view                               |
+| `packages/genshin-engine/src/culling/createInstanceCulling.ts`  | The per-instance compute pass and its indirect draw                         |
+| `packages/genshin-engine/src/vegetation/stepGrassTrail.ts`      | The trail of bends the character leaves, stepped each fixed step            |
+| `packages/genshin-engine/src/nodes/sampleGrassTrail.ts`         | The trail's bend at a point of the ground, read in the vertex stage         |
+| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                          |
+| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above                 |
+| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                                |
+| `packages/genshin-world/src/components/World/Grass/Index.vue`   | The rings, their tier's density, and when the capture is redrawn            |
+| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                                 |
 
 ## Notes
 
