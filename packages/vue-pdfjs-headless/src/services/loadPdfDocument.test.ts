@@ -20,6 +20,7 @@ describe(loadPdfDocument, () => {
       api: { GlobalWorkerOptions: globalWorkerOptions, getDocument } as unknown as PdfApi,
       cMapUrl: C_MAP_URL,
       standardFontDataUrl: STANDARD_FONT_DATA_URL,
+      viewer: {} as PdfRenderer["viewer"],
       wasmUrl: WASM_URL,
       workerSrc: WORKER_SOURCE,
     } satisfies PdfRenderer;

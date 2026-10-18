@@ -8,7 +8,7 @@ export const PDF_PRINT_SCALE = 2;
 export const PDF_PRINT_BATCH_SIZE = 10;
 export const PDF_PRINT_CLASS = "pdf-print";
 export const PDF_MIME_TYPE = "application/pdf";
-// Each sheet holds one page at its own margin, and nothing else of the page prints beside it. A template literal with a
-// Substitution has no type the declaration emitter can write, so its annotation stays
+// Each sheet holds one page at its own margin, and nothing else of the page prints beside it.
+// The template literal holds a substitution the declaration emitter cannot type, so its annotation stays
 // oxlint-disable-next-line typescript/no-inferrable-types -- The declaration emitter needs the annotation the linter calls redundant
 export const PDF_PRINT_STYLE: string = `@page { margin: 3mm } .${PDF_PRINT_CLASS} img { display: block; page-break-after: always; width: 100% } @media print { body > :not(.${PDF_PRINT_CLASS}) { display: none !important } }`;

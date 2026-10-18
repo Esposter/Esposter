@@ -1291,6 +1291,9 @@ importers:
       vue-grid-layout-headless:
         specifier: workspace:*
         version: link:../../packages/vue-grid-layout-headless
+      vue-pdfjs-headless:
+        specifier: workspace:*
+        version: link:../../packages/vue-pdfjs-headless
       vue-phaserjs:
         specifier: workspace:*
         version: link:../../packages/vue-phaserjs

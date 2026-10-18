@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
 import type { FileEntity } from "@esposter/db-schema";
 
-import type { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
-import type { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
+import type { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
@@ -10,12 +9,9 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Neither the thumbnail nor the viewer draws in this file, which asserts the shell around them and when the dialog
-// Exists. The source never answers, so each component stays at its loading state
-vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
-  loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
-}));
-vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({
-  loadPdfDocument: vi.fn<typeof loadPdfDocument>(() => new Promise(() => {})),
+// Exists. The renderer never loads, so the document is never requested and each component stays at its loading state
+vi.mock(import("@/services/pdf/loadPdfRenderer"), () => ({
+  loadPdfRenderer: vi.fn<typeof loadPdfRenderer>(() => new Promise(() => {})),
 }));
 
 describe("messageModelFileRendererPdf", () => {
