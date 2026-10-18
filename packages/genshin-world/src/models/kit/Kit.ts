@@ -61,8 +61,9 @@ export interface Kit {
   // Against some enemies only, given the enemy as it stands
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
-  // Against some enemies only, given the enemy as it stands and the deployed team
-  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
+  // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
+  // Reads for a bonus its kit's actions set going
+  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects?: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
   // Stats, given the enemy as it stands, the deployed team and the effects on it
   getStrikeAdditiveBaseDamageBonus?: (

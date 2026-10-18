@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -299,5 +300,82 @@ describe(createDilucKitBehaviour, () => {
       combatant,
     );
     expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  // Constellation 4's bonus is read at the damage hook against an enemy under half its HP, where Constellation 1's does not add
+  const createConstellation4Fixture = (constellationCount = 4) => {
+    const combatant = { ...createCombatant(0), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const presses = [DILUC_KIT.elementalSkill, ...(DILUC_KIT.elementalSkillChain?.followUps ?? [])];
+    const press = (index: number) => presses[index]?.onStart?.(context);
+    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const getBonus = (attackTag: AttackTag) =>
+      DILUC_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
+        { ...enemy, health: enemy.maxHealth * 0.4 },
+        createParty([DILUC_CHARACTER_ID]),
+        kitEffectState.effects,
+      );
+    return { getBonus, press, wait };
+  };
+
+  test("constellation 4 adds 40% to a searing onslaught press that comes two seconds after the one before it, for two seconds", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBeCloseTo(0.4);
+    wait(1.5);
+    expect(getBonus(AttackTag.ElementalSkill)).toBeCloseTo(0.4);
+    wait(0.5);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a searing onslaught press that comes within two seconds of the one before it", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(1);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to the first press of a searing onslaught chain", () => {
+    expect.hasAssertions();
+    const { getBonus, press } = createConstellation4Fixture();
+    press(0);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a third press that comes within two seconds of the bonused second press", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    wait(0.5);
+    press(2);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
+  });
+
+  test("constellation 4 adds nothing to a normal attack that lands while the bonus runs", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture();
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+  });
+
+  test("constellation 3 adds nothing to a searing onslaught press that comes two seconds after the one before it", () => {
+    expect.hasAssertions();
+    const { getBonus, press, wait } = createConstellation4Fixture(3);
+    press(0);
+    wait(2);
+    press(1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
   });
 });
