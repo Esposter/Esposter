@@ -3,6 +3,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
+import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -19,7 +20,7 @@ import {
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
-// Takes or yields, every offering the Frostbearing Tree's levels take or pay, and every item a Reputation level pays,
+// Takes or yields, every dish a cook recipe yields, every offering the Frostbearing Tree's levels take or pay, and every item a Reputation level pays,
 // Each read from the game's Material table with its name's text id, which `genshin:text names` writes into the name-text
 // Chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is
 // Taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table.
@@ -46,6 +47,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   const itemIds = [
     ...new Set([
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
+      ...readCookingRecipes().flatMap(({ resultItemIds }) => Object.values(resultItemIds)),
       ...expeditionItemIds,
       ...forgeItemIds,
       ...craftingRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),

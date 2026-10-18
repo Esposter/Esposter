@@ -1,10 +1,12 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { CookingRecipe } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
+import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
@@ -12,6 +14,9 @@ vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
 }));
 vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces"), () => ({
   readMondstadtExpeditionPlaces: vi.fn<() => never[]>(() => []),
+}));
+vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => ({
+  readCookingRecipes: vi.fn<() => CookingRecipe[]>(() => []),
 }));
 vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>() }));
 
@@ -23,6 +28,8 @@ describe(buildItems, () => {
   const REPUTATION_REWARD_ITEM_ID = 140004;
 
   const ADVENTURE_EXP_ID = 102;
+
+  const DISH_ITEM_ID = 108_011;
 
   const materialRows = [
     {
@@ -53,6 +60,16 @@ describe(buildItems, () => {
       nameTextMapHash: 3,
       rank: 1,
       rankLevel: 3,
+      stackLimit: 99,
+    },
+    {
+      foodQuality: "FOOD_QUALITY_STRANGE",
+      id: DISH_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_FOOD",
+      nameTextMapHash: 5,
+      rank: 1,
+      rankLevel: 1,
       stackLimit: 99,
     },
     {
@@ -107,6 +124,35 @@ describe(buildItems, () => {
 
     expect(ids.map(({ id }) => id)).toStrictEqual(expect.arrayContaining([TREE_ITEM_ID, TREE_REWARD_ITEM_ID]));
     expect(ids.map(({ id }) => id)).not.toContain(ADVENTURE_EXP_ID);
+  });
+
+  test("publishes every dish a cook recipe yields", async () => {
+    expect.hasAssertions();
+    vi.mocked(readCookingRecipes).mockReturnValueOnce([
+      {
+        foodType: CookingFoodType.Heal,
+        id: 1,
+        ingredients: [],
+        isDefaultUnlocked: true,
+        maxProficiency: 1,
+        nameTextId: "1",
+        qteParam: [0, 0],
+        rankLevel: 1,
+        resultItemIds: {
+          [CookingQuality.Delicious]: DISH_ITEM_ID,
+          [CookingQuality.Regular]: DISH_ITEM_ID,
+          [CookingQuality.Suspicious]: DISH_ITEM_ID,
+        },
+        specialties: [],
+        unlockItemIds: [],
+      },
+    ]);
+
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).toContain(DISH_ITEM_ID);
   });
 
   test("publishes every item a Reputation level pays", async () => {
