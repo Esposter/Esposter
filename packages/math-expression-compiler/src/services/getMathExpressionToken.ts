@@ -54,7 +54,8 @@ const getCharacter = (state: MathExpressionParserState, offset: number): string 
 const skipSpaces = (state: MathExpressionParserState): void => {
   while (state.index < state.source.length) {
     const character = getCharacter(state, 0);
-    if (character === " " || character === "\t" || (character === "\n" && state.nestingLevel > 0)) state.index++;
+    if (character === " " || character === "\t" || character === " " || (character === "\n" && state.nestingLevel > 0))
+      state.index++;
     else if (character === "#")
       while (state.index < state.source.length && getCharacter(state, 0) !== "\n") state.index++;
     else break;

@@ -35,4 +35,10 @@ describe(parseMathExpression, () => {
 
     expect(getParseError("((1 + 2) * (3))")).toBeNull();
   });
+
+  test("a non-breaking space between operands is whitespace, as a space is", () => {
+    expect.hasAssertions();
+
+    expect(getParseError("1 + 2")).toBeNull();
+  });
 });
