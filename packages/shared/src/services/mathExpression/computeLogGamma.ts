@@ -1,9 +1,9 @@
 import { computeLogGammaOfPositive } from "#src/services/mathExpression/computeLogGammaOfPositive";
 
-// The natural log of the gamma function, where it is real: NaN below zero, and infinite at zero
+// The natural log of the gamma function, where it is real: NaN below zero, and infinite at zero and at infinity
 export const computeLogGamma = (value: number): number => {
   if (Number.isNaN(value) || value < 0) return Number.NaN;
-  if (value === 0) return Number.POSITIVE_INFINITY;
+  if (value === 0 || value === Number.POSITIVE_INFINITY) return Number.POSITIVE_INFINITY;
   // Gamma is exactly one at one and at two
   if (value === 1 || value === 2) return 0;
 

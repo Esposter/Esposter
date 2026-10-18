@@ -33,6 +33,12 @@ describe(compileMathExpression, () => {
     ["An assignment is read back by the formula", "(x = col0 + 1) * x", SCOPE, 16],
     ["A variable reads its outer value until its assignment runs", "x * (x = 2)", { x: 3 }, 6],
     ["A constant reads its value until its assignment runs", "pi * (pi = 1)", {}, Math.PI],
+    [
+      "The log gamma of infinity is infinite, as the gamma function is",
+      "lgamma(Infinity)",
+      {},
+      Number.POSITIVE_INFINITY,
+    ],
   ])("%s", (_title, formula, scope, expected) => {
     expect.hasAssertions();
 
