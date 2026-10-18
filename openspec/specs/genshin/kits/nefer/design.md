@@ -13,15 +13,15 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Not built
 
-- **Phantasm Performance's behaviour waits on the side branch.** Its charges are a stance parameter on the record. The behaviour, reading the stance with `readStance` and entering it with `enterKitStance`, is not built.
+- **Her Shadow Dance's charges and exit are not built.** Her skill enters Shadow Dance for her record's seconds, where her charged attack is Phantasm Performance. The Verdant Dew a performance needs and spends, the three performances that end the state, and the burst's use of her charges wait on their rules, which her record does not carry.
 - **The Phantasm Performance measurement is owed.** Its action frames, hitmarks and areas are spread or borrowed until her official showcase is measured; the coordinator adds that measurement to the recordings list.
 
 ## Key files
 
-| File                                                             | Role                                                            |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/neferKit.ts` | `createNeferKitBehaviour`, with no behaviour of Nefer's own yet |
-| `packages/genshin-world/src/data/kits/nefer.json`                | Nefer's overlay                                                 |
+| File                                                             | Role                                                |
+| :--------------------------------------------------------------- | :-------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/neferKit.ts` | `createNeferKitBehaviour`, her skill's Shadow Dance |
+| `packages/genshin-world/src/data/kits/nefer.json`                | Nefer's overlay                                     |
 
 ## Sources
 
