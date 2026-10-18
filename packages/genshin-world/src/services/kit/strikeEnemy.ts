@@ -130,14 +130,12 @@ export const strikeEnemy = (
         stat: attack,
         talentMultiplier,
       });
-  return {
-    appliedElement,
-    energyDrops: damageEnemy(enemy, {
-      damage: damage + transformativeDamage,
-      poiseDamage: poiseDamage + reactionPoiseDamage,
-    }),
-    isCritical,
-    reachingReactions,
-    reactions,
-  };
+  const energyDrops = damageEnemy(enemy, {
+    damage: damage + transformativeDamage,
+    poiseDamage: poiseDamage + reactionPoiseDamage,
+  });
+  // A status that follows the damage lands after it, and only when the hit dealt some, as gcsim's attack callbacks read it
+  const afterDamageStatus = damage > 0 ? kitHit.enemyStatusAfterDamage?.(combatant) : undefined;
+  if (afterDamageStatus) addEnemyStatus(enemy, { ...afterDamageStatus });
+  return { appliedElement, energyDrops, isCritical, reachingReactions, reactions };
 };

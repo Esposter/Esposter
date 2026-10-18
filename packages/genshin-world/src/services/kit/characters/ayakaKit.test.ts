@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -16,18 +17,21 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
-const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const normalHit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
 const chargedHit = takeOne(AYAKA_KIT.chargedAttack.hits);
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.Attack, value: 1000 },
+  ]),
   characterId: AYAKA_CHARACTER_ID,
   constellationCount,
   elementalResonances: [],
@@ -45,6 +49,24 @@ const strikeWithFirstNormalAttack = (constellationCount: number, random: () => n
   hit.onStrike?.(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
   return partyMember.skillCooldownSeconds;
 };
+
+const STURDY_HEALTH = 1e9;
+const NEVER_CRITICAL = (): number => 1;
+
+// A Frostflake strike on a sturdy enemy, which the hit lands on with the statuses it leaves
+const strikeFrostflake = (hit: KitHit, combatant: Combatant): Enemy => {
+  const enemy: Enemy = {
+    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    health: STURDY_HEALTH,
+    maxHealth: STURDY_HEALTH,
+  };
+  strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
+  return enemy;
+};
+
+// The DEF each status on the enemy takes off it, which a constellation's DEF cut leaves as one
+const readDefenceReductions = (enemy: Enemy): number[] =>
+  enemy.statuses.flatMap(({ defenseReduction }) => (defenseReduction === undefined ? [] : [defenseReduction]));
 
 // The DMG Bonus Ayaka's kit gives one of her strikes, with the effects her Hyouka left on her
 const readStrikeDamageBonus = (
@@ -197,11 +219,8 @@ describe(createAyakaKitBehaviour, () => {
     AYAKA_KIT.elementalBurst.onStart?.(context);
     const strikes = stepKitTestEffects(7, context);
 
-    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant)?.defenseReduction)).toStrictEqual(
-      strikes.map(() => 0.3),
-    );
-    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant)?.secondsRemaining)).toStrictEqual(
-      strikes.map(() => 6),
+    expect(strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake(hit, combatant)))).toStrictEqual(
+      strikes.map(() => [0.3]),
     );
   });
 
@@ -212,6 +231,20 @@ describe(createAyakaKitBehaviour, () => {
     AYAKA_KIT.elementalBurst.onStart?.(context);
     const strikes = stepKitTestEffects(7, context);
 
-    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant))).toStrictEqual(strikes.map(() => undefined));
+    expect(strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake(hit, combatant)))).toStrictEqual(
+      strikes.map(() => []),
+    );
+  });
+
+  test("a constellation's DEF cut does not take effect on a hit that deals no damage", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(4) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(
+      strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake({ ...hit, talentMultiplier: 0 }, combatant))),
+    ).toStrictEqual(strikes.map(() => []));
   });
 });
