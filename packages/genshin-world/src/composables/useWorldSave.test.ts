@@ -40,6 +40,21 @@ describe(useWorldSave, () => {
     scope.stop();
   });
 
+  test("keeps a camp cleared again once", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const scope = effectScope();
+    const worldSave = scope.run(() => useWorldSave({ emitGrant: vi.fn<() => void>(), events, savedState }));
+    assert.exists(worldSave);
+    const camp = { id: "made-up-camp", position: { x: 1, z: 2 } };
+
+    events.emit("campCleared", camp);
+    events.emit("campCleared", camp);
+
+    expect(worldSave.clearedCamps.value).toStrictEqual([camp]);
+    scope.stop();
+  });
+
   test("emits no grant before anything changes", async () => {
     expect.hasAssertions();
     const emitGrant = vi.fn<() => void>();

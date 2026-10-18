@@ -5,6 +5,7 @@ import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -35,6 +36,7 @@ export interface GenshinSaveState {
   archiveProgressMap: ArchiveProgress;
   characterCopyCountMap: ReadonlyMap<number, number>;
   characters: Character[];
+  clearedCamps: ClearedCamp[];
   clearedDomainIds: ReadonlySet<string>;
   commissionDay: CommissionDay;
   companionshipExpMap: ReadonlyMap<number, number>;

@@ -120,5 +120,5 @@ export const useWorldChests = ({
       events.emit("chestOpened");
     }
   };
-  return { chestInteractables, digChestById, openChestById };
+  return { chestInteractables, digChestById, openChestById, worldChestPlaces };
 };

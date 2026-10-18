@@ -1,6 +1,7 @@
 schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
+x-waiting: "exploration-steps.mkv, an English PC recording of the map's percentage stepping as one statue, one chest, one camp, one puzzle solved and one Oculus offered are each done in Galesong Hill, for task 3.2, since the wiki gives no kind's weight"
 x-model: claude-haiku-5-5
 x-touches:
   [

@@ -5,6 +5,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
@@ -227,6 +228,7 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{
   charge: [];
+  campCleared: [camp: ClearedCamp];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   respawn: [spawnKey: string];
@@ -560,6 +562,7 @@ onUnmounted(() => {
       :target="characterBody?.position"
       :world-level
       :world-level-rows
+      @camp-cleared="(camp) => emit('campCleared', camp)"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"

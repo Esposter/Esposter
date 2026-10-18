@@ -1,4 +1,5 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Quest } from "#src/models/quest/Quest";
@@ -11,6 +12,8 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 export interface WorldEventMap {
   achievementEvents: [AchievementEvent[]];
   bagChange: [Inventory];
+  // A camp whose last enemy is defeated, with the point it stands at, which the save keeps as cleared
+  campCleared: [camp: ClearedCamp];
   chestOpened: [];
   defeatEnemy: [Enemy];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
