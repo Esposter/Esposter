@@ -1,6 +1,6 @@
 # Cooking
 
-The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the [cooking](../../../changes/genshin-cooking/design.md) proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing, campfires, the characters' passives that bonus a kind of dish, and a dish's use once eaten. The stove's place in Mondstadt and the cooking screen and its indicator are not built and stay in the proposal.
+The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the [cooking](../../../changes/genshin-cooking/design.md) proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing, campfires, the characters' passives that bonus a kind of dish, and a dish's use once eaten. The cooking screen's view is built, but the world does not open it from a stove yet, and that opening stays in the proposal.
 
 ## How it works
 
@@ -65,7 +65,7 @@ The quality weights the table gives each dish are all the Delicious weight in th
 - **The zones are provisional.** `readCookingZones` reads a recipe's zone parameters as the centre and the width of the regular zone along the bar, and the delicious zone takes a provisional share of that width. Which parameter lays out which zone, and the indicator's speed, are measured off a recording of the cooking screen, owed on the roadmap.
 - **The special dish's order is read, not confirmed.** The chances are matched to the qualities in the order the table lists the results, the order its food qualities confirm. No public source confirms it yet, so a recording owed on the roadmap does.
 - **Most processings are closed.** Most are not known from the start, and the table names no instruction that teaches them, all of them in one group. They stay closed until that source is read.
-- **Nothing is placed or on a screen.** The stove and the cooking screen are not built, as with the [crafting](../crafting/design.md) bench. A dish eaten from the bag applies its heal, revive or bonus through the [inventory](../inventory/design.md)'s using and the character kits; a bonus is read for the attack, defence and critical dishes' stats, and a dish naming another stat gives none until that stat is modelled.
+- **The cooking screen is built, and nothing opens it yet.** Its indicator is laid out from each recipe's zone parameters and its Stop button emits; the stove does not open it. A dish eaten from the bag applies its heal, revive or bonus through the [inventory](../inventory/design.md)'s using and the character kits; a bonus is read for the attack, defence and critical dishes' stats, and a dish naming another stat gives none until that stat is modelled.
 
 ## Sources
 

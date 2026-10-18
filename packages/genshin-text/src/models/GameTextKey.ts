@@ -104,6 +104,9 @@ export enum GameTextKey {
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
+  // The cooking screen's title and the Stop button that ends its indicator
+  CookingStop = "UI_COOKING_QTE_END_BUTTON",
+  CookingTitle = "UI_COOKING_QTE_TITLE",
   CorLapis = "2764520484",
   // The crafting bench: its title and Craft button, the amount slider beside the picked recipe, the Crafting Performed
   // Count, the Required line over its Mora, and the Crafting Materials heading
