@@ -25,8 +25,8 @@ const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // Gcsim's default press gives. A cancel, or her swap out, stops the clouds not yet launched, and the ones in flight still land,
 // As gcsim's cancel does. Not built: the Swirl buff her state gives the party, the state's restriction of her actions to swap,
 // Dash and burst, the Yumemi Style Special Snacks her burst leaves, which are pick-ups the kit has no entity for, and the travel
-// A press's parameter sets, which the kit holds at the default. Her skill's activation hit still strikes on a press that cancels
-// The state, since the record plays every press's hits and the kit has no way to skip one, as the other kits' exit presses do
+// A press's parameter sets, which the kit holds at the default. The press that cancels the state plays none of its skill's
+// Hits and sets no cooldown, as gcsim's does, through the skill's state-ending check
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 // Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built
 // Constellation 2 needs the Dreamdrifter state's Elemental Mastery bonus for the party, which is not built
@@ -70,6 +70,8 @@ export const createMizukiKitBehaviour = ({ readHit, readSeconds }: KitRecordRead
         endDreamdrifterState(kitEffectState, characterId);
     },
     skill: {
+      checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>
+        checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, DREAMDRIFTER_STATUS_ID),
       onStart: ({ activeCombatant, body, kitEffectState }) => {
         const { characterId } = activeCombatant;
         if (checkIsKitStatusActive(kitEffectState.effects, characterId, DREAMDRIFTER_STATUS_ID))

@@ -155,6 +155,14 @@ describe(createChascaKitBehaviour, () => {
     expect(countKitResource(context.kitEffectState.effects, CHASCA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 
+  test("the skill's press ends the state only while the Blessing holds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createChascaCombatant());
+    expect(CHASCA_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(false);
+    CHASCA_KIT.elementalSkill.onStart?.(context);
+    expect(CHASCA_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(true);
+  });
+
   test("galesplitting's six shells land at gcsim's hitmarks, from 103 to 160 frames", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createChascaCombatant());

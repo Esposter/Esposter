@@ -37,10 +37,9 @@ const readRadiantElements = ({ characterIdCombatantMap, party }: KitContext): El
 // Chasca's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points as gcsim does, and a press
 // In it leaves the Blessing, and a sprint in it drains points. Galesplitting's six shells are cast at its start as one
 // Summon, each shell a single-target hit at its hitmark that takes its enemy in turn, Radiant while the team has a Pyro,
-// Hydro, Electro or Cryo bullet for it and Anemo after (burst.go:76-93). Its skill's record hit still strikes on the press that
-// Leaves the Blessing, which gcsim's exit press does not deal, since the kit plays every press's record hits and has no way to
-// Skip one. Not built: the Ascension talent's Burning Shadowhunt Shell, and the Constellations that need
-// The shells' energy and follow-up hits
+// Hydro, Electro or Cryo bullet for it and Anemo after (burst.go:76-93). The press that leaves the Blessing plays none of
+// Its skill's hits and sets no cooldown, as gcsim's does, through the skill's state-ending check. Not built: the Ascension
+// Talent's Burning Shadowhunt Shell, and the Constellations that need the shells' energy and follow-up hits
 // Constellation 1 needs Bullet Trick's Spiritbinding Conversion, which the Ascension talent does not build
 // Constellation 2 needs Bullet Trick's Spirit of the Radiant Shadow stacks, which the Ascension talent does not build
 // Constellation 4 needs each Radiant shell's energy and follow-up hit (cons.go:67), which the kit does not build
@@ -69,6 +68,8 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
         drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
     },
     skill: {
+      checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>
+        hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
       onStart: ({ activeCombatant, kitEffectState }) => {
         const { characterId } = activeCombatant;
         if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))

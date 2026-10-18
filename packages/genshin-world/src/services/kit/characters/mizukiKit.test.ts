@@ -94,6 +94,15 @@ describe(createMizukiKitBehaviour, () => {
     );
   });
 
+  test("the skill's press ends the state only while the Dreamdrifter lasts", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(MIZUKI_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(true);
+    stepKitSeconds(context, 5);
+    expect(MIZUKI_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(false);
+  });
+
   test("a press in the Dreamdrifter state cancels it", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createMizukiCombatant());
