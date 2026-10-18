@@ -13,13 +13,14 @@ Pressing F at a cleared challenge's blossom SHALL offer each claim the held Orig
 
 #### Scenario: Condensed Resin is offered at a ley line or a domain
 
-- **GIVEN** the player holds enough Original Resin for Condensed Resin
+- **GIVEN** the bag holds a Condensed Resin
 - **WHEN** the player presses F at a ley line's blossom or a domain's
 - **THEN** Condensed Resin is among the offers
 
 #### Scenario: A blossom the held resin does not afford offers nothing
 
 - **GIVEN** the player holds less Original Resin than the cheapest claim costs
+- **AND** the bag holds no Condensed Resin
 - **WHEN** the player presses F at the blossom
 - **THEN** no claim is offered
 - **AND** the player's Original Resin is unchanged
