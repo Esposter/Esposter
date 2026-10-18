@@ -5,6 +5,6 @@
 
 ## 2. Investigation spots
 
-- [ ] 2.1 Place the investigation spots at the Investigation label's points and give each its rewards once. Verify: a test named after the scenario 'An investigated spot gives its rewards' written first and seen failing.
-- [ ] 2.2 Return a Mora spot at its refresh. Verify: a test named after the scenario 'A Mora spot comes back as its refresh says' written first and seen failing.
+- [ ] 2.1 Place the investigation spots at the Investigation label's points and give each its rewards once. Verify: a test named after the scenario 'An investigated spot gives its rewards' written first and seen failing. Blocked on the PC's scene-group export: the official map's Investigation label holds no points (point_count 0), and the dump's gadget and investigation tables carry no positions.
+- [ ] 2.2 Return a Mora spot at its refresh. Verify: a test named after the scenario 'A Mora spot comes back as its refresh says' written first and seen failing. Blocked with 2.1: a Mora spot's place and refresh come from the same scene-group export.
 - [ ] 2.3 Count investigations per game day from the 04:00 reset and stop new spawns at a hundred. Verify: tests named after the scenarios 'The hundredth investigation stops new spawns' and 'The day's count restarts at the 04:00 reset' written first and seen failing. The day's count from the reset and the cap are built ([investigation](../../specs/genshin/investigation/design.md)); what waits is the store that keeps each investigation's instant, which that page leaves unbuilt.
