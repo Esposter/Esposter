@@ -26,9 +26,7 @@ export const readReputationRequestQuest = ({
       {
         id: String(subQuest.subId),
         objectives: giving.exactItems.flatMap(({ count, id }) =>
-          count === undefined || id === undefined
-            ? []
-            : [{ count, kind: QuestObjectiveKind.Collect, targetId: String(id) }],
+          id === 0 ? [] : [{ count, kind: QuestObjectiveKind.Collect, targetId: String(id) }],
         ),
         textId: String(subQuest.stepDescTextMapHash),
       },
