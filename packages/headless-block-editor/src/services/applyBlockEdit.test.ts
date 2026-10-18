@@ -1,0 +1,39 @@
+import { applyPatches } from "@esposter/shared";
+import { applyBlockEdit } from "#src/services/applyBlockEdit";
+import { insertBlockNode } from "#src/services/insertBlockNode";
+import { TEST_DOCUMENT, TEST_ITEM_ID, TEST_REGISTRY } from "#src/services/constants.test";
+import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
+import { describe, expect, test } from "vitest";
+
+describe(applyBlockEdit, () => {
+  test("an edit that cannot apply", () => {
+    expect.hasAssertions();
+
+    const operations = updateBlockNodeProps("/content/5", { text: "" });
+
+    expect(
+      applyBlockEdit(TEST_DOCUMENT, operations).match(
+        (edit) => edit.document,
+        () => TEST_DOCUMENT,
+      ),
+    ).toStrictEqual(TEST_DOCUMENT);
+    expect(
+      applyBlockEdit(TEST_DOCUMENT, operations).match(
+        () => "applied",
+        () => "refused",
+      ),
+    ).toBe("refused");
+  });
+
+  test("an agent edits on the server", () => {
+    expect.hasAssertions();
+
+    const operations = insertBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/0/props/children", 1, {
+      props: { id: TEST_ITEM_ID, text: "" },
+      type: "heading",
+    });
+    const { document: editedDocument, inverses } = applyPatches(TEST_DOCUMENT, operations);
+
+    expect(applyPatches(editedDocument, inverses).document).toStrictEqual(TEST_DOCUMENT);
+  });
+});

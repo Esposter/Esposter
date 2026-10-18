@@ -1,0 +1,64 @@
+{
+  "name": "headless-block-editor",
+  "version": "4.2.0",
+  "description": "A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, with no framework or DOM.",
+  "keywords": [
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/headless-block-editor#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "neverthrow": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "zod": "catalog:"
+  }
+}
