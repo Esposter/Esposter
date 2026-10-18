@@ -28,9 +28,16 @@ export const advanceAchievements = (
       achievement.preStageAchievementId === 0 ||
       checkIsAchievementFinished(achievement.preStageAchievementId, nextProgressMap);
     if (!isTierDone || checkIsAchievementFinished(achievement.id, nextProgressMap)) continue;
+    const progress = nextProgressMap.get(achievement.id);
+    const countedTargetIds = progress?.countedTargetIds ?? [];
+    if (!watch.countsQuantity && countedTargetIds.includes(event.targetId)) continue;
     const step = watch.countsQuantity ? event.quantity : 1;
-    const count = Math.min((nextProgressMap.get(achievement.id)?.count ?? 0) + step, achievement.progress);
-    if (count < achievement.progress) nextProgressMap.set(achievement.id, { count });
+    const count = Math.min((progress?.count ?? 0) + step, achievement.progress);
+    if (count < achievement.progress)
+      nextProgressMap.set(
+        achievement.id,
+        watch.countsQuantity ? { count } : { count, countedTargetIds: [...countedTargetIds, event.targetId] },
+      );
     else {
       nextProgressMap.set(achievement.id, { count, finishedAt: now });
       primogems += achievement.primogems;
