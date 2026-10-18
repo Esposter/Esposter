@@ -6,7 +6,7 @@
 
 ## 2. Second character banner
 
-- [ ] 2.1 Key banners by banner and share the character banners' counters. Verify: a test named after 'Two character banners are offered together and share the character banners' counters'.
+- [x] 2.1 Key banners by banner and share the character banners' counters. Verify: a test named after 'Two character banners are offered together and share the character banners' counters'.
 
 ## 3. History and roster
 

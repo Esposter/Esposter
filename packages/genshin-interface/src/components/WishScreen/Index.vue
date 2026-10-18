@@ -20,9 +20,9 @@ interface Props {
   backLabel: string;
   // The open event banner's card, "undefined" on a banner the game gives no card to here
   bannerCard?: WishBannerCard;
-  // The banners on offer, in the game's order, each named in the runs of colour the game words it in
-  bannerKinds: BannerKind[];
-  bannerLabels: Record<BannerKind, TextSegment[]>;
+  // The banners on offer, in the game's order, each with its id, its kind and its name in the runs of colour the game
+  // Words it in
+  banners: { id: string; kind: BannerKind; label: TextSegment[] }[];
   // The counts the screen shows over its banner
   currencies: CurrencyCount[];
   // The Details button's words, which open the popup listing the open banner's pool
@@ -50,12 +50,11 @@ interface Props {
   title: string;
 }
 
-const bannerKind = defineModel<BannerKind>("bannerKind");
+const bannerId = defineModel<string>("bannerId");
 const {
   backLabel,
+  banners,
   bannerCard,
-  bannerKinds,
-  bannerLabels,
   currencies,
   detailsLabel,
   fatePoints,
@@ -73,8 +72,11 @@ const emit = defineEmits<{ buy: []; close: []; dismiss: []; wish: [count: number
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeatured && rarity === 5));
-const getBannerLabel = (kind: BannerKind) => bannerLabels[kind].map(({ text }) => text).join("");
-const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(bannerKind.value));
+const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).join("");
+const bannerLabelText = computed(() => {
+  const openBanner = banners.find(({ id }) => id === bannerId.value);
+  return openBanner && getLabelText(openBanner.label);
+});
 </script>
 
 <template>
@@ -87,13 +89,13 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
   <div class="wish-screen">
     <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">
-      <li v-for="kind of bannerKinds" :key="kind">
+      <li v-for="banner of banners" :key="banner.id">
         <GameButton
           class="banner"
-          :aria-label="getBannerLabel(kind)"
-          :aria-pressed="kind === bannerKind"
+          :aria-label="getLabelText(banner.label)"
+          :aria-pressed="banner.id === bannerId"
           :kind="GameButtonKind.Row"
-          @click="bannerKind = kind"
+          @click="bannerId = banner.id"
         />
       </li>
     </ul>
@@ -125,7 +127,7 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
       <GameButton class="link" :kind="GameButtonKind.Reply">{{ historyLabel }}</GameButton>
     </div>
     <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
-    <div v-if="bannerKind" class="sets">
+    <div v-if="bannerId" class="sets">
       <GameButton
         v-for="{ cost, count, isAffordable, label } of sets"
         :key="count"

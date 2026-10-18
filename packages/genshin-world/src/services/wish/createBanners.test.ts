@@ -6,6 +6,7 @@ import {
   STANDARD_WISH_CHARACTER_IDS,
   STANDARD_WISH_WEAPON_IDS,
 } from "#src/services/wish/constants";
+import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { createBanners } from "#src/services/wish/createBanners";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -49,5 +50,26 @@ describe(createBanners, () => {
     expect(eventBanner.id).toBe(event.id);
     expect(eventBanner.kind).toBe(BannerKind.CharacterEvent);
     expect(eventBanner.featuredFiveStars.map(({ id }) => id)).toStrictEqual([LIMITED_FEATURED_CHARACTER_ID]);
+  });
+
+  test("two character banners are offered together and share the character banners' counters", () => {
+    expect.hasAssertions();
+
+    const second: WishScheduleEvent = { ...event, id: "Second Event", kindNumber: 2 };
+    const banners = createBanners(statTables, {}, [event, second]);
+    const characterBanners = banners.filter(({ kind }) => kind === BannerKind.CharacterEvent);
+    expect(characterBanners.map(({ id, kindNumber }) => ({ id, kindNumber }))).toStrictEqual([
+      { id: event.id, kindNumber: 1 },
+      { id: second.id, kindNumber: 2 },
+    ]);
+  });
+
+  test("a featured item is read from whichever stat table holds its id", () => {
+    expect.hasAssertions();
+
+    const [, eventBanner] = createBanners(statTables, {}, [{ ...event, fiveStarIds: [STANDARD_WISH_WEAPON_IDS[0]] }]);
+    expect(eventBanner.featuredFiveStars).toStrictEqual([
+      { id: STANDARD_WISH_WEAPON_IDS[0], kind: WishItemKind.Weapon, name: "", rarity: 5 },
+    ]);
   });
 });
