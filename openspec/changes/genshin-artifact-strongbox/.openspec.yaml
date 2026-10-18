@@ -1,0 +1,16 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/crafting/**",
+    "scripts/src/services/genshinAssets/commands/craftingCommand.ts",
+    "scripts/src/models/genshinAssets/crafting/**",
+    "packages/genshin-world/src/models/crafting/**",
+    "packages/genshin-world/src/services/crafting/**",
+    "packages/genshin-world/src/services/artifact/rollPieceArtifact.ts",
+    "packages/genshin-world/src/services/chest/rollChestDrops.ts",
+    "packages/genshin-world/src/components/Crafting/**",
+    "packages/genshin-text/src/models/GameTextKey.ts",
+  ]
