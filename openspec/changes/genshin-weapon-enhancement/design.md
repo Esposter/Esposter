@@ -140,6 +140,7 @@ packages/genshin-world/src/models/weapon/WeaponData.ts
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `EquipAffixExcelConfigData`, and the scrambled weapon configs (`BinOutput/Talent/EquipTalents`).
+- [gcsim](https://github.com/genshinsim/gcsim) v2.47.2 (MIT), `internal/weapons/`, the mechanics a passive's text leaves open. Where the installed build's dump and its text have moved past it, the latest version wins and the difference is recorded here: Kagura's Verity, whose 7.1 rows give 24 s and a Stellar-Conduct line, and whose text's three-stack bonus is Elemental only, where gcsim reads 16 s and counts Physical (`internal/weapons/catalyst/kagura/kagura.go:34`, `:57`).
 
 ## Reference
 
