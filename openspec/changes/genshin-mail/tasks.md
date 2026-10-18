@@ -12,6 +12,6 @@
 
 ## 3. The Mail screen
 
-- [ ] 3.1 List the held mails on the Mail screen, and show a mail's text and attachments. Blocked on the parity loop's traced layout.
-- [ ] 3.2 Deliver mails by the game's rules. Blocked on the PC export's client scripts.
-- [ ] 3.3 Name the mails' text ids in `genshin-text`. Blocked on the main session's text write.
+- [x] 3.1 List the held mails on the Mail screen, and show a mail's text and attachments. Built provisionally from the wiki's Mail page; the parity loop's traced layout replaces it.
+- [ ] 3.2 Deliver mails by the game's rules. The Traveler's birthday mail, the expiry and the Gift Mail Box's keeping are built provisionally; the PC export's client scripts confirm them.
+- [ ] 3.3 Name the mails' text ids in `genshin-text`. The screen's keys are added and the mail text is built per language; the main session's text write fills the English and the other languages.

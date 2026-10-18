@@ -1,6 +1,6 @@
 # Mail
 
-Mail is a list of letters the save holds, each read from the game's mail table and claimed once for its attached items. The delivery rules and the screen's layout wait on the export and the parity loop.
+Mail is a list of letters the save holds, each read from the game's mail table and claimed once for its attached items. The Traveler's birthday mail and the screen are built provisionally from the wiki; the other delivery rules and the screen's traced layout wait on the export and the parity loop.
 
 ## How it works
 
@@ -25,7 +25,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 
 - **The save holds the mails a player has, as a required list.** A save without it is refused, with no default, as the quick swap's slots were, and the backfill for existing saves is the main session's.
 - **A mail's text is its game text, not a translated string.** The title, sender and content are referenced by text id through `genshin-text`, so the main session writes them and no string is typed here.
-- **No mail is delivered until the rules are read.** The screen lists what the save holds; which mail a player receives, and when, waits on the export.
+- **Only the Traveler's birthday mail is delivered, until the rules are read.** Every other mail waits on the export, so the mailbox holds no mail the rules have not yet placed. The birthday mail is the one the wiki states.
 - **Claiming gives the items once.** A claimed mail stays in the list as read, so a reload cannot grant its items twice.
 - **The dump's birthday letters are the Traveler's, not a character's.** Seven untyped rows name a birthday, all "Best Wishes on Your Birthday" from the Mailing System and addressed to the Traveler; three are dated by `BirthdayMailExcelConfigData`, which keys them by mail id. No mail is dated to a character's birthday, though `FetterInfoExcelConfigData` dates all 120 characters. So delivery on a held character's birthday has no letter to deliver: it waits on a source for that letter, and until then no mail is delivered on a character's birthday.
 - **The save's mail list is backfilled with an empty list, and the Traveler's birthday is optional.** `mails` is required, so a save written before it is refused until the backfill sets it to `[]`; the main session adds that to its one backfill script and runs it on dev, and prod waits on the user. `travelerBirthday` is optional, since the profile sets it once and an unset birthday is a real state, so existing saves need no backfill.
@@ -33,6 +33,13 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The Traveler's birthday mail is delivered provisionally, on the birthday in the game's time zone.** The wiki says the mail arrives on the player's birthday, only that day, in the server's time (UTC+8, past midnight). The mail due is the latest row of `BirthdayMailExcelConfigData` taking effect by that birthday, and it is delivered once a birthday. The table's three rows end in 2022, so later birthdays repeat the last one, which is provisional until the export confirms it. Without a birthday set, nothing is delivered.
 - **A mail expires `expireDays` after its delivery and is deleted then, except a birthday mail already claimed.** The wiki's Gift Mail Box keeps a birthday mail once its rewards are collected, and no other mail. Claim and claim-all refuse a mail the bag cannot take whole, so a claim gives its items once or not at all.
 - **The mail data is one index, `mail/mail`, read one mail at a time.** The builder publishes each mail under its id and the birthday rows under `birthdayMails`, in the game's own effective-date text, so the world reads a held mail by its id and never fetches the whole table. The world converts the effective date with its own game time zone, so the scripts carry none.
+
+- **The Mail screen is built on the list screen's frame, provisionally.** Its words are `GameTextKey` members whose English text the main session writes, and its layout is the wiki's description until the parity loop traces it. Delete Read, the Gift Mail Box as its own list and the mail's Date line are not built.
+- **The mail's title, sender and body are published per language as `mailText/<language>`, read as achievements' text is.** The builder writes every mail's text ids, so the screen reads them in the reader's language and English stands in where a language lacks one.
+- **The mailbox loads as the world starts, so the birthday mail is due on login that day.** Expired mail is removed and the birthday mail delivered at load, before the Mail screen can open; the screen shows once the mailbox has loaded.
+- **A claimed birthday mail is labelled as kept in the Gift Mail Box, in place of its expiry.** The Gift Mail Box keeps it past its expiry, so that label is the only difference the screen draws.
+- **The save writes the Traveler's birthday only once it is set.** A save with no birthday has no `travelerBirthday` key, so a reload of an unset birthday is the same save it was.
+- **The profile has no birthday setter yet.** The save holds the birthday and the delivery reads it; the setter is open, and the wiki says the birth date is chosen once in profile customization.
 
 ## Key files
 
@@ -42,6 +49,12 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 | `packages/genshin-world/src/services/save/constants.ts`            | Bounds the mail list at its longest, so the save's ceiling counts it               |
 | `packages/genshin-world/src/models/save/GenshinSave.ts`            | Holds the mail list beside the other collections the save keeps                    |
 | `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`      | Joins a mail's `rewardId` to its reward's items                                    |
+| `packages/genshin-world/src/components/World/Session/Index.vue`    | Loads the mailbox as the world starts, and gives the Mail screen its slot          |
+| `packages/genshin-world/src/models/data/GameDataset.ts`            | Names the `mail` and `mailText` datasets the builder publishes                     |
+| `packages/genshin-text/src/models/GameTextKey.ts`                  | The mail screen's words, by the game's own keys                                    |
+| `packages/genshin-world/src/models/save/GenshinSaveState.ts`       | Carries the mails and the Traveler's birthday beside the other saved state         |
+| `packages/genshin-world/src/services/save/toGenshinSave.ts`        | Writes the mails, and the Traveler's birthday once it is set                       |
+| `packages/genshin-world/src/services/save/readGenshinSave.ts`      | Reads the mails and the Traveler's birthday back                                   |
 
 The new files sit in a tree:
 
@@ -61,6 +74,14 @@ scripts/src/services/genshinAssets/mail/buildMailPublication.ts ← the mail tab
 scripts/src/services/genshinAssets/commands/mailCommand.ts ← the `genshin:assets mail` publish, with its dry run
 scripts/src/models/genshinAssets/mail/ExcelBirthdayMailRow.ts ← the birthday mail table's named keys
 packages/genshin-world/src/models/mail/MailData.ts     ← the mail's and the birthday rows' schemas, read from the game data
+packages/genshin-world/src/composables/useWorldMail.ts ← the mailbox read as the world starts, the birthday due, the claims applied
+packages/genshin-world/src/services/mail/readMailText.ts ← one language's mail text, read by its key
+packages/genshin-world/src/services/mail/getMailExpiry.ts ← a mail's time left in its largest unit
+packages/genshin-world/src/services/mail/MailExpiryGameTextKeyMap.ts ← each expiry unit's line
+packages/genshin-world/src/services/mail/sortMails.ts  ← the held mails, pinned first then newest first
+packages/genshin-world/src/models/mail/MailExpiry.ts   ← a mail's time left, as a count of its unit
+packages/genshin-world/src/models/mail/MailExpiryUnit.ts ← the unit a time left is shown in
+packages/genshin-world/src/components/Mail/Screen/Index.vue ← the Mail screen: the list, the detail and the claims
 ```
 
 - The dump's two unnamed mail keys are not guessed at; the builder skips them, and a mail with a key it cannot name is not delivered.
