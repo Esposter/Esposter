@@ -4,7 +4,7 @@ The email editor, built over the node types and the renderer contract the [docum
 
 ## Email
 
-MJML stays the engine, and the email's node types are its components from the [MJML blocks](../resource-page-builder-mjml-blocks/design.md) package: their attributes, MJML's defaults, their nesting and the head as the root's props. That package owns what an email may hold. This page is what the editor draws over it, plus the one type the app adds, the survey invite, an `mj-button` whose survey link prop indexes the invite as the webpage's does.
+MJML stays the engine, and the email's node types are its components from the [MJML blocks](../../specs/mjml-blocks/README.md) package: their attributes, MJML's defaults, their nesting and the head as the root's props. That package owns what an email may hold. This page is what the editor draws over it, plus the one type the app adds, the survey invite, an `mj-button` whose survey link prop indexes the invite as the webpage's does.
 
 The preview text is a root prop, so the bar's field binds it through a patch like any other edit, and `readEmailPreviewText`, `writeEmailPreviewText` and `getEmailPreview` go with the read-back after every change. A merge field is an inline node in the text, inserted by typing `{{` — the mention suggestion the composer already uses, offering the bound dataset's columns — or by dragging a column from the Merge fields category; it renders as the `{{column}}` token `toMergeField` writes today.
 

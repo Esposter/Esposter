@@ -1,6 +1,6 @@
 ## 1. The audit
 
-- [ ] 1.1 Give every issue and pull request of `GrapesJS/mjml` one verdict, generated into an Upstream section of this design from a verdict map checked to name each exactly once, with each in-scope defect reproduced against the installed plugin first. Verify: the map's count equals the tracker's, and each in-scope defect names the scenario or regression test that will close it.
+- [x] 1.1 Give every issue and pull request of `GrapesJS/mjml` one verdict, generated into an Upstream section of this design from a verdict map checked to name each exactly once, with each in-scope defect reproduced against the installed plugin first. Verify: the map's count equals the tracker's, and each in-scope defect names the scenario or regression test that will close it.
 
 ## 2. The package
 
@@ -15,4 +15,4 @@
 
 ## 3. The record
 
-- [ ] 3.1 Write the package's area as built, with the Upstream table in its `README.md`, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/duplicateProse.test.ts src/services/openspec` passes.
+- [x] 3.1 Write the package's area as built, with the Upstream table in its `README.md`, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/duplicateProse.test.ts src/services/openspec` passes.

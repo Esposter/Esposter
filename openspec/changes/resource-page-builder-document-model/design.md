@@ -1,6 +1,6 @@
 # Document model
 
-The webpage and email editors' documents: the node types each editor registers over the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. The webpage's types are the app's own. The email's types are the [MJML blocks](../resource-page-builder-mjml-blocks/design.md) package's, with the app's survey invite added.
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. The webpage's types are the app's own. The email's types are the [MJML blocks](../../specs/mjml-blocks/README.md) package's, with the app's survey invite added.
 
 ## The document model
 

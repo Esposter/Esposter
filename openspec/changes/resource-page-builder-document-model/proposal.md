@@ -23,7 +23,7 @@ A webpage and an email gain a document of typed nodes, with the renderers that t
 
 ## Waiting on
 
-- `resource-page-builder-mjml-blocks`, whose types the email registry is.
+None.
 
 ## Impact
 
