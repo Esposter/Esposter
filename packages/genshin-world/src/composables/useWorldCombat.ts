@@ -1,3 +1,4 @@
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Element } from "#src/models/Element";
@@ -58,6 +59,7 @@ export const useWorldCombat = ({
   savedParty,
   startingCharacterIdKitMap,
   statTables,
+  travelerBonusLines,
   travelerElement,
   wildlifePlaces,
 }: {
@@ -71,6 +73,8 @@ export const useWorldCombat = ({
   savedParty: Party;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
+  // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
+  travelerBonusLines: Readonly<Ref<AttributeLine[]>>;
   // The element the Traveler holds, which the statue she resonated with last gives her, none until one is resonated with
   travelerElement: Readonly<Ref<Element | undefined>>;
   wildlifePlaces: readonly WildlifePlace[];
@@ -129,7 +133,14 @@ export const useWorldCombat = ({
       if (kit)
         combatantMap.set(
           character.id,
-          createCombatant(character, kit, elementalResonances, statTables, getElement(character.id)),
+          createCombatant(
+            character,
+            kit,
+            elementalResonances,
+            statTables,
+            getElement(character.id),
+            travelerBonusLines.value,
+          ),
         );
     }
     return combatantMap;

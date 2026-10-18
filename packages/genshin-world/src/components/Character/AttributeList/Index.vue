@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
@@ -23,6 +24,8 @@ interface Props {
   isLevelUpable?: boolean;
   // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
   isLiftable?: boolean;
+  // The bonuses the Traveler holds from the elements it resonated with, given to the Traveler alone
+  travelerBonusLines?: AttributeLine[];
 }
 
 const {
@@ -33,6 +36,7 @@ const {
   maxStamina,
   name,
   statTables,
+  travelerBonusLines = [],
 } = defineProps<Props>();
 const emit = defineEmits<{ levelUp: []; lift: [] }>();
 const levelText = computed(() =>
@@ -43,7 +47,9 @@ const levelText = computed(() =>
 );
 // The tab's attributes: the base five the panel shows first, each as the game writes it, Max HP, ATK, DEF, Elemental
 // Mastery and Max Stamina whole, then the advanced and elemental groups under them, each a percentage to one place
-const attributes = computed(() => computeCharacterAttributes(getCharacterAttributeLines(character, statTables)));
+const attributes = computed(() =>
+  computeCharacterAttributes(getCharacterAttributeLines(character, statTables, travelerBonusLines)),
+);
 const rows = computed(() => {
   const { attack, attributeTotalMap, defense, maxHealth } = attributes.value;
   return [
