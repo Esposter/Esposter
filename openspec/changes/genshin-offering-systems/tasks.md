@@ -9,4 +9,4 @@
 
 ## 3. Rule check
 
-- [ ] 3.1 Check the wiki's Offering System wording against the rule and the published offerings, as the design's sources note still owes. Verify: the offerings listed on the wiki page match the published list one for one.
+- [x] 3.1 Check the wiki's Offering System wording against the rule and the published offerings, as the design's sources note still owes. Verify: the offerings listed on the wiki page match the published list one for one.

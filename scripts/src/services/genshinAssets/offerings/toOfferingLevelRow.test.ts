@@ -21,7 +21,7 @@ describe(toOfferingLevelRow, () => {
     ],
   };
 
-  test("offering the items for a level raises the offering", () => {
+  test("a level's items publish as a list, each with its count, and its reward is the fixed one its row pays", () => {
     expect.hasAssertions();
 
     const levelRow: ExcelOfferingLevelupRow = {
@@ -40,7 +40,7 @@ describe(toOfferingLevelRow, () => {
         { itemCount: OTHER_ITEM_COUNT, itemId: OTHER_ITEM_ID },
       ],
       level: LEVEL,
-      rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
+      reward: { kind: "fixed", rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }] },
     });
   });
 
@@ -60,7 +60,7 @@ describe(toOfferingLevelRow, () => {
     expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
       items: [{ itemCount: ITEM_COUNT, itemId: ITEM_ID }],
       level: LEVEL,
-      rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
+      reward: { kind: "fixed", rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }] },
     });
   });
 
@@ -77,7 +77,7 @@ describe(toOfferingLevelRow, () => {
     expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
       items: [],
       level: 1,
-      rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
+      reward: { kind: "fixed", rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }] },
     });
   });
 });
