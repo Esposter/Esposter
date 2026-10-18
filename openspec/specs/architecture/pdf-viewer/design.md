@@ -4,18 +4,18 @@ The app shows a PDF with its own look over the [vue-pdfjs-headless](../../vue-pd
 
 ## How it works
 
-The app supplies the renderer, its worker and its folders, and the look. `loadPdfRenderer` imports `pdfjs-dist` after mount, and points the worker at the worker the app loads by URL. The viewer's components are a separate import that the viewer makes when it mounts. The character maps, the standard fonts and the image decoders sit at folders the server mounts from that same install, so the worker and the API cannot drift apart. The renderer then goes to the package, which the app never imports for its own work.
+The app supplies the renderer, its worker and its folders, and the look. `loadPdfRenderer` imports `pdfjs-dist` after mount and names the worker the app loads by URL, which the package hands the renderer before each load. The viewer's components are a separate import that the viewer makes when it mounts. The character maps, the standard fonts and the image decoders sit at folders the server mounts from that same install, so the worker and the API cannot drift apart. The renderer then goes to the package, which the app never imports for its own work.
 
-The attachment loads its document once with the package's `usePdfDocument`, and passes it to both views: the thumbnail, and the viewer in the dialog. Each view used to parse the file for itself.
+The attachment loads its document once with the package's `usePdfDocument`, and passes it to both views: the thumbnail, and the viewer in the dialog. The message's read link is minted again before it expires, and the attachment keeps the document it has loaded rather than loading it again from the new link, so an open viewer keeps its page, its zoom and the password it was given. A link that has loaded nothing yet is followed, so a load that failed on an expired link is tried again on the new one.
 
-The thumbnail draws the first page with `usePdfPage` into its canvas, and a click on it opens the dialog. The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its toolbar is the app's own controls: page, zoom and fit, search with the match count, rotate, download and print. The password field is the app's, shown while the document asks for one, and a load that fails says so in place of the pages, whether the document failed or the viewer's own module never came.
+The thumbnail draws the first page with `usePdfPage` into its canvas. In a message it is a button, so a click, Enter or Space opens the dialog; in a preview it opens nothing, since the preview's own click opens its message. The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its toolbar is the app's own controls: page, zoom and fit, search with the match count, rotate, download and print. The password field is the app's, shown while the document asks for one, and a load that fails says so in place of the pages, whether the document failed or the viewer's own module never came.
 
 ```mermaid
 flowchart TD
   loader["loadPdfRenderer: pdfjs-dist, after mount"] --> attachment["Pdf.vue: the attachment"]
   attachment -->|"the renderer, then one document"| document["the package's document"]
   document --> thumbnail["Thumbnail.vue: usePdfPage on the first page"]
-  document -->|"a click opens the dialog"| viewer["Viewer.vue: usePdfViewer, the app's toolbar"]
+  document -->|"a press opens the dialog"| viewer["Viewer.vue: usePdfViewer, the app's toolbar"]
   viewerLoader["loadPdfViewer: the viewer's components, when the viewer mounts"] -->|"the viewer module"| viewer
   viewer --> prompt["the password field, or the failure text"]
 ```
@@ -24,7 +24,7 @@ flowchart TD
 
 - **Two wrappers become the renderer's components over one package.** The renderer's viewer components do the document's work: virtual scrolling, in-document search, the text layer and the tree a screen reader reads. The app's viewer is their state in a headless package, with the app's look over it. Rejected: keeping both wrappers, and a viewer of our own over the renderer's page drawing, which would rewrite the scrolling, the search and the text layer.
 - **The package draws no chrome, so the app keeps the look.** The toolbar, the thumbnail's row and the password field are the app's, drawn with the UI library, so the keyboard and the labels are the library's and its menus open inside the dialog's top layer. Rejected: the renderer's own toolbar, whose menus portal to the body and so leave the dialog's top layer.
-- **One document for both views.** The attachment owns the load, so the thumbnail and the dialog read the same document. A closed dialog keeps a password prompt until it is answered or the attachment unmounts, where the earlier viewer destroyed the load on close.
+- **One document for both views.** The attachment owns the load, so the thumbnail and the dialog read the same document. A closed dialog keeps a password prompt until it is answered or the attachment unmounts.
 - **The renderer loads after mount.** `loadPdfRenderer` imports `pdfjs-dist` in the browser only, so nothing renders on the server and no module import runs at load. The viewer's components load only when a viewer mounts, so an attachment that is never opened loads no viewer code.
 - **The renderer's data is served from its own install.** The character maps, the standard fonts and the image decoders' WebAssembly are Nitro public assets mounted from `pdfjs-dist`'s own folders, as the Temporal polyfill is mounted from its install, under base URLs named once as constants the loader reads too. They move with the renderer's version in the lockfile, so no committed copy is kept, and the control-character sweep needs no exclusion for one. Rejected: copying the folders in a build step, which is the committed copy again under another name.
 - **The page itself is drawn as authored in either theme, and the chrome around it follows the app's.**

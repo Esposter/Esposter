@@ -6,6 +6,22 @@ Any PDF the app opens is drawn by its own viewer in the app's tokens: pages draw
 
 ## Requirements
 
+### Requirement: A PDF attachment opens its viewer and keeps its document
+
+A PDF attached to a message SHALL open its viewer from a click or the keyboard, and SHALL keep the document it has loaded when the message's read link is minted again.
+
+#### Scenario: Opening the viewer from the keyboard
+
+- **GIVEN** a PDF attachment in a message
+- **WHEN** the reader presses Enter on its thumbnail
+- **THEN** the viewer opens in a dialog titled with the file's name
+
+#### Scenario: A re-minted link keeps the loaded document
+
+- **GIVEN** a PDF attachment whose document has loaded
+- **WHEN** the message's read link is minted again
+- **THEN** the document is not loaded a second time
+
 ### Requirement: The viewer draws only the pages in view
 
 The viewer SHALL draw only the pages the reader can see, so a long document opens without drawing every page.

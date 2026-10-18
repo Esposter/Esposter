@@ -1,11 +1,13 @@
 // @vitest-environment nuxt
 import type { FileEntity } from "@esposter/db-schema";
-
-import type { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
+import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
+import type { PdfApi, PdfRenderer } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
+import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Neither the thumbnail nor the viewer draws in this file, which asserts the shell around them and when the dialog
@@ -24,8 +26,12 @@ describe("messageModelFileRendererPdf", () => {
     mimetype: MimeType.Pdf,
     size: 1,
   };
-  const mountPdf = (isPreview: boolean) =>
-    mountSuspended(MessageModelFileRendererPdf, { attachTo: document.body, props: { file, isPreview, url: "" } });
+  const url = "/document.pdf";
+  const mountPdf = (isPreview: boolean, mountedUrl = "") =>
+    mountSuspended(MessageModelFileRendererPdf, {
+      attachTo: document.body,
+      props: { file, isPreview, url: mountedUrl },
+    });
 
   afterEach(() => {
     document.body.innerHTML = "";
@@ -52,5 +58,42 @@ describe("messageModelFileRendererPdf", () => {
     expect(document.body.querySelector("dialog h2")?.textContent).toBe(filename);
     expect(document.body.querySelector("dialog footer")).toBeNull();
     expect(document.body.querySelector('dialog [aria-label="Close"]')).not.toBeNull();
+  });
+
+  test("opening the viewer from the keyboard", async () => {
+    expect.hasAssertions();
+
+    const component = await mountPdf(false);
+    await component.get('[role="button"]').trigger("keydown", { key: "Enter" });
+
+    expect(document.body.querySelector("dialog h2")?.textContent).toBe(filename);
+  });
+
+  // The read link is re-minted before it expires, and an open viewer would lose its page, its zoom and the password
+  // If the document were loaded again from the new link
+  test("a re-minted link keeps the loaded document", async () => {
+    expect.hasAssertions();
+
+    // The first page never arrives, so the thumbnail draws nothing from the document it is handed
+    const pdfDocument = { getPage: () => new Promise(() => {}) } as unknown as PDFDocumentProxy;
+    const task = {
+      destroy: vi.fn<PDFDocumentLoadingTask["destroy"]>(() => Promise.resolve()),
+      promise: Promise.resolve(pdfDocument),
+    } as unknown as PDFDocumentLoadingTask;
+    const getDocument = vi.fn<PdfApi["getDocument"]>(() => task);
+    const renderer: PdfRenderer = {
+      api: { getDocument, GlobalWorkerOptions: { workerSrc: "" } } as unknown as PdfApi,
+      cMapUrl: "",
+      standardFontDataUrl: "",
+      wasmUrl: "",
+      workerSrc: "",
+    };
+    vi.mocked(loadPdfRenderer).mockResolvedValueOnce(renderer);
+    const component = await mountPdf(false, url);
+    await flushPromises();
+    await component.setProps({ url: `${url}?sig=` });
+    await flushPromises();
+
+    expect(getDocument).toHaveBeenCalledTimes(1);
   });
 });
