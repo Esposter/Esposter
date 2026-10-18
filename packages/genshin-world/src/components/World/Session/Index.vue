@@ -1172,6 +1172,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :random="kitContext.random"
       :recipes="craftingRecipes"
       :wallet
+      @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
