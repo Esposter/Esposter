@@ -15,7 +15,7 @@ import { GameLanguage, GameTextKey } from "genshin-text";
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is
 // Not among them, since no still of the menu the references hold shows it
 export const PAIMON_MENU_CONTENTS: readonly { icon: MenuEntryIcon; screenKind: TitledScreenKind }[] = [
-  { icon: EntryIcon.Shop, screenKind: ScreenKind.Shop },
+  { icon: EntryIcon.Shop, screenKind: ScreenKind.PaimonsBargains },
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
   { icon: EntryIcon.Friends, screenKind: ScreenKind.Friends },
   { icon: EntryIcon.Achievements, screenKind: ScreenKind.Achievements },

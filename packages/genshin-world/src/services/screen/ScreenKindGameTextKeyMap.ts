@@ -19,6 +19,7 @@ export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTex
   [ScreenKind.Mail]: GameTextKey.Mail,
   [ScreenKind.Map]: GameTextKey.Map,
   [ScreenKind.Notices]: GameTextKey.Notices,
+  [ScreenKind.PaimonsBargains]: GameTextKey.PaimonsBargains,
   [ScreenKind.PartySetup]: GameTextKey.PartySetup,
   [ScreenKind.PhotoMode]: GameTextKey.TakePhoto,
   [ScreenKind.Quests]: GameTextKey.Quests,

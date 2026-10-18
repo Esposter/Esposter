@@ -45,6 +45,7 @@ import MenuTime from "#src/components/Menu/Time/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
+import PaimonsBargainsScreen from "#src/components/PaimonsBargains/Screen/Index.vue";
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -109,6 +110,7 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
@@ -170,6 +172,7 @@ const {
   sceneExportBaseUrl,
   seelies,
   serverClockOffsetMs = 0,
+  paimonsBargainsRotation,
   shopIdShopGoodMap,
   startingCharacterIdKitMap,
   statTables,
@@ -1274,6 +1277,25 @@ defineExpose({ jumpTo, readCameraPosition });
           :stella-fortuna-name-text-id-map
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
+        />
+      </template>
+      <template #[ScreenKind.PaimonsBargains]>
+        <PaimonsBargainsScreen
+          v-model:characters="characters"
+          v-model:purchases="shopPurchases"
+          :adventure-rank="rank"
+          :character-data-map="statTables.characterDataMap"
+          :game-text
+          :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
+          :inventory
+          :material-data-map
+          :name-text
+          :rotation="paimonsBargainsRotation"
+          :wallet
+          :weapon-data-map="statTables.weaponDataMap"
+          @close="screenKind = ScreenKind.World"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
+          @update:wallet="(nextWallet) => setWallet(nextWallet)"
         />
       </template>
       <!-- The Time screen dials the hour and confirming sets the world's clock to it, from which the world runs on -->

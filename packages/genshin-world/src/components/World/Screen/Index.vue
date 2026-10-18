@@ -20,6 +20,7 @@ import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/read
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
+import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
@@ -61,6 +62,7 @@ getResultAsync(() =>
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
       measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
+      measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -81,6 +83,7 @@ getResultAsync(() =>
     craftingBenchPlace,
     puzzlePlaces,
     wishSchedule,
+    paimonsBargainsRotation,
     shopIdShopGoodMap,
   ]) => {
     tables.value = {
@@ -95,6 +98,7 @@ getResultAsync(() =>
       materialDataMap,
       monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),
       nameText,
+      paimonsBargainsRotation,
       seelies: pairSeelieCourts(
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
