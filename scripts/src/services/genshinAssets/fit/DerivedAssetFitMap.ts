@@ -4,6 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
+import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
 import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
@@ -35,6 +36,7 @@ export const DerivedAssetFitMap: Partial<
     runFits(
       {
         ...(await readRegionGroundFits(DerivedAssetComponent.Liyue)),
+        rivers: () => fitRiverCourses(DerivedAssetComponent.Liyue),
         waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Liyue),
       },
       only,

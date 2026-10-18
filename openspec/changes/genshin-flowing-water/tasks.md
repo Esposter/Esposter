@@ -6,5 +6,5 @@
 
 ## 2. Rivers
 
-- [ ] 2.1 Fit each river's ribbon to the centreline, width and level of its water mesh once the water prefabs are exported. Verify: a test named after the scenario 'A river's ribbon follows the game's centreline' written first and seen failing.
+- [x] 2.1 Fit each river's ribbon to the centreline, width and level of its water mesh once the water prefabs are exported. Verify: a test named after the scenario 'A river's ribbon follows the game's centreline' written first and seen failing.
 - [ ] 2.2 Fit the falls outside the capitals' witnesses the same way, once their meshes are exported. Verify: a test named after the scenario 'A fall stands at the game's lip' written first and seen failing, against a fall outside the capitals.

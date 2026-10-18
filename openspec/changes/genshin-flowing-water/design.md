@@ -12,14 +12,16 @@ The shapes and the flow are built: see [flowing water](../../specs/genshin/flowi
 
 - **The draw rule for the sheets is the [flowing water](../../specs/genshin/flowing-water/design.md) page's.** The fit keeps every record as the game places it, and the world decides what to draw. A sheet with no drop lies flat on the ground, so its streaks would paint a strip the game does not show as a fall, and one with no width has no area. The Mondstadt and Liyue records with either are dropped at draw time, and the region data keeps them. The placements the witness repeats at one lip, across, drop and width are drawn once, by the renderer rather than merged in the fit, so the data stays a copy of the game's placements.
 - **A region whose witness export stands in draws its own falls.** Where the game's exports for a region are in the scene, the world leaves that region's sheets out, as it leaves out the landmarks the exports draw.
+- **A river's course is read off its water surface's centreline.** The witness places each water surface (`Area_Ly_Water_*`, three in Liyue, none in another region) in three's axes, and the fit turns each mesh's vertices into three's axes before its placement, as the falls are. The course slices the surface one metre along its long axis, each slice a point at the middle of its width with its mean level. Four values are provisional until a recording of the river checks the ribbon: the metre slice, the pond rule (a surface no longer than twice its width has no course, which takes Liyue's flat `Qunyuge_01` pond), the four-metre hole that breaks a course (Liyue's `Slums_02` has one of nineteen metres, which a ribbon would otherwise draw across), and the downhill direction, since a river runs from its higher level to its lower and the game's own flow direction is not read yet.
+- **Two surfaces over the same ground are each a river.** Liyue's `Slums_01` and `Slums_02` lie over the same place at different heights. Each is fitted as its own courses, and the drawing row decides which the world shows.
 
 ## Still to build
 
-1. **The rivers' courses**, from the water prefabs the streaming records place, named by their path hashes as `checkIsArchitectureName` names buildings, then each ribbon fitted to its mesh's centreline, width and level.
+1. **The rivers drawn in the world**: a ribbon along each fitted Liyue course, mounted where the water is, with its flow read from the game's water material where the export holds it.
 
 ## Deferred compute
 
-- The river courses, read from the region's layout pass, are not in the repo, and need their water prefabs' meshes exported before fitting. The falls outside the capitals' witnesses wait the same way.
+- No other region's witness holds a water surface, so the rivers outside Liyue are not fitted. The falls outside the capitals' witnesses are not fitted either, though their meshes are exported: Inazuma, Sumeru and Natlan hold 58, 49 and 2 fall placements, and their region files exist, so their wait is a fit entry for each region (task 2.2), not the export.
 - The mist and foam pool particles are not built: their emitter and their statistics are judged against a recording of the game's falls.
 - How tight a bend gathers full foam on its outer bank is provisional, fitted to a recording of a bending river once its course is placed.
 
