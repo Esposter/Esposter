@@ -33,7 +33,13 @@ export const publishGameData = async ({
   if (formatGameDataLock(nextLock) === formatGameDataLock(currentLock))
     return { outcome: GameDataPublishOutcome.Unchanged };
   // A dry run stops before any account, so it needs no credential and writes nothing
-  if (!containerClientMap) return { outcome: GameDataPublishOutcome.DryRun, storedObjectCount: plan.records.length };
+  if (!containerClientMap)
+    return {
+      nextLock,
+      outcome: GameDataPublishOutcome.DryRun,
+      records: plan.records,
+      storedObjectCount: plan.records.length,
+    };
   const compressedJsonMap = new Map<string, Promise<Buffer>>();
   // Compressed once per object and shared by both accounts, which hold the same bytes
   const getCompressedJson = (record: GameDataRecord) => {

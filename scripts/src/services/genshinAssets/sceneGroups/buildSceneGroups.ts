@@ -8,8 +8,8 @@ import { readSceneBuildingPoints } from "#src/services/genshinAssets/sceneGroups
 import { readViewpointMembers } from "#src/services/genshinAssets/sceneGroups/readViewpointMembers";
 import { SCENE_NPC_BORN_KEY } from "#src/services/genshinAssets/sceneNpcBorn/constants";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { TRIGGER_TABLE_NAME } from "#src/services/genshinText/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
 import { SceneGroupMemberKind, SceneGroupSource, sceneGroupsSchema, sceneNpcBornSchema } from "genshin-world";
 import { z } from "zod";

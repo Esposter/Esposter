@@ -18,7 +18,7 @@ export const buildGatheringPlaces = async (): Promise<GameDataBuild> => {
     readInteractiveMapLabels(),
     readFittedMapPoints(),
   ]);
-  const { items, labelItemIdMap } = await readGatheringItems(labels);
+  const { items, labelItemIdMap } = readGatheringItems(labels);
   const placement = placeMapPoints(points, transform, labelItemIdMap, "gathering", origin);
   const slices = buildMapPointSlices(GameDataset.Gathering, placement, "gathering points");
   return {

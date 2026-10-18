@@ -2,7 +2,7 @@ import type { ExcelPlayerLevelLockRow } from "#src/models/genshinAssets/adventur
 import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelRow";
 import type { ExcelWorldLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelWorldLevelRow";
 
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The Adventure Rank tables the world reads, from the dump's player level, level lock and world level tables. The lock

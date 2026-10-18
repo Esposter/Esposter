@@ -8,7 +8,7 @@ import {
 } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The bench's recipes from the game's combine table, each with the instruction items that open it, sorted by id as the

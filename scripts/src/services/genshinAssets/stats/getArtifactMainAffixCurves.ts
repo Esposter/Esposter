@@ -1,8 +1,8 @@
 import type { ExcelReliquaryLevelRow } from "#src/models/genshinAssets/stats/ExcelReliquaryLevelRow";
 import type { ArtifactMainAffixCurve } from "genshin-world";
 
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 import { artifactMainAffixCurveSchema } from "genshin-world";
 

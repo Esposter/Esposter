@@ -4,7 +4,7 @@ import type { ExcelBlossomSectionOrderRow } from "#src/models/genshinAssets/leyL
 
 import { LEY_LINE_REGION_DIRECTORY } from "#src/services/genshinAssets/leyLine/constants";
 import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineRegions";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";

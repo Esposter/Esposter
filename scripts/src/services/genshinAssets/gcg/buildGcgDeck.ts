@@ -6,7 +6,7 @@ import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSki
 import type { GcgDeckSlice } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
 
 import { toGcgDeck } from "#src/services/genshinAssets/gcg/toGcgDeck";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset, gcgDeckSchema } from "genshin-world";
 

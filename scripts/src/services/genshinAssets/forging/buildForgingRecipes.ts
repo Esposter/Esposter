@@ -10,7 +10,7 @@ import {
 } from "#src/services/genshinAssets/forging/constants";
 import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The blacksmith's recipes from the game's forge table, each with the diagrams that open it, sorted by id as the

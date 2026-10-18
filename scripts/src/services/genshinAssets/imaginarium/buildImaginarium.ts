@@ -7,7 +7,7 @@ import {
 } from "#src/services/genshinAssets/imaginarium/constants";
 import { toImaginariumDifficulty } from "#src/services/genshinAssets/imaginarium/toImaginariumDifficulty";
 import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toImaginariumSeason";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 

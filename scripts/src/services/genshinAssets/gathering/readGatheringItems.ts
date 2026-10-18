@@ -8,19 +8,16 @@ import {
   CATEGORY_RESPAWN_MAP,
   GATHER_POINT_LOCATION_GROUND,
   GATHER_SAVE_TYPE_NONE,
-  GATHER_TABLE_FILENAME,
+  GATHER_TABLE_NAME,
   LABEL_RESPAWN_MAP,
 } from "#src/services/genshinAssets/gathering/constants";
-import { MATERIAL_TABLE_FILENAME } from "#src/services/genshinAssets/items/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { flattenLabelTree } from "#src/services/genshinAssets/points/flattenLabelTree";
-import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameTextKeys } from "genshin-text";
 import { MaterialType } from "genshin-world";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // How a label's points come back once picked or broken: by its own rule where it has one, else by its category
 const getLabelRespawn = ({ categoryId, id }: FlatInteractiveMapLabel) =>
@@ -30,15 +27,11 @@ const getLabelRespawn = ({ categoryId, id }: FlatInteractiveMapLabel) =>
 // Its English name is the name of a label the official map files under a category that respawns, which is the label
 // Its points are marked by. Returns the items, and each label's item by the label's id, the first item of a name taking
 // The label where two items share one. An item of a material type the world does not name is left out
-export const readGatheringItems = async (
+export const readGatheringItems = (
   labels: InteractiveMapLabel[],
-): Promise<{ items: GatheringItem[]; labelItemIdMap: Map<number, number> }> => {
-  const [gatherContent, materialContent] = await Promise.all([
-    readFile(join(EXCEL_DIRECTORY, GATHER_TABLE_FILENAME), "utf8"),
-    readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
-  ]);
-  const gatherRows = parseMachineJson<GatherRow[]>(gatherContent);
-  const materialRows = parseMachineJson<MaterialRow[]>(materialContent);
+): { items: GatheringItem[]; labelItemIdMap: Map<number, number> } => {
+  const gatherRows = readExcelTable<GatherRow>(GATHER_TABLE_NAME);
+  const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const englishText = readTextMap(GameLanguage.English);
   const categoryLabels = flattenLabelTree(labels).filter((label) => getLabelRespawn(label) !== undefined);
   const materialRowMap = new Map(materialRows.map((materialRow) => [materialRow.id, materialRow]));

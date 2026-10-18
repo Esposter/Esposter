@@ -1,6 +1,6 @@
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The game's reward table keyed by its reward id, which each level writer joins its level's reward through
 export const readRewardMap = (): Map<number, ExcelRewardRow> =>

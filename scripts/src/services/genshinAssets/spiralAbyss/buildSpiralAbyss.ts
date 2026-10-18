@@ -12,7 +12,7 @@ import {
 import { toAbyssFloor } from "#src/services/genshinAssets/spiralAbyss/toAbyssFloor";
 import { toAbyssFloorReward } from "#src/services/genshinAssets/spiralAbyss/toAbyssFloorReward";
 import { toAbyssPeriod } from "#src/services/genshinAssets/spiralAbyss/toAbyssPeriod";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The Spiral Abyss's floors with their chambers, every floor's rewards in every reward group and the Moon Spire's periods,

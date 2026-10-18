@@ -10,7 +10,7 @@ import {
   MONSTER_DESCRIBE_TABLE_NAME,
 } from "#src/services/genshinAssets/archive/constants";
 import { MONSTER_CODEX_TYPE } from "#src/services/genshinAssets/enemies/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The animals and the monsters the Living Beings section lists, each in the codex's order and named by the description its
 // Row is filed under, whose name the description table gives

@@ -9,10 +9,11 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
-import { WORLD_AREAS_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { WORLD_AREAS_TABLE_NAME, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -32,14 +33,13 @@ import { join } from "node:path";
 // Landmark alone. Both files stay written, as the sources people edit, and each ground rewritten is also its record
 // `ground/<region>`, with the paths written as the notes
 export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
-  const [areasJson, transportPoints, [originX, originY, originZ], { base }] = await Promise.all([
-    readFile(WORLD_AREAS_PATH, "utf8"),
+  const [transportPoints, [originX, originY, originZ], { base }] = await Promise.all([
     readSceneTransportPoints(),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readPublishedGameData<GaussianHills>(`${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`),
   ]);
   const textMap = readTextMap(GameLanguage.English);
-  const areas = parseMachineJson<WorldArea[]>(areasJson);
+  const areas = readExcelTable<WorldArea>(WORLD_AREAS_TABLE_NAME);
   return mergeGameDataBuilds(
     await Promise.all(
       Object.entries(RegionCapitalMap).map(async ([region, capital]) => {

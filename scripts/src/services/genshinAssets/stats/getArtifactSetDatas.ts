@@ -2,8 +2,8 @@ import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/stats/ExcelEq
 import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/stats/ExcelReliquarySetRow";
 import type { ArtifactSetData } from "genshin-world";
 
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { artifactSetDataSchema } from "genshin-world";
 
 // Every artifact set with bonuses, each bonus the attributes its affix adds at its piece count and the numbers its effect

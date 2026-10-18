@@ -4,7 +4,7 @@ import type { GcgStandardRule } from "#src/models/genshinAssets/gcg/GcgStandardR
 
 import { GCG_STANDARD_RULE_ID } from "#src/services/genshinAssets/gcg/constants";
 import { toGcgStandardRule } from "#src/services/genshinAssets/gcg/toGcgStandardRule";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset, gcgStandardRuleSchema } from "genshin-world";
 

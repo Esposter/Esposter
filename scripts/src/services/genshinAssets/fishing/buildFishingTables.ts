@@ -6,7 +6,7 @@ import type { Fish, FishingPool, FishRod } from "genshin-world";
 
 import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 const toFish = (row: Fish): Fish => ({

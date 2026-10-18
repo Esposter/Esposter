@@ -13,7 +13,7 @@ import {
 import { getNamecardIconName } from "#src/services/genshinAssets/profile/getNamecardIconName";
 import { selectFetterStoryRows } from "#src/services/genshinAssets/profile/selectFetterStoryRows";
 import { toProfileStory } from "#src/services/genshinAssets/profile/toProfileStory";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";

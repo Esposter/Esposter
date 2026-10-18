@@ -7,6 +7,7 @@ import { commitGameDataLock } from "#src/services/gameData/commitGameDataLock";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
+import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
 
 interface PublishGameDataStepOptions {
   isDryRun: boolean;
@@ -15,13 +16,15 @@ interface PublishGameDataStepOptions {
 }
 
 // One generator's publish: the scopes it replaces are stored in both accounts, and the lock is committed only once both have
-// Them. A dry run stores nothing and needs no credential. Returns a note of what the step did to the lock
+// Them. A dry run stores nothing and needs no credential, and its note adds what it would change against the published
+// Records. Returns a note of what the step did to the lock
 export const publishGameDataStep = async ({
   isDryRun,
   publication,
   scopes,
 }: PublishGameDataStepOptions): Promise<string> => {
   const label = scopes.join(", ");
+  const currentLock = await readGameDataLock();
   const result = await publishGameData({
     containerClientMap: isDryRun
       ? undefined
@@ -29,13 +32,16 @@ export const publishGameDataStep = async ({
           [GameDataTarget.Dev]: createGameDataContainerClient(GameDataTarget.Dev),
           [GameDataTarget.Prod]: createGameDataContainerClient(GameDataTarget.Prod),
         },
-    currentLock: await readGameDataLock(),
+    currentLock,
     publication,
     scopes,
   });
   if (result.outcome === GameDataPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
   if (result.outcome === GameDataPublishOutcome.DryRun)
-    return `${label}: dry run, ${result.storedObjectCount} records would be published`;
+    return [
+      `${label}: dry run, ${result.storedObjectCount} records would be published`,
+      ...(await summarizeGameDataChanges(currentLock, result.nextLock, result.records)),
+    ].join("\n");
   await commitGameDataLock(scopes, result.plannedLock);
   const { uploadedCountMap } = result;
   return `${label}: ${result.storedObjectCount} records published, ${uploadedCountMap[GameDataTarget.Dev]} objects uploaded to dev and ${uploadedCountMap[GameDataTarget.Prod]} to prod`;

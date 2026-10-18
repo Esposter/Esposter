@@ -1,9 +1,9 @@
 // The game's tables the enemies' kinds are read from, in the dump beside its text maps
-export const MONSTER_TABLE_FILENAME = "MonsterExcelConfigData.json";
+export const MONSTER_TABLE_NAME = "MonsterExcelConfigData";
 // A monster's name is filed under its description, since the hash its row holds names no text in any language
-export const MONSTER_DESCRIBE_TABLE_FILENAME = "MonsterDescribeExcelConfigData.json";
-export const MONSTER_CURVE_TABLE_FILENAME = "MonsterCurveExcelConfigData.json";
-export const ANIMAL_CODEX_TABLE_FILENAME = "AnimalCodexExcelConfigData.json";
+export const MONSTER_DESCRIBE_TABLE_NAME = "MonsterDescribeExcelConfigData";
+export const MONSTER_CURVE_TABLE_NAME = "MonsterCurveExcelConfigData";
+export const ANIMAL_CODEX_TABLE_NAME = "AnimalCodexExcelConfigData";
 // An archive row of a monster rather than of wildlife
 export const MONSTER_CODEX_TYPE = "CODEX_MONSTER";
 // The stat each base value grows by, as the monster table names it

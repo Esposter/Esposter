@@ -4,9 +4,9 @@ import type { GameLanguage } from "genshin-text";
 
 import { LOCALIZATION_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { LocalizationPathKeyMap } from "#src/services/genshinAssets/archive/LocalizationPathKeyMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { GameLanguageCodeMap, READABLE_DIRECTORY } from "#src/services/genshinText/constants";
 import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguages } from "genshin-text";
 import { GameDataset } from "genshin-world";

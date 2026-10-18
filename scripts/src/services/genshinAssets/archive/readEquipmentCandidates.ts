@@ -12,7 +12,7 @@ import {
   WEAPON_CODEX_TABLE_NAME,
   WEAPON_TABLE_NAME,
 } from "#src/services/genshinAssets/archive/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The weapons and the artifact sets the Equipment section lists, each in the codex's order. A weapon is named by its
 // Weapon row, and a set by the equip affix its set row holds, which carries the set's name

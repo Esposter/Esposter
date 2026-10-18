@@ -3,7 +3,7 @@ import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offering
 import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/genshinAssets/offerings/constants";
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 

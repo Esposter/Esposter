@@ -7,10 +7,10 @@ import { getSkillGlyphsLoaderMapSource } from "#src/services/genshinAssets/skill
 import { traceTalentIcon } from "#src/services/genshinAssets/skillGlyphs/traceTalentIcon";
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWikiFiles";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema } from "genshin-world";

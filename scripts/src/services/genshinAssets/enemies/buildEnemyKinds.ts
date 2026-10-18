@@ -4,26 +4,23 @@ import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterC
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
 import {
-  ANIMAL_CODEX_TABLE_FILENAME,
+  ANIMAL_CODEX_TABLE_NAME,
   BASE_ATTACK_PROPERTY,
   BASE_DEFENSE_PROPERTY,
   BASE_HEALTH_PROPERTY,
   MONSTER_CODEX_TYPE,
-  MONSTER_CURVE_TABLE_FILENAME,
-  MONSTER_DESCRIBE_TABLE_FILENAME,
-  MONSTER_TABLE_FILENAME,
+  MONSTER_CURVE_TABLE_NAME,
+  MONSTER_DESCRIBE_TABLE_NAME,
+  MONSTER_TABLE_NAME,
   REGIONS_DIRECTORY,
 } from "#src/services/genshinAssets/enemies/constants";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-const readExcelTable = async <T>(filename: string): Promise<T[]> =>
-  parseMachineJson<T[]>(await readFile(join(EXCEL_DIRECTORY, filename), "utf8"));
 
 const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): string => {
   const growCurve = propGrowCurves.find(({ type }) => type === property)?.growCurve;
@@ -37,19 +34,17 @@ const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): str
 export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const regionsDirectory = join(WORLD_DATA_DIRECTORY, REGIONS_DIRECTORY);
   const regionFilenames = await readdir(regionsDirectory);
-  const [regionDatas, monsterRows, monsterDescribeRows, monsterCurveRows, animalCodexRows] = await Promise.all([
-    Promise.all(
-      regionFilenames.map(async (filename) =>
-        parseMachineJson<{ enemyCamps: { members: { enemyKindId: number }[] }[] }>(
-          await readFile(join(regionsDirectory, filename), "utf8"),
-        ),
+  const regionDatas = await Promise.all(
+    regionFilenames.map(async (filename) =>
+      parseMachineJson<{ enemyCamps: { members: { enemyKindId: number }[] }[] }>(
+        await readFile(join(regionsDirectory, filename), "utf8"),
       ),
     ),
-    readExcelTable<MonsterRow>(MONSTER_TABLE_FILENAME),
-    readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_FILENAME),
-    readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_FILENAME),
-    readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_FILENAME),
-  ]);
+  );
+  const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
+  const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
+  const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
+  const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
   const enemyKindIds = new Set(
     regionDatas.flatMap(({ enemyCamps }) =>
       enemyCamps.flatMap(({ members }) => members.map(({ enemyKindId }) => enemyKindId)),

@@ -9,10 +9,10 @@ import {
   PLAYABLE_AVATAR_USE_TYPE,
   QualityTypeRarityMap,
 } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { Attribute, characterDataSchema } from "genshin-world";
 
 // Every playable character as the roster holds it: its name by text id, its element from its burst's energy, its region

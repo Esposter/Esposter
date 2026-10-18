@@ -7,7 +7,7 @@ import {
   PUSH_TIPS_TABLE_NAME,
   PUSH_TIPS_TUTORIAL_TYPE,
 } from "#src/services/genshinAssets/archive/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The tutorials the Tutorials section lists, each in the codex's order and named by the title its push tip shows. A push
 // Tip of another kind, such as a monster's, is not a tutorial

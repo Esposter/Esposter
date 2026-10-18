@@ -12,10 +12,11 @@ import {
   CATALOGUE_PATH,
   OPEN_WORLD_SCENE_ID,
   WORLD_AREA_POLYGONS_PATH,
-  WORLD_AREAS_PATH,
+  WORLD_AREAS_TABLE_NAME,
 } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
@@ -30,14 +31,15 @@ import { readFile } from "node:fs/promises";
 // Outline the catalogue gives it, and a subarea the table files no row for takes no outline and no terrain.
 // The catalogue is written back, as the source people edit, and is also its record, with what was outlined as the notes
 export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
-  const [areasJson, polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
-    readFile(WORLD_AREAS_PATH, "utf8"),
+  const [polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFile(CATALOGUE_PATH, "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
-  const areas = parseMachineJson<WorldArea[]>(areasJson).filter(({ sceneID }) => sceneID === OPEN_WORLD_SCENE_ID);
+  const areas = readExcelTable<WorldArea>(WORLD_AREAS_TABLE_NAME).filter(
+    ({ sceneID }) => sceneID === OPEN_WORLD_SCENE_ID,
+  );
   const { level1Areas } = parseMachineJson<WorldAreaPolygonFile>(polygonsJson);
   const catalogue = catalogueSchema.parse(parseMachineJson(catalogueJson));
   const toOutline = ({ roadPoints }: { roadPoints: readonly GroundPoint[] }): GroundPoint[] =>

@@ -3,7 +3,7 @@ import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/Exc
 import type { ReliquarySetData } from "genshin-world";
 
 import { EQUIP_AFFIX_TABLE_NAME, RELIQUARY_SET_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset, reliquarySetDataSchema } from "genshin-world";
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the pieces it is

@@ -2,7 +2,7 @@ import type { ExcelViewCodexRow } from "#src/models/genshinAssets/archive/ExcelV
 import type { ViewpointCandidate } from "#src/models/genshinAssets/archive/ViewpointCandidate";
 
 import { VIEW_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The viewpoints the Geography section lists, each in the codex's order and named by its own row, with the group and
 // Config id the scene group record places it by

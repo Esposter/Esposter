@@ -1,9 +1,9 @@
 import type { ExcelCityLevelupRow } from "#src/models/genshinAssets/statues/ExcelCityLevelupRow";
 
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 

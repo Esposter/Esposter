@@ -3,7 +3,7 @@ import type { TravelLogCandidate } from "#src/models/genshinAssets/archive/Trave
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 
 import { MAIN_QUEST_TABLE_NAME, QUEST_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The quests the Travel Log lists, each in the codex's order. A quest is named by the main quest it is filed under, whose
 // Title is the one the codex's entry shows, and whose finish opens the entry

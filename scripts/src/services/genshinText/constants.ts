@@ -13,18 +13,18 @@ export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput
 // The readable texts the game's books and letters are read from, one folder a language named by its code, fetched into the
 // Dump from the AnimeGameData repository's `Readable/` like the tables, never committed
 export const READABLE_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "Readable");
-export const MANUAL_TEXT_MAP_PATH: string = join(EXCEL_DIRECTORY, "ManualTextMapConfigData.json");
-export const FETTERS_PATH: string = join(EXCEL_DIRECTORY, "FettersExcelConfigData.json");
+export const MANUAL_TEXT_MAP_TABLE_NAME = "ManualTextMapConfigData";
+export const FETTERS_TABLE_NAME = "FettersExcelConfigData";
 // The quest, dialog and character tables a quest's steps and talks are read from, and the binary output holding each
 // Quest's steps under its id
-export const MAIN_QUEST_PATH: string = join(EXCEL_DIRECTORY, "MainQuestExcelConfigData.json");
-export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.json");
+export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
+export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
 // Numbered parts
 export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";
 // The trigger table, each trigger a quest fires by its id with the scene and the group that hold it
 export const TRIGGER_TABLE_NAME = "TriggerExcelConfigData";
-export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
+export const NPC_TABLE_NAME = "NpcExcelConfigData";
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
 // Text map is split across the chunks of its kind's folder, numbered from its range's first to its last

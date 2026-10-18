@@ -4,11 +4,11 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import type { CharacterConstellationKit, Constellation, ConstellationDepot } from "genshin-world";
 
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { readTalentActions } from "#src/services/genshinAssets/stats/readTalentActions";
 import { toConstellationRaise } from "#src/services/genshinAssets/stats/toConstellationRaise";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";

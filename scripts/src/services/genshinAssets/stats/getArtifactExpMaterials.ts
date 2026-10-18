@@ -2,7 +2,7 @@ import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMate
 import type { ArtifactExpMaterial } from "genshin-world";
 
 import { ARTIFACT_EXP_ITEM_USE } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
 import { artifactExpMaterialSchema } from "genshin-world";
 

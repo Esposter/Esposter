@@ -19,8 +19,9 @@ import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegio
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { NPC_PATH } from "#src/services/genshinText/constants";
+import { NPC_TABLE_NAME } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
@@ -64,11 +65,12 @@ export const writeResidents = async (): Promise<string> => {
     const region = classifyPlacementRegion(place.position, regionMapPoints, RESIDENT_REGION_MAX_DISTANCE);
     return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];
   });
-  const npcs = parseMachineJson<DumpedNpc[]>(await readFile(NPC_PATH, "utf8"));
+  const npcs = readExcelTable<DumpedNpc>(NPC_TABLE_NAME);
   const nameTextIdMap = new Map(
     npcs.flatMap(({ id, nameTextMapHash }) => (nameTextMapHash === 0 ? [] : [[id, String(nameTextMapHash)] as const])),
   );
-  const [speakers, talkConfigs] = await Promise.all([readDialogSpeakers(), readTalkConfigs()]);
+  const speakers = readDialogSpeakers();
+  const talkConfigs = await readTalkConfigs();
   const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
   const residentJoin = joinResidents(placements, nameTextIdMap, talkIdMap, (region, position) =>

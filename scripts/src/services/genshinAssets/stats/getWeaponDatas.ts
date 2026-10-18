@@ -4,9 +4,9 @@ import type { ExcelWeaponRow } from "#src/models/genshinAssets/stats/ExcelWeapon
 import type { WeaponData } from "genshin-world";
 
 import { EMPTY_ITEM_ID, EMPTY_PROPERTY_TYPE } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { toWeaponPassive } from "#src/services/genshinAssets/stats/toWeaponPassive";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
 import { weaponDataSchema } from "genshin-world";
 

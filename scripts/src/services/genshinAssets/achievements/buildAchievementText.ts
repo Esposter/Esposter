@@ -2,8 +2,8 @@ import type { ExcelAchievementGoalRow } from "#src/models/genshinAssets/achievem
 import type { Achievement } from "genshin-world";
 
 import { ACHIEVEMENT_GOAL_TABLE_NAME } from "#src/services/genshinAssets/achievements/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameLanguages } from "genshin-text";
 import { GameDataset } from "genshin-world";
 

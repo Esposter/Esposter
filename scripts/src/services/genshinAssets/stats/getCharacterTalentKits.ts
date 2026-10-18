@@ -3,10 +3,10 @@ import type { CharacterTalentKit } from "genshin-world";
 
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toCharacterTalentKit } from "#src/services/genshinAssets/stats/toCharacterTalentKit";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // Every playable character's combat talents and passives, from the first of its skill sets that names them all, as
 // `toCharacterTalentKit` reads them, a Traveler's from its Anemo set. A character none of whose sets does is left out

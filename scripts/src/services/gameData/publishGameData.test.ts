@@ -7,6 +7,7 @@ import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutc
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
+import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
@@ -172,7 +173,14 @@ describe(publishGameData, () => {
 
     const result = await publishGameData({ currentLock: emptyLock, publication, scopes });
 
-    expect(result).toStrictEqual({ outcome: GameDataPublishOutcome.DryRun, storedObjectCount: 4 });
+    // Nothing was published before, so the lock it would leave is the plan's own
+    const plan = planGameDataPublication(publication);
+    expect(result).toStrictEqual({
+      nextLock: plan.lock,
+      outcome: GameDataPublishOutcome.DryRun,
+      records: plan.records,
+      storedObjectCount: 4,
+    });
     expect(MockContainerDatabase.size).toBe(0);
   });
 

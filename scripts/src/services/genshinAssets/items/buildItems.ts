@@ -2,9 +2,8 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
-import { MATERIAL_TABLE_FILENAME } from "#src/services/genshinAssets/items/constants";
-import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
   craftingRecipeSchema,
@@ -16,8 +15,6 @@ import {
   reputationCitySchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
@@ -43,9 +40,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .array(offeringLevelSchema)
     .parse(await readPublishedGameData("offerings/frostbearingTree"));
   const { levels: reputationLevels } = reputationCitySchema.parse(await readPublishedGameData("reputation/mondstadt"));
-  const materialRows = parseMachineJson<MaterialRow[]>(
-    await readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
-  );
+  const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const itemIds = [
     ...new Set([
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),

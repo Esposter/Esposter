@@ -9,7 +9,7 @@ import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFitt
 import { readInteractiveMapViewpoints } from "#src/services/genshinAssets/points/readInteractiveMapViewpoints";
 import { matchViewpointPoints } from "#src/services/genshinAssets/sceneGroups/matchViewpointPoints";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { SceneGroupMemberKind, SceneGroupSource } from "genshin-world";

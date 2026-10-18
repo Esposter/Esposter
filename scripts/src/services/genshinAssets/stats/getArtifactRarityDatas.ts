@@ -4,7 +4,7 @@ import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelRel
 import type { ArtifactRarityData } from "genshin-world";
 
 import { ArtifactRarityAffixDepotMap } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
 import { artifactRarityDataSchema } from "genshin-world";
 

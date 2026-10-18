@@ -1,7 +1,7 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 
 import { toShopGoodRow } from "#src/services/genshinAssets/shops/toShopGoodRow";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The goods of the table that pass the filter, one row a good by its id, as one record of the shops dataset named by its stem

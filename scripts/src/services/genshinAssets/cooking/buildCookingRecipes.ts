@@ -10,7 +10,7 @@ import {
 import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRecipe";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The dishes from the game's cook recipe table, each with its specialties and the instruction items that teach it, sorted

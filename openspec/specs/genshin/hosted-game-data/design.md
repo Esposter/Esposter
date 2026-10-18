@@ -85,12 +85,12 @@ Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A
 
 ## Creating a dataset
 
-A dataset starts as a `GameDataset` member, which is both the scope a publish replaces and the first segment of its keys. Its builder returns its records by key (`GameDataBuild`) instead of writing files, and its command publishes them under the dataset's scope. A dry run builds and reports `N records would be published` with no credential and no request. The real publish stores each object in both accounts, then writes the lock, which is committed with the publish's report in its body. Only then is the reader written, since its key is typed off the committed lock.
+A dataset starts as a `GameDataset` member, which is both the scope a publish replaces and the first segment of its keys. Its builder returns its records by key (`GameDataBuild`) instead of writing files, and its command publishes them under the dataset's scope. A dry run builds and reports `N records would be published` with no credential and no write, then what it would change against the published lock: the keys and index entries added, removed and changed, and the paths the changed records differ at, counted with array indices and numeric keys collapsed, rows that carry an `id` matched by it, and the published side read from the dev account (`summarizeGameDataChanges`). The real publish stores each object in both accounts, then writes the lock, which is committed with the publish's report in its body. Only then is the reader written, since its key is typed off the committed lock.
 
 ```mermaid
 flowchart TD
   Member["a GameDataset member: the scope, and the first segment of its keys"] --> Builder["a builder returns its records by key"]
-  Builder --> Dry["--dry-run: the records that would publish, no credential, no request"]
+  Builder --> Dry["--dry-run: the records that would publish and the paths they change, no credential, no write"]
   Dry --> Publish["publish to both accounts: hash, store what each lacks, create-only"]
   Publish --> Held{"both accounts hold every object?"}
   Held -->|no| Abort["throws: the lock is untouched, a rerun converges"]
@@ -262,6 +262,8 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
 | `scripts/src/services/gameData/publishGameData.ts`                                    | Plans a publication, stores it in both accounts and returns the entries it planned for the lock                           |
 | `scripts/src/services/gameData/publishGameDataStep.ts`                                | One generator's publish: publishes, then commits its entries onto the lock as it stands then                              |
+| `scripts/src/services/gameData/summarizeGameDataChanges.ts`                           | A dry run's change against the published lock: keys and entries added, removed and changed, and the paths they differ at  |
+| `scripts/src/services/gameData/countGameDataPathChanges.ts`                           | Counts where two records differ by path, indices and numeric keys collapsed and rows matched by id                        |
 | `scripts/src/services/gameData/commitGameDataLock.ts`                                 | Merges a publication's entries onto the lock at commit, so a concurrent scope's entries survive                           |
 | `scripts/src/services/gameData/mergeGameDataLock.ts`                                  | Drops every entry a dataset or key scope names, and every retired dataset's, and lays the publication's over the rest     |
 | `scripts/src/services/gameData/toGameDataKeyScopes.ts`                                | The keys a step republishes on their own, each checked to sit under a dataset                                             |

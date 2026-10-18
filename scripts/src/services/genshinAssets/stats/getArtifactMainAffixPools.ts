@@ -2,7 +2,7 @@ import type { ExcelReliquaryMainPropRow } from "#src/models/genshinAssets/stats/
 import type { ArtifactMainAffixPool } from "genshin-world";
 
 import { ArtifactSlotMainPropDepotMap } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { artifactMainAffixPoolSchema, ArtifactSlot } from "genshin-world";
 
 // Every slot's main affix pool: the attributes its depot holds, which the wiki's weights then draw among

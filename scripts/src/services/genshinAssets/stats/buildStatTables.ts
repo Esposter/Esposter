@@ -13,12 +13,12 @@ import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacte
 import { getCharacterSkillKits } from "#src/services/genshinAssets/stats/getCharacterSkillKits";
 import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCharacterTalentKits";
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
 import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables";
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { writeTalentTables } from "#src/services/genshinAssets/stats/writeTalentTables";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables, with

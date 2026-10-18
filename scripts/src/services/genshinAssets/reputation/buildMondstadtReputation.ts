@@ -7,8 +7,8 @@ import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewa
 
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 

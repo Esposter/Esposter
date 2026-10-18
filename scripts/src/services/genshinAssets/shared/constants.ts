@@ -11,7 +11,6 @@ import {
   PARITY_DIRECTORY,
 } from "#src/services/genshinParity/shared/constants";
 import {
-  EXCEL_DIRECTORY,
   GAME_TEXT_DIRECTORY,
   SCENE_WORLD_AREA_DIRECTORY,
   SCENE_WORLD_AREA_FILE_NAME,
@@ -290,7 +289,7 @@ export const CATALOGUE_PATH: string = join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE)
 // The game's own area table in the community's dump, each area's id and the text id of its name, and the field a scene
 // Point files the area it stands in under, as the dump obfuscates it: Windrise's statue's holds 201, which the table
 // Names Windrise
-export const WORLD_AREAS_PATH: string = join(EXCEL_DIRECTORY, "WorldAreaConfigData.json");
+export const WORLD_AREAS_TABLE_NAME = "WorldAreaConfigData";
 // The open world's areas' outlines in the community's dump, the game's own polygon for each of its areas
 export const WORLD_AREA_POLYGONS_PATH: string = join(
   GAME_TEXT_DIRECTORY,

@@ -3,7 +3,7 @@ import type { ExcelWorldAreaExploreEventRow } from "#src/models/genshinAssets/ex
 
 import { ExploreAreaCatalogueIdMap } from "#src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap";
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 

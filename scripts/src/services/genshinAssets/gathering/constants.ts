@@ -1,7 +1,7 @@
 import { GatheringRespawn } from "genshin-world";
 
 // The game's gather table in the dump beside its material table
-export const GATHER_TABLE_FILENAME = "GatherExcelConfigData.json";
+export const GATHER_TABLE_NAME = "GatherExcelConfigData";
 // The gather rows that are picked off the ground: the animals' and events' rows save nothing and sit on no point
 export const GATHER_POINT_LOCATION_GROUND = "POINT_GROUND";
 export const GATHER_SAVE_TYPE_NONE = "GATHER_SAVE_TYPE_NONE";

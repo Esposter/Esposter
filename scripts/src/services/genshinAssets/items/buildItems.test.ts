@@ -2,8 +2,8 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
-import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
@@ -12,7 +12,7 @@ vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
 vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces"), () => ({
   readMondstadtExpeditionPlaces: vi.fn<() => never[]>(() => []),
 }));
-vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
+vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>() }));
 
 describe(buildItems, () => {
   const TREE_ITEM_ID = 107010;
@@ -70,7 +70,7 @@ describe(buildItems, () => {
     const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
       materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
     );
-    vi.mocked(readFile).mockResolvedValue(JSON.stringify([...materialRows, ...dropItemRows]));
+    vi.mocked(readExcelTable).mockReturnValue([...materialRows, ...dropItemRows]);
     vi.mocked(readPublishedGameData).mockImplementation((key) => {
       if (key === "offerings/frostbearingTree")
         return Promise.resolve([

@@ -10,7 +10,7 @@ import {
 import { toAchievement } from "#src/services/genshinAssets/achievements/toAchievement";
 import { toAchievementCategory } from "#src/services/genshinAssets/achievements/toAchievementCategory";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { achievementCategorySchema, achievementSchema, GameDataset } from "genshin-world";
 

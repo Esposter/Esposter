@@ -2,10 +2,10 @@ import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatar
 import type { CharacterSkillKit } from "genshin-world";
 
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toSkillDepot } from "#src/services/genshinAssets/stats/toSkillDepot";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { characterSkillKitSchema } from "genshin-world";
 
 // Every playable character's skill sets, its own form's first and then each element form's, as the game's tables give

@@ -6,8 +6,8 @@ import type { RewardItem } from "genshin-world";
 
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
   COMMISSION_RANK_BAND_COUNT,

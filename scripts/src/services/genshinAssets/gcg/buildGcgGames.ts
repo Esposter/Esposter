@@ -3,7 +3,7 @@ import type { GcgGame } from "genshin-world";
 
 import { GCG_DUEL_GAME_IDS, GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
 import { toGcgGames } from "#src/services/genshinAssets/gcg/toGcgGames";
-import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The duels the world's residents play, read from the dump's game table into one small map by game id, which the world

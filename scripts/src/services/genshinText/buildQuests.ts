@@ -2,9 +2,10 @@ import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { Quest } from "genshin-world";
 
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
-import { MAIN_QUEST_PATH, QUEST_BINARY_DIRECTORY } from "#src/services/genshinText/constants";
+import { MAIN_QUEST_TABLE_NAME, QUEST_BINARY_DIRECTORY } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTalkTables } from "#src/services/genshinText/readTalkTables";
@@ -25,15 +26,12 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
   const mainQuestMap = new Map(
-    parseMachineJson<DumpedMainQuest[]>(readFileSync(MAIN_QUEST_PATH, "utf8")).map((mainQuest) => [
-      mainQuest.id,
-      mainQuest,
-    ]),
+    readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME).map((mainQuest) => [mainQuest.id, mainQuest]),
   );
   const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
     const mainQuest = mainQuestMap.get(Number(questId));
-    if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_PATH, `has no quest ${questId}`);
+    if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
     const questKind = DumpedQuestKindMap[mainQuest.type];
     if (!questKind) throw new InvalidOperationError(Operation.Read, questId, `has the unknown type ${mainQuest.type}`);
     const questBinary = parseMachineJson<Record<string, unknown>>(
