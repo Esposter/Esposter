@@ -48,10 +48,7 @@ const stepPoise = (enemy: Enemy, stepSeconds: number): void => {
   const { length, refillPerSecond } = PoiseTypeSettingsMap[enemy.traits.poiseType];
   if (enemy.poiseBrokenSeconds > 0) {
     enemy.poiseBrokenSeconds = Math.max(0, enemy.poiseBrokenSeconds - stepSeconds);
-    if (enemy.poiseBrokenSeconds === 0) {
-      enemy.poise = length;
-      if (enemy.shield) enemy.shield.health = enemy.shield.maxHealth;
-    }
+    if (enemy.poiseBrokenSeconds === 0) enemy.poise = length;
   } else enemy.poise = Math.min(length, enemy.poise + refillPerSecond * stepSeconds);
 };
 // The move a boss is winding up or recovering from, which a common enemy, having no moves, never has
@@ -117,16 +114,20 @@ export const stepEnemy = (
       }
       return undefined;
     case EnemyState.Return:
-      // Home, it is healed and its poise restored, as the game heals an enemy that gives up
+      // Home, it is healed, and its shield and poise restored, as the game heals an enemy that gives up
       if (walkToward(enemy, enemy.home, ENEMY_RUN_SPEED * stepSeconds)) {
         enemy.health = enemy.maxHealth;
+        if (enemy.shield) enemy.shield.health = enemy.shield.maxHealth;
         enemy.poise = PoiseTypeSettingsMap[enemy.traits.poiseType].length;
         enemy.poiseBrokenSeconds = 0;
         setEnemyState(enemy, EnemyState.Idle);
       }
       return undefined;
     case EnemyState.Stagger:
-      if (enemy.stateSeconds >= ENEMY_STAGGER_SECONDS) setEnemyState(enemy, EnemyState.Chase);
+      if (enemy.stateSeconds >= ENEMY_STAGGER_SECONDS) {
+        if (enemy.shield) enemy.shield.health = enemy.shield.maxHealth;
+        setEnemyState(enemy, EnemyState.Chase);
+      }
       return undefined;
     case EnemyState.Windup:
       if (target) face(enemy, target);
