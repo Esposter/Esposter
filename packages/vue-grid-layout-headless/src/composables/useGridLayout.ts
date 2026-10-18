@@ -20,7 +20,9 @@ import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
 import { resolveMove } from "#src/placement/resolveMove";
-import { findGridAt, findGridRoot, registerGrid, unregisterGrid } from "#src/services/mountedGrids";
+import { findGridAt } from "#src/services/findGridAt";
+import { findGridRoot } from "#src/services/findGridRoot";
+import { mountedGrids } from "#src/services/mountedGrids";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
 
@@ -205,7 +207,7 @@ export const useGridLayout = <T extends GridItem>(
     element.addEventListener("pointermove", handlePointerMove);
     element.addEventListener("pointerup", handlePointerUp);
     element.addEventListener("pointercancel", handlePointerCancel);
-    registerGrid(element, self);
+    mountedGrids.set(element, self);
     attached.value = { element, observer };
   });
   onUnmounted(() => {
@@ -213,7 +215,7 @@ export const useGridLayout = <T extends GridItem>(
 
     const { element, observer } = attached.value;
     observer.disconnect();
-    unregisterGrid(element);
+    mountedGrids.delete(element);
     element.removeEventListener("pointermove", handlePointerMove);
     element.removeEventListener("pointerup", handlePointerUp);
     element.removeEventListener("pointercancel", handlePointerCancel);

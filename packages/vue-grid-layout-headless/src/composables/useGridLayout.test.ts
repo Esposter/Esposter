@@ -3,12 +3,12 @@ import type { GridCommit } from "#src/models/GridCommit";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
 
-import { startExternalDrag } from "#src/composables/startExternalDrag";
 import { useGridLayout } from "#src/composables/useGridLayout";
 import { CollisionMode } from "#src/models/CollisionMode";
 import { CompactType } from "#src/models/CompactType";
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
+import { startExternalDrag } from "#src/services/startExternalDrag";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, shallowRef, useTemplateRef } from "vue";

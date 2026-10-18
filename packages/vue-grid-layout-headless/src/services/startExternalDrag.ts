@@ -1,6 +1,6 @@
 import type { GridItem } from "#src/models/GridItem";
 
-import { findGridAt } from "#src/services/mountedGrids";
+import { findGridAt } from "#src/services/findGridAt";
 
 // An item from outside every grid, such as a palette entry, is dragged by its element: the release lands it on the grid under
 // The pointer, and a release over no grid drops it
