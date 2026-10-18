@@ -1,6 +1,7 @@
 ## 1. The applier
 
 - [ ] 1.1 Move the JSON Patch applier, its models and its helpers from `apps/web/shared` into `packages/shared`, and point every importer at `@esposter/shared`. Verify: `applyPatches.test.ts` passes from its new place, and `pnpm test server/trpc/routers/resource.test.ts --run` from `apps/web` passes.
+- [ ] 1.2 Sweep the prose that names the applier's old location, in the same change as the move: `openspec/specs/architecture/agent-content-tools/design.md` (the applier's sentence and its Key files row), and `openspec/changes/architecture-ai-native-resources-program/design.md` (the cutover item's "lives in the app's `shared/` layer"). Verify: `grep -rn "apps/web/shared/services/jsonPatch" openspec` finds nothing outside this change's own folder.
 
 ## 2. The package
 
