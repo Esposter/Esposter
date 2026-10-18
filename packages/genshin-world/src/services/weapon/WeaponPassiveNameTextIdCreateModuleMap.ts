@@ -66,6 +66,7 @@ import { createPrecisePassiveModule } from "#src/services/weapon/passives/create
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
+import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives/createPurifyingCrownPassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
@@ -368,4 +369,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2612600955": createPrimordialJadeRegaliaPassiveModule,
   // Offering Unto Wind and Sun (Starcaller's Watch)
   "646104387": createOfferingUntoWindAndSunPassiveModule,
+  // Purifying Crown (Fractured Halo)
+  "3108076563": createPurifyingCrownPassiveModule,
 };
