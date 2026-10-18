@@ -47,6 +47,7 @@ export const applyGcgDamage = (
   const standingBefore = listGcgStandingCharacters(duel);
   const dealt: GcgDealtDamage[] = [];
   const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
+  const shieldBefore = hit?.shield ?? 0;
   if (hit)
     hitGcgCharacter(
       duel,
@@ -58,6 +59,7 @@ export const applyGcgDamage = (
       context,
     );
   settleGcgDefeats(duel, standingBefore);
+  if (hit && shieldBefore > 0 && hit.shield === 0) notifyGcgShieldDepleted(duel, targetSideIndex, hit, rule);
   for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return dealt;
 };
@@ -202,6 +204,26 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
     }
   }
   for (const sideIndex of defeatedSideIndices) notifyGcgOpposingDefeat(duel, 1 - sideIndex);
+};
+
+// Tells the cards attached to a character whose shield a hit has just depleted. Each may answer with piercing DMG, which every
+// Opposing character takes, the active one and those on standby alike, from the side the character is on
+const notifyGcgShieldDepleted = (
+  duel: GcgDuel,
+  sideIndex: number,
+  character: GcgCharacterState,
+  rule: GcgRule,
+): void => {
+  const characterIndex = takeOne(duel.sides, sideIndex).characters.indexOf(character);
+  for (const zoneCard of [...character.equipments, ...character.statuses]) {
+    const value = GcgCardIdModuleMap.get(zoneCard.cardId)?.onShieldDepleted?.(
+      { characterIndex, duel, sideIndex },
+      zoneCard,
+    );
+    if (!value) continue;
+    applyGcgDamage(duel, sideIndex, { damageType: GcgDamageKind.Piercing, value }, rule, { duel, sideIndex });
+    applyGcgStandbyPiercing(duel, sideIndex, value);
+  }
 };
 
 // A card attached to a character that would be defeated may answer it, restoring the character to the HP the card names.

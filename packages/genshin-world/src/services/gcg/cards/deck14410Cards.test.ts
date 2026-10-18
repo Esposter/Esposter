@@ -1,4 +1,6 @@
+import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { GcgCost } from "#src/models/gcg/GcgCost";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
@@ -7,16 +9,23 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
+import { ABSORBING_PRISM_ID, absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
 import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
+import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
@@ -210,7 +219,7 @@ describe("chains of Warding Thunder", () => {
       ),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
-    const switchCost = [{ count: 1, kind: GcgCostKind.Unaligned }];
+    const switchCost: GcgCost[] = [{ count: 1, kind: GcgCostKind.Unaligned }];
 
     expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { switchTo: 1 }, switchCost, [0])).toBe(false);
     expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { switchTo: 1 }, switchCost, [0, 1])).toBe(true);
@@ -225,7 +234,7 @@ describe("chains of Warding Thunder", () => {
       createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)], [Element.Pyro]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
-    const skillCost = [{ count: 1, kind: GcgCostKind.Unaligned }];
+    const skillCost: GcgCost[] = [{ count: 1, kind: GcgCostKind.Unaligned }];
 
     expect(payGcgSubjectCost({ duel, sideIndex: 1 }, 0, { skill: ELEMENTAL_SKILL }, skillCost, [0])).toBe(true);
   });
@@ -265,5 +274,151 @@ describe("lightning Lockdown", () => {
     expect(takeOne(duel.sides, 0).summons).toStrictEqual([
       { cardId: CHAINS_OF_WARDING_THUNDER_ID, counter: 0, rounds: 0, usages: 2 },
     ]);
+  });
+});
+
+describe("aegis of Abyssal Flame", () => {
+  test("the shield takes a hit first, and once its points are depleted, 1 piercing DMG reaches every opposing character", () => {
+    expect.hasAssertions();
+
+    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    abyss.shield = 2;
+    abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
+    const duel = createDuel([
+      createSideState([abyss]),
+      createSideState([
+        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
+        createCharacterState(KUJOU_SARA_ID, Element.Electro),
+      ]),
+    ]);
+
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 3 }, TEST_RULE);
+
+    const defended = takeOne(duel.sides, 0).characters[0];
+    expect(defended?.hp).toBe(9);
+    expect(defended?.shield).toBe(0);
+    expect(defended?.statuses).toStrictEqual([]);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9, 9]);
+  });
+
+  test("a piercing hit takes no shield points, so the Aegis is not depleted", () => {
+    expect.hasAssertions();
+
+    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    abyss.shield = 2;
+    abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
+    const duel = createDuel([
+      createSideState([abyss]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Piercing, value: 3 }, TEST_RULE);
+
+    const defended = takeOne(duel.sides, 0).characters[0];
+    expect(defended?.hp).toBe(7);
+    expect(defended?.shield).toBe(2);
+    expect(defended?.statuses).toStrictEqual([{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }]);
+  });
+});
+
+describe("embers Rekindled", () => {
+  const EMBERS_TALENT: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: EMBERS_REKINDLED_ID,
+    isLocation: false,
+    kind: GcgCardKind.Talent,
+    nameTextId: 1,
+  };
+
+  test("when its character triggers Fiery Rebirth, the card is discarded and the character gains the Aegis of Abyssal Flame", () => {
+    expect.hasAssertions();
+
+    const lector = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), hp: 3 };
+    lector.statuses = [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)];
+    lector.equipments = [createGcgZoneCard(EMBERS_REKINDLED_ID, embersRekindled)];
+    const duel = createDuel([
+      createSideState([lector]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    applyGcgDamage(duel, 1, { damageType: Element.Pyro, value: 5 }, TEST_RULE);
+
+    const restored = takeOne(duel.sides, 0).characters[0];
+    expect(restored?.hp).toBe(4);
+    expect(restored?.equipments).toStrictEqual([]);
+    expect(restored?.shield).toBe(2);
+    expect(restored?.statuses).toStrictEqual([
+      { cardId: FIERY_REBIRTH_ID, counter: 1, rounds: 0, usages: 0 },
+      { cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 },
+    ]);
+  });
+
+  test("played on a character that has already triggered Fiery Rebirth, the card is discarded and the Aegis is applied", () => {
+    expect.hasAssertions();
+
+    const lector = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    lector.statuses = [{ cardId: FIERY_REBIRTH_ID, counter: 1, rounds: 0, usages: 0 }];
+    const duel = createDuel([
+      createSideState([lector]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [EMBERS_REKINDLED_ID];
+    takeOne(duel.sides, 0).cards = [EMBERS_TALENT];
+
+    expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Done);
+
+    const played = takeOne(duel.sides, 0).characters[0];
+    expect(played?.equipments).toStrictEqual([]);
+    expect(played?.shield).toBe(2);
+    expect(played?.statuses.map(({ cardId }) => cardId)).toStrictEqual([FIERY_REBIRTH_ID, AEGIS_OF_ABYSSAL_FLAME_ID]);
+  });
+});
+
+describe("absorbing Prism", () => {
+  const ABSORBING_PRISM_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: ABSORBING_PRISM_ID,
+    isLocation: false,
+    kind: GcgCardKind.Event,
+    nameTextId: 1,
+  };
+
+  test("when the active character is Electro Hypostasis, it is healed 3 HP and gains the Electro Crystal Core", () => {
+    expect.hasAssertions();
+
+    const hypostasis = { ...createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), hp: 5 };
+    const duel = createDuel([
+      createSideState([hypostasis]),
+      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [ABSORBING_PRISM_ID];
+    takeOne(duel.sides, 0).cards = [ABSORBING_PRISM_CARD];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+
+    const active = takeOne(duel.sides, 0).characters[0];
+    expect(active?.hp).toBe(8);
+    expect(active?.statuses).toStrictEqual([{ cardId: ELECTRO_CRYSTAL_CORE_ID, counter: 0, rounds: 0, usages: 1 }]);
+    expect(takeOne(duel.sides, 0).hand).toStrictEqual([]);
+  });
+
+  test("when the active character is another, the card is refused and the duel is left as it was", () => {
+    expect.hasAssertions();
+
+    const lector = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), hp: 5 };
+    const duel = createDuel([
+      createSideState([lector]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [ABSORBING_PRISM_ID];
+    takeOne(duel.sides, 0).cards = [ABSORBING_PRISM_CARD];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Unavailable);
+    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(5);
+    expect(takeOne(duel.sides, 0).hand).toStrictEqual([ABSORBING_PRISM_ID]);
   });
 });

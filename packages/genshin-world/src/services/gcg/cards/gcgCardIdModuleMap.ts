@@ -1,6 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
 import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
+import { aegisOfAbyssalFlame } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { aurousBlaze } from "#src/services/gcg/cards/aurousBlaze";
@@ -32,6 +34,7 @@ import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elemental
 import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
+import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
@@ -186,6 +189,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
   [123_022, fieryRebirth],
+  [123_024, aegisOfAbyssalFlame],
   [124_013, chainsOfWardingThunder],
   [124_014, electroCrystalCore],
   [125011, shadowswordLoneGale],
@@ -202,6 +206,8 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [214_081, theShrinesSacredShade],
   [215041, conquerorOfEvilGuardianYaksha],
   [222011, streamingSurge],
+  [223_021, embersRekindled],
+  [224_011, absorbingPrism],
   [225011, transcendentAutomaton],
   [303_305, mushroomPizzaInEffect],
   [311_101, magicGuide],
