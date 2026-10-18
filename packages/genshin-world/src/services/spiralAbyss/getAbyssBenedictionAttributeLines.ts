@@ -6,7 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 // The game's text: the stat to every character of the party for the chamber, at the amount the description gives. PROVISIONAL:
 // The published choices carry no modifier, so this table is the only source of the stat. A Benediction it does not hold gives
 // No line, and the ones it leaves unbuilt are named in the change's design
-const TOWER_BUFF_ID_ATTRIBUTE_LINES_MAP: Readonly<Record<number, AttributeLine[]>> = {
+const TowerBuffIdAttributeLinesMap: Readonly<Record<number, AttributeLine[]>> = {
   1: [{ attribute: Attribute.AttackPercent, value: 0.2 }],
   2: [
     { attribute: Attribute.CriticalRate, value: 0.08 },
@@ -44,4 +44,4 @@ const TOWER_BUFF_ID_ATTRIBUTE_LINES_MAP: Readonly<Record<number, AttributeLine[]
 
 // The attribute lines of a Benediction by its tower buff id, empty for one the table leaves unbuilt
 export const getAbyssBenedictionAttributeLines = (towerBuffId: number): AttributeLine[] =>
-  TOWER_BUFF_ID_ATTRIBUTE_LINES_MAP[towerBuffId] ?? [];
+  TowerBuffIdAttributeLinesMap[towerBuffId] ?? [];
