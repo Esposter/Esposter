@@ -10,6 +10,8 @@ export interface EnemyStatus {
   // The share of its ATK the enemy loses while it carries the status, if it lowers it
   attackReduction?: number;
   damageTakenBonus: number;
+  // The share of its DEF the enemy loses while it carries the status, if it lowers it
+  defenseReduction?: number;
   id: string;
   maxStacks?: number;
   nextTickSeconds?: number;

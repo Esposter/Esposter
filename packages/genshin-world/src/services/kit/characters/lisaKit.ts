@@ -1,4 +1,5 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -21,6 +22,18 @@ const CONDUCTIVE_STACK: EnemyStatus = {
   stacks: 1,
 };
 
+// Measured: gcsim v2.47.2 (MIT) lisa/asc.go, from Ascension 4 each opponent Lightning Rose hits has its DEF decreased by 15%
+// For 10 seconds, as the dump's Lisa passive text gives it. Each discharge refreshes the status rather than stacking it
+const LIGHTNING_ROSE_ASCENSION = 4;
+const LIGHTNING_ROSE_DEFENSE_STATUS: EnemyStatus = {
+  damageTakenBonus: 0,
+  defenseReduction: 0.15,
+  id: "lisa-lightning-rose",
+  secondsRemaining: 10,
+};
+const getLightningRoseStatus = ({ ascension }: Combatant): EnemyStatus | undefined =>
+  ascension >= LIGHTNING_ROSE_ASCENSION ? LIGHTNING_ROSE_DEFENSE_STATUS : undefined;
+
 export const LISA_CHARACTER_ID = 10_000_006;
 
 // Measured: gcsim v2.47.2 (MIT) lisa/cons.go. Constellation 6: when Lisa takes the field, each opponent within 5 metres of
@@ -40,11 +53,11 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 
 // Lisa's behaviour: Violet Arc's press gives each enemy it strikes a stack of Conductive, as her charged attack does from
 // Ascension 1, and its hold strikes each enemy at the multiplier and poise of its stacks, consuming them. Lightning Rose
-// Is a summon whose discharges land from her body. A4's effect is not built. Constellations 1 and 6 are built
-// Constellation 2 needs a DEF buff for as long as the hold lasts, which the skill holds do not carry the length of
-// Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
+// Is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of the enemy it hits.
+// Constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts, which the skill holds do
+// not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
 export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
-  const discharges = readHits("discharges");
+  const discharges = readHits("discharges", { enemyStatus: getLightningRoseStatus });
   const lightningRoseSeconds = readSeconds("lightningRose");
   // Constellation 1's Energy the hold in progress has regenerated, which its start clears
   let holdRegeneratedEnergy = 0;
