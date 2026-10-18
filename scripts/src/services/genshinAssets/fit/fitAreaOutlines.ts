@@ -14,6 +14,7 @@ import {
   WORLD_AREA_POLYGONS_PATH,
   WORLD_AREAS_TABLE_NAME,
 } from "#src/services/genshinAssets/shared/constants";
+import { toOpenWorldLevelOneAreaIdsByName } from "#src/services/genshinAssets/shared/toOpenWorldLevelOneAreaIdsByName";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -53,9 +54,7 @@ export const fitAreaOutlines = async ({ isDryRun }: { isDryRun: boolean }): Prom
     ),
   );
   const getName = ({ areaNameTextMapHash }: WorldArea): string | undefined => textMap.get(String(areaNameTextMapHash));
-  const levelOneIdMap = new Map(
-    areas.filter(({ areaType }) => areaType === WorldAreaType.Level1).map((area) => [getName(area), area.areaID1]),
-  );
+  const levelOneIdMap = new Map(toOpenWorldLevelOneAreaIdsByName(areas, textMap));
   const levelTwoAreas = areas.filter(({ areaType }) => areaType === WorldAreaType.Level2);
   // The areas the game's polygon outlines, and those whose own outline the catalogue keeps
   const gameAreaIds: string[] = [];

@@ -1,7 +1,6 @@
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 
-import { WorldAreaType } from "#src/models/genshinAssets/world/WorldAreaType";
-import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { toOpenWorldLevelOneAreaIdsByName } from "#src/services/genshinAssets/shared/toOpenWorldLevelOneAreaIdsByName";
 
 // The open world's level-one areas by their id in the game's area table, each with the catalogue area of its English name
 // And the region holding it, as `fitAreaOutlines` pairs the game's areas with the catalogue's. An area the catalogue holds
@@ -21,11 +20,9 @@ export const toCatalogueAreaPlaceMap = ({
     ),
   );
   return new Map(
-    areas
-      .filter(({ areaType, sceneID }) => areaType === WorldAreaType.Level1 && sceneID === OPEN_WORLD_SCENE_ID)
-      .flatMap(({ areaID1, areaNameTextMapHash }) => {
-        const place = placeMap.get(textMap.get(String(areaNameTextMapHash)) ?? "");
-        return place ? [[areaID1, place] as const] : [];
-      }),
+    toOpenWorldLevelOneAreaIdsByName(areas, textMap).flatMap(([name, areaID1]) => {
+      const place = placeMap.get(name);
+      return place ? [[areaID1, place] as const] : [];
+    }),
   );
 };
