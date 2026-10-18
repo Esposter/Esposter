@@ -9,7 +9,7 @@ The framework holds no Benison stacks and no attack-speed buff for the party, so
 - **Benison stacks and the shield's regeneration wait on the Benison hook.** Her normal attacks gain her stacks during Favonian Favor, four hits to a stack, and a broken shield is made again from a stack. Radiant Psalter's shield is built here, but it is not made again once it breaks.
 - **The Favonian Favor attack speed waits on the attack-speed hook.** The active party member gets an attack-speed bonus from her burst's Favonian Favor, which the framework has no attribute or party buff for. Her charged attack takes none.
 - **Her skill's Hydro particles wait on the particle hook.** Immersive Ordinance gives three Hydro particles on an internal cooldown, so its energy goes ungenerated, as the index says of every particle.
-- **Her Ascension passives and constellations are not built.** Ascension 1 and Constellation 1 and 2 read the Benison stacks, and Ascension 4 and Constellation 6 read the attack-speed bonus, so they wait on the hooks above. Constellation 4 lengthens Favonian Favor, which the passives' step adds to the burst.
+- **Her Ascension passives and Constellations 1, 2 and 6 are not built.** Ascension 1 and Constellations 1 and 2 read the Benison stacks, and Ascension 4 and Constellation 6 read the attack-speed bonus, so they wait on the hooks above. Constellation 4 lengthens Favonian Favor by three seconds on the shield the burst places.
 
 ## Decisions
 

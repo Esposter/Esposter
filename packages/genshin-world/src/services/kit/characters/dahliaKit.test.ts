@@ -14,18 +14,41 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const DAHLIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DAHLIA_CHARACTER_ID);
-const createDahliaCombatant = (): Combatant => ({
+const createDahliaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),
   characterId: DAHLIA_CHARACTER_ID,
-  constellationCount: 0,
+  constellationCount,
   elementalResonances: [],
   kit: DAHLIA_KIT,
   level: 90,
   weaponType: WeaponType.Sword,
 });
 
+// The shield Radiant Psalter places once its task runs, read off the field its task is held in
+const castRadiantPsalterShield = (constellationCount: number): KitShield => {
+  const combatant = createDahliaCombatant(constellationCount);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  DAHLIA_KIT.elementalBurst.onStart?.(context);
+  const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
+  field.onTick(context, 0);
+  return takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
+};
+
 describe(createDahliaKitBehaviour, () => {
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(castRadiantPsalterShield(4).secondsRemaining).toBe(15);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(castRadiantPsalterShield(3).secondsRemaining).toBe(12);
+  });
+
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
