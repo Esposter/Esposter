@@ -35,7 +35,7 @@ export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([
         donor === undefined
           ? cause !== KitProvisionalCause.BorrowedFromDonor
           : cause === KitProvisionalCause.BorrowedFromDonor && value === undefined,
-      "a borrowed value names its donor and no value of its own, and only a borrowed value names a donor",
+      { error: "a borrowed value names its donor and no value of its own, and only a borrowed value names a donor" },
     ),
   z.strictObject({
     file: z.string().min(1),
