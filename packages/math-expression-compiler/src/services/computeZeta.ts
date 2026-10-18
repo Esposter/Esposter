@@ -1,4 +1,4 @@
-import { computeGamma } from "#src/services/mathExpression/computeGamma";
+import { computeGamma } from "#src/services/computeGamma";
 
 // The Riemann zeta function. Above zero it is the Euler-Maclaurin sum, whose Bernoulli terms make it exact to machine
 // Precision here. Below zero the functional equation turns it into that sum at one minus the argument

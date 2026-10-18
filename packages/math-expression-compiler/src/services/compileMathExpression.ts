@@ -1,13 +1,13 @@
-import type { MathExpressionNode } from "#src/models/mathExpression/MathExpressionNode";
+import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 
-import { MathExpressionLogicalOperator } from "#src/models/mathExpression/MathExpressionLogicalOperator";
-import { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
-import { checkIsTruthy } from "#src/services/mathExpression/checkIsTruthy";
-import { getMathExpressionChildren } from "#src/services/mathExpression/getMathExpressionChildren";
-import { getMathExpressionFunction } from "#src/services/mathExpression/getMathExpressionFunction";
-import { MathExpressionConstantMap } from "#src/services/mathExpression/MathExpressionConstantMap";
-import { toNumber } from "#src/services/mathExpression/toNumber";
-import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
+import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
+import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
+import { checkIsTruthy } from "#src/services/checkIsTruthy";
+import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
+import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantMap";
+import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
+import { toNumber } from "#src/services/toNumber";
+import { exhaustiveGuard } from "@esposter/shared";
 
 interface CompileContext {
   assignedSlots: ReadonlyMap<string, number>;
@@ -26,7 +26,9 @@ type Result = null | number;
 const NO_VALUES: readonly number[] = [];
 const NO_LOCALS: Result[] = [];
 
-const getCompute = (name: string): Compute => getMathExpressionFunction(name)?.compute ?? (() => null);
+const getCompute = (name: string): Compute =>
+  (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.compute : undefined) ??
+  (() => null);
 
 // A percentage expression is a percentage, or a sum or difference of percentage expressions
 const checkIsPercentageExpression = (node: MathExpressionNode): boolean => {

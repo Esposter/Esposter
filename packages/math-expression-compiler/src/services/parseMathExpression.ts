@@ -1,18 +1,18 @@
-import type { MathExpressionFunction } from "#src/models/mathExpression/MathExpressionFunction";
-import type { MathExpressionNode } from "#src/models/mathExpression/MathExpressionNode";
-import type { MathExpressionParserState } from "#src/models/mathExpression/MathExpressionParserState";
+import type { MathExpressionFunction } from "#src/models/MathExpressionFunction";
+import type { MathExpressionNode } from "#src/models/MathExpressionNode";
+import type { MathExpressionParserState } from "#src/models/MathExpressionParserState";
 import type { Result } from "neverthrow";
 
-import { MathExpressionError } from "#src/models/mathExpression/MathExpressionError";
-import { MathExpressionListForm } from "#src/models/mathExpression/MathExpressionListForm";
-import { MathExpressionLogicalOperator } from "#src/models/mathExpression/MathExpressionLogicalOperator";
-import { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
-import { MathExpressionTokenType } from "#src/models/mathExpression/MathExpressionTokenType";
-import { computeNumberLiteral } from "#src/services/mathExpression/computeNumberLiteral";
-import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/mathExpression/constants";
-import { failMathExpression } from "#src/services/mathExpression/failMathExpression";
-import { getMathExpressionFunction } from "#src/services/mathExpression/getMathExpressionFunction";
-import { getMathExpressionToken } from "#src/services/mathExpression/getMathExpressionToken";
+import { MathExpressionError } from "#src/models/MathExpressionError";
+import { MathExpressionListForm } from "#src/models/MathExpressionListForm";
+import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
+import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
+import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
+import { computeNumberLiteral } from "#src/services/computeNumberLiteral";
+import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
+import { failMathExpression } from "#src/services/failMathExpression";
+import { getMathExpressionToken } from "#src/services/getMathExpressionToken";
+import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { err, ok } from "neverthrow";
 
 // The operators of each level, from the loosest binding to the tightest, as the function each one computes. Each
@@ -113,7 +113,7 @@ const getArityMessage = (name: string, definition: MathExpressionFunction): stri
 };
 
 const parseCall = (state: MathExpressionParserState, name: string): MathExpressionNode => {
-  const definition = getMathExpressionFunction(name);
+  const definition = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
   if (definition === undefined) {
     if (state.error === null) state.error = new MathExpressionError(`Unknown function "${name}"`);
     return PLACEHOLDER;
@@ -157,7 +157,7 @@ const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
 
   const isName =
     state.tokenType === MathExpressionTokenType.Symbol ||
-    (state.tokenType === MathExpressionTokenType.Delimiter && getMathExpressionFunction(state.token) !== undefined);
+    (state.tokenType === MathExpressionTokenType.Delimiter && Object.hasOwn(MathExpressionFunctionMap, state.token));
   if (isName) {
     const name = state.token;
     const isSymbol = state.tokenType === MathExpressionTokenType.Symbol;

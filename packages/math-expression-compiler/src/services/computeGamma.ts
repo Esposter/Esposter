@@ -1,4 +1,4 @@
-import { computeLogGammaOfPositive } from "#src/services/mathExpression/computeLogGammaOfPositive";
+import { computeLogGammaOfPositive } from "#src/services/computeLogGammaOfPositive";
 
 // The gamma function overflows above this argument, and an integer above the last factorial is infinite
 const OVERFLOW_ARGUMENT = 171.35;

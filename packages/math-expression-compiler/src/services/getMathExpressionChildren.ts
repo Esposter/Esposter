@@ -1,7 +1,7 @@
-import type { MathExpressionNode } from "#src/models/mathExpression/MathExpressionNode";
+import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 
-import { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
-import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
+import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const getMathExpressionChildren = (node: MathExpressionNode): MathExpressionNode[] => {
   switch (node.type) {

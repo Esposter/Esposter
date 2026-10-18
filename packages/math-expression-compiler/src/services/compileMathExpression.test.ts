@@ -1,8 +1,8 @@
-import type { MathExpressionNode } from "#src/models/mathExpression/MathExpressionNode";
+import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 
-import { compileMathExpression } from "#src/services/mathExpression/compileMathExpression";
-import { getMathExpressionNames } from "#src/services/mathExpression/getMathExpressionNames";
-import { parseMathExpression } from "#src/services/mathExpression/parseMathExpression";
+import { compileMathExpression } from "#src/services/compileMathExpression";
+import { getMathExpressionNames } from "#src/services/getMathExpressionNames";
+import { parseMathExpression } from "#src/services/parseMathExpression";
 import { describe, expect, test } from "vitest";
 
 const SCOPE = { col0: 3, col1: -2.5 };

@@ -1,5 +1,5 @@
-import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/mathExpression/constants";
-import { parseMathExpression } from "#src/services/mathExpression/parseMathExpression";
+import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
+import { parseMathExpression } from "#src/services/parseMathExpression";
 import { describe, expect, test } from "vitest";
 
 const getParseError = (formula: string): null | string =>

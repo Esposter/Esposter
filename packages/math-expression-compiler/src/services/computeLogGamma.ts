@@ -1,4 +1,4 @@
-import { computeLogGammaOfPositive } from "#src/services/mathExpression/computeLogGammaOfPositive";
+import { computeLogGammaOfPositive } from "#src/services/computeLogGammaOfPositive";
 
 // The natural log of the gamma function, where it is real: NaN below zero, and infinite at zero and at infinity
 export const computeLogGamma = (value: number): number => {

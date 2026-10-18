@@ -1,4 +1,4 @@
-import { SQRT_PI } from "#src/services/mathExpression/constants";
+import { SQRT_PI } from "#src/services/constants";
 
 // The error function. Within three it is a series whose terms are all positive, so it does not cancel. Beyond, the
 // Complementary function comes from its continued fraction, read backwards from a fixed depth, and erf is one less it

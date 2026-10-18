@@ -1,5 +1,5 @@
-import { computeErf } from "#src/services/mathExpression/computeErf";
-import { SQRT_PI } from "#src/services/mathExpression/constants";
+import { computeErf } from "#src/services/computeErf";
+import { SQRT_PI } from "#src/services/constants";
 
 // The inverse of the error function: Giles's approximation gives the first guess, and Newton steps on erf itself refine
 // It, so that erf of the result returns the argument to machine precision

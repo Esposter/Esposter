@@ -1,8 +1,8 @@
-import type { MathExpressionNode } from "#src/models/mathExpression/MathExpressionNode";
+import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 
-import { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
-import { getMathExpressionChildren } from "#src/services/mathExpression/getMathExpressionChildren";
-import { MathExpressionConstantMap } from "#src/services/mathExpression/MathExpressionConstantMap";
+import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
+import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
+import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantMap";
 
 const collectNames = (node: MathExpressionNode, read: Set<string>, assigned: Set<string>): void => {
   if (node.type === MathExpressionNodeType.Name) read.add(node.name);

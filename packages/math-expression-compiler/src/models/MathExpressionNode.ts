@@ -1,5 +1,5 @@
-import type { MathExpressionLogicalOperator } from "#src/models/mathExpression/MathExpressionLogicalOperator";
-import type { MathExpressionNodeType } from "#src/models/mathExpression/MathExpressionNodeType";
+import type { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
+import type { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 
 // A formula's parsed tree. A `name` on a unary, binary or call node, and each of a comparison's `names`, is a key of the
 // Function table, so the evaluator computes each operator and each function the same way.

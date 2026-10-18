@@ -1,4 +1,4 @@
-import { checkIsNearlyEqual } from "#src/services/mathExpression/checkIsNearlyEqual";
+import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
 
 // A floored modulo that takes the divisor's sign. A quotient nearly equal to an integer, as a rounding residue leaves it,
 // Is an exact multiple, so the result is zero rather than a tiny residue of either sign

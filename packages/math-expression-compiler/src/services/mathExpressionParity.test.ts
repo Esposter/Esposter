@@ -1,7 +1,7 @@
-import { checkIsNearlyEqual } from "#src/services/mathExpression/checkIsNearlyEqual";
-import { compileMathExpression } from "#src/services/mathExpression/compileMathExpression";
-import { parseMathExpression } from "#src/services/mathExpression/parseMathExpression";
-import { jsonDateParse } from "#src/util/object/jsonDateParse";
+import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
+import { compileMathExpression } from "#src/services/compileMathExpression";
+import { parseMathExpression } from "#src/services/parseMathExpression";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 

@@ -1,7 +1,7 @@
-import type { MathExpressionParserState } from "#src/models/mathExpression/MathExpressionParserState";
+import type { MathExpressionParserState } from "#src/models/MathExpressionParserState";
 
-import { MathExpressionTokenType } from "#src/models/mathExpression/MathExpressionTokenType";
-import { failMathExpression } from "#src/services/mathExpression/failMathExpression";
+import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
+import { failMathExpression } from "#src/services/failMathExpression";
 
 // Read as mathjs reads them: the symbols of three, two and one character, longest first, and the words that are
 // Operators rather than names

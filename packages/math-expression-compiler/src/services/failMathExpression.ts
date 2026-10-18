@@ -1,6 +1,6 @@
-import type { MathExpressionParserState } from "#src/models/mathExpression/MathExpressionParserState";
+import type { MathExpressionParserState } from "#src/models/MathExpressionParserState";
 
-import { MathExpressionError } from "#src/models/mathExpression/MathExpressionError";
+import { MathExpressionError } from "#src/models/MathExpressionError";
 
 // Keeps the first error met, with the character it starts at, counted from one as mathjs counts it
 export const failMathExpression = (state: MathExpressionParserState, message: string): void => {

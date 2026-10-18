@@ -1,20 +1,20 @@
-import type { MathExpressionFunction } from "#src/models/mathExpression/MathExpressionFunction";
+import type { MathExpressionFunction } from "#src/models/MathExpressionFunction";
 
-import { MathExpressionListForm } from "#src/models/mathExpression/MathExpressionListForm";
-import { checkIsNearlyEqual } from "#src/services/mathExpression/checkIsNearlyEqual";
-import { checkIsTruthy } from "#src/services/mathExpression/checkIsTruthy";
-import { computeBernoulliNumber } from "#src/services/mathExpression/computeBernoulliNumber";
-import { computeCombinations } from "#src/services/mathExpression/computeCombinations";
-import { computeErf } from "#src/services/mathExpression/computeErf";
-import { computeErfInverse } from "#src/services/mathExpression/computeErfInverse";
-import { computeGamma } from "#src/services/mathExpression/computeGamma";
-import { computeLogGamma } from "#src/services/mathExpression/computeLogGamma";
-import { computeModularInverse } from "#src/services/mathExpression/computeModularInverse";
-import { computeModulo } from "#src/services/mathExpression/computeModulo";
-import { computeNthRoot } from "#src/services/mathExpression/computeNthRoot";
-import { computeZeta } from "#src/services/mathExpression/computeZeta";
-import { shiftDecimalPlaces } from "#src/services/mathExpression/shiftDecimalPlaces";
-import { toNumber } from "#src/services/mathExpression/toNumber";
+import { MathExpressionListForm } from "#src/models/MathExpressionListForm";
+import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
+import { checkIsTruthy } from "#src/services/checkIsTruthy";
+import { computeBernoulliNumber } from "#src/services/computeBernoulliNumber";
+import { computeCombinations } from "#src/services/computeCombinations";
+import { computeErf } from "#src/services/computeErf";
+import { computeErfInverse } from "#src/services/computeErfInverse";
+import { computeGamma } from "#src/services/computeGamma";
+import { computeLogGamma } from "#src/services/computeLogGamma";
+import { computeModularInverse } from "#src/services/computeModularInverse";
+import { computeModulo } from "#src/services/computeModulo";
+import { computeNthRoot } from "#src/services/computeNthRoot";
+import { computeZeta } from "#src/services/computeZeta";
+import { shiftDecimalPlaces } from "#src/services/shiftDecimalPlaces";
+import { toNumber } from "#src/services/toNumber";
 
 // A function of the table is keyed by its mathjs name. Its arguments are the ones its arity says, and its list form says
 // How a square-bracketed list stands in for them. Its computation yields null where mathjs would throw, which the
