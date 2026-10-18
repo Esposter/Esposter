@@ -72,10 +72,13 @@ const ASCENSION_1 = 1;
 const GOLDEN_CHALICE_BOUNTY_SECONDS = 30;
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
 
-// Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden Chalice's
-// Bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by 35% for 10 seconds.
-// In gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the text stands
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+/*
+ * Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden Chalice's
+ * Bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction that such a member triggers
+ * lands on, by 35% for 10 seconds. The talent's text leaves the Dendro half ungated, but its page has no note on it, so
+ * gcsim's gate stands.
+ * https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+ */
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_RES_REDUCTION = 0.35;
 const CONSTELLATION_2_SECONDS = 10;
@@ -225,6 +228,7 @@ export const createNilouKitBehaviour = ({
           addEnemyStatus(event.enemy, createConstellation2Status(CONSTELLATION_2_HYDRO_STATUS_ID, Element.Hydro));
         if (
           event.kind === KitEventKind.ReactionTriggered &&
+          checkIsKitStatusActive(kitEffectState.effects, event.striker.characterId, GOLDEN_CHALICE_BOUNTY_STATUS_ID) &&
           event.reactions.some(({ reactionType }) => CONSTELLATION_2_BLOOM_REACTION_TYPES.has(reactionType))
         )
           addEnemyStatus(event.enemy, createConstellation2Status(CONSTELLATION_2_DENDRO_STATUS_ID, Element.Dendro));

@@ -88,7 +88,7 @@ Constellation 1 SHALL add 65% damage to the sword dance's Luminous Illusion hit 
 
 ### Requirement: Constellation 2's RES cuts
 
-From Constellation 2 with Ascension 1, a Hydro hit by a team member under Golden Chalice's Bounty SHALL lower the struck enemy's Hydro RES by 35% for 10 seconds, and a Bloom or Lunar-Bloom reaction SHALL lower the Dendro RES of the enemy it triggers on by 35% for 10 seconds.
+From Constellation 2 with Ascension 1, a Hydro hit by a team member under Golden Chalice's Bounty SHALL lower the struck enemy's Hydro RES by 35% for 10 seconds, and a Bloom or Lunar-Bloom reaction that such a member triggers SHALL lower the Dendro RES of the enemy it lands on by 35% for 10 seconds.
 
 #### Scenario: A Bounty member's Hydro hit cuts the enemy's Hydro RES
 
@@ -98,8 +98,8 @@ From Constellation 2 with Ascension 1, a Hydro hit by a team member under Golden
 
 #### Scenario: A Bloom reaction cuts the enemy's Dendro RES
 
-- **GIVEN** Nilou has Constellation 2 and Ascension 1
-- **WHEN** a Bloom or Lunar-Bloom reaction triggers on an enemy
+- **GIVEN** Nilou has Constellation 2 and Ascension 1, and a team member is under Golden Chalice's Bounty
+- **WHEN** that member triggers a Bloom or Lunar-Bloom reaction on an enemy
 - **THEN** the enemy's Dendro RES is lowered by 35% for 10 seconds
 
 #### Scenario: Constellation 1 cuts no RES

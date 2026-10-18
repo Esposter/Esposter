@@ -398,10 +398,11 @@ describe(createNilouKitBehaviour, () => {
     ]);
   });
 
-  test("constellation 2 lowers an enemy's Dendro RES by 35% for ten seconds as a Bloom or Lunar-Bloom reaction triggers on it", () => {
+  test("constellation 2 lowers an enemy's Dendro RES by 35% for ten seconds as a member under the Bounty triggers a Bloom or Lunar-Bloom reaction", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant(2, 1);
     const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    landThirdStep(context);
     const bloomEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const lunarBloomEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const reactionTriggered = (enemy: typeof bloomEnemy, reactionType: ReactionType): KitEvent => ({
@@ -420,6 +421,25 @@ describe(createNilouKitBehaviour, () => {
       secondsRemaining: 10,
     };
     expect([bloomEnemy.statuses, lunarBloomEnemy.statuses]).toStrictEqual([[dendroStatus], [dendroStatus]]);
+  });
+
+  test("constellation 2 cuts no Dendro RES for a Bloom reaction that a member not under the Bounty triggers", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(2, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    NILOU_KIT.onKitEvent?.(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ reactionType: ReactionType.Bloom }],
+        striker: createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      },
+      context,
+      combatant,
+    );
+
+    expect(enemy.statuses).toStrictEqual([]);
   });
 
   test("constellation 1 cuts no enemy's RES, from a Hydro hit under the Bounty or a Bloom reaction", () => {
