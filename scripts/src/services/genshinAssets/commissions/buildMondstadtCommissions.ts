@@ -5,6 +5,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expedition
 import type { RewardItem } from "genshin-world";
 
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
+import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -76,7 +77,7 @@ export const buildMondstadtCommissions = (): Record<string, unknown> => {
     .toSorted((firstTier, secondTier) => firstTier.tier - secondTier.tier);
   const tasks = readExcelTable<ExcelDailyTaskRow>("DailyTaskExcelConfigData")
     .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
-    .map((row) => toCommissionTask(row))
+    .map((row) => toCommissionTask(row, CityIdRegionMap[MONDSTADT_CITY_ID]))
     .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
   const slice = commissionSliceSchema.parse({ bonuses, rewardTiers, tasks });
   return { [`${GameDataset.Commissions}/mondstadt`]: slice };

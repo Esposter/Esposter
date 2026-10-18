@@ -38,8 +38,10 @@ describe(claimCommissionReward, () => {
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
+    preferredRegion: "mondstadt",
     questId: "",
     rewardTier: REWARD_TIER,
+    titleTextId: 1,
   });
   const slice: CommissionSlice = {
     bonuses: bonusBands,
