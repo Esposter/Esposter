@@ -12,6 +12,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
+import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { KitSkillChain } from "#src/models/kit/KitSkillChain";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
