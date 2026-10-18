@@ -93,8 +93,8 @@ const downloadDumpFile = async ({ path }: DumpFile): Promise<void> => {
   await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
 };
 
-// Every readable text, table, text map and held binary the dump lacks, or holds at another size, fetched from AnimeGameData. Returns a note of
-// The count fetched and the count kept
+// Every readable text, table, text map and held binary the dump lacks, or holds at another size, fetched from
+// AnimeGameData. Returns a note of the count fetched and the count kept
 export const fetchDump = async (): Promise<string[]> => {
   const remoteFiles = await listDumpFiles();
   const localSizeMap = new Map(
