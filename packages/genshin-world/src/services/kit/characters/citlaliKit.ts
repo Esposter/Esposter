@@ -7,6 +7,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,8 +15,10 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
@@ -75,6 +78,14 @@ const ASCENSION_1_RESISTANCE_REDUCTION = 0.2;
 const ASCENSION_1_RESISTANCE_SECONDS = 12;
 const ASCENSION_1_REACTION_TYPES = new Set<ReactionType>([ReactionType.Frozen, ReactionType.Melt]);
 
+// Constellation 2 gives Citlali 125 Elemental Mastery of her own, and each teammate on the field 250 while the Opal Shield or
+// The Blessing holds, and deepens Ascension 1's RES cut to 40%, as gcsim's c2 and a1Hook do (cons.go 60 to 99, asc.go 40 to 42)
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_SELF_MASTERY = 125;
+const CONSTELLATION_2_TEAM_MASTERY = 250;
+const CONSTELLATION_2_MASTERY_SOURCE_ID = "citlali-c2-elemental-mastery";
+const CONSTELLATION_2_RESISTANCE_REDUCTION = 0.4;
+
 // The flat base damage a hit adds from a share of its striker's Elemental Mastery, from Ascension 4
 const createElementalMasteryFlatDamage =
   (share: number) =>
@@ -83,8 +94,13 @@ const createElementalMasteryFlatDamage =
 
 // Lowers the enemy's Hydro and Pyro RES and gives Citlali her Ascension 1 points for a Melt or Frozen that lands on it, as
 // gcsim's a1Hook does: nothing outside the Blessing, and the points once each eight seconds, on a timer the status holds
-const triggerAscension1Reaction = (context: KitContext, characterId: number, enemy: Enemy) => {
+const triggerAscension1Reaction = (context: KitContext, combatant: Combatant, enemy: Enemy) => {
+  const { characterId } = combatant;
   const { kitEffectState } = context;
+  const resistanceReduction =
+    combatant.constellationCount >= CONSTELLATION_2
+      ? CONSTELLATION_2_RESISTANCE_REDUCTION
+      : ASCENSION_1_RESISTANCE_REDUCTION;
   if (!hasKitNightsoulBlessing(kitEffectState.effects, characterId)) return;
   if (!checkIsKitStatusActive(kitEffectState.effects, characterId, ASCENSION_1_POINTS_COOLDOWN_ID)) {
     addKitStatus(kitEffectState, characterId, {
@@ -96,10 +112,7 @@ const triggerAscension1Reaction = (context: KitContext, characterId: number, ene
   addEnemyStatus(enemy, {
     damageTakenBonus: 0,
     id: ASCENSION_1_RESISTANCE_ID,
-    resistanceReduction: {
-      [Element.Hydro]: ASCENSION_1_RESISTANCE_REDUCTION,
-      [Element.Pyro]: ASCENSION_1_RESISTANCE_REDUCTION,
-    },
+    resistanceReduction: { [Element.Hydro]: resistanceReduction, [Element.Pyro]: resistanceReduction },
     secondsRemaining: ASCENSION_1_RESISTANCE_SECONDS,
   });
 };
@@ -108,8 +121,8 @@ const triggerAscension1Reaction = (context: KitContext, characterId: number, ene
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
 // Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit,
 // the Spirit Vessel skulls her burst summons on the first three enemies within 7 metres, and her Ascension 1 Melt and Frozen
-// passive. Not built: Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below 50 points
-// and outlast its points
+// passive, and her Constellation 2's Elemental Mastery and RES cut. Not built: Constellations 1, 4 and 6, among them
+// Constellation 6, which lets the Opal Fire start below 50 points and outlast its points
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
 export const createCitlaliKitBehaviour = ({
   kit,
@@ -225,6 +238,33 @@ export const createCitlaliKitBehaviour = ({
         summonSpiritVesselSkulls(context);
       },
     },
+    // Constellation 2's own Elemental Mastery, which gcsim's permanent self buff gives whether she is on the field or not
+    getPassiveBonuses: (combatant) =>
+      combatant.constellationCount >= CONSTELLATION_2
+        ? [{ amount: CONSTELLATION_2_SELF_MASTERY, attribute: Attribute.ElementalMastery }]
+        : [],
+    // Constellation 2's teammate Elemental Mastery, held on the member on the field while the Opal Shield or the Blessing holds,
+    // For as long as the longer of them has seconds left, as gcsim's StatMod reads its condition each time it prices a hit
+    onStep: ({ activeCombatant, kitEffectState }, combatant) => {
+      if (combatant.constellationCount < CONSTELLATION_2 || activeCombatant.characterId === combatant.characterId)
+        return;
+      const shieldSeconds = kitEffectState.effects
+        .filter(checkIsKitShieldLive)
+        .filter((shield) => shield.characterId === combatant.characterId && shield.isCrystallize !== true)
+        .map(({ secondsRemaining }) => secondsRemaining);
+      const blessingSeconds =
+        findKitStatus(kitEffectState.effects, combatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID)?.secondsRemaining ??
+        0;
+      const holdSeconds = Math.max(blessingSeconds, ...shieldSeconds);
+      if (holdSeconds <= 0) return;
+      buffKitMember(kitEffectState, activeCombatant.characterId, {
+        amount: CONSTELLATION_2_TEAM_MASTERY,
+        attribute: Attribute.ElementalMastery,
+        isEndedOnSwap: true,
+        secondsRemaining: holdSeconds,
+        source: CONSTELLATION_2_MASTERY_SOURCE_ID,
+      });
+    },
     // Ascension 4 gives points on each Nightsoul burst that goes off anywhere on the team, on the field or off it, as gcsim's
     // OnNightsoulBurst subscription does
     onKitEvent: (event, context, combatant) => {
@@ -236,7 +276,7 @@ export const createCitlaliKitBehaviour = ({
         combatant.ascension >= ASCENSION_1 &&
         event.reactions.some(({ reactionType }) => ASCENSION_1_REACTION_TYPES.has(reactionType))
       )
-        triggerAscension1Reaction(context, combatant.characterId, event.enemy);
+        triggerAscension1Reaction(context, combatant, event.enemy);
     },
     skill: {
       onStart: (context) => {

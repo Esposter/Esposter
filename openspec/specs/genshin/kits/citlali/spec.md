@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, the Opal Fire with Itzpapa's Frostfall Storm, the Opal Shield and the Spirit Vessel skulls. Her constellations wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, the Opal Fire with Itzpapa's Frostfall Storm, the Opal Shield, the Spirit Vessel skulls, Ascension 1 and Constellation 2. Her Constellations 1, 4 and 6 wait on their hooks.
 
 ## Requirements
 
@@ -191,6 +191,43 @@ At Ascension 1 a Melt or Frozen on an enemy during the Nightsoul Blessing SHALL 
 - **GIVEN** Citlali is at Ascension 1 and out of the Blessing
 - **WHEN** a Melt lands on an enemy
 - **THEN** she gains no points and the enemy's RES is unchanged
+
+### Requirement: Constellation 2
+
+At Constellation 2 Citlali SHALL gain 125 Elemental Mastery, each teammate on the field SHALL gain 250 while the Opal Shield or the Nightsoul Blessing holds, and Ascension 1's RES cut SHALL be 40%.
+
+#### Scenario: Citlali gains 125 Elemental Mastery at Constellation 2 and none below it
+
+- **GIVEN** Citlali is at Constellation 1
+- **THEN** her Elemental Mastery gains nothing from the constellation
+- **WHEN** she reaches Constellation 2
+- **THEN** her Elemental Mastery is 125 higher
+
+#### Scenario: A teammate on the field gains 250 Elemental Mastery while the Blessing holds
+
+- **GIVEN** Citlali is at Constellation 2 and her Nightsoul Blessing holds
+- **WHEN** a teammate is on the field
+- **THEN** the teammate gains 250 Elemental Mastery
+
+#### Scenario: A teammate gains nothing with neither the Blessing nor the Opal Shield
+
+- **GIVEN** Citlali is at Constellation 2, with no Blessing and no Opal Shield
+- **WHEN** a teammate is on the field
+- **THEN** the teammate gains no Elemental Mastery from her
+
+#### Scenario: A teammate's Elemental Mastery ends when the longer of the Blessing and the shield ends
+
+- **GIVEN** the Opal Shield has one second left and the Blessing has two
+- **WHEN** one second passes
+- **THEN** the teammate still gains 250 Elemental Mastery
+- **WHEN** two more seconds pass
+- **THEN** the teammate gains none
+
+#### Scenario: Constellation 2 makes Ascension 1's RES cut 40%
+
+- **GIVEN** Citlali is at Ascension 1 and Constellation 2, and in the Blessing
+- **WHEN** a Melt lands on an enemy
+- **THEN** the enemy's Hydro and Pyro RES are lowered by 40% for twelve seconds
 
 ### Requirement: The Opal Shield
 

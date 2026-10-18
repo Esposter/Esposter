@@ -25,13 +25,18 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -515,5 +520,102 @@ describe(createCitlaliKitBehaviour, () => {
     raiseReaction(context, combatant, enemy, ReactionType.Melt);
     expect(countPoints(context)).toBe(0);
     expect(enemy.statuses).toEqual([]);
+  });
+});
+
+const TEAMMATE_CHARACTER_ID = 10_000_002;
+
+// Citlali's Elemental Mastery as the team's buffs and passives price it for the given combatant
+const getBuffedMastery = (combatant: Combatant, context: KitContext): number =>
+  getBuffedCombatant(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
+    .attributes.attributeTotalMap[Attribute.ElementalMastery];
+
+// Citlali at the given constellation, with a teammate beside her in the deployed team, the context standing at Citlali
+const createCitlaliTeam = (constellationCount: number) => {
+  const citlali = { ...createCitlaliCombatant(), constellationCount };
+  const teammate = { ...createCitlaliCombatant(), characterId: TEAMMATE_CHARACTER_ID };
+  const context = createKitTestContext(citlali, {
+    characterIdCombatantMap: new Map<number, Combatant>([
+      [citlali.characterId, citlali],
+      [teammate.characterId, teammate],
+    ]),
+    party: createParty([citlali.characterId, teammate.characterId]),
+  });
+  return { citlali, context, teammate };
+};
+
+// The frames a step runs as the world does: the team's effects, then each deployed kit's clock, which a teammate's buff reads
+const stepTeamFrames = (context: KitContext, frames: number): void => {
+  for (let frame = 0; frame < frames; frame++) {
+    stepKitEffects(FRAME_SECONDS, context);
+    stepDeployedKits(context, FRAME_SECONDS);
+  }
+};
+
+describe("constellation 2", () => {
+  test("Citlali gets 125 Elemental Mastery from Constellation 2, and none below it", () => {
+    expect.hasAssertions();
+    const { citlali, context } = createCitlaliTeam(0);
+    const base = getBuffedMastery(citlali, context);
+    expect(getBuffedMastery({ ...citlali, constellationCount: 1 }, context) - base).toBe(0);
+    expect(getBuffedMastery({ ...citlali, constellationCount: 2 }, context) - base).toBe(125);
+  });
+
+  test("a teammate gets 250 Elemental Mastery while Citlali's Blessing holds on the field", () => {
+    expect.hasAssertions();
+    const { context, teammate } = createCitlaliTeam(2);
+    const base = getBuffedMastery(teammate, context);
+    enterKitNightsoulBlessing(context.kitEffectState, CITLALI_CHARACTER_ID, { points: 24, secondsRemaining: 20 });
+    const teammateOnField = { ...context, activeCombatant: teammate };
+    stepTeamFrames(teammateOnField, 1);
+    expect(getBuffedMastery(teammate, teammateOnField) - base).toBe(250);
+  });
+
+  test("a teammate gets no Elemental Mastery from Constellation 2 with neither the Blessing nor the Opal Shield", () => {
+    expect.hasAssertions();
+    const { context, teammate } = createCitlaliTeam(2);
+    const base = getBuffedMastery(teammate, context);
+    const teammateOnField = { ...context, activeCombatant: teammate };
+    stepTeamFrames(teammateOnField, 1);
+    expect(getBuffedMastery(teammate, teammateOnField)).toBe(base);
+  });
+
+  test("a teammate gets 250 Elemental Mastery while the Opal Shield holds, and none once it ends", () => {
+    expect.hasAssertions();
+    const { context, teammate } = createCitlaliTeam(2);
+    castKitShield(context.kitEffectState, CITLALI_CHARACTER_ID, {
+      element: Element.Cryo,
+      health: 1000,
+      secondsRemaining: 2,
+    });
+    const base = getBuffedMastery(teammate, context);
+    const teammateOnField = { ...context, activeCombatant: teammate };
+    stepTeamFrames(teammateOnField, 60);
+    expect(getBuffedMastery(teammate, teammateOnField) - base).toBe(250);
+    stepTeamFrames(teammateOnField, 180);
+    expect(getBuffedMastery(teammate, teammateOnField)).toBe(base);
+  });
+
+  test("a teammate's Elemental Mastery ends with the Blessing", () => {
+    expect.hasAssertions();
+    const { context, teammate } = createCitlaliTeam(2);
+    enterKitNightsoulBlessing(context.kitEffectState, CITLALI_CHARACTER_ID, { points: 24, secondsRemaining: 2 });
+    const base = getBuffedMastery(teammate, context);
+    const teammateOnField = { ...context, activeCombatant: teammate };
+    stepTeamFrames(teammateOnField, 60);
+    expect(getBuffedMastery(teammate, teammateOnField) - base).toBe(250);
+    stepTeamFrames(teammateOnField, 180);
+    expect(getBuffedMastery(teammate, teammateOnField)).toBe(base);
+  });
+
+  test("Ascension 1's Hydro and Pyro RES cut is 40% from Constellation 2", () => {
+    expect.hasAssertions();
+    const enemy = createSturdyEnemy(3);
+    const combatant = { ...createCitlaliCombatantAt(1), constellationCount: 2 };
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    const status = enemy.statuses.find(({ resistanceReduction }) => resistanceReduction !== undefined);
+    expect(status?.resistanceReduction).toEqual({ [Element.Hydro]: 0.4, [Element.Pyro]: 0.4 });
   });
 });
