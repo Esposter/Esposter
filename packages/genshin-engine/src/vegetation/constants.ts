@@ -19,6 +19,8 @@ export const FLOWER_COLOR_ATTRIBUTE_NAME = "flowerColor";
 // Game's grass parting
 export const GRASS_TRAIL_EXTENT = 16;
 export const GRASS_TRAIL_TEXELS = 64;
+// A texel's side, in metres
+export const GRASS_TRAIL_TEXEL_SIZE: number = GRASS_TRAIL_EXTENT / GRASS_TRAIL_TEXELS;
 // The stamp a character leaves in the trail, a disc this many metres across its footing, and the seconds a stamp takes
 // to fade. Both provisional, like the extent
 export const GRASS_TRAIL_STAMP_RADIUS = 0.6;
