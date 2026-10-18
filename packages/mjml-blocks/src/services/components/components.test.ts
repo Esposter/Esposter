@@ -29,7 +29,9 @@ describe("components", () => {
   const preset = PRESET_SCHEMA.parse(createRequire(import.meta.url)("mjml-preset-core"));
   const components = preset.components.map(readComponent);
   const { dependencies } = preset;
-  const SPECIFICATION_ROWS = MJML_COMPONENT_SPECIFICATIONS.map((specification) => [specification.type, specification]);
+  const SPECIFICATION_ROWS = MJML_COMPONENT_SPECIFICATIONS.map(
+    (specification) => [specification.type, specification] as const,
+  );
 
   test.each(SPECIFICATION_ROWS)(
     "%s takes the attributes MJML's component allows, less css-class and mj-class",

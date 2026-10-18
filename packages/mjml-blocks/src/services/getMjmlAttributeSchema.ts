@@ -7,7 +7,7 @@ import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 export const getMjmlAttributeSchema = (
   allowedAttributes: Record<string, string>,
   name: string,
-): z.ZodType<string> | undefined => {
+): undefined | z.ZodType<string> => {
   const grammar = Object.hasOwn(allowedAttributes, name) ? allowedAttributes[name] : undefined;
   return grammar === undefined ? undefined : createMjmlAttributeSchema(parseMjmlAttributeType(grammar), name);
 };
