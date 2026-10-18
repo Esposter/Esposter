@@ -22,6 +22,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   nextFirstSideIndex: 0,
   outcome: undefined,
   phase: GcgPhase.Action,
+  random: () => 0,
   round: 1,
   rule: TEST_RULE,
   sides,

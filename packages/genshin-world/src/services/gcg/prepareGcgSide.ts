@@ -15,7 +15,6 @@ export const prepareGcgSide = (
   sideIndex: number,
   switchedHandIndices: number[],
   activeIndex: number,
-  random: () => number,
 ): GcgActionResult => {
   if (duel.phase !== GcgPhase.Preparation) return GcgActionResult.WrongPhase;
   const side = takeOne(duel.sides, sideIndex);
@@ -25,11 +24,11 @@ export const prepareGcgSide = (
   else if (!checkIsGcgIndexSelection(switchedHandIndices, side.hand.length)) return GcgActionResult.Unavailable;
   const switchedCards = side.hand.filter((_card, index) => switchedHandIndices.includes(index));
   side.hand = side.hand.filter((_card, index) => !switchedHandIndices.includes(index));
-  side.drawPile = shuffleGcgCards([...side.drawPile, ...switchedCards], random);
+  side.drawPile = shuffleGcgCards([...side.drawPile, ...switchedCards], duel.random);
   side.hand.push(...side.drawPile.slice(0, switchedCards.length));
   side.drawPile = side.drawPile.toSpliced(0, switchedCards.length);
   side.activeIndex = activeIndex;
   side.hasPrepared = true;
-  if (duel.sides.every((preparedSide) => preparedSide.hasPrepared)) startGcgRound(duel, random);
+  if (duel.sides.every((preparedSide) => preparedSide.hasPrepared)) startGcgRound(duel);
   return GcgActionResult.Done;
 };

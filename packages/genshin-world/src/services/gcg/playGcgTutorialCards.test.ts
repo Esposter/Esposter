@@ -31,8 +31,8 @@ describe("the tutorial deck's cards and skills", () => {
     const random = createSeededRandom(SEED);
     const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, TUTORIAL_DECK_ID);
     const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL));
-    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
-    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
+    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0);
+    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, []);
     takeOne(duel.sides, 0).dice = dice;
     return duel;
   };

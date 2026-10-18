@@ -46,7 +46,7 @@ const createSessionDuel = async (): Promise<GcgDuel> => {
     readGcgStandardRule(gameDataBaseUrl),
   ]);
   const newDuel = createGcgDuel([playerDeck, opponentDeck], Math.random, rule);
-  advanceGcgOpponent(newDuel, GCG_OPPONENT_SIDE_INDEX, Math.random);
+  advanceGcgOpponent(newDuel, GCG_OPPONENT_SIDE_INDEX);
   return newDuel;
 };
 // A duel that fails to load leaves to the world, since nothing is drawn without one and only the duel's own end closes it
@@ -75,7 +75,7 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
   const duelValue = duel.value;
   if (!duelValue) return;
   action(duelValue);
-  advanceGcgOpponent(duelValue, GCG_OPPONENT_SIDE_INDEX, Math.random);
+  advanceGcgOpponent(duelValue, GCG_OPPONENT_SIDE_INDEX);
 };
 </script>
 
@@ -90,9 +90,7 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
     :player-side-index="GCG_PLAYER_SIDE_INDEX"
     :text-map
     @declare-round-end="
-      playerAction((currentDuel) =>
-        declareGcgRoundEnd(currentDuel, GCG_PLAYER_SIDE_INDEX, currentDuel.rule, Math.random),
-      )
+      playerAction((currentDuel) => declareGcgRoundEnd(currentDuel, GCG_PLAYER_SIDE_INDEX, currentDuel.rule))
     "
     @leave="emit('leave')"
     @play-card="
@@ -104,12 +102,11 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
     @prepare="
       (switchedHandIndices, activeIndex) =>
         playerAction((currentDuel) =>
-          prepareGcgSide(currentDuel, GCG_PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex, Math.random),
+          prepareGcgSide(currentDuel, GCG_PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex),
         )
     "
     @reroll="
-      (dieIndices) =>
-        playerAction((currentDuel) => rerollGcgDice(currentDuel, GCG_PLAYER_SIDE_INDEX, dieIndices, Math.random))
+      (dieIndices) => playerAction((currentDuel) => rerollGcgDice(currentDuel, GCG_PLAYER_SIDE_INDEX, dieIndices))
     "
     @replace-character="
       (characterIndex) =>

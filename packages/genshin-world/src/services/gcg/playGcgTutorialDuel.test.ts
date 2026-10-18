@@ -17,9 +17,9 @@ const playGcgDuel = (decks: Parameters<typeof createGcgDuel>[0], rule: GcgDuel["
   const MAX_STEPS = 2000;
   const random = createSeededRandom(SEED);
   const duel = createGcgDuel(decks, random, rule);
-  for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
+  for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0);
   for (let step = 0; step < MAX_STEPS && duel.phase !== GcgPhase.Ended; step++)
-    for (const sideIndex of [0, 1]) advanceGcgOpponent(duel, sideIndex, random);
+    for (const sideIndex of [0, 1]) advanceGcgOpponent(duel, sideIndex);
   return duel;
 };
 

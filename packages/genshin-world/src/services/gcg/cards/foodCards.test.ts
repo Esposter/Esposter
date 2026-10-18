@@ -57,6 +57,7 @@ const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
   nextFirstSideIndex: 0,
   outcome: undefined,
   phase: GcgPhase.Action,
+  random: () => 0,
   round: 1,
   rule: { handCardLimit: 10 } as GcgDuel["rule"],
   sides: [createSide(characters), createSide([])],

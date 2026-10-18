@@ -12,7 +12,7 @@ import { takeOne } from "@esposter/shared";
 // The end phase once both sides have declared their round's end: a Frozen status lapses, each side draws its cards from
 // The first side on, and the next round begins with its roll, the side that declared first going first. The fifteenth
 // Round's end concedes the duel to both sides
-export const endGcgRound = (duel: GcgDuel, rule: GcgRule, random: () => number): void => {
+export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
   runGcgEndPhase(duel);
   if (duel.phase === GcgPhase.Ended) return;
   for (const side of duel.sides) {
@@ -33,5 +33,5 @@ export const endGcgRound = (duel: GcgDuel, rule: GcgRule, random: () => number):
   }
   duel.round += 1;
   duel.firstSideIndex = duel.nextFirstSideIndex;
-  startGcgRound(duel, random);
+  startGcgRound(duel);
 };

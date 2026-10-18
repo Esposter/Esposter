@@ -13,7 +13,7 @@ import { takeOne } from "@esposter/shared";
 // Tried burst first, then the elemental skill, then the normal attack
 const SKILL_KIND_ORDER = ["ElementalBurst", "ElementalSkill", "NormalAttack"];
 
-export const takeGcgScriptedAction = (duel: GcgDuel, sideIndex: number, random: () => number): GcgActionResult => {
+export const takeGcgScriptedAction = (duel: GcgDuel, sideIndex: number): GcgActionResult => {
   const side = takeOne(duel.sides, sideIndex);
   const diceSubsets = listGcgDiceSubsets(side.dice.length);
   const targetIndices: (number | undefined)[] = [undefined, ...side.characters.map((_character, index) => index)];
@@ -34,5 +34,5 @@ export const takeGcgScriptedAction = (duel: GcgDuel, sideIndex: number, random: 
       if (result === GcgActionResult.Done) return result;
       else if (result !== GcgActionResult.Unpayable) break;
     }
-  return declareGcgRoundEnd(duel, sideIndex, duel.rule, random);
+  return declareGcgRoundEnd(duel, sideIndex, duel.rule);
 };

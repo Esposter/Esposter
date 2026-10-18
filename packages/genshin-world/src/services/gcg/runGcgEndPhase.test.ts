@@ -65,6 +65,7 @@ describe(runGcgEndPhase, () => {
       nextFirstSideIndex: 0,
       outcome: undefined,
       phase: GcgPhase.Action,
+      random: () => 0,
       round: 1,
       rule,
       sides: [attacker, createSideState([createCharacterState(Element.Hydro)])],

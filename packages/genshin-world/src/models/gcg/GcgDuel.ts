@@ -12,6 +12,8 @@ export interface GcgDuel {
   nextFirstSideIndex: number;
   outcome?: GcgOutcome;
   phase: GcgPhase;
+  // The seeded source the duel's dice are rolled from and its decks shuffled with, held here so every draw reads one source
+  random: () => number;
   round: number;
   rule: GcgRule;
   sides: [GcgSideState, GcgSideState];

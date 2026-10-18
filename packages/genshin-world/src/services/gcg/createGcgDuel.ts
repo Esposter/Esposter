@@ -13,6 +13,7 @@ export const createGcgDuel = (decks: [GcgDeck, GcgDeck], random: () => number, r
   nextFirstSideIndex: 0,
   outcome: undefined,
   phase: GcgPhase.Preparation,
+  random,
   round: 1,
   rule,
   sides: [createGcgSideState(decks[0], random), createGcgSideState(decks[1], random)],
