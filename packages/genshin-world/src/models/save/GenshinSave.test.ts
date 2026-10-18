@@ -478,8 +478,6 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
-  // Next write
   test("the save keeps the learned dishes, the proficiencies and the processing queues", () => {
     expect.hasAssertions();
     const cooking = {
@@ -491,6 +489,8 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.parse({ ...EMPTY_GENSHIN_SAVE, cooking }).cooking).toStrictEqual(cooking);
   });
 
+  // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
+  // Next write
   test("refuses an id key that is not its number's own decimal", () => {
     expect.hasAssertions();
     const save = {
@@ -522,7 +522,7 @@ describe("genshinSaveSchema", () => {
   test("accepts a save written before the Sigils were added", () => {
     expect.hasAssertions();
     const currencies = Object.fromEntries(
-      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.some((sigil) => sigil === currency)),
+      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.includes(currency)),
     );
 
     expect(

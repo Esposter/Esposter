@@ -4,9 +4,11 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery. Her Ascension 1 passive and Constellations 1 and 6 are not built.** Constellation 4's Energy is built, see the Decisions. Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), and the discharge gcsim places on its primary target lands on `KitContext.primaryTarget`, so they wait only on her kit's next pass.
+- **Her Ascension 1 passive and Constellations 1 and 6 are not built.** Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), and the discharge gcsim places on its primary target lands on `KitContext.primaryTarget`, so they wait only on her kit's next pass.
 
 ## Decisions
+
+- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery.**
 
 - **Her Moonsign Benediction.** It turns the party's Electro-Charged into Lunar-Charged and gives the party's Lunar-Charged 0.7% Base DMG Bonus for each 100 of her ATK, at most 14%, as gcsim's `asc.go` has it.
 - **The skill's shield is a task's.** gcsim places Cleaning Mode's shield 4 frames in, so the skill sets a task that runs then, and the shield reads her ATK as it stands as the task runs: the table's share of ATK plus its flat HP. It is Electro and lasts the 20 seconds the table gives it, from its placement.

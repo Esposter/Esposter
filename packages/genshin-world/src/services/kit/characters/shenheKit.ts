@@ -11,6 +11,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -251,6 +252,6 @@ export const createShenheKitBehaviour = ({
       },
     },
     // Clarity of Heart, from Constellation 1, lets Spring Spirit Summoning be used one more time
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
   };
 };

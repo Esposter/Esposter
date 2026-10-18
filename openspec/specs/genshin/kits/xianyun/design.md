@@ -2,6 +2,10 @@
 
 Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour`, on avatar 10000093: four strikes, a charged attack, a collision and two plunges, Stars Gather at Dusk's hit, and Skyladder's three presses in one state. Her multipliers are read from proud skill groups 9331, 9332 and 9339; its cooldowns and the burst's energy cost are the same groups' too. Driftcloud Wave is built as a plunge variant per press count, with Constellations 1, 2, 4 and 6 on top; Constellation 2's ATK buff is built below. Starwicker, her burst's heals, the airborne buff the burst gives the party, and her passives are not built. The poise is provisional at 0, as gcsim gives none.
 
+## Decisions
+
+- **Constellation 1's extra charge is a skill charge.** White Clouds at Dawn's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
+
 ## Skyladder's presses
 
 Skyladder's first press sets the Cloud Transmogrification state for 220 frames, as gcsim's `skillStateDur` does, and holds one press in it as the state's stacks. The state's second and third presses are `skillChain` follow-ups, which play their own animations (243 and 178 frames) and set the state for 238 and 179 frames. Each follow-up's frames are cited to gcsim's `skill.go` (lines 46 and 56), and its hitmark to line 20. Its element is `Unsourced`, since gcsim's `attributes.Anemo` at line 95 is a struct field the reader does not evaluate. A chained press starts no cooldown, which matches gcsim: it sets the cooldown only when the chain starts, and a chain's presses are its own.
@@ -26,7 +30,6 @@ Constellation 6's burst gives eight presses that cost no cooldown for 16 seconds
 - **The burst's heals** — the instant heal at the burst's hitmark, and the continuous heals every 2.5 seconds for 16 seconds. `KitPartyHeal` rides a hit only as the hit strikes an enemy, so a heal with no enemy struck waits on a party heal the kit's own timer can give.
 - **The airborne buff** — the higher jumps it gives the party. It waits on a party buff the controller's jump reads.
 - **Passives** — not built.
-- **Constellation 1's extra charge is a skill charge.** White Clouds at Dawn's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
 
 ## Constellation 2
 

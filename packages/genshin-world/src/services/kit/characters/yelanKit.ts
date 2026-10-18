@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -57,6 +58,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const depthClarionDiceSeconds = readParameter("depthClarionDiceSeconds");
   const exquisiteThrows = readHits("exquisiteThrow");
   return {
+    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
+    // Ticks do not depend on where the body stands
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { facing, height, position } = body;
@@ -111,10 +114,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
           : elementTypeCount * ASCENSION_1_HEALTH_PERCENT_PER_ELEMENT;
       return [{ amount, attribute: Attribute.HealthPercent }];
     },
-    // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
-    // Ticks do not depend on where the body stands
     // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
     // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's marked
     // Hit does while its burst status holds
     skill: {

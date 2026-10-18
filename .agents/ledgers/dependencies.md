@@ -37,7 +37,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@iconify-json/lucide`                  | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@iconify-json/mdi`                     | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@iconify-json/pixelarticons`           | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
-| `@jsonforms/core`                       | —                     | Keep — engine     | the form engine under the schema form, which draws its own fields in place of the Vue bindings         |
+| `@jsonforms/core`                       | 2026-10-18 · Opus 5.5 | Keep — engine     | the form engine under the schema form, which draws its own fields in place of the Vue bindings         |
 | `@kjanat/actionlint`                    | —                     | Keep — tooling    | workflow lint                                                                                          |
 | `@lerna-lite/cli`                       | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
 | `@lerna-lite/publish`                   | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
@@ -66,7 +66,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/extension-file-handler`        | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-list`                | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-mention`             | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
-| `@tiptap/extension-table`               | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-table`               | 2026-10-18 · Opus 5.5 | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extensions`                    | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/html`                          | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/pm`                            | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
@@ -79,7 +79,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@trpc/server`                          | —                     | Keep — framework  | the API layer                                                                                          |
 | `@tsdown/css`                           | —                     | Keep — tooling    | tsdown's CSS handling                                                                                  |
 | `@types/js-beautify`                    | —                     | Keep — types      | declarations for `js-beautify`                                                                         |
-| `@types/mjml`                           | —                     | Keep — types      | declarations for `mjml`                                                                                |
+| `@types/mjml`                           | 2026-10-18 · Opus 5.5 | Keep — types      | declarations for `mjml`                                                                                |
 | `@types/node`                           | —                     | Keep — types      | declarations for `node`                                                                                |
 | `@types/sax`                            | —                     | Keep — types      | declarations for `sax`                                                                                 |
 | `@types/three`                          | —                     | Keep — types      | declarations for `three`                                                                               |
@@ -113,7 +113,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@webgpu/types`                         | —                     | Keep — types      | WebGPU's declarations                                                                                  |
 | `@xterm/addon-fit`                      | —                     | Keep — engine     | the terminal engine's sizing                                                                           |
 | `@xterm/xterm`                          | —                     | Keep — engine     | the terminal engine                                                                                    |
-| `apexcharts`                            | —                     | Keep — engine     | the chart engine, in a chunk of its own that only the routes drawing a chart load                      |
+| `apexcharts`                            | 2026-10-18 · Opus 5.5 | Keep — engine     | the chart engine, in a chunk of its own that only the routes drawing a chart load                      |
 | `better-auth`                           | —                     | Keep — security   | authentication, on the stop list                                                                       |
 | `bowser`                                | —                     | Keep — data       | user-agent tables for the session's device label, which change without us                              |
 | `chokidar`                              | —                     | Keep — hold       | unstorage's fs driver loads it undeclared (`@TODO` in the catalog)                                     |
@@ -161,14 +161,14 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `marked`                                | —                     | Keep — engine     | the client's markdown parser                                                                           |
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
-| `mjml`                                  | —                     | Keep — engine     | the MJML compiler, which mjml-blocks' tests compile under strict validation                            |
-| `mjml-preset-core`                      | —                     | Keep — data       | MJML's component set and nesting map, which mjml-blocks' tables and slots are held equal to            |
+| `mjml`                                  | 2026-10-18 · Opus 5.5 | Keep — engine     | the MJML compiler, which mjml-blocks' tests compile under strict validation                            |
+| `mjml-preset-core`                      | 2026-10-18 · Opus 5.5 | Keep — data       | MJML's component set and nesting map, which mjml-blocks' tables and slots are held equal to            |
 | `mlly`                                  | —                     | Keep — tooling    | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |
 | `neverthrow`                            | —                     | Keep — framework  | the `Result` the error-handling convention is built on                                                 |
 | `nitro`                                 | —                     | Keep — framework  | the server framework                                                                                   |
-| `node-html-parser`                      | —                     | Keep — engine     | HTML parsing with CSS selectors in the app, the server and the functions; parse5 has none              |
+| `node-html-parser`                      | 2026-10-18 · Opus 5.5 | Keep — engine     | HTML parsing with CSS selectors in the app, the server and the functions; parse5 has none              |
 | `node-pty`                              | —                     | Keep — engine     | native pseudo-terminals                                                                                |
 | `nuxt`                                  | —                     | Keep — framework  | the framework                                                                                          |
 | `ohash`                                 | —                     | Keep — free       | the framework installs it                                                                              |
@@ -195,10 +195,10 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `sharp`                                 | —                     | Keep — engine     | image processing                                                                                       |
 | `sirv`                                  | —                     | Keep — tooling    | the static file server Vite's public middleware runs on, serving `public/` in dev                      |
 | `superjson`                             | —                     | Keep — spec       | tRPC's wire transformer                                                                                |
-| `survey-core`                           | —                     | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
-| `survey-creator-core`                   | —                     | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
-| `survey-creator-vue`                    | —                     | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
-| `survey-vue3-ui`                        | —                     | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
+| `survey-core`                           | 2026-10-18 · Opus 5.5 | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
+| `survey-creator-core`                   | 2026-10-18 · Opus 5.5 | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
+| `survey-creator-vue`                    | 2026-10-18 · Opus 5.5 | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
+| `survey-vue3-ui`                        | 2026-10-18 · Opus 5.5 | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
 | `temporal-polyfill`                     | —                     | Keep — hold       | until every target ships `Temporal`                                                                    |
 | `three`                                 | —                     | Keep — engine     | the 3D engine                                                                                          |
 | `three-globe`                           | —                     | Keep — engine     | the globe                                                                                              |

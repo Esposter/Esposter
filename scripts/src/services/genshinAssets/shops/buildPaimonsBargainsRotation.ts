@@ -11,11 +11,11 @@ import {
   PAIMON_BARGAINS_ROYAL_ORDER,
   PAIMON_BARGAINS_SHOP_TYPE,
   PAIMON_BARGAINS_WEAPON_ROTATE_IDS,
-  SHOP_GOODS_TABLE_NAME,
   SHOP_REFRESH_BY_TABLE_TYPE,
   SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
 import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
@@ -41,8 +41,6 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
       return avatarUse ? [[id, Number(avatarUse.useParam[0])] as const] : [];
     }),
   );
-  // The price and monthly limit of a rotation's goods, the same for every rotation of a set, which the table gives on each
-  // Good of the rotation by its rotate id
   // The one good of Paimon's Bargains a rotation sells, by its rotate id, which the table gives once a rotation
   const goodOfRotation = (rotateId: number): ExcelShopGoodsRow => {
     const row = goodRows.find(
@@ -52,6 +50,8 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
       throw new InvalidOperationError(Operation.Read, "Paimon's Bargains rotation", `rotation ${rotateId} has no good`);
     return row;
   };
+  // The price and monthly limit of a rotation's goods, the same for every rotation of a set, which the table gives on each
+  // Good of the rotation by its rotate id
   const priceOfRotations = (rotateIds: readonly number[]): PaimonsBargainsPrice => {
     const prices = rotateIds.map((rotateId) => {
       const row = goodOfRotation(rotateId);

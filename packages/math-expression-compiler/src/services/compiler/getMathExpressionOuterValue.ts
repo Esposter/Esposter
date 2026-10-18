@@ -2,7 +2,7 @@ import type { MathExpressionOuterBinding } from "#src/models/compiler/MathExpres
 import type { MathExpressionResult } from "#src/models/compiler/MathExpressionResult";
 
 // Reads the value an assigned name holds before its assignment runs: its variable, else its constant, else nothing
-export const readMathExpressionOuterValue = (
+export const getMathExpressionOuterValue = (
   outer: MathExpressionOuterBinding,
   values: readonly number[],
 ): MathExpressionResult => {

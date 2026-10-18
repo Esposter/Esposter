@@ -27,6 +27,7 @@ const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
 const ASCENSION_1 = 1;
 const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_NORMAL_ATTACK_SPEED_BONUS = 0.1;
 // Measured: gcsim (MIT) kokomi/cons.go, Constellation 4's energy: while she dons the garment, each normal attack that hits an
 // Opponent restores 0.8 energy to her, once every 0.2 seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/cons.go
@@ -171,7 +172,7 @@ export const createKokomiKitBehaviour = ({
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
       activeCombatant.constellationCount >= CONSTELLATION_4 &&
       findKitStance(kitEffectState.effects, activeCombatant.characterId)
-        ? 0.1
+        ? CONSTELLATION_4_NORMAL_ATTACK_SPEED_BONUS
         : 0,
     getPassiveBonuses,
     skill: createBakeKurage(bakeKurageRipples),

@@ -5,6 +5,7 @@ import type { Party } from "#src/models/party/Party";
 
 import { createKitFallRefusal } from "#src/services/kit/createKitFallRefusal";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
@@ -21,7 +22,8 @@ export const hitPartyMember = (
 ): void => {
   const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
   const { maxHealth } = buffedCombatant.attributes;
-  const overflow = absorbKitShield(kitEffectState.effects, buffedCombatant, damage, element);
+  const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
+  const overflow = absorbKitShield(shields, buffedCombatant, damage, element);
   damagePartyMember(party, combatant.characterId, overflow / maxHealth, {
     element,
     fallRefusal: createKitFallRefusal(combatant, kitEffectState, maxHealth),

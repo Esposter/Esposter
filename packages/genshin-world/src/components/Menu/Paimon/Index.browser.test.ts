@@ -1,3 +1,5 @@
+import type { FunctionalComponent } from "vue";
+
 import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
@@ -11,6 +13,8 @@ import { page, userEvent } from "vitest/browser";
 import { defineComponent, h } from "vue";
 
 describe("menuPaimon", () => {
+  const global = { components: { NuxtImg } };
+
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();

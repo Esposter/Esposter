@@ -7,7 +7,8 @@ import { WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
-import { GOOD_HUNTER_SHOP_TYPE, SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
+import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
 import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";

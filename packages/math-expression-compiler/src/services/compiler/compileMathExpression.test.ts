@@ -1,19 +1,9 @@
-import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
-
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
+import { parseNode } from "#src/services/compiler/parseNode.fixture";
 import { getMathExpressionNames } from "#src/services/names/getMathExpressionNames";
-import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { describe, expect, test } from "vitest";
 
 const SCOPE = { col0: 3, col1: -2.5 };
-
-const parseNode = (formula: string): MathExpressionNode =>
-  parseMathExpression(formula).match(
-    (node) => node,
-    (error) => {
-      throw error;
-    },
-  );
 
 const evaluateFormula = (formula: string, scope: Record<string, number> = {}): number =>
   compileMathExpression(parseNode(formula), Object.keys(scope))(Object.values(scope));
@@ -145,6 +135,10 @@ describe("defect fixes", () => {
     expect(evaluateFormula("or(0, 0, 1)")).toBe(1);
     expect(evaluateFormula("xor(1, 1, 1)")).toBe(1);
     expect(evaluateFormula("xor(1, 1)")).toBe(0);
+    expect(evaluateFormula("and(1)")).toBe(1);
+    expect(evaluateFormula("and(0)")).toBe(0);
+    expect(evaluateFormula("xor(1)")).toBe(1);
+    expect(evaluateFormula("xor(0)")).toBe(0);
   });
 
   test("#2464 an exact root of a perfect power is exact", () => {
@@ -167,6 +161,78 @@ describe("defect fixes", () => {
     expect(evaluateFormula("erf(erfinv(0.25))")).toBeCloseTo(0.25, 14);
     expect(evaluateFormula("erfinv(erf(0.3))")).toBeCloseTo(0.3, 14);
   });
+
+  test.each([
+    ["round(1e300, 9)", 1e300],
+    ["ceil(1e300, 9)", 1e300],
+    ["floor(-1e300, 9)", -1e300],
+    ["fix(1e294, 15)", 1e294],
+  ])("a rounding of a number past the shift's range keeps the number, as mathjs rounds: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([
+    ["mod(1/0, 3)", Number.NaN],
+    ["mod(5, 1/0)", Number.NaN],
+    ["1/0 % 3", Number.NaN],
+    ["mod(1/0, 0)", Number.POSITIVE_INFINITY],
+  ])(
+    "a modulo of a non-finite operand is NaN, and a zero divisor keeps the dividend, as mathjs answers: %s",
+    (formula, expected) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(expected);
+    },
+  );
+
+  test.each([
+    ["invmod(4, -7)", -12],
+    ["invmod(-3, -7)", -12],
+    ["invmod(3, -7)", -9],
+  ])("an inverse under a negative modulus is reduced below it, as mathjs reduces it: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([
+    ["bernoulli(258) > 0", 1],
+    ["bernoulli(260)", Number.NEGATIVE_INFINITY],
+    ["bernoulli(300)", Number.NEGATIVE_INFINITY],
+  ])("a Bernoulli number past the recurrence's range is its closed form: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([["sum([-0, -0])"], ["add(-0, -0, -0)"]])(
+    "a sum of negative zeros is negative zero, as mathjs sums: %s",
+    (formula) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(-0);
+    },
+  );
+
+  test.each([
+    ["zeta(1/0)", 1],
+    ["zeta(-1/0)", Number.NaN],
+  ])("the zeta of plus infinity is one, and of minus infinity no value, as mathjs answers: %s", (formula, expected) => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula(formula)).toBe(expected);
+  });
+
+  test.each([["variance([1/0])"], ["std([1/0])"]])(
+    "a single infinite value has no variance, as mathjs answers: %s",
+    (formula) => {
+      expect.hasAssertions();
+
+      expect(evaluateFormula(formula)).toBe(Number.NaN);
+    },
+  );
 });
 
 describe("counting and primality", () => {
@@ -234,5 +300,12 @@ describe("counting and primality", () => {
     expect(evaluateFormula("stirlingS2(5000, 1)")).toBe(1);
     expect(evaluateFormula("stirlingS2(3000, 2999)")).toBe(4498500);
     expect(evaluateFormula("stirlingS2(2000, 1000)")).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  test("a Stirling number with no part, or with as many parts as its count, is answered without the loop running on", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("stirlingS2(1e12, 0)")).toBe(0);
+    expect(evaluateFormula("stirlingS2(1e12, 1e12)")).toBe(1);
   });
 });

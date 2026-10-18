@@ -24,8 +24,6 @@ Gadgets become bag items that a player equips and uses, with detectors that poin
 - `openspec/changes/archive/2026-10-18-genshin-crafting/`: most gadgets are crafted at the bench.
 - `openspec/changes/genshin-domains/`: the usable-here check for a gadget in a domain.
 - Co-op, which is deferred: the check for a gadget in another player's world waits on it.
-- A compass's city joins a region's chest slice only once its areas are outlined.
-- The Oculus Resonance Stone's target, which the config does not hold; its detector is not settled until the target is read from another table.
 
 ## Impact
 

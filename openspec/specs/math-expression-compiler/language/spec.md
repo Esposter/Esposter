@@ -92,6 +92,22 @@ A formula that cannot be parsed SHALL be refused with an error naming the charac
 - **WHEN** a caller parses it
 - **THEN** the parse fails with an error instead of exhausting the stack
 
+### Requirement: A parse takes time in step with the formula's length
+
+A formula SHALL be parsed in time that grows with its length, however deeply its groups nest.
+
+#### Scenario: A formula of forty nested groups behind a division parses
+
+- **GIVEN** a formula of forty groups, each opened after `1/`
+- **WHEN** a caller parses it
+- **THEN** the parse succeeds
+
+#### Scenario: A formula of forty nested groups behind a percent sign parses
+
+- **GIVEN** a formula of forty groups, each opened after `8%`
+- **WHEN** a caller parses it
+- **THEN** the parse succeeds
+
 ### Requirement: A name never reaches an object's prototype
 
 A name SHALL resolve only to an assigned name, a variable in the scope or a named constant.

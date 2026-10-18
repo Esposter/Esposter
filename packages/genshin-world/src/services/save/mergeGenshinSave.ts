@@ -15,6 +15,9 @@ import type { TipSave } from "#src/models/tip/TipSave";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 
+// Whether an ISO instant is later than another
+const checkIsLaterInstant = (instant: string, than: string): boolean =>
+  Temporal.Instant.compare(Temporal.Instant.from(instant), Temporal.Instant.from(than)) > 0;
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished
 const mergeAchievementProgress = (
@@ -25,8 +28,7 @@ const mergeAchievementProgress = (
   if (account.finishedAt === undefined && guest.finishedAt === undefined) return { count };
   if (account.finishedAt === undefined) return { count, finishedAt: guest.finishedAt };
   if (guest.finishedAt === undefined) return { count, finishedAt: account.finishedAt };
-  const isGuestFirst =
-    Temporal.Instant.compare(Temporal.Instant.from(guest.finishedAt), Temporal.Instant.from(account.finishedAt)) < 0;
+  const isGuestFirst = checkIsLaterInstant(account.finishedAt, guest.finishedAt);
   return { count, finishedAt: isGuestFirst ? guest.finishedAt : account.finishedAt };
 };
 // Whether a progress is further on than another: by its level, and on the same level by its count toward the next one
@@ -79,13 +81,11 @@ const checkIsLaterWorldLevelAdjustment = (
 ): boolean => {
   if (adjustment.changedAt === undefined) return false;
   if (than.changedAt === undefined) return true;
-  return (
-    Temporal.Instant.compare(Temporal.Instant.from(adjustment.changedAt), Temporal.Instant.from(than.changedAt)) > 0
-  );
+  return checkIsLaterInstant(adjustment.changedAt, than.changedAt);
 };
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
+  checkIsLaterInstant(day.dealtAt, than.dealtAt);
 // The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
 const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
   const order = Temporal.Instant.compare(
@@ -114,13 +114,7 @@ const mergeMinedOutcrops = (account: MinedOutcropSave[], guest: MinedOutcropSave
   const minedOutcropMap = new Map<string, MinedOutcropSave>();
   for (const minedOutcrop of [...account, ...guest]) {
     const heldMinedOutcrop = minedOutcropMap.get(minedOutcrop.id);
-    if (
-      heldMinedOutcrop === undefined ||
-      Temporal.Instant.compare(
-        Temporal.Instant.from(minedOutcrop.minedAt),
-        Temporal.Instant.from(heldMinedOutcrop.minedAt),
-      ) > 0
-    )
+    if (heldMinedOutcrop === undefined || checkIsLaterInstant(minedOutcrop.minedAt, heldMinedOutcrop.minedAt))
       minedOutcropMap.set(minedOutcrop.id, minedOutcrop);
   }
   return [...minedOutcropMap.values()];
