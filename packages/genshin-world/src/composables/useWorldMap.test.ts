@@ -70,6 +70,7 @@ describe(useWorldMap, () => {
     descriptionTextId: "description",
     id: String(REQUEST_QUEST_ID),
     kind: QuestKind.World,
+    mainId: "900",
     offerTalkIds: [],
     rewards: [],
     steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetId: "1" }], textId: "text" }],
@@ -309,6 +310,7 @@ describe(useWorldMap, () => {
       descriptionTextId: "",
       id: "quest",
       kind: QuestKind.World,
+      mainId: "quest",
       offerTalkIds: [],
       rewards: [],
       steps: [

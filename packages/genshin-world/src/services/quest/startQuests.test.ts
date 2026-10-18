@@ -10,6 +10,7 @@ const createQuest = (id: string): Quest => ({
   descriptionTextId: "descriptionTextId",
   id,
   kind: QuestKind.Archon,
+  mainId: id,
   offerTalkIds: [],
   rewards: [],
   steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "textId" }],

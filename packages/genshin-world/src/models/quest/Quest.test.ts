@@ -11,6 +11,7 @@ describe("questSchema", () => {
     descriptionTextId: "descriptionTextId",
     id: "id",
     kind: QuestKind.World,
+    mainId: "id",
     offerTalkIds: [],
     rewards: [],
     steps: [

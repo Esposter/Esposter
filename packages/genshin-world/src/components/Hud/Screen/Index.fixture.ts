@@ -79,6 +79,7 @@ export const props = {
     descriptionTextId: "albedo",
     id: ALBEDO_QUEST_ID,
     kind: QuestKind.World,
+    mainId: ALBEDO_QUEST_ID,
     offerTalkIds: [],
     rewards: [],
     steps: [

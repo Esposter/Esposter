@@ -48,6 +48,7 @@ export const readReputationRequestQuest = ({
     descriptionTextId: String(mainQuest.descTextMapHash),
     id: String(subQuest.subId),
     kind: QuestKind.World,
+    mainId: String(mainQuest.id),
     offerTalkIds: [],
     rewards,
     steps: [

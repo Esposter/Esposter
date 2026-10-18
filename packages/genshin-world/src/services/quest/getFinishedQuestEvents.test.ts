@@ -17,6 +17,7 @@ describe(getFinishedQuestEvents, () => {
     descriptionTextId: "descriptionTextId",
     id: "1",
     kind: QuestKind.Archon,
+    mainId: "1",
     offerTalkIds: [],
     rewards: [],
     steps: [createStep("10"), createStep("11")],

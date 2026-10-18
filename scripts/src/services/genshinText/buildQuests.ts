@@ -108,6 +108,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       descriptionTextId: String(mainQuest.descTextMapHash),
       id: questId,
       kind: questKind,
+      mainId: questId,
       offerTalkIds,
       rewards,
       steps,

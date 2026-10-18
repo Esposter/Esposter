@@ -11,6 +11,7 @@ const quest: Quest = {
   descriptionTextId: "descriptionTextId",
   id: "0",
   kind: QuestKind.Archon,
+  mainId: "0",
   offerTalkIds: [],
   rewards: [],
   steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "place" }], textId: "textId" }],

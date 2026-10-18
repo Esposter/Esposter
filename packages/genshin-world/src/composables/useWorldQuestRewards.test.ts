@@ -33,6 +33,7 @@ const QUEST: Quest = {
   descriptionTextId: "",
   id: "1",
   kind: QuestKind.World,
+  mainId: "1",
   offerTalkIds: [],
   rewards: [
     { count: 2, itemId: 202 },
