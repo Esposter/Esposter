@@ -5,6 +5,7 @@ import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
+import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
@@ -26,6 +27,8 @@ export interface WorldTables {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
+  // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
+  seelies: Seelie[];
   // The kits of the team the world starts with, by character id, so its first frame has each member's combatant
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from

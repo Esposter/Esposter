@@ -67,6 +67,8 @@ getResultAsync(() =>
       hudInterfaceRects,
       materialDataMap,
       nameText,
+      // No Seelie is read yet, so the world starts with none placed
+      seelies: [],
       startingCharacterIdKitMap,
       statTables,
       wildlifePlaces,

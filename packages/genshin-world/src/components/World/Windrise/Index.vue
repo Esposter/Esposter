@@ -8,6 +8,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
+import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
@@ -26,6 +27,7 @@ import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
+import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
@@ -40,6 +42,7 @@ import { useResidentSpots } from "#src/composables/useResidentSpots";
 import { useSceneExports } from "#src/composables/useSceneExports";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
+import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
@@ -159,6 +162,8 @@ interface Props {
   // Where the host serves the developer's own exports of the game's scenes, drawn in place of our stand-ins of each
   // Family they hold, as only the development server does
   sceneExportBaseUrl?: string;
+  // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
+  seelies: Seelie[];
   // The Mondstadt animals the official map marks, each stood at its place
   wildlifePlaces: WildlifePlace[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
@@ -194,6 +199,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
   sceneExportBaseUrl,
+  seelies,
   wildlifePlaces,
   windriseData,
   worldLevel,
@@ -339,6 +345,10 @@ watch(
 const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin, getGroundHeight);
 const questTargetPosition = computed(() =>
   questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
+);
+// The courts of the Seelies still resting, which the sight leads a trail to while it is on
+const seelieCourts = computed(() =>
+  seelies.filter(({ state }) => state === SeelieState.Resting).map(({ court }) => court),
 );
 // The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
 const failedCharacterPackKey = ref("");
@@ -546,6 +556,14 @@ onUnmounted(() => {
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
+    <!-- The sight's trails from the character to the courts of the Seelies still resting, in the sight's scene only -->
+    <WorldSightTrails
+      :elemental-sight
+      :ends="seelieCourts"
+      :get-ground-height
+      :sight-scene="sightScene"
+      :target="characterBody?.position"
+    />
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <primitive

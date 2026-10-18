@@ -112,6 +112,7 @@ const {
   removeAccountCharacterPack,
   save,
   sceneExportBaseUrl,
+  seelies,
   serverClockOffsetMs = 0,
   startingCharacterIdKitMap,
   statTables,
@@ -677,6 +678,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         :scene-export-base-url
         :frostbearing-tree-places
+        :seelies
         :wildlife-places
         :windrise-data
         :world-level
