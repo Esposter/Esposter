@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -13,6 +14,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createThomaKitBehaviour, THOMA_CHARACTER_ID } from "#src/services/kit/characters/thomaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -72,6 +74,23 @@ const readFieryCollapseAdditiveBaseDamage = (ascension: number): number | undefi
   return fieryCollapse?.kind === "summon" ? fieryCollapse.hits[0]?.additiveBaseDamageBonus?.(combatant) : undefined;
 };
 
+const readOoyoroiSeconds = (constellationCount: number): number | undefined => {
+  const combatant = { ...createThomaCombatant(), constellationCount };
+  const context = createKitTestContext(combatant);
+  THOMA_KIT.elementalBurst.onStart?.(context);
+  return context.kitEffectState.effects.find((effect) => effect.kind === "summon")?.secondsRemaining;
+};
+
+const readEnergy = (constellationCount: number): number => {
+  const combatant = { ...createThomaCombatant(), constellationCount };
+  const context = createKitTestContext(combatant);
+  THOMA_KIT.elementalBurst.onStart?.(context);
+  for (const effect of context.kitEffectState.effects)
+    if (effect.kind === "status" && effect.id === "thoma-c4-energy")
+      THOMA_KIT.onKitEvent?.({ effect, kind: KitEventKind.EffectExpired }, context, combatant);
+  return getPartyMember(context.party, THOMA_CHARACTER_ID).energy;
+};
+
 describe(createThomaKitBehaviour, () => {
   test("blazing Blessing sets a shield of the table's share of Max HP and flat HP, and infuses Thoma with Pyro", () => {
     expect.hasAssertions();
@@ -126,6 +145,18 @@ describe(createThomaKitBehaviour, () => {
     expect(readShieldHealth(undefined, 2)).toStrictEqual([fieryCollapseShieldHealth]);
     expect(readShieldHealth(1000, 1)).toStrictEqual([1000 + fieryCollapseShieldHealth]);
     expect(readShieldHealth(maxShieldHealth - 1, 1)).toStrictEqual([maxShieldHealth]);
+  });
+
+  test("constellation 2 holds Crimson Ooyoroi for three seconds longer, and Constellation 1 holds it for the table's seconds", () => {
+    expect.hasAssertions();
+
+    expect([readOoyoroiSeconds(1), readOoyoroiSeconds(2)]).toStrictEqual([15, 18]);
+  });
+
+  test("constellation 4 restores 15 energy to Thoma as the burst's delay runs out, and Constellation 3 restores none", () => {
+    expect.hasAssertions();
+
+    expect([readEnergy(3), readEnergy(4)]).toStrictEqual([0, 15]);
   });
 });
 
