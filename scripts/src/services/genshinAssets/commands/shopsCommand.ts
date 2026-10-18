@@ -6,6 +6,7 @@ import { buildMondstadtGeneralGoods } from "#src/services/genshinAssets/shops/bu
 import { buildPaimonsBargainsGoods } from "#src/services/genshinAssets/shops/buildPaimonsBargainsGoods";
 import { buildPaimonsBargainsRotation } from "#src/services/genshinAssets/shops/buildPaimonsBargainsRotation";
 import { buildRealmDepotGoods } from "#src/services/genshinAssets/shops/buildRealmDepotGoods";
+import { buildSouvenirGoods } from "#src/services/genshinAssets/shops/buildSouvenirGoods";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -13,7 +14,7 @@ export const shopsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust, its rotation of characters and weapons, the Mondstadt grocery's general goods and the Realm Depot's goods from the dump to the game data",
+      "Publish Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust, its rotation of characters and weapons, the Mondstadt grocery's general goods, the Realm Depot's goods and the Souvenir Shops' goods from the dump to the game data",
     name: "shops",
   },
   run: async ({ args }) => {
@@ -22,6 +23,7 @@ export const shopsCommand: SubCommandsDef[string] = defineCommand({
       ...buildPaimonsBargainsRotation(),
       ...buildMondstadtGeneralGoods(),
       ...buildRealmDepotGoods(),
+      ...buildSouvenirGoods(),
     };
     console.log(
       await publishGameDataStep({
