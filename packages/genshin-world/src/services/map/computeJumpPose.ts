@@ -1,16 +1,16 @@
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
-import { JUMP_STANDOFF_DISTANCE } from "#src/services/map/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A jump to a landmark lands in front of it, along the way it faces, and faces back at it, so the view arrives on what
-// Was jumped to: a landmark turned by its rotation faces along the sine and cosine of it, and a view at that same yaw
-// Looks the opposite way
-export const computeJumpPose = ({ heightOffset, position, rotation }: Landmark): WorldJumpPose => ({
-  heightOffset,
-  point: {
-    x: position.x + Math.sin(rotation) * JUMP_STANDOFF_DISTANCE,
-    z: position.z + Math.cos(rotation) * JUMP_STANDOFF_DISTANCE,
-  },
-  yaw: rotation,
-});
+// A jump lands at a landmark's arrival, the game's own place for it, facing the turn the game gives there and at the
+// Height that place stands. A landmark with no arrival read from the game is an error, since a jump has nowhere to land
+export const computeJumpPose = (landmark: Landmark): WorldJumpPose => {
+  if (!landmark.arrival) throw new InvalidOperationError(Operation.Read, landmark.id, "has no arrival to jump to");
+  const { arrival } = landmark;
+  return {
+    heightOffset: arrival.heightOffset,
+    point: { x: arrival.position.x, z: arrival.position.z },
+    yaw: arrival.rotation,
+  };
+};
