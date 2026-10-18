@@ -14,32 +14,32 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `alhaitham`          | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `aloy`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `alyosha`            | —                      |                                                                          |
-| `amber`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `amber`              | —                      |                                                                          |
 | `arataki-itto`       | 2026-10-19 · Haiku 5.5 | design is `itto`                                                         |
 | `arlecchino`         | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `baizhu`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `barbara`            | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `beidou`             | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `bennett`            | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `beidou`             | —                      |                                                                          |
+| `bennett`            | —                      |                                                                          |
 | `candace`            | —                      |                                                                          |
 | `charlotte`          | —                      |                                                                          |
 | `chasca`             | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `chevreuse`          | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `chiori`             | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `chevreuse`          | —                      |                                                                          |
+| `chiori`             | —                      |                                                                          |
 | `chongyun`           | —                      |                                                                          |
-| `citlali`            | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `citlali`            | —                      |                                                                          |
 | `clorinde`           | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `collei`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `columbina`          | 2026-10-19 · Haiku 5.5 | her page's poise bullet names the deleted framework proposal's poise gap |
 | `cyno`               | —                      |                                                                          |
 | `dahlia`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `dehya`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `diluc`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `diona`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `dori`               | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `diluc`              | —                      |                                                                          |
+| `diona`              | —                      |                                                                          |
+| `dori`               | —                      |                                                                          |
 | `durin`              | —                      |                                                                          |
 | `emilie`             | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `escoffier`          | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `escoffier`          | —                      |                                                                          |
 | `eula`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `faruzan`            | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `fischl`             | —                      |                                                                          |
@@ -47,35 +47,35 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `freminet`           | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `furina`             | —                      |                                                                          |
 | `gaming`             | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `ganyu`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `ganyu`              | —                      |                                                                          |
 | `gorou`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `hu-tao`             | —                      |                                                                          |
-| `iansan`             | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `iansan`             | —                      |                                                                          |
 | `ifa`                | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `illuga`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ineffa`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `jean`               | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `jean`               | —                      |                                                                          |
 | `kachina`            | —                      |                                                                          |
 | `kaedehara-kazuha`   | —                      | design is `kazuha`                                                       |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | —                      |                                                                          |
 | `kamisato-ayato`     | —                      |                                                                          |
 | `kaveh`              | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `keqing`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `keqing`             | —                      |                                                                          |
 | `kinich`             | —                      |                                                                          |
-| `kirara`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `kirara`             | —                      |                                                                          |
 | `klee`               | —                      |                                                                          |
-| `kujou-sara`         | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `kujou-sara`         | —                      |                                                                          |
 | `kuki-shinobu`       | —                      | design is `kuki`                                                         |
 | `lan-yan`            | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `lauma`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `lauma`              | —                      |                                                                          |
 | `layla`              | —                      |                                                                          |
 | `linnea`             | —                      |                                                                          |
-| `lisa`               | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `lisa`               | —                      |                                                                          |
 | `lohen`              | —                      |                                                                          |
 | `lynette`            | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `lyney`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `lyney`              | —                      |                                                                          |
 | `mavuika`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `mika`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `mona`               | —                      |                                                                          |
@@ -86,47 +86,47 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `neuvillette`        | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `nicole`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `nilou`              | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `ningguang`          | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `noelle`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `ningguang`          | —                      |                                                                          |
+| `noelle`             | —                      |                                                                          |
 | `odette`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ororon`             | —                      |                                                                          |
 | `prune`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `qiqi`               | —                      |                                                                          |
-| `raiden-shogun`      | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `raiden-shogun`      | —                      |                                                                          |
 | `razor`              | 2026-10-18 · Haiku 5.5 |                                                                          |
-| `rosaria`            | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `rosaria`            | —                      |                                                                          |
 | `sandrone`           | —                      |                                                                          |
 | `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 | design is `kokomi`                                                       |
 | `sayu`               | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sethos`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `shenhe`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `shikanoin-heizou`   | 2026-10-19 · Haiku 5.5 | design is `heizou`                                                       |
-| `sigewinne`          | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `skirk`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `sigewinne`          | —                      |                                                                          |
+| `skirk`              | —                      |                                                                          |
 | `sucrose`            | —                      |                                                                          |
-| `tartaglia`          | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `tartaglia`          | —                      |                                                                          |
 | `thoma`              | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `tighnari`           | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `tighnari`           | —                      |                                                                          |
 | `traveler`           | —                      |                                                                          |
-| `varesa`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `varesa`             | —                      |                                                                          |
 | `varka`              | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `venti`              | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `venti`              | —                      |                                                                          |
 | `vesna`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `vodyanitsa`         | —                      |                                                                          |
-| `wanderer`           | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `wanderer`           | —                      |                                                                          |
 | `wriothesley`        | —                      |                                                                          |
-| `xiangling`          | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `xiangling`          | —                      |                                                                          |
 | `xianyun`            | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `xiao`               | —                      |                                                                          |
 | `xilonen`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `xingqiu`            | —                      |                                                                          |
-| `xinyan`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `xinyan`             | —                      |                                                                          |
 | `yae-miko`           | —                      |                                                                          |
 | `yanfei`             | —                      |                                                                          |
 | `yaoyao`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `yelan`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `yoimiya`            | —                      |                                                                          |
 | `yumemizuki-mizuki`  | 2026-10-14 · Haiku 5.5 | design is `mizuki`                                                       |
-| `yun-jin`            | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `yun-jin`            | —                      |                                                                          |
 | `zhongli`            | —                      |                                                                          |
 | `zibai`              | 2026-10-19 · Haiku 5.5 |                                                                          |
