@@ -92,6 +92,11 @@ import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } fro
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
+import {
+  DOMAIN_ARENA_PROMPT_OFFSET,
+  DOMAIN_LEAVE_INTERACTABLE_ID,
+  DOMAIN_TREE_INTERACTABLE_ID,
+} from "#src/services/domains/constants";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
@@ -531,12 +536,12 @@ const {
   onPartyDown: () => {
     // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
     // Jump to the nearest waypoint, so the entrance is where the player lands
-    if (!isDomainChallengeActive.value) {
+    if (!domainArena.value) {
       screenKind.value = ScreenKind.GameOver;
       return;
     }
     reviveFallenParty();
-    stepDomainChallenge(true);
+    stepDomainChallenge({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
   },
   onPartyRevived: () => {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
@@ -831,25 +836,64 @@ const {
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 const {
+  chooseDomainTreeClaim,
+  closeDomainTreeClaim,
+  domainArena,
   domainCamps,
+  domainClaimOffers,
   domainEntrance,
   domainLevelRows,
   enterDomain,
-  isDomainChallengeActive,
+  isDomainTreeRaised,
+  leaveDomain,
   openDomain,
+  openDomainTreeClaim,
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
+  adventureExp,
+  adventureRankTables,
+  completedMainQuestIds,
   events,
   gameDataBaseUrl,
   getWorldNow,
+  inventory,
   jumpTo,
+  materialDataMap,
+  nameText,
   random: () => kitContext.random(),
   rank,
+  setInventory,
+  setWallet,
   unlockedLandmarks,
+  wallet,
 });
 // The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
 const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value]);
+// The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
+const domainArenaInteractables = computed<Interactable[]>(() => {
+  if (!domainArena.value) return [];
+  const { x, z } = domainArena.value.center;
+  const y = getGroundHeight(x, z);
+  return [
+    {
+      id: DOMAIN_LEAVE_INTERACTABLE_ID,
+      kind: InteractionKind.Activate,
+      name: gameText[GameTextKey.DomainLeave],
+      position: { x: x - DOMAIN_ARENA_PROMPT_OFFSET, y, z },
+    },
+    ...(isDomainTreeRaised.value
+      ? [
+          {
+            id: DOMAIN_TREE_INTERACTABLE_ID,
+            kind: InteractionKind.Activate,
+            name: gameText[GameTextKey.PetrifiedTree],
+            position: { x: x + DOMAIN_ARENA_PROMPT_OFFSET, y, z },
+          },
+        ]
+      : []),
+  ];
+});
 const interactables = computed<Interactable[]>(() => {
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
@@ -877,6 +921,7 @@ const interactables = computed<Interactable[]>(() => {
     ),
     // An unlocked domain entrance is entered on the key, its screen opened with its levels
     ...unlockedDomainEntrances.value.map((landmark) => toLandmarkInteractable(landmark, GameTextKey.DomainEnter)),
+    ...domainArenaInteractables.value,
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
     ...computeCookingStoveInteractables(
       cookingStovePlace.value,
@@ -1047,7 +1092,11 @@ defineExpose({ jumpTo, readCameraPosition });
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
           if (!isPaused && screenKind === ScreenKind.World) drawDayOutcrops(getWorldNow(), kitContext.random);
-          if (!isPaused) stepDomainChallenge(false);
+          stepDomainChallenge({
+            deltaMilliseconds: context.delta,
+            isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
+            partyDown: false,
+          });
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
@@ -1113,6 +1162,16 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              interactable.id === DOMAIN_LEAVE_INTERACTABLE_ID
+            ) {
+              screenKind = ScreenKind.Domain;
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              interactable.id === DOMAIN_TREE_INTERACTABLE_ID
+            ) {
+              openDomainTreeClaim(getWorldNow());
             } else if (interactable?.kind === InteractionKind.Activate && domainEntranceLandmark) {
               openDomain(domainEntranceLandmark);
               screenKind = ScreenKind.Domain;
@@ -1297,6 +1356,15 @@ defineExpose({ jumpTo, readCameraPosition });
           :original-label="gameText[GameTextKey.UseOriginalResin]"
           @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
           @close="closeTrounceBlossomClaim()"
+        />
+        <OfferChoice
+          v-if="domainClaimOffers"
+          :cancel-label="gameText[GameTextKey.Cancel]"
+          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :offers="domainClaimOffers"
+          :original-label="gameText[GameTextKey.UseOriginalResin]"
+          @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
+          @close="closeDomainTreeClaim"
         />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
@@ -1595,9 +1663,14 @@ defineExpose({ jumpTo, readCameraPosition });
     <DomainScreen
       v-if="screenKind === ScreenKind.Domain"
       :game-text
+      :is-in-domain="domainArena !== undefined"
       :levels="domainLevelRows"
       @close="screenKind = ScreenKind.World"
       @enter="enterDomainLevel"
+      @leave="
+        leaveDomain();
+        screenKind = ScreenKind.World;
+      "
     />
     <CraftingScreen
       v-if="screenKind === ScreenKind.Crafting"

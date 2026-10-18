@@ -1,4 +1,5 @@
 import { DomainKind } from "#src/models/domains/DomainKind";
+import { itemCountSchema } from "#src/models/inventory/ItemCount";
 import { z } from "zod";
 
 // One level of a challenge domain as the game's tables set it: its dungeon, the recommended Adventure Rank and the
@@ -9,6 +10,9 @@ export const domainLevelSchema = z.object({
   enemyLevel: z.int(),
   recommendedRank: z.int(),
   scheduledDaysOfWeek: z.array(z.int().min(1).max(7)),
+  // The resin a Petrified Tree claim of this level costs, and the whole items each claim grants, from the dump's tables
+  resinCost: z.int().min(0),
+  treeRewards: z.array(itemCountSchema),
 });
 
 // A challenge domain's kind and its levels, read by its entrance's entry id

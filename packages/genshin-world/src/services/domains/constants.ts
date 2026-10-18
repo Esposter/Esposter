@@ -11,3 +11,8 @@ export const DOMAIN_ENTRANCE_STAND_IN_WIDTH = 2;
 export const DOMAIN_ARENA_OFFSET = 30;
 // How far from an arena's centre its stand-in enemies stand, in world units. PROVISIONAL, as the arena is
 export const DOMAIN_ARENA_SPREAD = 6;
+// The arena's two prompts: the leave that opens the domain screen's leave prompt, and the Petrified Tree a clear raises.
+// Both stand beside the arena's centre, PROVISIONAL until the domain's scene export gives their places
+export const DOMAIN_LEAVE_INTERACTABLE_ID = "domain-leave";
+export const DOMAIN_TREE_INTERACTABLE_ID = "domain-tree";
+export const DOMAIN_ARENA_PROMPT_OFFSET = 4;
