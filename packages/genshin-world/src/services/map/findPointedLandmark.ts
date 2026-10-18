@@ -1,8 +1,8 @@
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GroundPoint } from "genshin-engine";
 
-import { NAVIGATION_POINTER_HIDE_DISTANCE, NAVIGATION_POINTER_SHOW_DISTANCE } from "#src/services/map/constants";
 import { computeLandmarkDistance } from "#src/services/map/computeLandmarkDistance";
+import { NAVIGATION_POINTER_HIDE_DISTANCE, NAVIGATION_POINTER_SHOW_DISTANCE } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 
 // The locked jump landmark the HUD points to from the character's ground point: the one pointed to last while it is still
