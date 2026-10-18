@@ -35,17 +35,19 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
     {
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed
       catalogue: fitAreaOutlines,
-      ground: () =>
-        fitGroundPieces(
-          DerivedAssetComponent.Windrise,
-          {
-            centre: { x: 0, z: 0 },
-            half: GROUND_RADIUS,
-            isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
-            key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
-          },
-          true,
-        ),
+      ground: async () =>
+        (
+          await fitGroundPieces(
+            DerivedAssetComponent.Windrise,
+            {
+              centre: { x: 0, z: 0 },
+              half: GROUND_RADIUS,
+              isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
+              key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
+            },
+            true,
+          )
+        ).build,
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
       landmarks: async () => {
         const landmarksPath = await fitRegionLandmarks(DerivedAssetComponent.Windrise, WINDRISE_REGION_FILE);
