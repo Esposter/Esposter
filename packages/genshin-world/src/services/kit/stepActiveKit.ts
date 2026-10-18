@@ -66,6 +66,7 @@ export const stepActiveKit = (
   }: ActiveKitControls,
 ): void => {
   context.locomotionState = input.locomotionState;
+  context.stamina = characterController.stamina;
   const {
     body,
     characterIdCombatantMap,
