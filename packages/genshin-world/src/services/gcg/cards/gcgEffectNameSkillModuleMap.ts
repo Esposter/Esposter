@@ -8,6 +8,7 @@ import { dandelionBreeze } from "#src/services/gcg/cards/dandelionBreeze";
 import { dawn } from "#src/services/gcg/cards/dawn";
 import { elementalSedimentation } from "#src/services/gcg/cards/elementalSedimentation";
 import { fantasticVoyage } from "#src/services/gcg/cards/fantasticVoyage";
+import { floralBrush } from "#src/services/gcg/cards/floralBrush";
 import { flowfireEdgeSkill } from "#src/services/gcg/cards/flowfireEdgeSkill";
 import { forbiddenCreation } from "#src/services/gcg/cards/forbiddenCreation";
 import { frostgnaw } from "#src/services/gcg/cards/frostgnaw";
@@ -61,6 +62,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
   ["Char_Skill_15023", dandelionBreeze],
+  ["Char_Skill_17012", floralBrush],
   ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],
   ["Char_Skill_22013", theMyriadWilds],
