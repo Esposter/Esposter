@@ -56,18 +56,22 @@ describe(createByakuyaKougetsuPassiveModule, () => {
   test("a Normal Attack gains 1% of the wielder's Max HP as base damage, and a Charged Attack gains none", () => {
     expect.hasAssertions();
 
-    const context = createKitTestContext(wielder);
+    const combatant: Combatant = {
+      ...wielder,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+    };
+    const context = createKitTestContext(combatant);
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
         byakuyaKougetsuPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-          createStrike(attackTag),
+          createStrike(attackTag, combatant),
           enemy,
           context.party,
           context.kitEffectState.effects,
           context.characterIdCombatantMap,
         ),
       ),
-    ).toStrictEqual([0.01 * wielder.attributes.maxHealth, 0]);
+    ).toStrictEqual([0.01 * 10_000, 0]);
   });
 
   test("a Health buff on the wielder raises the Normal Attack's base damage through her buffed Max HP", () => {
