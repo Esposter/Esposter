@@ -206,31 +206,31 @@ export const useGridLayout = <T extends GridItem>(
     if (event.pointerId === gesture.value?.pointerId) resetGesture();
   };
 
-  // The element and its observer are held from mount, so unmount detaches exactly what mount attached
-  const attached = shallowRef<{ element: HTMLElement; observer: ResizeObserver }>();
+  // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount attached
+  const attached = shallowRef<{ controller: AbortController; element: HTMLElement; observer: ResizeObserver }>();
   onMounted(() => {
     const element = root.value;
     if (!element) return;
 
+    const controller = new AbortController();
+    const { signal } = controller;
     const observer = new ResizeObserver(([entry]) => {
       width.value = entry?.contentRect.width ?? 0;
     });
     observer.observe(element);
-    element.addEventListener("pointermove", handlePointerMove);
-    element.addEventListener("pointerup", handlePointerUp);
-    element.addEventListener("pointercancel", handlePointerCancel);
+    element.addEventListener("pointermove", handlePointerMove, { signal });
+    element.addEventListener("pointerup", handlePointerUp, { signal });
+    element.addEventListener("pointercancel", handlePointerCancel, { signal });
     mountedGrids.set(element, self);
-    attached.value = { element, observer };
+    attached.value = { controller, element, observer };
   });
   onUnmounted(() => {
     if (!attached.value) return;
 
-    const { element, observer } = attached.value;
+    const { controller, element, observer } = attached.value;
     observer.disconnect();
     mountedGrids.delete(element);
-    element.removeEventListener("pointermove", handlePointerMove);
-    element.removeEventListener("pointerup", handlePointerUp);
-    element.removeEventListener("pointercancel", handlePointerCancel);
+    controller.abort();
   });
 
   return { gridHeight, placeholder, reportContentHeight, startGesture, tiles };

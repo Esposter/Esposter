@@ -3,6 +3,18 @@ import type { GridItem } from "#src/models/GridItem";
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { GRID_MIN_SPAN } from "#src/services/constants";
 
+// The sides each edge pulls, as one map so an edge added to ResizeEdge is a type error until it names its sides
+const ResizeEdgeSidesMap = {
+  [ResizeEdge.East]: { isEast: true, isNorth: false, isSouth: false, isWest: false },
+  [ResizeEdge.North]: { isEast: false, isNorth: true, isSouth: false, isWest: false },
+  [ResizeEdge.NorthEast]: { isEast: true, isNorth: true, isSouth: false, isWest: false },
+  [ResizeEdge.NorthWest]: { isEast: false, isNorth: true, isSouth: false, isWest: true },
+  [ResizeEdge.South]: { isEast: false, isNorth: false, isSouth: true, isWest: false },
+  [ResizeEdge.SouthEast]: { isEast: true, isNorth: false, isSouth: true, isWest: false },
+  [ResizeEdge.SouthWest]: { isEast: false, isNorth: false, isSouth: true, isWest: true },
+  [ResizeEdge.West]: { isEast: false, isNorth: false, isSouth: false, isWest: true },
+} as const satisfies Record<ResizeEdge, { isEast: boolean; isNorth: boolean; isSouth: boolean; isWest: boolean }>;
+
 // The cell a pointer's travel from where it pressed puts an item on. A move shifts its origin by whole cells and keeps it
 // Within the columns. A resize moves the edges it pulls and keeps the opposite ones in place, and never shrinks below the
 // Least span
@@ -29,10 +41,7 @@ export const getGestureCell = ({
     return { h: origin.h, id: origin.id, w: origin.w, x, y };
   }
 
-  const isWest = edge === ResizeEdge.West || edge === ResizeEdge.NorthWest || edge === ResizeEdge.SouthWest;
-  const isEast = edge === ResizeEdge.East || edge === ResizeEdge.NorthEast || edge === ResizeEdge.SouthEast;
-  const isNorth = edge === ResizeEdge.North || edge === ResizeEdge.NorthEast || edge === ResizeEdge.NorthWest;
-  const isSouth = edge === ResizeEdge.South || edge === ResizeEdge.SouthEast || edge === ResizeEdge.SouthWest;
+  const { isEast, isNorth, isSouth, isWest } = ResizeEdgeSidesMap[edge];
   const right = origin.x + origin.w;
   const bottom = origin.y + origin.h;
   // The left edge stops at the grid's left side, and at the least span short of the right edge
