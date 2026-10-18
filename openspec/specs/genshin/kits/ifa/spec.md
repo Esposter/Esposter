@@ -1,6 +1,6 @@
 ## Purpose
 
-Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, and her low and collision plunges. Tonic Shot, her healing, the sedation marks and her passives and constellations wait on the Nightsoul Blessing.
+Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, and her low and collision plunges. Her skill's press enters and leaves the blessing with its points. Tonic Shot, her healing, the sedation marks and her passives and constellations wait on the Nightsoul hook and the sedation-mark hook.
 
 ## Requirements
 
@@ -78,3 +78,19 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed and SHALL deal no h
 - **GIVEN** the skill is cooling down
 - **WHEN** the player presses the skill again within 7.5 seconds
 - **THEN** nothing happens
+
+### Requirement: Skill press enters the Nightsoul Blessing
+
+Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, which drain eight a second, when she is not in it, and SHALL leave the blessing when she is. Neither press SHALL deal a hit yet.
+
+#### Scenario: Press enters the blessing and its points drain
+
+- **WHEN** the player presses Ifa's skill outside the blessing
+- **THEN** Ifa is in the Nightsoul Blessing with 80 points
+- **AND** her points drop by eight a second
+
+#### Scenario: A press in the blessing leaves it
+
+- **GIVEN** Ifa is in the Nightsoul Blessing
+- **WHEN** the player presses Ifa's skill
+- **THEN** she is no longer in the blessing and her points are gone
