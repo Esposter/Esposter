@@ -1,6 +1,6 @@
 ## 1. The blacksmith
 
-- [ ] 1.1 Place Mondstadt's blacksmith at the Blacksmith point of its scene group record. Verify: a test named after the scenario 'Mondstadt's blacksmith stands at its recorded place' first written and seen failing.
+- [x] 1.1 Place Mondstadt's blacksmith at the Blacksmith point of its scene group record. Verify: a test named after the scenario 'Mondstadt's blacksmith stands at its recorded place' first written and seen failing.
 
 ## 2. The screen
 
