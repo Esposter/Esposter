@@ -39,7 +39,7 @@ flowchart TD
 
 - **Opening reads the global only when called.** Importing the module on the server, or in a test with no `indexedDB`, is harmless; the open call is the first thing that touches the browser.
 - **The upgrade runs inside the version change.** An upgrade that throws aborts its own transaction, so the version is not applied with half its stores, and the open request rejects with the abort.
-- **`done` settles with the transaction's outcome.** A transaction that fails rejects `done` with the error that aborted it, and an abort with no error of its own rejects with an `AbortError`. An upgrade's `done` is made before the upgrade callback runs, so a read after the transaction has settled still gets its outcome. A failure nobody reads is logged rather than left unhandled, since the open request already carries it.
+- **`done` settles with the transaction's outcome.** A transaction that fails rejects `done` with the error that aborted it, and an abort with no error of its own rejects with an `AbortError`. An upgrade's `done` is made before the upgrade callback runs, so a read after the transaction has settled still gets its outcome. A failure nobody reads is handled rather than left unhandled. The two upgrade logs split the failures between them: `openDatabase` logs an error the upgrade callback threw, and an upgrade's `done` logs a failure only when the transaction carries an error of its own, such as the request error that aborted it, so a throw's abort is not logged a second time.
 - **The one-request shortcuts run in a transaction of their own** with no `done` attached, so the request's own error is what the caller receives.
 
 ## Scope

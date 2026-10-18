@@ -1,6 +1,8 @@
 import type { DatabaseSchema } from "#src/models/indexedDb/DatabaseSchema";
 
+import { getResultAsync } from "#src/services/error/getResultAsync";
 import { openDatabase } from "#src/services/indexedDb/openDatabase";
+import { noop } from "#src/util/function/noop";
 import { IDBVersionChangeEvent } from "fake-indexeddb";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -98,6 +100,73 @@ describe(openDatabase, () => {
     await expect(open).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
     );
+  });
+
+  test("A thrown upgrade failure is logged once", async () => {
+    expect.hasAssertions();
+
+    const upgradeError = new Error("upgrade failed");
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    const upgradeTransactions: { done: Promise<void> }[] = [];
+    const open = openDatabase<Schema>("thrownLogged", 1, {
+      upgrade: (_database, _oldVersion, _newVersion, transaction) => {
+        upgradeTransactions.push(transaction);
+        throw upgradeError;
+      },
+    });
+
+    await expect(open).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
+    );
+    await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AbortError: The transaction was aborted]`,
+    );
+    expect(console.error).toHaveBeenCalledOnce();
+  });
+
+  test("A thrown upgrade failure keeps its message", async () => {
+    expect.hasAssertions();
+
+    const upgradeError = new Error("upgrade failed");
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    const upgradeTransactions: { done: Promise<void> }[] = [];
+    const open = openDatabase<Schema>("thrownMessage", 1, {
+      upgrade: (_database, _oldVersion, _newVersion, transaction) => {
+        upgradeTransactions.push(transaction);
+        throw upgradeError;
+      },
+    });
+
+    await expect(open).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
+    );
+    await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AbortError: The transaction was aborted]`,
+    );
+    expect(console.error).toHaveBeenLastCalledWith(upgradeError);
+  });
+
+  test("An upgrade aborted by a request error is logged", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    const upgradeTransactions: { done: Promise<void> }[] = [];
+    const open = openDatabase<Schema>("requestLogged", 1, {
+      upgrade: (upgradeDatabase, _oldVersion, _newVersion, transaction) => {
+        const store = upgradeDatabase.createObjectStore("users", { keyPath: "id" });
+        store.createIndex("name", "name", { unique: true });
+        upgradeTransactions.push(transaction);
+        store.put({ id: 1, name: "a" });
+        // The second name fails its request, which aborts the transaction, so its rejection is handled as it is made
+        getResultAsync(() => store.put({ id: 2, name: "a" })).match(noop, noop);
+      },
+    });
+
+    await expect(open).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
+    );
+    await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(`[ConstraintError]`);
+    expect(console.error).toHaveBeenCalledOnce();
   });
 
   test("#190 a shortcut write rejects with the request's own error", async () => {
