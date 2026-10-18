@@ -1,4 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -8,7 +7,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { OBSIDIAN_CODEX_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createObsidianCodexSetModule } from "#src/services/artifact/sets/createObsidianCodexSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -19,34 +19,19 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const strike: KitStrike = {
   attackTag: AttackTag.NormalAttack,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
   combatant: wearer,
   hit: KIT.plungeCollision,
-};
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(OBSIDIAN_CODEX_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
 };
 
 describe(createObsidianCodexSetModule, () => {
@@ -55,7 +40,9 @@ describe(createObsidianCodexSetModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: NIGHTSOUL_BLESSING_STATUS_ID, secondsRemaining: 10 });
-    const { getStrikeDamageBonus } = createObsidianCodexSetModule(bonusOf(2));
+    const { getStrikeDamageBonus } = createObsidianCodexSetModule(
+      getArtifactSetBonus(statTables, OBSIDIAN_CODEX_ARTIFACT_SET_ID, 2),
+    );
 
     expect(
       getStrikeDamageBonus?.(strike, enemy, createParty([TRAVELER_CHARACTER_ID]), kitEffectState.effects),
@@ -73,7 +60,9 @@ describe(createObsidianCodexSetModule, () => {
   test("raises no DMG outside Nightsoul's Blessing", () => {
     expect.hasAssertions();
 
-    const { getStrikeDamageBonus } = createObsidianCodexSetModule(bonusOf(2));
+    const { getStrikeDamageBonus } = createObsidianCodexSetModule(
+      getArtifactSetBonus(statTables, OBSIDIAN_CODEX_ARTIFACT_SET_ID, 2),
+    );
 
     expect(getStrikeDamageBonus?.(strike, enemy, createParty([TRAVELER_CHARACTER_ID]), [])).toBe(0);
   });
@@ -84,7 +73,9 @@ describe(createObsidianCodexSetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getPassiveBonuses, onKitEvent } = createObsidianCodexSetModule(bonusOf(4));
+    const { getPassiveBonuses, onKitEvent } = createObsidianCodexSetModule(
+      getArtifactSetBonus(statTables, OBSIDIAN_CODEX_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.(
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.NightsoulPointsConsumed, points: 1 },
@@ -103,7 +94,9 @@ describe(createObsidianCodexSetModule, () => {
     const party = createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getPassiveBonuses, onKitEvent } = createObsidianCodexSetModule(bonusOf(4));
+    const { getPassiveBonuses, onKitEvent } = createObsidianCodexSetModule(
+      getArtifactSetBonus(statTables, OBSIDIAN_CODEX_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.(
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.NightsoulPointsConsumed, points: 1 },

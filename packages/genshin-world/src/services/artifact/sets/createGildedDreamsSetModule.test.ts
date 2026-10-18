@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { GILDED_DREAMS_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createGildedDreamsSetModule } from "#src/services/artifact/sets/createGildedDreamsSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -19,7 +20,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,13 +29,6 @@ const SAME_ELEMENT_CHARACTER_ID = 2;
 const PYRO_CHARACTER_ID = 3;
 const CRYO_CHARACTER_ID = 4;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(GILDED_DREAMS_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -47,7 +41,9 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
 });
 const wearer: Combatant = {
   ...createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro),
-  kit: getPassiveKit(KIT, [createGildedDreamsSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createGildedDreamsSetModule(getArtifactSetBonus(statTables, GILDED_DREAMS_ARTIFACT_SET_ID, 4)),
+  ]),
 };
 const members = [
   wearer,

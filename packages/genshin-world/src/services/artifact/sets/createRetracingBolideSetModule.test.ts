@@ -1,4 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
@@ -6,7 +5,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { RETRACING_BOLIDE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createRetracingBolideSetModule } from "#src/services/artifact/sets/createRetracingBolideSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -15,15 +14,7 @@ import { assert, describe, expect, test } from "vitest";
 const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wearer = createSetWearer(TRAVELER_KIT);
 const deployed = (isOnField: boolean): DeployedCombatant[] => [{ ...wearer, isOnField }];
 const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
 const shieldedBonuses = [

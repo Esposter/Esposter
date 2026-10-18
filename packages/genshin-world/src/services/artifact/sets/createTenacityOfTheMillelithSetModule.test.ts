@@ -1,4 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 
@@ -9,8 +8,9 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 
 import { TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/sets/createTenacityOfTheMillelithSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -19,21 +19,13 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const damageDealtBy = (attackTag: AttackTag) =>
   ({
@@ -45,13 +37,6 @@ const damageDealtBy = (attackTag: AttackTag) =>
     kind: KitEventKind.DamageTaken,
     striker: wearer,
   }) as const;
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 
 describe(createTenacityOfTheMillelithSetModule, () => {
   test("gives every deployed member 20% ATK and 30% Shield Strength for 3 seconds when its wearer's Elemental Skill hits, from four pieces", () => {
@@ -60,7 +45,9 @@ describe(createTenacityOfTheMillelithSetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { onKitEvent } = createTenacityOfTheMillelithSetModule(bonusOf(4));
+    const { onKitEvent } = createTenacityOfTheMillelithSetModule(
+      getArtifactSetBonus(statTables, TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.(damageDealtBy(AttackTag.ElementalSkill), context, wearer);
 
@@ -87,7 +74,9 @@ describe(createTenacityOfTheMillelithSetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { onKitEvent } = createTenacityOfTheMillelithSetModule(bonusOf(4));
+    const { onKitEvent } = createTenacityOfTheMillelithSetModule(
+      getArtifactSetBonus(statTables, TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.(damageDealtBy(AttackTag.NormalAttack), context, wearer);
     expect(kitEffectState.effects).toHaveLength(0);

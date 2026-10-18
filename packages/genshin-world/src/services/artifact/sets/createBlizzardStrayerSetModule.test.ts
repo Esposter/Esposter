@@ -1,5 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -9,7 +7,8 @@ import { AuraType } from "#src/models/combat/AuraType";
 
 import { BLIZZARD_STRAYER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createBlizzardStrayerSetModule } from "#src/services/artifact/sets/createBlizzardStrayerSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -17,20 +16,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const strike: KitStrike = {
   attackTag: AttackTag.NormalAttack,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -38,13 +29,6 @@ const strike: KitStrike = {
   hit: KIT.plungeCollision,
 };
 const party = createParty([TRAVELER_CHARACTER_ID]);
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(BLIZZARD_STRAYER_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 // An enemy under the auras given
 const createEnemyUnder = (auraTypes: AuraType[]) => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -57,7 +41,9 @@ describe(createBlizzardStrayerSetModule, () => {
   test("raises CRIT Rate by 20% against an enemy under Cryo, and by 20% more against a Frozen one, from four pieces", () => {
     expect.hasAssertions();
 
-    const { getStrikeCriticalRateBonus } = createBlizzardStrayerSetModule(bonusOf(4));
+    const { getStrikeCriticalRateBonus } = createBlizzardStrayerSetModule(
+      getArtifactSetBonus(statTables, BLIZZARD_STRAYER_ARTIFACT_SET_ID, 4),
+    );
 
     expect(getStrikeCriticalRateBonus?.(strike, createEnemyUnder([AuraType.Cryo]), party, [])).toBeCloseTo(0.2);
     expect(

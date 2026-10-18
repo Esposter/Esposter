@@ -6,6 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { OCEAN_HUED_CLAM_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -20,7 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,13 +29,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 const OTHER_CHARACTER_ID = 2;
 const FOAM_ID = "oceanHuedClamFoam";
 const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(OCEAN_HUED_CLAM_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 // Sturdy, so no hit is clamped to the health the camp member starts with, and standing at the wearer's feet unless placed
 const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
@@ -52,7 +46,9 @@ const createWearer = (maxHealth = 10_000, characterId = TRAVELER_CHARACTER_ID): 
     characterId,
     constellationCount: 0,
     elementalResonances: [],
-    kit: getPassiveKit(KIT, [createOceanHuedClamSetModule(bonusOf(4))]),
+    kit: getPassiveKit(KIT, [
+      createOceanHuedClamSetModule(getArtifactSetBonus(statTables, OCEAN_HUED_CLAM_ARTIFACT_SET_ID, 4)),
+    ]),
     level: 1,
   };
 };

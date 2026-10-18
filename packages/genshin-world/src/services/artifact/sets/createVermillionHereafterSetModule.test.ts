@@ -7,6 +7,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { VERMILLION_HEREAFTER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createVermillionHereafterSetModule } from "#src/services/artifact/sets/createVermillionHereafterSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -17,25 +18,20 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(VERMILLION_HEREAFTER_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
-  kit: getPassiveKit(KIT, [createVermillionHereafterSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createVermillionHereafterSetModule(getArtifactSetBonus(statTables, VERMILLION_HEREAFTER_ARTIFACT_SET_ID, 4)),
+  ]),
   level: 1,
 });
 const createHpDecrease = (): KitEvent => ({

@@ -8,6 +8,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createHuskOfOpulentDreamsSetModule } from "#src/services/artifact/sets/createHuskOfOpulentDreamsSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -21,27 +22,22 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createWearer = (characterId = TRAVELER_CHARACTER_ID): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
   characterId,
   constellationCount: 0,
   elementalResonances: [],
-  kit: getPassiveKit(KIT, [createHuskOfOpulentDreamsSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createHuskOfOpulentDreamsSetModule(getArtifactSetBonus(statTables, HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID, 4)),
+  ]),
   level: 1,
 });
 // A hit the given combatant deals of the given element, as the kit sends it

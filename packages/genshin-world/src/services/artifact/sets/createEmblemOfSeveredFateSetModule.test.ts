@@ -6,6 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createEmblemOfSeveredFateSetModule } from "#src/services/artifact/sets/createEmblemOfSeveredFateSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -14,7 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -41,13 +42,6 @@ const createStrike = (attackTag: AttackTag, combatant: Combatant): KitStrike => 
   combatant,
   hit: KIT.plungeCollision,
 });
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 
 describe(createEmblemOfSeveredFateSetModule, () => {
   test("raises the Elemental Burst DMG by 25% of the wearer's Energy Recharge from four pieces", () => {
@@ -55,7 +49,9 @@ describe(createEmblemOfSeveredFateSetModule, () => {
 
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    const { getStrikeDamageBonus } = createEmblemOfSeveredFateSetModule(bonusOf(4));
+    const { getStrikeDamageBonus } = createEmblemOfSeveredFateSetModule(
+      getArtifactSetBonus(statTables, EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID, 4),
+    );
     const wearer = createWearer(1.5);
 
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst, wearer), enemy, party, [])).toBeCloseTo(0.375);
@@ -67,7 +63,9 @@ describe(createEmblemOfSeveredFateSetModule, () => {
 
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    const { getStrikeDamageBonus } = createEmblemOfSeveredFateSetModule(bonusOf(4));
+    const { getStrikeDamageBonus } = createEmblemOfSeveredFateSetModule(
+      getArtifactSetBonus(statTables, EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID, 4),
+    );
     const wearer = createWearer(4);
 
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst, wearer), enemy, party, [])).toBeCloseTo(0.75);

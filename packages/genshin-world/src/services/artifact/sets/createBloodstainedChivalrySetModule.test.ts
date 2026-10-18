@@ -7,7 +7,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createBloodstainedChivalrySetModule } from "#src/services/artifact/sets/createBloodstainedChivalrySetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -16,20 +17,12 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createStrike = (attackTag: AttackTag): KitStrike => ({
@@ -38,13 +31,6 @@ const createStrike = (attackTag: AttackTag): KitStrike => ({
   combatant: wearer,
   hit: KIT.plungeCollision,
 });
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 
 describe(createBloodstainedChivalrySetModule, () => {
   test("raises the DMG of its wearer's Charged Attacks by 50% once it defeats an opponent, and of no other strike", () => {
@@ -53,7 +39,9 @@ describe(createBloodstainedChivalrySetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getStrikeDamageBonus, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
+    const { getStrikeDamageBonus, onKitEvent } = createBloodstainedChivalrySetModule(
+      getArtifactSetBonus(statTables, BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+    );
 
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects)).toBe(0);
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
@@ -69,7 +57,9 @@ describe(createBloodstainedChivalrySetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getChargedAttackStaminaMultiplier, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
+    const { getChargedAttackStaminaMultiplier, onKitEvent } = createBloodstainedChivalrySetModule(
+      getArtifactSetBonus(statTables, BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+    );
 
     expect(getChargedAttackStaminaMultiplier?.(context)).toBe(1);
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
@@ -87,7 +77,9 @@ describe(createBloodstainedChivalrySetModule, () => {
       kitEffectState,
       party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
     });
-    const { getChargedAttackStaminaMultiplier, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
+    const { getChargedAttackStaminaMultiplier, onKitEvent } = createBloodstainedChivalrySetModule(
+      getArtifactSetBonus(statTables, BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, wearerContext, wearer);
     expect(getChargedAttackStaminaMultiplier?.(wearerContext)).toBe(0);
@@ -97,7 +89,9 @@ describe(createBloodstainedChivalrySetModule, () => {
   test("starts the bonus only on a defeat its wearer deals while it is the active character, and a swap off the field keeps it", () => {
     expect.hasAssertions();
 
-    const { getStrikeDamageBonus, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
+    const { getStrikeDamageBonus, onKitEvent } = createBloodstainedChivalrySetModule(
+      getArtifactSetBonus(statTables, BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+    );
     const benchParty = createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const benchKitEffectState: KitEffectState = { effects: [] };
     const benchContext = createKitTestContext(wearer, { kitEffectState: benchKitEffectState, party: benchParty });

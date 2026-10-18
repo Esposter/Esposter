@@ -7,6 +7,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createEchoesOfAnOfferingSetModule } from "#src/services/artifact/sets/createEchoesOfAnOfferingSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -19,27 +20,22 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
-  kit: getPassiveKit(KIT, [createEchoesOfAnOfferingSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createEchoesOfAnOfferingSetModule(getArtifactSetBonus(statTables, ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID, 4)),
+  ]),
   level: 1,
 });
 const createNormalAttackStrike = (combatant: Combatant): KitStrike => ({

@@ -7,6 +7,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { LONG_NIGHTS_OATH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createLongNightsOathSetModule } from "#src/services/artifact/sets/createLongNightsOathSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -18,27 +19,22 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(LONG_NIGHTS_OATH_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
-  kit: getPassiveKit(KIT, [createLongNightsOathSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createLongNightsOathSetModule(getArtifactSetBonus(statTables, LONG_NIGHTS_OATH_ARTIFACT_SET_ID, 4)),
+  ]),
   level: 1,
 });
 const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => ({
@@ -73,7 +69,12 @@ describe(createLongNightsOathSetModule, () => {
   test("the two-piece bonus raises Plunging Attack DMG by 25%, and no other attack's", () => {
     expect.hasAssertions();
 
-    const wearer = { ...createWearer(), kit: getPassiveKit(KIT, [createLongNightsOathSetModule(bonusOf(2))]) };
+    const wearer = {
+      ...createWearer(),
+      kit: getPassiveKit(KIT, [
+        createLongNightsOathSetModule(getArtifactSetBonus(statTables, LONG_NIGHTS_OATH_ARTIFACT_SET_ID, 2)),
+      ]),
+    };
     const kitEffectState: KitEffectState = { effects: [] };
 
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.25);
