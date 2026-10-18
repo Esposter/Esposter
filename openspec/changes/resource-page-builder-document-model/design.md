@@ -1,6 +1,6 @@
 # Document model
 
-The webpage and email editors' documents: the node types each editor registers over the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. It is built once the core has shipped.
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets.
 
 ## The document model
 
@@ -28,9 +28,9 @@ interface PageDocument<TRootProps, TNode> {
 }
 ```
 
-`WebpageEditor` and `EmailEditor` keep their names and their place in `JSONClassMap` and become this document plus what the editor does not own: the Email's `datasetReference`, and on a published snapshot only, the HTML the publish baked (see "Rendering and publishing"). `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through all go — the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks.
+**Beside the live editors.** The two documents are new classes, built beside `WebpageEditor` and `EmailEditor` rather than in place of them, and each open one sits in the page builder's document store, keyed by its resource, loaded and saved through functions its caller passes in. GrapesJS still mounts and saves its own shape until the [cutover](../resource-page-builder-cutover/design.md), so nothing it reads or writes changes here, as the [program](../resource-page-builder-program/design.md)'s phases require. The cutover puts these documents into the two content classes, under the same names, and removes `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through, so the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks. Rejected: changing the two classes here, which would leave GrapesJS saving documents the new schemas refuse.
 
-The tree, the registry contract and the schema below are the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. The document schema is one discriminated union over `type`, recursive through each slot, built from the registry. It checks what Zod can: every props schema, every slot's allowed child types, ids unique within the document, and the node count under a named `MAX_*` limit through a refinement on the root. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
+The tree, the registry contract and the schema below are the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry: each node's shape is parsed first, then a refinement walks the tree checking every type against the registry and its slot, every props schema, ids unique within the document, and the node count under a named `MAX_*` limit this page passes in, so a refusal names the slot that refused. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
 
 The text inside a text node is the ProseMirror JSON the Note stores, validated by the node schema `apps/web/shared/models/resource/note/NoteResource.ts` already declares, exported for its second consumer. Portable Text was weighed for it and lost: it would need an editor of its own — Portable Text's is React — or a converter each way, against a format the app already stores, edits and renders on the server.
 
@@ -99,26 +99,27 @@ flowchart TD
   RENDERE --> VIEW
 ```
 
-Publishing bakes the output on the server, in each type's `transformPublishedContent`: a webpage's HTML document from the renderer, an email's from MJML compiled server-side, each rendered after `transformPublishedBlobUrls` has pointed the tree's asset urls at their published clones, so the baked HTML does too. The working copy holds only the tree, so no save captures derived HTML any more, and an email whose MJML fails strict validation is refused at publish with MJML's own message, replacing `transformPublishedEmail`'s check for missing HTML. Both views serve the baked `html` whole through the sandboxed frame; the Webpage view stops joining a separate `css` to it.
-
-The same procedure that bakes an email backs its Preview and its export: a `generateEmailHtml` query reads the stored working copy, so the personalized export flushes any pending save, reads the compiled HTML and substitutes per row as `apps/web/app/services/emailEditor/substituteMergeFields.ts` does now. The export then works from the command bar with the Editor blade closed, and the store's bridge to a live editor goes. Because the renderer escapes a merge token exactly once, substitution matches one form of it instead of two — once a test confirms MJML's minifier leaves the escaped form alone.
-
-A Webpage gains an Export of one self-contained HTML file, rendered in the browser by the same pure function; the zip exporter and its viewer go.
+This change builds and tests what the publish branch of that diagram calls: the webpage renderer, a pure function the browser's export also runs, and the server's compile service on MJML's Node package, which refuses markup failing strict validation with MJML's own message. The cutover wires both into publishing, the views and the exports, as its "Binding the new editors" describes.
 
 ## Key files
 
-| File                                                         | Role after the change                                                             |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Webpage/View.vue`          | serves the baked HTML document whole                                              |
-| `apps/web/app/store/webpageEditor/index.ts`                  | the webpage document through `createContentData`; no save-time capture            |
-| `apps/web/app/store/emailEditor/index.ts`                    | the email document and its dataset reference; no live editor bridge               |
-| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts` | the webpage document in Puck's shape, its schema built from the registry          |
-| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`     | the email document, its dataset reference, and baked HTML on a published snapshot |
-| `apps/web/shared/models/resource/note/NoteResource.ts`       | exports its ProseMirror node schema for the text node                             |
-| `apps/web/app/services/resource/PortableFormatMap.ts`        | the email export without an open editor; the webpage's HTML file export           |
-| `apps/web/server/trpc/routers/webpage.ts`                    | publish renders the HTML document                                                 |
-| `apps/web/shared/services/superjson/JSONClassMap.ts`         | the two content classes, same names                                               |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts` | Webpage becomes portable, for its HTML file export                                |
+| File                                                                       | Role after the change                                 |
+| -------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `apps/web/shared/models/resource/note/NoteResource.ts`                     | exports its ProseMirror node schema for the text node |
+| `packages/shared/src/services/sanitizeHtml/escapeText.ts`                  | escapes every text node the serialiser writes         |
+| `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`             | escapes every attribute value the serialiser writes   |
+| `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`           | the check every URL prop's schema runs                |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw-HTML type stores                         |
+| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | each editor's document schema, over its registry      |
+
+New code lands here:
+
+```text
+apps/web/shared/models/pageBuilder/            the webpage and email documents, beside the classes GrapesJS still saves
+apps/web/shared/services/pageBuilder/          the two registries, one module per type, the serialiser and the renderers
+apps/web/server/services/emailEditor/          the MJML compile service
+apps/web/app/store/pageBuilder/                each open document, keyed by its resource, loaded and saved through what its caller passes
+```
 
 ## Sources
 

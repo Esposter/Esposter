@@ -6,7 +6,7 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 
 ## Sub-pages
 
-- [Headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
+- [Headless core](../../specs/headless-block-editor/editor-core/design.md) (built) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
 - [Document model](../resource-page-builder-document-model/design.md) — the typed node tree, the node types a registry holds for each editor, and how a document renders and publishes
 - [Canvas](../resource-page-builder-canvas/design.md) — the same-origin frame, its overlays, and the pointer, keyboard and layers paths that select and move nodes
 - [Style panel](../resource-page-builder-style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
@@ -77,7 +77,7 @@ The editor shell is library parts: `UiTabs` over the Content, Style and Theme pa
 
 ## Phases
 
-Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap.
+Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap. Nothing in the first four touches what GrapesJS reads or writes: the new documents, their stores and their renderers sit beside `WebpageEditor`, `EmailEditor` and the two editors' stores, each store loaded and saved through functions its tests pass in, and the cutover binds them to the two resource types — the content classes, the content stores and their hooks, the views, publishing and the exports — in the change that removes GrapesJS. Binding any of it earlier would leave GrapesJS saving documents the new schemas refuse, with every webpage and email broken until the swap.
 
 1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then the webpage and email node types over it; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests and the MJML defaults test.
 2. **The webpage editor.** The canvas frame, overlays and toolbar; the pointer drag and every keyboard path; the layers tree; the palette; the content, style and theme panels; text editing; device widths; Export. Component tests and a browser suite for what only a layout engine can show.

@@ -14,9 +14,10 @@
 
 ## 4. Keyboard moves
 
-- [ ] 4.1 Add the Alt-arrow moves with their announcement, keeping focus on the node. Verify: tests named after the scenarios 'Alt Down moves the selected node after its next sibling', 'Alt Right moves a node into the previous sibling' and 'Alt Left moves a node out after its parent'.
-- [ ] 4.2 Add Move to, listing only the slots that accept the node by path. Verify: tests named after the scenarios 'Move to lists every slot that accepts the node' and 'Move to offers no slot that refuses the node'.
-- [ ] 4.3 Move selection and focus to a neighbour when a node is deleted. Verify: a test named after the scenario 'Deleting a node moves focus to a neighbour'.
+- [ ] 4.1 Add to the headless core the previous and next node in document order, the slots in a document that accept a node, a move out after the parent, the layers rows and duplicate, each a pure function with its package test in the plain Node environment. Verify: a test named after the scenario 'Duplicating a node places its copy after it', and a package test per function.
+- [ ] 4.2 Add the Alt-arrow moves with their announcement, keeping focus on the node. Verify: tests named after the scenarios 'Alt Down moves the selected node after its next sibling', 'Alt Right moves a node into the previous sibling' and 'Alt Left moves a node out after its parent'.
+- [ ] 4.3 Add Move to, listing only the slots that accept the node by path. Verify: tests named after the scenarios 'Move to lists every slot that accepts the node' and 'Move to offers no slot that refuses the node'.
+- [ ] 4.4 Move selection and focus to a neighbour when a node is deleted. Verify: a test named after the scenario 'Deleting a node moves focus to a neighbour'.
 
 ## 5. Layers and text
 

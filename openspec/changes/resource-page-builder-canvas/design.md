@@ -24,7 +24,7 @@ No script ever reaches the canvas, by construction rather than by policy: every 
 
 ## Selection and drag
 
-Where a move lands, which slots accept a node and where focus goes after a delete are computed by the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s navigation; this page draws, announces and binds them. Every pointer action has a keyboard path, because each is a registered command first, so the keyboard, a single pointer, the palette and the context menu all reach it, and `useCommands` lists each in the shortcuts dialog.
+The [headless core](../../specs/headless-block-editor/editor-core/design.md) computes the types a slot accepts, a move, a move into the previous sibling, a paste and where focus goes after a delete. The rest of the navigation the canvas draws is added to the core by this change, as pure functions over the document beside those: the previous and next node in document order, every slot in the document that accepts a node, a move out after the parent, the rows the layers tree draws, and duplicate, a paste of the node's own copy straight after it. They hold no editor's node types, so they belong to the package rather than the app; this page draws, announces and binds them. Every pointer action has a keyboard path, because each is a registered command first, so the keyboard, a single pointer, the palette and the context menu all reach it, and `useCommands` lists each in the shortcuts dialog.
 
 ```mermaid
 flowchart TD
@@ -61,17 +61,20 @@ The editor around the frame is library parts: the palette and the layers tree in
 
 ## Key files
 
-| File                                                          | Role after the change                                                                     |
-| :------------------------------------------------------------ | :---------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/ui/useCommands.ts`                  | every pointer and keyboard action registered as a command, listed in the shortcuts dialog |
-| `apps/web/app/composables/ui/useContextMenu.ts`               | the right-click menu the node toolbar's overflow `Item` list also feeds                   |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`  | an image field's upload in the Content panel                                              |
-| `packages/configuration/src/getVitestBrowserConfiguration.ts` | the shared browser configuration the app's browser suite takes                            |
-| `apps/web/package.json`                                       | the browser suite's script, apart from the default run                                    |
+| File                                                              | Role after the change                                                                     |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/ui/useCommands.ts`                      | every pointer and keyboard action registered as a command, listed in the shortcuts dialog |
+| `apps/web/app/composables/ui/useContextMenu.ts`                   | the right-click menu the node toolbar's overflow `Item` list also feeds                   |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`      | an image field's upload in the Content panel                                              |
+| `packages/configuration/src/getVitestBrowserConfiguration.ts`     | the shared browser configuration the app's browser suite takes                            |
+| `packages/headless-block-editor/src/services/getAcceptedTypes.ts` | the slot check every listed Move to target passes                                         |
+| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`  | the paste a duplicate is, its copy placed straight after the node                         |
+| `apps/web/package.json`                                           | the browser suite's script, apart from the default run                                    |
 
 New code lands here:
 
 ```text
+packages/headless-block-editor/src/services/    document-order neighbours, the accepting slots, the move out, the layers rows and duplicate
 apps/web/vitest.browser.config.ts               the app's browser suite
 apps/web/shared/services/pageBuilder/            the device widths and the breakpoints they sit inside
 apps/web/app/store/pageBuilder/                  the selection and the device width, keyed by resource

@@ -83,52 +83,40 @@ A published webpage SHALL NOT run a script or follow a link that an unsafe addre
 - **THEN** the event handler is removed
 - **AND** the rest of the block's markup is kept
 
-### Requirement: A published webpage is one HTML document
+### Requirement: A webpage document renders as one HTML document
 
-Publishing a webpage SHALL produce one HTML document holding its language, its theme, its styles and its content.
+The webpage renderer SHALL turn a webpage document into one HTML document declaring the document's language, with each present type's structural CSS once and its content.
 
-#### Scenario: A published webpage is one HTML document
+#### Scenario: A webpage document renders as one HTML document
 
-- **GIVEN** a webpage with a language, theme colours and styled nodes
-- **WHEN** the webpage is published
-- **THEN** a reader receives a single HTML document
-- **AND** the document declares the webpage's language
-- **AND** the document holds the webpage's theme and styles
+- **GIVEN** a webpage document with a language and a section holding a button
+- **WHEN** the document is rendered
+- **THEN** the output is a single HTML document declaring that language
+- **AND** the button appears inside the section
 
-### Requirement: Publishing an email compiles its markup and refuses invalid markup
+### Requirement: The server compiles an email document and refuses invalid markup
 
-Publishing an email SHALL compile the email to email HTML on the server and SHALL refuse an email whose markup fails strict validation.
+The server's compile service SHALL compile an email document to email HTML, and SHALL refuse a document whose markup fails strict validation with the validator's message.
 
-#### Scenario: An email with invalid markup is refused at publish
+#### Scenario: An email document with invalid markup is refused by the compile
 
-- **GIVEN** an email whose markup fails strict validation
-- **WHEN** the owner publishes the email
-- **THEN** the publish is refused
-- **AND** the refusal shows the validator's message
+- **GIVEN** an email document whose markup fails strict validation
+- **WHEN** the server compiles it
+- **THEN** the compile is refused
+- **AND** the refusal carries the validator's message
 
-#### Scenario: A valid email publishes its compiled HTML
+#### Scenario: A valid email document compiles to email HTML
 
-- **GIVEN** an email whose markup passes strict validation
-- **WHEN** the owner publishes the email
-- **THEN** a reader receives the email's compiled HTML
+- **GIVEN** an email document whose markup passes strict validation
+- **WHEN** the server compiles it
+- **THEN** the result is the email's HTML
 
-### Requirement: A survey invite links its survey
+### Requirement: Each open document is held apart
 
-A survey invite in a webpage or an email SHALL link its survey, so that deleting the survey warns about the page that holds the invite.
+The page builder's document store SHALL keep each open resource's document apart, loaded and saved through the functions its caller passes.
 
-#### Scenario: Deleting a surveyed invite's survey names the webpage
+#### Scenario: Two open webpages keep their own documents
 
-- **GIVEN** a webpage with a survey invite for a survey
-- **WHEN** the owner deletes the survey
-- **THEN** the delete warning names the webpage
-
-### Requirement: A webpage exports as one HTML file
-
-A webpage SHALL export as one self-contained HTML file showing the page as published.
-
-#### Scenario: Exporting a webpage downloads one HTML file
-
-- **GIVEN** a webpage open in the editor
-- **WHEN** the owner chooses Export
-- **THEN** one HTML file downloads
-- **AND** the file shows the webpage without needing any other file
+- **GIVEN** two webpages open in the document store
+- **WHEN** one of them is edited
+- **THEN** the other's document is unchanged

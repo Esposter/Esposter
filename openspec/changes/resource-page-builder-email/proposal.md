@@ -14,7 +14,6 @@ An email is built from email node types, edited on a design canvas, and checked 
 - The preview text is a field on the email's root, so editing it updates the compiled email.
 - An email node has no breakpoints or states, and its style fields are its email attributes.
 - A merge field is inserted by typing two braces, offering the bound dataset's columns, or by dragging a column into a text. It shows as its token.
-- A personalised export compiles from the saved email, so it works with the editor closed. It downloads one HTML file per dataset row in a zip.
 - **Capabilities:** `resource/page-builder/email` (new).
 
 ## Capabilities
@@ -31,5 +30,4 @@ An email is built from email node types, edited on a design canvas, and checked 
 
 - The email editor's shell, its dataset picker and its preview text field.
 - The email node types and their default looks, which a server test holds equal to the installed email engine's defaults.
-- The server, which compiles the email on publish, where invalid markup is refused, and for preview, which returns the validator's messages with the compiled email.
-- The personalised export, which reads the compiled email instead of a live editor, and the merge field substitution it runs.
+- The server, which compiles the open email for Preview and returns the validator's messages with the compiled email.

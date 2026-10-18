@@ -22,20 +22,24 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Style fields.** An email node has no breakpoints and no states: email clients honour media queries unevenly, so MJML's own column stacking is the responsive model. Its style fields are its MJML attributes — padding, colours, font, alignment, border, background image — drawn by the style panel's field components and stored as props, and the Style tab shows no breakpoint or state choice for an email.
 
-**Preview** is the truth: a toggle beside the device widths shows `generateEmailHtml`'s output in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
+**Preview** is the truth: a toggle beside the device widths shows the open document compiled by the server, through a query that passes the document to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved and reads nothing GrapesJS still writes. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
-The compile runs in the app server, which takes MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`. Its weight — a CSS minifier, an HTML minifier, an inliner and a DOM parser — lands in the server, where no reader downloads it.
+The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`. Its weight — a CSS minifier, an HTML minifier, an inliner and a DOM parser — lands in the server, where no reader downloads it.
 
 ## Key files
 
-| File                                                                | Role after the change                                               |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Email/ExportTruncationDialog.vue` | exports from compiled HTML, with no live editor                     |
-| `apps/web/app/composables/emailEditor/useExportPersonalizedHtml.ts` | reads the compiled email instead of a live editor                   |
-| `apps/web/app/services/emailEditor/exportPersonalizedHtml.ts`       | zips per-row HTML from the compiled email                           |
-| `apps/web/app/services/emailEditor/substituteMergeFields.ts`        | matches the single escaped token form                               |
-| `apps/web/server/trpc/routers/email.ts`                             | `generateEmailHtml`; publish compiles                               |
-| `apps/web/server/services/emailEditor/transformPublishedEmail.ts`   | compiles the snapshot's MJML on the server and refuses invalid MJML |
+| File                                                       | Role after the change                                                                 |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/email.ts`                    | the query compiling an open email document for Preview, with the validator's messages |
+| `apps/web/app/services/emailEditor/toMergeField.ts`        | the `{{column}}` token a merge field renders as                                       |
+| `apps/web/app/models/richTextEditor/RichTextSuggestion.ts` | the mention suggestion typing two braces opens                                        |
+
+New code lands here:
+
+```text
+apps/web/shared/services/pageBuilder/email/     the email node types, their schemas and their MJML
+apps/web/app/components/PageBuilder/Email/      the design canvas's email types, Preview and the merge field node
+```
 
 ## Sources
 

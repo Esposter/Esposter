@@ -172,6 +172,17 @@ Deleting a node SHALL move selection and focus to its next sibling, else its pre
 - **WHEN** the owner deletes the node
 - **THEN** selection and focus move to the next sibling
 
+### Requirement: Duplicating a node places a separate copy straight after it
+
+Duplicating a node SHALL insert a copy of it, with its children, straight after it in the same slot, and the copy SHALL be edited apart from the original.
+
+#### Scenario: Duplicating a node places its copy after it
+
+- **GIVEN** a selected button with a label
+- **WHEN** the owner duplicates it
+- **THEN** a button with the same label appears straight after it
+- **AND** editing the copy's label leaves the original's unchanged
+
 ### Requirement: The Content panel edits the selected node's fields
 
 The Content panel SHALL show the fields of the selected node's type, and a change to a field SHALL show on the canvas.

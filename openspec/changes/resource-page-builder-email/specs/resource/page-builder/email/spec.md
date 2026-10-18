@@ -85,18 +85,6 @@ A merge field SHALL be inserted into a text by typing two braces or by dragging 
 - **WHEN** the owner drags Name from the Merge fields group into a text
 - **THEN** a merge field for Name is inserted in the text
 
-### Requirement: The personalised export works with the editor closed
-
-A personalised export SHALL compile from the saved email and SHALL download one HTML file per dataset row in a zip, with each row's merge fields filled in.
-
-#### Scenario: A personalised export runs with the editor closed
-
-- **GIVEN** a saved email bound to a dataset of two rows
-- **WHEN** the owner exports from the command bar with the editor closed
-- **THEN** a zip downloads holding two HTML files
-- **AND** each file has its row's values in place of the merge fields
-- **AND** the export includes the latest saved edit
-
 ### Requirement: An email node's style fields are its email attributes
 
 An email node SHALL offer no breakpoints or states, and its style fields SHALL be the attributes its email output takes.

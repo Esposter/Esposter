@@ -46,16 +46,6 @@ The undo history for an open resource SHALL hold a bounded number of entries, an
 - **WHEN** the owner presses Undo until nothing more is undone
 - **THEN** the edits that dropped out of the history are not undone
 
-### Requirement: Restoring a version clears the undo history
-
-Restoring a version SHALL clear the undo history of the open resource.
-
-#### Scenario: Restoring a version leaves nothing to undo
-
-- **GIVEN** a resource with edits in its undo history
-- **WHEN** the owner restores a version and then presses Undo
-- **THEN** nothing is undone
-
 ### Requirement: The command bar names the edit that Undo or Redo would act on
 
 The command bar SHALL name the edit that Undo would reverse and the edit that Redo would reapply.
@@ -75,3 +65,13 @@ Edits SHALL NOT be saved one at a time, and a save SHALL store the whole documen
 - **GIVEN** several edits made since the last save
 - **WHEN** the document is saved
 - **THEN** reopening the resource shows the document as it was on screen
+
+### Requirement: Reloading a document clears its undo history
+
+Reloading an open resource's document SHALL clear that resource's undo history.
+
+#### Scenario: Reloading a document leaves nothing to undo
+
+- **GIVEN** an open resource with edits in its undo history
+- **WHEN** its document is reloaded and the owner presses Undo
+- **THEN** nothing is undone
