@@ -1,6 +1,8 @@
 import type { Seelie } from "#src/models/puzzle/Seelie";
 
+import { ChestKind } from "#src/models/chest/ChestKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
+import { computeSeelieChestPlaces } from "#src/services/puzzle/computeSeelieChestPlaces";
 import { SEELIE_RETURN_SECONDS, SEELIE_ROUTE_SECONDS } from "#src/services/puzzle/constants";
 import { stepSeelie } from "#src/services/puzzle/stepSeelie";
 import { describe, expect, test } from "vitest";
@@ -38,14 +40,14 @@ describe(stepSeelie, () => {
     });
   });
 
-  test("settles in its court once followed the whole route", () => {
+  test("a followed Seelie reaches its court and spawns its chest", () => {
     expect.hasAssertions();
 
     const seelie = createSeelie(SeelieState.Led);
     stepSeelie(seelie, SEELIE_ROUTE_SECONDS, true);
 
-    expect({ progress: seelie.progress, state: seelie.state }).toStrictEqual({
-      progress: 1,
+    expect({ chestPlaces: computeSeelieChestPlaces([seelie]), state: seelie.state }).toStrictEqual({
+      chestPlaces: [{ id: `seelie-chest-${seelie.id}`, kind: ChestKind.Exquisite, position: COURT }],
       state: SeelieState.Settled,
     });
   });
