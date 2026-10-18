@@ -72,6 +72,7 @@ One folder per idea, its kebab-case slug named after the idea. Its `proposal.md`
 
 - **`rejected/`** — what it was, **Why not**.
 - **`deferred/`** — what it was, **Why deferred**, and **Revisit when:** the concrete trigger. Optionally the **Cheaper interim** already covering the need.
+- **A deferred idea may carry its full design** when designing it now checks a shared mechanism against a consumer the first build does not have. The survey on the editor core is designed in full so that the core's registry is shaped for it before the page builder fixes it. The design is the change's to revise when the idea is revived, so the folder still holds no tasks and no spec delta.
 
 GitHub's folder listing is the index of either tree.
 
