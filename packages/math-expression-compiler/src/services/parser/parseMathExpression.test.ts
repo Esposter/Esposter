@@ -18,6 +18,8 @@ describe(parseMathExpression, () => {
       "2 + round(1, 2, 3)",
       /"round" takes 1 or 2 arguments \(char 5\)/u,
     ],
+    ["a function given one argument too many", "sin(1, 2)", /"sin" takes 1 argument \(char 1\)/u],
+    ["a function given fewer arguments than it takes", "hypot()", /"hypot" takes at least 1 argument \(char 1\)/u],
     ["A list given to a function that takes none", "sin([1])", /"sin" does not take a list argument \(char 1\)/u],
     ["A list-only function given a single value", "count(5)", /"count" takes a list argument \(char 1\)/u],
     ["A sign with no operand", "1 +", /Unexpected end of expression/u],
