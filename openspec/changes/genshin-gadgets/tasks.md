@@ -6,7 +6,7 @@
 ## 2. The quick-use slot
 
 - [x] 2.1 Use the equipped gadget on Z and show its cooldown on the HUD. Verify: tests named after the scenarios 'Z uses the equipped gadget' and 'Z does nothing while the gadget's cooldown runs' written first and seen failing.
-- [ ] 2.2 Open the quick swap on holding Z with up to four gadgets. Verify: tests named after the scenarios 'Holding Z opens the quick swap' and 'The quick swap does not hold a fifth gadget' written first and seen failing.
+- [x] 2.2 Open the quick swap on holding Z with up to four gadgets. Verify: tests named after the scenarios 'Holding Z opens the quick swap' and 'The quick swap does not hold a fifth gadget' written first and seen failing.
 
 ## 3. Detectors
 

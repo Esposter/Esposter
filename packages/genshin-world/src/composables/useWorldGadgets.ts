@@ -3,9 +3,11 @@ import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Ref } from "vue";
 
+import { checkIsQuickSwapOpen } from "#src/services/gadget/checkIsQuickSwapOpen";
 import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
+import { stepQuickUseHeldSeconds } from "#src/services/gadget/stepQuickUseHeldSeconds";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -39,5 +41,26 @@ export const useWorldGadgets = ({
   // The seconds left of the equipped gadget's cooldown at `now`, none when no gadget is equipped
   const getEquippedGadgetCooldown = (now: Temporal.Instant) =>
     equippedGadget.value ? getGadgetCooldownSeconds(cooldownGroupReadyAtMap.value, equippedGadget.value, now) : 0;
-  return { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedGadget };
+  // Z's hold, read each frame: a press released before the quick swap's hold uses the equipped gadget, and a longer hold
+  // Opens the quick swap instead. A frame outside the world drops the hold, so a release there is never a use
+  let quickUseHeldSeconds = 0;
+  const isQuickSwapOpen = shallowRef(false);
+  const stepQuickUse = ({
+    isActive,
+    isHeld,
+    now,
+    seconds,
+  }: {
+    isActive: boolean;
+    isHeld: boolean;
+    now: Temporal.Instant;
+    seconds: number;
+  }) => {
+    const previousHeldSeconds = quickUseHeldSeconds;
+    quickUseHeldSeconds = isActive ? stepQuickUseHeldSeconds(previousHeldSeconds, isHeld, seconds) : 0;
+    if (isActive && !isHeld && previousHeldSeconds > 0 && !checkIsQuickSwapOpen(previousHeldSeconds))
+      quickUseEquippedGadget(now);
+    isQuickSwapOpen.value = checkIsQuickSwapOpen(quickUseHeldSeconds);
+  };
+  return { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse };
 };

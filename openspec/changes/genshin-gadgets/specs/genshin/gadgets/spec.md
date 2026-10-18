@@ -33,13 +33,13 @@ Pressing Z SHALL use the equipped gadget when its cooldown group is ready, and S
 #### Scenario: Z uses the equipped gadget
 
 - **GIVEN** a gadget is equipped and its cooldown is ready
-- **WHEN** the player presses Z
+- **WHEN** the player taps Z, releasing it before the quick swap's hold
 - **THEN** the gadget is used and its cooldown starts
 
 #### Scenario: Z does nothing while the gadget's cooldown runs
 
 - **GIVEN** a gadget is equipped and still cooling down
-- **WHEN** the player presses Z
+- **WHEN** the player taps Z, releasing it before the quick swap's hold
 - **THEN** the gadget is not used and the HUD shows its cooldown
 
 ### Requirement: A detector points to the nearest of what it finds in its city
