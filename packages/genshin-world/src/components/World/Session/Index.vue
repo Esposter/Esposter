@@ -138,6 +138,7 @@ import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
 import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
 import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
+import { placeHomePot } from "#src/services/home/placeHomePot";
 import {
   HOME_POT_GADGET_ID,
   HOME_REALM_GROUND_HEIGHT,
@@ -463,6 +464,9 @@ const origin = new Vector3();
 // The realm the player is in, once they have gone into it from the pot: the place they went in from. While it is set the realm's
 // Island is shown in place of the world, and the world's ground gives way to the realm's flat ground
 const homeRealmVisit = shallowRef<HomeRealmVisit>();
+// The point the Serenitea Pot is set down at in the open world, from the gadget slot at the player's feet. The save does
+// Not hold it yet, so it lasts for the session
+const homePotPoint = shallowRef<{ x: number; z: number }>();
 // The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
 // Reach, which everything in the world stands on. It is built again only as a region's ground arrives
 const worldHeight = computed(() =>
@@ -1229,7 +1233,7 @@ const interactables = computed<Interactable[]>(() => {
     ),
     ...computeForgeInteractables(blacksmithPlace.value, gameText[GameTextKey.ForgeTitle], getGroundHeight),
     ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
-    computeHomePotInteractable(gameText, getGroundHeight),
+    ...(homePotPoint.value ? [computeHomePotInteractable(gameText, homePotPoint.value, getGroundHeight)] : []),
   ];
 });
 const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
@@ -1486,7 +1490,7 @@ defineExpose({ jumpTo, readCameraPosition });
               seconds: context.delta,
             });
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
-          stepQuickUse({
+          const usedGadget = stepQuickUse({
             isActive: !isPaused && screenKind === ScreenKind.World,
             isHeld:
               inputState.heldActions.has(InputAction.QuickUseGadget) ||
@@ -1494,6 +1498,9 @@ defineExpose({ jumpTo, readCameraPosition });
             now: getWorldNow(),
             seconds: context.delta,
           });
+          // The Serenitea Pot used from the gadget slot is set down at the player's feet, unless the open world already holds one
+          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit.value)
+            homePotPoint.value = placeHomePot(usedGadget, homePotPoint.value, characterBody.position);
           hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
