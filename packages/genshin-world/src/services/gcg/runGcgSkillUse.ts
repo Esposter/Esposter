@@ -7,6 +7,7 @@ import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/apply
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
+import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -30,7 +31,13 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   skillModule?.afterDamage?.(context);
   side.usedSkillIds.push(skill.id);
   for (const zoneCard of fieldCards) {
-    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(context, skill, zoneCard, dealt);
+    const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
+    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(
+      { ...context, characterIndex },
+      skill,
+      zoneCard,
+      dealt,
+    );
     if (skillDamage) applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule);
   }
   for (const passive of user?.character.skills ?? [])

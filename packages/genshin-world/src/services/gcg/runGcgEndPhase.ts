@@ -2,6 +2,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 
@@ -12,7 +13,8 @@ export const runGcgEndPhase = (duel: GcgDuel): void => {
     for (const zoneCard of listGcgFieldCards(side, undefined)) {
       const module = GcgCardIdModuleMap.get(zoneCard.cardId);
       if (module?.endPhaseStandbyPiercing) applyGcgStandbyPiercing(duel, sideIndex, module.endPhaseStandbyPiercing);
-      const damage = module?.onEndPhase?.({ duel, sideIndex }, zoneCard);
+      const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
+      const damage = module?.onEndPhase?.({ characterIndex, duel, sideIndex }, zoneCard);
       if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
     }
   for (const side of duel.sides)
