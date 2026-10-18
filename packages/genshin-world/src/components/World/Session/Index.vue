@@ -296,17 +296,6 @@ const {
   setWallet,
   wallet,
 });
-// The rewards each quest's finish pays into the bag, the wallet and the rank, as it finishes
-useWorldQuestRewards({
-  events,
-  gainAdventureExp: gainWorldAdventureExp,
-  inventory,
-  materialDataMap,
-  names: nameText,
-  setInventory,
-  setWallet,
-  wallet,
-});
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
 const { commissionDay, handbookDayCommissions } = useWorldCommissions({
@@ -517,6 +506,24 @@ const {
   travelerBonusLines,
   travelerElement,
   wildlifePlaces,
+});
+// The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
+useWorldQuestRewards({
+  characters,
+  events,
+  gainAdventureExp: gainWorldAdventureExp,
+  getDeployedCharacterIds: () => getDeployedCharacterIds(party),
+  getMaxLevel: (character) =>
+    statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
+  inventory,
+  materialDataMap,
+  names: nameText,
+  setCharacters: (nextCharacters) => {
+    characters.value = nextCharacters;
+  },
+  setInventory,
+  setWallet,
+  wallet,
 });
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
 const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
