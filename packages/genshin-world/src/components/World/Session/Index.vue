@@ -102,6 +102,7 @@ import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
+import { useWorldQuestStates } from "#src/composables/useWorldQuestStates";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
@@ -177,6 +178,7 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecialStoryModeActive";
+import { OPEN_WORLD_SCENE_ID, QUEST_STATE_CHECK_INTERVAL_MS } from "#src/services/quest/constants";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
@@ -1341,6 +1343,16 @@ const {
   weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
+// The quests that wait on the world's own state: the open world is the one scene the Traveler is in, the realm, a domain
+// And a trial holding them in none the game's scene table names
+const { checkQuestStates } = useWorldQuestStates({
+  events,
+  getGameClock: () => windrise.value?.gameClock,
+  getSceneId: () => (homeRealmVisit.value || domainArena.value || trialArena.value ? "" : OPEN_WORLD_SCENE_ID),
+  questProgressMap,
+  quests,
+});
+useIntervalFn(checkQuestStates, QUEST_STATE_CHECK_INTERVAL_MS);
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
 const fightingCamps = computed(() => [
   ...outcropCamps.value,

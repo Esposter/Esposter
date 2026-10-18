@@ -1,4 +1,5 @@
 import { QuestCategory } from "#src/models/quest/QuestCategory";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 
 // The quest screen's tabs after its first, which lists every quest, in the order the game draws them and its list's
 // Headings run
@@ -24,3 +25,14 @@ export const QUEST_BEAM_TOP = 1000;
 // Tracker names it higher or lower. No reference shows the line at a small height, so it is a climb's height rather than
 // A step's
 export const QUEST_MARK_MIN_HEIGHT = 10;
+// The scene the open world is, by the game's id, which the player is in whenever no domain, realm or trial holds them
+export const OPEN_WORLD_SCENE_ID = "3";
+// How often, in milliseconds, the world checks the quests that wait on its state, which the clock and a skip of the Time
+// Screen move without any quest event
+export const QUEST_STATE_CHECK_INTERVAL_MS = 1000;
+// The objectives the world's state meets and not a doing, whose targets are no place for a beam to rise over
+export const QUEST_STATE_OBJECTIVE_KINDS: readonly QuestObjectiveKind[] = [
+  QuestObjectiveKind.Plot,
+  QuestObjectiveKind.Scene,
+  QuestObjectiveKind.Wait,
+];

@@ -1,19 +1,19 @@
 ## Purpose
 
-Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first and every other quest from the talk that offers it, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
+Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on, and of the world's own state, see a plot through, be in a scene, wait out a day and an hour), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first and every other quest from the talk that offers it, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and the world's clock, scene and plots advance the ones that wait on them, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
 
 ## Requirements
 
 ### Requirement: A quest is one of five kinds, a run of steps with objectives
 
-A quest SHALL be one of the game's five kinds, holding ordered steps, each with the objectives it asks of the Traveler: go to, talk to, defeat, collect or interact.
+A quest SHALL be one of the game's five kinds, holding ordered steps, each with the objectives it asks of the Traveler: go to, talk to, defeat, collect or interact, or of the world's own state, to see a plot through, be present in a scene or wait.
 
 #### Scenario: Quest's steps read
 
 - **GIVEN** a quest in the world
 - **WHEN** its steps are read
 - **THEN** each step lists its objectives in the order the game gives them
-- **AND** each objective is one of go to, talk to, defeat, collect or interact
+- **AND** each objective is one of go to, talk to, defeat, collect, interact, plot, scene or wait
 
 ### Requirement: The Archon quests run in order and other quests start from their offering talk
 
@@ -58,6 +58,65 @@ A quest in progress SHALL advance when the Traveler's doing meets an objective o
 - **GIVEN** a quest in progress
 - **WHEN** a doing names none of its objectives
 - **THEN** the quest stays where it was
+
+### Requirement: A step the world's own state meets needs no doing
+
+A quest in progress SHALL advance when the world's own state meets an objective of its current step, with no doing of the Traveler: a plot at once, a scene while the Traveler is in it, and a wait once its days have passed and the clock reads within one of its hour windows. The world SHALL check this as the quests move and once a second.
+
+#### Scenario: Plot ended at once
+
+- **GIVEN** a quest in progress whose step asks only to see a plot through, a plot the world cannot play
+- **WHEN** the world next checks its quests
+- **THEN** the objective is met and the quest moves on to its next step
+
+#### Scenario: Scene the player is in
+
+- **GIVEN** a quest in progress whose step asks to be present in a scene
+- **WHEN** the Traveler is in that scene
+- **THEN** the objective is met
+
+#### Scenario: Scene the world has not built
+
+- **GIVEN** a quest in progress whose step asks to be present in a scene the world has not built
+- **WHEN** the world checks its quests wherever the Traveler stands
+- **THEN** the objective stays unmet
+
+#### Scenario: Wait window reached
+
+- **GIVEN** a quest in progress whose step waits for a window of hours of the day, after a number of days
+- **WHEN** the days have passed and the clock reads within the window
+- **THEN** the objective is met
+
+#### Scenario: Wait window wrapping midnight
+
+- **GIVEN** a wait whose window runs from the evening to the morning
+- **WHEN** the clock reads late at night or early in the morning
+- **THEN** the window is reached
+- **AND** it is not reached in the afternoon
+
+#### Scenario: Skipped day counted
+
+- **GIVEN** a quest has waited on a step since the day it began, and the step waits two days
+- **WHEN** the Time screen skips two days
+- **THEN** the wait's days have passed
+
+#### Scenario: Alternative window met
+
+- **GIVEN** a wait that names two windows of hours
+- **WHEN** the clock reads within either
+- **THEN** the objective is met
+
+#### Scenario: Objective already met
+
+- **GIVEN** a step with a plot already met and a talk not yet had
+- **WHEN** the world checks its quests
+- **THEN** nothing is raised for the plot again
+
+#### Scenario: Quest not in progress
+
+- **GIVEN** a quest not started, or one finished
+- **WHEN** the world checks its quests
+- **THEN** nothing is raised for it
 
 ### Requirement: A finished quest reaches the Travel Log when it is a main quest
 
@@ -117,6 +176,12 @@ A navigated objective SHALL have a beam rising over its target, shown once the c
 - **GIVEN** a quest navigated to with its target placed
 - **WHEN** the camera is 50 metres or more away from the target
 - **THEN** the beam rises over the target
+
+#### Scenario: State step has no place
+
+- **GIVEN** a quest navigated to whose current step asks only for a plot, a scene or a wait
+- **WHEN** its target is looked for
+- **THEN** it names no place, and no beam rises
 
 #### Scenario: Target no region in reach places
 

@@ -13,6 +13,7 @@ flowchart TD
   FILES --> START["startQuests: the first unfinished Archon quest,<br/>and one whose offering talk ended"]
   START --> PROGRESS["Quests in progress, from step 0"]
   DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
+  STATE["The world's state, checked as the quests move and once a second:<br/>a plot, the scene, the clock's days and hours"] --> ADVANCE
   PROGRESS --> ADVANCE
   ADVANCE --> MET{"Every objective of the step met?"}
   MET -->|"no"| COUNT["The objective's count goes up, held at its own"]
@@ -36,12 +37,24 @@ A `Quest` has the game's id, its kind, its title and description by text id, its
 | Defeat   | defeat enemies, a count of them | the enemy                                           |
 | Collect  | collect items, a count of them  | the item, or any one of a group's items             |
 | Interact | act on a thing                  | the thing, or the waypoint unlocked                 |
+| Plot     | see a plot through              | the plot                                            |
+| Scene    | be present in a scene           | the scene, by the game's scene id                   |
+| Wait     | wait out days and an hour       | each window of hours, with the days before it       |
 
-The kinds are the game's five, and the quest screen files them under the game's four lists. An event's quests are listed among the world quests, as the game's own quest types have it.
+The quests are of the game's five kinds, and the quest screen files them under the game's four lists. The first five objective kinds are what the Traveler does; the last three are the world's own state, met without a doing. An event's quests are listed among the world quests, as the game's own quest types have it.
 
 ### Progress
 
 A quest's progress is the step it is on, which equals the number of steps once it is finished, and how many times each of that step's objectives has been met. `advanceQuest` takes a `QuestEvent`, the kind of the Traveler's doing and the id it names. Each objective of the current step that names the event's target is met once more, held at its count. Once every objective is met, the quest moves on to its next step with nothing met. An event no objective names leaves the quest where it was, and so does any event once the quest is finished.
+
+### What the world's own state meets
+
+A plot, a scene and a wait ask nothing of the Traveler's hands, so no doing reports them. `getQuestStateEvents` reads the world's state, `QuestState`: the clock's days and minute and the scene the Traveler is in. For each unmet objective of a quest's current step that the state meets, it gives the quest event that meets it. `useWorldQuestStates` records the first such event whenever the quests move, and the session calls its check once a second (`QUEST_STATE_CHECK_INTERVAL_MS`) since the clock and a skip of the Time screen move the state with no quest event. An event is raised only for an objective not yet met, and always meets it, so a check cannot raise the same event twice. The first event only is recorded and the quests it moves raise the next, so each is read against the quests as they now stand, and the checks end once nothing is met.
+
+- **A plot is met at once.** The game finishes such a step when a plot script ends, a cutscene or a talk the Traveler is shown. The world plays no cutscenes, so a plot it cannot play is a named stand-in: the objective is met the first time the world checks it.
+- **A scene is met while the Traveler is in it.** The one scene the world knows by the game's id is the open world, `OPEN_WORLD_SCENE_ID`. The home realm, a domain and a trial hold the Traveler in none the game's scene table names, and the world builds no interior or dungeon scene, so a scene step naming one waits: the Cat's Tail's interior, which the Genius Invokation tutorial's second step names, is the one carried scene that is not the open world.
+- **A wait counts days from its step.** A wait names one or more windows of hours, `formatQuestWaitTargetId` writing each as its days and its hours ("1:18-6" is a day on, from eighteen to six, across midnight). It is met once the days have passed since the step began and the clock reads within any one window, `checkIsQuestWaitReached`. The step begins on the day the world first sees it (`getQuestStepStartDays`), and the clock counts a day at each midnight, a frame's or the Time screen's skip's ([sky and time](../sky-and-time/design.md)), so a skipped day counts. The clock is not saved, so a reload counts the days again from the step's first sight.
+- **They name no place.** A step the state alone meets gives the beam no target (`getQuestTargetId`), and a step that also asks a place or a talk sends the player there.
 
 ### Starting and finishing
 
@@ -76,6 +89,10 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its main quest, kind, words, steps, talks, rewards and schema           |
 | `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, targets and count                        |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                  |
+| `packages/genshin-world/src/services/quest/getQuestStateEvents.ts`       | The quest events the world's state raises for the unmet objectives it meets      |
+| `packages/genshin-world/src/services/quest/checkIsQuestWaitReached.ts`   | Whether a wait's days have passed and the clock reads within its hours           |
+| `packages/genshin-world/src/services/quest/getQuestStepStartDays.ts`     | The day each current step began, as the world first saw it                       |
+| `packages/genshin-world/src/composables/useWorldQuestStates.ts`          | The check that records the world's state events as quest events                  |
 | `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk          |
 | `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events          |
 | `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema          |
