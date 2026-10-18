@@ -39,6 +39,7 @@ export const createEnemy = (
     level: spawnLevel,
     maxHealth,
     moondriftHarmonyHits: [],
+    moveIndex: 0,
     patrol,
     patrolIndex: 0,
     poise: length,

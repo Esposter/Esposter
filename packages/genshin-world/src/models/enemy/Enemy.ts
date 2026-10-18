@@ -37,6 +37,8 @@ export interface Enemy {
   level: number;
   maxHealth: number;
   moondriftHarmonyHits: MoondriftHarmonyHit[];
+  // The index of the boss move it makes next in the boss's moves, which a common enemy never reads
+  moveIndex: number;
   patrol: GroundPoint[];
   patrolIndex: number;
   poise: number;

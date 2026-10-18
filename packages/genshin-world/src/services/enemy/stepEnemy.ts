@@ -1,3 +1,4 @@
+import type { BossMove } from "#src/models/bosses/BossMove";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { GroundPoint } from "genshin-engine";
 
@@ -51,12 +52,16 @@ const stepPoise = (enemy: Enemy, stepSeconds: number): void => {
     if (enemy.poiseBrokenSeconds === 0) enemy.poise = length;
   } else enemy.poise = Math.min(length, enemy.poise + refillPerSecond * stepSeconds);
 };
+// The move a boss is winding up or recovering from, which a common enemy, having no moves, never has
+const getMove = (enemy: Enemy, moves: readonly BossMove[]): BossMove | undefined => moves[enemy.moveIndex];
 // One fixed step of an enemy's AI, toward a target on the ground or none when nothing is there to fight, written into
-// The enemy in place. It returns what the world acts on: a strike that reached its target, or a death that has passed
+// The enemy in place. It returns what the world acts on: a strike that reached its target, or a death that has passed.
+// A boss passes its moves, which it makes in turn, so each windup and recovery lasts its own move's seconds
 export const stepEnemy = (
   enemy: Enemy,
   target: GroundPoint | undefined,
   stepSeconds: number,
+  moves: readonly BossMove[] = [],
 ): EnemyEvent | undefined => {
   enemy.hitSeconds += stepSeconds;
   enemy.stateSeconds += stepSeconds;
@@ -103,7 +108,8 @@ export const stepEnemy = (
       return undefined;
     }
     case EnemyState.Recovery:
-      if (enemy.stateSeconds >= ENEMY_RECOVERY_SECONDS) {
+      if (enemy.stateSeconds >= (getMove(enemy, moves)?.recoverySeconds ?? ENEMY_RECOVERY_SECONDS)) {
+        if (moves.length > 0) enemy.moveIndex = (enemy.moveIndex + 1) % moves.length;
         enemy.attackCooldownSeconds = ENEMY_ATTACK_COOLDOWN_SECONDS;
         setEnemyState(enemy, EnemyState.Chase);
       }
@@ -122,7 +128,7 @@ export const stepEnemy = (
       return undefined;
     case EnemyState.Windup:
       if (target) face(enemy, target);
-      if (enemy.stateSeconds < ENEMY_WINDUP_SECONDS) return undefined;
+      if (enemy.stateSeconds < (getMove(enemy, moves)?.windupSeconds ?? ENEMY_WINDUP_SECONDS)) return undefined;
       setEnemyState(enemy, EnemyState.Recovery);
       return target && computeDistance(enemy.position, target) <= ENEMY_ATTACK_REACH ? EnemyEvent.Strike : undefined;
     default:
