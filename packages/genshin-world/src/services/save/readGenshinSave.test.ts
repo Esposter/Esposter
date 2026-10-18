@@ -11,9 +11,11 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { toGenshinSave } from "#src/services/save/toGenshinSave";
@@ -341,5 +343,25 @@ describe(readGenshinSave, () => {
       ],
       nextId: 2,
     });
+  });
+
+  test("a limited good's purchase survives a reload", () => {
+    expect.hasAssertions();
+    const save: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      shopPurchases: [{ count: 2, goodsId: 7, lastPurchasedAt: Temporal.Instant.fromEpochMilliseconds(0).toString() }],
+    };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+  });
+
+  test("a save written before the Sigils were added reads each Sigil as zero", () => {
+    expect.hasAssertions();
+    const currencies = Object.fromEntries(
+      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.some((sigil) => sigil === currency)),
+    );
+    const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
+
+    expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()).wallet[Currency.AnemoSigil]).toBe(0);
   });
 });

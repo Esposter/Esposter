@@ -38,14 +38,14 @@ describe(buyShopGoodCount, () => {
       EMPTY_INVENTORY,
       getNoItemDefinition,
       [],
-      GOOD,
+      { ...GOOD, buyLimit: 2 },
       2,
       ADVENTURE_RANK,
       NOW,
     );
     expect(wallet[Currency.Mora]).toBe(100 - MORA_PRICE * 2);
     expect(wallet[Currency.AnemoSigil]).toBe(2);
-    expect(purchases).toHaveLength(2);
+    expect(purchases).toStrictEqual([{ count: 2, goodsId: GOOD.goodsId, lastPurchasedAt: NOW }]);
   });
 
   test("a count past what the player can pay buys what it can", () => {

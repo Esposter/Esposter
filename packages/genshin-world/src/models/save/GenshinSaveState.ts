@@ -12,6 +12,7 @@ import type { OfferingProgressSave } from "#src/models/offering/OfferingProgress
 import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { BannerKind } from "genshin-interface/save";
@@ -23,7 +24,8 @@ import type { BannerKind } from "genshin-interface/save";
 // Wish history, the Bench's learned recipes and each recipe's Crafted count by its id, the Archive's opened entries by
 // Section and its defeat counts by entry id, the Frostbearing Tree's offering Progress, the furnishings placed in the
 // Realm, each Region's Statues of The Seven progress by the Region's id, the ids of the Oculi found, the ids of the
-// Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler and the party.
+// Seelies settled and the puzzles solved, the World Level adjustment, the name chosen for The Traveler, the party and
+// The purchases of each limited good that still count against its limit.
 // The save's slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
@@ -46,6 +48,7 @@ export interface GenshinSaveState {
   regionStatueProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   reputation: ReputationProgress;
   settledSeelieIds: ReadonlySet<string>;
+  shopPurchases: ShopPurchase[];
   solvedPuzzleIds: ReadonlySet<string>;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;

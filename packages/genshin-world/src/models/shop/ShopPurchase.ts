@@ -1,5 +1,7 @@
-// One good bought, by its id and the moment it was bought, from which its buy limit's count is read against the refresh
+// What a good's purchases count against its buy limit: how many were bought in the refresh window the latest was bought
+// In, and the moment of that latest, from which the window is read. A good is listed once, and only while it has a limit
 export interface ShopPurchase {
+  count: number;
   goodsId: number;
-  purchasedAt: Temporal.Instant;
+  lastPurchasedAt: Temporal.Instant;
 }

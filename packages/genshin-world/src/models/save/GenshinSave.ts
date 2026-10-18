@@ -16,12 +16,14 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
+import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import {
   MAX_CHARACTER_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
+  MAX_SHOP_PURCHASE_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_WISH_HISTORY_COUNT,
 } from "#src/services/save/constants";
@@ -53,6 +55,8 @@ export const genshinSaveSchema = z
     puzzles: puzzleProgressSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
+    // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
+    shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT).default([]),
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen

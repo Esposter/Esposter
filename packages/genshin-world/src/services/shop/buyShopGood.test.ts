@@ -13,6 +13,11 @@ import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
+// A Fate is a currency, so its purchase never asks for a definition
+const getNoItemDefinition = (itemId: number): ItemDefinition => {
+  throw new Error(`no definition asked for item ${itemId}`);
+};
+
 describe(buyShopGood, () => {
   const ADVENTURE_RANK = 4;
   const STARGLITTER_PRICE = 5;
@@ -20,10 +25,6 @@ describe(buyShopGood, () => {
   // Forty days past the epoch, a morning in February, after the month's refresh on its first and today's at four
   const NOW = EPOCH.add({ hours: 24 * 40 });
   const DAILY_REFRESH = NOW.subtract({ hours: 4 });
-  // A Fate is a currency, so its purchase never asks for a definition
-  const getNoItemDefinition = (itemId: number): ItemDefinition => {
-    throw new Error(`no definition asked for item ${itemId}`);
-  };
   const fateGood: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
@@ -69,7 +70,7 @@ describe(buyShopGood, () => {
     refresh: ShopRefresh.None,
   };
 
-  test("should take the price and give the item's currency, recording the purchase at its moment", () => {
+  test("should take the price and give the item's currency, keeping no purchase of a good with no limit", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
@@ -78,7 +79,7 @@ describe(buyShopGood, () => {
     expect(result?.wallet[Currency.MasterlessStarglitter]).toBe(STARGLITTER_PRICE);
     expect(result?.wallet[Currency.IntertwinedFate]).toBe(1);
     expect(result?.inventory).toStrictEqual(EMPTY_INVENTORY);
-    expect(result?.purchases).toStrictEqual([{ goodsId: fateGood.goodsId, purchasedAt: NOW }]);
+    expect(result?.purchases).toStrictEqual([]);
   });
 
   test("should refuse a good the wallet cannot pay for", () => {
@@ -105,8 +106,10 @@ describe(buyShopGood, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
-    const boughtThisMonth = [{ goodsId: limitedGood.goodsId, purchasedAt: NOW.subtract({ hours: 24 }) }];
-    const boughtLastMonth = [{ goodsId: limitedGood.goodsId, purchasedAt: NOW.subtract({ hours: 24 * 10 }) }];
+    const boughtThisMonth = [{ count: 1, goodsId: limitedGood.goodsId, lastPurchasedAt: NOW.subtract({ hours: 24 }) }];
+    const boughtLastMonth = [
+      { count: 1, goodsId: limitedGood.goodsId, lastPurchasedAt: NOW.subtract({ hours: 24 * 10 }) },
+    ];
 
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtThisMonth, limitedGood, ADVENTURE_RANK, NOW),
@@ -121,8 +124,12 @@ describe(buyShopGood, () => {
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
     const dailyGood = { ...limitedGood, refresh: ShopRefresh.Daily };
-    const boughtBeforeRefresh = [{ goodsId: dailyGood.goodsId, purchasedAt: DAILY_REFRESH.subtract({ hours: 1 }) }];
-    const boughtAfterRefresh = [{ goodsId: dailyGood.goodsId, purchasedAt: DAILY_REFRESH.add({ hours: 1 }) }];
+    const boughtBeforeRefresh = [
+      { count: 1, goodsId: dailyGood.goodsId, lastPurchasedAt: DAILY_REFRESH.subtract({ hours: 1 }) },
+    ];
+    const boughtAfterRefresh = [
+      { count: 1, goodsId: dailyGood.goodsId, lastPurchasedAt: DAILY_REFRESH.add({ hours: 1 }) },
+    ];
 
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, boughtBeforeRefresh, dailyGood, ADVENTURE_RANK, NOW),
@@ -137,7 +144,7 @@ describe(buyShopGood, () => {
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
     const unrefreshedGood = { ...limitedGood, refresh: ShopRefresh.None };
-    const bought = [{ goodsId: unrefreshedGood.goodsId, purchasedAt: NOW.subtract({ hours: 24 * 5 }) }];
+    const bought = [{ count: 1, goodsId: unrefreshedGood.goodsId, lastPurchasedAt: NOW.subtract({ hours: 24 * 5 }) }];
 
     expect(
       buyShopGood(wallet, EMPTY_INVENTORY, getNoItemDefinition, bought, unrefreshedGood, ADVENTURE_RANK, NOW),

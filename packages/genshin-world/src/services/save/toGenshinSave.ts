@@ -7,6 +7,7 @@ import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
+import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
 
@@ -32,6 +33,7 @@ export const toGenshinSave = ({
   regionStatueProgressMap,
   reputation,
   settledSeelieIds,
+  shopPurchases,
   solvedPuzzleIds,
   travelerName,
   unlockedLandmarkIds,
@@ -58,6 +60,7 @@ export const toGenshinSave = ({
   puzzles: { settledSeelieIds: [...settledSeelieIds], solvedPuzzleIds: [...solvedPuzzleIds] },
   quests: Object.fromEntries(quests),
   reputation,
+  shopPurchases: toShopPurchaseSaves(shopPurchases),
   statues: { foundOculusIds: [...foundOculusIds], regions: Object.fromEntries(regionStatueProgressMap) },
   travelerName,
   unlockedLandmarks: [...unlockedLandmarkIds],

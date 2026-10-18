@@ -75,8 +75,12 @@ describe(buyHomeDepotGood, () => {
 
     const weeklyGood = { ...good, refresh: ShopRefresh.Weekly };
     const wallet = { ...EMPTY_WALLET, [Currency.RealmCurrency]: PRICE_COUNT * 2 };
-    const boughtLastWeek = [{ goodsId: weeklyGood.goodsId, purchasedAt: WEEKLY_REFRESH.subtract({ hours: 1 }) }];
-    const boughtThisWeek = [{ goodsId: weeklyGood.goodsId, purchasedAt: WEEKLY_REFRESH.add({ hours: 1 }) }];
+    const boughtLastWeek = [
+      { count: 1, goodsId: weeklyGood.goodsId, lastPurchasedAt: WEEKLY_REFRESH.subtract({ hours: 1 }) },
+    ];
+    const boughtThisWeek = [
+      { count: 1, goodsId: weeklyGood.goodsId, lastPurchasedAt: WEEKLY_REFRESH.add({ hours: 1 }) },
+    ];
     const buy = (purchases: typeof boughtLastWeek, now: Temporal.Instant) =>
       buyHomeDepotGood(weeklyGood, {
         adventureRank: ADVENTURE_RANK,
