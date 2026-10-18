@@ -1,13 +1,16 @@
-import type { ApplyPatchesResult } from "#shared/models/jsonPatch/ApplyPatchesResult";
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
+import type { ApplyPatchesResult } from "#src/models/jsonPatch/ApplyPatchesResult";
+import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
-import { addJsonValue } from "#shared/services/jsonPatch/addJsonValue";
-import { parseJsonPointer } from "#shared/services/jsonPatch/parseJsonPointer";
-import { readJsonValue } from "#shared/services/jsonPatch/readJsonValue";
-import { removeJsonValue } from "#shared/services/jsonPatch/removeJsonValue";
-import { updateJsonValue } from "#shared/services/jsonPatch/updateJsonValue";
-import { checkIsDeepEqual, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
+import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { addJsonValue } from "#src/services/jsonPatch/addJsonValue";
+import { parseJsonPointer } from "#src/services/jsonPatch/parseJsonPointer";
+import { readJsonValue } from "#src/services/jsonPatch/readJsonValue";
+import { removeJsonValue } from "#src/services/jsonPatch/removeJsonValue";
+import { updateJsonValue } from "#src/services/jsonPatch/updateJsonValue";
+import { checkIsDeepEqual } from "#src/util/object/checkIsDeepEqual";
+import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 
 export const applyPatch = (document: unknown, operation: JsonPatchOperation): ApplyPatchesResult<unknown> => {
   switch (operation.op) {

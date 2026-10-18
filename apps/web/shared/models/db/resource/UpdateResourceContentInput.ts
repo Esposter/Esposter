@@ -1,8 +1,7 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { jsonPatchOperationSchema } from "#shared/models/jsonPatch/JsonPatchOperation";
-import { MAX_PATCH_OPERATIONS } from "#shared/services/jsonPatch/constants";
 import { selectResourceInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
+import { jsonPatchOperationSchema, MAX_PATCH_OPERATIONS } from "@esposter/shared";
 
 export const updateResourceContentInputSchema = z.object({
   ...resourceIdInputSchema.shape,

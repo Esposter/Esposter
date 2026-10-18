@@ -1,8 +1,9 @@
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
+import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
-import { applyPatches } from "#shared/services/jsonPatch/applyPatches";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { applyPatches } from "#src/services/jsonPatch/applyPatches";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 import { describe, expect, test } from "vitest";
 
 describe(applyPatches, () => {

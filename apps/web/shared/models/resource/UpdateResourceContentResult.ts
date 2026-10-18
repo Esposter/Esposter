@@ -1,4 +1,4 @@
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
+import type { JsonPatchOperation } from "@esposter/shared";
 
 export interface UpdateResourceContentResult {
   contentVersion: number;

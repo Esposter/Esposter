@@ -1,12 +1,11 @@
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
 import type { ResourceType } from "@esposter/db-schema";
 
 import { checkIsAgentWritablePath } from "#server/services/mcp/checkIsAgentWritablePath";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { exhaustiveGuard, Operation } from "@esposter/shared";
+import { exhaustiveGuard, Operation, JsonPatchOperationType } from "@esposter/shared";
+import type { JsonPatchOperation } from "@esposter/shared";
 
 // The paths an operation changes or takes a value from; a test only compares, so it may read anywhere
 const getCheckedPaths = (operation: JsonPatchOperation) => {

@@ -1,7 +1,7 @@
-import type { ApplyPatchesResult } from "#shared/models/jsonPatch/ApplyPatchesResult";
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
+import type { ApplyPatchesResult } from "#src/models/jsonPatch/ApplyPatchesResult";
+import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
-import { applyPatch } from "#shared/services/jsonPatch/applyPatch";
+import { applyPatch } from "#src/services/jsonPatch/applyPatch";
 
 // Applies an RFC 6902 patch without touching the document it is handed, so a failed operation leaves nothing applied
 // And the new document shares every subtree no operation reached. The inverses undo the whole patch in order

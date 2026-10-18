@@ -1,4 +1,4 @@
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
+import type { JsonPatchOperation } from "#src/models/jsonPatch/JsonPatchOperation";
 
 export interface ApplyPatchesResult<T> {
   document: T;

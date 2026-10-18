@@ -1,7 +1,5 @@
 import type { JSONSchema } from "zod/v4/core";
-
-import { APPEND_SEGMENT } from "#shared/services/jsonPatch/constants";
-import { parseArrayIndex } from "#shared/services/jsonPatch/parseArrayIndex";
+import { APPEND_SEGMENT, parseArrayIndex } from "@esposter/shared";
 
 // The schemas the member a pointer's segment names may be described by, inside a value `schema` describes: an object's
 // Property or else its record's values, and an array's item at that index or else any of its items

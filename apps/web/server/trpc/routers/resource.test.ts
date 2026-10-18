@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -17,7 +16,6 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -47,7 +45,9 @@ import {
   Operation,
   takeOne,
   waitForSynchronizedFunctions,
+  JsonPatchOperationType,
 } from "@esposter/shared";
+import type { JsonPatchOperation } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 

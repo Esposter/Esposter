@@ -1,14 +1,12 @@
-import type { ApplyPatchesResult } from "#shared/models/jsonPatch/ApplyPatchesResult";
-import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
 import type { ResourceType } from "@esposter/db-schema";
 
 import { checkIsJsonSizeWithin } from "#server/services/resource/checkIsJsonSizeWithin";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { applyPatches } from "#shared/services/jsonPatch/applyPatches";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { getResult, Operation } from "@esposter/shared";
+import { getResult, Operation, applyPatches } from "@esposter/shared";
+import type { ApplyPatchesResult, JsonPatchOperation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

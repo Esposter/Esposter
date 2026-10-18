@@ -1,11 +1,13 @@
-import type { ApplyPatchesResult } from "#shared/models/jsonPatch/ApplyPatchesResult";
+import type { ApplyPatchesResult } from "#src/models/jsonPatch/ApplyPatchesResult";
 
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
-import { parseArrayIndex } from "#shared/services/jsonPatch/parseArrayIndex";
-import { parseJsonPointer } from "#shared/services/jsonPatch/parseJsonPointer";
-import { readJsonValue } from "#shared/services/jsonPatch/readJsonValue";
-import { updateJsonValue } from "#shared/services/jsonPatch/updateJsonValue";
-import { checkIsPlainObject, InvalidOperationError, Operation } from "@esposter/shared";
+import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { parseArrayIndex } from "#src/services/jsonPatch/parseArrayIndex";
+import { parseJsonPointer } from "#src/services/jsonPatch/parseJsonPointer";
+import { readJsonValue } from "#src/services/jsonPatch/readJsonValue";
+import { updateJsonValue } from "#src/services/jsonPatch/updateJsonValue";
+import { checkIsPlainObject } from "#src/util/object/checkIsPlainObject";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 
 export const removeJsonValue = (document: unknown, path: string): ApplyPatchesResult<unknown> => {
   const segments = parseJsonPointer(path);

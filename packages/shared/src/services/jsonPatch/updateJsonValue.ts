@@ -1,6 +1,8 @@
-import { parseArrayIndex } from "#shared/services/jsonPatch/parseArrayIndex";
-import { toJsonPointer } from "#shared/services/jsonPatch/toJsonPointer";
-import { checkIsPlainObject, InvalidOperationError, Operation } from "@esposter/shared";
+import { parseArrayIndex } from "#src/services/jsonPatch/parseArrayIndex";
+import { toJsonPointer } from "#src/services/jsonPatch/toJsonPointer";
+import { checkIsPlainObject } from "#src/util/object/checkIsPlainObject";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 
 // Copies only the containers on the way to the value at the segments, so the new document shares every untouched
 // Subtree with the old one and an object nothing changed keeps its identity

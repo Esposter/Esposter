@@ -5,9 +5,7 @@ import type { Except } from "type-fest";
 import { checkIsJsonSizeWithin } from "#server/services/resource/checkIsJsonSizeWithin";
 import { MAX_AGENT_READ_SIZE } from "#server/services/resource/constants";
 import { getJsonByteSize } from "#server/services/resource/getJsonByteSize";
-import { parseJsonPointer } from "#shared/services/jsonPatch/parseJsonPointer";
-import { readJsonValue } from "#shared/services/jsonPatch/readJsonValue";
-import { checkIsPlainObject, getResult } from "@esposter/shared";
+import { checkIsPlainObject, getResult, parseJsonPointer, readJsonValue } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 const getMemberSizes = (members: [string, unknown][]) =>

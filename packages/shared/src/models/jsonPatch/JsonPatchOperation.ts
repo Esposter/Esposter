@@ -1,5 +1,5 @@
-import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
-import { jsonPointerSchema } from "#shared/models/jsonPatch/JsonPointer";
+import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { jsonPointerSchema } from "#src/models/jsonPatch/JsonPointer";
 import { z } from "zod";
 
 // One RFC 6902 operation, its paths RFC 6901 JSON Pointers from the document's root
@@ -22,7 +22,26 @@ interface JsonPatchValueOperation {
   value: unknown;
 }
 
-export const jsonPatchOperationSchema = z.discriminatedUnion("op", [
+export const jsonPatchOperationSchema: z.ZodDiscriminatedUnion<
+  [
+    z.ZodObject<{
+      from: z.ZodString;
+      op: z.ZodEnum<{ copy: JsonPatchOperationType.Copy; move: JsonPatchOperationType.Move }>;
+      path: z.ZodString;
+    }>,
+    z.ZodObject<{ op: z.ZodLiteral<JsonPatchOperationType.Remove>; path: z.ZodString }>,
+    z.ZodObject<{
+      op: z.ZodEnum<{
+        add: JsonPatchOperationType.Add;
+        replace: JsonPatchOperationType.Replace;
+        test: JsonPatchOperationType.Test;
+      }>;
+      path: z.ZodString;
+      value: z.ZodUnknown;
+    }>,
+  ],
+  "op"
+> = z.discriminatedUnion("op", [
   z.object({
     from: jsonPointerSchema,
     op: z.enum([JsonPatchOperationType.Copy, JsonPatchOperationType.Move]),

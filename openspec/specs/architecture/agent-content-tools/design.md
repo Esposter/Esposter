@@ -37,7 +37,7 @@ A read answers the stored JSON, through `JSON.parse` alone, rather than the cont
 
 ## Editing
 
-An edit is a list of RFC 6902 operations — add, remove, replace, move, copy and test — each addressed by a JSON Pointer, at most `MAX_PATCH_OPERATIONS` of them. `applyPatches` (`apps/web/shared/services/jsonPatch/applyPatches.ts`), the app's one RFC 6902 applier, applies them atomically: if any operation fails, a failed test included, none applies. Appending is the pointer's `-` index, so adding a row is `add /data/rows/-` with no index to know.
+An edit is a list of RFC 6902 operations — add, remove, replace, move, copy and test — each addressed by a JSON Pointer, at most `MAX_PATCH_OPERATIONS` of them. `applyPatches` (`packages/shared/src/services/jsonPatch/applyPatches.ts`), the one RFC 6902 applier, in `@esposter/shared`, applies them atomically: if any operation fails, a failed test included, none applies. Appending is the pointer's `-` index, so adding a row is `add /data/rows/-` with no index to know.
 
 ```mermaid
 flowchart TD
@@ -90,8 +90,8 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 | `apps/web/server/services/resource/readStoredResourceContent.ts`      | the stored JSON a read selects from and a patch applies to                 |
 | `apps/web/server/services/resource/readContentAtPointer.ts`           | the value at a pointer, an array's page, and the member sizes past the cap |
 | `apps/web/server/services/resource/checkIsJsonSizeWithin.ts`          | a value's JSON size against a cap, without serializing it                  |
-| `apps/web/shared/models/jsonPatch/JsonPatchOperation.ts`              | the six operations and their schema                                        |
-| `apps/web/shared/services/jsonPatch/applyPatches.ts`                  | the app's one RFC 6902 applier                                             |
+| `packages/shared/src/models/jsonPatch/JsonPatchOperation.ts`          | the six operations and their schema                                        |
+| `packages/shared/src/services/jsonPatch/applyPatches.ts`              | the one RFC 6902 applier                                                   |
 | `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the follow-ups' change, through the generic update                         |
 | `apps/web/shared/models/flowchartEditor/data/GraphNode.ts`            | the node label the Flowchart editor reads and writes                       |
 | `apps/web/shared/models/flowchartEditor/data/GraphEdge.ts`            | the empty data shape the edge editor uses                                  |
