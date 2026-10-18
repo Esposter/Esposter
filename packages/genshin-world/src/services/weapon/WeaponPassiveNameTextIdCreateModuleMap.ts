@@ -5,7 +5,9 @@ import { Element } from "#src/models/Element";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
+import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
+import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/createCritEnergyPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
@@ -26,7 +28,9 @@ import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
+import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
+import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
@@ -144,4 +148,26 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1849455683": createPrecisePassiveModule,
   // Decimate
   "174540131": createDecimatePassiveModule,
+  // Windfall (Favonius Sword)
+  "1914259": createCritEnergyPassiveModule,
+  // Windfall (Favonius Greatsword)
+  "2638835051": createCritEnergyPassiveModule,
+  // Windfall (Favonius Lance)
+  "1244741843": createCritEnergyPassiveModule,
+  // Windfall (Favonius Codex)
+  "2196159603": createCritEnergyPassiveModule,
+  // Windfall (Favonius Warbow)
+  "3964029091": createCritEnergyPassiveModule,
+  // Bane of Fire and Thunder (Lion's Roar)
+  "2541719715": (params) => createBaneOfElementsPassiveModule([Element.Pyro, Element.Electro], params),
+  // Bane of Storm and Tide (Rainslasher)
+  "3070185899": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Electro], params),
+  // Bane of Flame and Water (Dragon's Bane)
+  "2359918763": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], params),
+  // Rust
+  "3717831139": createRustPassiveModule,
+  // The Stringless
+  "1839966563": createSkillAndBurstDamagePassiveModule,
+  // Echo (Eye of Perception)
+  "2057933859": createBoltOfPerceptionPassiveModule,
 };
