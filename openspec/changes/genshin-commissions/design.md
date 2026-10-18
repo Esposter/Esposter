@@ -15,7 +15,8 @@ The as-built [commissions](../../specs/genshin/commissions/design.md) page holds
 - **A quest task finishes with its quest.** Its finish count is its quest's one completion, which the builder writes into the record, since the dump leaves most quest tasks' count at zero. `useWorldQuests` emits `finishQuest` with the quest's id when a quest in progress completes, and `advanceCommissionForQuest` advances the dealt, unclaimed quest task whose quest it is by that one doing, so `checkIsCommissionFinished` reads it finished. The session's listener advances the dealt task once the slice is read, and earns the quest's Encounter Points whether or not a day is dealt.
 - **A claim's rewards are routed as a blossom's claim is.** `routeCommissionClaim` sends the claim's Mora and the Mora its Adventure EXP pays past rank 60 into the wallet, its Adventure EXP into the rank through `gainAdventureExp`, its Companionship EXP to the deployed team's friendship through `gainCompanionshipExp`, and every other item into the bag through `addInventoryItem`. A bag that cannot take an item whole refuses the claim: it returns undefined, nothing is routed, and the claim is not recorded, as `claimResinReward` refuses a claim the bag cannot hold. Encounter Points are not in the wallet, so the claim's count is the caller's to keep.
 - **An Archon or Story quest's completion earns four Encounter Points.** `getQuestEncounterHalfPoints` gives the amount by the quest's kind, and the other kinds give none until their amounts are settled. The wiki marks shorter Archon quests and some Event Story quests as giving less, so their amounts stay open with the other sources (section 6). The amounts are held in half points, so a half point from a chest or a collected item is held whole, and the claim's count is the whole points held.
-- **The points are held for the daily reset they were earned on, up to the storage.** The save holds `encounterPoints` as the reset they were earned on (`earnedOn`) and the half points held. `readEncounterPoints` reads a balance earned before the latest daily reset (`computeLastDailyReset`) as none, and `computeEncounterPointStorage` caps the held half points at four points less one for each daily commission finished that day, as the wiki's storage rule has it. Points held stay when the storage has since shrunk below them. Points past the storage are not kept until the long-term points land (section 6), and the claim does not yet take the half points back, since no caller passes the points to `claimCommissionReward`.
+- **The points are held for the daily reset they were earned on, up to the storage.** The save holds `encounterPoints` as the reset they were earned on (`earnedOn`) and the half points held. `readEncounterPoints` reads a balance earned before the latest daily reset (`computeLastDailyReset`) as none, and `computeEncounterPointStorage` caps the held half points at four points less one for each daily commission finished that day, as the wiki's storage rule has it. Points held stay when the storage has since shrunk below them. Points past the storage are not kept until the long-term points land (section 6), and `claimCommissionWithPoints` spends a claim's point from them (the next decision); no screen claims a commission yet (task 6.9).
+- **A claim spends a whole point from the half points held.** `claimCommissionWithPoints` reads the points held at `now`, passes their whole points (`floor(halfPoints / 2)`) to `claimCommissionReward`, and takes two half points back for each whole point the claim spent. A claim that `routeCommissionClaim` refuses spends none, so the point stays held.
 - **The later reset's points win a merge.** A save merged from a guest and an account keeps the balance earned on the later daily reset, and on the same reset the larger count.
 
 ## Scope and order
@@ -54,14 +55,15 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                                    | Role after the change                                    |
-| :---------------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`                  | A scene task's camp, swapped in for its area's own       |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`             | Advances a quest task's quest as any quest's is advanced |
-| `packages/genshin-world/src/services/handbook/constants.ts`             | The Commissions tab, filled with the day's four          |
-| `packages/genshin-world/src/services/commission/earnEncounterPoints.ts` | Holds a quest's points in the storage they are capped at |
-| `packages/genshin-world/src/composables/useWorldCommissions.ts`         | Earns a finished quest's points on `finishQuest`         |
-| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`       | Draws the day's commissions and the preferred region     |
+| File                                                                          | Role after the change                                                                             |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`                        | A scene task's camp, swapped in for its area's own                                                |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`                   | Advances a quest task's quest as any quest's is advanced                                          |
+| `packages/genshin-world/src/services/handbook/constants.ts`                   | The Commissions tab, filled with the day's four                                                   |
+| `packages/genshin-world/src/services/commission/earnEncounterPoints.ts`       | Holds a quest's points in the storage they are capped at                                          |
+| `packages/genshin-world/src/services/commission/claimCommissionWithPoints.ts` | Spends a claim's point from the half points held, and spends none where routing refuses the claim |
+| `packages/genshin-world/src/composables/useWorldCommissions.ts`               | Earns a finished quest's points on `finishQuest`                                                  |
+| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`             | Draws the day's commissions and the preferred region                                              |
 
 ## Sources
 
