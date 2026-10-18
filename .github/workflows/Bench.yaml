@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/ai/queue' && github.ref != 'refs/heads/main' }}
 
 jobs:
   # The same reusable workflow 🏗️ CI calls, so a build of this content by either warms the cache for the other
