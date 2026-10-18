@@ -138,7 +138,7 @@ export const createCharlotteKitBehaviour = ({
         { target: enemy },
       );
     },
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, _effects) => {
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       if (combatant.ascension < ASCENSION_4) return [];
       const otherMembers = deployedCombatants.filter(({ characterId }) => characterId !== combatant.characterId);
       const fontaineCount = otherMembers.filter(({ regionId }) => regionId === FONTAINE_REGION_ID).length;
