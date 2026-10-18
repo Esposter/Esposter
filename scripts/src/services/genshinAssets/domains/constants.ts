@@ -1,7 +1,7 @@
 import type { ScenePointExemplar } from "#src/models/genshinAssets/world/ScenePointExemplar";
 
 import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
-import { DomainKind } from "genshin-world";
+import { DomainKind, GameDataset } from "genshin-world";
 
 // The game's dungeon entry table in the dump, read by its name
 export const DUNGEON_ENTRY_TABLE_NAME = "DungeonEntryExcelConfigData";
@@ -26,6 +26,12 @@ export const DUNGEON_TABLE_NAME = "DungeonExcelConfigData";
 export const REWARD_PREVIEW_TABLE_NAME = "RewardPreviewExcelConfigData";
 // The type a challenge domain's level is named by in the dungeon table
 export const DOMAIN_LEVEL_TYPE = "DUNGEON_DAILY_FIGHT";
+// The dungeon entries of the weekly bosses' trounce domains, read by id: Stormterror's, whose levels the entry's own list names
+export const WEEKLY_BOSS_ENTRY_IDS: number[] = [1006];
+// The type a weekly boss's level is named by in the dungeon table
+export const WEEKLY_BOSS_DUNGEON_TYPE = "DUNGEON_BOSS";
+// The record the weekly bosses' trounce domains publish under, in the domains dataset
+export const WEEKLY_BOSS_DOMAINS_KEY = `${GameDataset.Domains}/weeklyBosses`;
 // The days of the week, Monday as 1, each of a Domain of Forgery's or Mastery's day pairs is set for, in the order its
 // Entry's day lists give them: Monday and Thursday, Tuesday and Friday, Wednesday and Saturday
 export const DOMAIN_DAY_PAIRS: number[][] = [

@@ -7,9 +7,11 @@ import {
   DUNGEON_ENTRY_TABLE_NAME,
   DUNGEON_TABLE_NAME,
   REWARD_PREVIEW_TABLE_NAME,
+  WEEKLY_BOSS_DOMAINS_KEY,
 } from "#src/services/genshinAssets/domains/constants";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainLevels } from "#src/services/genshinAssets/domains/toDomainLevels";
+import { toWeeklyBossDomains } from "#src/services/genshinAssets/domains/toWeeklyBossDomains";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
@@ -18,15 +20,25 @@ import { GameDataset } from "genshin-world";
 // Blessing domain's from its entrance point
 export const buildDomainLevels = async (): Promise<{ notes: string[]; publication: GameDataPublication }> => {
   const points = await readDomainEntrancePoints();
+  const entries = readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME);
+  const dungeons = readExcelTable<ExcelDungeonRow>(DUNGEON_TABLE_NAME);
   const schedules = toDomainLevels(
-    readExcelTable<ExcelDungeonEntryRow>(DUNGEON_ENTRY_TABLE_NAME),
-    readExcelTable<ExcelDungeonRow>(DUNGEON_TABLE_NAME),
+    entries,
+    dungeons,
     readExcelTable<ExcelRewardPreviewRow>(REWARD_PREVIEW_TABLE_NAME),
     points,
   );
+  const weeklyBosses = toWeeklyBossDomains(entries, dungeons);
   const levelCount = Object.values(schedules).reduce((count, { levels }) => count + levels.length, 0);
+  const weeklyLevelCount = Object.values(weeklyBosses).reduce((count, { levels }) => count + levels.length, 0);
   return {
-    notes: [`${Object.keys(schedules).length} domains, ${levelCount} levels`],
-    publication: { indexes: { [GameDataset.Domains]: schedules }, objects: {} },
+    notes: [
+      `${Object.keys(schedules).length} domains, ${levelCount} levels`,
+      `${Object.keys(weeklyBosses).length} weekly boss domains, ${weeklyLevelCount} levels`,
+    ],
+    publication: {
+      indexes: { [GameDataset.Domains]: schedules },
+      objects: { [WEEKLY_BOSS_DOMAINS_KEY]: weeklyBosses },
+    },
   };
 };
