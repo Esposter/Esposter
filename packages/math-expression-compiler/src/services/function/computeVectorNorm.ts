@@ -2,6 +2,7 @@ import { checkIsLarger } from "#src/services/function/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { checkIsSmaller } from "#src/services/function/checkIsSmaller";
 import { computeExtreme } from "#src/services/function/computeExtreme";
+import { computeSum } from "#src/services/function/computeSum";
 
 // The norm of a vector for a power: its largest magnitude for an infinite power and its smallest for minus infinity.
 // Each is folded from the first magnitude as mathjs's max and min fold.
@@ -18,6 +19,6 @@ export const computeVectorNorm = (values: readonly number[], power: number): nul
   }
   if (checkIsNearlyEqual(power, 0)) return Number.POSITIVE_INFINITY;
 
-  const total = magnitudes.reduce((sum, magnitude) => magnitude ** power + sum, 0);
+  const total = computeSum(magnitudes.map((magnitude) => magnitude ** power));
   return total ** (1 / power);
 };

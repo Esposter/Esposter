@@ -5,8 +5,6 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
-// The game's shop table in the dump, every shop's goods by the shop's number
-export const SHOP_GOODS_TABLE_NAME = "ShopGoodsExcelConfigData";
 // The Good Hunter's food shop, which Sara runs: the restaurant's food, cooking ingredients and recipes, shop 1005 in the table
 export const GOOD_HUNTER_SHOP_TYPE = 1005;
 // The Fishing Associations' shops, one in each region, by the shop's number in the goods table and the stem of the dataset
@@ -72,12 +70,11 @@ export const PAIMON_BARGAINS_ROYAL_ORDER = 1;
 export const PAIMON_BARGAINS_BLACKCLIFF_ORDER = 2;
 // The item use that gives a character card's avatar, and where the avatar's id sits in its parameters
 export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";
-// The Sigils a region's Souvenir Shop is paid in, by their item ids in the game's tables: Anemo for Mondstadt and Geo for
-// Liyue. A Souvenir good is one priced in one of them, which is how the builder finds the shops, whose table numbers the
-// Dump's names do not match
-// Each region's Sigil, which its Souvenir Shop takes: the eight Elemental Sigils, named by the region whose Souvenir Shop
-// Each one's shop is. Pyro, Hydro, Electro and Dendro are the four the wiki's Elemental Sigils page places in Natlan,
-// Fontaine, Inazuma and Sumeru; Luna's Nod-Krai follows the element, which no page here names
+// Each region's Sigil, the currency its Souvenir Shop takes: the eight Elemental Sigils, named by the region whose
+// Souvenir Shop each one is. A Souvenir good is one priced in one of them, which is how the builder finds the shops,
+// Since the dump's table numbers do not match its names. Pyro, Hydro, Electro and Dendro are the four the wiki's
+// Elemental Sigils page places in Natlan, Fontaine, Inazuma and Sumeru; Luna's Nod-Krai follows the element, which no
+// Page here names
 export const SOUVENIR_SIGIL_ITEM_IDS = {
   fontaine: 302,
   inazuma: 304,

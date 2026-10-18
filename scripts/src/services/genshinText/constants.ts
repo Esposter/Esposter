@@ -33,6 +33,8 @@ export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 export const CHAPTER_TABLE_NAME = "ChapterExcelConfigData";
 export const CITY_TABLE_NAME = "CityConfigData";
 export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
+// The shop goods table, each good by its id with its shop, its price and its limit, which the shops and the items builds read
+export const SHOP_GOODS_TABLE_NAME = "ShopGoodsExcelConfigData";
 // The series the world carries whole, by the chapter table's id: the first whose first quest a placed resident offers.
 // Of every chapter's first quest in the dump, scanned on 2026-10-18, only 2029's is offered by a resident the region data places
 export const CARRIED_CHAPTER_IDS: readonly number[] = [2029];

@@ -26,6 +26,9 @@ import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset"
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 
+// Whether an ISO instant is later than another
+const checkIsLaterInstant = (instant: string, than: string): boolean =>
+  Temporal.Instant.compare(Temporal.Instant.from(instant), Temporal.Instant.from(than)) > 0;
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished
 const mergeAchievementProgress = (
@@ -36,8 +39,7 @@ const mergeAchievementProgress = (
   if (account.finishedAt === undefined && guest.finishedAt === undefined) return { count };
   if (account.finishedAt === undefined) return { count, finishedAt: guest.finishedAt };
   if (guest.finishedAt === undefined) return { count, finishedAt: account.finishedAt };
-  const isGuestFirst =
-    Temporal.Instant.compare(Temporal.Instant.from(guest.finishedAt), Temporal.Instant.from(account.finishedAt)) < 0;
+  const isGuestFirst = checkIsLaterInstant(account.finishedAt, guest.finishedAt);
   return { count, finishedAt: isGuestFirst ? guest.finishedAt : account.finishedAt };
 };
 // A quest's progress from both copies: the further step, and on the same step each objective's count takes the larger, as
@@ -120,10 +122,7 @@ const mergeArchive = (account: ArchiveSave, guest: ArchiveSave): ArchiveSave => 
 };
 // Whether a purchase was bought later than another
 const checkIsLaterPurchase = (purchase: ShopPurchaseSave, than: ShopPurchaseSave): boolean =>
-  Temporal.Instant.compare(
-    Temporal.Instant.from(purchase.lastPurchasedAt),
-    Temporal.Instant.from(than.lastPurchasedAt),
-  ) > 0;
+  checkIsLaterInstant(purchase.lastPurchasedAt, than.lastPurchasedAt);
 // A good both copies hold a purchase of keeps the copy bought later, as the copy further on, and a good only one copy holds
 // Is kept. Each good is listed once, as the save holds it
 const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave[]): ShopPurchaseSave[] => {
@@ -137,7 +136,7 @@ const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave
 };
 // Whether a processing's queue was started later than another
 const checkIsLaterJob = (job: ProcessingJobSave, than: ProcessingJobSave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(job.startedAt), Temporal.Instant.from(than.startedAt)) > 0;
+  checkIsLaterInstant(job.startedAt, than.startedAt);
 // A processing both copies hold a queue of keeps the copy started later, as a queue is one copy's whole, and a processing
 // Only one copy holds is kept. Each processing is listed once, by its id
 const mergeProcessingJobs = (
@@ -158,13 +157,11 @@ const checkIsLaterWorldLevelAdjustment = (
 ): boolean => {
   if (adjustment.changedAt === undefined) return false;
   if (than.changedAt === undefined) return true;
-  return (
-    Temporal.Instant.compare(Temporal.Instant.from(adjustment.changedAt), Temporal.Instant.from(than.changedAt)) > 0
-  );
+  return checkIsLaterInstant(adjustment.changedAt, than.changedAt);
 };
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
+  checkIsLaterInstant(day.dealtAt, than.dealtAt);
 // The game day's investigations of the two copies: a copy with no key has counted none, and copies counted on the same
 // Game day keep the larger count, the conservative one against the cap, while otherwise the later day's counter is kept
 const mergeInvestigationDay = (account: InvestigationDaySave, guest: InvestigationDaySave): InvestigationDaySave => {
@@ -206,10 +203,7 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
   const enemyRespawns = { ...account };
   for (const [spawnKey, guestRespawnAt] of Object.entries(guest)) {
     const accountRespawnAt = enemyRespawns[spawnKey];
-    if (
-      accountRespawnAt === undefined ||
-      Temporal.Instant.compare(Temporal.Instant.from(accountRespawnAt), Temporal.Instant.from(guestRespawnAt)) < 0
-    )
+    if (accountRespawnAt === undefined || checkIsLaterInstant(guestRespawnAt, accountRespawnAt))
       enemyRespawns[spawnKey] = guestRespawnAt;
   }
   return enemyRespawns;
@@ -219,13 +213,7 @@ const mergeMinedOutcrops = (account: MinedOutcropSave[], guest: MinedOutcropSave
   const minedOutcropMap = new Map<string, MinedOutcropSave>();
   for (const minedOutcrop of [...account, ...guest]) {
     const heldMinedOutcrop = minedOutcropMap.get(minedOutcrop.id);
-    if (
-      heldMinedOutcrop === undefined ||
-      Temporal.Instant.compare(
-        Temporal.Instant.from(minedOutcrop.minedAt),
-        Temporal.Instant.from(heldMinedOutcrop.minedAt),
-      ) > 0
-    )
+    if (heldMinedOutcrop === undefined || checkIsLaterInstant(minedOutcrop.minedAt, heldMinedOutcrop.minedAt))
       minedOutcropMap.set(minedOutcrop.id, minedOutcrop);
   }
   return [...minedOutcropMap.values()];

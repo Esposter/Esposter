@@ -1,8 +1,6 @@
 import type { DumpedChapter } from "#src/models/genshinText/DumpedChapter";
 import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
 import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
-import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
-import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest, QuestId } from "genshin-world";
 
 import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
@@ -14,7 +12,6 @@ import {
   MAIN_QUEST_DEFAULT_TYPE,
   MAIN_QUEST_TABLE_NAME,
   QUEST_BINARY_DIRECTORY,
-  SUB_QUEST_TABLE_NAME,
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
@@ -54,12 +51,7 @@ import { join } from "node:path";
 export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
-  const mainQuestMap = new Map(
-    readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME).map((mainQuest) => [mainQuest.id, mainQuest]),
-  );
-  const subQuestMap = new Map(
-    readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME).map((subQuest) => [subQuest.subId, subQuest]),
-  );
+  const { mainQuestMap, subQuestMap } = readQuestMaps();
   const givingMap = new Map(readExcelTable<DumpedGiving>(GIVING_TABLE_NAME).map((giving) => [giving.id, giving]));
   const givingGroupMap = new Map(
     readExcelTable<DumpedGivingGroup>(GIVING_GROUP_TABLE_NAME).map((givingGroup) => [givingGroup.id, givingGroup]),
@@ -72,7 +64,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     subQuestMap,
   );
   const carriedQuestIds = new Set<string>(QuestIds);
-  const rewardsByQuest = readCarriedQuestRewards();
+  const rewardsByQuest = readCarriedQuestRewards(mainQuestMap, subQuestMap);
   const talkTables = await readTalkTables();
   const mainQuestIds = new Set(mainQuestMap.keys());
   const mainIdBySubId = new Map([...subQuestMap].map(([subId, subQuest]) => [subId, subQuest.mainId] as const));

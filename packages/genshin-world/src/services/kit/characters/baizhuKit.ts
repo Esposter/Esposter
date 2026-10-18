@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
@@ -133,6 +134,6 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         return;
       queueKitPassiveHit(context, combatant, gossamerSpliceHit, event.enemy);
     },
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
   };
 };

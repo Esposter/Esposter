@@ -11,8 +11,8 @@ import {
 } from "#src/services/genshinAssets/offerings/constants";
 import { OfferingIdKindMap } from "#src/services/genshinAssets/offerings/OfferingIdKindMap";
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
-import { toPoolOfferingLevelRow } from "#src/services/genshinAssets/offerings/toPoolOfferingLevelRow";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
+import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
@@ -63,7 +63,7 @@ export const buildOfferingLevels = (): GameDataBuild => {
     if (poolRewardIds) {
       const poolRewards = poolRewardIds.map((rewardId) => readReward(rewardMap, rewardId, `${kind}'s pool`));
       objects[`${GameDataset.Offerings}/${kind}`] = offeringRows.map((levelRow) =>
-        toPoolOfferingLevelRow(levelRow, poolRewards),
+        toOfferingLevelRow(levelRow, { kind: "pool", sets: poolRewards.map((rewardRow) => toRewardItems(rewardRow)) }),
       );
       notes.push(`${kind}: ${offeringRows.length} levels, each drawing one of ${poolRewards.length} reward sets`);
       continue;
@@ -73,7 +73,10 @@ export const buildOfferingLevels = (): GameDataBuild => {
       continue;
     }
     objects[`${GameDataset.Offerings}/${kind}`] = offeringRows.map((levelRow) =>
-      toOfferingLevelRow(levelRow, readReward(rewardMap, levelRow.rewardId, `level ${levelRow.level} of ${kind}`)),
+      toOfferingLevelRow(levelRow, {
+        kind: "fixed",
+        rewards: toRewardItems(readReward(rewardMap, levelRow.rewardId, `level ${levelRow.level} of ${kind}`)),
+      }),
     );
     notes.push(`${kind}: ${offeringRows.length} levels`);
   }

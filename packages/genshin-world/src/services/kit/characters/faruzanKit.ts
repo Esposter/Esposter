@@ -28,6 +28,9 @@ const PRAYERFUL_WIND_SOURCE = "faruzan-prayerful-wind";
 // The Wind's Secret Ways' Perfidious Wind's Ruin, which the initial hit and each Whirlwind Pulse give the enemies they reach
 const PERFIDIOUS_WIND_RUIN_ID = "faruzan-perfidious-wind-ruin";
 
+// Constellation 2, Overzealous Intellect: the Dazzling Polyhedron lasts this many seconds longer
+const CONSTELLATION_2_EXTRA_POLYHEDRON_SECONDS = 6;
+
 export const FARUZAN_CHARACTER_ID = 10_000_076;
 
 // A body the given metres ahead of another at its facing, and the given metres across it, as gcsim's offsets place a point:
@@ -75,8 +78,6 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
     secondsRemaining: prayerfulWindSeconds,
     source: PRAYERFUL_WIND_SOURCE,
   };
-  // Constellation 2, Overzealous Intellect: the Dazzling Polyhedron lasts this many seconds longer
-  const CONSTELLATION_2_EXTRA_POLYHEDRON_SECONDS = 6;
 
   // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that cast's body. Its
   // Ticks are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lingers past its seconds

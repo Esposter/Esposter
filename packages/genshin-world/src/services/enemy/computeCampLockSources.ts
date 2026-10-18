@@ -2,7 +2,7 @@ import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 
 // Each camp as a lock on the chests within its reach, its points its members' spawns. A camp is done once every member
 // Is dead or not spawned, which is how a defeated member stands until its respawn comes
@@ -12,7 +12,7 @@ export const computeCampLockSources = (
 ): ChestLockSource[] =>
   enemyCamps.map(({ id, members }) => ({
     isDone: members.every(({ id: memberId }) => {
-      const enemy = enemyStateMap.get([id, memberId].join(ID_SEPARATOR));
+      const enemy = enemyStateMap.get(getSpawnKey(id, memberId));
       return !enemy || enemy.state === EnemyState.Dead;
     }),
     positions: members.map(({ position }) => position),

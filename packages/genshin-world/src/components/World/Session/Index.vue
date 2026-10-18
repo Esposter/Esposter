@@ -11,7 +11,6 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
-import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
@@ -78,6 +77,7 @@ import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useCharacterPacks } from "#src/composables/useCharacterPacks";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
+import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
@@ -170,8 +170,7 @@ import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/con
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
-import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
-import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
+import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -218,7 +217,7 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useIntervalFn, useLocalStorage, useMediaQuery, useRafFn } from "@vueuse/core";
+import { useEventListener, useIntervalFn, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createGrassTrail,
@@ -297,10 +296,7 @@ const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinS
 // The settings the device keeps, read over the host's defaults. The world renders at the quality tier it started with,
 // Since its renderer and grass take the tier at setup, so a tier chosen in Settings is kept for the next start
 const settingsDefaults = { ...GENSHIN_SETTINGS_DEFAULTS, language, qualityTier };
-const settings = useLocalStorage<GenshinSettings>(GENSHIN_SETTINGS_STORAGE_KEY, settingsDefaults, {
-  serializer: { read: (raw) => readGenshinSettings(raw, settingsDefaults), write: (value) => JSON.stringify(value) },
-  writeDefaults: false,
-});
+const settings = useStoredGenshinSettings(settingsDefaults);
 const worldQualityTier = settings.value.qualityTier;
 const { maxPixelRatio } = QualityTierSettingsMap[worldQualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");

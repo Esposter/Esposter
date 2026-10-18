@@ -50,6 +50,7 @@ import { getAscensionMaterials } from "#src/services/character/getAscensionMater
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
 import { getTalentRows } from "#src/services/character/getTalentRows";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
@@ -78,9 +79,9 @@ import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } f
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
   // The player's Adventure Rank, which an ascension's phase requires
   adventureRank: number;
+  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
   characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The kit each character's combat talents are read from, the proud skill group each of them names
   characterTalentKits: CharacterTalentKit[];
@@ -265,8 +266,6 @@ const talentPanel = computed(() => {
     ),
   };
 });
-// The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
-// Never refuses
 // The chosen character raised one level with its Character EXP materials, or undefined where that is refused now
 const levelUpResult = computed(() => {
   if (!character.value) return undefined;
@@ -288,9 +287,8 @@ const isLiftable = computed(() => {
 // Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
 // The table carries no cost for that phase yet
 const ascendRows = computed(() => {
-  const nextPhase =
-    character.value &&
-    statTables.characterDataMap.get(character.value.id)?.ascensionPhases[character.value.ascension + 1];
+  const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
+  const nextPhase = character.value && phases && getNextAscensionPhase(phases, character.value.ascension);
   if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return undefined;
   return [
     { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },

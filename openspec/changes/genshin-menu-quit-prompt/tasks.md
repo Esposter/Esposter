@@ -4,8 +4,8 @@
 
 ## 2. Scale
 
-- [x] 2.1 Scale the exit prompt and its panel to the 2026 recording's frame. Verify: a test named after the scenario 'The prompt opens over the menu at the game's scale' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. The test is written and unrun in this worktree, since the browser suite cannot run here; the post-merge run is its check.
-- [x] 2.2 Draw the two choices, Cancel and Confirm, at the new scale and keep their outcomes. Verify: tests named after the scenarios 'Cancel returns to the menu' and 'Confirm leaves for the app's home' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. Unrun in this worktree, as 2.1.
+- [ ] 2.1 Scale the exit prompt and its panel to the 2026 recording's frame. Verify: a test named after the scenario 'The prompt opens over the menu at the game's scale' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. The test is written and unrun in this worktree, since the browser suite cannot run here; the post-merge run is its check.
+- [ ] 2.2 Draw the two choices, Cancel and Confirm, at the new scale and keep their outcomes. Verify: tests named after the scenarios 'Cancel returns to the menu' and 'Confirm leaves for the app's home' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. Unrun in this worktree, as 2.1.
 
 ## 3. Re-measure
 

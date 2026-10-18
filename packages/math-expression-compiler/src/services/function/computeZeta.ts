@@ -2,7 +2,9 @@ import { computeGamma } from "#src/services/function/computeGamma";
 import { computeSummedZeta } from "#src/services/function/computeSummedZeta";
 
 export const computeZeta = (value: number): number => {
-  if (Number.isNaN(value) || !Number.isFinite(value)) return Number.NaN;
+  // The series tends to its first term as the argument grows without bound, so the zeta of plus infinity is one, as mathjs answers
+  if (value === Number.POSITIVE_INFINITY) return 1;
+  if (!Number.isFinite(value)) return Number.NaN;
   if (value === 1) return Number.NaN;
   if (value === 0) return -0.5;
   if (value > 0) return computeSummedZeta(value);

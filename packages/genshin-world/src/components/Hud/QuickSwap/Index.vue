@@ -14,8 +14,8 @@ const { gameText } = defineProps<Props>();
 
 <template>
   <!-- The quick swap menu drawn over the world's centre while Z is held past its hold: a cyan band of the menu's slots
-       Under a tag asking for one, and the prompts of its switch and cancel below. Its slots stand empty until a gadget
-       Is added to the menu, and the menu passes no clicks through to the world -->
+       under a tag asking for one, and the prompts of its switch and cancel below. Its slots stand empty until a gadget
+       is added to the menu, and the menu passes no clicks through to the world -->
   <div class="quick-swap" :aria-label="gameText[GameTextKey.QuickSwapSelect]" role="dialog">
     <div class="tag">{{ gameText[GameTextKey.QuickSwapSelect] }}</div>
     <div class="slots">
@@ -30,7 +30,7 @@ const { gameText } = defineProps<Props>();
 
 <style scoped>
 /* Centred on the screen, as the menu sits in the recording: a band 720 wide and 166 high, its slots 128 across a pitch
-   Of 176 with 32 at either end, its tag 256 by 51 on its top edge and its prompts 125 below the centre. Measured from a
+   of 176 with 32 at either end, its tag 256 by 51 on its top edge and its prompts 125 below the centre. Measured from a
    1920 by 1080 frame of the 2023 recording, the menu's look at its era, so provisional until a current frame is read */
 .quick-swap {
   position: absolute;
@@ -80,7 +80,7 @@ const { gameText } = defineProps<Props>();
 }
 
 /* The prompts sit 125 below the centre, the switch on the left of the cancel, each in white with a shadow for the
-   World behind it */
+   world behind it */
 .prompts {
   position: absolute;
   top: calc(50% + var(--unit) * 125);

@@ -5,6 +5,7 @@ import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 import { checkIsPercentageExpression } from "#src/services/compiler/checkIsPercentageExpression";
+import { ADDITIVE_NAMES } from "#src/services/compiler/constants";
 import { getMathExpressionScalarCompute } from "#src/services/compiler/getMathExpressionScalarCompute";
 import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 
@@ -15,7 +16,7 @@ export const compileBinary = (
   const { left, name, right } = node;
   const compiledLeft = context.compile(left);
   // X + y% is x + x * y / 100, unless x is a percentage expression, where the right side adds as a plain value
-  const isAdditive = name === "add" || name === "subtract";
+  const isAdditive = ADDITIVE_NAMES.includes(name);
   if (isAdditive && right.type === MathExpressionNodeType.Percentage && !checkIsPercentageExpression(left)) {
     const compiledPercent = context.compile(right.operand);
     const sign = name === "add" ? 1 : -1;

@@ -23,7 +23,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYunjinKitBehaviour, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, readBuffTuples, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -83,9 +83,7 @@ const readReactionBuffs = (constellationCount: number, reactions: Reaction[]) =>
     combatant,
   );
 
-  return kitEffectState.effects.flatMap((effect) =>
-    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
-  );
+  return readBuffTuples(kitEffectState.effects);
 };
 
 describe(createYunjinKitBehaviour, () => {

@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 
 export const LAN_YAN_CHARACTER_ID = 10_000_108;
@@ -45,5 +46,5 @@ export const createLanYanKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour
     },
   },
   // Constellation 6 gives the skill one more charge
-  getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_6 ? 1 : 0),
+  getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_6),
 });

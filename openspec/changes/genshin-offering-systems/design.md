@@ -92,8 +92,7 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 | `scripts/src/services/genshinAssets/offerings/constants.ts`                    | The ended event's ids, Primal Flame's provisional wiki values and the Gift of Amrita's reward pool             |
 | `scripts/src/services/genshinAssets/offerings/getConsumedItems.ts`             | The item slots a level names, the zeroed empty slots dropped                                                   |
 | `scripts/src/services/genshinAssets/offerings/toLevelItems.ts`                 | Every item a level takes, as its item and its count                                                            |
-| `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One fixed-reward level's row: every item it takes, its rewards                                                 |
-| `scripts/src/services/genshinAssets/offerings/toPoolOfferingLevelRow.ts`       | One pool-reward level's row: every item it takes, every set of its pool                                        |
+| `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One level's row: every item it takes, and the reward it pays, fixed or drawn from a pool                       |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts`  | Builds the tree's place from the official map's point and the fit                                              |
 | `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                  | The reward table keyed by reward id, shared by the level builders                                              |
 
