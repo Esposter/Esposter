@@ -4,13 +4,13 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 
 ## Skyladder's presses
 
-Skyladder's first press sets the Cloud Transmogrification state for 220 frames, as gcsim's `skillStateDur` does, and holds one press in it as the state's stacks. The state's second and third presses are `skillChain` follow-ups, which play their own animations (243 and 178 frames) and set the state for 238 and 179 frames. Each press's frames, hitmark and element are cited to gcsim's `skill.go` (lines 46, 56, 20 and 95). A chained press starts no cooldown, which matches gcsim: it sets the cooldown only when the chain starts, and a chain's presses are its own.
+Skyladder's first press sets the Cloud Transmogrification state for 220 frames, as gcsim's `skillStateDur` does, and holds one press in it as the state's stacks. The state's second and third presses are `skillChain` follow-ups, which play their own animations (243 and 178 frames) and set the state for 238 and 179 frames. Each follow-up's frames are cited to gcsim's `skill.go` (lines 46 and 56), and its hitmark to line 20. Its element is `Unsourced`, since gcsim's `attributes.Anemo` at line 95 is a struct field the reader does not evaluate. A chained press starts no cooldown, which matches gcsim: it sets the cooldown only when the chain starts, and a chain's presses are its own.
 
 The engine has one chain window, `windowSeconds`, where gcsim closes each press's window at its own state's end. The window here is 238 frames, the second press's, so a second press up to 18 frames past the first state's end still plays as a follow-up. That is the approximation.
 
 ## Driftcloud Wave
 
-While the state stands, a plunge plays a leap for the press count the state holds: one press plays the leap at 4 metres, two at 5 and three at 6.5, each with its own frames, hitmark and multiplier, read from proud skill group 9332's index one to three. Each leap's `checkIsActive` reads the state's stacks, and its `onStart` spends the state and leaves the count on a Driftcloud status for 76 frames, the longest of the three leaps, which covers every hit. The engine's landing picks the variant, the standard plunge is the fallback, as a plunge variant is built.
+While the state stands, a plunge plays a leap for the press count the state holds: one press plays the leap at 4 metres, two at 5 and three at 6.5, each with its own frames cited to gcsim's `plunge.go` and its multiplier read from proud skill group 9332's index one to three. Its hitmark, element, gauge and radius are `Unsourced` values, since the reader cannot cite gcsim's array and struct lines for them. Each leap's `checkIsActive` reads the state's stacks, and its `onStart` spends the state and leaves the count on a Driftcloud status for 76 frames, the longest of the three leaps, which covers every hit. The engine's landing picks the variant, the standard plunge is the fallback, as a plunge variant is built.
 
 ## Constellation 4 and 6
 
@@ -34,13 +34,13 @@ From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 
 
 ## Key files
 
-| File                                                                          | Role                                                                                                           |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/xianyunKit.ts`            | `createXianyunKitBehaviour`, Xianyun's kit: Skyladder's presses, Driftcloud Wave, Constellations 1, 2, 4 and 6 |
-| `packages/genshin-world/src/services/kit/characters/xianyunSkyladder.test.ts` | The Skyladder count, the leap variants, the Constellation 4 heal and the Constellation 6 presses and CRIT DMG  |
-| `packages/genshin-world/src/services/kit/effects/consumeKitResource.ts`       | Spends an amount of a resource a character holds, for Constellation 6's presses                                |
-| `packages/genshin-world/src/services/kit/startNextKitAction.ts`               | The skill's readiness, which `isSkillCooldownWaived` can waive                                                 |
-| `packages/genshin-world/src/data/kits/xianyun.json`                           | The overlay: the follow-up presses, the leaps and the chain window, each cited to gcsim                        |
+| File                                                                          | Role                                                                                                                                                        |
+| :---------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/xianyunKit.ts`            | `createXianyunKitBehaviour`, Xianyun's kit: Skyladder's presses, Driftcloud Wave, Constellations 1, 2, 4 and 6                                              |
+| `packages/genshin-world/src/services/kit/characters/xianyunSkyladder.test.ts` | The Skyladder count, the leap variants, the Constellation 4 heal and the Constellation 6 presses and CRIT DMG                                               |
+| `packages/genshin-world/src/services/kit/effects/consumeKitResource.ts`       | Spends an amount of a resource a character holds, for Constellation 6's presses                                                                             |
+| `packages/genshin-world/src/services/kit/startNextKitAction.ts`               | The skill's readiness, which `isSkillCooldownWaived` can waive                                                                                              |
+| `packages/genshin-world/src/data/kits/xianyun.json`                           | The overlay: the follow-up presses, the leaps and the chain window, cited to gcsim where the reader can evaluate the line, and `Unsourced` values elsewhere |
 
 ## Sources
 
