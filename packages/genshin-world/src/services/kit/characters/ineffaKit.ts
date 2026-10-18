@@ -15,6 +15,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -90,7 +91,7 @@ const firePunishmentEdit = (context: KitContext, combatant: Combatant, enemy: En
 // Marks the enemy the burst hits first, for its Punishment Edit. The mark outlasts the task that fires it by the summon
 // Linger, so the task still finds it, and the task fires the hit only if the mark is still on the enemy
 const markPunishmentEdit = (context: KitContext, combatant: Combatant, enemy: Enemy, hit: KitHit): void => {
-  enemy.statuses.push({
+  addEnemyStatus(enemy, {
     damageTakenBonus: 0,
     id: PUNISHMENT_EDIT_STATUS_ID,
     secondsRemaining: PUNISHMENT_EDIT_DELAY_SECONDS + SUMMON_LINGER_SECONDS,
