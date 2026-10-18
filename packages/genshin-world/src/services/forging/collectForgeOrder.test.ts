@@ -46,7 +46,7 @@ describe(collectForgeOrder, () => {
     stackLimit: 99,
   };
   const definitions = new Map([[RESULT_ID, resultDefinition]]);
-  const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
+  const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };
   const order = (count: number): ForgeOrder => ({
     count,
     queueId: 1,

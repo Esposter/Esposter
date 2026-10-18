@@ -66,7 +66,7 @@ const createDuel = (side: GcgSideState): GcgDuel => ({
 
 const zoneCard = { cardId: CIRCLET_ID, counter: 0, rounds: 0, usages: 0 };
 
-describe(luckyDogsSilverCirclet, () => {
+describe("luckyDogsSilverCirclet", () => {
   test("should heal the character it is equipped to for 2 HP after an Elemental Skill", () => {
     expect.hasAssertions();
     const side = createSide(5);

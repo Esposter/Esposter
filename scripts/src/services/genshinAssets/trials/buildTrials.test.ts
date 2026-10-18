@@ -8,6 +8,7 @@ import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialB
 
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
 
 const CHARACTER_ID = 10_000_022;
 const DUNGEON_ID = 6131;
@@ -33,7 +34,7 @@ const templateRows: ExcelTrialAvatarTemplateRow[] = [
   { TrialAvatarLevel: 85, TrialAvatarSkillLevel: 8, TrialReliquaryList: RELIQUARY_IDS },
 ];
 const reliquaryRows: ExcelTrialReliquaryRow[] = [
-  { AppendPropList: [201_053], Id: RELIQUARY_IDS[0], Level: 5, MainPropId: 15_004, ReliquaryId: 60_211 },
+  { AppendPropList: [201_053], Id: takeOne(RELIQUARY_IDS), Level: 5, MainPropId: 15_004, ReliquaryId: 60_211 },
 ];
 const wikiBuilds: WikiTrialBuild[] = [
   {
@@ -61,9 +62,9 @@ describe(buildTrials, () => {
         [CHARACTER_ID]: { characterId: CHARACTER_ID, constellation: 0, refinement: 1, weaponId: WEAPON_ID },
       },
       "characterTrials/reliquaries": {
-        [RELIQUARY_IDS[0]]: {
+        [takeOne(RELIQUARY_IDS)]: {
           appendPropIds: [201_053],
-          id: RELIQUARY_IDS[0],
+          id: takeOne(RELIQUARY_IDS),
           level: 5,
           mainPropId: 15_004,
           reliquaryId: 60_211,

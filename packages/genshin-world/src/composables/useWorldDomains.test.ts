@@ -7,11 +7,15 @@ import type { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBoss
 
 import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { DomainKind } from "#src/models/domains/DomainKind";
+import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { PoiseType } from "#src/models/enemy/PoiseType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { createParty } from "#src/services/party/createParty";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -42,8 +46,10 @@ const createBrokenBoss = (campId: string): Enemy => ({
   attackCooldownSeconds: 0,
   campId,
   droppedThresholdCount: 0,
+  elementalNodePulsesLeft: 0,
   elementalReactions: [],
   elementalState: createElementalState(),
+  enemyFamily: EnemyFamily.EnemiesOfNote,
   enemyKindId: EnemyKindId.StormterrorDvalin,
   heading: 0,
   health: 1,
@@ -63,6 +69,7 @@ const createBrokenBoss = (campId: string): Enemy => ({
   state: EnemyState.Stagger,
   stateSeconds: 0,
   statuses: [],
+  traits: { energyDrops: [], poiseType: PoiseType.Boss },
 });
 
 const createDomains = () => {
@@ -70,6 +77,8 @@ const createDomains = () => {
   const domains = useWorldDomains({
     adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
+    artifactMainAffixPools: [],
+    artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
     completedMainQuestIds: shallowRef(new Set<string>()),
     events,
@@ -77,14 +86,19 @@ const createDomains = () => {
     getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpTo: vi.fn<() => void>(),
+    kitEffectState: { effects: [] },
     materialDataMap: new Map(),
     nameText: {},
+    party: createParty([TRAVELER_CHARACTER_ID]),
     random: () => 0.5,
     rank: ref(40),
+    reliquaryPieceEntryMap: new Map(),
+    reliquarySets: [],
     setInventory: vi.fn<() => void>(),
     setWallet: vi.fn<() => void>(),
     unlockedLandmarks: ref<Landmark[]>([domainEntrance]),
     wallet: ref<Wallet>(EMPTY_WALLET),
+    weaponDataMap: new Map(),
   });
   return { domains, events };
 };

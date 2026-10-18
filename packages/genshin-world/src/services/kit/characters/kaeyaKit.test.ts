@@ -49,6 +49,8 @@ const getCriticalRateBonus = (attackTag: AttackTag, auras: AuraType[], constella
         hit: takeOne(takeOne(KAEYA_KIT.normalAttacks).hits),
       },
       enemy,
+      createKitTestContext(combatant).party,
+      [],
     ) ?? 0
   );
 };

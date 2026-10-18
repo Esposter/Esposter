@@ -59,7 +59,7 @@ describe(strikeStellarReaction, () => {
     expect(enemy.maxHealth - enemy.health).toBeCloseTo(
       takeOne(CharacterLevelMultiplierMap, LEVEL) *
         0.75 *
-        LUNAR_CONTRIBUTION_WEIGHTS[0] *
+        takeOne(LUNAR_CONTRIBUTION_WEIGHTS, 0) *
         getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Anemo)),
       6,
     );

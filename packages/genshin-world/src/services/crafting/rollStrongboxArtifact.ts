@@ -1,5 +1,5 @@
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
-import type { CraftingStrongbox } from "#src/models/crafting/CraftingStrongbox";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 
 import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 // The artifact a strongbox holds, rolled as a drop of its set: one of the strongbox's pieces at its star rank, drawn evenly
 // Among those it lists, since the wiki gives no odds for the piece within the set
 export const rollStrongboxArtifact = (
-  strongbox: CraftingStrongbox,
+  strongbox: CraftingStrongboxData,
   random: () => number,
   { artifactMainAffixPools, artifactRarityDataMap, reliquarySets }: ArtifactDropTables,
 ): DroppedItem => {

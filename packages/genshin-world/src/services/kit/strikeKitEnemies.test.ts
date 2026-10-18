@@ -16,11 +16,12 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const [KIT_HIT] = TRAVELER_KIT.normalAttacks[0].hits;
+const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 
 const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatant => ({
   ascension: 0,

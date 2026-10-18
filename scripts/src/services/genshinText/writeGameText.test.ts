@@ -9,6 +9,7 @@ import { GameLanguage } from "genshin-text";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import type { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 
 vi.mock(import("#src/services/genshinText/getGameTextHash"), () => ({ getGameTextHash: () => "1" }));
 vi.mock(import("#src/services/genshinText/readManualTextMap"));
@@ -17,13 +18,13 @@ vi.mock(import("#src/services/genshinText/readTextMap"));
 vi.mock(import("#src/services/genshinText/readVoiceLineFetters"));
 vi.mock(import("#src/services/shared/writeJsonFile"));
 vi.mock(import("genshin-persona/src/services/readGenshinDb.ts"), () => ({
-  readGenshinDb: () => ({ characters: () => [], voiceovers: () => undefined }),
+  readGenshinDb: (() => ({ characters: () => [], voiceovers: () => undefined })) as unknown as typeof readGenshinDb,
 }));
 vi.mock(import("node:fs"), async (importOriginal) => ({
-  ...(await importOriginal<typeof import("node:fs")>()),
-  mkdirSync: vi.fn<() => void>(),
-  rmSync: vi.fn<() => void>(),
-  writeFileSync: vi.fn<() => void>(),
+  ...(await importOriginal()),
+  mkdirSync: vi.fn(),
+  rmSync: vi.fn(),
+  writeFileSync: vi.fn(),
 }));
 
 describe(writeGameText, () => {
