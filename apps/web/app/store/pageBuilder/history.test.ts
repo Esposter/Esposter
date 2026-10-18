@@ -225,4 +225,40 @@ describe(usePageBuilderHistoryStore, () => {
 
     expect(getDocument(resourceId)).toStrictEqual(labelEditedDocument);
   });
+
+  test("an insert and a replace of its path in one interaction stay two entries, and redo restores both", async () => {
+    expect.hasAssertions();
+
+    const resourceId = await setupDocument();
+    const interactionId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, redo, undo } = pageBuilderHistoryStore;
+    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
+    applyEdit(
+      resourceId,
+      [{ op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("d") }],
+      TEST_LABEL_LABEL,
+      interactionId,
+    )._unsafeUnwrap();
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({
+      content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    });
+
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
+
+    redo(resourceId);
+    redo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({
+      content: [createButton(TEST_ID), createButton("d"), createButton(TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    });
+  });
 });
