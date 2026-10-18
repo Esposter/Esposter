@@ -1,8 +1,33 @@
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { inventoryItemSaveSchema } from "#src/models/inventory/InventoryItemSave";
 import { describe, expect, test } from "vitest";
 
 describe("inventoryItemSaveSchema", () => {
+  test("an artifact's entry without the item id of its piece is refused", () => {
+    expect.hasAssertions();
+
+    expect(
+      inventoryItemSaveSchema.safeParse({
+        artifact: {
+          experience: 0,
+          isLocked: false,
+          level: 0,
+          mainAffix: Attribute.Health,
+          minorAffixes: [],
+          rarity: 5,
+          setId: 1,
+          slot: ArtifactSlot.FlowerOfLife,
+        },
+        id: 0,
+        itemId: 101,
+        kind: InventoryItemKind.Artifact,
+        quantity: 1,
+      }).success,
+    ).toBe(false);
+  });
+
   test("a weapon's entry holds its level, EXP, ascension and refinement", () => {
     expect.hasAssertions();
 

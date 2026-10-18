@@ -1,73 +1,64 @@
-import type { Artifact } from "#src/models/artifact/Artifact";
-import type { Character } from "#src/models/character/Character";
+import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
+import { FLOWER_ITEM_DEFINITION } from "#src/services/artifact/constants.test";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
+import { createCharacter } from "#src/services/artifact/createCharacter.test";
+import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
+import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
+import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
-const createArtifact = (setId: number): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity: 5,
-  setId,
-  slot: ArtifactSlot.FlowerOfLife,
-});
-
-const createCharacter = (artifacts: Artifact[]): Character => ({
-  artifacts,
-  ascension: 0,
-  constellationCount: 0,
-  friendshipExp: 0,
-  id: 1,
-  level: 1,
-  stellaFortunaCount: 0,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
-});
-
 describe(unequipArtifactToBag, () => {
-  const flowerDefinition: ItemDefinition = {
-    category: ItemCategory.Artifact,
-    id: 101,
-    name: "Flower Piece",
+  const variantName = "Four Affix Flower Piece";
+  const variantDefinition: ItemDefinition = { ...FLOWER_ITEM_DEFINITION, id: 102, name: variantName };
+  const flowerPiece = {
+    itemId: 101,
+    nameTextId: "101",
     rank: 1,
     rarity: 5,
-    stackLimit: 1,
-  };
+    slot: ArtifactSlot.FlowerOfLife,
+    startingMinorCount: 3,
+  } satisfies ReliquaryPieceData;
+  const variantPiece = {
+    itemId: 102,
+    nameTextId: "102",
+    rank: 1,
+    rarity: 5,
+    slot: ArtifactSlot.FlowerOfLife,
+    startingMinorCount: 4,
+  } satisfies ReliquaryPieceData;
   const options = {
-    names: { "101": "Flower Piece" },
+    names: { "101": "Flower Piece", "102": variantName },
     reliquarySets: [
-      {
-        id: 1,
-        needCounts: [2, 4],
-        nameTextId: "1",
-        pieces: [
-          {
-            itemId: 101,
-            nameTextId: "101",
-            rank: 1,
-            rarity: 5,
-            slot: ArtifactSlot.FlowerOfLife,
-            startingMinorCount: 3,
-          },
-        ],
-      },
+      { id: 1, needCounts: [2, 4], nameTextId: "1", pieces: [flowerPiece, variantPiece] },
     ] satisfies ReliquarySetData[],
+  };
+  const rarityData: ArtifactRarityData = {
+    affixLevels: [4],
+    baseExperience: 100,
+    levelExperiences: [50],
+    maxLevel: 1,
+    minorAffixGroups: [
+      { attribute: Attribute.Attack, values: [1] },
+      { attribute: Attribute.CriticalDamage, values: [2] },
+      { attribute: Attribute.CriticalRate, values: [3] },
+      { attribute: Attribute.ElementalMastery, values: [4] },
+    ],
+    rarity: 5,
   };
 
   test("unequipping puts the worn piece in the bag as an entry of its own", () => {
     expect.hasAssertions();
 
-    const artifact = createArtifact(1);
+    const artifact = createArtifact();
     expect(
       unequipArtifactToBag(
         { items: [], nextId: 1, quickSwapItemIds: [] },
@@ -78,7 +69,27 @@ describe(unequipArtifactToBag, () => {
     ).toStrictEqual({
       character: createCharacter([]),
       inventory: {
-        items: [{ artifact, definition: flowerDefinition, id: 1, quantity: 1 }],
+        items: [{ artifact, definition: FLOWER_ITEM_DEFINITION, id: 1, quantity: 1 }],
+        nextId: 2,
+        quickSwapItemIds: [],
+      },
+      isBagFull: false,
+    });
+  });
+
+  test("a dropped second variant comes back to the bag as that variant once worn and unequipped", () => {
+    expect.hasAssertions();
+
+    const dropped = rollPieceArtifact(1, variantPiece, () => 0, {
+      artifactMainAffixPools: [{ attributes: [Attribute.Health], slot: ArtifactSlot.FlowerOfLife }],
+      artifactRarityDataMap: new Map([[5, rarityData]]),
+    });
+    const { inventory } = addDroppedItem({ items: [], nextId: 0, quickSwapItemIds: [] }, dropped, variantDefinition);
+    const worn = equipBagArtifact(inventory, createCharacter([]), 0, options);
+    expect(unequipArtifactToBag(worn.inventory, worn.character, ArtifactSlot.FlowerOfLife, options)).toStrictEqual({
+      character: createCharacter([]),
+      inventory: {
+        items: [{ artifact: dropped.artifact, definition: variantDefinition, id: 1, quantity: 1 }],
         nextId: 2,
         quickSwapItemIds: [],
       },
@@ -91,7 +102,7 @@ describe(unequipArtifactToBag, () => {
 
     const unequipped = unequipArtifactToBag(
       { equippedGadgetItemId: 1, items: [], nextId: 1, quickSwapItemIds: [] },
-      createCharacter([createArtifact(1)]),
+      createCharacter([createArtifact()]),
       ArtifactSlot.FlowerOfLife,
       options,
     );
@@ -105,10 +116,10 @@ describe(unequipArtifactToBag, () => {
 
     const room = ItemCategoryRoomMap[ItemCategory.Artifact];
     assert.exists(room);
-    const artifact = createArtifact(1);
+    const artifact = createArtifact();
     const items = Array.from({ length: room }, (_value, index) => ({
-      artifact: createArtifact(1),
-      definition: flowerDefinition,
+      artifact: createArtifact(),
+      definition: FLOWER_ITEM_DEFINITION,
       id: index,
       quantity: 1,
     }));
@@ -144,12 +155,12 @@ describe(unequipArtifactToBag, () => {
     expect(() =>
       unequipArtifactToBag(
         { items: [], nextId: 0, quickSwapItemIds: [] },
-        createCharacter([createArtifact(2)]),
+        createCharacter([createArtifact({ setId: 2 })]),
         ArtifactSlot.FlowerOfLife,
         options,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: getArtifactItemDefinition, set 2 piece for EQUIP_BRACER at rarity 5]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getArtifactItemDefinition, set 2 piece with item id 101]`,
     );
   });
 });

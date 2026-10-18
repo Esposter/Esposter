@@ -136,6 +136,7 @@ describe("genshinSaveSchema", () => {
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
           experience: maxNumber,
           isLocked: true,
+          itemId: 101,
           level: maxNumber,
           mainAffix: Attribute.Health,
           minorAffixes: Attributes.slice(0, MAX_MINOR_AFFIX_COUNT).map((attribute) => ({

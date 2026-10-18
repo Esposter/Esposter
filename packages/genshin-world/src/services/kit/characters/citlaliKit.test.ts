@@ -20,7 +20,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

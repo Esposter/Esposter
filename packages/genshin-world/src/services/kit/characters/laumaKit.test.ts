@@ -28,8 +28,8 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { createParty } from "#src/services/party/createParty";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

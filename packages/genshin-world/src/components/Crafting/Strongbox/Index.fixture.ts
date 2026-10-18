@@ -68,6 +68,7 @@ const artifactDropTables: ArtifactDropTables = {
 const createArtifact = (isLocked: boolean): Artifact => ({
   experience: 0,
   isLocked,
+  itemId: 100_001,
   level: 0,
   mainAffix: Attribute.Health,
   minorAffixes: [],

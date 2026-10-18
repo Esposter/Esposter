@@ -43,12 +43,12 @@ const { receivedKinds } = vi.hoisted(() => ({ receivedKinds: [] as string[] }));
 vi.mock("#src/services/artifact/ArtifactSetIdCreateModuleMap", async (importOriginal) => {
   const { ArtifactSetIdCreateModuleMap } =
     await importOriginal<typeof import("#src/services/artifact/ArtifactSetIdCreateModuleMap")>();
-  // INSTRUCTOR_ARTIFACT_SET_ID
-  const createInstructorModule = ArtifactSetIdCreateModuleMap[10_007];
+  const { INSTRUCTOR_ARTIFACT_SET_ID } = await importOriginal<typeof import("#src/services/artifact/constants")>();
+  const createInstructorModule = ArtifactSetIdCreateModuleMap[INSTRUCTOR_ARTIFACT_SET_ID];
   return {
     ArtifactSetIdCreateModuleMap: {
       ...ArtifactSetIdCreateModuleMap,
-      [10_007]: (bonus: Parameters<NonNullable<typeof createInstructorModule>>[0]) => {
+      [INSTRUCTOR_ARTIFACT_SET_ID]: (bonus: Parameters<NonNullable<typeof createInstructorModule>>[0]) => {
         const setModule = createInstructorModule?.(bonus);
         return {
           ...setModule,
@@ -70,6 +70,7 @@ const createSetArtifacts = (setId: number, count: number): Artifact[] =>
   Array.from({ length: count }, () => ({
     experience: 0,
     isLocked: false,
+    itemId: 101,
     level: 0,
     mainAffix: Attribute.Health,
     minorAffixes: [],

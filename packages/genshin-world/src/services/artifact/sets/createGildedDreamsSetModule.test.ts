@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { GILDED_DREAMS_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createGildedDreamsSetModule } from "#src/services/artifact/sets/createGildedDreamsSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -19,7 +20,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,13 +29,6 @@ const SAME_ELEMENT_CHARACTER_ID = 2;
 const PYRO_CHARACTER_ID = 3;
 const CRYO_CHARACTER_ID = 4;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(GILDED_DREAMS_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -47,7 +41,9 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
 });
 const wearer: Combatant = {
   ...createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro),
-  kit: getPassiveKit(KIT, [createGildedDreamsSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [
+    createGildedDreamsSetModule(getArtifactSetBonus(statTables, GILDED_DREAMS_ARTIFACT_SET_ID, 4)),
+  ]),
 };
 const members = [
   wearer,
@@ -79,13 +75,13 @@ describe(createGildedDreamsSetModule, () => {
     });
 
     triggerReaction(wearer, context);
-    expect(getGildedBuffs(kitEffectState)).toEqual([
+    expect(getGildedBuffs(kitEffectState)).toStrictEqual([
       { amount: expect.closeTo(0.14), attribute: Attribute.AttackPercent },
       { amount: 100, attribute: Attribute.ElementalMastery },
     ]);
 
     stepKitSeconds(context, 8.1);
-    expect(getGildedBuffs(kitEffectState)).toEqual([]);
+    expect(getGildedBuffs(kitEffectState)).toStrictEqual([]);
   });
 
   test("a reaction a member other than the wearer strikes gives the wearer nothing, and leaves its cooldown unstarted", () => {
@@ -121,7 +117,7 @@ describe(createGildedDreamsSetModule, () => {
     const remainingSeconds = kitEffectState.effects.flatMap((effect) =>
       effect.kind === "buff" && effect.source === "Gilded Dreams" ? [effect.secondsRemaining] : [],
     );
-    expect(remainingSeconds).toEqual([expect.closeTo(4), expect.closeTo(4)]);
+    expect(remainingSeconds).toStrictEqual([expect.closeTo(4), expect.closeTo(4)]);
 
     stepKitSeconds(context, 4.1);
     triggerReaction(wearer, context);

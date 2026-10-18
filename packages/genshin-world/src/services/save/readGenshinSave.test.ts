@@ -135,6 +135,7 @@ describe(readGenshinSave, () => {
   const ARTIFACT: Artifact = {
     experience: 120,
     isLocked: true,
+    itemId: 101,
     level: 4,
     mainAffix: Attribute.Health,
     minorAffixes: [{ attribute: Attribute.Defense, value: 10 }],

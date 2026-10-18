@@ -7,8 +7,8 @@ import { ARLECCHINO_CHARACTER_ID, createArlecchinoKitBehaviour } from "#src/serv
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

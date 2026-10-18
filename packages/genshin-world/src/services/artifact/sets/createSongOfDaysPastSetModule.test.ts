@@ -7,6 +7,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SONG_OF_DAYS_PAST_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSongOfDaysPastSetModule } from "#src/services/artifact/sets/createSongOfDaysPastSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -18,7 +19,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -26,13 +27,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 const OTHER_CHARACTER_ID = 2;
 const MAX_HEALTH = 10_000;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(SONG_OF_DAYS_PAST_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   attributes.maxHealth = MAX_HEALTH;
@@ -49,7 +43,9 @@ const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => 
 const createTeam = (characterIds: number[]) => {
   const wearer = createCombatant(
     TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [createSongOfDaysPastSetModule(bonusOf(4))]),
+    getPassiveKit(KIT, [
+      createSongOfDaysPastSetModule(getArtifactSetBonus(statTables, SONG_OF_DAYS_PAST_ARTIFACT_SET_ID, 4)),
+    ]),
   );
   const other = createCombatant(OTHER_CHARACTER_ID);
   const kitEffectState: KitEffectState = { effects: [] };

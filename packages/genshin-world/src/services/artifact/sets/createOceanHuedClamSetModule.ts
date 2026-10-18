@@ -8,18 +8,18 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { OCEAN_HUED_CLAM_FOAM_ID } from "#src/services/artifact/constants";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHealedHp } from "#src/services/kit/getKitHealedHp";
 import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { takeOne } from "@esposter/shared";
 
 const OCEAN_HUED_CLAM_COOLDOWN_ID = "oceanHuedClamCooldown";
-const OCEAN_HUED_CLAM_FOAM_ID = "oceanHuedClamFoam";
 // The status a wearer's heals gather on while no foam takes them, which the next foam takes and its burst empties
 const OCEAN_HUED_CLAM_GATHERED_HP_ID = "oceanHuedClamGatheredHp";
 // The radius about the active character that the foam's burst reaches, as gcsim draws the burst about the player
@@ -38,29 +38,28 @@ const setGatheredHp = (kitEffectState: KitEffectState, characterId: number, gath
 const findSeaDyedFoam = (effects: readonly KitEffect[]): KitField | undefined =>
   effects.find((effect): effect is KitField => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID);
 
-// The foam's burst, which deals the share of the HP gathered on its wearer as Physical DMG to each standing enemy within its
-// Radius of the active character as it pops, and empties the gathered HP
+// The foam's burst, which deals the share of the HP gathered on its wearer as Physical DMG to each standing enemy
+// Within its radius of the active character as it pops, and empties the gathered HP
 const createSeaDyedFoamBurst =
   (characterId: number, damageShare: number) =>
   (context: KitContext): void => {
-    const centre = { ...context.body.position };
     const gatheredHp = getGatheredHp(context.kitEffectState, characterId);
     setGatheredHp(context.kitEffectState, characterId, 0);
     const owner = context.characterIdCombatantMap.get(characterId);
     for (const enemy of context.enemyMap.values())
       if (
         ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
-        checkIsInKitField({ centre, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
+        checkIsInKitField({ centre: context.body.position, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
       )
         strikeReactionDamage(enemy, undefined, damageShare * gatheredHp, owner, context);
   };
 
-// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three seconds on
-// For the table's second param of the HP its wearer's heals gathered, as Physical DMG to the enemies within six of the active
-// Character as the foam pops. The heal the wearer gives while no foam stands gathers too, and the next foam takes it, as gcsim's accumulation does.
-// One foam stands at a time, so another wearer's heal gathers for nobody while it does. One foam can start every 3.5 seconds, and
-// It holds at most the fifth param's HP. The first param is its seconds, the second its DMG share, the third is zero and unread,
-// And the fourth the cooldown
+// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three
+// Seconds on for the table's second param of the HP its wearer's heals gathered, as Physical DMG to the enemies within
+// Six of the active character as the foam pops. The heal the wearer gives while no foam stands gathers too, and the
+// Next foam takes it, as gcsim's accumulation does. One foam stands at a time, so another wearer's heal gathers for
+// Nobody while it does. One foam can start every 3.5 seconds, and it holds at most the fifth param's HP. The first
+// Param is its seconds, the second its DMG share, the third is zero and unread, and the fourth the cooldown
 export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const foamSeconds = takeOne(bonus.params, 0);
   const damageShare = takeOne(bonus.params, 1);
@@ -80,10 +79,8 @@ export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveMo
         characterId,
         Math.min(maximumHp, getGatheredHp(kitEffectState, characterId) + healedHp),
       );
-      if (foam || checkIsKitStatusActive(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID)) return;
-      addKitStatus(kitEffectState, characterId, { id: OCEAN_HUED_CLAM_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
-      const centre = { ...body.position };
-      castKitField(kitEffectState, characterId, centre, {
+      if (foam || !startKitCooldown(kitEffectState, characterId, OCEAN_HUED_CLAM_COOLDOWN_ID, cooldownSeconds)) return;
+      castKitField(kitEffectState, characterId, body.position, {
         id: OCEAN_HUED_CLAM_FOAM_ID,
         nextTickSeconds: foamSeconds,
         onTick: createSeaDyedFoamBurst(characterId, damageShare),

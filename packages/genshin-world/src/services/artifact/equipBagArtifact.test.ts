@@ -1,47 +1,16 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
-import type { Character } from "#src/models/character/Character";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
+import { FLOWER_ITEM_DEFINITION } from "#src/services/artifact/constants.test";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
+import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const createArtifact = (level: number): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  level,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity: 5,
-  setId: 1,
-  slot: ArtifactSlot.FlowerOfLife,
-});
-
-const createCharacter = (artifacts: Artifact[]): Character => ({
-  artifacts,
-  ascension: 0,
-  constellationCount: 0,
-  friendshipExp: 0,
-  id: 1,
-  level: 1,
-  stellaFortunaCount: 0,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
-});
-
 describe(equipBagArtifact, () => {
-  const flowerDefinition = {
-    category: ItemCategory.Artifact,
-    id: 101,
-    name: "Flower Piece",
-    rank: 1,
-    rarity: 5,
-    stackLimit: 1,
-  };
   const options = {
     names: { "101": "Flower Piece" },
     reliquarySets: [
@@ -64,7 +33,7 @@ describe(equipBagArtifact, () => {
   };
   const createEntry = (artifact: Artifact, id: number): InventoryItem => ({
     artifact,
-    definition: flowerDefinition,
+    definition: FLOWER_ITEM_DEFINITION,
     id,
     quantity: 1,
   });
@@ -72,9 +41,9 @@ describe(equipBagArtifact, () => {
   test("the chosen piece is worn, and the piece it wore goes back to the bag as an entry of its own", () => {
     expect.hasAssertions();
 
-    const worn = createArtifact(0);
-    const chosen = createArtifact(4);
-    const other = createArtifact(2);
+    const worn = createArtifact();
+    const chosen = createArtifact({ level: 4 });
+    const other = createArtifact({ level: 2 });
     expect(
       equipBagArtifact(
         { items: [createEntry(chosen, 0), createEntry(other, 1)], nextId: 2, quickSwapItemIds: [] },
@@ -91,7 +60,7 @@ describe(equipBagArtifact, () => {
   test("a slot with no piece worn takes the chosen piece without returning one", () => {
     expect.hasAssertions();
 
-    const chosen = createArtifact(4);
+    const chosen = createArtifact({ level: 4 });
     expect(
       equipBagArtifact(
         { items: [createEntry(chosen, 0)], nextId: 1, quickSwapItemIds: [] },
@@ -111,7 +80,7 @@ describe(equipBagArtifact, () => {
     expect(() =>
       equipBagArtifact(
         {
-          items: [{ definition: { ...flowerDefinition, category: ItemCategory.Material }, id: 0, quantity: 3 }],
+          items: [{ definition: { ...FLOWER_ITEM_DEFINITION, category: ItemCategory.Material }, id: 0, quantity: 3 }],
           nextId: 1,
           quickSwapItemIds: [],
         },

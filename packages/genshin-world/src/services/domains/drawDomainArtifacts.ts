@@ -3,9 +3,7 @@ import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { drawArtifactPiece } from "#src/services/artifact/drawArtifactPiece";
-import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
+import { drawSetArtifact } from "#src/services/artifact/drawSetArtifact";
 import { drawChancedCount } from "#src/services/reward/drawChancedCount";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
@@ -26,9 +24,7 @@ export const drawDomainArtifacts = (
   return treeArtifacts.flatMap((treeArtifact) =>
     Array.from({ length: drawChancedCount(treeArtifact, random) }, () => {
       const set = takeOne(sets, Math.floor(random() * sets.length));
-      const slots = Object.values(ArtifactSlot);
-      const slot = takeOne(slots, Math.floor(random() * slots.length));
-      return rollPieceArtifact(set.id, drawArtifactPiece(set, slot, treeArtifact.rarity, random), random, tables);
+      return drawSetArtifact(set, treeArtifact.rarity, random, tables);
     }),
   );
 };

@@ -4,9 +4,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const TENACITY_OF_THE_MILLELITH_COOLDOWN_ID = "tenacityOfTheMillelithCooldown";
@@ -25,17 +24,14 @@ export const createTenacityOfTheMillelithSetModule = (bonus: ArtifactSetBonus): 
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         event.attackTag !== AttackTag.ElementalSkill ||
-        checkIsKitStatusActive(
-          context.kitEffectState.effects,
+        !startKitCooldown(
+          context.kitEffectState,
           combatant.characterId,
           TENACITY_OF_THE_MILLELITH_COOLDOWN_ID,
+          cooldownSeconds,
         )
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: TENACITY_OF_THE_MILLELITH_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       buffKitTeam(context.kitEffectState, context.party, {
         amount: attackPercent,
         attribute: Attribute.AttackPercent,

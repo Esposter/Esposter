@@ -13,7 +13,7 @@ import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNig
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const CITLALI_CHARACTER_ID = 10_000_107;
 

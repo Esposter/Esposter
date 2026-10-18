@@ -67,13 +67,14 @@ const DATA = {
 };
 
 describe(createTrialCharacter, () => {
-  test("a trial party member is at the trial's level with its artifacts", () => {
+  test("a trial party member is at the trial's level with its artifacts, each as its reliquary's item", () => {
     expect.hasAssertions();
     expect(createTrialCharacter(TRIAL, TABLES, DATA)).toStrictEqual({
       artifacts: [
         {
           experience: 100,
           isLocked: false,
+          itemId: 91,
           level: 4,
           mainAffix: Attribute.AttackPercent,
           minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
@@ -84,6 +85,7 @@ describe(createTrialCharacter, () => {
         {
           experience: 100,
           isLocked: false,
+          itemId: 92,
           level: 4,
           mainAffix: Attribute.AttackPercent,
           minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],

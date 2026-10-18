@@ -13,7 +13,7 @@ import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNig
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers

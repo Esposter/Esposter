@@ -3,9 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
@@ -29,8 +28,7 @@ export const createGildedDreamsSetModule = (bonus: ArtifactSetBonus): PassiveMod
       const { characterId, element } = combatant;
       if (event.striker.characterId !== characterId) return;
       const { characterIdCombatantMap, kitEffectState, party } = context;
-      if (checkIsKitStatusActive(kitEffectState.effects, characterId, GILDED_DREAMS_COOLDOWN_ID)) return;
-      addKitStatus(kitEffectState, characterId, { id: GILDED_DREAMS_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
+      if (!startKitCooldown(kitEffectState, characterId, GILDED_DREAMS_COOLDOWN_ID, cooldownSeconds)) return;
       let sameElementCount = 0;
       let differentElementCount = 0;
       for (const memberId of getDeployedCharacterIds(party)) {

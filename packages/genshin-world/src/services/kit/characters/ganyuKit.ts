@@ -10,7 +10,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 import { grantKitChargeSkip } from "#src/services/kit/effects/grantKitChargeSkip";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Provisional: no source gives the lotus health, so it stands until its seconds run out, unless a taunt's health is taken

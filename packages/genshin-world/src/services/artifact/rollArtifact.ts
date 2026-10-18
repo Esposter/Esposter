@@ -11,12 +11,14 @@ import { takeOne } from "@esposter/shared";
 // Its minor affixes drawn one at a time from the rarity's pool, with the main affix's attribute and each one drawn left
 // Out of the next draw. Each minor affix is valued by one of its tiers, every tier as likely as the next
 export const rollArtifact = ({
+  itemId,
   mainAffixPool,
   minorAffixCount,
   random,
   rarityData,
   setId,
 }: {
+  itemId: number;
   mainAffixPool: ArtifactMainAffixPool;
   minorAffixCount: number;
   random: () => number;
@@ -47,6 +49,7 @@ export const rollArtifact = ({
   return {
     experience: 0,
     isLocked: false,
+    itemId,
     level: 0,
     mainAffix,
     minorAffixes,

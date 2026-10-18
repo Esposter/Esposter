@@ -7,6 +7,7 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { describe, expect, test } from "vitest";
 
 // Two made-up moves, the boss making the first of them next
@@ -47,7 +48,7 @@ const createBoss = (state: EnemyState): Enemy => ({
 });
 
 describe("startBossMove", () => {
-  test("starts the named move as the boss's next, and winds it up at once when the boss is ready to attack", () => {
+  test("starts the named move as the boss's next, and winds it up on the next step within attack range", () => {
     expect.hasAssertions();
 
     const boss = createBoss(EnemyState.Chase);
@@ -55,6 +56,9 @@ describe("startBossMove", () => {
     expect(startBossMove(boss, MOVES, "Made-up Pulse")).toBe(true);
     expect(boss.moveIndex).toBe(1);
     expect(boss.attackCooldownSeconds).toBe(0);
+    // The boss stands on its target, so its step finds the target in range and winds the move up
+    stepEnemy(boss, boss.position, 1);
+    expect(boss.state).toBe(EnemyState.Windup);
   });
 
   test("leaves a boss that is mid-move on the move it is making", () => {

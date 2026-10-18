@@ -1,6 +1,6 @@
-import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { NO_ARTIFACT_DROP_TABLES } from "#src/services/chest/constants.test";
 import { openChest } from "#src/services/chest/openChest";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
@@ -9,11 +9,6 @@ describe(openChest, () => {
   const CHEST_ID = "chest-1";
   const commonChest = { id: CHEST_ID, kind: ChestKind.Common, position: { x: 0, z: 0 } };
   const NO_OPENED_CHESTS: ReadonlySet<string> = new Set();
-  const NO_ARTIFACT_DROP_TABLES: ArtifactDropTables = {
-    artifactMainAffixPools: [],
-    artifactRarityDataMap: new Map(),
-    reliquarySets: [],
-  };
   const COMMON_DROPS = [
     { count: 1, itemId: 11_101 },
     { count: 4, itemId: 104_001 },

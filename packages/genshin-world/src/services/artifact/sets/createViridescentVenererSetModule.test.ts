@@ -8,6 +8,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { VIRIDESCENT_VENERER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createViridescentVenererSetModule } from "#src/services/artifact/sets/createViridescentVenererSetModule";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -19,19 +20,12 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(VIRIDESCENT_VENERER_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
@@ -41,7 +35,9 @@ const createCombatant = (characterId: number, kit = KIT): Combatant => {
 const createTeam = (characterIds: number[]) => {
   const wearer = createCombatant(
     TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [createViridescentVenererSetModule(bonusOf(4))]),
+    getPassiveKit(KIT, [
+      createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
+    ]),
   );
   const other = createCombatant(OTHER_CHARACTER_ID);
   const kitEffectState: KitEffectState = { effects: [] };

@@ -17,7 +17,7 @@ import { MISSING_KIT_BEHAVIOUR_ID } from "#src/services/kit/build/constants";
 import { missingKitBehaviour } from "#src/services/kit/build/missingKitBehaviour";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The field of a striker's attributes each stat a hit scales with is read from, its total where none holds it

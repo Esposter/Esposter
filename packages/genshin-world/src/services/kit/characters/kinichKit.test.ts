@@ -17,7 +17,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 

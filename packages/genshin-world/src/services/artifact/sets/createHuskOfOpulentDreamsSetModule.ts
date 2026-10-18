@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
@@ -89,13 +89,9 @@ export const createHuskOfOpulentDreamsSetModule = (bonus: ArtifactSetBonus): Pas
         event.striker.characterId === characterId &&
         isOnField &&
         getKitHitElement(event.hit, event.striker) === Element.Geo &&
-        !checkIsKitStatusActive(kitEffectState.effects, characterId, HUSK_STACK_GAIN_COOLDOWN_ID)
+        startKitCooldown(kitEffectState, characterId, HUSK_STACK_GAIN_COOLDOWN_ID, cooldownSeconds)
       ) {
         gainStack(kitEffectState, characterId);
-        addKitStatus(kitEffectState, characterId, {
-          id: HUSK_STACK_GAIN_COOLDOWN_ID,
-          secondsRemaining: cooldownSeconds,
-        });
       }
     },
   };

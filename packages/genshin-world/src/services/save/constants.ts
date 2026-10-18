@@ -137,6 +137,7 @@ const LONGEST_BANNER_KIND = getLongestMember(Object.values(BannerKind));
 const LONGEST_ARTIFACT = {
   experience: MAX_SAVE_NUMBER,
   isLocked: true,
+  itemId: MAX_SAVE_NUMBER,
   level: MAX_SAVE_NUMBER,
   mainAffix: LONGEST_ATTRIBUTE,
   minorAffixes: Array.from({ length: MAX_MINOR_AFFIX_COUNT }, () => ({

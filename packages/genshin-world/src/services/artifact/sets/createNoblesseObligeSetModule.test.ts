@@ -1,4 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -9,7 +8,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NOBLESSE_OBLIGE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -18,36 +18,21 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(NOBLESSE_OBLIGE_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
+const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createNoblesseObligeSetModule, () => {
   test("gives every deployed member 20% more ATK for 12 seconds when its wearer uses its Elemental Burst from four pieces", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    createNoblesseObligeSetModule(bonusOf(4)).onKitEvent?.(
+    createNoblesseObligeSetModule(getArtifactSetBonus(statTables, NOBLESSE_OBLIGE_ARTIFACT_SET_ID, 4)).onKitEvent?.(
       { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed },
       createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) }),
       wearer,
@@ -72,7 +57,9 @@ describe(createNoblesseObligeSetModule, () => {
       hit: TRAVELER_KIT.plungeCollision,
     });
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    const { getStrikeDamageBonus } = createNoblesseObligeSetModule(bonusOf(2));
+    const { getStrikeDamageBonus } = createNoblesseObligeSetModule(
+      getArtifactSetBonus(statTables, NOBLESSE_OBLIGE_ARTIFACT_SET_ID, 2),
+    );
 
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(0.2);
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);

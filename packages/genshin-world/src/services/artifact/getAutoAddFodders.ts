@@ -2,6 +2,7 @@ import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
+import { getArtifactMaxExperience } from "#src/services/artifact/getArtifactMaxExperience";
 import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { getFodderEnhancement } from "#src/services/artifact/getFodderEnhancement";
 
@@ -20,7 +21,7 @@ export const getAutoAddFodders = ({
   maxRarity: number;
 }): number[] => {
   const rarityData = getArtifactRarityData(artifactRarityDataMap, artifact.rarity);
-  const totalExperience = rarityData.levelExperiences.reduce((total, levelExperience) => total + levelExperience, 0);
+  const totalExperience = getArtifactMaxExperience(rarityData);
   const fodders = inventory.items
     .flatMap(({ artifact: fodder, id }) =>
       fodder && !fodder.isLocked && fodder.rarity <= maxRarity ? [{ fodder, id }] : [],

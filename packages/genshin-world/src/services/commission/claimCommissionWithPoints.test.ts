@@ -16,16 +16,14 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { claimCommissionWithPoints } from "#src/services/commission/claimCommissionWithPoints";
-import { COMMISSION_RANK_BAND_COUNT } from "#src/services/commission/constants";
+import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
+import { minimumRoll } from "#src/services/commission/minimumRoll.test";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
-
-const emptyBands = (): RewardItem[][] => Array.from({ length: COMMISSION_RANK_BAND_COUNT }, (): RewardItem[] => []);
-const minimumRoll = () => 0;
 
 describe(claimCommissionWithPoints, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -66,9 +64,9 @@ describe(claimCommissionWithPoints, () => {
     weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
   };
   // Rank 12 is the third band, which pays the Mora reward at its minimum, so a claim's routing is seen in the wallet
-  const moraBands = emptyBands();
+  const moraBands = createEmptyBands();
   moraBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: 20, minCount: MORA_REWARD }];
-  const itemBands = emptyBands();
+  const itemBands = createEmptyBands();
   itemBands[2] = [{ itemId: ITEM_ID, maxCount: 1, minCount: 1 }];
   const commissionOf = (id: number): Commission => ({
     centerPosition: `Event_${id}`,
@@ -78,7 +76,7 @@ describe(claimCommissionWithPoints, () => {
     finishProgress: FINISH_PROGRESS,
     id,
     kind: CommissionKind.Scene,
-    nameTextId: "1",
+    nameTextId: NAME_TEXT_ID,
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
@@ -87,7 +85,7 @@ describe(claimCommissionWithPoints, () => {
     rewardTier: REWARD_TIER,
   });
   const sliceWith = (bands: RewardItem[][]): CommissionSlice => ({
-    bonuses: emptyBands(),
+    bonuses: createEmptyBands(),
     rewardTiers: [{ bands, tier: REWARD_TIER }],
     tasks: [commissionOf(1)],
   });

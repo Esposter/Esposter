@@ -1,5 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 
@@ -9,7 +7,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 
 import { DEEPWOOD_MEMORIES_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -18,20 +17,12 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const damageDealtBy = (enemy: ReturnType<typeof createEnemy>, attackTag: AttackTag) =>
   ({
     attackTag,
@@ -42,13 +33,6 @@ const damageDealtBy = (enemy: ReturnType<typeof createEnemy>, attackTag: AttackT
     kind: KitEventKind.DamageTaken,
     striker: wearer,
   }) as const;
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(DEEPWOOD_MEMORIES_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 
 describe(createDeepwoodMemoriesSetModule, () => {
   test("lowers the Dendro RES of an enemy its wearer's Elemental Skill or Burst hits by 30% for 8 seconds, from four pieces", () => {
@@ -56,7 +40,9 @@ describe(createDeepwoodMemoriesSetModule, () => {
 
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const context = createKitTestContext(wearer, { party: createParty([TRAVELER_CHARACTER_ID]) });
-    const { onKitEvent } = createDeepwoodMemoriesSetModule(bonusOf(4));
+    const { onKitEvent } = createDeepwoodMemoriesSetModule(
+      getArtifactSetBonus(statTables, DEEPWOOD_MEMORIES_ARTIFACT_SET_ID, 4),
+    );
 
     onKitEvent?.(damageDealtBy(enemy, AttackTag.NormalAttack), context, wearer);
     expect(enemy.statuses).toHaveLength(0);

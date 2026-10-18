@@ -4,12 +4,12 @@ import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { computeOpenedChestCountMap } from "#src/services/chest/computeOpenedChestCountMap";
+import { NO_ARTIFACT_DROP_TABLES } from "#src/services/chest/constants.test";
 import { openChest } from "#src/services/chest/openChest";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeOpenedChestCountMap, () => {
-  const NO_ARTIFACT_DROP_TABLES = { artifactMainAffixPools: [], artifactRarityDataMap: new Map(), reliquarySets: [] };
   const AREA_ID = "galesong-hill";
   const areas: Pick<CatalogueArea, "id" | "outline">[] = [
     {

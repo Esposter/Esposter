@@ -29,12 +29,20 @@ vi.mock(import("genshin-engine"), async (importOriginal) => {
 });
 
 describe(readCharacterMesh, () => {
+  const readFile = vi.fn((path: string) => Promise.resolve(new Blob([path])));
+  const characterPackReader: CharacterPackReader = { key: "", readFile };
+  const meshOptions = {
+    characterId: TRAVELER_CHARACTER_ID,
+    lightUniforms: createLightUniforms(),
+    rampTexture: new DataTexture(),
+  };
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
-  test("a texture a material uses as a toon ramp is not decoded for its diffuse too", async () => {
+  test("a texture drawn both as a colour and as a toon ramp is decoded once each way, not shared", async () => {
     expect.hasAssertions();
 
     // Node has no ImageBitmap, which the reader names when it checks a decoded image for transparent texels, so a stand-in
@@ -63,16 +71,7 @@ describe(readCharacterMesh, () => {
       ],
       textures: ["ramp.bmp", "body.png"],
     } as PmxModel);
-    const characterPackReader: CharacterPackReader = {
-      key: "test",
-      readFile: (path) => Promise.resolve(new Blob([path])),
-    };
-
-    const result = await readCharacterMesh(characterPackReader, {
-      characterId: TRAVELER_CHARACTER_ID,
-      lightUniforms: createLightUniforms(),
-      rampTexture: new DataTexture(),
-    });
+    const result = await readCharacterMesh(characterPackReader, meshOptions);
 
     expect(result.isOk()).toBe(true);
     expect(createPmxMesh).toHaveBeenCalledTimes(1);
@@ -94,38 +93,17 @@ describe(readCharacterMesh, () => {
       materials: [{ isToonShared: true, sphereMode, sphereTextureIndex: 1, textureIndex: 0, toonIndex: -1 }],
       textures: ["a", "b"],
     } as PmxModel);
-    const readPaths: string[] = [];
-    const characterPackReader: CharacterPackReader = {
-      key: "test",
-      readFile: (path) => {
-        readPaths.push(path);
-        return Promise.resolve(new Blob([path]));
-      },
-    };
+    await readCharacterMesh(characterPackReader, meshOptions);
 
-    await readCharacterMesh(characterPackReader, {
-      characterId: TRAVELER_CHARACTER_ID,
-      lightUniforms: createLightUniforms(),
-      rampTexture: new DataTexture(),
-    });
-
-    expect(readPaths).toStrictEqual(expectedPaths);
+    expect(readFile.mock.calls.map(([path]) => path)).toStrictEqual(expectedPaths);
   });
 
   test("a model is drawn at its character's unit", async () => {
     expect.hasAssertions();
 
     vi.mocked(parsePmx).mockReturnValue({ materials: [], textures: [] } as unknown as PmxModel);
-    const characterPackReader: CharacterPackReader = {
-      key: "test",
-      readFile: (path) => Promise.resolve(new Blob([path])),
-    };
 
-    await readCharacterMesh(characterPackReader, {
-      characterId: TRAVELER_CHARACTER_ID,
-      lightUniforms: createLightUniforms(),
-      rampTexture: new DataTexture(),
-    });
+    await readCharacterMesh(characterPackReader, meshOptions);
 
     expect(createPmxMesh).toHaveBeenCalledWith(
       expect.anything(),

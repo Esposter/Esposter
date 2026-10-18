@@ -4,6 +4,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { takeOne } from "@esposter/shared";
 
 const DEEPWOOD_MEMORIES_STATUS_ID = "deepwoodMemories";
@@ -22,15 +23,12 @@ export const createDeepwoodMemoriesSetModule = (bonus: ArtifactSetBonus): Passiv
         (event.attackTag !== AttackTag.ElementalSkill && event.attackTag !== AttackTag.ElementalBurst)
       )
         return;
-      event.enemy.statuses = [
-        ...event.enemy.statuses.filter(({ id }) => id !== DEEPWOOD_MEMORIES_STATUS_ID),
-        {
-          damageTakenBonus: 0,
-          id: DEEPWOOD_MEMORIES_STATUS_ID,
-          resistanceReduction: { [Element.Dendro]: resistanceReduction },
-          secondsRemaining: seconds,
-        },
-      ];
+      addEnemyStatus(event.enemy, {
+        damageTakenBonus: 0,
+        id: DEEPWOOD_MEMORIES_STATUS_ID,
+        resistanceReduction: { [Element.Dendro]: resistanceReduction },
+        secondsRemaining: seconds,
+      });
     },
   };
 };

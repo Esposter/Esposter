@@ -1,4 +1,4 @@
-import { computeWeeklyBossTopClearKey } from "#src/services/bosses/markWeeklyBossTopClear";
+import { computeWeeklyBossTopClearKey } from "#src/services/bosses/computeWeeklyBossTopClearKey";
 
 // Whether a weekly boss's first clear can be claimed: its highest difficulty has been cleared, and the claim has not been
 // Made, which it records by the entry id alone

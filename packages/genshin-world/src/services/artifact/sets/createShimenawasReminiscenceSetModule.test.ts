@@ -1,4 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -6,8 +5,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { createShimenawasReminiscenceSetModule } from "#src/services/artifact/sets/createShimenawasReminiscenceSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -17,20 +17,12 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
+const wearer = createSetWearer(KIT);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
@@ -38,13 +30,6 @@ const createStrike = (attackTag: AttackTag): KitStrike => ({
   combatant: wearer,
   hit: KIT.plungeCollision,
 });
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
 
 describe(createShimenawasReminiscenceSetModule, () => {
   test("spends 15 Energy on casting an Elemental Skill and raises the DMG of its wearer's Normal, Charged and Plunging Attacks by 50% for 10 seconds", () => {
@@ -54,7 +39,9 @@ describe(createShimenawasReminiscenceSetModule, () => {
     const partyMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getStrikeDamageBonus, onKitEvent } = createShimenawasReminiscenceSetModule(bonusOf(4));
+    const { getStrikeDamageBonus, onKitEvent } = createShimenawasReminiscenceSetModule(
+      getArtifactSetBonus(statTables, SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID, 4),
+    );
     partyMember.energy = 15;
 
     onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wearer);
@@ -81,7 +68,9 @@ describe(createShimenawasReminiscenceSetModule, () => {
     const partyMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { getStrikeDamageBonus, onKitEvent } = createShimenawasReminiscenceSetModule(bonusOf(4));
+    const { getStrikeDamageBonus, onKitEvent } = createShimenawasReminiscenceSetModule(
+      getArtifactSetBonus(statTables, SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID, 4),
+    );
     partyMember.energy = 14;
 
     onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wearer);
@@ -97,7 +86,9 @@ describe(createShimenawasReminiscenceSetModule, () => {
     const partyMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const { onKitEvent } = createShimenawasReminiscenceSetModule(bonusOf(4));
+    const { onKitEvent } = createShimenawasReminiscenceSetModule(
+      getArtifactSetBonus(statTables, SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID, 4),
+    );
     const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed } as const;
 
     partyMember.energy = 15;

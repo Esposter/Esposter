@@ -69,6 +69,7 @@ const RANDOM = (): number => 0.5;
 const createArtifact = (isLocked: boolean): Artifact => ({
   experience: 0,
   isLocked,
+  itemId: 101,
   level: 0,
   mainAffix: Attribute.Health,
   minorAffixes: [],

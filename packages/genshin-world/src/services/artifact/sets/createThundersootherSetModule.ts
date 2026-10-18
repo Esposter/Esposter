@@ -6,5 +6,5 @@ import { createAuraDamageSetModule } from "#src/services/artifact/sets/createAur
 import { takeOne } from "@esposter/shared";
 
 // Thundersoother. Its four-piece bonus raises the DMG its wearer's strikes deal to an enemy under Electro by the table's first param
-export const createThundersooterSetModule = (bonus: ArtifactSetBonus): PassiveModule =>
+export const createThundersootherSetModule = (bonus: ArtifactSetBonus): PassiveModule =>
   createAuraDamageSetModule({ amount: takeOne(bonus.params, 0), element: Element.Electro });

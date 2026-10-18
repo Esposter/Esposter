@@ -14,8 +14,8 @@ import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelaye
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 export const WRIOTHESLEY_CHARACTER_ID = 10_000_086;
 

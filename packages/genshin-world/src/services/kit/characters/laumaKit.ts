@@ -22,9 +22,9 @@ import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { countDew } from "#src/services/party/countDew";
 import { spendDew } from "#src/services/party/spendDew";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
 // RES below for 10 seconds

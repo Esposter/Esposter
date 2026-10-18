@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -16,7 +17,7 @@ const GOLDEN_TROUPE_LINGER_STATUS_ID = "goldenTroupeLinger";
 export const createGoldenTroupeSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const damageBonus = takeOne(bonus.params, 0);
   if (bonus.pieceCount === 2)
-    return { getStrikeDamageBonus: (strike) => (strike.attackTag === AttackTag.ElementalSkill ? damageBonus : 0) };
+    return createAttackTagDamageSetModule({ amount: damageBonus, attackTag: AttackTag.ElementalSkill });
   const seconds = takeOne(bonus.params, 2);
   return {
     getStrikeDamageBonus: (strike, _enemy, party, effects) => {

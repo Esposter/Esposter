@@ -2,7 +2,7 @@ import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
-import { CHEST_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS } from "#src/services/chest/constants";
+import { ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS } from "#src/services/artifact/constants";
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -15,7 +15,7 @@ export const drawArtifactPiece = (
   rarity: number,
   random: () => number,
 ): ReliquaryPieceData => {
-  const minorAffixCountWeights = CHEST_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS[rarity];
+  const minorAffixCountWeights = ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS[rarity];
   if (minorAffixCountWeights === undefined)
     throw new InvalidOperationError(Operation.Read, drawArtifactPiece.name, `no minor affix count for ${rarity} stars`);
   const minorAffixCount = drawWeightedValue(minorAffixCountWeights, random);
@@ -26,8 +26,8 @@ export const drawArtifactPiece = (
   if (piece === undefined)
     throw new InvalidOperationError(
       Operation.Read,
-      String(set.id),
-      `holds no ${slot} piece of ${rarity} stars with ${minorAffixCount} minor affixes`,
+      drawArtifactPiece.name,
+      `set ${set.id} holds no ${slot} piece of ${rarity} stars with ${minorAffixCount} minor affixes`,
     );
   return piece;
 };

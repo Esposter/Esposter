@@ -1,5 +1,5 @@
-import { fetchCharacterPackResponse } from "#src/services/character/fetchCharacterPackResponse";
 import { getCharacterPackFileUrl } from "#src/services/character/getCharacterPackFileUrl";
+import { readFileResponse } from "#src/services/shared/readFileResponse";
 
 // A file of a character's pack, by its path in the pack, from the host the world is given, none where the host answers
 // That its pack holds no such file. Only a character the host's index lists is read, so no file the world knows is
@@ -10,4 +10,4 @@ export const readCharacterPackFile = (
   path: string,
   timeoutMs: number,
 ): Promise<Response | undefined> =>
-  fetchCharacterPackResponse(getCharacterPackFileUrl(characterPackBaseUrl, characterId, path), timeoutMs, 404);
+  readFileResponse(getCharacterPackFileUrl(characterPackBaseUrl, characterId, path), timeoutMs, 404);

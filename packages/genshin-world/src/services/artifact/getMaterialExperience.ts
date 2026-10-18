@@ -1,7 +1,10 @@
+import type { ArtifactExpMaterial } from "#src/models/artifact/ArtifactExpMaterial";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 
-import { ItemIdExperienceMap } from "#src/services/artifact/ItemIdExperienceMap";
-
-// The Artifact EXP the enhancement materials among a set of item counts give, each material's EXP times its count
-export const getMaterialExperience = (itemCounts: readonly ItemCount[]): number =>
-  itemCounts.reduce((total, { count, id }) => total + (ItemIdExperienceMap.get(id) ?? 0) * count, 0);
+// The Artifact EXP the enhancement materials among a set of item counts give, each material's EXP from the game's table
+// Times its count
+export const getMaterialExperience = (
+  artifactExpMaterialMap: ReadonlyMap<number, ArtifactExpMaterial>,
+  itemCounts: readonly ItemCount[],
+): number =>
+  itemCounts.reduce((total, { count, id }) => total + (artifactExpMaterialMap.get(id)?.experience ?? 0) * count, 0);
