@@ -47,6 +47,7 @@ import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
+import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
@@ -312,6 +313,8 @@ const { chestInteractables, openChestById } = useWorldChests({
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
+// The Seelies of Mondstadt, each led to its court by the player following it, and settled where the save names it settled
+const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(seelies, savedState.settledSeelieIds);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
@@ -409,8 +412,8 @@ const {
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
   wallet,
 });
-// The Companionship EXP, the day's commissions, the statues and the Traveler's name no source changes yet, so they are
-// Carried as they were saved
+// The Companionship EXP, the day's commissions, the statues, the solved puzzles and the Traveler's name no source changes
+// Yet, so they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
@@ -431,7 +434,7 @@ useWorldSaveSync({
     quests: questProgressMap.value,
     regionStatueProgressMap: savedState.regionStatueProgressMap,
     reputation: reputation.value,
-    settledSeelieIds: savedState.settledSeelieIds,
+    settledSeelieIds: settledSeelieIds.value,
     solvedPuzzleIds: savedState.solvedPuzzleIds,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
@@ -616,6 +619,7 @@ defineExpose({ jumpTo, readCameraPosition });
               inputState.pressedActions.has(InputAction.ElementalSight),
             );
           else elementalSight.isOn = false;
+          if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.QuickUseGadget))
             quickUseEquippedGadget(getWorldNow());
@@ -723,7 +727,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         :scene-export-base-url
         :frostbearing-tree-places
-        :seelies
+        :seelies="puzzleSeelies"
         :wildlife-places
         :windrise-data
         :world-level
