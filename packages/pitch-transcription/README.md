@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on the current TensorFlow.js and written as MIDI if you want a file. It hears several notes at once, on any instrument. The trained model ships with the package, and the step that turns the model's readings into notes imports without TensorFlow.js.
+The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on ONNX Runtime and written as MIDI if you want a file. It hears several notes at once, on any instrument. The trained model ships with the package, and the step that turns the model's readings into notes imports without ONNX Runtime.
 
 ## Table of Contents
 
@@ -18,27 +18,25 @@ The notes played in a recording: each note's pitch, start, length, loudness and 
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i pitch-transcription @tensorflow/tfjs
+pnpm i pitch-transcription onnxruntime-common onnxruntime-node
 ```
 
 ```ts
-import { loadGraphModelSync } from "@tensorflow/tfjs";
-import { readFile } from "node:fs/promises";
+import { InferenceSession } from "onnxruntime-node";
+import { fileURLToPath } from "node:url";
 import {
   addPitchBends,
   convertNotesToSeconds,
   createNotes,
   MODEL_URL,
-  MODEL_WEIGHTS_URL,
   readModel,
   writeMidi,
 } from "pitch-transcription";
 
-// Under Node, the model is built from its two files; in a browser, `await loadGraphModel(servedModelUrl)` instead
-const [modelJson, weights] = await Promise.all([readFile(MODEL_URL, "utf8"), readFile(MODEL_WEIGHTS_URL)]);
-const model = loadGraphModelSync([JSON.parse(modelJson), new Uint8Array(weights).buffer]);
+// Under Node, the session reads the shipped model file; in a browser, `InferenceSession.create(servedModelUrl)` from `onnxruntime-web` instead
+const session = await InferenceSession.create(fileURLToPath(MODEL_URL));
 // One channel at 22050 Hz as a Float32Array, or an AudioBuffer at 22050 Hz with any number of channels
-const readings = await readModel(model, samples, (_windowReadings, progress) => console.log(progress));
+const readings = await readModel(session, samples, (_windowReadings, progress) => console.log(progress));
 const notes = createNotes(readings, { minNoteLength: 11 });
 const bentNotes = addPitchBends(readings.contours, notes);
 const timedNotes = convertNotesToSeconds(bentNotes);
@@ -46,7 +44,7 @@ const timedNotes = convertNotesToSeconds(bentNotes);
 const midiBytes = writeMidi(timedNotes);
 ```
 
-A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads TensorFlow.js.
+A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads ONNX Runtime. `pitch-transcription` takes `onnxruntime-common` as a peer, and the runtime the session runs on is yours to choose: `onnxruntime-node` under Node, `onnxruntime-web` in a browser.
 
 ## <a name="documentation">📖 Documentation</a>
 
@@ -54,14 +52,14 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ### Key exports
 
-| Export                           | Role                                                                                                              |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `readModel`                      | The model's frame, onset and contour readings over a recording, a window at a time, each window's tensors freed   |
-| `createNotes`                    | The readings turned into notes, with Basic Pitch's thresholds, inferred onsets, frequency range and melodia trick |
-| `addPitchBends`                  | Each note's bend at every frame, in contour bins of a third of a semitone                                         |
-| `convertNotesToSeconds`          | Notes timed in seconds rather than the model's frames                                                             |
-| `writeMidi`                      | Notes as a MIDI file's bytes, each bend written as its share of the bend's range                                  |
-| `MODEL_URL`, `MODEL_WEIGHTS_URL` | The shipped model's two files                                                                                     |
+| Export                  | Role                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `readModel`             | The model's frame, onset and contour readings over a recording, a window at a time, each output disposed once read |
+| `createNotes`           | The readings turned into notes, with Basic Pitch's thresholds, inferred onsets, frequency range and melodia trick  |
+| `addPitchBends`         | Each note's bend at every frame, in contour bins of a third of a semitone                                          |
+| `convertNotesToSeconds` | Notes timed in seconds rather than the model's frames                                                              |
+| `writeMidi`             | Notes as a MIDI file's bytes, each bend written as its share of the bend's range                                   |
+| `MODEL_URL`             | The shipped model file, Basic Pitch's ONNX export                                                                  |
 
 ### Commands
 

@@ -7,4 +7,4 @@
 ## 2. The removal
 
 - [x] 2.1 Remove `@tensorflow/tfjs` from the catalog, both manifests and the ledger, and add `onnxruntime-node` and `onnxruntime-common` at the versions Transformers.js already resolves. Drop the `core-js` build allowance and the `sprintf-js` exception in `osv-scanner.toml`, then run `pnpm i`. Verify: `@tensorflow` appears nowhere in `pnpm-lock.yaml`, and task 1.3's suite still passes, since a session fed a tensor from a second copy of `onnxruntime-common` refuses it.
-- [ ] 2.2 Rewrite the package's README as built, and update the pitch-transcription paragraph of the dependency admission page. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
+- [x] 2.2 Rewrite the package's README as built, and update the pitch-transcription paragraph of the dependency admission page. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
