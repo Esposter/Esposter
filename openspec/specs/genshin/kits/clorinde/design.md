@@ -5,7 +5,7 @@ Clorinde's kit is its record and one behaviour module, `createClorindeKitBehavio
 ## Decisions
 
 - **Each strike is priced at its gcsim reach.** The first three strikes are circles of radius 1.7, 1.9 and 2.1 centred 1.1 to 1.3 metres ahead, priced as the offset plus the radius, as Zhongli's are. The fourth strike is three boxes 2 metres wide, 1.3 metres ahead, and the fifth a circle of radius 2.5 at 1.4 metres. gcsim gives no poise for a normal attack, so none is dealt.
-- **The charged attack is a circle of radius 4.1 round her.** gcsim strikes it at 38 frames of a 68-frame animation as a Physical hit, with 20 stamina.
+- **The charged attack is a circle of radius 4.1 round her.** gcsim strikes it at 38 frames of a 68-frame animation as a Physical hit, with 20 stamina. Its poise is the wiki's 120, which gcsim does not give.
 - **Last Lightfall keeps gcsim's five frames.** Its boxes land at 97, 103, 109, 115 and 121 frames, each a gauge of 1U under the Elemental Burst internal cooldown, inside its 128-frame animation.
 - **The press has no hit.** gcsim's press only starts Night Vigil, so the kit's press plays its animation and starts its cooldown, and the stance is not built.
 - **Her plunges are provisional.** Clorinde has no plunge in gcsim, so hers share the plunge reach, deal 0 poise and land as their action starts; the roadmap's Manual verification list has the question.
