@@ -1,9 +1,10 @@
 import type { MjmlAttributeType } from "#src/models/MjmlAttributeType";
 
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
+import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkIsMjmlAddressAttribute } from "#src/services/checkIsMjmlAddressAttribute";
-import { ALLOWED_URL_SCHEMES, MJML_COLOR_MATCHERS } from "#src/services/constants";
-import { checkIsAllowedUrl, exhaustiveGuard } from "@esposter/shared";
+import { MJML_COLOR_MATCHERS } from "#src/services/constants";
+import { exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
 
 // MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them
@@ -39,7 +40,5 @@ const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
 // The schema of one attribute's value, accepting what MJML's validator for its type accepts, and for an address only a scheme that is allowed
 export const createMjmlAttributeSchema = (type: MjmlAttributeType, name: string): z.ZodType<string> => {
   const schema = createTypeSchema(type);
-  return checkIsMjmlAddressAttribute(name)
-    ? schema.refine((url) => checkIsAllowedUrl(url, ALLOWED_URL_SCHEMES), "has a scheme that is not allowed")
-    : schema;
+  return checkIsMjmlAddressAttribute(name) ? schema.and(allowedAddressSchema) : schema;
 };
