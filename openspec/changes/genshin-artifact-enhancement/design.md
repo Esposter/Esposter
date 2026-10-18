@@ -5,6 +5,7 @@ Rolling, enhancing and locking artifacts is [built](../../specs/genshin/artifact
 ## Decisions
 
 - **A set's conditional bonus is a module.** A two or four-piece bonus that waits on combat is a small module of its own over the shared effects the kits use, its numbers the set table's, as a weapon's passive is. Its unconditional attributes stay what the sum already reads ([character attributes](../../specs/genshin/character-attributes/design.md)).
+- **A chest opened during Adventurer's restoration restarts it.** The four-piece's restoration is a field, and fields stack as each one is its own, so the module ends its wearer's running restoration before it starts the next: two chests opened within five seconds heal for five seconds from the second, never twice at once. No source says whether the game refreshes or stacks it, so this is provisional, and a recording of two chests opened back to back settles it.
 - **A module is carried with its set.** No set's conditional bonus is written before the set is carried, so no module waits on an effect the kits do not yet have.
 
 ## Scope and order
