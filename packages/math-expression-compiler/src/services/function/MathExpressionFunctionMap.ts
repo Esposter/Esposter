@@ -48,6 +48,7 @@ import { computeVectorNorm } from "#src/services/function/computeVectorNorm";
 import { computeZeta } from "#src/services/function/computeZeta";
 import { createBinarySignatures } from "#src/services/function/signature/createBinarySignatures";
 import { createBitwiseFold } from "#src/services/function/signature/createBitwiseFold";
+import { createBitwisePair } from "#src/services/function/signature/createBitwisePair";
 import { createDigitSignatures } from "#src/services/function/signature/createDigitSignatures";
 import { createFixedSignatures } from "#src/services/function/signature/createFixedSignatures";
 import { createIdentitySignatures } from "#src/services/function/signature/createIdentitySignatures";
@@ -67,6 +68,9 @@ import { createVariadicSignatures } from "#src/services/function/signature/creat
 import { checkIsTruthy } from "#src/services/shared/checkIsTruthy";
 import { toNumber } from "#src/services/shared/toNumber";
 
+const computeBitwiseAnd = (left: number, right: number): number => left & right;
+const computeBitwiseOr = (left: number, right: number): number => left | right;
+
 // A function of the table is keyed by its mathjs name, and is the signatures it takes.
 // Each signature gives its parameter kinds, its arities and its computation.
 // A computation yields null where mathjs would throw, which the evaluation turns into an error
@@ -78,7 +82,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   acoth: createUnarySignatures(computeInverseCoth),
   acsc: createUnarySignatures((value) => Math.asin(1 / value)),
   acsch: createUnarySignatures((value) => Math.asinh(1 / value)),
-  add: createVariadicSignatures(2, computeSum),
+  add: createVariadicSignatures(2, computeSum, (left, right) => left + right),
   addScalar: createBinarySignatures((left, right) => left + right),
   and: createVariadicSignatures(2, (values) => toNumber(values.every((value) => checkIsTruthy(value)))),
   arg: createUnarySignatures((value) => (Number.isNaN(value) ? Number.NaN : value < 0 ? Math.PI : 0)),
@@ -93,15 +97,9 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   bernoulli: createUnarySignatures((value) =>
     Number.isInteger(value) && value >= 0 ? computeBernoulliNumber(value) : null,
   ),
-  bitAnd: createVariadicSignatures(
-    2,
-    createBitwiseFold(0, (left, right) => left & right),
-  ),
+  bitAnd: createVariadicSignatures(2, createBitwiseFold(0, computeBitwiseAnd), createBitwisePair(0, computeBitwiseAnd)),
   bitNot: createIntegerUnarySignatures((value) => ~value),
-  bitOr: createVariadicSignatures(
-    2,
-    createBitwiseFold(-1, (left, right) => left | right),
-  ),
+  bitOr: createVariadicSignatures(2, createBitwiseFold(-1, computeBitwiseOr), createBitwisePair(-1, computeBitwiseOr)),
   bitXor: createIntegerBinarySignatures((left, right) => left ^ right),
   boolean: createRangedSignatures(0, 1, (values) =>
     values.length === 0 ? 0 : toNumber(checkIsTruthy(values[0] ?? 0)),
@@ -217,7 +215,11 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   mod: createBinarySignatures((left, right) => computeModulo(left, right)),
   multinomial: [createListSignature(computeMultinomial)],
   multiply: [
-    ...createVariadicSignatures(2, (values) => values.reduce((total, value) => total * value, 1)),
+    ...createVariadicSignatures(
+      2,
+      (values) => values.reduce((total, value) => total * value, 1),
+      (left, right) => left * right,
+    ),
     createListPairSignature(computeDotProduct),
     createSignature([MathExpressionParameterType.Any], 2, Number.POSITIVE_INFINITY, computeProduct),
   ],
@@ -306,6 +308,10 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   unaryPlus: createUnarySignatures((value) => value),
   unequal: createBinarySignatures((left, right) => toNumber(!checkIsNearlyEqual(left, right))),
   variance: createSpreadSignatures(1, createNonEmptyCompute(computeVariance)),
-  xor: createVariadicSignatures(2, (values) => toNumber(computeTruthyCount(values) % 2 === 1)),
+  xor: createVariadicSignatures(
+    2,
+    (values) => toNumber(computeTruthyCount(values) % 2 === 1),
+    (left, right) => toNumber(checkIsTruthy(left) !== checkIsTruthy(right)),
+  ),
   zeta: createUnarySignatures(computeZeta),
 };

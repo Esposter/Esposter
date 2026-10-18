@@ -17,7 +17,10 @@ export const compileCall = (
 ): MathExpressionCompiled => {
   const signatures = getMathExpressionSignatures(node.name);
   const parameterTypes = node.arguments.map((argument) => getMathExpressionParameterType(argument));
-  const compute = matchMathExpressionSignature(signatures ?? [], parameterTypes)?.compute ?? (() => null);
+  const signature = matchMathExpressionSignature(signatures ?? [], parameterTypes);
+  const compute = signature?.compute ?? (() => null);
+  const computeUnary = signature?.computeUnary;
+  const computeBinary = signature?.computeBinary;
   const compiledArguments = node.arguments.map((argument) => compileArgument(argument, context));
   const isConstant = compiledArguments.every((argument) => argument.isConstant);
   const [first, second] = compiledArguments;
@@ -25,7 +28,11 @@ export const compileCall = (
     return {
       evaluate: (values, locals) => {
         const firstValue = first.evaluate(values, locals);
-        return firstValue === null ? null : compute([firstValue]);
+        if (firstValue === null) return null;
+        // A scalar form takes only a number, so any other value goes through the array form
+        if (computeUnary !== undefined && typeof firstValue === "number") return computeUnary(firstValue);
+
+        return compute([firstValue]);
       },
       isConstant,
     };
@@ -36,7 +43,11 @@ export const compileCall = (
         const firstValue = first.evaluate(values, locals);
         if (firstValue === null) return null;
         const secondValue = second.evaluate(values, locals);
-        return secondValue === null ? null : compute([firstValue, secondValue]);
+        if (secondValue === null) return null;
+        if (computeBinary !== undefined && typeof firstValue === "number" && typeof secondValue === "number")
+          return computeBinary(firstValue, secondValue);
+
+        return compute([firstValue, secondValue]);
       },
       isConstant,
     };

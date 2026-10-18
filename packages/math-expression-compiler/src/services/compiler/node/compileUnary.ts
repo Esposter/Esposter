@@ -3,18 +3,18 @@ import type { MathExpressionCompiled } from "#src/models/compiler/MathExpression
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
-import { getMathExpressionCompute } from "#src/services/compiler/getMathExpressionCompute";
+import { getMathExpressionUnaryCompute } from "#src/services/compiler/getMathExpressionUnaryCompute";
 
 export const compileUnary = (
   node: Extract<MathExpressionNode, { type: MathExpressionNodeType.Unary }>,
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
-  const compute = getMathExpressionCompute(node.name);
+  const compute = getMathExpressionUnaryCompute(node.name);
   const compiledOperand = context.compile(node.operand);
   return {
     evaluate: (values, locals) => {
       const operandValue = compiledOperand.evaluate(values, locals);
-      return operandValue === null ? null : compute([operandValue]);
+      return operandValue === null ? null : compute(operandValue);
     },
     isConstant: compiledOperand.isConstant,
   };

@@ -9,5 +9,7 @@ export const createDigitSignatures = (rounder: (value: number) => number): MathE
     const [value = Number.NaN, digits = 0] = values;
     if (!Number.isInteger(digits) || digits < 0 || digits > MAXIMUM_DIGITS) return null;
     if (!Number.isFinite(value)) return value;
+    // Zero places is no shift, and the sum with zero gives the positive zero that the shifts give a rounded zero
+    if (digits === 0) return rounder(value) + 0;
     return shiftDecimalPlaces(rounder(shiftDecimalPlaces(value, digits)), -digits);
   });

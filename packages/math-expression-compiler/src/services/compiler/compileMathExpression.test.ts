@@ -67,6 +67,12 @@ describe(compileMathExpression, () => {
     expect(evaluateFormula(formula)).toBe(expected);
   });
 
+  test("an addition of two negative zeros is negative zero, as mathjs adds", () => {
+    expect.hasAssertions();
+
+    expect(Object.is(evaluateFormula("-0 + -0"), -0)).toBe(true);
+  });
+
   test("a name in a formula is read from the parsed names, minus its assignments and constants", () => {
     expect.hasAssertions();
 

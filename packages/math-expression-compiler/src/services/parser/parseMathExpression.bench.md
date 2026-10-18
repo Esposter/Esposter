@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T10:32:13.998Z
-- Commit: 33c2b5dcf5
+- Date: 2026-10-18T10:39:51.357Z
+- Commit: 10421b3666
 - Node: v26.12.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,19 +20,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| literals | 1.00×   | 0.0797    | ±18.31% | 0.1221   | 10      |
-| columns  | 0.82×   | 0.0974    | ±29.82% | 0.1825   | 10      |
+| literals | 1.00×   | 0.0741    | ±12.96% | 0.0961   | 10      |
+| columns  | 0.83×   | 0.0889    | ±11.26% | 0.1096   | 10      |
 
 ## parseMathExpression > a sum of 1000 numbers
 
 | task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------- | ------- | --------- | ------- | -------- | ------- |
-| operators | 1.00×   | 3.6443    | ±12.05% | 4.8193   | 10      |
-| arguments | 0.62×   | 5.8787    | ±10.52% | 8.0594   | 10      |
+| operators | 1.00×   | 3.7379    | ±11.80% | 4.9624   | 10      |
+| arguments | 0.58×   | 6.4342    | ±6.10%  | 7.3650   | 10      |
 
 ## parseMathExpression > a sum of 100000 numbers
 
 | task      | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | --------- | ------- | --------- | ------ | -------- | ------- |
-| operators | 1.00×   | 281.6501  | ±4.15% | 319.0059 | 10      |
-| arguments | 0.55×   | 510.4003  | ±4.83% | 558.2049 | 10      |
+| operators | 1.00×   | 259.2739  | ±4.98% | 289.7998 | 10      |
+| arguments | 0.46×   | 558.4213  | ±8.79% | 653.8622 | 10      |

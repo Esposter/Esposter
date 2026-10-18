@@ -5,7 +5,7 @@ import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 import { checkIsPercentageExpression } from "#src/services/compiler/checkIsPercentageExpression";
-import { getMathExpressionCompute } from "#src/services/compiler/getMathExpressionCompute";
+import { getMathExpressionBinaryCompute } from "#src/services/compiler/getMathExpressionBinaryCompute";
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
 export const compileBinary = (
@@ -29,7 +29,7 @@ export const compileBinary = (
   }
 
   const compiledRight = context.compile(right);
-  const compute = getMathExpressionCompute(name);
+  const compute = getMathExpressionBinaryCompute(name);
   const absorption = MathExpressionBitwiseAbsorptionMap[name];
   // A left operand that decides a bitwise operation answers it, and the right operand is never read, as in mathjs
   const evaluate: MathExpressionEvaluator = (values, locals) => {
@@ -39,7 +39,7 @@ export const compileBinary = (
 
     const rightValue = compiledRight.evaluate(values, locals);
     if (rightValue === null) return null;
-    return compute([leftValue, rightValue]);
+    return compute(leftValue, rightValue);
   };
   return { evaluate, isConstant: compiledLeft.isConstant && compiledRight.isConstant };
 };
