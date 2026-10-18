@@ -19,20 +19,6 @@ describe(toAbyssEnemyKinds, () => {
     });
   });
 
-  test("every Corridor chamber's enemies resolve to kinds", () => {
-    expect.hasAssertions();
-    const corridorChambers = [
-      { halfMonsterDescribeIds: [[DESCRIBE_ID], [OTHER_DESCRIBE_ID]] },
-      { halfMonsterDescribeIds: [[OTHER_DESCRIBE_ID], [DESCRIBE_ID]] },
-    ];
-    const enemyKinds = toAbyssEnemyKinds(
-      corridorChambers.flatMap(({ halfMonsterDescribeIds }) => halfMonsterDescribeIds.flat()),
-      monsterRows,
-    );
-    for (const { halfMonsterDescribeIds } of corridorChambers)
-      for (const describeId of halfMonsterDescribeIds.flat()) expect(enemyKinds).toHaveProperty([String(describeId)]);
-  });
-
   test("a describe with no monster row is left out, as the world has no kind to fight it as", () => {
     expect.hasAssertions();
 

@@ -70,34 +70,33 @@ const affixRows: ExcelReliquaryAffixRow[] = [
 const wikiBuilds: WikiTrialBuild[] = [
   {
     characterId: CHARACTER_ID,
-    characterName: "Venti",
+    characterName: "characterName",
     constellation: 0,
-    page: "Test Run - Character Trial Event",
+    page: "page",
     refinement: 1,
     weaponId: WEAPON_ID,
-    weaponName: "Skyward Harp",
+    weaponName: "weaponName",
   },
 ];
 const rewardMap = new Map<number, ExcelRewardRow>([
   [REWARD_ID, { rewardId: REWARD_ID, rewardItemList: [{ itemCount: 5, itemId: 201 }] }],
 ]);
+const trialTables = {
+  affixRows,
+  avatarRows,
+  mainPropRows,
+  pieceMap,
+  reliquaryRows,
+  rewardMap,
+  stageRows,
+  templateRows,
+  wikiBuilds,
+};
 
 describe(buildTrials, () => {
   test("a trial stage pays its first-clear reward, and its character is kept at its level", () => {
     expect.hasAssertions();
-    expect(
-      buildTrials({
-        affixRows,
-        avatarRows,
-        mainPropRows,
-        pieceMap,
-        reliquaryRows,
-        rewardMap,
-        stageRows,
-        templateRows,
-        wikiBuilds,
-      }),
-    ).toStrictEqual({
+    expect(buildTrials(trialTables)).toStrictEqual({
       "characterTrials/avatars": {
         [TRIAL_AVATAR_ID]: { characterId: CHARACTER_ID, level: 90, trialAvatarId: TRIAL_AVATAR_ID },
       },
@@ -127,5 +126,15 @@ describe(buildTrials, () => {
       },
       "characterTrials/templates": [{ level: 85, reliquaryIds: RELIQUARY_IDS, talentLevel: 8 }],
     });
+  });
+
+  test("a trial reliquary whose piece the reliquary table lacks is refused rather than left out", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      buildTrials({ ...trialTables, pieceMap: new Map<number, TrialReliquaryPiece>() }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 91, names no reliquary in the reliquary table]`,
+    );
   });
 });

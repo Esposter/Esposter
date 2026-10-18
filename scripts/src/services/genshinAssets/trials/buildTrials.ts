@@ -8,18 +8,18 @@ import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/Ex
 import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/TrialReliquaryPiece";
 import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
 
-import { toRewardItemsById } from "#src/services/genshinAssets/rewards/toRewardItemsById";
 import { toTrialAvatar } from "#src/services/genshinAssets/trials/toTrialAvatar";
 import { toTrialReliquary } from "#src/services/genshinAssets/trials/toTrialReliquary";
 import { toTrialStage } from "#src/services/genshinAssets/trials/toTrialStage";
 import { toTrialTemplate } from "#src/services/genshinAssets/trials/toTrialTemplate";
+import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { GameDataset } from "genshin-world";
 
 // The character trials' records, each published under the dataset's key: the stages by id, the trial avatars by id, the
 // Reliquaries by id, the templates by level, the weapon each trial character is fought with by character id, and the items
 // Each stage's first-clear reward pays, keyed by the reward id. A reliquary no set names is left out, since no artifact is
-// Worn from it
-export interface TrialTables {
+// Worn from it, and a reliquary the reliquary table lacks is refused
+interface TrialTables {
   affixRows: ExcelReliquaryAffixRow[];
   avatarRows: ExcelTrialAvatarRow[];
   mainPropRows: ExcelReliquaryMainPropRow[];
@@ -58,12 +58,16 @@ export const buildTrials = ({
     ),
     [`${GameDataset.CharacterTrials}/reliquaries`]: Object.fromEntries(
       reliquaryRows
-        .filter(({ ReliquaryId }) => (pieceMap.get(ReliquaryId)?.setId ?? 0) > 0)
+        .filter(({ ReliquaryId }) => {
+          // A piece the table lacks is kept, so toTrialReliquary refuses it rather than leaving it out
+          const piece = pieceMap.get(ReliquaryId);
+          return piece === undefined || piece.setId > 0;
+        })
         .map((row) => toTrialReliquary(row, pieceMap, mainPropTypeMap, affixMap))
         .map((reliquary) => [reliquary.id, reliquary]),
     ),
     [`${GameDataset.CharacterTrials}/rewards`]: Object.fromEntries(
-      [...rewardIds].map((rewardId) => [rewardId, toRewardItemsById(rewardId, rewardMap)]),
+      [...rewardIds].map((rewardId) => [rewardId, toQuestRewardItems([rewardId], rewardMap)]),
     ),
     [`${GameDataset.CharacterTrials}/stages`]: Object.fromEntries(stages.map((stage) => [stage.id, stage])),
     [`${GameDataset.CharacterTrials}/templates`]: templateRows

@@ -68,7 +68,7 @@ describe(writeResidents, () => {
     // Mondstadt's General Goods point, whose shop Blanche, NPC 1423, keeps
     const GENERAL_GOODS_POINT_ID = "63";
     const BLANCHE_NPC_ID = 1423;
-    const BLANCHE_NAME_TEXT_HASH = 127025653;
+    const BLANCHE_NAME_TEXT_HASH = 1;
     const BLANCHE_TALK_ID = 46406;
     vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
@@ -92,14 +92,18 @@ describe(writeResidents, () => {
     ] satisfies DumpedNpc[]);
     vi.mocked(readDialogSpeakers).mockReturnValueOnce([{ speakerId: BLANCHE_NPC_ID, talkId: BLANCHE_TALK_ID }]);
 
-    const report = await writeResidents({ isDryRun: true });
+    await writeResidents({ isDryRun: false });
 
-    expect(report).toStrictEqual(
-      [
-        `${REGION}: 1 placed with talks, 1 with a day spot only, 0 with a night spot`,
-        "0 at a crafting bench, 0 with no name, 0 with no talk, 0 repeat placements of a resident already placed, and 0 of 1 placed NPCs in no fitted region",
-        "nothing written",
-      ].join("\n"),
+    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      expect.objectContaining({
+        residents: [
+          expect.objectContaining({
+            day: expect.objectContaining({ position: { x: 0, z: 0 } }),
+            id: String(BLANCHE_NPC_ID),
+          }),
+        ],
+      }),
     );
   });
 
@@ -131,7 +135,7 @@ describe(writeResidents, () => {
     // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her week row names
     const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
     const ELLIN_NPC_ID = 9704;
-    const ELLIN_NAME_TEXT_HASH = 2404082984;
+    const ELLIN_NAME_TEXT_HASH = 2;
     const ELLIN_TALK_ID = 6970401;
     const ELLIN_DUEL_GAME_ID = 1031;
     seatChallenger(KNIGHTS_HEADQUARTERS_POINT_ID, ELLIN_NPC_ID, ELLIN_NAME_TEXT_HASH, ELLIN_TALK_ID);

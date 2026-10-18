@@ -1,6 +1,7 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 import type { ShopReputationDiscount } from "#src/models/genshinAssets/shops/ShopReputationDiscount";
 
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
 import { toShopGoodSlice } from "#src/services/genshinAssets/shops/toShopGoodSlice";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
@@ -13,7 +14,7 @@ export const buildShopGoodSlice = (
   reputationDiscount?: ShopReputationDiscount,
 ): Record<string, unknown> => ({
   [`${GameDataset.Shops}/${stem}`]: toShopGoodSlice(
-    readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData"),
+    readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME),
     checkIsIncluded,
     reputationDiscount,
   ),

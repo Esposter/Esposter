@@ -4,6 +4,7 @@ import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 
 import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { throwCollectedFailures } from "#src/services/shared/throwCollectedFailures";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
@@ -43,11 +44,11 @@ export const buildKitPublication = (
     const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap);
     if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
   }
-  if (failures.length > 0)
-    throw new InvalidOperationError(
-      Operation.Create,
-      buildKitPublication.name,
-      `the records differ from their published ones, so name each kit meant to change in --only:\n${failures.join("\n")}`,
-    );
+  throwCollectedFailures(
+    Operation.Create,
+    buildKitPublication.name,
+    "the records differ from their published ones, so name each kit meant to change in --only",
+    failures,
+  );
   return { indexes: { [GameDataset.Kits]: kits, [GameDataset.KitSources]: kitSources }, objects: {} };
 };

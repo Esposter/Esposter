@@ -1,6 +1,6 @@
 # Shops
 
-The shops whose goods are built are Paimon's Bargains, which sells the two Fates for the Masterless currencies, and the Mondstadt grocery, which sells general goods for Mora. Their goods are the game's own rows in the shop table, published as one record per shop to the shops dataset of the [hosted game data](../hosted-game-data/design.md). The rule over them is built: a good is offered from its Adventure Rank within its dates, a buy limit is counted from the purchases made since its refresh, and a purchase takes the price from the wallet and gives the item's currency back. Nothing is on a screen yet, so the goods are bought only by the rule's own callers.
+The shops whose goods are built are Paimon's Bargains, which sells the two Fates for the Masterless currencies and rotates its characters and weapons, the Mondstadt grocery, which sells general goods for Mora, the Good Hunter's food shop, the seven Mondstadt vendors, the Fishing Associations, the Realm Depot, the Souvenir Shops, and the Card Shop, which is priced in Lucky Coins. Their goods are the game's own rows in the shop table, published as one record per shop to the shops dataset of the [hosted game data](../hosted-game-data/design.md). The rule over them is built: a good is offered from its Adventure Rank within its dates, a buy limit is counted from the purchases made since its refresh, and a purchase takes the price from the wallet and gives the item's currency back. Nothing is on a screen yet, so the goods are bought only by the rule's own callers.
 
 ## How it works
 

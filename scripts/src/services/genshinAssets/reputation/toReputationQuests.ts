@@ -1,5 +1,6 @@
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { ExcelReputationQuestRow } from "#src/models/genshinAssets/reputation/ExcelReputationQuestRow";
+import type { ReputationQuest } from "genshin-world";
 
 import { readReward } from "#src/services/genshinAssets/reputation/readReward";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
@@ -10,7 +11,7 @@ export const toReputationQuests = (
   rows: readonly ExcelReputationQuestRow[],
   rewardMap: Map<number, ExcelRewardRow>,
   reputationItemId: number,
-): { questId: number; reward: { exp: number; items: { count: number; id: number }[] } }[] =>
+): ReputationQuest[] =>
   rows
     .toSorted((firstQuest, secondQuest) => firstQuest.order - secondQuest.order)
     .map((questRow) => ({
