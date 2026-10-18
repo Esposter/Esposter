@@ -4,6 +4,7 @@ import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKi
 import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
+import type { Element } from "#src/models/Element";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -23,12 +24,14 @@ import {
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getTalentRows } from "#src/services/character/getTalentRows";
 import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
 import { upgradeCharacterTalent } from "#src/services/character/upgradeCharacterTalent";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
@@ -70,6 +73,8 @@ interface Props {
   statTables: StatTables;
   // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
   talentUpgradeMap: TalentUpgradeMap;
+  // The element the Traveler holds from the statue it resonated with last, none before any resonance
+  travelerElement?: Element;
 }
 
 // What the host lays behind the screen, the scene the open tab is shown over, and over it for the character it shows,
@@ -92,6 +97,7 @@ const {
   nameText,
   statTables,
   talentUpgradeMap,
+  travelerElement,
 } = defineProps<Props>();
 // The player's characters, across the screen's top in the order given, a character's activated constellation and a
 // Talent's raised level written back into them
@@ -114,6 +120,11 @@ const menuEntries = computed(() =>
   })),
 );
 const characterName = computed(() => menuEntries.value.find(({ id }) => id === characterId.value)?.name ?? "");
+// The element mark at the chosen character's name, its element's or, for the Traveler, its alignment's, none while it has none
+const elementMarkPath = computed(() => {
+  const element = getCharacterElement(characterId.value, statTables.characterDataMap, travelerElement);
+  return element === undefined ? undefined : ElementMarkPathMap[element];
+});
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
 );
@@ -228,7 +239,13 @@ const activate = () => {
        First, the open tab's panel for the chosen one, the Profile's aside, and the way back -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
     <slot name="scene" :tab />
-    <CharacterMenu v-model:character-id="characterId" v-model:tab="tab" :characters="menuEntries" :tab-labels>
+    <CharacterMenu
+      v-model:character-id="characterId"
+      v-model:tab="tab"
+      :characters="menuEntries"
+      :element-mark-path
+      :tab-labels
+    >
       <CharacterAttributeList
         v-if="character && tab === CharacterMenuTab.Attributes"
         :character

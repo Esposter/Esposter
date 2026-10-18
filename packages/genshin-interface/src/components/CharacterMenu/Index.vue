@@ -6,6 +6,8 @@ import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
 import { computed } from "vue";
 
 interface Props {
+  // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
+  elementMarkPath?: string;
   // The player's characters, across the screen's top in the order given
   characters: CharacterMenuEntry[];
   // Each tab's name in the reader's language
@@ -15,7 +17,7 @@ interface Props {
 defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
-const { characters, tabLabels } = defineProps<Props>();
+const { characters, elementMarkPath, tabLabels } = defineProps<Props>();
 const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
 // The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
 // Left and right edges step to
@@ -42,6 +44,9 @@ const steps = computed(() => {
       </li>
     </ul>
     <p class="breadcrumb">{{ characterName }}</p>
+    <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
+      <path :d="elementMarkPath" />
+    </svg>
     <!-- The keys stepping through the tabs, W up and S down, beside the first -->
     <div class="tab-keys" aria-hidden="true">
       <kbd class="key">W</kbd>
@@ -156,6 +161,17 @@ const steps = computed(() => {
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: calc(var(--unit) * 36);
+}
+
+/* The element's mark just left of the name, its size and place provisional until the parity pass measures them off the
+   frame, its colour the name's */
+.element {
+  position: absolute;
+  top: calc(var(--unit) * 29);
+  left: calc(var(--unit) * 168);
+  width: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 36);
+  fill: #e6d6a8;
 }
 
 /* The tabs down the left, measured off each tab's own frame of the recording (155 to 159 seconds): the rows on a

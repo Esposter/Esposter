@@ -1153,6 +1153,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :name-text
           :stat-tables
           :talent-upgrade-map
+          :traveler-element="travelerElement"
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >
