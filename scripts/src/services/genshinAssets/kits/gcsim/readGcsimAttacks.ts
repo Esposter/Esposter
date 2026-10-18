@@ -79,6 +79,13 @@ const readCopySource = (tokens: readonly GoToken[], position: number): string | 
   return isCopy ? source.text : undefined;
 };
 
+// Whether the field at the position is set on a variable, `ai.Mult = ...`: a `.` before the field, an `=` after it, and
+// An identifier two tokens back
+const checkIsFieldSet = (tokens: readonly GoToken[], position: number): boolean =>
+  checkIsGoPunctuation(tokens[position - 1], ".") &&
+  checkIsGoPunctuation(tokens[position + 1], "=") &&
+  tokens[position - 2]?.kind === GoTokenKind.Identifier;
+
 // The field an if on a constant loop's variable may set on a copy, by its gcsim name: the poise its hit deals in that
 // Iteration. Other fields an if sets are not read
 const ITERATION_POISE_FIELD = "PoiseDMG";
@@ -260,12 +267,7 @@ export const readGcsimAttacks = (
                 position,
               ),
             );
-      } else if (
-        token.text === "Mult" &&
-        checkIsGoPunctuation(tokens[position - 1], ".") &&
-        checkIsGoPunctuation(tokens[position + 1], "=") &&
-        tokens[position - 2]?.kind === GoTokenKind.Identifier
-      ) {
+      } else if (token.text === "Mult" && checkIsFieldSet(tokens, position)) {
         const literalAttacks = readVariableAttacks(tokens[position - 2]?.text ?? "", token.line);
         const talentVariable = resolveGoAlias(
           aliasMap,
@@ -285,12 +287,7 @@ export const readGcsimAttacks = (
               position,
             ),
           );
-      } else if (
-        token.text === ITERATION_POISE_FIELD &&
-        checkIsGoPunctuation(tokens[position - 1], ".") &&
-        checkIsGoPunctuation(tokens[position + 1], "=") &&
-        tokens[position - 2]?.kind === GoTokenKind.Identifier
-      ) {
+      } else if (token.text === ITERATION_POISE_FIELD && checkIsFieldSet(tokens, position)) {
         const iteration = readIterationAt(tokens, position, loops);
         const copyAttack = readOwnAttack(tokens[position - 2]?.text ?? "", token.line);
         const poiseDamage = readGoNumber(
