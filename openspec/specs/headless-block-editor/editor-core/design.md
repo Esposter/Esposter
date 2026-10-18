@@ -62,7 +62,7 @@ flowchart TD
 ## Notes
 
 - **The applier's schema stayed in the app.** The applier and its types live in `@esposter/shared`, but the zod schemas for a pointer and an operation, and their two limits, have only the resource content inputs as consumers. `scripts/src/workspace/sharedExportConsumers.test.ts` flags such exports in shared, so they sit beside `ReadResourceContentInput.ts` and `UpdateResourceContentInput.ts`. Shared keeps the operation types, `applyPatches` and the pointer parser.
-- **Not built: coalescing.** The diagram's merge of consecutive replaces of one path within one interaction has no scenario, so it waits for a consumer that needs it; the page builder's patch-entry change owns that decision.
+- **Coalescing is the consumer's.** The core applies each edit whole and records nothing, so merging an interaction's edits into one undo entry belongs to the history that holds them: the page builder's [undo as patches](../../resource/page-builder/undo-as-patches/design.md) merges the edits of one interaction that set the same paths.
 - **Not built: a slot type.** A slot is an entry of the registry's type `slots` record and a key of the node's props, not a model of its own.
 - **The node limit is the consumer's.** `pasteBlockNodes` checks the copies against the slot and the registry but not the destination's node count; the consumer passes the limit to `createBlockDocumentSchema` and refuses an over-limit result.
 - **Test titles are lowercase.** The repo's `prefer-lowercase-title` rule rejects capitals, so the scenario names are the same words in lowercase.
