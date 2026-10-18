@@ -21,6 +21,7 @@ import {
 } from "#src/services/enemy/constants";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
+import { runDownSeconds } from "#src/services/runDownSeconds";
 import { exhaustiveGuard } from "@esposter/shared";
 
 const computeDistance = (from: GroundPoint, to: GroundPoint): number => Math.hypot(to.x - from.x, to.z - from.z);
@@ -64,7 +65,7 @@ export const stepEnemy = (
 ): EnemyEvent | undefined => {
   enemy.hitSeconds += stepSeconds;
   enemy.stateSeconds += stepSeconds;
-  for (const status of enemy.statuses) status.secondsRemaining -= stepSeconds;
+  for (const status of enemy.statuses) status.secondsRemaining = runDownSeconds(status.secondsRemaining, stepSeconds);
   enemy.statuses = enemy.statuses.filter(({ secondsRemaining }) => secondsRemaining > 0);
   enemy.attackCooldownSeconds = Math.max(0, enemy.attackCooldownSeconds - stepSeconds);
   if (enemy.state !== EnemyState.Dead) stepPoise(enemy, stepSeconds);
