@@ -12,6 +12,7 @@ const createSideState = (dice: (Element | GcgDieFace)[]): GcgSideState => ({
   cards: [],
   characters: [],
   dice,
+  deckCardIds: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,

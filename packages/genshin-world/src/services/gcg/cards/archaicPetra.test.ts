@@ -42,6 +42,7 @@ const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
   cards: [],
   characters,
   dice,
+  deckCardIds: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,

@@ -5,13 +5,14 @@ import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 // One side of a duel: its characters and which is active, its dice this round, its draw pile and hand by card id, the
-// Definitions of its deck's cards, its supports, summons and onstage cards on the field, the cards and skills it has used
+// Card ids its deck was built with, copies and all, and the definitions of its deck's cards, its supports, summons and onstage cards on the field, the cards and skills it has used
 // This round, and the flags of what it has done this round: prepared, rolled, declared its round's end, or owes a
 // Replacement for a defeated active character
 export interface GcgSideState {
   activeIndex: number;
   cards: GcgCard[];
   characters: GcgCharacterState[];
+  deckCardIds: number[];
   dice: (Element | GcgDieFace)[];
   drawPile: number[];
   hand: number[];
