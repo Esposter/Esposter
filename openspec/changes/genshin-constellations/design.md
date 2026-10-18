@@ -18,6 +18,7 @@ The table, the activation, the talent levels the third and fifth add, and the St
 - **A constellation can add a charge to a skill.** `getSkillChargeBonus` adds charges to the kit's own elemental skill as its combatant stands, and `getSkillReadySeconds` reads the record's count plus that bonus where a press checks readiness and where the party's cooldown shows. The count stays the record's, so a constellation that adds a charge is one switch, not a rewrite of the kit built at the join.
 - **A kit's own normal attacks can be sped up by a constellation.** `getNormalAttackSpeedBonus` adds Normal ATK SPD to the kit's normal attacks, on top of the infusion's bonus `stepKit` already reads, as the kit stands. Cyno's and Xinyan's first constellations need it, as their speed is not an infusion's.
 - **A normal attack can add a hit after one of its hits.** `getNormalAttackExtraHit` gives the hit a kit's normal attack adds after each of its hits that lands, given that hit and the combat state, and `stepKit` lands it in the same step. Bennett's Unexpected Odyssey, a follow-up to the Normal Attack that follows Passion Overload's first charge, reads that state.
+- **A constellation can cut a skill's running cooldown.** `changeKitSkillCooldown` changes the skill cooldown a party member has running, which the party member carries rather than a status, so a cut is written to the member and ends at zero. Alhaitham's first constellation and Navia's use it; a hold's cooldown is a status and takes `changeKitCooldown`.
 
 ## How it works
 
