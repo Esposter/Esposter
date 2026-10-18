@@ -8,6 +8,7 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GCG_BURNING_FLAME_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -262,5 +263,48 @@ describe(applyGcgDamage, () => {
     applyGcgDamage(duel, 0, { damageType: Element.Hydro, value: ELEMENT_VALUE }, rule);
 
     expect(attacker.onstages).toStrictEqual([{ cardId: GCG_DENDRO_CORE_ID, counter: 0, rounds: 0, usages: 1 }]);
+  });
+
+  test("should report a Physical hit it deals, with no reaction", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = createDuel([
+      createSideState([createCharacterState(Element.Pyro)]),
+      createSideState([createCharacterState(Element.Cryo)]),
+    ]);
+
+    expect(applyGcgDamage(duel, 0, { damageType: GcgDamageKind.Physical, value: PYRO_VALUE }, rule)).toStrictEqual([
+      { damageType: GcgDamageKind.Physical },
+    ]);
+  });
+
+  test("should report an elemental hit with the element it deals and the reaction it triggers", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = createDuel([
+      createSideState([createCharacterState(Element.Pyro)]),
+      createSideState([createCharacterState(Element.Cryo, Element.Cryo)]),
+    ]);
+
+    expect(applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule)).toStrictEqual([
+      { damageType: Element.Pyro, reaction: GcgReactionKind.Melt },
+    ]);
+  });
+
+  test("should report the piercing a Superconduct reaction deals to each other standing character", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = createDuel([
+      createSideState([createCharacterState(Element.Electro)]),
+      createSideState([createCharacterState(Element.Cryo, Element.Cryo), createCharacterState(Element.Hydro)]),
+    ]);
+
+    expect(applyGcgDamage(duel, 0, { damageType: Element.Electro, value: ELEMENT_VALUE }, rule)).toStrictEqual([
+      { damageType: Element.Electro, reaction: GcgReactionKind.Superconduct },
+      { damageType: GcgDamageKind.Piercing },
+    ]);
   });
 });

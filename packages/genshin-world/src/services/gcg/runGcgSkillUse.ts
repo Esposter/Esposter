@@ -1,3 +1,4 @@
+import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
@@ -23,13 +24,13 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   const side = takeOne(context.duel.sides, context.sideIndex);
   const fieldCards = listGcgFieldCards(side, side.activeIndex);
   const user = side.characters.at(side.activeIndex);
-  if (damage) dealGcgSkillDamage(context, damage);
+  const dealt: GcgDealtDamage[] = damage ? dealGcgSkillDamage(context, damage) : [];
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
-  if (standbyPiercing) applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing);
+  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing));
   skillModule?.afterDamage?.(context);
   side.usedSkillIds.push(skill.id);
   for (const zoneCard of fieldCards) {
-    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(context, skill, zoneCard);
+    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(context, skill, zoneCard, dealt);
     if (skillDamage) applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule);
   }
   for (const passive of user?.character.skills ?? [])

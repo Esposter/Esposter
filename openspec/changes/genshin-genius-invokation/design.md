@@ -19,6 +19,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **No duel against another player.** Duels with friends need other players, which [co-op](../../deferred/genshin/co-op/design.md) defers; the game gives them no reward either.
 - **The Player Level and the Friendship Level read one rule.** `computeLevelReached` counts the levels an EXP total has reached over any table of `{ exp }` rows, so the card game's level and the companionship level are the same function.
 - **The duel holds its random source.** `GcgDuel.random` is the seeded source its dice are rolled from and its decks shuffled with. The functions that roll or shuffle read it from the duel, so a caller passes none, and a card's draw or roll reads the duel's the same way. A choice a player makes when a card is played, such as the dice Toss-Up rerolls, is a typed argument on the play, which the duel screen supplies.
+- **A hit reports what it dealt.** `applyGcgDamage` and `applyGcgStandbyPiercing` return a `GcgDealtDamage` for each hit they land on a standing character, with the element or kind it hit with and the reaction it triggered, and a Superconduct or Electro-Charged reaction's piercing on the other standing characters is among them. `dealGcgSkillDamage` returns its skill's hits, and `onSkillUsed` receives every hit a skill landed, its own damage and its standby piercing alike, so a card can read what the skill did.
 
 ## Scope and order
 
