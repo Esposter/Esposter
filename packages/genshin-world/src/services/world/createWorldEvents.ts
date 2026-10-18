@@ -12,6 +12,7 @@ export const createWorldEvents = (): WorldEvents => {
     finishQuest: [],
     parentQuestFinish: [],
     pickUpMora: [],
+    tipShown: [],
     questEvent: [],
   };
   return {

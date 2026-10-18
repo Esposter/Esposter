@@ -31,6 +31,8 @@ import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBarga
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { readTips } from "#src/services/tip/readTips";
+import { TipTextLoaderMap } from "#src/services/tip/TipTextLoaderMap";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
@@ -92,6 +94,8 @@ getResultAsync(() =>
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
+      measureLoadStep("tip-text", TipTextLoaderMap[props.language](props.gameDataBaseUrl)),
+      measureLoadStep("tips", readTips(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -116,6 +120,8 @@ getResultAsync(() =>
     shopIdShopGoodMap,
     paimonsBargainsRotation,
     frostbearingTreeLevels,
+    tipText,
+    tips,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -140,6 +146,8 @@ getResultAsync(() =>
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,
       timeTrialPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.TimeTrialChallenge),
+      tipText,
+      tips,
       wildlifePlaces,
       windriseData,
       wishSchedule,
