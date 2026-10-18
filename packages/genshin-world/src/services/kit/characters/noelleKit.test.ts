@@ -3,9 +3,13 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
@@ -17,6 +21,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe("noelle kit", () => {
   const DEFENSE = 800;
@@ -224,5 +229,36 @@ describe("noelle kit", () => {
       for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike);
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(5);
+  });
+
+  const getChargedAttackDamageBonus = (constellationCount: number): number | undefined => {
+    const combatant = { ...createNoelleCombatant(), constellationCount };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    return NOELLE_KIT.getStrikeDamageBonus?.(
+      {
+        attackTag: AttackTag.ChargedAttack,
+        body: createKitTestContext(combatant).body,
+        combatant,
+        hit: takeOne(NOELLE_KIT.chargedAttack.hits),
+      },
+      enemy,
+      createParty([NOELLE_CHARACTER_ID]),
+    );
+  };
+
+  test("a Constellation 2 switch cuts her Charged Attacks' stamina and adds to their DMG", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext({ ...createNoelleCombatant(), constellationCount: 2 });
+
+    expect(NOELLE_KIT.getChargedAttackStaminaMultiplier?.(context)).toBe(0.8);
+    expect(getChargedAttackDamageBonus(2)).toBe(0.15);
+  });
+
+  test("a Constellation 1 switch changes neither her Charged Attacks' stamina nor their DMG", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext({ ...createNoelleCombatant(), constellationCount: 1 });
+
+    expect(NOELLE_KIT.getChargedAttackStaminaMultiplier?.(context)).toBe(1);
+    expect(getChargedAttackDamageBonus(1)).toBe(0);
   });
 });

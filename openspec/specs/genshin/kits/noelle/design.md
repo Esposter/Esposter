@@ -9,6 +9,7 @@ Noelle's kit is its record and one behaviour module, `createNoelleKitBehaviour`,
 - **Sweeping Time converts her normal attacks to their own poise.** An infusion that converts its attacks (`isConverted`) gives each normal attack hit its converted poise, 132.25, 122.82, 143.865 and 189.75 from the wiki. Her charged attack, collision and plunges have the same poise converted as normal, so they are unchanged. The Geo infusion and the ATK bonus of 40% of her DEF are built, for 15 seconds past an 80-frame start.
 - **Ascension 1 and 4 are passives on her module.** Devotion shields the active character with 400% of her DEF for 20 seconds when a drain takes it under 30% HP, from Ascension 1, once every 60 seconds; the drain must name its source, as an enemy's strike does not. From Ascension 4, each fourth normal or charged attack that strikes an enemy cuts the skill's cooldown by a second, counting each attack once on its first enemy, and a skill restarts the count, as gcsim's makeA4CB does.
 - **Noelle's charged attack is one cycle of its spin and its final slash.** A held spin's cycles are not built, so the charged attack hits once and then once more.
+- **Combat Maid's stamina cut and DMG bonus read the Charged Attack tag.** From Constellation 2, the charged attack's stamina multiplier is 0.8 and any strike tagged Charged Attack gains 15% DMG, so every hit of the spin and final slash counts. Constellation 6's extra seconds wait on an enemy-defeated event the kit does not read.
 
 ## Key files
 
