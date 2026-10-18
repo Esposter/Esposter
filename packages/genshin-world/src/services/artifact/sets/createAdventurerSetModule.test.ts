@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -10,9 +9,7 @@ import { createAdventurerSetModule } from "#src/services/artifact/sets/createAdv
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -21,12 +18,6 @@ import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// The given seconds stepped through the team's effects at the world's fixed step
-const stepSeconds = (context: KitContext, seconds: number) => {
-  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-};
-
 describe(createAdventurerSetModule, () => {
   const adventurerSetData = statTables.artifactSetDataMap.get(ADVENTURER_ARTIFACT_SET_ID);
   assert.exists(adventurerSetData);
@@ -53,7 +44,7 @@ describe(createAdventurerSetModule, () => {
       context,
       wearer,
     );
-    stepSeconds(context, 5);
+    stepKitSeconds(context, 5);
 
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
   });
@@ -70,11 +61,12 @@ describe(createAdventurerSetModule, () => {
       context,
       wearer,
     );
-    stepSeconds(context, 6);
+    stepKitSeconds(context, 6);
 
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
+
   test("a chest opened during the restoration restarts it", () => {
     expect.hasAssertions();
 
@@ -88,9 +80,9 @@ describe(createAdventurerSetModule, () => {
         wearer,
       );
     openChest();
-    stepSeconds(context, 2);
+    stepKitSeconds(context, 2);
     openChest();
-    stepSeconds(context, 6);
+    stepKitSeconds(context, 6);
 
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.52);
   });

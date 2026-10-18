@@ -10,9 +10,7 @@ import { createExileSetModule } from "#src/services/artifact/sets/createExileSet
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -57,8 +55,7 @@ describe(createExileSetModule, () => {
         kitEffectState,
         party,
       });
-      for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
-        stepKitEffects(FIXED_STEP_SECONDS, context);
+      stepKitSeconds(context, seconds);
       return PARTY_CHARACTER_IDS.map((characterId) => getPartyMember(party, characterId).energy);
     });
 

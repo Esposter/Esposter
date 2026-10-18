@@ -3,6 +3,8 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { describe } from "vitest";
 
@@ -26,6 +28,12 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   wildlifeList: [],
   ...context,
 });
+
+// The given seconds stepped through the team's effects at the world's fixed step
+export const stepKitSeconds = (context: KitContext, seconds: number) => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+};
 
 // The effects an action's start adds to the kit's state, which the action is run in and returned
 export const castKitAction = (
