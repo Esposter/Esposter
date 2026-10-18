@@ -13,7 +13,10 @@ import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
+import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -70,6 +73,7 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
   kind,
 });
 const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
+const ROCK_PAPER_SCISSORS_COMBO = createSkill(24_012, "Char_Skill_24012", GcgSkillKind.ElementalSkill);
 
 describe("fiery Rebirth", () => {
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
@@ -129,5 +133,62 @@ describe("electro Crystal Core", () => {
     const restored = takeOne(duel.sides, 0).characters[0];
     expect(restored?.hp).toBe(1);
     expect(restored?.statuses).toStrictEqual([]);
+  });
+});
+
+describe("rock-Paper-Scissors Combo", () => {
+  test("the combo deals 2 Electro and prepares Scissors and Paper, which run at the side's next turn", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(18);
+    expect(takeOne(duel.sides, 0).preparedSkills?.map(({ skill }) => skill.id)).toStrictEqual([24_015, 24_016]);
+
+    runGcgPreparedSkills(duel, 0);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(13);
+    expect(takeOne(duel.sides, 0).preparedSkills?.map(({ skill }) => skill.id)).toStrictEqual([24_016]);
+  });
+
+  test("the prepared skills run when their side's next turn begins, not before", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
+    passGcgTurn(duel, 0);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(18);
+
+    passGcgTurn(duel, 1);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(13);
+  });
+
+  test("a prepared skill whose character is defeated does not run", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([
+        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
+        createCharacterState(KUJOU_SARA_ID, Element.Electro),
+      ]),
+      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
+    takeOne(takeOne(duel.sides, 0).characters, 0).hp = 0;
+    runGcgPreparedSkills(duel, 0);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(18);
   });
 });

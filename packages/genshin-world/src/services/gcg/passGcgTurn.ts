@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSideDamageHook } from "#src/services/gcg/runGcgSideDamageHook";
 import { takeOne } from "@esposter/shared";
 
@@ -8,5 +9,6 @@ import { takeOne } from "@esposter/shared";
 export const passGcgTurn = (duel: GcgDuel, sideIndex: number): void => {
   const otherSideIndex = 1 - sideIndex;
   if (!takeOne(duel.sides, otherSideIndex).hasDeclaredEnd) duel.actingSideIndex = otherSideIndex;
+  runGcgPreparedSkills(duel, duel.actingSideIndex);
   runGcgSideDamageHook(duel, duel.actingSideIndex, "onBeforeAction");
 };

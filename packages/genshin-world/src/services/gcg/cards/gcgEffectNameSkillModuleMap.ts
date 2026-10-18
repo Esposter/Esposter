@@ -39,6 +39,8 @@ import { niwabiFireDance } from "#src/services/gcg/cards/niwabiFireDance";
 import { oceanidMimicSummoning } from "#src/services/gcg/cards/oceanidMimicSummoning";
 import { pyronado } from "#src/services/gcg/cards/pyronado";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
+import { rockPaperScissorsCombo } from "#src/services/gcg/cards/rockPaperScissorsCombo";
+import { rockPaperScissorsScissors } from "#src/services/gcg/cards/rockPaperScissorsScissors";
 import { royalDescent } from "#src/services/gcg/cards/royalDescent";
 import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
@@ -103,7 +105,9 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22013", theMyriadWilds],
   ["Char_Skill_22014", tideAndTorrent],
   ["Char_Skill_23024", fieryRebirthSkill],
+  ["Char_Skill_24012", rockPaperScissorsCombo],
   ["Char_Skill_24014", electroCrystalCoreSkill],
+  ["Char_Skill_24015", rockPaperScissorsScissors],
   ["Char_Skill_25012", blusteringBlade],
   ["Char_Skill_25013", frostyAssault],
   ["Char_Skill_26014", infusedStonehide],
