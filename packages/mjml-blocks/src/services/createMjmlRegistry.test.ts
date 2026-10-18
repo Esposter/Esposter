@@ -3,11 +3,14 @@ import type { BlockDocument } from "headless-block-editor";
 import {
   TEST_BUTTON_ID,
   TEST_COLUMN_ID,
+  TEST_GROUP_ID,
+  TEST_HERO_ID,
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_TEXT_ID,
+  TEST_WRAPPER_ID,
 } from "#src/services/constants.test";
 import { createBlockDocumentSchema, getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -99,6 +102,93 @@ describe("createMjmlRegistry", () => {
         root: { props: {} },
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "props", "children", 0, "props", "alt"]]);
+  });
+  test("#330 #339 #344 #262 #96 an image's width takes pixels only, and auto is refused", () => {
+    expect.hasAssertions();
+
+    expect(
+      getIssuePaths({
+        content: [
+          {
+            props: {
+              children: [
+                {
+                  props: {
+                    children: [
+                      {
+                        props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png", width: "50%" },
+                        type: "mj-image",
+                      },
+                      {
+                        props: { alt: "A cat", id: TEST_BUTTON_ID, src: "https://example.com/a.png", width: "auto" },
+                        type: "mj-image",
+                      },
+                    ],
+                    id: TEST_COLUMN_ID,
+                  },
+                  type: "mj-column",
+                },
+              ],
+              id: TEST_SECTION_ID,
+            },
+            type: "mj-section",
+          },
+        ],
+        root: { props: {} },
+      }),
+    ).toStrictEqual([
+      ["content", 0, "props", "children", 0, "props", "children", 0, "props", "width"],
+      ["content", 0, "props", "children", 0, "props", "children", 1, "props", "width"],
+    ]);
+  });
+  test("#142 #150 #184 #185 #361 a wrapper and a hero are body content, and a group holds columns", () => {
+    expect.hasAssertions();
+
+    expect(
+      getIssuePaths({
+        content: [
+          {
+            props: {
+              children: [
+                {
+                  props: {
+                    children: [
+                      {
+                        props: {
+                          children: [
+                            {
+                              props: {
+                                children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                                id: TEST_COLUMN_ID,
+                              },
+                              type: "mj-column",
+                            },
+                          ],
+                          id: TEST_GROUP_ID,
+                        },
+                        type: "mj-group",
+                      },
+                    ],
+                    id: TEST_SECTION_ID,
+                  },
+                  type: "mj-section",
+                },
+              ],
+              id: TEST_WRAPPER_ID,
+            },
+            type: "mj-wrapper",
+          },
+          {
+            props: {
+              children: [{ props: { content: "Hi", id: crypto.randomUUID() }, type: "mj-text" }],
+              id: TEST_HERO_ID,
+            },
+            type: "mj-hero",
+          },
+        ],
+        root: { props: {} },
+      }),
+    ).toStrictEqual([]);
   });
   test.each([
     { html: "<p>Hi</p>", isAccepted: true },

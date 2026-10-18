@@ -8,11 +8,15 @@ import {
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_TEXT_ID,
+  TEST_WRAPPER_ID,
 } from "#src/services/constants.test";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { createBlockDocumentSchema } from "headless-block-editor";
+import { createRequire } from "node:module";
 import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
+
+const MJML_PACKAGE = createRequire(import.meta.url)("mjml/package.json");
 
 const EMAIL_DOCUMENT: BlockDocument = {
   content: [
@@ -130,5 +134,232 @@ describe(renderMjmlDocument, () => {
       ],
       tagName: "mjml",
     });
+  });
+  test("#56 #268 #304 #307 a section and a wrapper take full-width and compile", async () => {
+    expect.hasAssertions();
+
+    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                        id: TEST_COLUMN_ID,
+                      },
+                      type: "mj-column",
+                    },
+                  ],
+                  "full-width": "full-width",
+                  id: TEST_SECTION_ID,
+                },
+                type: "mj-section",
+              },
+            ],
+            "full-width": "full-width",
+            id: TEST_WRAPPER_ID,
+          },
+          type: "mj-wrapper",
+        },
+      ],
+      root: { props: {} },
+    });
+    const json = renderMjmlDocument(document, TEST_REGISTRY, { isStampingIds: false });
+    expect(json).toStrictEqual({
+      attributes: {},
+      children: [
+        {
+          attributes: {},
+          children: [
+            {
+              attributes: { "full-width": "full-width" },
+              children: [
+                {
+                  attributes: { "full-width": "full-width" },
+                  children: [
+                    {
+                      attributes: {},
+                      children: [{ attributes: {}, content: "Hi", tagName: "mj-text" }],
+                      tagName: "mj-column",
+                    },
+                  ],
+                  tagName: "mj-section",
+                },
+              ],
+              tagName: "mj-wrapper",
+            },
+          ],
+          tagName: "mj-body",
+        },
+      ],
+      tagName: "mjml",
+    });
+    const { errors } = await mjml2html(json, { validationLevel: "strict" });
+    expect(errors).toStrictEqual([]);
+  });
+  test("#184 #150 #185 a section in a wrapper compiles with no body of its own", async () => {
+    expect.hasAssertions();
+
+    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        children: [
+                          {
+                            props: {
+                              children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                              id: TEST_COLUMN_ID,
+                            },
+                            type: "mj-column",
+                          },
+                        ],
+                        id: crypto.randomUUID(),
+                      },
+                      type: "mj-group",
+                    },
+                  ],
+                  id: TEST_SECTION_ID,
+                },
+                type: "mj-section",
+              },
+            ],
+            id: TEST_WRAPPER_ID,
+          },
+          type: "mj-wrapper",
+        },
+      ],
+      root: { props: {} },
+    });
+    const { errors, html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, { isStampingIds: false }), {
+      validationLevel: "strict",
+    });
+    expect(errors).toStrictEqual([]);
+    expect(html.match(/<body/gu)).toHaveLength(1);
+  });
+  test("#35 #4 #118 #124 #207 #208 #248 #249 #284 #351 #370 #371 a head's font, preview and style reach the compiled email", async () => {
+    expect.hasAssertions();
+
+    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        children: [
+                          { props: { content: "Hi", "font-family": "Test", id: TEST_TEXT_ID }, type: "mj-text" },
+                        ],
+                        id: TEST_COLUMN_ID,
+                      },
+                      type: "mj-column",
+                    },
+                  ],
+                  id: TEST_SECTION_ID,
+                },
+                type: "mj-section",
+              },
+            ],
+            id: TEST_WRAPPER_ID,
+          },
+          type: "mj-wrapper",
+        },
+      ],
+      root: {
+        props: {
+          fonts: [{ href: "https://fonts.example.com/a.css", name: "Test" }],
+          preview: "Preview",
+          styles: [{ css: ".a{color:red}", inline: false }],
+        },
+      },
+    });
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, { isStampingIds: false }), {
+      validationLevel: "strict",
+    });
+    expect(html).toContain("https://fonts.example.com/a.css");
+    expect(html).toContain(".a{color:red}");
+    expect(html).toContain("Preview");
+  });
+  test("#388 #269 #358 #367 #368 mj-attributes applies, and MJML's defaults fill what a node sets none", async () => {
+    expect.hasAssertions();
+
+    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                        id: TEST_COLUMN_ID,
+                      },
+                      type: "mj-column",
+                    },
+                  ],
+                  id: TEST_SECTION_ID,
+                },
+                type: "mj-section",
+              },
+            ],
+            id: TEST_WRAPPER_ID,
+          },
+          type: "mj-wrapper",
+        },
+      ],
+      root: { props: { attributes: { all: { "font-family": "Arial" } } } },
+    });
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, { isStampingIds: false }), {
+      validationLevel: "strict",
+    });
+    expect(html).toContain("font-family:Arial");
+    expect(html).toContain("line-height:1;");
+  });
+  test("#202 a body width caps the email at the width it sets", async () => {
+    expect.hasAssertions();
+
+    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                  id: TEST_COLUMN_ID,
+                },
+                type: "mj-column",
+              },
+            ],
+            id: TEST_SECTION_ID,
+          },
+          type: "mj-section",
+        },
+      ],
+      root: { props: { body: { width: "800px" } } },
+    });
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, { isStampingIds: false }), {
+      validationLevel: "strict",
+    });
+    expect(html).toContain("max-width:800px");
+  });
+  test("#406 the email compiles on the MJML 5 the package pins", () => {
+    expect.hasAssertions();
+
+    expect(MJML_PACKAGE.version).toMatch(/^5\./u);
   });
 });

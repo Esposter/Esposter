@@ -220,3 +220,14 @@ export const MJML_COLOR_MATCHERS: RegExp[] = [
   /^#([0-9a-f]{3}){1,2}$/iu,
   new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
 ];
+// The tags whose content is read raw: each content kind's type, and the head's title, preview and style
+export const MJML_BLOCK_TEXT_TAGS: string[] = [
+  ...MJML_COMPONENT_SPECIFICATIONS.filter((specification) => specification.contentKind !== undefined).map(
+    (specification) => specification.type,
+  ),
+  "mj-preview",
+  "mj-style",
+  "mj-title",
+];
+// The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names it
+export const STRAY_TEXT_TYPE: string = "#text";
