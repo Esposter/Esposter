@@ -1,11 +1,9 @@
-import type { ModelReadings } from "#src/models/ModelReadings";
-
 import { AUDIO_SAMPLE_RATE, MODEL_URL } from "#src/constants";
 import { createNotes } from "#src/services/createNotes";
 import { readModel } from "#src/services/readModel";
 import { InferenceSession, Tensor } from "onnxruntime-node";
 import { fileURLToPath } from "node:url";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const readShippedSession = (): Promise<InferenceSession> => InferenceSession.create(fileURLToPath(MODEL_URL));
 
@@ -20,47 +18,52 @@ describe(readModel, () => {
     { length: 36000 },
     (_value, index) => Math.sin((2 * Math.PI * (index < 18000 ? 440 : 659) * index) / AUDIO_SAMPLE_RATE) / 2,
   );
-  // One read of the shipped model, which every test below observes a part of: a read takes a few seconds alone and
-  // Several times that under coverage, so a read per test cannot fit the default test timeout
-  let disposals = 0;
-  let executions = 0;
-  let readings: ModelReadings;
-  let twoTonesReadings: ModelReadings;
 
-  beforeAll(async () => {
-    const session = await readShippedSession();
-    const run = vi.spyOn(session, "run");
-    const dispose = vi.spyOn(Tensor.prototype, "dispose");
-    readings = await readModel(session, tone);
-    disposals = dispose.mock.calls.length;
-    executions = run.mock.calls.length;
-    twoTonesReadings = await readModel(session, twoTones);
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  test("hears a tone's pitch", () => {
+  test("hears a tone's pitch", async () => {
     expect.hasAssertions();
+
+    const session = await readShippedSession();
+    const readings = await readModel(session, tone);
 
     expect(new Set(createNotes(readings).map(({ pitchMidi }) => pitchMidi))).toStrictEqual(new Set([69]));
   });
 
-  test("disposes every output it reads", () => {
+  test("disposes every output it reads", async () => {
     expect.hasAssertions();
 
-    expect({ disposals, outputs: executions * 3 }).toStrictEqual({ disposals: 3, outputs: 3 });
+    const session = await readShippedSession();
+    const run = vi.spyOn(session, "run");
+    const dispose = vi.spyOn(Tensor.prototype, "dispose");
+    await readModel(session, tone);
+
+    expect(dispose).toHaveBeenCalledTimes(run.mock.calls.length * 3);
   });
 
-  test("runs no window past the recording's last frame", () => {
+  test("runs no window past the recording's last frame", async () => {
     expect.hasAssertions();
 
-    expect({ executions, frames: readings.frames.length }).toStrictEqual({ executions: 1, frames: 140 });
+    const session = await readShippedSession();
+    const run = vi.spyOn(session, "run");
+    const readings = await readModel(session, tone);
+
+    expect({ executions: run.mock.calls.length, frames: readings.frames.length }).toStrictEqual({
+      executions: 1,
+      frames: 140,
+    });
   });
 
-  test("hears the notes the TensorFlow.js export heard", () => {
+  test("hears the notes the TensorFlow.js export heard", async () => {
     expect.hasAssertions();
+
+    const session = await readShippedSession();
+    const readings = await readModel(session, twoTones);
 
     expect(
-      createNotes(twoTonesReadings).map(({ durationFrames, pitchMidi, startFrame }) => ({
+      createNotes(readings).map(({ durationFrames, pitchMidi, startFrame }) => ({
         durationFrames,
         pitchMidi,
         startFrame,
