@@ -11,6 +11,7 @@ import {
   EnemyDropFamilyDropTableMap,
   ForgeRecipeKind,
   forgeRecipeSchema,
+  gadgetRowSchema,
   GameDataset,
   offeringLevelSchema,
   reputationCitySchema,
@@ -19,13 +20,14 @@ import {
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
-// Takes or yields, every offering the Frostbearing Tree's levels take or pay, and every item a Reputation level pays,
-// Each read from the game's Material table with its name's text id, which `genshin:text names` writes into the name-text
-// Chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is
-// Taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table.
-// The recipes and the levels are the records their steps published, read from the dev account. An item the table lacks
-// Is an error. An item the table gives no type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader
-// Leaves such an item out. Returns the record the materials publish under
+// Takes or yields, every gadget of the gadgets slice, every offering the Frostbearing Tree's levels take or pay, and
+// Every item a Reputation level pays, each read from the game's Material table with its name's text id, which
+// `genshin:text names` writes into the name-text Chunks. The wallet's currencies are no items: Mora, Primogems and the
+// Rest are held by the wallet, and Adventure EXP is Taken by the Adventure Rank, so none is written. A weapon a recipe
+// Yields is no item either, it is in the weapon table. The recipes and the levels are the records their steps
+// Published, read from the dev account. An item the table lacks Is an error. An item the table gives no type is left
+// Out, as the dump leaves out MATERIAL_NONE and the gathering reader Leaves such an item out. Returns the record the
+// Materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -37,6 +39,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       .filter(({ kind }) => kind !== ForgeRecipeKind.Weapon)
       .flatMap(({ results }) => results.map(({ itemId }) => itemId)),
   ];
+  const gadgetRows = z.array(gadgetRowSchema).parse(await readPublishedGameData("gadgets/gadgets"));
   const craftingRecipes = z.array(craftingRecipeSchema).parse(await readPublishedGameData("crafting/recipes"));
   const frostbearingTreeLevels = z
     .array(offeringLevelSchema)
@@ -48,6 +51,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
       ...expeditionItemIds,
       ...forgeItemIds,
+      ...gadgetRows.map(({ id }) => id),
       ...craftingRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),
       ...craftingRecipes.map(({ resultItemId }) => resultItemId),
       ...frostbearingTreeLevels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId),
