@@ -56,7 +56,7 @@ const getPassiveBonuses = (ascension: number) =>
   );
 
 describe(createFlinsKitBehaviour, () => {
-  test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
+  test("reads the strikes', charged attack's, plunges' and burst's initial, middle and final multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
       ...FLINS_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
@@ -66,9 +66,11 @@ describe(createFlinsKitBehaviour, () => {
       FLINS_KIT.highPlunge.hits[0]?.talentMultiplier,
       FLINS_KIT.elementalBurst.hits[0]?.talentMultiplier,
       FLINS_KIT.elementalBurst.hits[1]?.talentMultiplier,
+      FLINS_KIT.elementalBurst.hits[5]?.talentMultiplier,
     ];
     expect(multipliers).toStrictEqual([
-      0.44726, 0.451483, 0.559198, 0.320389, 0.320389, 0.767946, 1.03028, 0.639324, 1.278377, 1.596762, 2.5984, 1.16928,
+      0.44726, 0.451483, 0.559198, 0.320389, 0.320389, 0.767946, 1.03028, 0.639324, 1.278377, 1.596762, 2.5984, 0.1624,
+      1.16928,
     ]);
   });
 

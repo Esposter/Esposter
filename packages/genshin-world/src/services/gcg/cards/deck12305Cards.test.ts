@@ -22,16 +22,21 @@ import { liuSu } from "#src/services/gcg/cards/liuSu";
 import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
 import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
 import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
-import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
-import { ICY_QUILL_ID, icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { FROSTFLAKE_SEKI_NO_TO_ID } from "#src/services/gcg/cards/constants";
+import { icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { ICY_QUILL_ID } from "#src/services/gcg/cards/constants";
 import { rana } from "#src/services/gcg/cards/rana";
 import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
-import { MYSTICAL_ABANDON_ID, mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
+import { mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
+import { MYSTICAL_ABANDON_ID } from "#src/services/gcg/cards/constants";
 import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
-import { TALISMAN_SPIRIT_ID, talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
-import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
+import { TALISMAN_SPIRIT_ID } from "#src/services/gcg/cards/constants";
+import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
@@ -43,10 +48,19 @@ import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveChara
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import {
+  DUNYARZAD_ID,
+  LIU_SU_ID,
+  RANA_ID,
+  SHENHE_ID,
+  STONE_AND_CONTRACTS_ID,
+  VERMILLION_HEREAFTER_ID,
+  XIAO_ID,
+} from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const SHENHE_ID = 1_107;
 
 const createCharacterState = (id: number): GcgCharacterState => ({
   aura: GcgAura.None,
@@ -88,6 +102,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -122,7 +138,6 @@ const SPRING_SPIRIT_SUMMONING: GcgSkill = {
   kind: GcgSkillKind.ElementalSkill,
 };
 
-const XIAO_ID = 1_504;
 const CONQUEROR_OF_EVIL_ID = 215_041;
 const BANE_OF_ALL_EVIL: GcgSkill = {
   costs: [],
@@ -139,13 +154,8 @@ const LEMNISCATIC_WIND_CYCLING: GcgSkill = {
   kind: GcgSkillKind.ElementalSkill,
 };
 
-const LIU_SU_ID = 322_012;
-const DUNYARZAD_ID = 322_016;
-const RANA_ID = 322_017;
 const PLAIN_SUPPORT_ID = 321_001;
 const LITHIC_SPEAR_ID = 311_402;
-const VERMILLION_HEREAFTER_ID = 312_012;
-const STONE_AND_CONTRACTS_ID = 331_802;
 const DRAWN_CARD_ID = 213_011;
 const TALENT_CARD: GcgCard = {
   costs: [],

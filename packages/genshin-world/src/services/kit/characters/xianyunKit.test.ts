@@ -99,7 +99,11 @@ describe(createXianyunKitBehaviour, () => {
   test("a Constellation 2 White Clouds at Dawn gives Xianyun 20% ATK for 15 seconds", () => {
     expect.hasAssertions();
 
-    expect(castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(2)).effects).toStrictEqual([
+    expect(
+      castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(2)).effects.filter(
+        ({ kind }) => kind === "buff",
+      ),
+    ).toStrictEqual([
       {
         amount: 0.2,
         attribute: Attribute.AttackPercent,
@@ -114,7 +118,11 @@ describe(createXianyunKitBehaviour, () => {
   test("a Constellation 1 White Clouds at Dawn gives Xianyun no ATK", () => {
     expect.hasAssertions();
 
-    expect(castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(1)).effects).toStrictEqual([]);
+    expect(
+      castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(1)).effects.filter(
+        ({ kind }) => kind === "buff",
+      ),
+    ).toStrictEqual([]);
   });
 
   test("a second White Clouds at Dawn restarts the 15 seconds rather than stacking the ATK", () => {

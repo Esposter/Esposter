@@ -159,7 +159,6 @@ const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: 
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
-  const holdLunarBloomMultiplier = readParameter("hymnOfEternalRestLunarBloomMultiplier");
   // Pale Hymn's flat Elemental Mastery on Bloom, Hyperbloom and Burgeon, and on Lunar-Bloom, at her burst's talent level
   const paleHymnBloomIncrease = readParameter("paleHymnBloomDamageIncrease");
   const paleHymnLunarBloomIncrease = readParameter("paleHymnLunarBloomDamageIncrease");
@@ -178,11 +177,11 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     enemyStatus: createShredStatus,
   });
   // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
-  const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", ["talentMultiplier"]);
+  const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", []);
   const createHoldLunarBloomHit = (dewCount: number): KitHit => ({
     ...holdLunarBloomFields,
     enemyStatus: createShredStatus,
-    talentMultiplier: holdLunarBloomMultiplier * dewCount,
+    talentMultiplier: holdLunarBloomFields.talentMultiplier * dewCount,
   });
   // The Frostgrove Sanctuary the press and the hold each plant where she stands, its ticks striking as her Elemental Skill,
   // As gcsim v2.47.2 (MIT) lauma/skill.go tags them, so Cleansing for the Spring reaches them

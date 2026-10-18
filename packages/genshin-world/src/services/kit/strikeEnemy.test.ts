@@ -21,6 +21,7 @@ import { getResistanceMultiplier } from "#src/services/combat/damage/getResistan
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
+import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
@@ -590,6 +591,36 @@ describe(strikeEnemy, () => {
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
   });
 
+  test("a launching hit that staggers an enemy leaves it launched while the stagger lasts", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const hit: KitHit = { ...TRAVELER_KIT.plungeCollision, isLaunching: true, poiseDamage: STURDY_HEALTH };
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+
+    strikeEnemy(enemy, hit, combatant, context);
+
+    expect(enemy.statuses).toStrictEqual([
+      { damageTakenBonus: 0, id: ENEMY_LAUNCHED_STATUS_ID, secondsRemaining: ENEMY_STAGGER_SECONDS },
+    ]);
+  });
+
+  test.each<[string, Pick<KitHit, "isLaunching" | "poiseDamage">]>([
+    ["a launching hit that leaves its poise standing", { isLaunching: true, poiseDamage: 0 }],
+    ["a hit that staggers it without launching", { poiseDamage: STURDY_HEALTH }],
+  ])("%s leaves an enemy unlaunched", (_title, launch) => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+
+    strikeEnemy(enemy, { ...TRAVELER_KIT.plungeCollision, ...launch }, combatant, context);
+
+    expect(enemy.statuses).toStrictEqual([]);
+  });
+
   test("adds a hit's additive base DMG bonus, read from its striker, to the base damage it is priced at", () => {
     expect.hasAssertions();
 
@@ -650,6 +681,62 @@ describe(strikeEnemy, () => {
       ) * getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro));
 
     const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context, {
+      baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
+      lunarReactionTypes: [LunarReactionType.LunarBloom],
+      reactionBonus: REACTION_BONUS,
+    });
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("a direct Lunar hit takes the party's reaction bonuses its Lunar reaction takes: the DMG Bonus adds to the reaction bonus, and the CRIT Rate and CRIT DMG bonuses reach its roll and its CRIT", () => {
+    expect.hasAssertions();
+
+    const ELEMENTAL_MASTERY = 400;
+    const BASE_DAMAGE_BONUS = 0.07;
+    const REACTION_BONUS = 0.18;
+    const PARTY_DAMAGE_BONUS = 0.2;
+    const PARTY_CRITICAL_DAMAGE_BONUS = 0.5;
+    const enemy = createSturdyEnemy();
+    const combatant: Combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
+      ]),
+      kit: {
+        ...TRAVELER_KIT,
+        getPartyReactionBonus: () => ({
+          criticalDamageBonus: PARTY_CRITICAL_DAMAGE_BONUS,
+          criticalRateBonus: 1,
+          damageBonus: PARTY_DAMAGE_BONUS,
+        }),
+      },
+    };
+    const hit: KitHit = {
+      element: Element.Dendro,
+      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+      hitmarkSeconds: 0,
+      lunarHit: {
+        getScalingStat: ({ attributes }) => attributes.attributeTotalMap[Attribute.ElementalMastery],
+        lunarReactionType: LunarReactionType.LunarBloom,
+      },
+      poiseDamage: 0,
+      talentMultiplier: 2,
+    };
+    const damage =
+      getLunarDamage(
+        LunarReactionType.LunarBloom,
+        2 * ELEMENTAL_MASTERY,
+        ELEMENTAL_MASTERY,
+        BASE_DAMAGE_BONUS,
+        REACTION_BONUS + PARTY_DAMAGE_BONUS,
+      ) *
+      getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro)) *
+      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS);
+
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
     strikeEnemy(enemy, hit, combatant, context, {
       baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
       lunarReactionTypes: [LunarReactionType.LunarBloom],

@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -38,6 +39,24 @@ describe(hitPartyMember, () => {
 
     expect(shield.health).toBe(0);
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - 50 / MAX_HEALTH);
+  });
+
+  test("a Shield Strength buff on the member on the field raises what the team's shields absorb", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const shield: KitShield = { characterId: 2, health: 50, kind: "shield", secondsRemaining: 10 };
+    const buff: KitBuff = {
+      amount: 0.25,
+      attribute: Attribute.ShieldStrength,
+      characterId: 1,
+      kind: "buff",
+      secondsRemaining: 12,
+    };
+
+    hitPartyMember(party, combatant, { effects: [shield, buff] }, characterIdCombatantMap, 100);
+
+    expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (100 - 50 * 1.25) / MAX_HEALTH);
   });
 
   test("should lose the whole hit's share of max HP with no shield up", () => {

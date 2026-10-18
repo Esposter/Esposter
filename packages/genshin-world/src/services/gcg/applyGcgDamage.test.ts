@@ -14,10 +14,14 @@ import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } fro
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

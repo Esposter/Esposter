@@ -2,9 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
+import { GUOBA_ATTACK_ID, XIANGLING_ID } from "#src/services/gcg/cards/constants";
 
-const XIANGLING_ID = 1302;
-const GUOBA_ATTACK_ID = 13_022;
 const CROSSFIRE_DAMAGE = 1;
 
 // Crossfire, Xiangling's talent: equipped to her while she is active, and her Guoba Attack is used at once. Each Guoba Attack

@@ -64,7 +64,7 @@ const readListHitCalls = (
   const hitmarkCalls = typeof hitmark === "number" ? namedHit.queuedCalls.filter(({ delay }) => delay === hitmark) : [];
   if (hitmarkCalls.length === 1) return hitmarkCalls[0]?.fieldMap;
   if (namedHit.queuedCalls.length === listLength) return namedHit.queuedCalls[index]?.fieldMap;
-  const takingSites = Array.from(siteCallsMap.values()).filter(
+  const takingSites = [...siteCallsMap.values()].filter(
     ({ calls, keys }) => calls.length === listLength && keys.has(key),
   );
   const takingSite = takingSites.length === 1 ? takingSites[0] : undefined;
@@ -74,9 +74,10 @@ const readListHitCalls = (
 };
 
 // The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill hold's
-// Or a stance's, whose multiplier names a proud skill group and index gcsim's talent variables give a hit for, takes that
-// Hit's fields. A hit of a list takes the calls its attack makes in turn, in the order they land, where the list is as
-// Long as those calls, or where the calls of several keys from one attack site are, merged in the order they land
+// Or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index gcsim's talent
+// Variables give a hit for, takes that hit's fields. A hit of a list takes the calls its attack makes in turn, in the
+// Order they land, where the list is as long as those calls, or where the calls of several keys from one attack site are,
+// Merged in the order they land
 export const getNamedHitKitCandidates = (
   valueMap: ReadonlyMap<string, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,

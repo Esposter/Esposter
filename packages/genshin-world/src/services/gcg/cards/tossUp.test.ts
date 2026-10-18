@@ -9,6 +9,8 @@ import { tossUp } from "#src/services/gcg/cards/tossUp";
 import { GCG_DIE_FACES } from "#src/services/gcg/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 // A random source that rolls the given die face in turn, each as the middle of its slice of the faces
 const createFaceRandom = (faceIndices: number[]): (() => number) => {
@@ -36,6 +38,8 @@ const createSide = (dice: GcgSideState["dice"]): GcgSideState => ({
 });
 
 const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
@@ -15,7 +15,7 @@ const ADVENTURER_FIELD_ID = "adventurer";
 // Field with no edge, for those seconds, raised by the Healing Bonuses as every heal is. Only a wearer's kit carries
 // This module, so an opened chest restores no other member. A chest opened while the restoration runs restarts it, so two
 // Chests never restore at once
-export const createAdventurerSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
+export const createAdventurerSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(params, 0);
   const tickIntervalSeconds = takeOne(params, 1);
   const healedHealthShare = takeOne(params, 2);

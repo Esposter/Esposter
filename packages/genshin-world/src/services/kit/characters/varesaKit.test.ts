@@ -44,12 +44,12 @@ describe(createVaresaKitBehaviour, () => {
     ]);
   });
 
-  test("the three strikes hit at their hitmarks and cancel into a walk at their table frames", () => {
+  test("the three strikes hit at their hitmarks and end at their animation frames", () => {
     expect.hasAssertions();
     expect(
       VARESA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
     ).toStrictEqual([[23], [7], [33]]);
-    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([49, 28, 59]);
+    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([49, 30, 59]);
   });
 
   test("the charged attack hits at 69 frames of a 143-frame animation, costing 50 stamina", () => {

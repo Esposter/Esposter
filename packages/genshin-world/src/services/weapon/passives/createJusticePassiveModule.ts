@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -12,7 +12,7 @@ const JUSTICE_COOLDOWN_ID = "justiceCooldown";
 // Justice at its rank: the normal and charged attacks its wielder deals are raised by the rank's DMG Bonus, and a critical hit
 // By one of them restores the wielder the rank's share of its ATK as HP, once every the rank's cooldown seconds. The rank's
 // Fourth value is not in the text and is not read
-export const createJusticePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createJusticePassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const attackShare = takeOne(params, 1);
   const cooldownSeconds = takeOne(params, 2);

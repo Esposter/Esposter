@@ -57,6 +57,7 @@ describe(openKitCounterWindow, () => {
     const shieldAbsorbed: KitEvent = {
       amount: 50,
       characterId: 2,
+      health: 0,
       kind: KitEventKind.ShieldAbsorbed,
       struckCharacterId: TRAVELER_CHARACTER_ID,
     };

@@ -48,6 +48,7 @@ const createHealthLossEvent = (characterId: number, sourceCharacterId?: number):
 const createShieldAbsorbedEvent = (characterId: number, struckCharacterId: number): KitShieldAbsorbedEvent => ({
   amount: 0.1,
   characterId,
+  health: 0,
   kind: KitEventKind.ShieldAbsorbed,
   struckCharacterId,
 });

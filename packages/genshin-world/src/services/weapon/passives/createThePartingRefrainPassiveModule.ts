@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -21,7 +21,7 @@ const SIGIL_MAXIMUM = 4;
 // Burst hit it deals gains a Sigil of Remembrance, once every cooldown, whether or not it is on the field. At four Sigils they are
 // Consumed and the deployed team gains Farewell Song for the rank's seconds, with the second Elemental Mastery and the second ATK
 // Share, and no Sigil is gained for the rank's lockout seconds after it
-export const createThePartingRefrainPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createThePartingRefrainPassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);
   const sigilCooldownSeconds = takeOne(params, 1);
   const farewellSeconds = takeOne(params, 2);

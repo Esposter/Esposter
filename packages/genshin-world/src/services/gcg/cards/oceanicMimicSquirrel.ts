@@ -2,8 +2,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 
-export const OCEANIC_MIMIC_SQUIRREL_ID = 122_011;
-
 // Oceanic Mimic: Squirrel, a summon for two usages that deals 2 Hydro DMG at the end phase (the wiki's Oceanid Mimic Summoning)
 const SQUIRREL_DAMAGE = 2;
 

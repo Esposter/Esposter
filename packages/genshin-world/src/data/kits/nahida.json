@@ -6,7 +6,6 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7332 } },
-  "skillHolds.0.action.animationFrames": { "cause": "DiffersFromSource", "value": 362 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 332 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7332 } },

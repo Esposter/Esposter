@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { BAKE_KURAGE_ID, bakeKurage } from "#src/services/gcg/cards/bakeKurage";
+import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
+import { BAKE_KURAGE_ID } from "#src/services/gcg/cards/constants";
 import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplication";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

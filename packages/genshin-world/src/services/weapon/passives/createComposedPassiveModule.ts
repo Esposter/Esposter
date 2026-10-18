@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -11,7 +11,7 @@ const COMPOSED_COOLDOWN_ID = "composedCooldown";
 
 // Composed at its rank: an Elemental Skill that damages an enemy has the rank's chance to end its own cooldown, and a proc
 // Holds off the next for the rank's cooldown in seconds
-export const createComposedPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createComposedPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);
   return {

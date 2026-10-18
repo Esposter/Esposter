@@ -4,6 +4,20 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
 
+const createChargeSource = (callerArguments: string[]) => [
+  "package neuvillette",
+  "",
+  "const shortChargeHitmark = 27",
+  "",
+  "func (c *char) ChargeAttack(p map[string]int) {",
+  ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
+  "}",
+  "",
+  "func (c *char) chargeAttackShort(windup int) {",
+  "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+  "}",
+];
+
 describe(readGcsimQueuedAttacks, () => {
   test("reads a queue call's attack by the name it passes and its delay from the constants, an inline literal's by its line", () => {
     expect.hasAssertions();
@@ -249,19 +263,6 @@ describe(readGcsimQueuedAttacks, () => {
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
     expect.hasAssertions();
 
-    const source = (callerArguments: string[]) => [
-      "package neuvillette",
-      "",
-      "const shortChargeHitmark = 27",
-      "",
-      "func (c *char) ChargeAttack(p map[string]int) {",
-      ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
-      "}",
-      "",
-      "func (c *char) chargeAttackShort(windup int) {",
-      "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
-      "}",
-    ];
     const branchSources = [
       {
         path: "charge.go",
@@ -285,7 +286,7 @@ describe(readGcsimQueuedAttacks, () => {
         ].join("\n"),
       },
     ];
-    const valuesSources = [{ path: "charge.go", source: source(["0", "14"]).join("\n") }];
+    const valuesSources = [{ path: "charge.go", source: createChargeSource(["0", "14"]).join("\n") }];
 
     expect(
       readGcsimQueuedAttacks(branchSources, evaluateGoConstants(branchSources)).map(({ delay }) => delay),
@@ -636,6 +637,7 @@ describe(readGcsimQueuedAttacks, () => {
       readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
     ).toStrictEqual([[8, 93]]);
   });
+
   test("adds a QueueCharTask closure's delay written in a parameter, from its caller's argument", () => {
     expect.hasAssertions();
 
@@ -662,6 +664,7 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([30]);
   });
+
   test("reads both indexes of a named array a delay takes from a local clamped to 0 and 1 from the action's hold parameter", () => {
     expect.hasAssertions();
 
@@ -732,6 +735,35 @@ describe(readGcsimQueuedAttacks, () => {
       [13, 114],
       [13, 40],
     ]);
+  });
+
+  test("adds the delays of the Tasks.Add closures a method's call is nested in, outer and inner, to the queue calls in that method", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package collei",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.burstTicks(0)",
+          "\t\t}, 43)",
+          "\t}, 25)",
+          "}",
+          "",
+          "func (c *char) burstTicks(snap int) {",
+          "\tc.Core.QueueAttackWithSnap(ai, ap, snap, 0, 0)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[12, 68]]);
   });
 
   test("reads no delay from a method's call outside any task closure, which runs at its caller's own time", () => {
@@ -863,6 +895,7 @@ describe(readGcsimQueuedAttacks, () => {
       undefined,
     ]);
   });
+
   test("reads no delay from a returned closure no Tasks.Add schedules, an attack callback run by its hit", () => {
     expect.hasAssertions();
 
@@ -883,6 +916,108 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
       undefined,
+    ]);
+  });
+
+  test("gives a single-target hit fired in a loop over an area query the query's area, at the query's line", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "const skillRadius = 1.5",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, skillRadius)",
+          "\ttargets := c.Core.Combat.EnemiesWithinArea(aoe, func(t info.Enemy) bool {",
+          "\t\treturn true",
+          "\t})",
+          "\tfor _, t := range targets {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewSingleTargetHit(t.Key()), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.Player,
+        file: "skill.go",
+        line: 7,
+        name: "NewCircleHitOnTarget",
+        radius: 1.5,
+        shape: GcsimHitboxShape.Circle,
+      },
+    ]);
+  });
+
+  test("keeps a single-target hit's own hitbox in a loop over a random subset of an area, which does not reach every enemy in it", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 1.5)",
+          "\tenemies := c.Core.Combat.RandomEnemiesWithinArea(aoe, nil, 2)",
+          "\tfor _, e := range enemies {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewSingleTargetHit(e.Key()), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.PrimaryTarget,
+        file: "skill.go",
+        line: 8,
+        name: "NewSingleTargetHit",
+        radius: 0,
+        shape: GcsimHitboxShape.Circle,
+      },
+    ]);
+  });
+
+  test("keeps a hit's own hitbox in a loop over an area query where the hit is not single-target", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 1.5)",
+          "\tfor _, e := range c.Core.Combat.EnemiesWithinArea(aoe, nil) {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 2), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.PrimaryTarget,
+        file: "skill.go",
+        line: 7,
+        name: "NewCircleHitOnTarget",
+        radius: 2,
+        shape: GcsimHitboxShape.Circle,
+      },
     ]);
   });
 });

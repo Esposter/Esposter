@@ -309,6 +309,7 @@ describe(createCandaceKitBehaviour, () => {
       releaseHeldSkill(1, () => ({
         amount: 100,
         characterId: CANDACE_CHARACTER_ID,
+        health: 0,
         kind: KitEventKind.ShieldAbsorbed,
         struckCharacterId: CANDACE_CHARACTER_ID,
       })),

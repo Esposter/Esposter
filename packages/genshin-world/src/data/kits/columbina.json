@@ -1,7 +1,6 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 58 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.skillDotFirstTick": { "cause": "Unsourced", "value": 138 },
   "frames.skillDotInterval": { "file": "skill.go", "line": 338, "source": "Gcsim", "value": 117 },

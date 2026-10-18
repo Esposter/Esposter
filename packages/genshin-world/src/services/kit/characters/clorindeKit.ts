@@ -32,7 +32,12 @@ const BOND_OF_LIFE_TOLERANCE = 0.0000001;
 // Full Bond of Life share, which gains Bond of Life as it strikes, and of the normal shot otherwise, and its Impale the
 // Night press casts the variant the share picks, each where her body stands. Impale the Night's heals are not built, and
 // Neither are Last Lightfall's Bond of Life, her passives, or Constellations 1, 2 and 4
-export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance }: KitRecordReader): KitBehaviour => {
+export const createClorindeKitBehaviour = ({
+  readHit,
+  readHits,
+  readParameter,
+  readStance,
+}: KitRecordReader): KitBehaviour => {
   const nightVigilSeconds = readParameter("nightVigilSeconds");
   const swiftHuntBondOfLifeGain = readParameter("swiftHuntBondOfLifeGain");
   const swiftHuntNormalShots = readHits("swiftHuntNormalShot");
@@ -41,8 +46,8 @@ export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance
       grantPartyMemberBondOfLife(context.party, strike.combatant.characterId, swiftHuntBondOfLifeGain),
   });
   const impaleTheNightFullHits = readHits("impaleTheNightFullBondOfLife");
-  const impaleTheNightLowHits = readHits("impaleTheNightLowBondOfLife");
-  const impaleTheNightNoHits = readHits("impaleTheNightNoBondOfLife");
+  const impaleTheNightLowHit = readHit("impaleTheNightLowBondOfLife");
+  const impaleTheNightNoHit = readHit("impaleTheNightNoBondOfLife");
   const impaleTheNightFullHealing = readParameter("impaleTheNightFullBondOfLifeHealing");
   const impaleTheNightLowHealing = readParameter("impaleTheNightLowBondOfLifeHealing");
   // Swift Hunt's step casts its own entry of the list its share picks, the step's index in each list
@@ -62,13 +67,13 @@ export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance
     const { activeCombatant, body, kitEffectState, party } = context;
     const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
     if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) {
-      castKitSummon(kitEffectState, body, activeCombatant, impaleTheNightNoHits, {
+      castKitSummon(kitEffectState, body, activeCombatant, [impaleTheNightNoHit], {
         attackTag: AttackTag.ElementalSkill,
       });
       return;
     }
     const isFull = bondOfLifeShare >= BOND_OF_LIFE_FULL_SHARE;
-    castKitSummon(kitEffectState, body, activeCombatant, isFull ? impaleTheNightFullHits : impaleTheNightLowHits, {
+    castKitSummon(kitEffectState, body, activeCombatant, isFull ? impaleTheNightFullHits : [impaleTheNightLowHit], {
       attackTag: AttackTag.ElementalSkill,
     });
     changeKitMemberHealth(

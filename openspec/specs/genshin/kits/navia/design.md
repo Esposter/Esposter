@@ -4,7 +4,7 @@ Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, o
 
 ## Not yet built
 
-- **Crystal Shrapnel from the party's Crystallize shards and Lunar-Crystallize.** Navia gains a Shrapnel when a party member obtains a shard or triggers Lunar-Crystallize. The framework has no kit event for a shard's creation or pickup, since `addCrystallizeShards` and `pickUpCrystallizeShards` write the team's effects without emitting one, and it has no event for a Lunar-Crystallize reaction. Waits on a kit event for shard creation and pickup, and on Lunar-Crystallize among the reactions a kit hears.
+- **Crystal Shrapnel from the party's Crystallize shards and Lunar-Crystallize.** Navia gains a Shrapnel when a party member obtains a shard or triggers Lunar-Crystallize. A shard's pickup is a `CrystallizeShardPickedUp` event and a Lunar-Crystallize is a reaction among a `ReactionTriggered`'s, the two gcsim gains a Shrapnel on (`navia/skill.go:263`, `:276`), so it waits only on the kit answering them.
 - **Pulling shards to her during a hold.** gcsim draws each shard within 12 metres into Navia while the hold charges. Waits on a pickup that moves the shards toward the body, as `pickUpCrystallizeShards` reads a fixed reach round the body.
 - **The Shrapnel's DMG, extra pellets and CRIT past three stacks.** A shot's damage per stack past three, its pellets past three and its CRIT are not priced. Waits on a hit whose talent multiplier and DMG bonus read the team's effects as it prices, since a hit's `talentMultiplier` and `damageBonus` are static numbers and a variant exists only for a burst and a hold.
 - **Constellation 6's CRIT DMG.** Waits on a per-hit CRIT DMG on a `KitHit`.

@@ -1,7 +1,6 @@
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { takeOne } from "@esposter/shared";
 
@@ -15,9 +14,9 @@ export const modifyGcgDamageDealt = (context: GcgEffectContext, damage: GcgDamag
   let dealtDamage = damage;
   for (const zoneCard of zoneCards)
     dealtDamage =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.modifyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
+      duel.cardModules.get(zoneCard.cardId)?.modifyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
   for (const zoneCard of zoneCards)
     dealtDamage =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.multiplyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
+      duel.cardModules.get(zoneCard.cardId)?.multiplyDamageDealt?.(context, dealtDamage, zoneCard) ?? dealtDamage;
   return dealtDamage;
 };
