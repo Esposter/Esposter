@@ -5,8 +5,8 @@
 
 ## 2. Restocks and sale dates
 
-- [ ] 2.1 Restore each good's limit on its own refresh, and never for a good with no refresh. Verify: tests named after 'A daily good's limit returns at the daily refresh' and 'A good with no refresh stays bought'.
-- [ ] 2.2 Offer a good only within its sale dates. Verify: a test named after the scenario 'A good is not offered outside its sale dates'.
+- [x] 2.1 Restore each good's limit on its own refresh, and never for a good with no refresh. Verify: tests named after 'A daily good's limit returns at the daily refresh' and 'A good with no refresh stays bought'.
+- [x] 2.2 Offer a good only within its sale dates. Verify: a test named after the scenario 'A good is not offered outside its sale dates'.
 
 ## 3. Paimon's Bargains
 
