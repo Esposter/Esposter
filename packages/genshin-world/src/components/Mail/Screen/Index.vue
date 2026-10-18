@@ -15,7 +15,7 @@ import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { isGiftBoxed } from "#src/services/mail/isGiftBoxed";
 import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
-import { MailExpiryGameTextKeyMap } from "#src/services/mail/MailExpiryGameTextKeyMap";
+import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { GameButton, GameButtonKind } from "genshin-interface";
@@ -114,7 +114,7 @@ const getItemName = (itemId: number): string => {
 const getStatusText = ({ mail, row }: MailEntry): string => {
   if (isGiftBoxed(mail, row, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
-  return fillGameTextValues(gameText[MailExpiryGameTextKeyMap[unit]], count);
+  return fillGameTextValues(gameText[MailExpiryUnitGameTextKeyMap[unit]], count);
 };
 </script>
 

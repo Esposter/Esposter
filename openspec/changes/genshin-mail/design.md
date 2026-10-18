@@ -88,7 +88,7 @@ packages/genshin-world/src/services/mail/readMailText.ts ← one language's mail
 packages/genshin-world/src/services/mail/readMailRows.ts ← the held mails' rows by id, the ones the mail table no longer names left out
 packages/genshin-world/src/services/mail/getMailExpiresAt.ts ← the instant a mail expires, which getMailExpiry and removeExpiredMails both read
 packages/genshin-world/src/services/mail/getMailExpiry.ts ← a mail's time left in its largest unit
-packages/genshin-world/src/services/mail/MailExpiryGameTextKeyMap.ts ← each expiry unit's line
+packages/genshin-world/src/services/mail/MailExpiryUnitGameTextKeyMap.ts ← each expiry unit's line
 packages/genshin-world/src/services/mail/sortMails.ts  ← the held mails, pinned first then newest first
 packages/genshin-world/src/models/mail/MailExpiry.ts   ← a mail's time left, as a count of its unit
 packages/genshin-world/src/models/mail/MailExpiryUnit.ts ← the unit a time left is shown in
