@@ -24,9 +24,8 @@ const createWielder = (maxHealth: number): Combatant => ({
 const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
 
 describe(createEchoesOfThePlentifulLandPassiveModule, () => {
-  // Echoes of the Plentiful Land at its first rank: six thousandths of Normal Attack DMG for each thousand Max HP, up to
-  // Sixteen per cent, for ten seconds
-  const echoesOfThePlentifulLandPassiveModule = createEchoesOfThePlentifulLandPassiveModule([0.006, 0.16, 10]);
+  // Synthetic params: half a point of Normal Attack DMG for each thousand Max HP, up to two points, for three seconds
+  const echoesOfThePlentifulLandPassiveModule = createEchoesOfThePlentifulLandPassiveModule([0.5, 2, 3]);
 
   test("an Elemental Skill raises Normal Attack DMG by the rank's share for each thousand Max HP", () => {
     expect.hasAssertions();
@@ -38,7 +37,7 @@ describe(createEchoesOfThePlentifulLandPassiveModule, () => {
     expect(
       getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
         .attributes.attributeTotalMap[Attribute.NormalAttackDamageBonus],
-    ).toBe(0.012);
+    ).toBe(1);
   });
 
   test("the stacks count the wielder's Max HP after its buffs, not its base Max HP", () => {
@@ -63,7 +62,7 @@ describe(createEchoesOfThePlentifulLandPassiveModule, () => {
     expect(
       getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
         .attributes.attributeTotalMap[Attribute.NormalAttackDamageBonus],
-    ).toBe(0.012);
+    ).toBe(1);
   });
 
   test("only whole thousands of Max HP count toward the bonus", () => {
@@ -76,7 +75,7 @@ describe(createEchoesOfThePlentifulLandPassiveModule, () => {
     expect(
       getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
         .attributes.attributeTotalMap[Attribute.NormalAttackDamageBonus],
-    ).toBe(0.006);
+    ).toBe(0.5);
   });
 
   test("the bonus stops at the rank's maximum", () => {
@@ -89,7 +88,7 @@ describe(createEchoesOfThePlentifulLandPassiveModule, () => {
     expect(
       getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
         .attributes.attributeTotalMap[Attribute.NormalAttackDamageBonus],
-    ).toBe(0.16);
+    ).toBe(2);
   });
 
   test("a burst raises nothing", () => {

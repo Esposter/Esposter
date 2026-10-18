@@ -17,9 +17,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
 
 describe(createEssenceOfFalsityPassiveModule, () => {
-  // Essence of Falsity at its first rank: 8% CRIT Rate, 80 Elemental Mastery for twelve seconds after an Elemental Skill, and
-  // 24% CRIT DMG for four seconds after Lunar-Bloom DMG, each increased by 50% while both stand
-  const essenceOfFalsityPassiveModule = createEssenceOfFalsityPassiveModule([80, 0.24, 12, 4, 0.5, 0.08]);
+  // Essence of Falsity with synthetic params: 10% CRIT Rate, 50 Elemental Mastery for three seconds after an Elemental
+  // Skill, and 20% CRIT DMG for two seconds after Lunar-Bloom DMG, each increased by 50% while both stand
+  const essenceOfFalsityPassiveModule = createEssenceOfFalsityPassiveModule([50, 0.2, 3, 2, 0.5, 0.1]);
   const wielder: Combatant = createWielderCombatant();
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const createLunarBloom = () => ({
@@ -37,13 +37,13 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
   });
 
-  test("an Elemental Skill gives the wielder Secret of Lies, raising its Elemental Mastery for twelve seconds", () => {
+  test("an Elemental Skill gives the wielder Secret of Lies, raising its Elemental Mastery for three seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -52,23 +52,23 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
-      { amount: 80, attribute: Attribute.ElementalMastery },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
+      { amount: 50, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
 
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 3.1);
 
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
   });
 
-  test("a Lunar-Bloom DMG the wielder deals gives it Moon of Truth, raising its CRIT DMG for four seconds", () => {
+  test("a Lunar-Bloom DMG the wielder deals gives it Moon of Truth, raising its CRIT DMG for two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -77,17 +77,17 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
-      { amount: 0.24, attribute: Attribute.CriticalDamage },
+      { amount: 0.2, attribute: Attribute.CriticalDamage },
     ]);
 
-    stepKitSeconds(context, 4.1);
+    stepKitSeconds(context, 2.1);
 
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
     ]);
@@ -103,9 +103,9 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     expect(
       essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
     ).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
-      { amount: 120, attribute: Attribute.ElementalMastery },
-      { amount: 0.24 * 1.5, attribute: Attribute.CriticalDamage },
+      { amount: 0.1, attribute: Attribute.CriticalRate },
+      { amount: 75, attribute: Attribute.ElementalMastery },
+      { amount: 0.2 * 1.5, attribute: Attribute.CriticalDamage },
     ]);
   });
 });

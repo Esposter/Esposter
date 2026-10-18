@@ -23,8 +23,9 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Master Key at its first rank: sixty Elemental Mastery for twelve seconds after a reaction, sixty more under Ascendant Gleam
-const fallIntoPlacePassiveModule = createFallIntoPlacePassiveModule([60, 12, 60, 0]);
+// Master Key with synthetic params: 40 Elemental Mastery for four seconds after a reaction, 30 more under
+// Ascendant Gleam
+const fallIntoPlacePassiveModule = createFallIntoPlacePassiveModule([40, 4, 30, 0]);
 const createReaction = (striker: Combatant) => ({
   enemy,
   kind: KitEventKind.ReactionTriggered as const,
@@ -41,11 +42,11 @@ describe(createFallIntoPlacePassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 60,
+        amount: 40,
         attribute: Attribute.ElementalMastery,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 4,
         source: "fallIntoPlace",
       },
     ]);
@@ -66,11 +67,11 @@ describe(createFallIntoPlacePassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 120,
+        amount: 70,
         attribute: Attribute.ElementalMastery,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 4,
         source: "fallIntoPlace",
       },
     ]);

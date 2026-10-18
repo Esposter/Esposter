@@ -11,16 +11,17 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 describe(createExtinguishingPreceptPassiveModule, () => {
-  // Extinguishing Precept at its first rank: its All Elemental DMG Bonus is a passive bonus. After an Elemental Skill, the
-  // Wielder's ATK rises by 3.2% for each second of Consummation, up to six stacks, for 20 seconds, doubled while it is off the field
-  const extinguishingPreceptPassiveModule = createExtinguishingPreceptPassiveModule([0.12, 1, 0.032, 6, 20]);
-  const attackBonusPerSecond = 0.032;
+  // Extinguishing Precept with synthetic params: 10% All Elemental DMG Bonus. After an Elemental Skill, the
+  // Wielder's ATK rises by 5% for each second of Consummation, up to four stacks, for ten seconds, doubled
+  // While off the field. Its second value is not read, so it is passed as 0
+  const extinguishingPreceptPassiveModule = createExtinguishingPreceptPassiveModule([0.1, 0, 0.05, 4, 10]);
+  const attackBonusPerSecond = 0.05;
   const wielder: Combatant = createWielderCombatant();
   const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
   const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
   const offField: DeployedCombatant[] = [{ ...wielder, isOnField: false }];
 
-  test("the wielder gains 12% of each Elemental DMG Bonus", () => {
+  test("the wielder gains 10% of each Elemental DMG Bonus", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -28,10 +29,10 @@ describe(createExtinguishingPreceptPassiveModule, () => {
       extinguishingPreceptPassiveModule
         .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
         ?.filter(({ attribute }) => ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.includes(attribute)),
-    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
+    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute })));
   });
 
-  test("after an Elemental Skill, ATK rises by 3.2% for each second that passes", () => {
+  test("after an Elemental Skill, ATK rises by 5% for each second that passes", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -59,7 +60,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     ).toBe(attackBonusPerSecond);
   });
 
-  test("the ATK rise stops at six stacks", () => {
+  test("the ATK rise stops at four stacks", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -70,7 +71,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
       extinguishingPreceptPassiveModule
         .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
-    ).toBe(6 * attackBonusPerSecond);
+    ).toBe(4 * attackBonusPerSecond);
   });
 
   test("the ATK rise is doubled while the wielder is off the field", () => {
@@ -87,12 +88,12 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     ).toBe(4 * attackBonusPerSecond);
   });
 
-  test("the Consummation ends twenty seconds after the Elemental Skill", () => {
+  test("the Consummation ends ten seconds after the Elemental Skill", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     extinguishingPreceptPassiveModule.onKitEvent?.(skillUsed, context, wielder);
-    stepKitSeconds(context, 20.1);
+    stepKitSeconds(context, 10.1);
 
     expect(
       extinguishingPreceptPassiveModule

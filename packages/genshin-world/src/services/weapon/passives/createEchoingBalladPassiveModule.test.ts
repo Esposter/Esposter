@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Skyward Harp at its first rank: twenty per cent CRIT DMG, a sixty per cent chance, 125% ATK, and a four-second cooldown
-const echoingBalladPassiveModule = createEchoingBalladPassiveModule([0.2, 0.6, 1.25, 4]);
+// Skyward Harp with synthetic params: 10% CRIT DMG, a 50% chance, 150% ATK, and a three-second cooldown
+const echoingBalladPassiveModule = createEchoingBalladPassiveModule([0.1, 0.5, 1.5, 3]);
 const createDamageTaken = (attackTag?: AttackTag): KitEvent => ({
   ...(attackTag === undefined ? {} : { attackTag }),
   enemy,
@@ -36,7 +36,7 @@ describe(createEchoingBalladPassiveModule, () => {
     expect.hasAssertions();
 
     expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.CriticalDamage },
+      { amount: 0.1, attribute: Attribute.CriticalDamage },
     ]);
   });
 
@@ -47,7 +47,7 @@ describe(createEchoingBalladPassiveModule, () => {
     echoingBalladPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(1.25);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBe(1.5);
     expect(context.strikes[0]?.hit.element).toBeUndefined();
   });
 
@@ -69,7 +69,7 @@ describe(createEchoingBalladPassiveModule, () => {
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("a second AoE inside the four-second cooldown queues nothing, and one after it does", () => {
+  test("a second AoE inside the three-second cooldown queues nothing, and one after it does", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -78,7 +78,7 @@ describe(createEchoingBalladPassiveModule, () => {
 
     expect(context.strikes).toHaveLength(1);
 
-    stepKitSeconds(context, 4.5);
+    stepKitSeconds(context, 3.5);
     echoingBalladPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     // The step consumes the AoE queued before it, so the one queued after the cooldown is the only one left
