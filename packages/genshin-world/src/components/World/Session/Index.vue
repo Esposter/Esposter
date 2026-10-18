@@ -1086,6 +1086,8 @@ const {
   jumpTo,
   materialDataMap,
   nameText,
+  kitEffectState: kitContext.kitEffectState,
+  party,
   random: () => kitContext.random(),
   rank,
   reliquaryPieceEntryMap,
