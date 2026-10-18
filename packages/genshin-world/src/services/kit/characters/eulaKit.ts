@@ -44,9 +44,10 @@ const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
 const LIGHTFALL_STACKS_RESOURCE_ID = "eula-lightfall-stacks";
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
-// Constellation 6 starts the Sword with this many stacks, with its extra stack from each of Eula's strikes a random roll that
-// This kit leaves out
+// Constellation 6 starts the Sword with this many stacks, and each stack it gains rolls for one more
+const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_STARTING_STACKS = 5;
+const CONSTELLATION_6_EXTRA_STACK_CHANCE = 0.5;
 
 const checkIsGrimheartStack = (effect: KitEffect, characterId: number): boolean =>
   effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id);
@@ -70,8 +71,8 @@ export const EULA_CHARACTER_ID = 10_000_051;
 // Each, shredding the RES of the enemies they strike. Glacial Illumination lights the Lightfall Sword, which gains a stack
 // From each of her strikes and explodes priced by them, early on a swap of characters. Her Ascension 1 Shattered Lightfall
 // Sword, Ascension 4's stack, Constellation 1's Physical DMG Bonus, Constellation 4's Glacial Illumination bonus and
-// Constellation 6's starting stacks are built, as is Ascension 4's reset of Icetide Vortex's cooldown. Her Constellation 2
-// Hold cooldown, which the kit model cannot set per hold, is not. The Constellation 6 roll's extra stack is left out
+// Constellation 6's starting stacks and its extra stack roll are built, as is Ascension 4's reset of Icetide Vortex's
+// Cooldown. Her Constellation 2 Hold cooldown, which the kit model cannot set per hold, is not
 export const createEulaKitBehaviour = ({
   kit,
   readArea,
@@ -107,7 +108,7 @@ export const createEulaKitBehaviour = ({
   });
   // Each Eula strike that lands while the Sword is lit gains it a stack, once every 0.1 seconds, and rebuilds its explosion
   // From the stacks it now holds, so the explosion is priced by them when it lands
-  const gainLightfallStack = (kitEffectState: KitEffectState, combatant: Combatant): void => {
+  const gainLightfallStack = (kitEffectState: KitEffectState, combatant: Combatant, random: () => number): void => {
     const { characterId } = combatant;
     const summon = findStandingKitSummon(kitEffectState.effects, LIGHTFALL_SUMMON_ID, characterId);
     if (
@@ -119,12 +120,15 @@ export const createEulaKitBehaviour = ({
       return;
     const count = countKitResource(kitEffectState.effects, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
     if (count >= LIGHTFALL_MAX_STACKS) return;
-    gainKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID, 1, LIGHTFALL_MAX_STACKS);
-    const hits = [createLightfallExplosion(count + 1, lightfallExplosionSeconds)];
+    // Constellation 6's roll gives the stack gained one more, as gcsim's burst stack check rolls it
+    const gained =
+      combatant.constellationCount >= CONSTELLATION_6 && random() < CONSTELLATION_6_EXTRA_STACK_CHANCE ? 2 : 1;
+    gainKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID, gained, LIGHTFALL_MAX_STACKS);
+    const hits = [createLightfallExplosion(count + gained, lightfallExplosionSeconds)];
     kitEffectState.effects = kitEffectState.effects.map((effect) => (effect === summon ? { ...summon, hits } : effect));
   };
   const lightfallStackHit: KitHitBehaviour = {
-    onStrike: ({ kitEffectState }, { combatant }) => gainLightfallStack(kitEffectState, combatant),
+    onStrike: ({ kitEffectState, random }, { combatant }) => gainLightfallStack(kitEffectState, combatant, random),
   };
   return {
     burst: {
@@ -139,7 +143,7 @@ export const createEulaKitBehaviour = ({
         // Ascension 4 gains a Grimheart stack, which gcsim keeps only while the Grimheart it adds to is up
         if (combatant.ascension >= 4 && countGrimheartStacks(kitEffectState.effects, characterId) > 0)
           gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
-        const startingStacks = combatant.constellationCount >= 6 ? CONSTELLATION_6_STARTING_STACKS : 0;
+        const startingStacks = combatant.constellationCount >= CONSTELLATION_6 ? CONSTELLATION_6_STARTING_STACKS : 0;
         gainKitResource(
           kitEffectState,
           characterId,
@@ -177,11 +181,11 @@ export const createEulaKitBehaviour = ({
     skill: {
       hits: [
         {
-          onStrike: ({ kitEffectState }, { combatant }) => {
+          onStrike: ({ kitEffectState, random }, { combatant }) => {
             if (!startKitCooldown(kitEffectState, combatant.characterId, GRIMHEART_ICD_ID, GRIMHEART_ICD_SECONDS))
               return;
             gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
-            gainLightfallStack(kitEffectState, combatant);
+            gainLightfallStack(kitEffectState, combatant, random);
           },
         },
       ],
