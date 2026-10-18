@@ -19,7 +19,7 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
     },
     pass: {
       description:
-        "One pass's measure alone, for a pass taken up ahead of one before it that still fails, rewriting only its own rows of the component's report",
+        "Run the passes up to and including this one, refused while an earlier pass still fails, and rewrite only the rows of the passes run",
       options: Object.values(ParityPass),
       type: "enum",
     },

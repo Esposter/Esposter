@@ -88,4 +88,33 @@ describe(runParityPasses, () => {
       pass: ParityPass.Shape,
     });
   });
+
+  test("refuses a pass taken up while an earlier pass is open, and names that pass", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(failed);
+    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: false, measure: failed, pass: ParityPass.Layout },
+    ]);
+    expect(measureCamera).not.toHaveBeenCalled();
+  });
+
+  test("measures a pass taken up alone once every pass before it holds, and stops there", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(held);
+    measureCamera.mockResolvedValueOnce(held);
+    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Layout },
+      { isHeld: true, measure: held, pass: ParityPass.Camera },
+    ]);
+  });
 });
