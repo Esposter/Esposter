@@ -11,6 +11,7 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 - **Plunges use the shared plunge reaches, with provisional talent indices.** gcsim names no plunge group for her, so the collision, low and high plunges read attack group indices 3, 4 and 5, inferred from their values' ratios (0.568, 1.136 and 1.419), and land at the start of their 0.4-second action.
 - **Her strikes, shot and plunges carry no poise, provisionally.** gcsim gives them none.
 - **Semi-Strict Bedrest is her Ascension 1 Hydro DMG Bonus.** From Ascension 1, each press of Rebound Hydrotherapy gives her an 8% Hydro DMG Bonus for 18 seconds, as a buff on herself, as gcsim's a1Self gives it.
+- **The first wave's hitmark, 99 frames, is Unsourced.** gcsim sets it through its burst hitmark function, which the reader reads as 0, so the value stands and removing it zeroes the hit. Reading that function settles it.
 
 ## Not built
 

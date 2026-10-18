@@ -1,7 +1,7 @@
 {
   "burst.animationFrames": { "cause": "Unsourced", "value": 241 },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 99 },
+  "burst.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 99 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 9539 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "burst.hits.1.area": {
