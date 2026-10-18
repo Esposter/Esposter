@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -28,7 +29,11 @@ const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Claymore,
 });
-const createNaviaTeamMember = (element: Element): Combatant => ({ ...createNaviaCombatant(), element });
+const createNaviaTeamMember = (element: Element): DeployedCombatant => ({
+  ...createNaviaCombatant(),
+  element,
+  isOnField: false,
+});
 
 const getStatus = (kitEffectState: KitEffectState, id: string): KitStatus | undefined =>
   kitEffectState.effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === id);
@@ -211,7 +216,11 @@ describe("undisclosed Distribution Channels", () => {
     expect.hasAssertions();
     const navia = { ...createNaviaCombatant(), ascension: 4 };
     const bonusesOf = (elements: Element[]) =>
-      NAVIA_KIT.getPassiveBonuses?.(navia, 1, elements.map(createNaviaTeamMember));
+      NAVIA_KIT.getPassiveBonuses?.(
+        navia,
+        1,
+        elements.map((element) => createNaviaTeamMember(element)),
+      );
     expect(bonusesOf([Element.Pyro, Element.Anemo])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.AttackPercent },
     ]);
