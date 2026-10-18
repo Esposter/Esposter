@@ -10,4 +10,4 @@
 
 ## 3. The record
 
-- [ ] 3.1 Write the capability's design as built, with the Upstream table, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
+- [ ] 3.1 Write the capability's design as built, with the Upstream table, and archive this change. Before archiving, name the alternative rejected and the reason it lost for the grid-height decision (a grid that scrolls inside its own height is the candidate, lost because the page should scroll) and for the styles decision (the library's runtime-injected CSS is the candidate; the reason it lost is for the author to state), since the design does not record either. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
