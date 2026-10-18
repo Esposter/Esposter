@@ -62,9 +62,14 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   ];
   const gadgetRows = z.array(gadgetRowSchema).parse(await readPublishedGameData("gadgets/gadgets"));
   const craftingRecipes = z.array(craftingRecipeSchema).parse(await readPublishedGameData("crafting/recipes"));
-  // The published levels' shape, an items list per level, which the world's one-item level model reads down from
+  // The published levels' shape: the items each level takes, and the fixed rewards it pays under `reward`, as the offerings builder writes them
   const frostbearingTreeLevels = z
-    .array(z.object({ items: z.array(z.object({ itemId: z.int() })), rewards: z.array(z.object({ itemId: z.int() })) }))
+    .array(
+      z.object({
+        items: z.array(z.object({ itemId: z.int() })),
+        reward: z.object({ kind: z.literal("fixed"), rewards: z.array(z.object({ itemId: z.int() })) }),
+      }),
+    )
     .parse(await readPublishedGameData("offerings/frostbearingTree"));
   const { levels: reputationLevels } = reputationCitySchema.parse(await readPublishedGameData("reputation/mondstadt"));
   const groceryGoods = z
@@ -100,7 +105,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...craftingRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),
       ...craftingRecipes.map(({ resultItemId }) => resultItemId),
       ...frostbearingTreeLevels.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
-      ...frostbearingTreeLevels.flatMap(({ rewards }) => rewards.map(({ itemId }) => itemId)),
+      ...frostbearingTreeLevels.flatMap(({ reward }) => reward.rewards.map(({ itemId }) => itemId)),
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
       ...fishingGoodItemIds,

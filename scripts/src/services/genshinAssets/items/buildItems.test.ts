@@ -131,12 +131,12 @@ describe(buildItems, () => {
           {
             items: [{ itemCount: 0, itemId: TREE_ITEM_ID }],
             level: 1,
-            rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }],
+            reward: { kind: "fixed", rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
           },
           {
             items: [{ itemCount: 10, itemId: TREE_ITEM_ID }],
             level: 2,
-            rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }],
+            reward: { kind: "fixed", rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }] },
           },
         ]);
       if (key === "gadgets/gadgets")
