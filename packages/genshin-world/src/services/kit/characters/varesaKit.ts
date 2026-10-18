@@ -5,7 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 
 export const VARESA_CHARACTER_ID = 10_000_111;
@@ -17,10 +17,6 @@ const NIGHTSOUL_MAXIMUM = 40;
 const NIGHTSOUL_SKILL_POINTS = 20;
 const NIGHTSOUL_PLUNGE_POINTS = 25;
 const NIGHTSOUL_BLESSING_SECONDS = 15;
-
-const gainNightsoulPoints = (kitEffectState: KitEffectState, characterId: number, points: number): void => {
-  gainKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID, points, NIGHTSOUL_MAXIMUM);
-};
 
 // Enters the Blessing once her points are full, if she is not in it, with those points, as gcsim's plunge gain enters
 // It, which her plunges and burst reach
@@ -37,9 +33,9 @@ const enterNightsoulAtMaximum = (kitEffectState: KitEffectState, characterId: nu
 };
 
 // Fills her points to their maximum and enters the Blessing, as her burst and its Fiery Passion Flying Kick both do
-const fillNightsoulPoints = ({ activeCombatant, kitEffectState }: KitContext): void => {
-  gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_MAXIMUM);
-  enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
+const fillNightsoulPoints = (context: KitContext): void => {
+  generateKitNightsoulPoints(context, NIGHTSOUL_MAXIMUM, NIGHTSOUL_MAXIMUM);
+  enterNightsoulAtMaximum(context.kitEffectState, context.activeCombatant.characterId);
 };
 
 // Varesa's behaviour outside her Blessing: her Nightsoul points, the Blessing a full set enters for 15 seconds, from her
@@ -61,20 +57,19 @@ export const createVaresaKitBehaviour = (): KitBehaviour => ({
   },
   plunges: {
     high: {
-      onStart: ({ activeCombatant, kitEffectState }) => {
-        gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_PLUNGE_POINTS);
+      onStart: (context) => {
+        const { activeCombatant, kitEffectState } = context;
+        generateKitNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS, NIGHTSOUL_MAXIMUM);
         enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
       },
     },
     low: {
-      onStart: ({ activeCombatant, kitEffectState }) => {
-        gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_PLUNGE_POINTS);
+      onStart: (context) => {
+        const { activeCombatant, kitEffectState } = context;
+        generateKitNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS, NIGHTSOUL_MAXIMUM);
         enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
       },
     },
   },
-  skill: {
-    onStart: ({ activeCombatant, kitEffectState }) =>
-      gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_SKILL_POINTS),
-  },
+  skill: { onStart: (context) => generateKitNightsoulPoints(context, NIGHTSOUL_SKILL_POINTS, NIGHTSOUL_MAXIMUM) },
 });

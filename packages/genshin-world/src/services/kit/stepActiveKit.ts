@@ -5,10 +5,12 @@ import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsEnemyStanding } from "#src/services/enemy/checkIsEnemyStanding";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
+import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -19,6 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
+import { pickUpKitPickUps } from "#src/services/kit/pickUpKitPickUps";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { sendKitOutbox } from "#src/services/kit/sendKitOutbox";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
@@ -43,7 +46,8 @@ import { takeOne } from "@esposter/shared";
 // The body are picked up, the ticks the enemies' elements brought since, the party's Lunar-Charged cloud and the
 // Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
 // As its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that
-// Starts turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands
+// Starts turns the body to the enemy it targets, which it makes the primary target, or to the camera's aim for an aimed
+// Shot, and every hit the step lands
 // Strikes the Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy
 // Rolling for its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are
 // Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
@@ -65,6 +69,10 @@ export const stepActiveKit = (
     triggerReaction,
   }: ActiveKitControls,
 ): void => {
+  context.locomotionState = input.locomotionState;
+  context.isSkillHeld = input.isSkillHeld;
+  context.stamina = characterController.stamina;
+  context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {
     body,
     characterIdCombatantMap,
@@ -77,6 +85,9 @@ export const stepActiveKit = (
     random,
     strikes,
   } = context;
+  // A primary target that has died or left the world since is let go, so no kit places a hit on it
+  if (context.primaryTarget && !checkIsEnemyStanding(enemyMap, context.primaryTarget))
+    context.primaryTarget = undefined;
   const characterId = getActiveCharacterId(party);
   const fieldCombatant = characterIdCombatantMap.get(characterId);
   if (!fieldCombatant) return;
@@ -99,7 +110,8 @@ export const stepActiveKit = (
   stepDeployedKits(context, stepSeconds);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
-  pickUpCrystallizeShards(kitEffectState, position);
+  pickUpCrystallizeShards(kitEffectState, characterId, position, outbox);
+  pickUpKitPickUps(context, position);
   tickEnemyStatuses(enemyMap.values(), stepSeconds, outbox);
   sendKitOutbox(context);
   strikeElementalTicks(context);
@@ -125,6 +137,7 @@ export const stepActiveKit = (
     body.facing = characterController.facing;
   } else if (action) {
     target = selectAttackTarget(action.targetingArea, body, enemyMap.values());
+    context.primaryTarget = target;
     if (target) {
       const dx = target.position.x - position.x;
       const dz = target.position.z - position.z;
@@ -139,6 +152,12 @@ export const stepActiveKit = (
   if (isBurst) emitKitEvent({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed }, context);
   const isSkill = action !== undefined && getKitSkillActions(kit).includes(action);
   if (isSkill) emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
+  // A normal attack is sent to the team's kits as it starts, with whether it is the first strike of its string
+  if (action && kit.normalAttacks.includes(action))
+    emitKitEvent(
+      { action, isFirstStrike: action === takeOne(kit.normalAttacks), kind: KitEventKind.NormalAttackStarted },
+      context,
+    );
   if (isBurst || isSkill) lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body
   // Has moved
@@ -152,8 +171,11 @@ export const stepActiveKit = (
     for (const normalAttack of kit.normalAttacks)
       if (checkKitActionLanded(normalAttack, landedHits, strikes))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-  if (checkKitActionLanded(kit.chargedAttack, landedHits, strikes))
-    emitKitEvent({ action: kit.chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
+  for (const chargedAttack of kit.chargedAttackVariant
+    ? [kit.chargedAttack, kit.chargedAttackVariant.action]
+    : [kit.chargedAttack])
+    if (checkKitActionLanded(chargedAttack, landedHits, strikes))
+      emitKitEvent({ action: chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with
@@ -187,6 +209,9 @@ export const stepActiveKit = (
     const healthChange = takeOne(healthChanges, index);
     triggerHealthChange(healthChange);
     emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
+    // A fall a kit refused is heard just after the change that left its member standing
+    if (healthChange.isFallRefused)
+      emitKitEvent({ characterId: healthChange.characterId, kind: KitEventKind.FallRefused }, context);
   }
   healthChanges.copyWithin(0, sentCount);
   healthChanges.length -= sentCount;

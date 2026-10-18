@@ -1,12 +1,37 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createNeferKitBehaviour, NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import {
+  createNeferKitBehaviour,
+  NEFER_CHARACTER_ID,
+  VERDANT_DEW_STATUS_ID,
+} from "#src/services/kit/characters/neferKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NEFER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEFER_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+
+const MAX_HEALTH = 10_000;
+
+const createNeferCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+  characterId: NEFER_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: NEFER_KIT,
+  level: 90,
+  weaponType: WeaponType.Catalyst,
+});
 
 describe(createNeferKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -31,5 +56,60 @@ describe(createNeferKitBehaviour, () => {
   test("nefer's elemental skill uses her own hits", () => {
     expect.hasAssertions();
     expect(NEFER_KIT.elementalSkill.hits).not.toStrictEqual(TRAVELER_KIT.elementalSkill.hits);
+  });
+
+  test("her skill enters Shadow Dance, where her charged attack is Phantasm Performance, a stance with its own seven hits, for a positive time", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNeferCombatant());
+
+    NEFER_KIT.elementalSkill.onStart?.(context);
+    const stance = findKitStance(context.kitEffectState.effects, NEFER_CHARACTER_ID);
+
+    expect(stance?.combatant.kit.chargedAttack.hits).toHaveLength(7);
+    expect(stance?.combatant.kit.chargedAttack).not.toStrictEqual(NEFER_KIT.chargedAttack);
+    expect(stance?.secondsRemaining).toBeGreaterThan(0);
+  });
+
+  test("her Shadow Dance starts with two Verdant Dew", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNeferCombatant());
+
+    NEFER_KIT.elementalSkill.onStart?.(context);
+
+    expect(countKitResource(context.kitEffectState.effects, NEFER_CHARACTER_ID, VERDANT_DEW_STATUS_ID)).toBe(2);
+  });
+
+  test("each Phantasm Performance spends a Verdant Dew, and the third ends Shadow Dance", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNeferCombatant());
+    const verdantDew = () =>
+      countKitResource(context.kitEffectState.effects, NEFER_CHARACTER_ID, VERDANT_DEW_STATUS_ID);
+    const isShadowDanceActive = () => findKitStance(context.kitEffectState.effects, NEFER_CHARACTER_ID) !== undefined;
+    const playPhantasmPerformance = () =>
+      findKitStance(context.kitEffectState.effects, NEFER_CHARACTER_ID)?.combatant.kit.chargedAttack.onStart?.(context);
+
+    NEFER_KIT.elementalSkill.onStart?.(context);
+    playPhantasmPerformance();
+    expect(verdantDew()).toBe(1);
+    playPhantasmPerformance();
+    expect(verdantDew()).toBe(0);
+    expect(isShadowDanceActive()).toBe(true);
+    playPhantasmPerformance();
+    expect(isShadowDanceActive()).toBe(false);
+  });
+
+  test("a phantasm performance starts only with a verdant dew held", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNeferCombatant());
+    NEFER_KIT.elementalSkill.onStart?.(context);
+    const performance = findKitStance(context.kitEffectState.effects, NEFER_CHARACTER_ID)?.combatant.kit.chargedAttack;
+    const verdantDew = () =>
+      countKitResource(context.kitEffectState.effects, NEFER_CHARACTER_ID, VERDANT_DEW_STATUS_ID);
+
+    expect(performance?.canStart?.(context)).toBe(true);
+
+    while (verdantDew() > 0) performance?.onStart?.(context);
+
+    expect(performance?.canStart?.(context)).toBe(false);
   });
 });

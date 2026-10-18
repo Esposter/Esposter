@@ -1,6 +1,6 @@
 ## Purpose
 
-Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit and Moonsign Benediction, and what is left waiting on the Spirit Envoy and Pale Hymn hooks.
+Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, and what is left waiting on the Spirit Envoy and her other constellations.
 
 ## Requirements
 
@@ -104,12 +104,55 @@ From Ascension 4, Lauma's Elemental Skill, its press and the Frostgrove Sanctuar
 - **WHEN** a Frostgrove Sanctuary tick strikes
 - **THEN** it takes 0.04% DMG Bonus for each point of her Elemental Mastery, at most 32%
 
-### Requirement: Pale Hymn, Spirit Envoy and her other passives not yet built
+### Requirement: Her burst gives Pale Hymn, which Moon Song and reactions spend
 
-Pale Hymn, the Spirit Envoy state and Lauma's other passives and constellations SHALL NOT take effect.
+Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasting 15 seconds. A Dew Hymn of Eternal Rest spends during the burst SHALL give Moon Song six Pale Hymn a Dew, once in each burst, and a Dew spent outside it SHALL wait for the burst's gain for 15 seconds. Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction SHALL spend one Pale Hymn, Moon Song's before the burst's. While the party holds Pale Hymn, each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction the party makes SHALL take base damage of her Elemental Mastery times the burst's increase at her talent level: the Bloom increase for Bloom, Hyperbloom and Burgeon, and the Lunar-Bloom increase for Lunar-Bloom.
+
+#### Scenario: The burst gives 18 Pale Hymn after 96 frames
+
+- **WHEN** the player casts the elemental burst
+- **THEN** the party holds 18 Pale Hymn 96 frames later, for 15 seconds
+
+#### Scenario: Moon Song gives one Dew's Pale Hymn once in each burst
+
+- **GIVEN** Lauma's burst is up and its Moon Song has given Pale Hymn
+- **WHEN** Hymn of Eternal Rest spends Dew
+- **THEN** Moon Song gives no more Pale Hymn in that burst
+
+#### Scenario: Pale Hymn adds her Elemental Mastery to each Bloom the party makes
+
+- **GIVEN** the party holds Pale Hymn
+- **WHEN** a Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction triggers
+- **THEN** its base damage takes her Elemental Mastery times the burst's increase for that reaction
+
+#### Scenario: A reaction spends Moon Song's Pale Hymn first
+
+- **GIVEN** the party holds Moon Song's Pale Hymn and the burst's
+- **WHEN** a Bloom reaction triggers
+- **THEN** one of Moon Song's stacks is spent
+
+### Requirement: Constellation 2 adds to Pale Hymn's Bloom ratios
+
+From Constellation 2, each Bloom, Hyperbloom and Burgeon the party makes while it holds Pale Hymn SHALL take 5 more of Lauma's Elemental Mastery ratio, and each Lunar-Bloom 4 more.
+
+#### Scenario: Constellation 2 raises the Bloom ratio
+
+- **GIVEN** Lauma has Constellation 2 and the party holds Pale Hymn
+- **WHEN** a Bloom reaction triggers
+- **THEN** its base damage adds her Elemental Mastery times the Bloom ratio plus 5
+
+#### Scenario: Constellation 1 leaves the Bloom ratio alone
+
+- **GIVEN** Lauma has Constellation 1 and the party holds Pale Hymn
+- **WHEN** a Bloom reaction triggers
+- **THEN** its base damage adds her Elemental Mastery times the Bloom ratio alone
+
+### Requirement: Spirit Envoy and her other passives and constellations not yet built
+
+Lauma's Spirit Envoy state, and her other passives and constellations, SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has Pale Hymn, the Spirit Envoy state or another passive or constellation unlocked
+- **GIVEN** Lauma has the Spirit Envoy state or another passive or constellation unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect

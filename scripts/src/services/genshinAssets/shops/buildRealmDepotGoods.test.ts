@@ -43,8 +43,7 @@ const publishedGood = (goodsId: number, tabId: number) => ({
   itemCount: 1,
   itemId: 1,
   minPlayerLevel: 1,
-  priceCount: 100,
-  priceItemId: MORA_ITEM_ID,
+  costs: [{ count: 100, itemId: MORA_ITEM_ID }],
   refresh: ShopRefresh.None,
   tabId,
 });

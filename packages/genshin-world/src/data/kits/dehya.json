@@ -1,5 +1,4 @@
 {
-  "burst.animationFrames": { "cause": "DiffersFromSource", "value": 105 },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.hits.0.area": {
@@ -13,7 +12,6 @@
   },
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 7931 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Fire" },
   "plungeCollision.gauge": { "source": "Wiki" },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

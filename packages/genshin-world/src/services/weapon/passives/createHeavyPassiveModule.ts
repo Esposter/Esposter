@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
@@ -8,7 +8,7 @@ const HEAVY_COOLDOWN_ID = "heavyCooldown";
 
 // Heavy at its rank: each normal attack its wielder lands while active deals an extra hit at the rank's multiplier of ATK on
 // The attack's area, once per the rank's cooldown in seconds
-export const createHeavyPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createHeavyPassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);
   return {

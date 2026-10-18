@@ -9,6 +9,7 @@ import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -17,6 +18,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki
 const RING_CONSTELLATION = 2;
 const RING_CONSTELLATION_SECONDS = 3;
+// The ring's field id: a second cast restarts the ring it finds, as gcsim keeps one Grass Ring status for her skill
+const RING_FIELD_ID = "kuki-grass-ring";
 // Measured: gcsim (MIT) kuki/skill.go, Kuki drains 30% of her current HP as she casts, but no further than to 20% of her
 // Max HP. Her HP is a party member's health share, so the drain reads it at the cast's first step
 const HP_DRAIN_SHARE = 0.3;
@@ -82,17 +85,24 @@ export const createKukiKitBehaviour = ({
     const ringSeconds =
       ringBaseSeconds + (combatant.constellationCount >= RING_CONSTELLATION ? RING_CONSTELLATION_SECONDS : 0);
     castKitField(kitEffectState, combatant.characterId, position, {
+      id: RING_FIELD_ID,
       nextTickSeconds: ringFirstTickSeconds,
       onTick: (tick) => {
         const ascensionHealing =
           combatant.ascension >= ASCENSION_4
             ? ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE * getElementalMastery(combatant)
             : 0;
+        const maxHealth = getKitMaxHealth(
+          combatant,
+          tick.kitEffectState.effects,
+          tick.party,
+          tick.characterIdCombatantMap,
+        );
         changeKitMemberHealth(
           tick,
           combatant,
           tick.activeCombatant.characterId,
-          ringMaxHealthHealingShare * combatant.attributes.maxHealth + ringFlatHealing + ascensionHealing,
+          ringMaxHealthHealingShare * maxHealth + ringFlatHealing + ascensionHealing,
         );
         castKitSummon(tick.kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
       },

@@ -5,8 +5,8 @@ import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotati
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { payShopGood } from "#src/services/shop/payShopGood";
-import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
+import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
+import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";
 
 // The wallet, bag and purchases after a weapon of Paimon's Bargains is bought at `now`, the weapon being the good's item id,
 // Its price taken and the weapon put in the bag whole. Undefined where the good is sold out this month, the wallet cannot pay
@@ -19,11 +19,10 @@ export const buyPaimonsBargainsWeapon = (
   getWeaponDefinition: (weaponId: number) => ItemDefinition,
   now: Temporal.Instant,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[]; wallet: Wallet } => {
-  const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
-  if (priceCurrency === undefined) return undefined;
-  const paid = payShopGood(wallet, purchases, good, priceCurrency, now);
+  if (!checkIsCurrencyOnlyGood(good)) return undefined;
+  const paid = payShopGoodCosts(wallet, inventory, purchases, good, now);
   if (!paid) return undefined;
-  const addition = addInventoryItem(inventory, getWeaponDefinition(good.itemId), good.itemCount);
+  const addition = addInventoryItem(paid.inventory, getWeaponDefinition(good.itemId), good.itemCount);
   if (addition.overflow > 0) return undefined;
   return { inventory: addition.inventory, purchases: paid.purchases, wallet: paid.wallet };
 };

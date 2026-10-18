@@ -1,7 +1,7 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
@@ -11,6 +11,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -64,15 +65,21 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const signatureMixTicks = readHits("signatureMixTicks", { enemyStatus: getDrunkardsFarceStatus });
   const signatureMixHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   // The shield is a share of her Max HP and a flat amount, times its strength, which Constellation 2 raises by 15%
-  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, strengthMultiplier: number): KitShield =>
-    castKitShield(kitEffectState, combatant.characterId, {
+  const castShield = (
+    { characterIdCombatantMap, kitEffectState, party }: KitContext,
+    combatant: Combatant,
+    strengthMultiplier: number,
+  ): KitShield => {
+    const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+    return castKitShield(kitEffectState, combatant.characterId, {
       element: Element.Cryo,
       health:
-        (shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth) *
+        (shieldMaxHealthShare * maxHealth + shieldFlatHealth) *
         strengthMultiplier *
         (combatant.constellationCount >= SHIELD_CONSTELLATION ? SHIELD_CONSTELLATION_MULTIPLIER : 1),
       secondsRemaining: shieldSeconds,
     });
+  };
   return {
     burst: {
       hits: [{ enemyStatus: getDrunkardsFarceStatus }],
@@ -85,7 +92,9 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              signatureMixHealMaxHealthShare * combatant.attributes.maxHealth + signatureMixHealFlatHealth,
+              signatureMixHealMaxHealthShare *
+                getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap) +
+                signatureMixHealFlatHealth,
             ),
           radius: SIGNATURE_MIX_FIELD_RADIUS,
           secondsRemaining: signatureMixSeconds,
@@ -105,12 +114,7 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
       )
         gainPartyMemberEnergy(party, combatant, SIGNATURE_MIX_CONSTELLATION_ENERGY);
     },
-    skill: { onStart: ({ activeCombatant: combatant, kitEffectState }) => castShield(kitEffectState, combatant, 1) },
-    skillHolds: [
-      {
-        onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          castShield(kitEffectState, combatant, holdShieldMultiplier),
-      },
-    ],
+    skill: { onStart: (context) => castShield(context, context.activeCombatant, 1) },
+    skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, holdShieldMultiplier) }],
   };
 };

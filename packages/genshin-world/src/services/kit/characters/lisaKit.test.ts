@@ -58,7 +58,12 @@ const swapCharacter = (combatant: Combatant, context: KitContext, characterId: n
 const strikeHoldEnemies = (combatant: Combatant, context: KitContext, count: number) => {
   const hold = takeOne(LISA_KIT.elementalSkillHolds ?? []).action;
   const hit = takeOne(hold.hits);
-  for (let enemy = 0; enemy < count; enemy++) hit.onStrike?.(context, { body: context.body, combatant, hit });
+  for (let strike = 0; strike < count; strike++)
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
   return hold;
 };
 
@@ -128,7 +133,9 @@ describe("lisa kit", () => {
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
     const press = takeOne(LISA_KIT.elementalSkill.hits);
 
-    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemyTables, enemy, press, createLisaCombatant(), () => 1);
+    const combatant = createLisaCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 1 });
+    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemy, press, combatant, context);
 
     expect(enemy.statuses.map(({ id, stacks }) => [id, stacks])).toStrictEqual([["conductive", 3]]);
   });

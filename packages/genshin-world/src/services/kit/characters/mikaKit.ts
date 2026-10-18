@@ -3,6 +3,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 
 export const MIKA_CHARACTER_ID = 10_000_080;
 
@@ -24,13 +25,20 @@ export const createMikaKitBehaviour = ({ readParameter, readSeconds }: KitRecord
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: initialHealSeconds,
-          onTick: (tick) =>
+          onTick: (tick) => {
+            const maxHealth = getKitMaxHealth(
+              combatant,
+              tick.kitEffectState.effects,
+              tick.party,
+              tick.characterIdCombatantMap,
+            );
             changeKitMemberHealth(
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              flatHeal + maxHealthShare * combatant.attributes.maxHealth,
-            ),
+              flatHeal + maxHealthShare * maxHealth,
+            );
+          },
           secondsRemaining: 1,
           tickIntervalSeconds: 1,
         });

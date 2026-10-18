@@ -1,4 +1,6 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -6,9 +8,19 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { takeOne } from "@esposter/shared";
 
 export const NILOU_CHARACTER_ID = 10_000_070;
@@ -32,7 +44,8 @@ const CONSTELLATION_6_CRIT_RATE_MAX = 0.3;
 const CONSTELLATION_6_CRIT_DAMAGE_PER_MAX_HEALTH = 0.012 / 1000;
 const CONSTELLATION_6_CRIT_DAMAGE_MAX = 0.6;
 
-const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
+// Constellation 6 is a stat converted from her Max HP, read from the buffed Max HP in the conversion phase
+const getConversionBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
   combatant.constellationCount < CONSTELLATION_6
     ? []
     : [
@@ -52,13 +65,53 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
         },
       ];
 
+// Measured: gcsim (MIT) nilou/asc.go, Ascension 1 gives each member of a Dendro and Hydro team Golden Chalice's Bounty
+// For 30 seconds, and a Dendro hit on a member under it gives the team 100 Elemental Mastery for 10 seconds
+// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+const ASCENSION_1 = 1;
+const GOLDEN_CHALICE_BOUNTY_SECONDS = 30;
+const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
+
+// Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden Chalice's
+// Bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by 35% for 10 seconds.
+// In gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the text stands
+// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_RES_REDUCTION = 0.35;
+const CONSTELLATION_2_SECONDS = 10;
+const CONSTELLATION_2_HYDRO_STATUS_ID = "nilou-c2-hydro";
+const CONSTELLATION_2_DENDRO_STATUS_ID = "nilou-c2-dendro";
+const CONSTELLATION_2_BLOOM_REACTION_TYPES = new Set<ReactionType>([ReactionType.Bloom, ReactionType.LunarBloom]);
+
+// The RES Constellation 2 takes off an enemy, for its seconds
+const createConstellation2Status = (id: string, element: Element): EnemyStatus => ({
+  damageTakenBonus: 0,
+  id,
+  resistanceReduction: { [element]: CONSTELLATION_2_RES_REDUCTION },
+  secondsRemaining: CONSTELLATION_2_SECONDS,
+});
+const GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS = 10;
+
+// Measured: gcsim (MIT) nilou/asc.go, Ascension 4 raises a Bountiful Core's DMG by 9% for each 1,000 Max HP above
+// 30,000, Capped at 400%
+// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+const ASCENSION_4 = 4;
+const ASCENSION_4_HEALTH_THRESHOLD = 30_000;
+const ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH = 0.09 / 1000;
+const ASCENSION_4_DAMAGE_BONUS_MAX = 4;
+
+// A team with a Dendro member among it and no member that is neither Dendro nor Hydro, the team gcsim's asc.go sets the
+// Bounty on
+const checkIsDendroHydroTeam = (members: DeployedCombatant[]): boolean =>
+  members.some(({ element }) => element === Element.Dendro) &&
+  members.every(({ element }) => element === Element.Dendro || element === Element.Hydro);
+
 // Nilou's behaviour: Dance of Haftkarsvar enters Pirouette, whose normal attacks are the sword dance and whose skill is
 // The first Whirling Steps, and the sword dance's third step sets off Lunar Prayer, which plays the sword dance again with
-// The dance as its skill. Constellations 1 and 6 are built. Ascension 1 and 4, Constellations 2 and 4 and the Pirouette's
-// Later steps are not, nor is Dance of Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck and no hook
-// Gives that enemy to a later hit, and Constellations 3 and 5 raise talent levels, which no kit reads yet
-// Constellation 2 needs the Golden Chalice's Bounty state for the Hydro RES cut, which the kit does not build
-// Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
+// The dance as its skill. Constellations 1, 2 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's Bounty is set
+// As the third step lands. Constellation 4 and the Pirouette's later steps are not built, nor is Dance of
+// Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck, and no hook hands that enemy on.
+// Constellations 3 and 5 raise talent levels, which no kit reads yet. Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
 export const createNilouKitBehaviour = ({
   kit,
   readAction,
@@ -109,20 +162,73 @@ export const createNilouKitBehaviour = ({
         kitEffectState,
         activeCombatant.characterId,
         lunarPrayerDelaySeconds,
-        ({ kitEffectState: tickEffectState }) => enterLunarPrayer(tickEffectState, activeCombatant),
+        ({ characterIdCombatantMap, kitEffectState: tickEffectState, party }) => {
+          enterLunarPrayer(tickEffectState, activeCombatant);
+          if (activeCombatant.ascension < ASCENSION_1) return;
+          const members = getDeployedCombatants(party, characterIdCombatantMap);
+          if (!checkIsDendroHydroTeam(members)) return;
+          for (const { characterId } of members)
+            addKitStatus(tickEffectState, characterId, {
+              id: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+              secondsRemaining: GOLDEN_CHALICE_BOUNTY_SECONDS,
+            });
+        },
         { id: PIROUETTE_END_TASK_ID },
       ),
   });
 
   return {
-    getPassiveBonuses,
+    getConversionBonuses,
+    // Ascension 4 raises the DMG of each Bountiful Core reaction a deployed member makes by Nilou's Max HP above
+    // 30,000, and leaves a Bloom's alone
+    getPartyReactionBonus: (member, reaction, { characterIdCombatantMap, kitEffectState, party }) => {
+      if (reaction.coreKind !== DendroCoreKind.Bountiful || member.ascension < ASCENSION_4) return {};
+      const maxHealthAboveThreshold =
+        getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap) - ASCENSION_4_HEALTH_THRESHOLD;
+      return {
+        damageBonus: Math.min(
+          ASCENSION_4_DAMAGE_BONUS_MAX,
+          Math.max(0, maxHealthAboveThreshold * ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH),
+        ),
+      };
+    },
     // Constellation 1 raises Luminous Illusion's DMG, the one hit of the sword dance it is set on
     getStrikeDamageBonus: (strike: KitStrike) =>
       strike.combatant.constellationCount >= CONSTELLATION_1 && strike.hit === luminousIllusionHit
         ? CONSTELLATION_1_ILLUSION_DAMAGE_BONUS
         : 0,
-    // Leaving the field ends, with Pirouette or Lunar Prayer, the field that would have handed the team Lunar Prayer
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    // A Dendro hit on a member under Golden Chalice's Bounty gives the team Elemental Mastery, and leaving the field
+    // Ends, with Pirouette or Lunar Prayer, the field that would have handed the team Lunar Prayer
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
+      if (event.kind === KitEventKind.HealthChanged) {
+        if (
+          combatant.ascension >= ASCENSION_1 &&
+          event.element === Element.Dendro &&
+          checkIsKitStatusActive(kitEffectState.effects, event.characterId, GOLDEN_CHALICE_BOUNTY_STATUS_ID)
+        )
+          for (const { characterId } of getDeployedCombatants(party, characterIdCombatantMap))
+            buffKitMember(kitEffectState, characterId, {
+              amount: GOLDEN_CHALICE_ELEMENTAL_MASTERY,
+              attribute: Attribute.ElementalMastery,
+              secondsRemaining: GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS,
+              source: GOLDEN_CHALICE_BOUNTY_STATUS_ID,
+            });
+        return;
+      }
+      // Constellation 2 is read from the team's events: a Hydro hit from a member under the Bounty, and a Bloom reaction
+      if (combatant.ascension >= ASCENSION_1 && combatant.constellationCount >= CONSTELLATION_2) {
+        if (
+          event.kind === KitEventKind.EnemyHit &&
+          event.element === Element.Hydro &&
+          checkIsKitStatusActive(kitEffectState.effects, event.striker.characterId, GOLDEN_CHALICE_BOUNTY_STATUS_ID)
+        )
+          addEnemyStatus(event.enemy, createConstellation2Status(CONSTELLATION_2_HYDRO_STATUS_ID, Element.Hydro));
+        if (
+          event.kind === KitEventKind.ReactionTriggered &&
+          event.reactions.some(({ reactionType }) => CONSTELLATION_2_BLOOM_REACTION_TYPES.has(reactionType))
+        )
+          addEnemyStatus(event.enemy, createConstellation2Status(CONSTELLATION_2_DENDRO_STATUS_ID, Element.Dendro));
+      }
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       for (const effect of kitEffectState.effects)
         if (effect.kind === "field" && effect.id === PIROUETTE_END_TASK_ID) effect.secondsRemaining = 0;

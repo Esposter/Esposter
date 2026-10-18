@@ -1,0 +1,206 @@
+use: pipeline
+kind: character
+name: noelle
+
+talents:
+  - attack:
+      - attack(1-Hit DMG)
+      - attack(2-Hit DMG)
+      - attack(3-Hit DMG)
+      - attack(4-Hit DMG)
+  - charge: attack(Charged Attack Cyclic DMG)
+  - chargeFinal: attack(Charged Attack Final DMG)
+  - collision: attack(Plunge DMG)
+  - lowPlunge: attack(Low/High Plunge DMG)
+  - highPlunge: attack(Low/High Plunge DMG|1)
+
+  - shieldDef: skill(DMG Absorption)
+  - shieldHeal: skill(Healing)
+  - healChance: skill(Healing Triggering Chance)
+  - shieldDmg: skill(Skill DMG)
+  - shieldFlat: skill(DMG Absorption|1)
+  - shieldHealFlat: skill(Healing|1)
+
+  - burst: burst(Burst DMG)
+  - burstskill: burst(Skill DMG)
+  - defconv: burst(ATK Bonus)
+
+docs:
+  frames:
+    - count: https://docs.google.com/spreadsheets/d/1fpJmJ7SylDkrb0-ghuAnUc977Lf6yH-uWpOmyvazFNM/edit#gid=0
+      count_credit: shizukayuki
+      video: https://youtu.be/yAgWbb-jSRk
+      video_credit: shizukayuki
+    - count: https://docs.google.com/spreadsheets/d/16ZDmEBZOD4xeUcodxFJVuLC7IIqM9LGLilkct65mElg/edit?usp=sharing
+      count_credit: kolibri._.
+      video: https://youtu.be/pSxfVbBeRAg
+      video_credit: kolibri._.
+    - count: https://docs.google.com/spreadsheets/d/1fpJmJ7SylDkrb0-ghuAnUc977Lf6yH-uWpOmyvazFNM/edit#gid=0
+      count_credit: shizukayuki
+      video: https://youtu.be/05FD3m2E_g0
+      video_credit: shizukayuki
+
+abilities:
+  - name: attack
+    hitbox:
+      - name: N1
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 2
+
+      - name: N2
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 2
+
+      - name: N3
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 2
+        hitlag: { time: 0.09, scale: 0.01, defense_halt: true }
+
+      - name: N4
+        shape: Box
+        center: Player
+        offset: [0, -1]
+        box: [2, 3]
+
+      - name: Q-N1
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 5.2
+        hitlag: { time: 0.1, scale: 0.01, defense_halt: true }
+
+      - name: Q-N2
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 5.2
+        hitlag: { time: 0.1, scale: 0.01, defense_halt: true }
+
+      - name: Q-N3
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 5.2
+        hitlag: { time: 0.1, scale: 0.01, defense_halt: true }
+
+      - name: Q-N4
+        shape: Box
+        center: Player
+        offset: [0, -1]
+        box: [3.3, 6.2]
+        hitlag: { time: 0.15, scale: 0.01, defense_halt: true }
+
+  - name: charge
+    params:
+      final: 0 for inserting a finisher based on next action, 1 for executing a finisher immediately. Default 0.
+      no_limit: Whether to ignore charge attack duration limit. Default 0.
+    hitbox:
+      - name: CA-Spinning
+        shape: Circle
+        center: Player
+        offset: [0, 0.3]
+        radius: 3
+        hitlag: { time: 0.03, scale: 0.01, defense_halt: true }
+
+      - name: CA-Final
+        shape: Circle
+        center: Player
+        radius: 3.5
+        hitlag: { time: 0.15, scale: 0.01, defense_halt: true }
+
+      - name: Q-CA-Spinning
+        shape: Circle
+        center: Player
+        offset: [0, 0.3]
+        radius: 5
+
+      - name: Q-CA-Final
+        shape: Circle
+        center: Player
+        radius: 5.5
+
+  - name: plunge
+    hitbox:
+      - name: Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 1
+
+      - name: Q-Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 1
+
+      - name: Low_Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 3
+
+      - name: High_Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 5
+
+      - name: Q-Low_Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 3
+
+      - name: Q-High_Plunge
+        shape: Circle
+        center: Player
+        offset: [0, 1]
+        radius: 5
+
+  - name: low_plunge
+    note: Previous action must be a jump buffed via Xianyun's burst for example.
+    params:
+      collision: 0 for no collision dmg (default), 1 for collision dmg.
+
+  - name: high_plunge
+    note: Previous action must be a jump buffed via Xianyun's burst for example.
+    params:
+      collision: 0 for no collision dmg (default), 1 for collision dmg.
+
+  - name: skill
+    hitbox:
+      - name: E-Skill
+        shape: Circle
+        center: Player
+        radius: 2
+        hitlag: { defense_halt: true }
+
+  - name: burst
+    params:
+      extend: Number of seconds to extend Burst by. Value must be between 0 and 10. Default 10.
+    hitbox:
+      - name: Q-Burst
+        shape: Circle
+        center: Player
+        radius: 6.5
+        hitlag: { time: 0.15, scale: 0.01, defense_halt: true }
+
+      - name: Q-Skill
+        shape: Circle
+        center: Player
+        radius: 4
+        hitlag: { time: 0.15, scale: 0.01, defense_halt: true }
+
+  - name: cons
+    hitbox:
+      - name: C4
+        shape: Circle
+        center: Player
+        radius: 4
+        hitlag: { time: 0.15, scale: 0.01, defense_halt: true }

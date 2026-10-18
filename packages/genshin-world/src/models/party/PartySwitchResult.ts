@@ -1,7 +1,8 @@
 // What a press of a party member's key did: the switch, or the game's reason for refusing it (a fall still playing, a
-// Character who is down, the cooldown), or nothing at all for the
+// Character who is down, a swap lock, the cooldown), or nothing at all for the
 // Member already on the field or a slot with nobody in it
 export enum PartySwitchResult {
+  Blocked = "Blocked",
   Cooldown = "Cooldown",
   Down = "Down",
   Falling = "Falling",

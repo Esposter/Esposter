@@ -1,10 +1,12 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -19,6 +21,11 @@ const DREAMDRIFTER_SECONDS = 5;
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 
+// While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows only her swap,
+// Dash and burst. Each of her attacks and plunges, and the collision her plunge strikes, carries the check as its own gate
+const checkCanStartAttack = ({ activeCombatant, kitEffectState }: KitContext): boolean =>
+  !checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, DREAMDRIFTER_STATUS_ID);
+
 // Mizuki's behaviour: her skill's press enters the Dreamdrifter state for five seconds, and a press in it cancels the state,
 // As gcsim's Skill does. While the state lasts its clouds launch at 18 frames and every 45 frames after, as gcsim's cloudTask
 // Queues them (skill.go:221), and each lands its Anemo hit on the primary target's area 30 frames after its launch, the travel
@@ -26,14 +33,14 @@ const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // As gcsim's cancel does. While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows
 // Only her swap, dash and burst. The press that cancels the state plays none of its skill's hits and sets no cooldown, as
 // Gcsim's does, through the skill's state-ending check. Not built: the Swirl buff her state gives the party, the Yumemi Style
-// Special Snacks her burst leaves, which are pick-ups the kit has no entity for, and a press's parameter sets, which the kit
+// Special Snacks her burst leaves, which are pick-ups the kit does not leave yet, and a press's parameter sets, which the kit
 // Holds at the default
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 // Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built
 // Constellation 2 needs the Dreamdrifter state's Elemental Mastery bonus for the party, which is not built
 // Constellation 4 needs the Yumemi Style Special Snacks from her burst, which the kit does not build
 // Constellation 6 needs the Dreamdrifter state and a CRIT hook on the Swirl, which the kit does not build
-export const createMizukiKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const cloud = readHit("cloud");
   const cloudFirstHitSeconds = readSeconds("cloudFirstHit");
   const cloudHitIntervalSeconds = readSeconds("cloudHitInterval");
@@ -62,10 +69,13 @@ export const createMizukiKitBehaviour = ({ readHit, readSeconds }: KitRecordRead
   };
 
   return {
-    // While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows only her swap,
-    // Dash and burst
-    checkCanStartAttack: ({ activeCombatant, kitEffectState }) =>
-      !checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, DREAMDRIFTER_STATUS_ID),
+    chargedAttack: { canStart: checkCanStartAttack },
+    normalAttacks: kit.normalAttacks.map(() => ({ canStart: checkCanStartAttack })),
+    plungeCollision: { landsWhen: checkCanStartAttack },
+    plunges: {
+      [KitPlunge.High]: { canStart: checkCanStartAttack },
+      [KitPlunge.Low]: { canStart: checkCanStartAttack },
+    },
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (
         event.kind === KitEventKind.CharacterSwapped &&

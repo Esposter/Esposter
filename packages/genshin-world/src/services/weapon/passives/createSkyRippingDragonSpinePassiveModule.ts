@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -15,7 +15,7 @@ const SKY_RIPPING_DRAGON_SPINE_ID = "skyRippingDragonSpine";
 // Wielder uses starts the rank's seconds and the rank's count of vacuum blades, and each Normal or Charged Attack hit the
 // Wielder lands while both last queues a blade at the rank's multiplier of ATK, using one blade. The blade's area is
 // Provisional, as the game's area is not in the dump, so it is the small AoE
-export const createSkyRippingDragonSpinePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSkyRippingDragonSpinePassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 1);
   const seconds = takeOne(params, 2);
   const maximumBlades = takeOne(params, 3);

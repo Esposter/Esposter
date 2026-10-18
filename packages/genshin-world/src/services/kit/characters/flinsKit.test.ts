@@ -1,11 +1,16 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createFlinsKitBehaviour, FLINS_CHARACTER_ID } from "#src/services/kit/characters/flinsKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { landKitHits } from "#src/services/kit/landKitHits";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const FLINS_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FLINS_CHARACTER_ID);
@@ -18,6 +23,19 @@ const createFlinsCombatant = (constellationCount: number): Combatant => ({
   kit: FLINS_KIT,
   level: 90,
   weaponType: WeaponType.Polearm,
+});
+
+// The landed hits of the burst at the context, every hit's hitmark having fallen
+const countBurstLandedHits = (context: KitContext): number => {
+  const landedHits: KitHit[] = [];
+  landKitHits(FLINS_KIT.elementalBurst.hits, 0, Number.POSITIVE_INFINITY, landedHits, context);
+  return landedHits.length;
+};
+
+// A combatant whose kit is a Moonsign benediction, the member a team's Ascendant Gleam counts
+const withBenediction = (combatant: Combatant): Combatant => ({
+  ...combatant,
+  kit: { ...combatant.kit, moonsignBenediction: { getBaseDamageBonus: () => 0, lunarReactionTypes: [] } },
 });
 
 // Flins with his ATK at 1000, at the ascension, as the passive bonus reads him
@@ -38,7 +56,7 @@ const getPassiveBonuses = (ascension: number) =>
   );
 
 describe(createFlinsKitBehaviour, () => {
-  test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
+  test("reads the strikes', charged attack's, plunges' and burst's initial, middle and final multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
       ...FLINS_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
@@ -48,9 +66,11 @@ describe(createFlinsKitBehaviour, () => {
       FLINS_KIT.highPlunge.hits[0]?.talentMultiplier,
       FLINS_KIT.elementalBurst.hits[0]?.talentMultiplier,
       FLINS_KIT.elementalBurst.hits[1]?.talentMultiplier,
+      FLINS_KIT.elementalBurst.hits[5]?.talentMultiplier,
     ];
     expect(multipliers).toStrictEqual([
-      0.44726, 0.451483, 0.559198, 0.320389, 0.320389, 0.767946, 1.03028, 0.639324, 1.278377, 1.596762, 2.5984, 1.16928,
+      0.44726, 0.451483, 0.559198, 0.320389, 0.320389, 0.767946, 1.03028, 0.639324, 1.278377, 1.596762, 2.5984, 0.1624,
+      1.16928,
     ]);
   });
 
@@ -85,11 +105,30 @@ describe(createFlinsKitBehaviour, () => {
     ]);
   });
 
-  test("the burst's initial hit lands at 93 frames and its final at 164, with its middle hits not built", () => {
+  test("the burst's initial hit lands at 93 frames, its middle hits at 110, 119, 128 and 137, and its final at 164", () => {
     expect.hasAssertions();
     expect(FLINS_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
-      93, 164,
+      93, 110, 119, 128, 137, 164,
     ]);
+  });
+
+  test("the burst's third and fourth middle hits land only at Ascendant Gleam", () => {
+    expect.hasAssertions();
+    const flins = createFlinsCombatant(0);
+
+    // Flins alone is no Moonsign, so his burst lands its initial, first two middle and final hits
+    expect(countBurstLandedHits(createKitTestContext(flins))).toBe(4);
+
+    // Two Moonsign benedictions deployed make Ascendant Gleam, which lands the two further middle hits too
+    const gleamFlins = withBenediction(flins);
+    const gleamContext = createKitTestContext(gleamFlins, {
+      characterIdCombatantMap: new Map([
+        [FLINS_CHARACTER_ID, gleamFlins],
+        [10_000_002, withBenediction({ ...flins, characterId: 10_000_002 })],
+      ]),
+      party: createParty([FLINS_CHARACTER_ID, 10_000_002]),
+    });
+    expect(countBurstLandedHits(gleamContext)).toBe(6);
   });
 
   test("the press of Manifest Flame plays no hit of its own, and Northland Spearstorm is not built", () => {

@@ -85,4 +85,59 @@ describe(getRuleKitCandidates, () => {
       KitTargeting.Skill,
     ]);
   });
+
+  test("gives a kit's plunge variants the strike targeting a plunge takes, one per variant", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([
+        ["plungeVariants.length", 2],
+        ["plungeVariants.0.hits.length", 1],
+        ["plungeVariants.0.hits.0.hitmarkFrames", 35],
+        ["plungeVariants.1.hits.length", 1],
+        ["plungeVariants.1.hits.0.hitmarkFrames", 40],
+      ]),
+      undefined,
+    );
+
+    expect(
+      ["plungeVariants.0.targeting", "plungeVariants.1.targeting"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[KitTargeting.Strike], [KitTargeting.Strike]]);
+  });
+
+  test("gives a stance's charged attack the strike targeting a kit's own charged attack takes", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([["stances.blessing.chargedAttack.hits.length", 1]]),
+      undefined,
+    );
+
+    expect(candidateMap.get("stances.blessing.chargedAttack.targeting")?.map(({ value }) => value)).toStrictEqual([
+      KitTargeting.Strike,
+    ]);
+  });
+
+  test("gives a kit's plunge variants the strike targeting a plunge takes, one per variant", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([
+        ["plungeVariants.length", 2],
+        ["plungeVariants.0.hits.length", 1],
+        ["plungeVariants.0.hits.0.hitmarkFrames", 35],
+        ["plungeVariants.1.hits.length", 1],
+        ["plungeVariants.1.hits.0.hitmarkFrames", 40],
+      ]),
+      undefined,
+    );
+
+    expect(
+      ["plungeVariants.0.targeting", "plungeVariants.1.targeting"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[KitTargeting.Strike], [KitTargeting.Strike]]);
+  });
 });

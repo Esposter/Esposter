@@ -15,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -113,6 +114,72 @@ describe("noelle kit", () => {
     ]);
   });
 
+  test("its Breastplate's shield reads her DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNoelleCombatant());
+    buffKitMember(context.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    NOELLE_KIT.elementalSkill.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.Defense,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 1,
+      },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        health: 1.6 * (DEFENSE + 100) + 769.7851,
+        kind: "shield",
+        secondsRemaining: 12,
+      },
+    ]);
+  });
+
+  test("its Sweeping Time's ATK share reads her DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNoelleCombatant());
+    buffKitMember(context.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.Defense,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 1,
+      },
+      {
+        amount: 0.4 * (DEFENSE + 100),
+        attribute: Attribute.Attack,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 15 + 80 / 60,
+        source: "noelle-sweeping-time",
+      },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        kind: "infusion",
+        secondsRemaining: 15 + 80 / 60,
+      },
+    ]);
+  });
+
   test("with I Got Your Back, Breastplate's heal is certain under Sweeping Time from one constellation, and at its chance otherwise", () => {
     expect.hasAssertions();
     const combatant = { ...createNoelleCombatant(), constellationCount: 1 };
@@ -177,6 +244,40 @@ describe("noelle kit", () => {
     expect(context.kitEffectState.effects).toHaveLength(1);
   });
 
+  test("its Devotion shield reads her DEF as buffed at the drain", () => {
+    expect.hasAssertions();
+    const shieldedContext = createKitTestContext({ ...createNoelleCombatant(), ascension: 1 });
+    getPartyMember(shieldedContext.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
+    buffKitMember(shieldedContext.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+    NOELLE_KIT.onKitEvent?.(
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        healthShare: -0.5,
+        bondOfLifeShare: 0,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        sourceCharacterId: NOELLE_CHARACTER_ID,
+      },
+      shieldedContext,
+      shieldedContext.activeCombatant,
+    );
+    expect(
+      shieldedContext.kitEffectState.effects.find(
+        (effect) => effect.kind === "shield" && effect.characterId === NOELLE_CHARACTER_ID,
+      ),
+    ).toStrictEqual({
+      characterId: NOELLE_CHARACTER_ID,
+      element: Element.Cryo,
+      health: 4 * (DEFENSE + 100),
+      kind: "shield",
+      secondsRemaining: 20,
+    });
+  });
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
     // Ascension 1: a drain that takes the active character under 30% HP shields it with 4 times Noelle's DEF for 20 seconds
@@ -212,9 +313,10 @@ describe("noelle kit", () => {
     getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
     const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
     const strike = { body: context.body, combatant, hit: takeOne(normalAttack.hits) };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let attack = 0; attack < 4; attack++) {
       normalAttack.onStart?.(context);
-      for (const hit of normalAttack.hits) hit.onStrike?.(context, strike);
+      for (const hit of normalAttack.hits) hit.onStrike?.(context, strike, enemy);
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(4);
   });
@@ -243,9 +345,10 @@ describe("noelle kit", () => {
     getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
     const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
     const strike = { body: attackContext.body, combatant, hit: takeOne(normalAttack.hits) };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let attack = 0; attack < 4; attack++) {
       normalAttack.onStart?.(attackContext);
-      for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike);
+      for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike, enemy);
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(5);
   });

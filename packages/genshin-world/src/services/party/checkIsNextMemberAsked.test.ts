@@ -15,7 +15,7 @@ describe(checkIsNextMemberAsked, () => {
     const duringFall = checkIsNextMemberAsked(party);
     stepPartyFall(party, PARTY_FALL_SECONDS);
     const afterFall = checkIsNextMemberAsked(party);
-    switchPartyMember(party, 1, 10);
+    switchPartyMember(party, 1, 10, []);
 
     expect([duringFall, afterFall, checkIsNextMemberAsked(party)]).toStrictEqual([false, true, false]);
   });

@@ -90,7 +90,6 @@
   "skillHolds.0.action.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
   "skillHolds.0.action.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 5332 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": 6.2 },
-  "skillHolds.1.action.animationFrames": { "cause": "DiffersFromSource", "value": 169 },
   "skillHolds.1.action.hits.length": { "cause": "Unsourced", "value": 4 },
   "skillHolds.1.action.hits.0.area": {
     "cause": "Unsourced",
@@ -1170,6 +1169,5 @@
   "skillHolds.10.action.hits.21.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 5332 } },
   "skillHolds.10.cooldownSeconds": { "cause": "Unsourced", "value": 11 },
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unsourced", "value": 10 },
-  "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 10 },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 10 }
 }

@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -10,7 +10,7 @@ const TIP_OF_THE_SPEAR_COOLDOWN_ID = "tipOfTheSpearCooldown";
 
 // Tip of the Spear, Rightful Reward's passive at its rank: after its wielder is healed, it restores the rank's Energy to the
 // Wielder, at most once every cooldown the rank gives in seconds, whether or not the wielder is on the field
-export const createTipOfTheSpearPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createTipOfTheSpearPassiveModule = (params: number[]): PassiveModule => {
   const energy = takeOne(params, 0);
   const cooldownSeconds = takeOne(params, 1);
   return {

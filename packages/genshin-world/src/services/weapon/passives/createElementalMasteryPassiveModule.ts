@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -10,7 +10,7 @@ const ELEMENTAL_MASTERY_MAXIMUM_STACKS = 2;
 
 // Elemental Mastery at its rank: each normal attack hit its wielder deals raises every elemental DMG bonus by the rank's
 // Percentage per stack, up to two stacks for the rank's seconds
-export const createElementalMasteryPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createElementalMasteryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {

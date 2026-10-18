@@ -103,14 +103,24 @@ describe(createMizukiKitBehaviour, () => {
     expect(MIZUKI_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(false);
   });
 
-  test("the Dreamdrifter state lets her start no attack while it lasts, and any attack once it ends", () => {
+  test("the Dreamdrifter state lets her start no normal attack, charged attack or plunge while it lasts, and any once it ends", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createMizukiCombatant());
-    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(true);
+    const attacks = [
+      ...MIZUKI_KIT.normalAttacks,
+      MIZUKI_KIT.chargedAttack,
+      MIZUKI_KIT.highPlunge,
+      MIZUKI_KIT.lowPlunge,
+    ];
+    const checkCanStartAttacks = () => attacks.map((action) => action.canStart?.(context));
+    expect(checkCanStartAttacks()).toStrictEqual(attacks.map(() => true));
+    expect(MIZUKI_KIT.plungeCollision.landsWhen?.(context)).toBe(true);
     MIZUKI_KIT.elementalSkill.onStart?.(context);
-    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(false);
+    expect(checkCanStartAttacks()).toStrictEqual(attacks.map(() => false));
+    expect(MIZUKI_KIT.plungeCollision.landsWhen?.(context)).toBe(false);
     stepKitSeconds(context, 5);
-    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(true);
+    expect(checkCanStartAttacks()).toStrictEqual(attacks.map(() => true));
+    expect(MIZUKI_KIT.plungeCollision.landsWhen?.(context)).toBe(true);
   });
 
   test("a press in the Dreamdrifter state cancels it", () => {

@@ -1,23 +1,24 @@
 import type { ShopGood, ShopGoodLimit } from "#src/models/shop/ShopGood";
+import type { ShopGoodCost } from "#src/models/shop/ShopGoodCost";
 
+import { shopGoodCostSchema } from "#src/models/shop/ShopGoodCost";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { z } from "zod";
 
 // One character or weapon of Paimon's Bargains as a good: its goods id and limit, the id it gives (an avatar's for a
-// Character, a weapon's for a weapon), how many it gives, and the price it is bought at. It has no sale dates, since the
+// Character, a weapon's for a weapon), how many it gives, and the costs it is bought with. It has no sale dates, since the
 // Rotation gives none, so it is always on offer while its month holds
-export type PaimonsBargainsGood = Pick<ShopGood, "itemCount" | "itemId" | "priceCount" | "priceItemId"> & ShopGoodLimit;
+export type PaimonsBargainsGood = Pick<ShopGood, "costs" | "itemCount" | "itemId"> & ShopGoodLimit;
 
 // Paimon's Bargains' rotation as the shops dataset holds it: the pairs of characters it offers in turn, by their avatar
 // Ids, in the order the pairs come round, and the five weapons of each set, Blackcliff and Royal, by their weapon ids. Each
 // Slot of the pair and of the set is bought as one good, by its goods id, and the characters and the weapons each have the
-// Price their goods give
-// The price one of Paimon's Bargains' sets is sold at each time: the item it is bought with and how many of it, how many of
-// The set a player may buy in a refresh, and when that limit comes back
+// Costs their goods give
+// The costs one of Paimon's Bargains' sets is sold at each time: the items it is bought with and how many of each, and how many
+// Of the set a player may buy in a refresh, and when that limit comes back
 export interface PaimonsBargainsPrice {
   buyLimit: number;
-  priceCount: number;
-  priceItemId: number;
+  costs: ShopGoodCost[];
   refresh: ShopRefresh;
 }
 
@@ -33,8 +34,7 @@ export interface PaimonsBargainsRotation {
 
 export const paimonsBargainsPriceSchema = z.object({
   buyLimit: z.int().nonnegative(),
-  priceCount: z.int().nonnegative(),
-  priceItemId: z.int().positive(),
+  costs: z.array(shopGoodCostSchema).min(1),
   refresh: z.enum(ShopRefresh),
 }) satisfies z.ZodType<PaimonsBargainsPrice>;
 

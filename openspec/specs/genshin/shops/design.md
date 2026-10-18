@@ -10,9 +10,9 @@ flowchart TD
   RANK -->|no| REFUSE["Refused"]
   RANK -->|yes| LIMIT{"Under its buy limit since its refresh? A limit of zero is none"}
   LIMIT -->|no| REFUSE
-  LIMIT -->|yes| PRICE{"The wallet holds its price, and the item is a currency it trades in?"}
+  LIMIT -->|yes| PRICE{"The wallet and bag hold every cost of it?"}
   PRICE -->|no| REFUSE
-  PRICE -->|yes| BUY["Price taken, the item's currency given, the purchase kept with its moment"]
+  PRICE -->|yes| BUY["Costs taken, the good's item given, the purchase kept with its moment"]
 ```
 
 ## Decisions
@@ -37,8 +37,8 @@ flowchart TD
 | `scripts/src/services/genshinAssets/shops/buildPaimonsBargainsGoods.ts`      | The Fates record, by the Fates filter                                                 |
 | `scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts`     | The Mondstadt grocery's record, by shop 1004                                          |
 | `scripts/src/services/genshinAssets/shops/buildGoodHunterGoods.ts`           | The Good Hunter's food shop's record, by shop 1005                                    |
-| `scripts/src/services/genshinAssets/shops/toShopGoodRow.ts`                  | A good as the world reads it: its dates at the game's offset, its price and refresh   |
-| `packages/genshin-world/src/services/shop/buyShopGood.ts`                    | The purchase rule: rank, dates, buy limit, price, and the wallet after                |
+| `scripts/src/services/genshinAssets/shops/toShopGoodRow.ts`                  | A good as the world reads it: its dates at the game's offset, its costs and refresh   |
+| `packages/genshin-world/src/services/shop/buyShopGood.ts`                    | The purchase rule: rank, dates, buy limit, costs, and the wallet and bag after        |
 | `packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`         | The refresh at or before a moment, by its kind                                        |
 | `packages/genshin-world/src/services/shop/checkIsShopGoodSoldOut.ts`         | Whether a good's limit is reached since its refresh                                   |
 | `packages/genshin-world/src/services/shop/ShopItemCurrencyMap.ts`            | The item ids the shop trades in, as the wallet's currencies                           |

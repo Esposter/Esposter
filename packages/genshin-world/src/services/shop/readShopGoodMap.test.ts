@@ -20,8 +20,7 @@ const createGood = (goodsId: number): ShopGood => ({
   itemCount: 1,
   itemId: 1,
   minPlayerLevel: 1,
-  priceCount: 1,
-  priceItemId: 1,
+  costs: [{ count: 1, itemId: 1 }],
   refresh: ShopRefresh.None,
 });
 
@@ -34,7 +33,9 @@ describe(readShopGoodMap, () => {
     expect.hasAssertions();
 
     const goodsByKey = new Map(REALM_DEPOT_GOODS_KEYS.map((key, index) => [key, [createGood(index + 1)]]));
-    vi.mocked(readGameData).mockImplementation((_, key) => Promise.resolve(goodsByKey.get(key) ?? []));
+    vi.mocked(readGameData).mockImplementation((_, key) =>
+      Promise.resolve(goodsByKey.get(key as (typeof REALM_DEPOT_GOODS_KEYS)[number]) ?? []),
+    );
 
     const goodMap = await readShopGoodMap(GAME_DATA_BASE_URL);
 

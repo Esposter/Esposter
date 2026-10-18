@@ -14,15 +14,15 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 ## Not built
 
 - **The Dreamdrifter clouds and the state's restrictions are not built.** Her clouds of Anemo strike the enemies near her every 45 frames after a first hit at 18, and the state limits her actions to swap, dash and burst. The kit holds neither the clouds' talent multiplier nor gcsim's cloud timings, which the builder does not read yet, and the state's restriction needs a gate on her actions the kit does not hold.
-- **The snack pick-ups wait on the snack hook.** Her burst leaves a snack every 90 frames for 12 seconds, each a gadget that explodes on its own or when a member collects it, healing that member by a share of Elemental Mastery and flat HP. The pick-up's heal and its Munen Shockwave wait on it, and so does Constellation 4, which reads the snacks.
-- **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1, 2 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on the snack hook as well.
+- **The snack pick-ups wait on the kit leaving them.** Her burst leaves a snack every 90 frames for 12 seconds, each a gadget that explodes on its own or when a member collects it, healing that member by a share of Elemental Mastery and flat HP. A snack is a `KitPickUp`, its explosion on running out an answer to its `EffectExpired` and its pickup's heal or Munen Shockwave its `onPickedUp`, so the heal, the shockwave and Constellation 4, which reads the snacks, wait only on her kit. The larger reach gcsim gives her pickups in the Dreamdrifter state (`mizuki/snack.go:76`) is not a radius a pick-up holds, so it waits on the state as well.
+- **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1, 2 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on her kit leaving the snacks as well.
 - **The charged attack's windup waits on a hook that times an action by the state it starts from**, the 14 frames gcsim gives it when it is cast out of the air, as above.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                                                                                               |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKitBehaviour`, Mizuki's three strikes and charged attack, provisional plunges, the activation hit of her skill and her burst's hit, and the Dreamdrifter state its press enters, with the clouds and snacks waitinging on their hooks |
+| File                                                              | Role                                                                                                                                                                                                                                            |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKitBehaviour`, Mizuki's three strikes and charged attack, provisional plunges, the activation hit of her skill and her burst's hit, and the Dreamdrifter state its press enters, with the clouds and snacks waiting on their hooks |
 
 ## Sources
 

@@ -4,6 +4,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -22,6 +23,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
@@ -67,8 +69,37 @@ const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
     .map(({ enemy }) => enemy);
 };
 
+// A character other than the Traveler, whose kit gives the party strike bonus a test sets
+const OTHER_CHARACTER_ID = 1;
+
+// A combatant of another character, whose kit gives the party strike bonus given
+const createMember = (getPartyStrikeBonus: Kit["getPartyStrikeBonus"]): Combatant => ({
+  ...createCombatant(undefined),
+  characterId: OTHER_CHARACTER_ID,
+  kit: { ...TRAVELER_KIT, getPartyStrikeBonus },
+});
+
+const SURVIVING_HEALTH = 1e9;
+
+// The health the Traveler's first hit takes off an enemy that survives it, struck by the striker with the members given
+// Among the built combatants of the team, the team given as the deployed one, and the roll its critical check takes: 0 lands
+// A critical hit for any Critical Rate above zero, and 1 never does
+const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[], roll = 1): number => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.health = SURVIVING_HEALTH;
+  const context = createKitTestContext(striker, {
+    characterIdCombatantMap: new Map([striker, ...members].map((combatant) => [combatant.characterId, combatant])),
+    enemyMap: new Map([[enemy.id, enemy]]),
+    enemyTables,
+    party: createParty(teamCharacterIds),
+    random: () => roll,
+  });
+  strikeKitEnemies([{ body: context.body, combatant: striker, hit: KIT_HIT, target: enemy }], context);
+  return SURVIVING_HEALTH - enemy.health;
+};
+
 describe(strikeKitEnemies, () => {
-  test("sends the team's kits an elemental hit that carries the element it was dealt as", () => {
+  test("sends the team's kits an enemy hit that carries the element it was dealt as", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const combatant = createCombatant(onKitEvent);
@@ -78,7 +109,23 @@ describe(strikeKitEnemies, () => {
     expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
       element: Element.Pyro,
       enemy,
-      kind: KitEventKind.ElementalHit,
+      kind: KitEventKind.EnemyHit,
+      striker: combatant,
+    });
+  });
+
+  test("sends the team's kits an enemy hit that carries the attack tag of the strike that landed it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    strikeWithHit({ ...KIT_HIT, element: Element.Pyro }, enemy, combatant, AttackTag.NormalAttack);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      attackTag: AttackTag.NormalAttack,
+      element: Element.Pyro,
+      enemy,
+      kind: KitEventKind.EnemyHit,
       striker: combatant,
     });
   });
@@ -143,14 +190,42 @@ describe(strikeKitEnemies, () => {
     expect(areaOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([areaEnemy]);
   });
 
-  test("sends the team's kits no elemental hit for a hit with no element", () => {
+  test("lands a hitbox strike on its target and on the enemies its hitbox reaches of it, and no others", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const hitbox: KitHitbox = { offset: { x: -2.5, z: 2.5 }, shape: { kind: "circle", radius: 4.5 } };
+    const target = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "target", position: { x: 0, z: 0 } }, "");
+    const reached = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "reached", position: { x: 0, z: 1 } }, "");
+    const missed = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "missed", position: { x: 0, z: -6 } }, "");
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map([target, reached, missed].map((enemy) => [enemy.id, enemy])),
+      enemyTables,
+    });
+
+    strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, hitbox, target }], context);
+
+    expect(
+      onKitEvent.mock.calls
+        .map(([event]) => event)
+        .filter((event) => event.kind === KitEventKind.DamageTaken)
+        .map(({ enemy }) => enemy.id),
+    ).toStrictEqual(["target", "reached"]);
+  });
+
+  test("sends the team's kits an enemy hit with no element for a hit that deals none", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const combatant = createCombatant(onKitEvent);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit({ ...KIT_HIT, element: undefined, gauge: undefined }, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.ElementalHit);
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      element: undefined,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: combatant,
+    });
   });
 
   test("sends the team's kits a weak-point hit for a hit that lands on a weak point", () => {
@@ -269,7 +344,6 @@ describe(strikeKitEnemies, () => {
         secondsRemaining: 1,
       },
     ];
-    const SURVIVING_HEALTH = 1e9;
     const damageOf = (element: Element, effects: KitEffect[]): number => {
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
       enemy.health = SURVIVING_HEALTH;
@@ -306,6 +380,89 @@ describe(strikeKitEnemies, () => {
         .filter((event) => event.kind === KitEventKind.EnemyDefeated)
         .map(({ enemy: defeated }) => defeated),
     ).toStrictEqual([enemy]);
+  });
+
+  test("a deployed member's party strike bonus adds to another member's strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ damageBonus: 1 }));
+
+    expect(
+      takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+  });
+
+  test("a deployed member's party strike bonus CRIT DMG adds to another member's critical strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ criticalDamageBonus: 1 }));
+    // A Critical Rate above zero, so the roll of 0 lands a critical hit
+    const striker = {
+      ...createCombatant(undefined),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: 1000 },
+        { attribute: Attribute.CriticalRate, value: 0.5 },
+      ]),
+    };
+
+    expect(takeStrikeHealth(striker, [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID], 0)).toBeGreaterThan(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID], 0),
+    );
+  });
+
+  test("a member's party strike bonus does not add to its own strike, which its own hooks already price", () => {
+    expect.hasAssertions();
+    const striker = createCombatant(undefined);
+    const bonusedStriker = { ...striker, kit: { ...TRAVELER_KIT, getPartyStrikeBonus: () => ({ damageBonus: 1 }) } };
+
+    expect(takeStrikeHealth(bonusedStriker, [], [TRAVELER_CHARACTER_ID])).toBe(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
+  test("a party strike bonus of a member not deployed adds to no strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ damageBonus: 1 }));
+
+    expect(takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID])).toBe(
+      takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
+  test("a deployed member's party defence ignore lowers the enemy's defence against another member's strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ defenseIgnored: 0.5 }));
+
+    expect(
+      takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+  });
+
+  test("a strike's own defence ignore hook lowers the enemy's defence against its own strike", () => {
+    expect.hasAssertions();
+    const striker = createCombatant(undefined);
+    const ignoringStriker = { ...striker, kit: { ...TRAVELER_KIT, getStrikeDefenceIgnored: () => 0.5 } };
+
+    expect(takeStrikeHealth(ignoringStriker, [], [TRAVELER_CHARACTER_ID])).toBeGreaterThan(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
+  test("the party strike bonus is handed the member whose kit gives it", () => {
+    expect.hasAssertions();
+    const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
+    const member = createMember(getPartyStrikeBonus);
+    takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(getPartyStrikeBonus.mock.calls.map(([handed]) => handed.characterId)).toStrictEqual([OTHER_CHARACTER_ID]);
+  });
+
+  test("the party strike bonus is handed the team's built combatants, to read a member's buffed attributes from", () => {
+    expect.hasAssertions();
+    const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
+    const member = createMember(getPartyStrikeBonus);
+    takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const characterIdCombatantMap = takeOne(getPartyStrikeBonus.mock.calls, 0)[5];
+
+    expect(characterIdCombatantMap.get(OTHER_CHARACTER_ID)).toBe(member);
   });
 
   const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };

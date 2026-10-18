@@ -16,6 +16,8 @@ import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const FULL_HP = 10;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -68,6 +70,8 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
     usedSkillIds: [],
   };
   const duel: GcgDuel = {
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,

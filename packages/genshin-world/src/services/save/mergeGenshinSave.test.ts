@@ -1,7 +1,9 @@
 import type { CharacterSave } from "#src/models/character/CharacterSave";
+import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
 import { INITIAL_WISH_PITY } from "#src/services/wish/constants";
@@ -109,12 +111,12 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
   });
 
-  test("a rank claimed on either copy stays claimed after a merge", () => {
+  test("a rank reward claimed only in the guest's copy is claimed again on the account, its reward paid into the guest's bag", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2] };
     const guest = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
 
-    expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
+    expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2]);
   });
 
   test("a mail pinned on either copy stays pinned after a merge", () => {
@@ -409,6 +411,59 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).reputation).toStrictEqual({ exp: ACCOUNT_EXP, level: GUEST_LEVEL });
   });
 
+  test("keeps the account's bounty hunt over the guest's, and the guest's where the account holds none", () => {
+    expect.hasAssertions();
+    const accountHunt: ReputationBountyHunt = {
+      bountyId: 1,
+      isTargetDefeated: false,
+      regionId: 101,
+      spawn: [1, 2, 3],
+      targetEnemyKindId: 20_101,
+    };
+    const guestHunt: ReputationBountyHunt = {
+      bountyId: 2,
+      isTargetDefeated: false,
+      regionId: 102,
+      spawn: [4, 5, 6],
+      targetEnemyKindId: 20_102,
+    };
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyHunt: accountHunt };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyHunt: guestHunt };
+
+    expect(mergeGenshinSave(account, guest).reputationBountyHunt).toStrictEqual(accountHunt);
+    expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).reputationBountyHunt).toStrictEqual(guestHunt);
+  });
+
+  test("unions the bounty claims of both copies, keeping the latest of the week's limit", () => {
+    expect.hasAssertions();
+    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+      Temporal.Instant.fromEpochMilliseconds(0)
+        .add({ hours: index + 1 })
+        .toString(),
+    );
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(0, 2) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(2) };
+
+    expect(mergeGenshinSave(account, guest).reputationBountyClaimedAts).toStrictEqual(
+      claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT),
+    );
+  });
+
+  test("unions the request claims of both copies, kept apart from the bounty claims", () => {
+    expect.hasAssertions();
+    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+      Temporal.Instant.fromEpochMilliseconds(0)
+        .add({ hours: index + 1 })
+        .toString(),
+    );
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(0, 2) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(2) };
+    const merged = mergeGenshinSave(account, guest);
+
+    expect(merged.reputationRequestClaimedAts).toStrictEqual(claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT));
+    expect(merged.reputationBountyClaimedAts).toStrictEqual([]);
+  });
+
   test("the copy further on is kept when both saves hold a character", () => {
     expect.hasAssertions();
     const account = {
@@ -613,25 +668,84 @@ describe(mergeGenshinSave, () => {
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 2, level: 1 } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 } } },
     };
 
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({ [REGION_ID]: { heldCount: 2, level: 1 } });
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 },
+    });
   });
 
   test("a region both saves hold is the save further on", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 4, level: ACCOUNT_LEVEL } } },
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 4, level: ACCOUNT_LEVEL } },
+      },
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL } } },
     };
 
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL },
+      [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a level the account claimed is kept when the copy further on has claimed none", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 0, level: ACCOUNT_LEVEL } },
+      },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 3, level: GUEST_LEVEL } } },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 3, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a region both saves hold on the same level keeps the copy with more Oculi held, with the account's claim", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL } } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a level the guest claimed on a region the account does not hold is claimed again on the account", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: 0, heldCount: 0, level: GUEST_LEVEL },
     });
   });
 

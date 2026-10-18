@@ -13,8 +13,10 @@ import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 import { describe, expect, test } from "vitest";
+import { ARCHAIC_PETRA_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const ARCHAIC_PETRA_ID = 312_602;
 const FULL_HP = 10;
 
 const createCharacterState = (equipments: GcgCharacterState["equipments"] = []): GcgCharacterState => ({
@@ -58,6 +60,8 @@ const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
 
 // A duel with the first side holding Archaic Petra on its active character and the given starting dice
 const createDuel = (dice: Element[]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

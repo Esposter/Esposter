@@ -19,6 +19,9 @@ interface HitboxConstructor {
   shape: GcsimHitboxShape;
 }
 
+// The constructor of a hit gcsim gives its target alone, `combat.NewSingleTargetHit(e.Key())`, with no reach beyond it
+export const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
+
 const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewBoxHit", { fanAngle: false, onTarget: false, shape: GcsimHitboxShape.Box }],
   ["NewBoxHitOnTarget", { fanAngle: false, onTarget: true, shape: GcsimHitboxShape.Box }],
@@ -92,9 +95,20 @@ export const readGoHitbox = (
   while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
     position += 2;
   const constructorToken = tokens[position];
+  const call = parseGoExpression(tokens, start).expression;
+  if (constructorToken?.text === SINGLE_TARGET_HIT_CONSTRUCTOR)
+    return call.kind === GoExpressionKind.Call && call.parameterStarts.length === 1
+      ? {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file,
+          line: constructorToken.line,
+          name: constructorToken.text,
+          radius: 0,
+          shape: GcsimHitboxShape.Circle,
+        }
+      : undefined;
   const hitboxConstructor = HITBOX_CONSTRUCTORS.get(constructorToken?.text ?? "");
   if (constructorToken === undefined || hitboxConstructor === undefined) return undefined;
-  const call = parseGoExpression(tokens, start).expression;
   if (call.kind !== GoExpressionKind.Call) return undefined;
   const argumentStarts = call.parameterStarts;
   const { fanAngle: hasFanAngle, onTarget, shape } = hitboxConstructor;
@@ -112,10 +126,11 @@ export const readGoHitbox = (
   const offsetStart = argumentStarts[offsetIndex];
   const offset = offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName);
   if (center === undefined || offset === undefined) return undefined;
-  // Only a circle or box on the player takes an offset: a target's centre is the target itself
+  // A circle on the player or the target takes its offset, which moves its centre as a body circle's does; a box on the
+  // Target keeps none
   if (
     center === GcsimHitboxCenter.PrimaryTarget
-      ? offset !== null
+      ? offset !== null && shape === GcsimHitboxShape.Box
       : !onTarget && sourceCenter !== GcsimHitboxCenter.Player
   )
     return undefined;

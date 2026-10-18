@@ -4,8 +4,7 @@ import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodE
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-
-const SWEET_MADAME_ID = 333_005;
+import { SWEET_MADAME_ID } from "#src/services/gcg/cards/constants";
 
 // Sweet Madame: the target character heals for one HP, and holds the food as a status until the round ends, so it eats no
 // Other food this round

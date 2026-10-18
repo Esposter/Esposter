@@ -87,6 +87,22 @@ Constellation 4 SHALL take effect, and Constellation 6 SHALL keep Crystal Shrapn
 - **WHEN** Navia holds more than three Crystal Shrapnel
 - **THEN** the Shrapnel above three is kept
 
+### Requirement: Constellation 1 pays Energy and burst cooldown for each Shrapnel a shot spends
+
+Constellation 1 SHALL give Navia 3 Energy and cut her burst's cooldown by one second for each Crystal Shrapnel her Rosula Shardshot spends, three at most, on a press and on a hold alike.
+
+#### Scenario: Constellation 1 pays for the Shrapnel a press spends, three at most
+
+- **GIVEN** Navia has Constellation 1 and her burst is 10 seconds from ready
+- **WHEN** Rosula Shardshot is pressed with five Crystal Shrapnel
+- **THEN** Navia gains 9 Energy and her burst is 7 seconds from ready
+
+#### Scenario: Nothing is paid without Constellation 1
+
+- **GIVEN** Navia has no constellation and her burst is 10 seconds from ready
+- **WHEN** Rosula Shardshot is pressed with two Crystal Shrapnel
+- **THEN** Navia gains no Energy and her burst stays 10 seconds from ready
+
 ### Requirement: Navia's shot infuses her attacks with Geo from Ascension 1
 
 From Ascension 1, for four seconds after Rosula Shardshot fires, Navia's normal attacks, charged attack and plunges SHALL deal Geo DMG and 40% more DMG.
@@ -121,7 +137,7 @@ From Ascension 4 Navia's ATK SHALL raise her ATK percentage by 20% for each Pyro
 
 ### Requirement: Unbuilt Navia effects
 
-Crystal Shrapnel from shards and Lunar-Crystallize, pulling shards during a hold, the Shrapnel's extra damage, pellets and CRIT past three stacks, Constellations 1, 2 and 6 CRIT, the shot's Geo particles and the Surging Blade's placement on an enemy SHALL NOT take effect.
+Crystal Shrapnel from shards and Lunar-Crystallize, pulling shards during a hold, the Shrapnel's extra damage, pellets and CRIT past three stacks, Constellation 6's CRIT DMG, the shot's Geo particles and the Surging Blade's placement on an enemy SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

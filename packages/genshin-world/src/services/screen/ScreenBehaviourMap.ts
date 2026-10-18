@@ -45,4 +45,5 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.TrainingGuide]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Wish]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.World]: { isHeld: false, isHudHidden: false, isPointerReleased: false },
+  [ScreenKind.Worship]: MENU_SCREEN_BEHAVIOUR,
 };

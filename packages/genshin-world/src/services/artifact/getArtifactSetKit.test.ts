@@ -3,18 +3,23 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   ADVENTURER_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,
+  BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID,
+  DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
+  NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -92,6 +97,18 @@ describe(getArtifactSetKit, () => {
     ).toBe(TRAVELER_KIT);
   });
 
+  test("keeps the kit as it is for two pieces of a set whose two-piece bonus is only attributes, though its params repeat the value", () => {
+    expect.hasAssertions();
+
+    expect(
+      getArtifactSetKit(
+        TRAVELER_KIT,
+        createSetArtifacts(DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID, 2),
+        statTables.artifactSetDataMap,
+      ),
+    ).toBe(TRAVELER_KIT);
+  });
+
   test("answers a reaction with the set's module once the pieces worn reach its bonus", () => {
     expect.hasAssertions();
 
@@ -157,6 +174,28 @@ describe(getArtifactSetKit, () => {
     ]);
   });
 
+  test("raises the Elemental Burst DMG of its wearer's burst strikes from two pieces of Noblesse Oblige, through the kit", () => {
+    expect.hasAssertions();
+
+    const kit = getArtifactSetKit(
+      TRAVELER_KIT,
+      createSetArtifacts(NOBLESSE_OBLIGE_ARTIFACT_SET_ID, 2),
+      statTables.artifactSetDataMap,
+    );
+    const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
+    const createStrike = (attackTag: AttackTag): KitStrike => ({
+      attackTag,
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant,
+      hit: TRAVELER_KIT.plungeCollision,
+    });
+    const party = createParty([TRAVELER_CHARACTER_ID]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(0.2);
+    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
+  });
+
   test("a wearer of fewer than four pieces is not restored", () => {
     expect.hasAssertions();
 
@@ -200,6 +239,23 @@ describe(getArtifactSetKit, () => {
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(getPartyMember(party, ally.characterId).healthShare).toBe(0.5);
   });
+  test("A hit on wildlife reaches Bloodstained Chivalry's set module, the one set that answers wildlife", () => {
+    expect.hasAssertions();
+
+    const kit = getArtifactSetKit(
+      TRAVELER_KIT,
+      createSetArtifacts(BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+      statTables.artifactSetDataMap,
+    );
+    const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
+    const context = createKitTestContext(combatant, { party: createParty([TRAVELER_CHARACTER_ID]) });
+    const wildlife = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: 2 } });
+
+    kit.onKitEvent?.({ kind: KitEventKind.WildlifeStruck, striker: combatant, wildlife }, context, combatant);
+
+    expect(kit.getChargedAttackStaminaMultiplier?.(context)).toBe(0);
+  });
+
   test("A weapon passive triggers on wildlife, an artifact set does not", () => {
     expect.hasAssertions();
     receivedKinds.length = 0;

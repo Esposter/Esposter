@@ -8,4 +8,4 @@ export const CAMP_CLUSTER_DISTANCE = 10;
 export const CAMP_LEVEL_BAND = { max: 36, min: 1 };
 
 // The level every enemy of a camp is given: the middle of the band, as an estimate until a camp's own level is read
-export const CAMP_LEVEL = Math.floor((CAMP_LEVEL_BAND.min + CAMP_LEVEL_BAND.max) / 2);
+export const CAMP_LEVEL: number = Math.floor((CAMP_LEVEL_BAND.min + CAMP_LEVEL_BAND.max) / 2);

@@ -27,7 +27,7 @@ interface Props {
 }
 
 const { gameText, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; worship: [] }>();
 // The Restorative Power as the save's moment left it, refilled to now before the screen shows it or spends it
 const power = defineModel<RestorativePower>("power", { required: true });
 
@@ -51,8 +51,10 @@ const heal = (characterId: number) => {
       :pool-amount="regeneratePower().amount"
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
       :title="gameText[GameTextKey.StatueBlessing]"
+      :worship-title="gameText[GameTextKey.StatueWorship]"
       @close="emit('close')"
       @heal="(characterId) => heal(characterId)"
+      @worship="emit('worship')"
     />
   </GameScreen>
 </template>

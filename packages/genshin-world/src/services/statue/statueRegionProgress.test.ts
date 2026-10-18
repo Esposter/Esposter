@@ -12,17 +12,24 @@ describe(toStatueRegionProgress, () => {
 
   test("a region's saved Oculi are held against the one Oculus its levels take, and saved back as the count held", () => {
     expect.hasAssertions();
-    const saved = { heldCount: 3, level: 1 };
+    const saved = { claimedLevel: 0, heldCount: 3, level: 1 };
     const progress = toStatueRegionProgress(saved, levels);
 
     expect(progress).toStrictEqual({ heldCounts: { [OCULUS_ITEM_ID]: 3 }, level: 1, levels });
-    expect(toStatueRegionProgressSave(progress)).toStrictEqual(saved);
+    expect(toStatueRegionProgressSave(progress, saved.claimedLevel)).toStrictEqual(saved);
+  });
+
+  test("a region's progress is saved with the level claimed beside the level reached", () => {
+    expect.hasAssertions();
+    const progress = toStatueRegionProgress({ claimedLevel: 0, heldCount: 0, level: 2 }, levels);
+
+    expect(toStatueRegionProgressSave(progress, 1)).toStrictEqual({ claimedLevel: 1, heldCount: 0, level: 2 });
   });
 
   test("a region with no Oculi held starts with none held, so the save's count is never a zero entry", () => {
     expect.hasAssertions();
 
-    expect(toStatueRegionProgress({ heldCount: 0, level: 0 }, levels)).toStrictEqual({
+    expect(toStatueRegionProgress({ claimedLevel: 0, heldCount: 0, level: 0 }, levels)).toStrictEqual({
       heldCounts: {},
       level: 0,
       levels,

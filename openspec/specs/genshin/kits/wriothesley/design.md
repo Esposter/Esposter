@@ -8,8 +8,7 @@ From Ascension 4, Prosecution Edict stacks on each self-drain of his HP and each
 
 Not built, and why each is out of reach of the kit now:
 
-- The enhanced strikes' damage multiplier. gcsim's `Snapshot` multiplies each normal attack by the skill's own table, `skill[talent]` (1.431695 at level 1, in `zz_wriothesley.dm.go`), and the record holds no hit whose multiplier that scales. No hit field can carry it.
-- The enhanced strikes' hitboxes. gcsim's enhanced normal attacks use larger boxes (2.4 by 3.4 and 2.8 by 3.4, against the base 2 by 3 and 2.5 by 3), and the record holds only the base areas. A kit's hit takes its area from the record, not from a behaviour.
+- The enhanced strikes' damage and hitboxes wait on the publish and on the stance's behaviour. The builder emits Chilling Penalty's normal attacks at `stances.chillingPenalty.normalAttacks`: each strike's box from gcsim's enhanced attack state (2.4 by 3.4 and 2.8 by 3.4 among them) at forward offset 0, the normal attack's frames and hitmarks, its multiplier, and a `multiplierFactor` the Enhanced Repelling Fist table at the skill's level, which gcsim's `Snapshot` multiplies in. The published record does not carry the stance until publish, and the behaviour reads it through `readStance` once it does. A kit's hit takes its area from the record, not from a behaviour.
 - Darkgold Wolfbite's Surging Blade, which hits at 160 frames inside a 10 by 16 box with a 10-second internal cooldown. Its multiplier is not in the record, and the kit has no timed hit to land it on.
 - Ascension 1's Gracious Rebuke. It turns the charged attack into Rebuke: Vaulting Fist, which needs a charged attack variant (only burst and skill holds have one) and a +50% damage bonus that reads the Rebuke status, where the strike damage bonus reads no effect.
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
@@ -19,10 +18,11 @@ The kit-records row stays open. Its six `Unclassified` overlay entries (the five
 
 ## Key files
 
-| File                                                                   | Role                                                                                                                                                              |
-| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/wriothesleyKit.ts` | `createWriothesleyKitBehaviour`, Wriothesley's kit with his strikes, charged attack, plunges, Icefang Rush's enhancement, Prosecution Edict and Darkgold Wolfbite |
-| `packages/genshin-world/src/models/kit/KitStatus.ts`                   | `KitStatus`, which extends `KitSwapEndable` so a status such as Icefang Rush ends when its character leaves the field                                             |
+| File                                                                              | Role                                                                                                                                                              |
+| :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/wriothesleyKit.ts`            | `createWriothesleyKitBehaviour`, Wriothesley's kit with his strikes, charged attack, plunges, Icefang Rush's enhancement, Prosecution Edict and Darkgold Wolfbite |
+| `packages/genshin-world/src/models/kit/KitStatus.ts`                              | `KitStatus`, which extends `KitSwapEndable` so a status such as Icefang Rush ends when its character leaves the field                                             |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts` | The stance pass that emits Chilling Penalty's normal attacks, with the enhanced boxes and the factor                                                              |
 
 ## Sources
 

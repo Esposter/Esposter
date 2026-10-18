@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const SKYWARD_BLADE_MIGHT_ID = "skypiercingMight";
 // Gives the wielder Movement SPD and Normal Attack SPD by the rank's shares, and its Normal and Charged Attack hits deal the
 // Rank's share of ATK as base damage, for the rank's seconds. The share is the wielder's ATK with its buffs on, as a hit
 // Reads it
-export const createSkyPiercingFangPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSkyPiercingFangPassiveModule = (params: number[]): PassiveModule => {
   const movementSpeedShare = takeOne(params, 1);
   const normalAttackSpeedShare = takeOne(params, 2);
   const damageShare = takeOne(params, 3);

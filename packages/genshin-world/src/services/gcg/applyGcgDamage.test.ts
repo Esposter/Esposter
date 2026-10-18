@@ -10,14 +10,18 @@ import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { GCG_BURNING_FLAME_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
+import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -153,7 +157,7 @@ describe(applyGcgDamage, () => {
     });
   });
 
-  test("should switch an Overloaded active character forward to the next standing one", async () => {
+  test("should switch an Overloaded active character forward to the next standing one, flagged as switched in", async () => {
     expect.hasAssertions();
 
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -166,7 +170,8 @@ describe(applyGcgDamage, () => {
     expect({
       activeIndex: takeOne(duel.sides, 1).activeIndex,
       hp: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
-    }).toStrictEqual({ activeIndex: 1, hp: FULL_HP - PYRO_VALUE - 2 });
+      switchedIn: takeOne(takeOne(duel.sides, 1).characters, 1).isSwitchedIn,
+    }).toStrictEqual({ activeIndex: 1, hp: FULL_HP - PYRO_VALUE - 2, switchedIn: true });
   });
 
   test("should pierce the other opposing characters for one under Superconduct", async () => {
@@ -307,5 +312,41 @@ describe(applyGcgDamage, () => {
       { damageType: Element.Electro, reaction: GcgReactionKind.Superconduct },
       { damageType: GcgDamageKind.Piercing },
     ]);
+  });
+
+  test("should add Dendro Core's two to the next Pyro skill damage and spend its usage", () => {
+    expect.hasAssertions();
+
+    const attacker = createSideState([createCharacterState(Element.Pyro)]);
+    attacker.onstages.push({ cardId: GCG_DENDRO_CORE_ID, counter: 0, rounds: 0, usages: 1 });
+    const duel = createDuel([attacker, createSideState([createCharacterState(Element.Hydro)])]);
+    applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, TEST_RULE);
+
+    expect({
+      hpAfterFirst: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
+      usagesAfterFirst: attacker.onstages.map(({ usages }) => usages),
+    }).toStrictEqual({ hpAfterFirst: FULL_HP - PYRO_VALUE - 2, usagesAfterFirst: [] });
+  });
+
+  test("should add Catalyzing Field's one to Dendro damage, and leave Pyro damage alone", () => {
+    expect.hasAssertions();
+
+    const attacker = createSideState([createCharacterState(Element.Dendro)]);
+    attacker.onstages.push({ cardId: GCG_CATALYZING_FIELD_ID, counter: 0, rounds: 0, usages: 2 });
+    const duel = createDuel([attacker, createSideState([createCharacterState(Element.Hydro)])]);
+    applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, TEST_RULE);
+    const usagesAfterPyro = attacker.onstages.map(({ usages }) => usages);
+    takeOne(takeOne(duel.sides, 1).characters, 0).aura = GcgAura.None;
+    applyGcgDamage(duel, 0, { damageType: Element.Dendro, value: PYRO_VALUE }, TEST_RULE);
+
+    expect({
+      hpAfterDendro: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
+      usagesAfterDendro: attacker.onstages.map(({ usages }) => usages),
+      usagesAfterPyro,
+    }).toStrictEqual({
+      hpAfterDendro: FULL_HP - PYRO_VALUE - 1 - PYRO_VALUE,
+      usagesAfterDendro: [1],
+      usagesAfterPyro: [2],
+    });
   });
 });

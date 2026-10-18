@@ -8,7 +8,6 @@ import GcgScreenCharacter from "#src/components/Gcg/Screen/Character/Index.vue";
 import GcgScreenDie from "#src/components/Gcg/Screen/Die/Index.vue";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import {
   GCG_EQUIPMENT_CARD_KINDS,
   GCG_SKILL_KIND_DISPLAY_ORDER,
@@ -16,6 +15,7 @@ import {
   GCG_TOSS_UP_REROLL_COUNT,
 } from "#src/services/gcg/constants";
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
+import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
 import { takeOne } from "@esposter/shared";
 import { GameScreen } from "genshin-interface";
@@ -66,12 +66,10 @@ const playerHandCards = computed(() => {
   return playerSide.value.hand.flatMap((cardId) => cardMap.get(cardId) ?? []);
 });
 const activeSkills = computed(() =>
-  takeOne(playerSide.value.characters, playerSide.value.activeIndex)
-    .character.skills.filter(({ kind }) => kind !== GcgSkillKind.Passive)
-    .toSorted(
-      (firstSkill, secondSkill) =>
-        GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(firstSkill.kind) - GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(secondSkill.kind),
-    ),
+  listGcgActiveSkills(takeOne(playerSide.value.characters, playerSide.value.activeIndex)).toSorted(
+    (firstSkill, secondSkill) =>
+      GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(firstSkill.kind) - GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(secondSkill.kind),
+  ),
 );
 const bandTextKey = computed(() => {
   if (duel.phase === GcgPhase.Preparation) return GameTextKey.GcgStartingHand;

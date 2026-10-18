@@ -6281,14 +6281,14 @@
       "talkId": "60502501"
     },
     {
-      "areaId": "court-of-fontaine-region",
+      "areaId": "belleau-region",
       "day": { "position": { "x": 286.7, "z": -6077.92 }, "rotation": 0 },
       "id": "21188",
       "nameTextId": "1966720400",
       "talkId": "7410101"
     },
     {
-      "areaId": "court-of-fontaine-region",
+      "areaId": "morte-region",
       "day": { "position": { "x": 752.25, "z": -4919.15 }, "rotation": 0.7035 },
       "id": "21379",
       "nameTextId": "24733048",
