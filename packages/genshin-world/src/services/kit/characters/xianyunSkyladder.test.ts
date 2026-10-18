@@ -16,7 +16,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const createCombatant = (constellationCount: number): Combatant =>
   ({
@@ -143,18 +143,19 @@ describe(createXianyunKitBehaviour, () => {
     behaviour.plungeVariants?.[0]?.onStart?.(context);
 
     const member = context.party.characterIdMemberMap.get(XIANYUN_CHARACTER_ID);
-    if (member) member.healthShare = 0.5;
+    assert.exists(member);
+    member.healthShare = 0.5;
     const strike = { attackTag: AttackTag.PlungingAttack, combatant } as KitStrike;
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
-    expect(member?.healthShare).toBeCloseTo(0.5 + (0.5 * 1000) / 10_000, 10);
+    expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1000) / 10_000, 10);
     expect(
       checkIsKitStatusActive(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_CONSTELLATION_4_ICD_ID),
     ).toBe(true);
 
-    if (member) member.healthShare = 0.5;
+    member.healthShare = 0.5;
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
-    expect(member?.healthShare).toBe(0.5);
+    expect(member.healthShare).toBe(0.5);
   });
 });
