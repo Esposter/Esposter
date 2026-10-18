@@ -286,6 +286,7 @@ const {
 const { chestInteractables, openChestById } = useWorldChests({
   gameDataBaseUrl,
   gameText,
+  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
