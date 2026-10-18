@@ -9,6 +9,7 @@ import type { Party } from "#src/models/party/Party";
 import type { Trial } from "#src/models/trial/Trial";
 import type { TrialArena } from "#src/models/trial/TrialArena";
 import type { TrialRoster } from "#src/models/trial/TrialRoster";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { Ref } from "vue";
@@ -69,6 +70,13 @@ export const useWorldTrials = ({
   const trialArena = shallowRef<TrialArena>();
   // The player's roster while a trial holds its place, which the save keeps in the trial's stead and the trial's end restores
   const playerRoster = shallowRef<TrialRoster>();
+  // The seconds the arena's clock has left, rounded up so the last second shows until the clock runs out, none while no trial
+  // Is entered
+  const trialSecondsRemaining = computed(() =>
+    trialArena.value
+      ? Math.ceil((TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS - trialArena.value.elapsedMilliseconds) / 1000)
+      : undefined,
+  );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readCharacterTrials(gameDataBaseUrl)).match(
     (tables) => {
@@ -88,11 +96,12 @@ export const useWorldTrials = ({
     })),
   );
 
-  // A trial entered in place of the player's roster, on the first stage its trial id names. Its party member's kit is read at
+  // A trial entered in place of the player's roster, on the first stage its trial id names, and the pose the player was at is
+  // Kept to go back to. Its party member's kit is read at
   // The talents it plays with no constellations, since a trial's build has none, and the kit replaces the player's kits for the
   // Fight. A trial whose tables are not read, whose stage is not named, whose character has no build or whose kit is not read
   // Does not enter, and an arena already entered is not entered again. Resolves whether the trial entered
-  const enterTrial = async (trial: Trial): Promise<boolean> => {
+  const enterTrial = async (trial: Trial, returnPose: WorldJumpPose): Promise<boolean> => {
     const tables = trialTables.value;
     if (!tables || trialArena.value) return false;
     const stage = Object.values(tables.stages).find(({ trialAvatarId }) => trialAvatarId === trial.trialId);
@@ -117,7 +126,7 @@ export const useWorldTrials = ({
     characters.value = [character];
     Object.assign(party, createWorldParty(createParty([character.id])));
     characterIdKitMap.value = kits;
-    trialArena.value = { character, elapsedMilliseconds: 0, stageId: stage.id };
+    trialArena.value = { character, elapsedMilliseconds: 0, returnPose, stageId: stage.id };
     return true;
   };
 
@@ -155,7 +164,8 @@ export const useWorldTrials = ({
   };
 
   // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open. When it runs
-  // Out the trial is cleared, and its first clear pays once (PROVISIONAL). Either end gives the player's roster back
+  // Out the trial is cleared, and its first clear pays once (PROVISIONAL). Either end gives the player's roster back and returns
+  // The pose the player was at when the trial was entered, which the world jumps them to; none while the trial runs on
   const stepTrial = ({
     deltaMilliseconds,
     isPlaying,
@@ -164,9 +174,9 @@ export const useWorldTrials = ({
     deltaMilliseconds: number;
     isPlaying: boolean;
     partyDown: boolean;
-  }) => {
+  }): WorldJumpPose | undefined => {
     const arena = trialArena.value;
-    if (!arena) return;
+    if (!arena) return undefined;
     const elapsedMilliseconds = computeDomainChallengeElapsed(arena.elapsedMilliseconds, deltaMilliseconds, isPlaying);
     const outcome = resolveDomainChallenge(
       {
@@ -179,12 +189,13 @@ export const useWorldTrials = ({
     );
     if (outcome === DomainChallengeOutcome.Running) {
       trialArena.value = { ...arena, elapsedMilliseconds };
-      return;
+      return undefined;
     }
     trialArena.value = undefined;
     restorePlayerRoster();
     if (outcome === DomainChallengeOutcome.TimedOut) clearTrial(arena.stageId);
+    return arena.returnPose;
   };
 
-  return { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials };
+  return { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trialSecondsRemaining, trials };
 };

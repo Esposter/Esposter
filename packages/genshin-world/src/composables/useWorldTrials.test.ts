@@ -3,6 +3,7 @@ import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Kit } from "#src/models/kit/Kit";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { Trial } from "#src/models/trial/Trial";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 
@@ -43,6 +44,7 @@ const TABLES: CharacterTrialTables = {
 };
 const OWNED_KIT = {} as Kit;
 const TRIAL_KIT = {} as Kit;
+const RETURN_POSE: WorldJumpPose = { heightOffset: 0, point: { x: 12, z: -3 }, yaw: 1 };
 const TIMED_OUT_STEP = {
   deltaMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
   isPlaying: true,
@@ -95,7 +97,7 @@ describe(useWorldTrials, () => {
     expect(trials.value).toHaveLength(1);
     const trial: Trial = trials.value[0];
 
-    await expect(enterTrial(trial)).resolves.toBe(true);
+    await expect(enterTrial(trial, RETURN_POSE)).resolves.toBe(true);
     expect(trialArena.value?.character.talentLevels[CombatTalent.NormalAttack]).toBe(1);
     stepTrial(TIMED_OUT_STEP);
     expect(trialArena.value).toBeUndefined();
@@ -103,7 +105,7 @@ describe(useWorldTrials, () => {
     expect(setWallet).toHaveBeenCalledTimes(1);
     expect(setWallet).toHaveBeenCalledWith({ ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT });
 
-    await enterTrial(trial);
+    await enterTrial(trial, RETURN_POSE);
     stepTrial(TIMED_OUT_STEP);
     expect(setWallet).toHaveBeenCalledTimes(1);
   });
@@ -118,7 +120,7 @@ describe(useWorldTrials, () => {
     const { enterTrial, stepTrial, trials } = setUpTrials({ characterIdKitMap, characters, party });
     await flushReads();
 
-    await enterTrial(trials.value[0]);
+    await enterTrial(trials.value[0], RETURN_POSE);
     expect(characters.value).toHaveLength(1);
     expect(characters.value[0].id).toBe(CHARACTER_ID);
     expect(characterIdKitMap.value).toStrictEqual(new Map([[CHARACTER_ID, TRIAL_KIT]]));
@@ -138,7 +140,7 @@ describe(useWorldTrials, () => {
     const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ characters, setWallet });
     await flushReads();
 
-    await enterTrial(trials.value[0]);
+    await enterTrial(trials.value[0], RETURN_POSE);
     stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
     expect(trialArena.value).toBeUndefined();
     expect(characters.value).toBe(ownedCharacters);
@@ -151,7 +153,7 @@ describe(useWorldTrials, () => {
     const first = setUpTrials();
     await flushReads();
     const trial: Trial = first.trials.value[0];
-    await first.enterTrial(trial);
+    await first.enterTrial(trial, RETURN_POSE);
     first.stepTrial(TIMED_OUT_STEP);
     const save = toCharacterTrialSave(first.trialClaimedStageIds.value);
     expect(save).toStrictEqual({ claimedStageIds: [STAGE_ID] });
@@ -160,9 +162,41 @@ describe(useWorldTrials, () => {
     const setWallet = vi.fn<(wallet: Wallet) => void>();
     const second = setUpTrials({ claimedStageIds: new Set(save.claimedStageIds), setWallet });
     await flushReads();
-    await second.enterTrial(trial);
+    await second.enterTrial(trial, RETURN_POSE);
     second.stepTrial(TIMED_OUT_STEP);
     expect(second.trialClaimedStageIds.value).toStrictEqual(new Set([STAGE_ID]));
     expect(setWallet).not.toHaveBeenCalled();
+  });
+
+  test("a trial's end returns the player to the pose it was entered from", async () => {
+    expect.hasAssertions();
+    const { enterTrial, stepTrial, trials } = setUpTrials();
+    await flushReads();
+    await enterTrial(trials.value[0], RETURN_POSE);
+
+    expect(stepTrial({ deltaMilliseconds: 1, isPlaying: true, partyDown: false })).toBeUndefined();
+    expect(stepTrial(TIMED_OUT_STEP)).toStrictEqual(RETURN_POSE);
+  });
+
+  test("a party down returns the player to the pose it was entered from too", async () => {
+    expect.hasAssertions();
+    const { enterTrial, stepTrial, trials } = setUpTrials();
+    await flushReads();
+    await enterTrial(trials.value[0], RETURN_POSE);
+
+    expect(stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true })).toStrictEqual(RETURN_POSE);
+  });
+
+  test("a trial's countdown reads the seconds its clock has left", async () => {
+    expect.hasAssertions();
+    const { enterTrial, stepTrial, trialSecondsRemaining, trials } = setUpTrials();
+    await flushReads();
+    await enterTrial(trials.value[0], RETURN_POSE);
+    expect(trialSecondsRemaining.value).toBe(300);
+
+    stepTrial({ deltaMilliseconds: 1500, isPlaying: true, partyDown: false });
+    expect(trialSecondsRemaining.value).toBe(299);
+    stepTrial(TIMED_OUT_STEP);
+    expect(trialSecondsRemaining.value).toBeUndefined();
   });
 });

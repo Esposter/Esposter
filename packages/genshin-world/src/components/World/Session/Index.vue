@@ -133,6 +133,7 @@ import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
@@ -698,7 +699,8 @@ const {
   onPartyDown: () => {
     // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
     if (trialArena.value) {
-      stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+      const returnPose = stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+      if (returnPose) jumpTo(returnPose);
       return;
     }
     // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
@@ -725,22 +727,23 @@ const {
   wildlifePlaces,
 });
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
-const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials } = useWorldTrials({
-  artifactRarityDataMap,
-  characterDataMap: statTables.characterDataMap,
-  characterIdKitMap,
-  characters,
-  claimedStageIds: savedState.characterTrialClaimedStageIds,
-  gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
-  party,
-  setInventory,
-  setWallet,
-  wallet,
-  weaponDataMap: statTables.weaponDataMap,
-});
+const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trialSecondsRemaining, trials } =
+  useWorldTrials({
+    artifactRarityDataMap,
+    characterDataMap: statTables.characterDataMap,
+    characterIdKitMap,
+    characters,
+    claimedStageIds: savedState.characterTrialClaimedStageIds,
+    gameDataBaseUrl,
+    inventory,
+    materialDataMap,
+    nameText,
+    party,
+    setInventory,
+    setWallet,
+    wallet,
+    weaponDataMap: statTables.weaponDataMap,
+  });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
   characters,
@@ -1313,7 +1316,11 @@ const enterDomainLevel = (dungeonId: number) => {
 // A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
 // East of where the player stands (PROVISIONAL until the trial's scene is read)
 const openTrial = async (trial: Trial) => {
-  if (!(await enterTrial(trial))) return;
+  const returnPose = computeStandingPose(
+    { position: characterBody.position, yaw: characterBody.rotation.y },
+    getGroundHeight(characterBody.position.x, characterBody.position.z),
+  );
+  if (!(await enterTrial(trial, returnPose))) return;
   screenKind.value = ScreenKind.World;
   jumpTo(
     computeDomainScenePose({
@@ -1544,11 +1551,12 @@ defineExpose({ jumpTo, readCameraPosition });
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
             partyDown: false,
           });
-          stepTrial({
+          const trialReturnPose = stepTrial({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World,
             partyDown: false,
           });
+          if (trialReturnPose) jumpTo(trialReturnPose);
           stepAbyss({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
@@ -1864,6 +1872,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :quick-swap-open="isQuickSwapOpen"
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
+      :trial-seconds-remaining="trialSecondsRemaining"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
