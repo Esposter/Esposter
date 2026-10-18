@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 and 2.2 need the Reputation screen's offer, the one control that offers a request or takes a bounty, and the screen has none yet; 2.2 also needs the taken bounty's target placed in the world (the Enemies component, outside this change) and its trail on Elemental Sight; 3.1 the Reputation quest rows bound by parentQuestId, not yet read; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.1 and 2.2 need the Reputation screen's offer, the one control that offers a request or takes a bounty, and the screen has none yet; 2.2 also needs the taken bounty's target placed in the world (the Enemies component, outside this change) and its trail on Elemental Sight; 3.1 the Reputation quest rows bound by parentQuestId, not yet read; 3.2 the food shop's goods, which the shops dataset does not build yet; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -12,6 +12,7 @@ x-touches:
     "packages/genshin-world/src/models/quest/QuestObjective.ts",
     "packages/genshin-world/src/services/quest/advanceQuest*.ts",
     "packages/genshin-world/src/services/reputation/getFinishedReputationRewards.test.ts",
+    "packages/genshin-world/src/services/shop/discountShopGood.test.ts",
     "scripts/src/models/genshinText/DumpedGiving*.ts",
     "scripts/src/services/genshinText/buildQuests.ts",
     "scripts/src/services/genshinText/constants.ts",
