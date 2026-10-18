@@ -1,7 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -12,10 +12,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { ALHAITHAM_CHARACTER_ID, createAlhaithamKitBehaviour } from "#src/services/kit/characters/alhaithamKit";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { ALHAITHAM_CHARACTER_ID, createAlhaithamKitBehaviour } from "#src/services/kit/characters/alhaithamKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -193,37 +193,33 @@ describe(createAlhaithamKitBehaviour, () => {
     }).toStrictEqual({ infusionSeconds: 0, mirrors: 0 });
   });
 
-  describe("the Ascension 1 passive, Four-Causal Correction", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Four-Causal Correction, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(strikeWithChargedAttack(createAlhaithamCombatant(1), kitBody)).toBe(1);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-
-      expect(strikeWithChargedAttack(createAlhaithamCombatant(0), kitBody)).toBe(0);
-    });
+    expect(strikeWithChargedAttack(createAlhaithamCombatant(1), kitBody)).toBe(1);
   });
 
-  describe("the Ascension 4 passive, Mysteries Laid Bare", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createAlhaithamCombatant(4);
+  test("the Ascension 1 passive, Four-Causal Correction, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(
-        ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
-      ).toBeGreaterThan(0);
-    });
+    expect(strikeWithChargedAttack(createAlhaithamCombatant(0), kitBody)).toBe(0);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createAlhaithamCombatant(3);
+  test("the Ascension 4 passive, Mysteries Laid Bare, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant(4);
 
-      expect(
-        ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
-      ).toBe(0);
-    });
+    expect(
+      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+    ).toBeGreaterThan(0);
+  });
+
+  test("the Ascension 4 passive, Mysteries Laid Bare, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant(3);
+
+    expect(
+      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+    ).toBe(0);
   });
 });

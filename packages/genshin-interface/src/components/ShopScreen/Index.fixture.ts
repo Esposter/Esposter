@@ -2,9 +2,9 @@
 // Its layout is measured from that clip's frames; the detail's panel colour is an estimate, since the clip dims it
 export const props = {
   balances: [
-    { id: "primogem", name: "Primogems", quantity: 865, isTopUp: true },
+    { id: "primogem", isTopUp: true, name: "Primogems", quantity: 865 },
     { id: "mora", name: "Mora", quantity: 69 },
-    { id: "starglitter", name: "Starglitter", quantity: 2375, isTopUp: true },
+    { id: "starglitter", isTopUp: true, name: "Starglitter", quantity: 2375 },
   ],
   buyLabel: "Purchase",
   closeLabel: "Back",

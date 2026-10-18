@@ -1,5 +1,5 @@
-import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
+import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 
 import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 

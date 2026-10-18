@@ -89,25 +89,23 @@ describe(createDehyaKitBehaviour, () => {
     }).toStrictEqual({ collisionFrames: 32, highFrames: 41, lowFrames: 38 });
   });
 
-  describe("the Ascension 4 passive, Stalwart and True", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const { context, partyMember } = drainDehya(4);
+  test("the Ascension 4 passive, Stalwart and True, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const { context, partyMember } = drainDehya(4);
 
-      // Her 20% at once, then 6% on each of five ticks, every 2 seconds for 10
-      expect(partyMember.healthShare).toBeCloseTo(0.55, 5);
-      stepKitEffects(10, context);
+    // Her 20% at once, then 6% on each of five ticks, every 2 seconds for 10
+    expect(partyMember.healthShare).toBeCloseTo(0.55, 5);
+    stepKitEffects(10, context);
 
-      expect(partyMember.healthShare).toBeCloseTo(0.85, 5);
-    });
+    expect(partyMember.healthShare).toBeCloseTo(0.85, 5);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const { context, partyMember } = drainDehya(3);
+  test("the Ascension 4 passive, Stalwart and True, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const { context, partyMember } = drainDehya(3);
 
-      stepKitEffects(10, context);
+    stepKitEffects(10, context);
 
-      expect(partyMember.healthShare).toBeCloseTo(0.35, 5);
-    });
+    expect(partyMember.healthShare).toBeCloseTo(0.35, 5);
   });
 });

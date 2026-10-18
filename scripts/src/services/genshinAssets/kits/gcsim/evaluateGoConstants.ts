@@ -13,8 +13,8 @@ import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/eva
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
-import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
+import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const DECLARATION_KEYWORDS = new Set(["const", "var"]);
 

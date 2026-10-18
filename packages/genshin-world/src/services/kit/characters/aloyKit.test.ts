@@ -107,40 +107,36 @@ describe(createAloyKitBehaviour, () => {
       attribute
     ];
 
-  describe("the Ascension 1 passive, which raises ATK while Rushing Ice holds", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const started = startRushingIce(1);
+  test("the Ascension 1 passive, which raises ATK while Rushing Ice holds, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const started = startRushingIce(1);
 
-      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0.16);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const started = startRushingIce(0);
-
-      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0);
-    });
+    expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0.16);
   });
 
-  describe("the Ascension 4 passive, which raises Cryo DMG Bonus a step each second of Rushing Ice", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const started = startRushingIce(4);
-      const { context } = started;
+  test("the Ascension 1 passive, which raises ATK while Rushing Ice holds, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const started = startRushingIce(0);
 
-      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.035);
-      stepKitEffects(9, context);
+    expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0);
+  });
 
-      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.35);
-    });
+  test("the Ascension 4 passive, which raises Cryo DMG Bonus a step each second of Rushing Ice, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const started = startRushingIce(4);
+    const { context } = started;
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const started = startRushingIce(3);
-      stepKitEffects(9, started.context);
+    expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.035);
+    stepKitEffects(9, context);
 
-      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBe(0);
-    });
+    expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.35);
+  });
+
+  test("the Ascension 4 passive, which raises Cryo DMG Bonus a step each second of Rushing Ice, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const started = startRushingIce(3);
+    stepKitEffects(9, started.context);
+
+    expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBe(0);
   });
 });

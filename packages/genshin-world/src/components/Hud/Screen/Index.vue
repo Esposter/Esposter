@@ -51,13 +51,13 @@ interface Props {
   // And the touch layout's action buttons are drawn
   isTouch: boolean;
   landmarks: Landmark[];
-  nearOculusPlaces: OculusPlace[];
   // The party's stamina pool, which the meter's arc holds whole
   maxStamina: number;
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
   member?: HudMember;
   // The names the deployed team's text ids cite in the reader's language, which stay blank until they load
   nameTextMap?: Readonly<Record<string, string>>;
+  nearOculusPlaces: OculusPlace[];
   party: Party;
   // Where the navigated objective stands from the character, none while no quest is navigated to or no region in reach
   // Places its objective
@@ -89,10 +89,10 @@ const {
   interfaceRects,
   isTouch,
   landmarks,
-  nearOculusPlaces,
   maxStamina,
   member,
   nameTextMap,
+  nearOculusPlaces,
   party,
   questMark,
   questProgress,
@@ -139,7 +139,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
             :game-text
             :interface-rects
             :landmarks
-            :near-oculus-places="nearOculusPlaces"
+            :near-oculus-places
             :parent="miniMapRect"
             @open="emit('map')"
           />

@@ -1,8 +1,8 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import type { Combatant } from "#src/models/kit/Combatant";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -70,17 +70,15 @@ describe(createEscoffierKitBehaviour, () => {
     expect(takeOne(ESCOFFIER_KIT.highPlunge.hits).poiseDamage).toBe(150);
   });
 
-  describe("the Ascension 1 passive, Better to Salivate Than Medicate", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Better to Salivate Than Medicate, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castScoringCutsFieldIds(1)).toStrictEqual(["escoffier-scoring-cuts-heal", "escoffier-rehab-diet"]);
-    });
+    expect(castScoringCutsFieldIds(1)).toStrictEqual(["escoffier-scoring-cuts-heal", "escoffier-rehab-diet"]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Better to Salivate Than Medicate, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
-    });
+    expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
   });
 });

@@ -139,40 +139,36 @@ describe(createGorouKitBehaviour, () => {
     expect(crystalCollapse?.hits[0]?.hitmarkSeconds).toBeCloseTo(121 / 60);
   });
 
-  describe("the Ascension 1 passive, Heedless of the Wind and Weather", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Heedless of the Wind and Weather, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getA1Buffs(1)).toStrictEqual([
-        {
-          amount: 0.25,
-          attribute: Attribute.DefensePercent,
-          characterId: GOROU_CHARACTER_ID,
-          kind: "buff",
-          secondsRemaining: 12,
-          source: "gorou-a1",
-        },
-      ]);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-
-      expect(getA1Buffs(0)).toStrictEqual([]);
-    });
+    expect(getA1Buffs(1)).toStrictEqual([
+      {
+        amount: 0.25,
+        attribute: Attribute.DefensePercent,
+        characterId: GOROU_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+        source: "gorou-a1",
+      },
+    ]);
   });
 
-  describe("the Ascension 4 passive, A Favor Repaid", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Heedless of the Wind and Weather, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(4))).toBe(1560);
-    });
+    expect(getA1Buffs(0)).toStrictEqual([]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, A Favor Repaid, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(3))).toBe(0);
-    });
+    expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(4))).toBe(1560);
+  });
+
+  test("the Ascension 4 passive, A Favor Repaid, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(3))).toBe(0);
   });
 });

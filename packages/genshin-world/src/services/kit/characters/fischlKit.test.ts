@@ -169,18 +169,16 @@ describe(createFischlKitBehaviour, () => {
     ).toStrictEqual([AttackTag.ElementalSkill]);
   });
 
-  describe("the Ascension 4 passive, Undone Be Thy Sinful Hex", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Undone Be Thy Sinful Hex, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castHits(triggerOverloaded(4))).toStrictEqual([0.8]);
-    });
+    expect(castHits(triggerOverloaded(4))).toStrictEqual([0.8]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Undone Be Thy Sinful Hex, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castHits(triggerOverloaded(3))).toStrictEqual([]);
-    });
+    expect(castHits(triggerOverloaded(3))).toStrictEqual([]);
   });
 
   test("one constellation's coordinated attack follows her normal attack while Oz is away", () => {

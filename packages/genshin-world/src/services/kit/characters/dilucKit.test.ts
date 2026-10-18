@@ -60,43 +60,39 @@ describe(createDilucKitBehaviour, () => {
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
   });
 
-  describe("the Ascension 4 passive, Blessing of Phoenix", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const kitEffectState: KitEffectState = { effects: [] };
-      DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(4), { kitEffectState }));
-      expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
-        { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 12 },
-        {
-          amount: 0.2,
-          attribute: Attribute.PyroDamageBonus,
-          characterId: DILUC_CHARACTER_ID,
-          kind: "buff",
-          secondsRemaining: 12,
-        },
-      ]);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const kitEffectState: KitEffectState = { effects: [] };
-      DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(3), { kitEffectState }));
-      expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
-        { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 8 },
-      ]);
-    });
+  test("the Ascension 4 passive, Blessing of Phoenix, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(4), { kitEffectState }));
+    expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
+      { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 12 },
+      {
+        amount: 0.2,
+        attribute: Attribute.PyroDamageBonus,
+        characterId: DILUC_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+      },
+    ]);
   });
 
-  describe("the Ascension 1 passive, Relentless", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      expect(DILUC_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(createCombatant(1)))).toBe(0.5);
-    });
+  test("the Ascension 4 passive, Blessing of Phoenix, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(3), { kitEffectState }));
+    expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
+      { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 8 },
+    ]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      expect(DILUC_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(createCombatant(0)))).toBe(1);
-    });
+  test("the Ascension 1 passive, Relentless, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    expect(DILUC_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(createCombatant(1)))).toBe(0.5);
+  });
+
+  test("the Ascension 1 passive, Relentless, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    expect(DILUC_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(createCombatant(0)))).toBe(1);
   });
 
   const STEP_SECONDS = 0.1;

@@ -188,36 +188,34 @@ describe(createBarbaraKitBehaviour, () => {
     },
   );
 
-  describe("the Ascension 4 passive, Encore", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
-      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+  test("the Ascension 4 passive, Encore, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
+    const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
 
-      collectParticles(1, context, combatant);
+    collectParticles(1, context, combatant);
 
-      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 1);
-    });
+    expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 1);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 3 });
-      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+  test("the Ascension 4 passive, Encore, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 3 });
+    const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
 
-      collectParticles(1, context, combatant);
+    collectParticles(1, context, combatant);
 
-      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds);
-    });
+    expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds);
+  });
 
-    test("the Melody Loop is extended by at most five seconds", () => {
-      expect.hasAssertions();
-      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
-      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+  test("the Ascension 4 passive, Encore, the Melody Loop is extended by at most five seconds", () => {
+    expect.hasAssertions();
+    const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
+    const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
 
-      collectParticles(6, context, combatant);
-      collectParticles(1, context, combatant);
+    collectParticles(6, context, combatant);
+    collectParticles(1, context, combatant);
 
-      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 5);
-    });
+    expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 5);
   });
 });

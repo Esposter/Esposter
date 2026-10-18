@@ -6,7 +6,7 @@ import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTim
 export const computeNextShopRefreshTime = (
   refresh: ShopRefresh,
   now: Temporal.Instant,
-): undefined | Temporal.Instant => {
+): Temporal.Instant | undefined => {
   if (refresh === ShopRefresh.None) return undefined;
   const refreshTime = computeShopRefreshTime(refresh, now).toZonedDateTimeISO(GAME_TIME_ZONE);
   const nextRefreshTime =

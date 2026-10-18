@@ -1,6 +1,6 @@
-import type { Element } from "#src/models/Element";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { Element } from "#src/models/Element";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -14,6 +14,7 @@ import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
+import type { Ref } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -41,8 +42,6 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
-import type { Ref } from "vue";
-
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the

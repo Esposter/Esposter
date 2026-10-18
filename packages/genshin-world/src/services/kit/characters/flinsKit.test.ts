@@ -85,17 +85,15 @@ describe(createFlinsKitBehaviour, () => {
     });
   });
 
-  describe("the Ascension 4 passive, Whispering Flame", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Whispering Flame, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getPassiveBonuses(4)).toStrictEqual([{ amount: 80, attribute: Attribute.ElementalMastery }]);
-    });
+    expect(getPassiveBonuses(4)).toStrictEqual([{ amount: 80, attribute: Attribute.ElementalMastery }]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Whispering Flame, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getPassiveBonuses(3)).toStrictEqual([]);
-    });
+    expect(getPassiveBonuses(3)).toStrictEqual([]);
   });
 });

@@ -6,9 +6,9 @@ export type GoExpression =
   | { callee: string; kind: GoExpressionKind.Call; parameters: GoExpression[] }
   | { elements: GoExpression[]; kind: GoExpressionKind.Composite }
   | { index: GoExpression; kind: GoExpressionKind.Index; target: GoExpression }
+  | { isFloat: boolean; kind: GoExpressionKind.Number; value: number }
   | { kind: GoExpressionKind.Binary; left: GoExpression; operator: string; right: GoExpression }
   | { kind: GoExpressionKind.Identifier; name: string }
-  | { isFloat: boolean; kind: GoExpressionKind.Number; value: number }
   | { kind: GoExpressionKind.String; value: string }
   | { kind: GoExpressionKind.Unary; operand: GoExpression; operator: string }
   | { kind: GoExpressionKind.Unknown };

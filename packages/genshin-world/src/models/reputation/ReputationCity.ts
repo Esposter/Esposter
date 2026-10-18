@@ -17,8 +17,8 @@ import { z } from "zod";
 // Weekly bounties with the kinds each difficulty's target may be, the hunting regions they spawn in, and the exploration
 // Thresholds that pay it
 export interface ReputationCity {
-  bountyTargets: ReputationBountyTarget[];
   bounties: ReputationBounty[];
+  bountyTargets: ReputationBountyTarget[];
   explores: ReputationExplore[];
   huntingRegions: ReputationHuntingRegion[];
   levels: ReputationLevel[];
@@ -26,8 +26,8 @@ export interface ReputationCity {
 }
 
 export const reputationCitySchema = z.object({
-  bountyTargets: z.array(reputationBountyTargetSchema),
   bounties: z.array(reputationBountySchema),
+  bountyTargets: z.array(reputationBountyTargetSchema),
   explores: z.array(reputationExploreSchema),
   huntingRegions: z.array(reputationHuntingRegionSchema),
   levels: z.array(reputationLevelSchema),

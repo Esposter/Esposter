@@ -83,17 +83,15 @@ describe(createAinoKitBehaviour, () => {
     }).toStrictEqual({ burstHits: [], skillHitmarkFrames: [15, 33] });
   });
 
-  describe("the Ascension 4 passive, Structured Power Booster", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Structured Power Booster, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getFirstWaterBallBonus(createAinoCombatant(4))).toBeGreaterThan(0);
-    });
+    expect(getFirstWaterBallBonus(createAinoCombatant(4))).toBeGreaterThan(0);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Structured Power Booster, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getFirstWaterBallBonus(createAinoCombatant(3))).toBe(0);
-    });
+    expect(getFirstWaterBallBonus(createAinoCombatant(3))).toBe(0);
   });
 });

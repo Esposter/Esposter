@@ -5,9 +5,6 @@ export enum QuestId {
   BirdsEyeView = "352",
   CandidatureAnalysis = "11019",
   ForegoneConclusion = "11026",
-  SevenStarSelection = "11018",
-  TheSeventhSamurai = "72154",
-  WanderersTrail = "351",
   ReputationRequest7070001 = "7070001",
   ReputationRequest7070101 = "7070101",
   ReputationRequest7070201 = "7070201",
@@ -20,6 +17,9 @@ export enum QuestId {
   ReputationRequest7071201 = "7071201",
   ReputationRequest7071301 = "7071301",
   ReputationRequest7071401 = "7071401",
+  SevenStarSelection = "11018",
+  TheSeventhSamurai = "72154",
+  WanderersTrail = "351",
 }
 
 // The Mondstadt keeper's delivery requests, each a sub quest its request row names. The three camp requests are not

@@ -5,12 +5,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createEmilieKitBehaviour, EMILIE_CHARACTER_ID } from "#src/services/kit/characters/emilieKit";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
-import { createParty } from "#src/services/party/createParty";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createEmilieKitBehaviour, EMILIE_CHARACTER_ID } from "#src/services/kit/characters/emilieKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -102,17 +102,15 @@ describe(createEmilieKitBehaviour, () => {
     },
   );
 
-  describe("the Ascension 4 passive, Rectification", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Rectification, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getBurningStrikeBonus(4)).toBeCloseTo(0.3, 5);
-    });
+    expect(getBurningStrikeBonus(4)).toBeCloseTo(0.3, 5);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Rectification, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getBurningStrikeBonus(3)).toBe(0);
-    });
+    expect(getBurningStrikeBonus(3)).toBe(0);
   });
 });

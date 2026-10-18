@@ -5,6 +5,6 @@ describe(getResonatedRegionIds, () => {
   test("the regions resonated with are those whose statues are unlocked", () => {
     expect.hasAssertions();
 
-    expect(getResonatedRegionIds(new Set(["windrise-statue-of-the-seven", "a-waypoint"]))).toStrictEqual(["mondstadt"]);
+    expect(getResonatedRegionIds(new Set(["a-waypoint", "windrise-statue-of-the-seven"]))).toStrictEqual(["mondstadt"]);
   });
 });

@@ -26,8 +26,8 @@ import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
-import WorldOculi from "#src/components/World/Oculi/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
+import WorldOculi from "#src/components/World/Oculi/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
@@ -137,14 +137,12 @@ interface Props {
   enemyTables: EnemyTables;
   // The Frostbearing Trees the official map marks, each stood in at its place
   frostbearingTreePlaces: FrostbearingTreePlace[];
-  // The Oculi not yet found, each stood in at its place
-  oculusPlaces: OculusPlace[];
   // Where the hosted game data is read from, which each region's palettes are read from as it comes within reach
   gameDataBaseUrl: string;
-  // The bends the character leaves as it walks through the grass, which the grass parts round
-  grassTrail: GrassTrail;
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
+  // The bends the character leaves as it walks through the grass, which the grass parts round
+  grassTrail: GrassTrail;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -159,6 +157,8 @@ interface Props {
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
+  // The Oculi not yet found, each stood in at its place
+  oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
   qualityTier: QualityTier;
@@ -192,10 +192,9 @@ const {
   enemyMap,
   enemyTables,
   frostbearingTreePlaces,
-  oculusPlaces,
   gameDataBaseUrl,
-  grassTrail,
   getGroundHeight,
+  grassTrail,
   heldMinutes,
   interactables,
   isHeld,
@@ -203,6 +202,7 @@ const {
   isTuning,
   kitEffectState,
   landmarkCollider,
+  oculusPlaces,
   origin,
   qualityTier,
   questTargetId,
@@ -472,7 +472,7 @@ onUnmounted(() => {
         :blade-height="GRASS_BLADE_HEIGHT"
         :blade-width="GRASS_BLADE_WIDTH"
         :ground-capture
-        :grass-trail="grassTrail"
+        :grass-trail
         :light-uniforms
         :origin
         :quality-tier

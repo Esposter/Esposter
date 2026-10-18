@@ -114,8 +114,8 @@ describe(useWorldMap, () => {
     },
   ];
   const reputationCity: ReputationCity = {
-    bountyTargets: [],
     bounties: [],
+    bountyTargets: [],
     explores: [
       {
         exploreId: 1,

@@ -3,8 +3,8 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
-import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { checkIsGoFloatLiteral } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloatLiteral";
+import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { readGoNumberToken } from "#src/services/genshinAssets/kits/gcsim/readGoNumberToken";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 

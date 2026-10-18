@@ -126,11 +126,11 @@ export const createIneffaKitBehaviour = ({
           });
       },
     },
-    onKitEvent: (event, { kitEffectState }, combatant) => movePermutation(event, kitEffectState, combatant),
     moonsignBenediction: {
       getBaseDamageBonus: ({ attributes }) =>
         Math.min(attributes.attack * BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK, BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS),
     },
+    onKitEvent: (event, { kitEffectState }, combatant) => movePermutation(event, kitEffectState, combatant),
     skill: {
       // The shield is placed by a task, and reads the caster's ATK as it stands then. Its element is Electro, and it
       // Lasts the seconds gcsim gives it from its placement

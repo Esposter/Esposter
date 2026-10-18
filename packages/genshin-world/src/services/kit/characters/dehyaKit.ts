@@ -33,7 +33,7 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
       combatant.ascension < ASCENSION_4
     )
       return;
-    const { characterId, attributes } = combatant;
+    const { attributes, characterId } = combatant;
     const { kitEffectState, party } = context;
     if (getPartyMember(party, characterId).healthShare >= STALWART_AND_TRUE_THRESHOLD) return;
     if (
@@ -46,7 +46,7 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
     )
       return;
     changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * attributes.maxHealth);
-    for (const tick of Array.from({ length: STALWART_AND_TRUE_TICK_COUNT }, (_, index) => index + 1))
+    for (const tick of Array.from({ length: STALWART_AND_TRUE_TICK_COUNT }, (_value, index) => index + 1))
       scheduleKitTask(kitEffectState, characterId, tick * STALWART_AND_TRUE_TICK_INTERVAL_SECONDS, (tickContext) =>
         changeKitMemberHealth(
           tickContext,

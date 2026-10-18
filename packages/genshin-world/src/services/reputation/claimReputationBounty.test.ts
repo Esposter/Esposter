@@ -7,8 +7,8 @@ import { describe, expect, test } from "vitest";
 describe(claimReputationBounty, () => {
   const REWARD = { exp: 120, items: [{ count: 20_000, id: 202 }] };
   const CITY: ReputationCity = {
-    bountyTargets: [],
     bounties: [{ difficulty: "HUNTING_DIFFICULTY_EASY", id: 1, regionId: 101, reward: REWARD }],
+    bountyTargets: [],
     explores: [],
     huntingRegions: [],
     levels: [],

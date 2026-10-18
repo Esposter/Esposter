@@ -85,17 +85,15 @@ describe(createGamingKitBehaviour, () => {
     });
   });
 
-  describe("the Ascension 4 passive, Air of Prosperity", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Air of Prosperity, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getPassiveBonuses(4, 0.4)).toStrictEqual([{ amount: 0.2, attribute: Attribute.IncomingHealingBonus }]);
-    });
+    expect(getPassiveBonuses(4, 0.4)).toStrictEqual([{ amount: 0.2, attribute: Attribute.IncomingHealingBonus }]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Air of Prosperity, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getPassiveBonuses(3, 0.4)).toStrictEqual([]);
-    });
+    expect(getPassiveBonuses(3, 0.4)).toStrictEqual([]);
   });
 });

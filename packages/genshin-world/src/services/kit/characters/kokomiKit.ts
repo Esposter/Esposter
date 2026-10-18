@@ -121,7 +121,6 @@ export const createKokomiKitBehaviour = ({
     skill: createBakeKurage(garmentBakeKurageRipples),
   });
   return {
-    getPassiveBonuses,
     // Nereid's Ascension robes Kokomi in the garment as it is cast, and from Ascension 1 refreshes her Bake-Kurage
     burst: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
@@ -129,6 +128,7 @@ export const createKokomiKitBehaviour = ({
         enterKitStance(kitEffectState, combatant, ceremonialGarment, GARMENT_SECONDS, { isEndedOnSwap: true });
       },
     },
+    getPassiveBonuses,
     skill: createBakeKurage(bakeKurageRipples),
   };
 };

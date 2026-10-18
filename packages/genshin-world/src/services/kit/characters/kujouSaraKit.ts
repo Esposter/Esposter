@@ -14,9 +14,9 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // The Crowfeather Cover lasts 18 seconds, as gcsim v2.47.2 (MIT) sara/skill.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/skill.go

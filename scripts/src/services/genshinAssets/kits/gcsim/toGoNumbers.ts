@@ -1,4 +1,5 @@
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
+
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 
 // The numbers a Go value holds, a number as one and a slice of numbers as itself. Any other value holds none

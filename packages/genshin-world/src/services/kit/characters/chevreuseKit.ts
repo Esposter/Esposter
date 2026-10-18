@@ -22,7 +22,7 @@ const OVERCHARGED_BALL_STATUS_ID = "chevreuse-overcharged-ball";
 const ASCENSION_4 = 4;
 const VERTICAL_FORCE_ATK_PER_1000_MAX_HEALTH = 0.01;
 const VERTICAL_FORCE_ATK_MAX = 0.4;
-const VERTICAL_FORCE_ELEMENTS = new Set([Element.Pyro, Element.Electro]);
+const VERTICAL_FORCE_ELEMENTS = new Set([Element.Electro, Element.Pyro]);
 const VERTICAL_FORCE_SECONDS = 30;
 const VERTICAL_FORCE_SOURCE = "chevreuse-ascension-4";
 

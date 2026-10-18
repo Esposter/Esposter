@@ -101,15 +101,11 @@ describe(createArlecchinoKitBehaviour, () => {
   });
 
   // Her utility passive, The Balemoon Alone May Know, has no ascension phase: it holds from the start, below every phase
-  describe("the utility passive, The Balemoon Alone May Know", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createArlecchinoCombatant(0);
-      const { party } = createKitTestContext(combatant);
+  test("the utility passive, The Balemoon Alone May Know, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createArlecchinoCombatant(0);
+    const { party } = createKitTestContext(combatant);
 
-      expect(getBuffedCombatant(combatant, [], party).attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBe(
-        0.4,
-      );
-    });
+    expect(getBuffedCombatant(combatant, [], party).attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBe(0.4);
   });
 });

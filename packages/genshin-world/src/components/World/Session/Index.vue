@@ -11,10 +11,10 @@ import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
+import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
-import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
@@ -38,8 +38,8 @@ import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
-import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
+import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
@@ -94,11 +94,11 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
-import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
-import { OCULUS_MINIMAP_DISTANCE, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
-import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
+import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
+import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
+import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
@@ -681,9 +681,8 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
 // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
-// Mondstadt's Oculi, the only region's published so far, read as the world starts. Those not yet found are stood in, a
-// Touch within the touch radius finds one, and those near the camera within the minimap's distance are marked on it
-const OCULUS_REGION_ID = "mondstadt";
+// The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
+// Touch radius finds one, and those near the camera within the minimap's distance are marked on it
 const oculusPlaces = shallowRef<OculusPlace[]>([]);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
@@ -986,7 +985,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :is-touch
       :landmarks="unlockedLandmarks"
       :max-stamina="STAMINA_MAX"
-      :near-oculus-places="nearOculusPlaces"
+      :near-oculus-places
       :member="hudMember"
       :name-text-map="nameText"
       :party
@@ -1066,7 +1065,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Quests]>
         <QuestScreen
           :game-text
-          :quest-chapters="questChapters"
+          :quest-chapters
           :quest-distance-map
           :quest-progress-map
           :quests="questsInProgress"

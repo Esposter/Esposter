@@ -9,7 +9,7 @@ export const computeShopGoodLeft = (
   good: ShopGood,
   purchases: ShopPurchase[],
   now: Temporal.Instant,
-): undefined | number => {
+): number | undefined => {
   if (good.buyLimit === 0) return undefined;
   const refreshTime = computeShopRefreshTime(good.refresh, now);
   const boughtCount = purchases.filter(

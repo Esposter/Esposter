@@ -1,6 +1,7 @@
+import type { Element } from "#src/models/Element";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
-import type { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -29,7 +30,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
-      travelerElement: shallowRef<Element | undefined>(undefined),
+      travelerElement: shallowRef<Element>(),
       wildlifePlaces: [],
     });
 
@@ -49,7 +50,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
-      travelerElement: shallowRef<Element | undefined>(undefined),
+      travelerElement: shallowRef<Element>(),
       wildlifePlaces: [],
     });
     events.emit("chestOpened");

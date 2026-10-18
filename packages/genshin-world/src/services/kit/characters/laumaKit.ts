@@ -77,14 +77,6 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   };
   const pressBehaviour: KitActionBehaviour = { hits: [shredBehaviour], onStart: plantSanctuary };
   return {
-    moonsignBenediction: {
-      getBaseDamageBonus: (combatant) =>
-        Math.min(
-          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-            BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY,
-          BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
-        ),
-    },
     getStrikeDamageBonus: ({ attackTag, combatant }) =>
       combatant.ascension < ASCENSION_4 || attackTag !== AttackTag.ElementalSkill
         ? 0
@@ -93,6 +85,14 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
             CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY *
               combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
           ),
+    moonsignBenediction: {
+      getBaseDamageBonus: (combatant) =>
+        Math.min(
+          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
+            BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY,
+          BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
+        ),
+    },
     skill: pressBehaviour,
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [

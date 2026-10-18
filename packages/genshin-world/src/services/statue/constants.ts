@@ -16,3 +16,8 @@ export const OCULUS_MINIMAP_DISTANCE = 40;
 // The Oculus stand-in's radius and colour, until its model lands
 export const OCULUS_STAND_IN_COLOR = 0xffd27f;
 export const OCULUS_STAND_IN_RADIUS = 0.6;
+// Mondstadt's Oculi, the only region's published so far, the region the world reads its Oculus places for
+export const OCULUS_REGION_ID = "mondstadt";
+// Provisional: the minimap mark's share of the minimap's radius, until the owed minimap recording measures the Oculus's
+// Own mark
+export const OCULUS_MARK_RADIUS_SHARE = 0.04;

@@ -104,18 +104,16 @@ describe(createChevreuseKitBehaviour, () => {
     expect(Math.max(...shellHitmarks)).toBeGreaterThan(CHEVREUSE_KIT.elementalBurst.seconds);
   });
 
-  describe("the Ascension 4 passive, Vertical Force Coordination", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Vertical Force Coordination, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      // 1% for every 1,000 of 10,000 Max HP
-      expect(getAttackBuff(fireOverchargedBall(4))).toBeCloseTo(0.1, 5);
-    });
+    // 1% for every 1,000 of 10,000 Max HP
+    expect(getAttackBuff(fireOverchargedBall(4))).toBeCloseTo(0.1, 5);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Vertical Force Coordination, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getAttackBuff(fireOverchargedBall(3))).toBe(0);
-    });
+    expect(getAttackBuff(fireOverchargedBall(3))).toBe(0);
   });
 });

@@ -11,7 +11,7 @@ export interface KitHitBehaviour extends Partial<
   Pick<KitHit, "additiveBaseDamageBonus" | "enemyStatus" | "healAttackShare" | "onStrike">
 > {
   bubbleOmenId?: EnemyStatus["id"];
-  takesWielderElement?: boolean;
   healPartyChance?: KitPartyHeal["chance"];
   stackedHitStatusId?: KitStackedHit["statusId"];
+  takesWielderElement?: boolean;
 }

@@ -211,25 +211,23 @@ describe(createAyatoKitBehaviour, () => {
     expect(kitEffectState.effects.find((effect) => effect.kind === "status")?.secondsRemaining).toBe(0);
   });
 
-  describe("the Ascension 4 passive, Kamisato Art: Michiyuku Hagetsu", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createAyatoCombatant(4);
-      const context = createKitTestContext(combatant);
-      leaveField(context, combatant);
-      stepKitEffects(3, context);
+  test("the Ascension 4 passive, Kamisato Art: Michiyuku Hagetsu, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createAyatoCombatant(4);
+    const context = createKitTestContext(combatant);
+    leaveField(context, combatant);
+    stepKitEffects(3, context);
 
-      expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(6);
-    });
+    expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(6);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createAyatoCombatant(3);
-      const context = createKitTestContext(combatant);
-      leaveField(context, combatant);
-      stepKitEffects(3, context);
+  test("the Ascension 4 passive, Kamisato Art: Michiyuku Hagetsu, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createAyatoCombatant(3);
+    const context = createKitTestContext(combatant);
+    leaveField(context, combatant);
+    stepKitEffects(3, context);
 
-      expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(0);
-    });
+    expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(0);
   });
 });

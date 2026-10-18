@@ -153,65 +153,63 @@ describe(createFurinaKitBehaviour, () => {
     expect(teammateHydroBonus?.kind === "buff" ? teammateHydroBonus.amount : undefined).toBeCloseTo(20 * 0.0007);
   });
 
-  describe("the Ascension 1 passive, Endless Waltz", () => {
-    // Endless Waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character on the field is under four seconds old
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const furina = createFurinaCombatant({ ascension: 1 });
-      const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
-      const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
-      getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
-      const context = createKitTestContext(furina, {
-        characterIdCombatantMap: new Map([
-          [FURINA_CHARACTER_ID, furina],
-          [TEAMMATE_CHARACTER_ID, teammate],
-        ]),
-        party,
-      });
-      const overheal: KitHealthChangedEvent = {
+  // Endless Waltz heals every member 2% of Max HP every two seconds while another's heal past full HP on the character on the field is under four seconds old
+  test("the Ascension 1 passive, Endless Waltz, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const furina = createFurinaCombatant({ ascension: 1 });
+    const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
+    const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
+    getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
+    const context = createKitTestContext(furina, {
+      characterIdCombatantMap: new Map([
+        [FURINA_CHARACTER_ID, furina],
+        [TEAMMATE_CHARACTER_ID, teammate],
+      ]),
+      party,
+    });
+    const overheal: KitHealthChangedEvent = {
+      characterId: FURINA_CHARACTER_ID,
+      healthShare: 0,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare: 0.1,
+      sourceCharacterId: TEAMMATE_CHARACTER_ID,
+    };
+    FURINA_KIT.onKitEvent?.(overheal, context, furina);
+    stepFrames(60, context);
+    // A second overheal a second in keeps the regeneration's ticks at two and four seconds, and none at six
+    FURINA_KIT.onKitEvent?.(overheal, context, furina);
+    stepFrames(360, context);
+
+    expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBeCloseTo(0.54);
+  });
+
+  test("the Ascension 1 passive, Endless Waltz, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const furina = createFurinaCombatant({ ascension: 0 });
+    const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
+    const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
+    getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
+    const context = createKitTestContext(furina, {
+      characterIdCombatantMap: new Map([
+        [FURINA_CHARACTER_ID, furina],
+        [TEAMMATE_CHARACTER_ID, teammate],
+      ]),
+      party,
+    });
+    FURINA_KIT.onKitEvent?.(
+      {
         characterId: FURINA_CHARACTER_ID,
         healthShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0.1,
         sourceCharacterId: TEAMMATE_CHARACTER_ID,
-      };
-      FURINA_KIT.onKitEvent?.(overheal, context, furina);
-      stepFrames(60, context);
-      // A second overheal a second in keeps the regeneration's ticks at two and four seconds, and none at six
-      FURINA_KIT.onKitEvent?.(overheal, context, furina);
-      stepFrames(360, context);
+      },
+      context,
+      furina,
+    );
+    stepFrames(360, context);
 
-      expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBeCloseTo(0.54);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const furina = createFurinaCombatant({ ascension: 0 });
-      const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
-      const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
-      getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
-      const context = createKitTestContext(furina, {
-        characterIdCombatantMap: new Map([
-          [FURINA_CHARACTER_ID, furina],
-          [TEAMMATE_CHARACTER_ID, teammate],
-        ]),
-        party,
-      });
-      FURINA_KIT.onKitEvent?.(
-        {
-          characterId: FURINA_CHARACTER_ID,
-          healthShare: 0,
-          kind: KitEventKind.HealthChanged,
-          overflowHealthShare: 0.1,
-          sourceCharacterId: TEAMMATE_CHARACTER_ID,
-        },
-        context,
-        furina,
-      );
-      stepFrames(360, context);
-
-      expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBe(0.5);
-    });
+    expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBe(0.5);
   });
 
   test("a strike that lands opens the Arkhe's hit as a normal attack, once within each Arkhe's cooldown", () => {
@@ -269,19 +267,17 @@ describe(createFurinaKitBehaviour, () => {
     return singer.tickIntervalSeconds;
   };
 
-  describe("the Ascension 4 passive, Unheard Confession", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Unheard Confession, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getSalonAttackDamageBonus(4)).toBeCloseTo(0.14, 5);
-      expect(getSingerInterval(4)).toBeLessThan(getSingerInterval(3));
-    });
+    expect(getSalonAttackDamageBonus(4)).toBeCloseTo(0.14, 5);
+    expect(getSingerInterval(4)).toBeLessThan(getSingerInterval(3));
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Unheard Confession, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getSalonAttackDamageBonus(3)).toBe(0);
-      expect(getSingerInterval(3)).toBe(getSingerInterval(0));
-    });
+    expect(getSalonAttackDamageBonus(3)).toBe(0);
+    expect(getSingerInterval(3)).toBe(getSingerInterval(0));
   });
 });

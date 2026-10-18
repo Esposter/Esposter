@@ -2,8 +2,8 @@ import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { Element } from "#src/models/Element";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -73,17 +73,17 @@ export const createKiraraKitBehaviour = ({
     },
   };
   return {
+    // The Cardamoms are a summon cast at her body
+    burst: {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms]),
+    },
     getStrikeDamageBonus: ({ attackTag, combatant }) => {
       if (combatant.ascension < ASCENSION_4) return 0;
       const healthUnits = combatant.attributes.maxHealth / PUPILLARY_VARIANCE_HEALTH_UNIT;
       if (attackTag === AttackTag.ElementalSkill) return healthUnits * PUPILLARY_VARIANCE_SKILL_DAMAGE_BONUS;
       if (attackTag === AttackTag.ElementalBurst) return healthUnits * PUPILLARY_VARIANCE_BURST_DAMAGE_BONUS;
       return 0;
-    },
-    // The Cardamoms are a summon cast at her body
-    burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms]),
     },
     skill: skillStart,
     skillHolds: kit.elementalSkillHolds?.map(() => skillStart),

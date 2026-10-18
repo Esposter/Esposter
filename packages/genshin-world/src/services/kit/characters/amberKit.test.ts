@@ -70,34 +70,32 @@ describe("amber kit", () => {
     expect(kitEffectState.effects).toStrictEqual([]);
   });
 
-  describe("the Ascension 1 passive, Every Arrow Finds Its Target", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const baseCriticalRate = createAmberCombatant().attributes.attributeTotalMap[Attribute.CriticalRate];
-      const baseArrows = strikeFieryRain(0);
-      const arrows = strikeFieryRain(1);
+  test("the Ascension 1 passive, Every Arrow Finds Its Target, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const baseCriticalRate = createAmberCombatant().attributes.attributeTotalMap[Attribute.CriticalRate];
+    const baseArrows = strikeFieryRain(0);
+    const arrows = strikeFieryRain(1);
 
-      expect(arrows.map(({ hit }) => hit.hitArea.radius)).toStrictEqual(
-        baseArrows.map(({ hit }) => hit.hitArea.radius * 1.3),
-      );
-      expect(
-        arrows.every(
-          ({ combatant }) => combatant.attributes.attributeTotalMap[Attribute.CriticalRate] === baseCriticalRate + 0.1,
-        ),
-      ).toBe(true);
-    });
+    expect(arrows.map(({ hit }) => hit.hitArea.radius)).toStrictEqual(
+      baseArrows.map(({ hit }) => hit.hitArea.radius * 1.3),
+    );
+    expect(
+      arrows.every(
+        ({ combatant }) => combatant.attributes.attributeTotalMap[Attribute.CriticalRate] === baseCriticalRate + 0.1,
+      ),
+    ).toBe(true);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const baseCriticalRate = createAmberCombatant().attributes.attributeTotalMap[Attribute.CriticalRate];
-      const arrows = strikeFieryRain(0);
+  test("the Ascension 1 passive, Every Arrow Finds Its Target, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const baseCriticalRate = createAmberCombatant().attributes.attributeTotalMap[Attribute.CriticalRate];
+    const arrows = strikeFieryRain(0);
 
-      expect(arrows).toHaveLength(18);
-      expect(
-        arrows.every(
-          ({ combatant }) => combatant.attributes.attributeTotalMap[Attribute.CriticalRate] === baseCriticalRate,
-        ),
-      ).toBe(true);
-    });
+    expect(arrows).toHaveLength(18);
+    expect(
+      arrows.every(
+        ({ combatant }) => combatant.attributes.attributeTotalMap[Attribute.CriticalRate] === baseCriticalRate,
+      ),
+    ).toBe(true);
   });
 });

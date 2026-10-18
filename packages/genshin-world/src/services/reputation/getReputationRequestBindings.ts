@@ -1,5 +1,5 @@
-import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
+import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 
 // The quest and reward each Reputation request binds, one per quest: a quest the groups of several levels name is bound
 // By its first row, so its reward pays once when the quest finishes

@@ -1,8 +1,8 @@
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
-import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
+import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
 import { describe, expect, test } from "vitest";
 
 describe(computeShopGoodLeft, () => {

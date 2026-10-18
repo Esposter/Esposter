@@ -103,6 +103,6 @@ export const buildMondstadtReputation = (): Record<string, unknown> => {
       ),
     }));
   return {
-    [`${GameDataset.Reputation}/mondstadt`]: { bountyTargets, bounties, explores, huntingRegions, levels, requests },
+    [`${GameDataset.Reputation}/mondstadt`]: { bounties, bountyTargets, explores, huntingRegions, levels, requests },
   };
 };

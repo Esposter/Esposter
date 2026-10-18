@@ -302,43 +302,39 @@ describe(createChongyunKitBehaviour, () => {
     expect([getDamageBonus(1), getDamageBonus(0.5)]).toStrictEqual([0, 0.15]);
   });
 
-  describe("the Ascension 1 passive, Steady Breathing", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createChongyunCombatant(1);
+  test("the Ascension 1 passive, Steady Breathing, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createChongyunCombatant(1);
 
-      expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
-        {
-          characterId: CHONGYUN_CHARACTER_ID,
-          element: Element.Cryo,
-          kind: "infusion",
-          normalAttackSpeedBonus: 0.08,
-          secondsRemaining: 2,
-        },
-      ]);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const combatant = createChongyunCombatant(0);
-
-      expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
-        { characterId: CHONGYUN_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 2 },
-      ]);
-    });
+    expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
+      {
+        characterId: CHONGYUN_CHARACTER_ID,
+        element: Element.Cryo,
+        kind: "infusion",
+        normalAttackSpeedBonus: 0.08,
+        secondsRemaining: 2,
+      },
+    ]);
   });
 
-  describe("the Ascension 4 passive, Rimechaser Blade", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Steady Breathing, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createChongyunCombatant(0);
 
-      expect(endFieldOf(createChongyunCombatant(4)).filter((effect) => effect.kind === "summon")).toHaveLength(1);
-    });
+    expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
+      { characterId: CHONGYUN_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 2 },
+    ]);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Rimechaser Blade, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(endFieldOf(createChongyunCombatant(3)).filter((effect) => effect.kind === "summon")).toHaveLength(0);
-    });
+    expect(endFieldOf(createChongyunCombatant(4)).filter((effect) => effect.kind === "summon")).toHaveLength(1);
+  });
+
+  test("the Ascension 4 passive, Rimechaser Blade, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(endFieldOf(createChongyunCombatant(3)).filter((effect) => effect.kind === "summon")).toHaveLength(0);
   });
 });

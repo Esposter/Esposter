@@ -139,36 +139,32 @@ describe(createCynoKitBehaviour, () => {
     }).toStrictEqual({ endseer: true, nextTickFrames: 328 });
   });
 
-  describe("the Ascension 1 passive, Featherfall Judgment", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 1 })))?.id).toBe(
-        "cyno-judication",
-      );
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 0 })))).toBeUndefined();
-    });
+  test("the Ascension 1 passive, Featherfall Judgment, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 1 })))?.id).toBe(
+      "cyno-judication",
+    );
   });
 
-  describe("the Ascension 4 passive, Authority Over the Nine Bows", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
-      const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+  test("the Ascension 1 passive, Featherfall Judgment, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 0 })))).toBeUndefined();
+  });
 
-      expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
-    });
+  test("the Ascension 4 passive, Authority Over the Nine Bows, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
+    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 3 })));
-      const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+    expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
+  });
 
-      expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 3 }))).toBe(0);
-    });
+  test("the Ascension 4 passive, Authority Over the Nine Bows, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 3 })));
+    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+
+    expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 3 }))).toBe(0);
   });
 
   test("constellation 2 raises Electro DMG by 10% a stack for each normal attack's strike, once every 0.1 seconds", () => {

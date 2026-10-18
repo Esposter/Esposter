@@ -100,31 +100,27 @@ describe(createEulaKitBehaviour, () => {
     expect(explosion.hits[0]?.hitmarkSeconds).toBeCloseTo(35 / 60);
   });
 
-  describe("the Ascension 1 passive, Roiling Rime", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Roiling Rime, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castHold(1, 2).effects.filter((effect) => effect.kind === "summon")).toHaveLength(2);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-
-      expect(castHold(0, 2).effects.filter((effect) => effect.kind === "summon")).toHaveLength(1);
-    });
+    expect(castHold(1, 2).effects.filter((effect) => effect.kind === "summon")).toHaveLength(2);
   });
 
-  describe("the Ascension 4 passive, Wellspring of War-Lust", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Roiling Rime, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castBurstStacks(4, 1)).toBe(2);
-    });
+    expect(castHold(0, 2).effects.filter((effect) => effect.kind === "summon")).toHaveLength(1);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 4 passive, Wellspring of War-Lust, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(castBurstStacks(3, 1)).toBe(1);
-    });
+    expect(castBurstStacks(4, 1)).toBe(2);
+  });
+
+  test("the Ascension 4 passive, Wellspring of War-Lust, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castBurstStacks(3, 1)).toBe(1);
   });
 });

@@ -85,9 +85,9 @@ describe(createLynetteKitBehaviour, () => {
     LYNETTE_KIT.elementalBurst.onStart?.(
       createKitTestContext(lynette, {
         characterIdCombatantMap: new Map([
+          [hydro.characterId, hydro],
           [LYNETTE_CHARACTER_ID, lynette],
           [pyro.characterId, pyro],
-          [hydro.characterId, hydro],
         ]),
         kitEffectState,
         party: createParty([LYNETTE_CHARACTER_ID, pyro.characterId, hydro.characterId]),

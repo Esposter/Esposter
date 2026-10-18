@@ -6,8 +6,8 @@ import { describe, expect, test } from "vitest";
 describe(offerReputationRequest, () => {
   const REWARD = { exp: 80, items: [{ count: 20_000, id: 202 }] };
   const CITY: ReputationCity = {
-    bountyTargets: [],
     bounties: [],
+    bountyTargets: [],
     explores: [],
     huntingRegions: [],
     levels: [

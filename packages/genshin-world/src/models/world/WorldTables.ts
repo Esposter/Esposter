@@ -43,6 +43,8 @@ export interface WorldTables {
   nameText: Readonly<Record<string, string>>;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
+  // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
+  shopGoodMap: ReadonlyMap<number, ShopGood[]>;
   // The kits of the team the world starts with, by character id, so its first frame has each member's combatant
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from
@@ -58,6 +60,4 @@ export interface WorldTables {
   windriseData: WindriseData;
   // The wish schedule's event banners, each offered by the wish screen only inside its window
   wishSchedule: WishScheduleEvent[];
-  // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
-  shopGoodMap: ReadonlyMap<number, ShopGood[]>;
 }

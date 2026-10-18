@@ -96,7 +96,7 @@ const buy = () => {
         min="1"
         type="range"
         :value="pickedCount"
-        @input="setCount"
+        @input="(event) => setCount(event)"
       />
       <p class="amount-value">{{ pickedCount }}</p>
       <button class="cancel" :aria-label="closeLabel" type="button" @click="goodId = 0">
@@ -104,7 +104,7 @@ const buy = () => {
           <path d="M6 6 18 18M18 6 6 18" />
         </svg>
       </button>
-      <button class="buy" :disabled="countMaximum < 1" type="button" @click="buy">{{ buyLabel }}</button>
+      <button class="buy" :disabled="countMaximum < 1" type="button" @click="buy()">{{ buyLabel }}</button>
     </div>
   </div>
 </template>

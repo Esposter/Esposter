@@ -2,6 +2,7 @@
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
+
 import { OCULUS_STAND_IN_COLOR, OCULUS_STAND_IN_RADIUS } from "#src/services/statue/constants";
 import { watchImmediate } from "@vueuse/core";
 import { createInstancedMesh, createToonMaterial } from "genshin-engine";

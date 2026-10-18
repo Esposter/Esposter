@@ -56,7 +56,7 @@ const offeredGoods = computed(() =>
 );
 const pickedOffer = computed(() => offeredGoods.value.find(({ good }) => good.goodsId === goodId.value));
 const balances = computed<CurrencyCount[]>(() =>
-  [...new Set(offeredGoods.value.map(({ priceCurrency }) => priceCurrency))].map((currency) => ({
+  Array.from(new Set(offeredGoods.value.map(({ priceCurrency }) => priceCurrency)), (currency) => ({
     id: currency,
     name: gameText[takeOne(CurrencyGameTextKeyMap, currency)],
     quantity: wallet.value[currency],
@@ -127,11 +127,11 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :buy-label="gameText[GameTextKey.ShopPurchase]"
       :close-label="gameText[GameTextKey.Back]"
       :count-label="gameText[GameTextKey.CraftingAmount]"
-      :count-maximum="countMaximum"
+      :count-maximum
       :goods="goodCells"
       :tabs="[]"
       :title="gameText[GameTextKey.Shop]"
-      @buy="buy"
+      @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
     />
   </GameScreen>

@@ -10,6 +10,7 @@ import type { GameText } from "genshin-text";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
 import { MAP_GROUND, MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
+import { OCULUS_MARK_RADIUS_SHARE } from "#src/services/statue/constants";
 import { playOculusSound } from "#src/services/statue/playOculusSound";
 import { GameRect } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -33,8 +34,6 @@ interface Props {
 
 const { camera, catalogue, gameText, interfaceRects, landmarks, nearOculusPlaces, parent } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
-// Provisional: the mark's radius, until the owed minimap recording measures the Oculus's own mark
-const OCULUS_MARK_RADIUS = MINIMAP_RADIUS * 0.04;
 // The chime sounds as an Oculus comes into range, not on every frame it stays in range
 let nearOculusIds = new Set<string>();
 watch(
@@ -64,7 +63,7 @@ watch(
             class="oculus"
             :cx="position.x"
             :cy="position.z"
-            :r="OCULUS_MARK_RADIUS"
+            :r="MINIMAP_RADIUS * OCULUS_MARK_RADIUS_SHARE"
           />
         </g>
       </svg>

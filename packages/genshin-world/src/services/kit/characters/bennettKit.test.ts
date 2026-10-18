@@ -284,45 +284,41 @@ describe("bennett kit", () => {
     );
   });
 
-  describe("the Ascension 1 passive, Rekindle", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("the Ascension 1 passive, Rekindle, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(
-        releaseSkill(0.1, { ascension: 1, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
-      ).toBeCloseTo(4, 5);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-
-      expect(
-        releaseSkill(0.1, { ascension: 0, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
-      ).toBeCloseTo(5, 5);
-    });
+    expect(
+      releaseSkill(0.1, { ascension: 1, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
+    ).toBeCloseTo(4, 5);
   });
 
-  describe("the Ascension 4 passive, Fearnaught", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
-      const body = { x: 0, z: 0 };
-      const field = createFantasticVoyageField(body);
+  test("the Ascension 1 passive, Rekindle, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(releaseSkill(0.1, { ascension: 4, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
-        2,
-        5,
-      );
-    });
+    expect(
+      releaseSkill(0.1, { ascension: 0, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
+    ).toBeCloseTo(5, 5);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-      const body = { x: 0, z: 0 };
-      const field = createFantasticVoyageField(body);
+  test("the Ascension 4 passive, Fearnaught, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const body = { x: 0, z: 0 };
+    const field = createFantasticVoyageField(body);
 
-      expect(releaseSkill(0.1, { ascension: 3, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
-        4,
-        5,
-      );
-    });
+    expect(releaseSkill(0.1, { ascension: 4, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
+      2,
+      5,
+    );
+  });
+
+  test("the Ascension 4 passive, Fearnaught, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const body = { x: 0, z: 0 };
+    const field = createFantasticVoyageField(body);
+
+    expect(releaseSkill(0.1, { ascension: 3, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
+      4,
+      5,
+    );
   });
 });
