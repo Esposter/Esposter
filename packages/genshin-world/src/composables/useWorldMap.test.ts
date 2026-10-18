@@ -1,4 +1,5 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
+import type { Quest } from "#src/models/quest/Quest";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { RegionData } from "#src/models/world/RegionData";
@@ -9,6 +10,8 @@ import { useWorldMap } from "#src/composables/useWorldMap";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { QuestKind } from "#src/models/quest/QuestKind";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMondstadtExplorationAreas } from "#src/services/exploration/readMondstadtExplorationAreas";
 import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -54,6 +57,9 @@ describe(useWorldMap, () => {
   const THRESHOLD = 40;
   const REWARD_EXP = 200;
   const REWARD_MORA = 300;
+  const REQUEST_QUEST_ID = 901;
+  const REQUEST_EXP = 80;
+  const REQUEST_MORA = 500;
   const NEXT_LEVEL_EXP = 1000;
   const TRANS_POINT_ID = 9;
   const TRANS_POINT_ADVENTURE_EXP = 20;
@@ -104,6 +110,7 @@ describe(useWorldMap, () => {
     },
   ];
   const reputationCity: ReputationCity = {
+    bountyTargets: [],
     bounties: [],
     explores: [
       {
@@ -112,6 +119,7 @@ describe(useWorldMap, () => {
         reward: { exp: REWARD_EXP, items: [{ count: REWARD_MORA, id: MORA_ITEM_ID }] },
       },
     ],
+    huntingRegions: [],
     levels: [
       {
         functionIds: [],
@@ -122,20 +130,30 @@ describe(useWorldMap, () => {
         reward: { exp: 0, items: [] },
       },
     ],
-    requests: [],
+    requests: [
+      {
+        groupId: 1,
+        questId: REQUEST_QUEST_ID,
+        requestId: 1001,
+        reward: { exp: REQUEST_EXP, items: [{ count: REQUEST_MORA, id: MORA_ITEM_ID }] },
+        weight: 1,
+      },
+    ],
   };
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
   const createWorldMap = (unlockedLandmarkIds: ReadonlySet<string> = new Set<string>()) => {
+    const events = createWorldEvents();
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
     const wallet = ref(EMPTY_WALLET);
     return {
+      events,
       gainWorldAdventureExp,
       reputation,
       wallet,
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
-        events: createWorldEvents(),
+        events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
         regionDataBaseUrl: "region-data",
@@ -162,6 +180,29 @@ describe(useWorldMap, () => {
 
     expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+  });
+
+  test("a finished request pays its reward once", async () => {
+    expect.hasAssertions();
+
+    const { events, reputation, wallet } = createWorldMap();
+    await waitForReads();
+    const quest: Quest = {
+      descriptionTextId: "description",
+      id: String(REQUEST_QUEST_ID),
+      kind: QuestKind.World,
+      offerTalkIds: [],
+      steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetId: "1" }], textId: "text" }],
+      talks: [],
+      titleTextId: "title",
+    };
+    const finishedProgress = { objectiveCounts: [], stepIndex: 1 };
+
+    events.emit("finishQuest", quest, { objectiveCounts: [0], stepIndex: 0 }, finishedProgress);
+    events.emit("finishQuest", quest, finishedProgress, finishedProgress);
+
+    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
   });
 
   test("an unlock before the reads settle pays its threshold once", async () => {
