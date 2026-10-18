@@ -13,9 +13,11 @@ export const runGcgEndPhase = (duel: GcgDuel): void => {
     for (const zoneCard of listGcgFieldCards(side, undefined)) {
       const module = GcgCardIdModuleMap.get(zoneCard.cardId);
       if (module?.endPhaseStandbyPiercing) applyGcgStandbyPiercing(duel, sideIndex, module.endPhaseStandbyPiercing);
-      const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
-      const damage = module?.onEndPhase?.({ characterIndex, duel, sideIndex }, zoneCard);
-      if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
+      const context = { characterIndex: findGcgZoneCardOwner(side.characters, zoneCard), duel, sideIndex };
+      const damage = module?.onEndPhase?.(context, zoneCard);
+      // A card's End Phase DMG bears on its own damage modifier, which is how Talisman Spirit's +1 reaches its own damage
+      if (damage)
+        applyGcgDamage(duel, sideIndex, module?.modifyDamageDealt?.(context, damage, zoneCard) ?? damage, duel.rule);
     }
   for (const side of duel.sides)
     for (const zoneCard of listGcgFieldCards(side, undefined))

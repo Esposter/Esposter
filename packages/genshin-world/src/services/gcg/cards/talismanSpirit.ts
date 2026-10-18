@@ -8,7 +8,7 @@ const TALISMAN_SPIRIT_DAMAGE = 1;
 const TALISMAN_SPIRIT_BONUS = 1;
 
 // Talisman Spirit, the summon Divine Maiden's Deliverance creates: 1 Cryo DMG at each End Phase, for two usages. While on the
-// field, the Cryo and Physical DMG its side deals is 1 more. The End Phase DMG is not raised, as no skill deals it
+// field, the Cryo and Physical DMG its side deals is 1 more, its own End Phase DMG included
 export const talismanSpirit: GcgCardModule = {
   initialUsages: 2,
   modifyDamageDealt: (_context, damage) =>
