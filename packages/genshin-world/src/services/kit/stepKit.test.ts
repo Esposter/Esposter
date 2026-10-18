@@ -38,6 +38,8 @@ describe(stepKit, () => {
   };
 
   const STEP_SECONDS = 0.1;
+  // The steps the first strike takes to end, counting the one that starts it out
+  const STRIKE_STEP_COUNT = Math.ceil(TRAVELER_KIT.normalAttacks[0].seconds / STEP_SECONDS);
   const IDLE_INPUT: KitInput = {
     height: 0,
     isAttackHeld: false,
@@ -76,9 +78,8 @@ describe(stepKit, () => {
     const { step } = createFixture();
 
     expect(step({ isAttackPressed: true })).toBe(TRAVELER_KIT.normalAttacks[0]);
-    step();
-    step();
-    step();
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step();
+
     expect(step()).toBeUndefined();
     expect(step({ isAttackPressed: true })).toBe(TRAVELER_KIT.normalAttacks[1]);
   });
@@ -103,7 +104,7 @@ describe(stepKit, () => {
     step({ isAttackPressed: true });
     step();
     step({ isAttackPressed: true });
-    step();
+    for (let index = 0; index < STRIKE_STEP_COUNT - 3; index++) step();
 
     expect(step()).toBe(TRAVELER_KIT.normalAttacks[1]);
   });
@@ -115,9 +116,7 @@ describe(stepKit, () => {
     const heldInput = { isAttackHeld: true };
 
     step({ isAttackHeld: true, isAttackPressed: true });
-    step(heldInput);
-    step(heldInput);
-    step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
 
     expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
     expect(stamina.value).toBe(80);
@@ -125,7 +124,7 @@ describe(stepKit, () => {
     const lowStaminaFixture = createFixture();
     lowStaminaFixture.stamina.value = 19;
     lowStaminaFixture.step({ isAttackHeld: true, isAttackPressed: true });
-    for (let index = 0; index < 3; index++) lowStaminaFixture.step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) lowStaminaFixture.step(heldInput);
 
     expect(lowStaminaFixture.step(heldInput)).toBeUndefined();
     expect(lowStaminaFixture.stamina.value).toBe(19);
@@ -140,9 +139,7 @@ describe(stepKit, () => {
     const heldInput = { isAttackHeld: true };
 
     step({ isAttackHeld: true, isAttackPressed: true });
-    step(heldInput);
-    step(heldInput);
-    step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
 
     expect(step(heldInput)).toBe(variant);
   });
@@ -158,9 +155,7 @@ describe(stepKit, () => {
     const heldInput = { isAttackHeld: true };
 
     step({ isAttackHeld: true, isAttackPressed: true });
-    step(heldInput);
-    step(heldInput);
-    step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
 
     expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
   });
@@ -177,7 +172,7 @@ describe(stepKit, () => {
     const step = (input: Partial<KitInput>) =>
       stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
-    for (let index = 0; index < 3; index++) step({ isAttackHeld: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
     expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
     expect(stamina.value).toBe(0);
