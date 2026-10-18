@@ -22,6 +22,7 @@ import { liuSu } from "#src/services/gcg/cards/liuSu";
 import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
 import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
 import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
+import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { ICY_QUILL_ID, icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { rana } from "#src/services/gcg/cards/rana";
 import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
@@ -263,6 +264,24 @@ describe("icy Quill", () => {
     });
     expect(zoneCard.usages).toBe(1);
   });
+  test("a Swirl's spread takes Icy Quill's 1 more once for the whole Swirl, spending one usage, not one per hit", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      { ...createSideState([createCharacterState(SHENHE_ID)]), onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)] },
+      createSideState([
+        { ...createCharacterState(1_202), aura: Element.Cryo },
+        createCharacterState(1_203),
+        createCharacterState(1_204),
+      ]),
+    ]);
+
+    applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
+    expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
+    expect(takeOne(takeOne(duel.sides, 1).characters, 2).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
+    expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
+  });
+
   test("a Swirl's spread is Cryo DMG too, so it takes Icy Quill's 1 more and spends a usage", () => {
     expect.hasAssertions();
 
@@ -312,6 +331,24 @@ describe("talisman Spirit", () => {
     expect(zoneCard.usages).toBe(1);
     expect(talismanSpirit.onEndPhase?.(context, zoneCard)).toStrictEqual({ damageType: Element.Cryo, value: 1 });
     expect(zoneCard.usages).toBe(0);
+  });
+
+  test("a Frostflake Seki no To on its side deals 3 Cryo at End Phase, raised by its 1 more", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      {
+        ...createSideState([]),
+        summons: [
+          createGcgZoneCard(FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo),
+          createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit),
+        ],
+      },
+      createSideState([createCharacterState(1_202)]),
+    ]);
+
+    runGcgEndPhase(duel);
+    expect(takeOne(takeOne(duel.sides, 1).characters, 0).hp).toBe(10 - 2 - 3);
   });
 
   test("its End Phase DMG is raised by its own 1 more Cryo DMG", () => {
