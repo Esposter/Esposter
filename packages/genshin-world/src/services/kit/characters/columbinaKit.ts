@@ -301,7 +301,8 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 // Columbina's behaviour: her skill's DoT, a field that follows her body and ticks its hit round its centre from the press's
 // Hit for the table's duration, which a press while it runs restarts. Its tick reaches further while her team is at Ascendant
 // Gleam. Her Moonsign Benediction counts her toward that level, and its Base DMG bonus is the curve of her max HP.
-// That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each tick, and its CRIT Rate is the stacks' share.
+// That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each Gravity Ripple, not each tick,
+// And its CRIT Rate is the stacks' share.
 // The burst's field is not built yet
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
 // The Gravity Ripple's hit is not built, as the record holds none of its multipliers or hitmarks, so the ripple runs its
