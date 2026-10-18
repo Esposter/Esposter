@@ -1,4 +1,7 @@
-import { GCSIM_FIXTURE_DIRECTORY } from "#src/services/genshinAssets/kits/gcsim/constants.test";
+import {
+  GCSIM_FIXTURE_DIRECTORY,
+  GCSIM_ODETTE_FIXTURE_DIRECTORY,
+} from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readFileSync } from "node:fs";
@@ -116,6 +119,7 @@ describe(readGcsimAttacks, () => {
       { element: "attributes.Electro", line: 8, talentVariable: "burstFinal", variableName: "ai" },
     ]);
   });
+
   test("reads a struct copy as its source as of the copy, with the sets it gets after, its site the copy's own line", () => {
     expect.hasAssertions();
 
@@ -142,6 +146,25 @@ func (c *char) Burst() {
       { line: 7, siteLine: 4, talentVariable: "burstBloom", variableName: "ai" },
       { line: 9, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
       { line: 10, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
+    ]);
+  });
+
+  test("tags each Mult set in an if else's branches with its branch and the chain's last line, the literal and the call after untagged", () => {
+    expect.hasAssertions();
+
+    const name = "skill.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ branch, line, talentVariable }) => ({
+        branch,
+        line,
+        talentVariable,
+      })),
+    ).toStrictEqual([
+      { branch: undefined, line: 12, talentVariable: undefined },
+      { branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
+      { branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
     ]);
   });
 });
