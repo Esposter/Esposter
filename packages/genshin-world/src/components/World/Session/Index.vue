@@ -66,7 +66,7 @@ import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
-import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
+import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -356,8 +356,8 @@ const {
   events,
   gameDataBaseUrl,
   onPartyRevived: () => {
-    const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
-    if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
+    const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
+    if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
   },
   placeWorldDrops,
   savedCharacters: savedState.characters,
