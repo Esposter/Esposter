@@ -9,7 +9,7 @@
 
 ## 3. Locks by camps
 
-- [ ] 3.1 Lock each chest by the enemy camp whose reach it stands in, opening it once the camp is cleared. Verify: tests named after the scenarios 'a chest stays locked while a camp within its reach stands' and 'a chest opens once the camp within its reach is cleared', seen failing first. Blocked: the reach is unset, since the wiki gives no distance and the camp-lock recording is not found, so no lock is set yet. The rule is built as `checkIsChestLocked` over a camp's points and cleared state; the camps' cleared state is held by the Enemies component, outside this change's paths.
+- [x] 3.1 Lock each chest by the enemy camp whose reach it stands in, opening it once the camp is cleared. Verify: tests named after the scenarios 'a chest stays locked while a camp within its reach stands' and 'a chest opens once the camp within its reach is cleared', seen failing first. Built over the provisional twenty-metre reach `CHEST_LOCK_REACH`, which waits on `chest-camp-lock.mkv`.
 
 ## 4. Digging and seals
 
@@ -18,7 +18,7 @@
 
 ## 5. Locks by puzzles
 
-- [ ] 5.1 Lock each chest by the puzzle within its reach, once puzzles stand. Verify: a test named after the scenario 'a chest stays locked while a puzzle within its reach is unsolved', seen failing first. Blocked: the same unset reach as 3.1, so no puzzle lock is set yet. The rule is built as `checkIsChestLocked`, which takes a puzzle's point and solved state as it takes a camp's.
+- [x] 5.1 Lock each chest by the puzzle within its reach, once puzzles stand. Verify: a test named after the scenario 'a chest stays locked while a puzzle within its reach is unsolved', seen failing first. Built over the same provisional reach, with the time trials' solved state as the puzzles' done state.
 
 ## 6. Achievements and exploration
 

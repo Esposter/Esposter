@@ -93,4 +93,47 @@ describe(computeChestInteractables, () => {
       ),
     ).toStrictEqual([]);
   });
+  const NEAR_CAMP = { x: 3, z: 2 };
+  const FAR_CAMP = { x: 1000, z: 2 };
+  const chestPlaces = [{ id: "common", kind: ChestKind.Common, position }];
+
+  test("a chest stays locked while a camp within its reach stands", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(chestPlaces, NO_IDS, NO_IDS, gameText, getGroundHeight, [
+        { isDone: false, positions: [NEAR_CAMP] },
+      ]),
+    ).toStrictEqual([]);
+  });
+
+  test("a chest opens once the camp within its reach is cleared", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(chestPlaces, NO_IDS, NO_IDS, gameText, getGroundHeight, [
+        { isDone: true, positions: [NEAR_CAMP] },
+      ]),
+    ).toStrictEqual([{ id: "common", kind: InteractionKind.Open, name: "Common Chest", position: groundPosition }]);
+  });
+
+  test("a chest stays locked while a puzzle within its reach is unsolved", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(chestPlaces, NO_IDS, NO_IDS, gameText, getGroundHeight, [
+        { isDone: false, positions: [NEAR_CAMP] },
+      ]),
+    ).toStrictEqual([]);
+  });
+
+  test("a chest stays open while a camp beyond its reach stands", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(chestPlaces, NO_IDS, NO_IDS, gameText, getGroundHeight, [
+        { isDone: false, positions: [FAR_CAMP] },
+      ]),
+    ).toStrictEqual([{ id: "common", kind: InteractionKind.Open, name: "Common Chest", position: groundPosition }]);
+  });
 });

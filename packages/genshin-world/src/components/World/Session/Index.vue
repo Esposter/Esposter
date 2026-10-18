@@ -5,6 +5,7 @@ import type { Constellation } from "#src/models/character/Constellation";
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -409,14 +410,27 @@ const {
 });
 // The Elemental Monuments of Mondstadt, the Seelies and the Time Trial Challenges, each lit, led or started by the player,
 // And each settled or solved where the save names it, with the chests they spawn
-const { puzzleChestPlaces, puzzleSeelies, settledSeelieIds, solvedPuzzleIds, stepWorldPuzzles, strikeWorldPuzzles } =
-  useWorldPuzzles({
-    monumentPlaces,
-    savedSettledSeelieIds: savedState.settledSeelieIds,
-    savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
-    seelies,
-    timeTrialPlaces,
-  });
+const {
+  puzzleChestPlaces,
+  puzzleSeelies,
+  settledSeelieIds,
+  solvedPuzzleIds,
+  stepWorldPuzzles,
+  strikeWorldPuzzles,
+  timeTrialMarkers,
+} = useWorldPuzzles({
+  monumentPlaces,
+  savedSettledSeelieIds: savedState.settledSeelieIds,
+  savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
+  seelies,
+  timeTrialPlaces,
+});
+// The camps' chest locks as the Enemies component writes them, and each time trial's lock until it is solved
+const campLockSources = shallowRef<ChestLockSource[]>([]);
+const chestLockSources = computed<ChestLockSource[]>(() => [
+  ...campLockSources.value,
+  ...timeTrialMarkers.map(({ id, position }) => ({ isDone: solvedPuzzleIds.value.has(id), positions: [position] })),
+]);
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   events,
@@ -425,6 +439,7 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   gameText,
   getGroundHeight,
   inventory,
+  lockSources: chestLockSources,
   materialDataMap,
   nameText,
   openedChestIds,
@@ -1161,6 +1176,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :world-level-rows="adventureRankTables.worldLevelRows"
         @charge="chargeParty()"
         @camp-cleared="(camp) => events.emit('campCleared', camp)"
+        @camp-locks="(locks) => (campLockSources = locks)"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"

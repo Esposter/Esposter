@@ -13,3 +13,6 @@ export const CHEST_HIGH_RARITY_ARTIFACT_SET_IDS: readonly number[] = [10005, 100
 export const CHARACTER_EXP_ONE_STAR_ITEM_ID = 104_001;
 export const CHARACTER_EXP_TWO_STAR_ITEM_ID = 104_002;
 export const CHARACTER_EXP_THREE_STAR_ITEM_ID = 104_003;
+// The distance, in game units, within which an enemy camp or a puzzle not yet done locks a chest from being opened. The
+// Wiki gives no distance, so this is provisional at twenty until the recording `chest-camp-lock.mkv` measures it
+export const CHEST_LOCK_REACH = 20;

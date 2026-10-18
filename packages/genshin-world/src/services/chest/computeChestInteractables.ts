@@ -1,9 +1,12 @@
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { ChestKindNameKeyMap } from "#src/services/chest/ChestKindNameKeyMap";
 import { ChestKindRewardMap } from "#src/services/chest/ChestKindRewardMap";
+import { CHEST_LOCK_REACH } from "#src/services/chest/constants";
+import { checkIsChestLocked } from "#src/services/chest/checkIsChestLocked";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -16,6 +19,7 @@ export const computeChestInteractables = (
   dugChestIds: ReadonlySet<string>,
   gameText: Readonly<Record<string, string>>,
   getGroundHeight: (x: number, z: number) => number,
+  lockSources: readonly ChestLockSource[] = [],
 ): Interactable[] =>
   chestPlaces.flatMap(({ id, kind, position: { x, z } }): Interactable[] => {
     if (openedChestIds.has(id)) return [];
@@ -24,5 +28,6 @@ export const computeChestInteractables = (
       return [{ id, kind: InteractionKind.Dig, name: gameText[GameTextKey.Dig] ?? "", position }];
     const nameKey = ChestKindNameKeyMap[kind];
     if (!nameKey || (!ChestKindRewardMap[kind] && !dugChestIds.has(id))) return [];
+    if (checkIsChestLocked(position, lockSources, CHEST_LOCK_REACH)) return [];
     return [{ id, kind: InteractionKind.Open, name: gameText[nameKey] ?? "", position }];
   });

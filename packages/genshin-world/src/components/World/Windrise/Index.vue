@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -227,6 +228,7 @@ const {
   worldLevelRows,
 } = defineProps<Props>();
 const emit = defineEmits<{
+  campLocks: [locks: ChestLockSource[]];
   charge: [];
   campCleared: [camp: ClearedCamp];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
@@ -563,6 +565,7 @@ onUnmounted(() => {
       :world-level
       :world-level-rows
       @camp-cleared="(camp) => emit('campCleared', camp)"
+      @camp-locks="(locks) => emit('campLocks', locks)"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
