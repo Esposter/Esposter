@@ -128,13 +128,13 @@ From Constellation 2, each Mirror made SHALL give Alhaitham 50 Elemental Mastery
 
 ### Requirement: Constellation 4 moves Elemental Mastery and Dendro DMG on the burst
 
-From Constellation 4, Particular Field's burst SHALL take 30 Elemental Mastery per Mirror it consumes from each member of the team other than Alhaitham, for 15 seconds. The Mirrors the regeneration makes afterwards SHALL give Alhaitham 10% Dendro DMG Bonus per Mirror made, for 15 seconds.
+From Constellation 4, Particular Field's burst SHALL give each member of the team other than Alhaitham 30 Elemental Mastery per Mirror it consumes, for 15 seconds. The Mirrors the regeneration makes afterwards SHALL give Alhaitham 10% Dendro DMG Bonus per Mirror made, for 15 seconds.
 
-#### Scenario: The burst takes Elemental Mastery from the team
+#### Scenario: The burst gives the team Elemental Mastery
 
 - **GIVEN** Alhaitham is at Constellation 4 and holds two Mirrors
 - **WHEN** Particular Field's burst is cast
-- **THEN** each other member of the team loses 60 Elemental Mastery for 15 seconds, the buff Alhaitham's Mirrors' consumption gives
+- **THEN** each other member of the team gains 60 Elemental Mastery for 15 seconds
 
 #### Scenario: Regenerated Mirrors give Dendro DMG
 
