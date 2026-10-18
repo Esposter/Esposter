@@ -52,7 +52,11 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const stellarVortexSeconds = readSeconds("stellarVortex");
 
   // The Dance Double's hits from its summon, alternating from the attack given on each attack's interval, while its status runs
-  const createDanceDoubleHits = (firstAttack: number, firstTickSeconds: number, spawnSeconds: number): KitHit[] => {
+  const createDanceDoubleHits = (
+    firstAttack: typeof PLUME | typeof WING,
+    firstTickSeconds: number,
+    spawnSeconds: number,
+  ): KitHit[] => {
     const hits: KitHit[] = [];
     let attack = firstAttack;
     for (let hitmarkSeconds = firstTickSeconds; hitmarkSeconds < danceDoubleDurationSeconds;) {
@@ -68,7 +72,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
     kitEffectState: KitEffectState,
     body: KitBody,
     combatant: Combatant,
-    firstAttack: number,
+    firstAttack: typeof PLUME | typeof WING,
     { firstTickSeconds, spawnSeconds }: { firstTickSeconds: number; spawnSeconds: number },
   ): void => {
     for (const effect of kitEffectState.effects)
