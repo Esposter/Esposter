@@ -21,7 +21,7 @@ Residents keep the game's hours, moving between their day and night spots as the
 
 ## Waiting on
 
-- The vendors' hours wait on the shops, once they sell: `openspec/changes/genshin-shops/`.
+- The vendors' hours (task 3.1) wait on this change's x-touches being widened to the shop service and the Session. The shops they waited on have landed: `openspec/changes/genshin-shops/`.
 - Nod-Krai's residents wait on their placements in the scene-group record: no Nod-Krai NPC is placed there, so `packages/genshin-world/src/data/regions/nod-krai.json` keeps its `residents` empty. The wiki's NPC pages give hours but no positions, so they do not unblock it; nothing is built until the record places them.
 
 ## Impact
