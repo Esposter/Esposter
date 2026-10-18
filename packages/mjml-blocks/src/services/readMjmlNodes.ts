@@ -20,7 +20,8 @@ const readMjmlNode = <TContent>(
   const { alt, id: idAttribute, ...attributes } = element.attributes;
   const isDecorative = specification?.hasAlternativeText === true && alt === "";
   const props: Record<string, unknown> = {
-    ...(isDecorative ? { ...attributes, decorative: true } : { ...attributes, ...(alt === undefined ? {} : { alt }) }),
+    ...attributes,
+    ...(isDecorative ? { decorative: true } : alt === undefined ? {} : { alt }),
     ...(idAttribute === undefined ? {} : { [STRAY_ID_ATTRIBUTE_KEY]: idAttribute }),
     id: crypto.randomUUID(),
   };
