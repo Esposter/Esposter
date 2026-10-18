@@ -1,5 +1,7 @@
-// One level of a curve table, each curve's multiplier at it, under the dump's obfuscated `GGKIEIJLCJJ`
+import type { CurveInfo } from "#src/models/genshinAssets/shared/CurveInfo";
+
+// One level of a curve table, each curve's multiplier at it
 export interface ExcelCurveRow {
-  curveInfos: { GGKIEIJLCJJ: number; type: string }[];
+  curveInfos: CurveInfo[];
   level: number;
 }
