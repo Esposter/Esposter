@@ -3,10 +3,14 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports, media-engine, parity-page]
-x-waiting: "a decision on the prompt's choices: the 2026 recording shows Cancel and Confirm, not the three choices this proposal names (tasks 2.1 and 2.2); menu-quit-prompt.mkv for the re-measure (3.1)"
+x-waiting: "menu-quit-prompt.mkv for the 60 frames a second re-measure of the prompt's hover and pressed states (3.1)"
 x-touches:
   [
     "packages/genshin-world/src/components/Menu/Exit/**",
+    "packages/genshin-world/src/components/Menu/Paimon/Index.vue",
     "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/models/menu/MenuPromptIcon.ts",
+    "packages/genshin-world/src/services/menu/MenuPromptGlyphMap.ts",
+    "packages/genshin-text/src/models/GameTextKey.ts",
     "scripts/src/services/genshinParity/shared/ParityReferenceMap.ts",
   ]

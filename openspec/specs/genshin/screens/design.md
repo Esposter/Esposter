@@ -14,8 +14,8 @@ stateDiagram-v2
   World --> Talk: F on a resident
   Talk --> World: its end, the only key that closes it
   PaimonMenu --> QuitPrompt: Quit Game
-  QuitPrompt --> World: Continue Game
-  QuitPrompt --> [*]: Exit to Login Interface or Exit to Desktop, to the app's home
+  QuitPrompt --> PaimonMenu: Cancel
+  QuitPrompt --> [*]: Confirm, to the app's home
 ```
 
 `getNextScreenKind` is the rule, a pure function of what is open and the frame's pressed actions:

@@ -36,7 +36,7 @@ The Paimon menu SHALL list its side bar from Back to Quit Game and its contents 
 - **WHEN** the player looks over its side bar and contents
 - **THEN** the side bar runs from Back to Quit Game in the game's order
 - **AND** the contents follow the game's order, labelled with the game's own words
-- **AND** Community and Feedback are drawn disabled at the foot of the contents
+- **AND** Community, Version Highlights, Feedback and Survey are drawn disabled at the foot of the contents
 - **AND** entries the game shows but the references do not are left out
 
 ### Requirement: Entries whose screen is not built are drawn disabled
@@ -57,7 +57,7 @@ The Paimon menu SHALL draw each entry whose screen is not built as disabled, and
 
 ### Requirement: Back closes the menu and Quit Game asks first
 
-The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt over the world when Quit Game is chosen.
+The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt over the menu when Quit Game is chosen.
 
 #### Scenario: Back closes the menu
 
@@ -69,30 +69,25 @@ The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt 
 
 - **GIVEN** the Paimon menu is open
 - **WHEN** the player chooses Quit Game
-- **THEN** the quit prompt opens over the world
-- **AND** the menu is set aside while the prompt shows
+- **THEN** the quit prompt opens over the menu
+- **AND** the menu stays visible behind it, dimmed, while the prompt shows
 
-#### Scenario: Continue Game from the prompt
-
-- **GIVEN** the quit prompt is open
-- **WHEN** the player chooses Continue Game
-- **THEN** the world is set back in play
-
-### Requirement: The quit prompt offers three choices and both exits leave the world
-
-The quit prompt SHALL offer Continue Game, Exit to Login Interface and Exit to Desktop, and each exit SHALL leave the world for the app's home.
-
-#### Scenario: Exit to Login Interface
+#### Scenario: Cancel from the prompt
 
 - **GIVEN** the quit prompt is open
-- **WHEN** the player chooses Exit to Login Interface
+- **WHEN** the player chooses Cancel
+- **THEN** the prompt closes
+- **AND** the Paimon menu is shown again
+
+### Requirement: The quit prompt offers Cancel and Confirm, and Confirm leaves the world
+
+The quit prompt SHALL offer Cancel and Confirm, and Confirm SHALL leave the world for the app's home.
+
+#### Scenario: Confirm leaves for the app's home
+
+- **GIVEN** the quit prompt is open
+- **WHEN** the player chooses Confirm
 - **THEN** the player leaves the world for the app's home
-
-#### Scenario: Exit to Desktop
-
-- **GIVEN** the quit prompt is open
-- **WHEN** the player chooses Exit to Desktop
-- **THEN** the player leaves the world for the app's home in the same way
 
 ### Requirement: The menu opens and closes on a fixed timing
 
