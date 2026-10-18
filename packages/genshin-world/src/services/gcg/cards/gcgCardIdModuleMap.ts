@@ -7,6 +7,7 @@ import { brokenRimesEcho } from "#src/services/gcg/cards/brokenRimesEcho";
 import { burningFlame } from "#src/services/gcg/cards/burningFlame";
 import { calxsArts } from "#src/services/gcg/cards/calxsArts";
 import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
+import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
@@ -151,6 +152,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_003, timaeus],
   [322_006, tubby],
   [322_007, timmie],
+  [322_009, changTheNinth],
   [322_010, ellin],
   [322011, ironTongueTian],
   [331_101, elementalResonanceWovenIce],
