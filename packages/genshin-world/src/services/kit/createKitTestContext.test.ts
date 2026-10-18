@@ -20,6 +20,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   expiredEffects: [],
   kitEffectState: { effects: [] },
   oreStrikes: [],
+  reactionTriggers: [],
   outbox: [],
   party: createParty([combatant.characterId]),
   placeWildlifeDrops: () => undefined,

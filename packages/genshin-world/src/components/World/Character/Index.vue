@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { OreHit } from "#src/models/gathering/OreHit";
+import type { Reaction } from "#src/models/combat/Reaction";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -97,6 +99,7 @@ const { party } = kitContext;
 const emit = defineEmits<{
   clearKitEffects: [];
   drown: [];
+  reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
   strikeOre: [body: KitBody, hit: OreHit];
   strikePuzzle: [body: KitBody, hit: PuzzleHit];
 }>();
@@ -194,6 +197,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       isAimHeld: inputState.heldActions.has(InputAction.Aim),
       landedHits,
       strikeOre: (kitBody, oreHit) => emit("strikeOre", kitBody, oreHit),
+      triggerReaction: (enemy, reactions) => emit("reactionTriggered", enemy, reactions),
       strikePuzzle: (kitBody, puzzleHit) => emit("strikePuzzle", kitBody, puzzleHit),
     },
   );

@@ -1,5 +1,6 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
@@ -17,4 +18,6 @@ export interface WorldEventMap {
   parentQuestFinish: [];
   pickUpMora: [];
   questEvent: [QuestEvent];
+  // A reaction a hit or a tick triggered on an enemy, which the Spiral Abyss's period blessings answer
+  reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
 }
