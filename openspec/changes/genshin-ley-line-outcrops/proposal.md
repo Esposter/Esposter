@@ -14,7 +14,7 @@ Touching an outcrop fights it, and its blossom pays its reward by the reader's W
 - A cleared but unclaimed outcrop stays where it is until the daily reset.
 - A claimed outcrop moves to the next place in its group.
 - The daily reset starts each open outcrop kind over at newly drawn places.
-- Whether Liyue opens its blossoms at rank 8 and 12, or at 18, and whether a claim grants the previews' 100 Adventure EXP are left open for a decision.
+- Liyue's blossoms open at Adventure Rank 18, as the dump's table has them, and a claim grants the spent resin's Adventure EXP once and no more.
 
 ## Capabilities
 
