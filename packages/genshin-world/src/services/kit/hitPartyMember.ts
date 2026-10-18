@@ -1,3 +1,4 @@
+import type { Element } from "#src/models/Element";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
@@ -16,6 +17,7 @@ export const hitPartyMember = (
   kitEffectState: KitEffectState,
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   damage: number,
+  element?: Element,
 ): void => {
   const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
   const overflow = absorbKitShield(kitEffectState.effects, combatant, damage);
@@ -25,5 +27,6 @@ export const hitPartyMember = (
     overflow / maxHealth,
     undefined,
     createKitFallRefusal(combatant, kitEffectState, maxHealth),
+    element,
   );
 };
