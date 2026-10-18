@@ -2275,8 +2275,12 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           @close="screenKind = ScreenKind.World"
           @confirm="
-            (minutes) => {
-              if (windrise) windrise.gameClock.minutes = minutes;
+            (minutes, days) => {
+              if (windrise) {
+                windrise.gameClock.minutes = minutes;
+                windrise.gameClock.days += days;
+              }
+
               screenKind = ScreenKind.World;
             }
           "

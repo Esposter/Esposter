@@ -20,6 +20,23 @@ The world's clock SHALL run at one in-game minute per real second, so that a ful
 - **WHEN** the world first shows
 - **THEN** the clock reads that region's reference hour
 
+### Requirement: The clock counts the days it has passed
+
+The world's clock SHALL count each midnight it passes, whether a frame crosses one or a skip of the Time screen does, so that a quest waiting on a later day can tell how many have gone by.
+
+#### Scenario: A day is counted when the clock wraps past midnight
+
+- **GIVEN** the world's clock is a minute before midnight
+- **WHEN** it runs on past midnight
+- **THEN** the clock reads the first minutes of the day after
+- **AND** one more day is counted
+
+#### Scenario: Every midnight a fast-forwarded frame passes is counted
+
+- **GIVEN** the world's clock is run at a rate that carries a frame past more than one midnight
+- **WHEN** the frame runs
+- **THEN** each midnight it passed is counted
+
 ### Requirement: The sun rises in the east at dawn and sets in the west at dusk
 
 The sun SHALL rise due east at six in the morning, stand highest at noon and set due west at six in the evening, with the moon opposite it.

@@ -2,6 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
+import { getTimeSkippedDays } from "#src/services/menu/getTimeSkippedDays";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const { clockMinutes, gameText } = defineProps<Props>();
-const emit = defineEmits<{ close: []; confirm: [minutes: number] }>();
+const emit = defineEmits<{ close: []; confirm: [minutes: number, days: number] }>();
 const dial = useTemplateRef("dial");
 const confirmButton = useTemplateRef("confirmButton");
 // How far the pointer has dialled the advance, from none, and the angle it was at about the dial's centre while held
@@ -75,7 +76,12 @@ onMounted(() => {
     </div>
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <p class="hour">{{ targetTime }}</p>
-    <GameButton ref="confirmButton" class="confirm" :kind="GameButtonKind.Pill" @click="emit('confirm', targetMinutes)">
+    <GameButton
+      ref="confirmButton"
+      class="confirm"
+      :kind="GameButtonKind.Pill"
+      @click="emit('confirm', targetMinutes, getTimeSkippedDays(clockMinutes, advance))"
+    >
       {{ gameText[GameTextKey.TimeConfirm] }}
     </GameButton>
   </GameScreen>

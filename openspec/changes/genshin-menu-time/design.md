@@ -5,6 +5,7 @@ The [Paimon menu](../../specs/genshin/paimon-menu/design.md) opens a Time screen
 ## Decisions
 
 - **Time is the game's own control of the clock.** Its screen sets an hour at least half an hour ahead of the current one and at most two days on, never back, as the game allows. It sets the running clock's minute, `gameClock.minutes` of `World/Windrise`, and never `heldMinutes`, which holds the clock still for a reference's frame; the clock runs on from the hour set. Its dial counts whole turns as days, as the game's does, and a confirm lands at the target's minute of the day. It is the world's one control of the hour, and that control is the game's: no clock control of the world's own is drawn.
+- **A confirm counts the days it passes.** The clock's `days` is how many midnights the world has passed ([sky and time](../../specs/genshin/sky-and-time/design.md)), and a quest that waits on a later day reads it ([quests](../../specs/genshin/quests/design.md)), so the skip adds the midnights it crosses and not only the target's minute. `getTimeSkippedDays` counts them from the clock's minute and the advance, clamped as the target's minute is, and `confirm` carries them beside the minute: a skip of a whole day lands on the same minute, which the minute alone cannot tell from no skip.
 - **Time is laid out from a public clip until its recording lands.** `a4_J84iMqR0` on YouTube, 60 seconds at 1920 by 1080, shows the English PC client's Time screen opened from the menu, its dial turned and confirmed. Its frame is the screen's reference, and `menu-time.mkv` re-measures it later without gating the build.
 - **The dial keeps its advance within the bounds as the pointer turns it.** `stepTimeDialAdvance` adds the shorter turn the pointer makes, a full turn being a day, and clamps the result, so a drag back past thirty minutes moves the hand again as soon as the pointer comes forward; `getTimeTargetMinutes` clamps the same bounds as the rule for any caller. The hour is drawn on a 24-hour face under the label `TimeWaitUntil` (`UI_CLOCK_PAGE_TO_TIME`, "Wait Until"). Its confirm is `TimeConfirm`, given the level-up dialog's OK, the one "Confirm" text the main UI holds, until the clip's own label is checked at the compare.
 
@@ -29,10 +30,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                             | Role after the change                                |
-| :--------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue` | Exposes `gameClock`, the minute the Time screen sets |
-| `packages/genshin-text/src/models/GameTextKey.ts`                | Gains the Time screen's labels                       |
+| File                                                             | Role after the change                                                 |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue` | Exposes `gameClock`, the minute the Time screen sets                  |
+| `packages/genshin-world/src/services/menu/getTimeSkippedDays.ts` | The midnights a confirmed advance passes, which the clock's days gain |
+| `packages/genshin-text/src/models/GameTextKey.ts`                | Gains the Time screen's labels                                        |
 
 New files:
 

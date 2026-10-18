@@ -28,7 +28,7 @@ export const useSky = ({
 }: SkyOptions): GameClock => {
   const { scene } = useTres();
   const { onBeforeRender } = useLoop();
-  const gameClock: GameClock = { minutes: startMinutes, minutesPerSecond: GAME_MINUTES_PER_SECOND };
+  const gameClock: GameClock = { days: 0, minutes: startMinutes, minutesPerSecond: GAME_MINUTES_PER_SECOND };
   const skyState = createSkyState();
   const { cloudDrift } = skyTargets.skyUniforms;
   const writeSky = () => {

@@ -33,6 +33,12 @@ The Time screen SHALL set the world's clock to the dialled target only when the 
 - **THEN** the world's clock shows the target
 - **AND** the screen closes back to the world
 
+#### Scenario: A skip counts the days it passes
+
+- **GIVEN** the player has dialled an advance that passes midnight
+- **WHEN** the player confirms
+- **THEN** the world's clock counts each midnight the skip passed
+
 #### Scenario: Closing without confirming leaves the clock as it was
 
 - **GIVEN** the player has dialled an advance on the Time screen
