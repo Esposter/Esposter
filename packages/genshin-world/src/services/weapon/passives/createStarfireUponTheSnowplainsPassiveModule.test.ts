@@ -28,8 +28,8 @@ const wielder: Combatant = {
   kit: TRAVELER_KIT,
   level: 1,
 };
-// Starfire Upon the Snowplains at its first rank: sixteen per cent ATK for twelve seconds after a reaction, and a Stellar Glimmer
-// Reaction DMG clause that is not built here, since the damage path reads no attribute for it
+// Starfire Upon the Snowplains at its first rank: sixteen per cent ATK for twelve seconds after a reaction, and sixteen per cent
+// Stellar Glimmer reaction DMG for twelve seconds after a Stellar Glimmer reaction
 const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.16, 12, 0.16, 12]);
 const createReaction = (reactionType: ReactionType, element: Element) => ({
   enemy,
@@ -62,7 +62,7 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
     ]);
   });
 
-  test("a Stellar Glimmer reaction is an Elemental Reaction too, and raises the ATK alike", () => {
+  test("a Stellar Glimmer reaction is an Elemental Reaction too, so it raises the ATK and its Stellar Glimmer reaction DMG", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -72,8 +72,23 @@ describe(createStarfireUponTheSnowplainsPassiveModule, () => {
       wielder,
     );
 
-    expect(
-      getBuffs(context.kitEffectState.effects).map(({ attribute, amount }) => ({ amount, attribute })),
-    ).toStrictEqual([{ amount: 0.16, attribute: Attribute.AttackPercent }]);
+    expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
+      {
+        amount: 0.16,
+        attribute: Attribute.AttackPercent,
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+        source: "starfireUponTheSnowplains",
+      },
+      {
+        amount: 0.16,
+        attribute: Attribute.StellarGlimmerReactionDamageBonus,
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+        source: "starfireUponTheSnowplains",
+      },
+    ]);
   });
 });
