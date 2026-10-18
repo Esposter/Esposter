@@ -1,5 +1,6 @@
 import type { KitBurstUsedEvent } from "#src/models/kit/KitBurstUsedEvent";
 import type { KitCharacterSwappedEvent } from "#src/models/kit/KitCharacterSwappedEvent";
+import type { KitChestOpenedEvent } from "#src/models/kit/KitChestOpenedEvent";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectExpiredEvent } from "#src/models/kit/KitEffectExpiredEvent";
 import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
@@ -14,6 +15,7 @@ import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent"
 export type KitEvent =
   | KitBurstUsedEvent
   | KitCharacterSwappedEvent
+  | KitChestOpenedEvent
   | KitDamageTakenEvent
   | KitEffectExpiredEvent
   | KitEnergyParticleCollectedEvent

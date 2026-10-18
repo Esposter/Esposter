@@ -61,8 +61,12 @@ export const useWorldChests = ({
     gainWorldAdventureExp(opening.adventureExp);
     openedChestIds.value = opening.openedChestIds;
     placeWorldDrops(chestPlace, opening.drops);
-    if (opening.openedChestIds !== previousOpenedChestIds)
+    // A chest left as it was, opened already or of a kind with no reward, is no opening: it counts toward no achievement
+    // And reaches no combat
+    if (opening.openedChestIds.has(chestId) && !previousOpenedChestIds.has(chestId)) {
       events.emit("achievementEvents", [{ kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: chestId }]);
+      events.emit("chestOpened");
+    }
   };
   return { chestInteractables, openChestById };
 };

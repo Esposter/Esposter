@@ -3,6 +3,8 @@ import type { WeightedValue } from "#src/models/shared/WeightedValue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 
+// Adventurer's id in the set table
+export const ADVENTURER_ARTIFACT_SET_ID = 10_010;
 // Berserker's id in the set table
 export const BERSERKER_ARTIFACT_SET_ID = 10_005;
 // Instructor's id in the set table
