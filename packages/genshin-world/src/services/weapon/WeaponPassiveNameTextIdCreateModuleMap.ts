@@ -81,6 +81,7 @@ import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/createStaffOfHomaPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
+import { createSunkenSongOfTheSandsPassiveModule } from "#src/services/weapon/passives/createSunkenSongOfTheSandsPassiveModule";
 import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
 import { createThePartingRefrainPassiveModule } from "#src/services/weapon/passives/createThePartingRefrainPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
@@ -359,4 +360,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "131958235": createExtinguishingPreceptPassiveModule,
   // Deathly Pact (Absolution)
   "2056241443": createDeathlyPactPassiveModule,
+  // Sunken Song of the Sands (Key of Khaj-Nisut)
+  "1054220683": createSunkenSongOfTheSandsPassiveModule,
 };
