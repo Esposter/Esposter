@@ -28,12 +28,21 @@ const ASCENSION_4_CRIT_RATE_SHARE = 0.15;
 const ASCENSION_4_CRIT_RATE_MAX = 0.15;
 const ASCENSION_4_SECONDS = 10;
 
+// Regina Probationum, as the dump's Rosaria_PermanentSkill_1 row (promote 1, params 0.12 and 5) and gcsim v2.47.2 (MIT)
+// Rosaria/asc.go and skill.go give it: from Ascension 1, Ravaging Confession's first hit gives her 12% CRIT Rate for 5
+// Seconds as it strikes an enemy. gcsim assumes the hit lands from behind, as the kit does without her teleport
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/rosaria/asc.go
+const REGINA_PROBATIONUM_ASCENSION = 1;
+const REGINA_PROBATIONUM_CRITICAL_RATE = 0.12;
+const REGINA_PROBATIONUM_SECONDS = 5;
+const REGINA_PROBATIONUM_SOURCE = "rosaria-regina-probationum";
+
 export const ROSARIA_CHARACTER_ID = 10_000_045;
 
 // Rosaria's behaviour: Rites of Termination places a field where she casts it, ticking from the lance on, each tick a
 // Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Ascension 4's Crit Rate share
-// Is built on the cast. Her Ascension 1, her other Constellations and her teleport behind the target are not built: the
-// Ascension 1 needs whether the first hit lands from behind, which the teleport decides, and the body does not reach it
+// Is built on the cast, and from Ascension 1 Ravaging Confession's first hit gives her CRIT Rate, as from behind. Her
+// Other Constellations and her teleport behind the target are not built
 // Ascension 4: the cast's Crit Rate for every other member of the deployed team, from her own Crit Rate as it stands
 const addAscension4CritRate = (combatant: Combatant, kitEffectState: KitEffectState, party: Party): void => {
   const amount = Math.min(
@@ -70,6 +79,22 @@ export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRe
         });
         if (combatant.ascension >= ASCENSION_4) addAscension4CritRate(combatant, kitEffectState, party);
       },
+    },
+    skill: {
+      hits: [
+        {
+          // Each enemy the first hit strikes restarts the same CRIT Rate at the same moment, as gcsim gives it once
+          onStrike: ({ kitEffectState }, { combatant }) => {
+            if (combatant.ascension < REGINA_PROBATIONUM_ASCENSION) return;
+            buffKitMember(kitEffectState, combatant.characterId, {
+              amount: REGINA_PROBATIONUM_CRITICAL_RATE,
+              attribute: Attribute.CriticalRate,
+              secondsRemaining: REGINA_PROBATIONUM_SECONDS,
+              source: REGINA_PROBATIONUM_SOURCE,
+            });
+          },
+        },
+      ],
     },
   };
 };

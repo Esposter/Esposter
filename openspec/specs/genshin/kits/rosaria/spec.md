@@ -1,6 +1,6 @@
 ## Purpose
 
-Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with her Ascension 4 Crit Rate share built, and her Ascension 1, her other constellations and the teleport behind the target left unbuilt.
+Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with both her passives built, and her other constellations and the teleport behind the target left unbuilt.
 
 ## Requirements
 
@@ -59,12 +59,22 @@ Rites of Termination SHALL strike a slash and a lance, then leave a field that t
 - **WHEN** Rites of Termination is cast
 - **THEN** the field lasts four seconds longer
 
+### Requirement: Ravaging Confession's first hit raises her CRIT Rate from Ascension 1
+
+From Ascension 1, Ravaging Confession's first hit SHALL give Rosaria 12% CRIT Rate for 5 seconds as it strikes an enemy, whichever side it strikes from.
+
+#### Scenario: Regina Probationum on the first hit
+
+- **GIVEN** Rosaria has reached Ascension 1
+- **WHEN** Ravaging Confession's first hit strikes an enemy
+- **THEN** her CRIT Rate rises by 12% for 5 seconds
+
 ### Requirement: Unbuilt Rosaria effects
 
-Rosaria's Ascension 1, her other constellations and the teleport behind the target SHALL NOT take effect.
+Rosaria's other constellations and the teleport behind the target SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Rosaria has her Ascension 1 passive, a constellation or the teleport unlocked
+- **GIVEN** Rosaria has a constellation or the teleport unlocked
 - **WHEN** the player fights with Rosaria
 - **THEN** that effect has no effect
