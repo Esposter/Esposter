@@ -38,6 +38,7 @@ import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
+import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
@@ -243,4 +244,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3835416843": createEagleSpearOfJusticePassiveModule,
   // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
   "641137867": createSmokeAndMirrorMysteryPassiveModule,
+  // Pact of Flowing Springs (Footprint of the Rainbow)
+  "4067649747": createPactOfFlowingSpringsPassiveModule,
 };
