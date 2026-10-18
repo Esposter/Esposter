@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -55,6 +56,11 @@ const castEffects = (
 const castSolarIsotoma = (): KitSummon =>
   takeOne(castEffects(ALBEDO_KIT.elementalSkill).filter((effect): effect is KitSummon => effect.kind === "summon"));
 const createStandingSolarIsotoma = (): KitSummon => ({ ...castSolarIsotoma(), elapsedSeconds: 1 });
+// The Elemental Mastery buffs Albedo's burst gives the team as it is cast beside a standing Solar Isotoma
+const tectonicTideBuffs = (combatant: Combatant): KitBuff[] =>
+  castEffects(ALBEDO_KIT.elementalBurst, [createStandingSolarIsotoma()], combatant).filter(
+    (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
+  );
 
 describe(createAlbedoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -128,5 +134,24 @@ describe(createAlbedoKitBehaviour, () => {
     const hitmarks = blossomSummon?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
 
     expect(hitmarks).toStrictEqual([145, 150, 155, 160, 165, 170, 175]);
+  });
+
+  describe("ascension 4's team Elemental Mastery", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(
+        tectonicTideBuffs(createAlbedoCombatant(4)).map(({ amount, secondsRemaining }) => ({
+          amount,
+          secondsRemaining,
+        })),
+      ).toStrictEqual([{ amount: 125, secondsRemaining: 10 }]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
+    });
   });
 });
