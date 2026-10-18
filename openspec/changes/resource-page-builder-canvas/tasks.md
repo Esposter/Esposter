@@ -21,7 +21,7 @@
 
 ## 5. Layers and text
 
-- [ ] 5.1 Build the layers tree on the shared UI library's tree component, with arrows, Home, End and type-ahead. Verify: tests named after the scenarios 'Arrow keys walk the layers tree and select the focused node' and 'Typing a label in the tree moves focus to that node'.
+- [x] 5.1 Build the layers tree on the shared UI library's tree component, with arrows, Home, End and type-ahead. Verify: tests named after the scenarios 'Arrow keys walk the layers tree and select the focused node' and 'Typing a label in the tree moves focus to that node'.
 - [ ] 5.2 Mount the text editor on the selected text node on Enter, and return focus to the tree on Escape. Verify: tests named after the scenarios 'Enter edits a text node in place' and 'Escape leaves a text node being edited'.
 
 ## 6. Clipboard
