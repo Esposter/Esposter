@@ -4,6 +4,7 @@ import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGrammarRule";
 import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
+import { checkIsNameToken } from "#src/services/parser/checkIsNameToken";
 import { checkIsToken } from "#src/services/parser/checkIsToken";
 import { computeNumberLiteral } from "#src/services/parser/computeNumberLiteral";
 import { PLACEHOLDER } from "#src/services/parser/constants";
@@ -11,7 +12,6 @@ import { failMathExpression } from "#src/services/parser/failMathExpression";
 import { getMathExpressionColumn } from "#src/services/parser/getMathExpressionColumn";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { parseCall } from "#src/services/parser/parseCall";
-import { getMathExpressionSignatures } from "#src/services/shared/getMathExpressionSignatures";
 
 // A number, a name, a call or a parenthesised group, the tightest operand of a formula
 export const parseSymbol: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
@@ -27,10 +27,7 @@ export const parseSymbol: MathExpressionRuleParser = (state, parse): MathExpress
     return { type: MathExpressionNodeType.Number, value };
   }
 
-  const isName =
-    state.tokenType === MathExpressionTokenType.Symbol ||
-    (state.tokenType === MathExpressionTokenType.Delimiter && getMathExpressionSignatures(state.token) !== undefined);
-  if (isName) {
+  if (checkIsNameToken(state)) {
     const name = state.token;
     const column = getMathExpressionColumn(state);
     const isSymbol = state.tokenType === MathExpressionTokenType.Symbol;

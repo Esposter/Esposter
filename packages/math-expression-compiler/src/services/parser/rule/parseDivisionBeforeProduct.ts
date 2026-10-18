@@ -6,8 +6,8 @@ import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenT
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 import { checkIsSignedNumber } from "#src/services/parser/checkIsSignedNumber";
 import { checkIsToken } from "#src/services/parser/checkIsToken";
+import { createBinaryNode } from "#src/services/parser/createBinaryNode";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
-import { restoreMathExpressionParserState } from "#src/services/parser/restoreMathExpressionParserState";
 
 // A division of one signed number by another, followed by a name or a parenthesis, is taken first, so `1/2 col0` is
 // `(1/2) * col0`, as mathjs reads it
@@ -17,14 +17,20 @@ export const parseDivisionBeforeProduct: MathExpressionRuleParser = (state, pars
 
   const snapshot = { ...state };
   getMathExpressionToken(state);
-  const divisor = parse(state, MathExpressionGrammarRule.Percentage);
-  // Mathjs takes only an unsigned divisor into the exception: a signed one binds to the name after it, so 1/-2 col0 is 1/-6
+  // Mathjs takes only an unsigned divisor into the exception: a signed one binds to the name after it, so 1/-2 col0
+  // is 1/-6
+  const isNumber = state.tokenType === MathExpressionTokenType.Number;
+  if (isNumber) getMathExpressionToken(state);
   const isProductFactor =
+    isNumber &&
     state.error === null &&
-    divisor.type === MathExpressionNodeType.Number &&
     (state.tokenType === MathExpressionTokenType.Symbol || checkIsToken(state, "("));
-  if (isProductFactor) return { left: dividend, name: "divide", right: divisor, type: MathExpressionNodeType.Binary };
+  if (isProductFactor) {
+    Object.assign(state, snapshot);
+    getMathExpressionToken(state);
+    return createBinaryNode(dividend, "divide", parse(state, MathExpressionGrammarRule.Percentage));
+  }
 
-  restoreMathExpressionParserState(state, snapshot);
+  Object.assign(state, snapshot);
   return dividend;
 };

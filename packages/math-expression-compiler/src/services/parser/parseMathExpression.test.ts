@@ -45,6 +45,15 @@ describe(parseMathExpression, () => {
     expect(getParseError("((1 + 2) * (3))")).toBeNull();
   });
 
+  test.each([
+    ["a division", "1/("],
+    ["a percent sign", "8%("],
+  ])("a formula of forty nested groups behind %s parses", (_title, open) => {
+    expect.hasAssertions();
+
+    expect(getParseError(`${open.repeat(40)}1${")".repeat(40)}`)).toBeNull();
+  });
+
   test.each([["A list inside a list is refused"]])("%s", (_title) => {
     expect.hasAssertions();
 
