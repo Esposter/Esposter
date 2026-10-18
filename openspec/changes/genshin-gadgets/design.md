@@ -1,6 +1,6 @@
 # Gadgets
 
-Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculus Resonance Stones that find chests and Oculi, the Portable Waypoint, the Kamera, the Parametric Transformer and many more. The bag already files them under their own tab ([inventory](../../specs/genshin/inventory/design.md)), and the controls already bind `Z` to the one equipped ([controls](../../specs/genshin/controls/design.md)). Most find or act on what the world spawns, so this page waits on the [spawned places](../genshin-spawned-places/design.md) and the [crafting](../genshin-crafting/design.md) bench most are made at. The [gadgets](../../specs/genshin/gadgets/design.md) page holds their data and cooldowns; what remains is below.
+Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculus Resonance Stones that find chests and Oculi, the Portable Waypoint, the Kamera, the Parametric Transformer and many more. The bag already files them under their own tab ([inventory](../../specs/genshin/inventory/design.md)), and the controls already bind `Z` to the one equipped ([controls](../../specs/genshin/controls/design.md)). Most find or act on what the world spawns, so this page waits on the [spawned places](../genshin-spawned-places/design.md) and the [crafting](../archive/2026-10-18-genshin-crafting/design.md) bench most are made at. The [gadgets](../../specs/genshin/gadgets/design.md) page holds their data and cooldowns; what remains is below.
 
 ## Decisions
 

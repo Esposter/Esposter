@@ -63,21 +63,21 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ### Phase three: the play features
 
-| Page                                                      | What it adds                                                                                                                              |
-| :-------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-| [Follow camera](../genshin-follow-camera/design.md)       | a notch's zoom and the ease read off a recording, the camera's settings, and how far photo mode may go                                    |
-| [HUD](../genshin-hud/design.md)                           | the HUD's fitted places and its pieces' measured looks                                                                                    |
-| [Characters](../genshin-characters/design.md)             | the game's characters from HoYoverse's official models                                                                                    |
-| [Party](../genshin-party/design.md)                       | Party Setup's screen and Quick Setup, the next-member and game-over screens, Elemental Resonance's remains, the party kept between visits |
-| [Character screen](../genshin-character-screen/design.md) | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                        |
-| [Menu Paimon](../genshin-menu-paimon/design.md)           | the Paimon menu's traced icons and fitted layout, Paimon beside it, and the profile card's fields                                         |
-| [Menu Time](../genshin-menu-time/design.md)               | the Time screen the side bar opens, setting the world's held hour                                                                         |
-| [Menu Settings](../genshin-menu-settings/design.md)       | the Settings screen's body: its Graphics quality, Audio and language rows                                                                 |
-| [Menu quit prompt](../genshin-menu-quit-prompt/design.md) | the exit prompt Quit Game opens, scaled to its whole frame                                                                                |
-| [Combat](../genshin-combat/design.md)                     | the Stellar Glimmer reactions, waiting on the Cryo Traveler's or Odette's kit                                                             |
-| [Inventory](../genshin-inventory/design.md)               | using food on the party, and the destroy mode on the bag's screen                                                                         |
-| [Wish](../genshin-wish/design.md)                         | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |
-| [Quests](../genshin-quests/design.md)                     | the go-to triggers placed, the world quest series, the commissions dealt at the reset, and the quests' clues                              |
+| Page                                                           | What it adds                                                                                                                              |
+| :------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| [Follow camera](../genshin-follow-camera/design.md)            | a notch's zoom and the ease read off a recording, the camera's settings, and how far photo mode may go                                    |
+| [HUD](../genshin-hud/design.md)                                | the HUD's fitted places and its pieces' measured looks                                                                                    |
+| [Characters](../genshin-characters/design.md)                  | the game's characters from HoYoverse's official models                                                                                    |
+| [Party](../genshin-party/design.md)                            | Party Setup's screen and Quick Setup, the next-member and game-over screens, Elemental Resonance's remains, the party kept between visits |
+| [Character screen](../genshin-character-screen/design.md)      | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                        |
+| [Menu Paimon](../genshin-menu-paimon/design.md)                | the Paimon menu's traced icons and fitted layout, Paimon beside it, and the profile card's fields                                         |
+| [Menu Time](../genshin-menu-time/design.md)                    | the Time screen the side bar opens, setting the world's held hour                                                                         |
+| [Menu Settings](../genshin-menu-settings/design.md)            | the Settings screen's body: its Graphics quality, Audio and language rows                                                                 |
+| [Menu quit prompt](../genshin-menu-quit-prompt/design.md)      | the exit prompt Quit Game opens, scaled to its whole frame                                                                                |
+| [Combat](../genshin-combat/design.md)                          | the Stellar Glimmer reactions, waiting on the Cryo Traveler's or Odette's kit                                                             |
+| [Inventory](../archive/2026-10-18-genshin-inventory/design.md) | using food on the party, and the destroy mode on the bag's screen                                                                         |
+| [Wish](../archive/2026-10-18-genshin-wish/design.md)           | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |
+| [Quests](../genshin-quests/design.md)                          | the go-to triggers placed, the world quest series, the commissions dealt at the reset, and the quests' clues                              |
 
 ### Phase four: the game's systems
 
@@ -108,8 +108,8 @@ What still separates the recreation from the whole game once the world and its p
 | [Reputation](../genshin-reputation/design.md)                              | each nation's levels from bounties, requests and exploration, and their rewards                                                                                            |
 | [Gathering](../genshin-gathering/design.md)                                | the ores struck, the mining outcrops' places and the investigation spots; the plants but for five left out, the outcrops' rank and respawn and the daily cap are built     |
 | [Wildlife](../genshin-wildlife/design.md)                                  | animals that flee, charge or fight back, and the materials picked off them                                                                                                 |
-| [Crafting](../genshin-crafting/design.md)                                  | the bench's place and screen, the regional talent materials, and the gadgets once their instructions are named; the recipes and the talents' doubles and refunds are built |
-| [Cooking](../genshin-cooking/design.md)                                    | the stove and cooking screen, eating a dish, and the passives that bonus a kind of dish; the dishes, Auto Cook, specialties, processing and campfires are built            |
+| [Crafting](../archive/2026-10-18-genshin-crafting/design.md)               | the bench's place and screen, the regional talent materials, and the gadgets once their instructions are named; the recipes and the talents' doubles and refunds are built |
+| [Cooking](../archive/2026-10-18-genshin-cooking/design.md)                 | the stove and cooking screen, eating a dish, and the passives that bonus a kind of dish; the dishes, Auto Cook, specialties, processing and campfires are built            |
 | [Forging](../genshin-forging/design.md)                                    | the forge screen and the blacksmith's place; the recipes, queues, orders, daily cap, talents, the Serenitea Pot's refusal and the drop-table Mystic are built              |
 | [Gadgets](../genshin-gadgets/design.md)                                    | each gadget's kind from the game's config on Z, cooldowns that run while paused                                                                                            |
 | [Shops](../genshin-shops/design.md)                                        | every vendor's goods and restocks, Paimon's Bargains and the Souvenir Shops, nothing for crystals                                                                          |
