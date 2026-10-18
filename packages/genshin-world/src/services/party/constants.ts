@@ -1,3 +1,4 @@
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { InputAction } from "genshin-engine";
 import { GameTextKey } from "genshin-text";
@@ -111,4 +112,19 @@ export const MOONDRIFT_OFFSETS = [
   { x: 0, z: 1 },
   { x: Math.sqrt(3) / 2, z: -0.5 },
   { x: -Math.sqrt(3) / 2, z: -0.5 },
+];
+
+// The share of its time a member's affliction lasts under the Resonance that shortens it: 40% less, as the Team Bonus page
+// Gives Fervent Flames, Soothing Water, High Voltage and Shattering Ice
+export const RESONANCE_AFFLICTION_TIME_SHARE = 0.6;
+// The reactions High Voltage drops an Electro particle for, each once its cooldown has passed, as the Team Bonus page lists
+// Them. Stellar-Conduct is not a reaction type the engine has yet, so it is not listed
+export const HIGH_VOLTAGE_REACTION_TYPES: readonly ReactionType[] = [
+  ReactionType.Aggravate,
+  ReactionType.ElectroCharged,
+  ReactionType.Hyperbloom,
+  ReactionType.LunarCharged,
+  ReactionType.Overloaded,
+  ReactionType.Quicken,
+  ReactionType.Superconduct,
 ];

@@ -45,7 +45,7 @@ export const applyElement = (
   state: ElementalState,
   element: Element,
   gauge: number,
-  { lunarReactionTypes = [], selfAuraSeconds, sourceId }: ElementApplication = {},
+  { auraDecayRateScale = 1, lunarReactionTypes = [], selfAuraSeconds, sourceId }: ElementApplication = {},
 ): Reaction[] => {
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];
@@ -105,7 +105,8 @@ export const applyElement = (
       auraType,
       selfAuraSeconds === undefined
         ? {
-            decayRate: taxedGauge / (AURA_SECONDS_PER_GAUGE * remainingGauge + AURA_BASE_SECONDS),
+            decayRate:
+              (taxedGauge / (AURA_SECONDS_PER_GAUGE * remainingGauge + AURA_BASE_SECONDS)) * auraDecayRateScale,
             gauge: taxedGauge,
             isImmutable: false,
           }

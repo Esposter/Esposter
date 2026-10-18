@@ -21,6 +21,7 @@ import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
+import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
@@ -78,7 +79,11 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         random,
         moonsign,
       );
-      collectKitEnergyDrops(energyDrops, combatant.element, context);
+      collectKitEnergyDrops(
+        [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],
+        combatant.element,
+        context,
+      );
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
       addCrystallizeShards(kitEffectState, enemy, pricedCombatant, reactions, random);
       addMoondrifts(party, enemy, pricedCombatant, reactions, body.position);

@@ -16,6 +16,7 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
+import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 
 const checkIsElectroCharged = ({ reactionType }: Reaction): boolean =>
   reactionType === TransformativeReactionType.ElectroCharged;
@@ -53,7 +54,10 @@ const strikeOwnedTicks = (
     reachingReactions.push({ element, reactionType, spreadGauge });
   }
   collectKitEnergyDrops(
-    damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }),
+    [
+      ...damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }),
+      ...getReactionParticleDrops(context.party, reactions, combatant.elementalResonances),
+    ],
     combatant.element,
     context,
   );
