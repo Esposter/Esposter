@@ -30,6 +30,8 @@ export interface KitSummon extends KitSwapEndable {
   secondsRemaining: number;
   // The seconds from its cast it appears on the field at, if not at once, which a kit asking whether it stands waits for
   spawnSeconds?: number;
+  // The Stellar Swirls a summon has taken, which its kit counts to level it up and to explode it
+  stacks?: number;
   // The one enemy its hits land on, instead of each enemy their areas reach, if it lands on one
   target?: Enemy;
   travel?: { metresPerSecond: number; startSeconds: number };

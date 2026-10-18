@@ -82,3 +82,5 @@ export const POLESTAR_PHYSICAL_RES_REDUCTION = 0.4;
 export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";
 // The source the Starlight Prism's Cryo and Electro DMG Bonus buffs are held under, so each step restarts them
 export const POLESTAR_BUFF_SOURCE = "polestar";
+// Stellar Swirls a vortex takes before it explodes at once: three after its level-up (gcsim sswMaxStacks)
+export const STELLAR_VORTEX_MAX_STACKS = 6;
