@@ -1,6 +1,6 @@
 {
   "areas.birgitta": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 111 },
+  "burst.hits.0.hitmarkFrames": { "file": "burst.go", "line": 41, "source": "Gcsim", "value": 0 },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 200 },
   "chargedAttack.hits.0.element": { "cause": "DiffersFromSource", "value": "Electric" },
   "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
