@@ -8434,5 +8434,15 @@
 {"formula":"2e5./3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":66666.66666666667},
 {"formula":"2e.*3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":16.30969097075427},
 {"formula":"2e5.*3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":600000},
-{"formula":"2e5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":200000}
+{"formula":"2e5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":200000},
+{"formula":"x * (x = 2)","scope":{},"value":null},
+{"formula":"(x = 2) * x","scope":{},"value":4},
+{"formula":"(c ? (y = 1) : (y = 2)) + y","scope":{"c":1},"value":2},
+{"formula":"(c ? (y = 1) : (y = 2)) + y","scope":{"c":0},"value":4},
+{"formula":"(c ? (y = 1) : 0) + y","scope":{"c":0,"y":5},"value":5},
+{"formula":"(c and (x = 2)) + x","scope":{"c":0,"x":7},"value":7},
+{"formula":"(c and (x = 2)) + x","scope":{"c":1,"x":7},"value":3},
+{"formula":"(c and (x = 2)) + x","scope":{"c":0},"value":null},
+{"formula":"(c & (x = 2)) + x","scope":{"c":0,"x":7},"value":7},
+{"formula":"(c & (x = 2)) + x","scope":{"c":1,"x":7},"value":2}
 ]}

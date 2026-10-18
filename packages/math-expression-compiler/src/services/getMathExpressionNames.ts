@@ -3,18 +3,61 @@ import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
 import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantMap";
+import { exhaustiveGuard } from "@esposter/shared";
 
-const collectNames = (node: MathExpressionNode, read: Set<string>, assigned: Set<string>): void => {
-  if (node.type === MathExpressionNodeType.Name) read.add(node.name);
-  if (node.type === MathExpressionNodeType.Assignment) assigned.add(node.name);
-  for (const child of getMathExpressionChildren(node)) collectNames(child, read, assigned);
+// The bitwise operations whose right side is skipped when the left side decides them, as the compiler skips it
+const LAZY_BINARY_NAMES: ReadonlySet<string> = new Set(["bitAnd", "bitOr"]);
+
+// Walks a node in the order the formula evaluates it. A name is free where it is read before every path to that read
+// has assigned it, so bound holds the names assigned on every such path and free collects the rest in reading order
+const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string>): void => {
+  switch (node.type) {
+    case MathExpressionNodeType.Assignment:
+      walkNode(node.value, bound, free);
+      bound.add(node.name);
+      return;
+    case MathExpressionNodeType.Binary: {
+      walkNode(node.left, bound, free);
+      const rightBound = LAZY_BINARY_NAMES.has(node.name) ? new Set(bound) : bound;
+      walkNode(node.right, rightBound, free);
+      return;
+    }
+    case MathExpressionNodeType.Call:
+    case MathExpressionNodeType.Comparison:
+    case MathExpressionNodeType.Group:
+    case MathExpressionNodeType.Number:
+    case MathExpressionNodeType.Percentage:
+    case MathExpressionNodeType.Unary:
+      for (const child of getMathExpressionChildren(node)) walkNode(child, bound, free);
+      return;
+    case MathExpressionNodeType.Conditional: {
+      walkNode(node.condition, bound, free);
+      const whenTrueBound = new Set(bound);
+      const whenFalseBound = new Set(bound);
+      walkNode(node.whenTrue, whenTrueBound, free);
+      walkNode(node.whenFalse, whenFalseBound, free);
+      for (const name of whenTrueBound) {
+        if (whenFalseBound.has(name)) bound.add(name);
+      }
+      return;
+    }
+    case MathExpressionNodeType.Logical:
+      walkNode(node.left, bound, free);
+      walkNode(node.right, new Set(bound), free);
+      return;
+    case MathExpressionNodeType.Name:
+      if (!bound.has(node.name)) free.add(node.name);
+      return;
+    default:
+      return exhaustiveGuard(node);
+  }
 };
 
-// The column names a formula reads: every name it reads that it does not assign itself and that is not a constant of
-// Mathjs's, so the edit form can check each one is a column before the formula is saved
+// The column names a formula reads before it assigns them, which the edit form checks are columns before saving
+// A name the formula only assigns is not one, and neither is a constant of Mathjs's
 export const getMathExpressionNames = (node: MathExpressionNode): string[] => {
-  const read = new Set<string>();
-  const assigned = new Set<string>();
-  collectNames(node, read, assigned);
-  return [...read].filter((name) => !assigned.has(name) && !Object.hasOwn(MathExpressionConstantMap, name));
+  const bound = new Set<string>();
+  const free = new Set<string>();
+  walkNode(node, bound, free);
+  return [...free].filter((name) => !Object.hasOwn(MathExpressionConstantMap, name));
 };
