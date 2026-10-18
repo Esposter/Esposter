@@ -5,14 +5,14 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.area": {
     "file": "charge.go",
     "line": 45,
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.universalityMirrorDelays.length": { "cause": "Unsourced", "value": 2 },
   "frames.universalityMirrorDelays.0": { "file": "skill.go", "line": 67, "source": "Gcsim", "value": 15 },
   "frames.universalityMirrorDelays.1": { "file": "skill.go", "line": 97, "source": "Gcsim", "value": 23 },
@@ -204,35 +204,35 @@
     "source": "Gcsim",
     "value": { "angle": 3.141592653589793, "height": 2, "radius": 2.5 }
   },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 58.5 },
   "normalAttacks.1.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5999999999999996 }
   },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 59.5 },
   "normalAttacks.2.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1622776601683795 }
   },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 39 },
   "normalAttacks.2.hits.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1622776601683795 }
   },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 39 },
   "normalAttacks.3.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.743416490252569 }
   },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 77 },
   "normalAttacks.4.hits.0.area": {
     "file": "attack.go",
     "line": 20,
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 101 },
   "parameters.projectionAttackElementalMasteryShare": {
     "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 7832 }
@@ -246,7 +246,7 @@
     "value": { "index": 1, "proudSkillGroupId": 7832 }
   },
   "plungeCollision.hitmarkFrames": { "file": "plunge.go", "line": 22, "source": "Gcsim", "value": 40 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "plunges.high.animationFrames": { "file": "plunge.go", "line": 58, "source": "Gcsim", "value": 77 },
   "plunges.low.animationFrames": { "file": "plunge.go", "line": 41, "source": "Gcsim", "value": 70 },
   "plunges.low.hits.0.hitmarkFrames": { "file": "plunge.go", "line": 20, "source": "Gcsim", "value": 46 },

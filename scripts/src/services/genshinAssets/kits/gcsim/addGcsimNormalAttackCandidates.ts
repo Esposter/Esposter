@@ -6,7 +6,6 @@ import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGo
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
-import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
@@ -22,7 +21,7 @@ const readStrikeFrames = (value: GoValue | undefined, strikeIndex: number): GoVa
 // From `attackFrames`, and its hits' areas from the `N<strike>` or `N<strike>-<hit>` hitboxes
 export const addGcsimNormalAttackCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap, travelMap }: GcsimCharacter,
+  { attacks, config, constantMap }: GcsimCharacter,
 ): void => {
   const normalHitmarks = findGcsimConstant(constantMap, "attackHitmarks", "attackReleases");
   if (normalHitmarks === undefined || !Array.isArray(normalHitmarks.value)) return;
@@ -58,11 +57,7 @@ export const addGcsimNormalAttackCandidates = (
         {
           areaHitbox: findGcsimHitbox(config, "attack", `N${strikeIndex + 1}-${hitIndex + 1}`, `N${strikeIndex + 1}`),
           attack,
-          hitmark: {
-            file: normalHitmarks.file,
-            line: hitmarkLine,
-            value: getGcsimLandingFrames(travelMap, normalHitmarks.name, hitmark),
-          },
+          hitmark: { file: normalHitmarks.file, line: hitmarkLine, value: hitmark },
           ...(poiseVariable !== undefined &&
             typeof hitPoise === "number" && { poiseDamage: { line: poiseVariable.line, value: hitPoise } }),
           talentLeaf: findGcsimTalentLeaf(config, "attack", [strikeIndex, hitIndex]),
