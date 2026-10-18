@@ -102,7 +102,7 @@ describe(openDatabase, () => {
     );
   });
 
-  test("A thrown upgrade failure is logged once", async () => {
+  test("a thrown upgrade failure is logged once", async () => {
     expect.hasAssertions();
 
     const upgradeError = new Error("upgrade failed");
@@ -121,10 +121,10 @@ describe(openDatabase, () => {
     await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AbortError: The transaction was aborted]`,
     );
-    expect(console.error).toHaveBeenCalledOnce();
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 
-  test("A thrown upgrade failure keeps its message", async () => {
+  test("a thrown upgrade failure keeps its message", async () => {
     expect.hasAssertions();
 
     const upgradeError = new Error("upgrade failed");
@@ -146,7 +146,7 @@ describe(openDatabase, () => {
     expect(console.error).toHaveBeenLastCalledWith(upgradeError);
   });
 
-  test("An upgrade aborted by a request error is logged", async () => {
+  test("an upgrade aborted by a request error is logged", async () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockReturnValue(undefined);
@@ -166,7 +166,7 @@ describe(openDatabase, () => {
       `[AbortError: A request was aborted, for example through a call to IDBTransaction.abort.]`,
     );
     await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(`[ConstraintError]`);
-    expect(console.error).toHaveBeenCalledOnce();
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 
   test("#190 a shortcut write rejects with the request's own error", async () => {

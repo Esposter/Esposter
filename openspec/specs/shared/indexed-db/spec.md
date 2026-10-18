@@ -51,6 +51,28 @@ The wrapper SHALL abort the version change when its upgrade callback throws, so 
 - **THEN** the open request rejects with the abort
 - **AND** the database keeps its previous version
 
+### Requirement: A failed upgrade is logged once, with its own message
+
+The wrapper SHALL write exactly one console error for each failed upgrade, naming the message its callback threw, and SHALL still write one when a request error aborts the upgrade with nothing thrown.
+
+#### Scenario: A thrown upgrade failure is logged once
+
+- **GIVEN** an upgrade whose callback throws an error
+- **WHEN** the upgrade fails
+- **THEN** exactly one console error is written
+
+#### Scenario: A thrown upgrade failure keeps its message
+
+- **GIVEN** an upgrade whose callback throws an error with a message
+- **WHEN** the upgrade fails
+- **THEN** the console error includes that message
+
+#### Scenario: An upgrade aborted by a request error is logged
+
+- **GIVEN** an upgrade in which a request fails and the callback throws nothing
+- **WHEN** the transaction aborts
+- **THEN** exactly one console error is written
+
 ### Requirement: A transaction settles with its own outcome
 
 The wrapper SHALL settle a transaction's completion with the error that aborted it, and SHALL settle an abort that carries no error as an abort error.
