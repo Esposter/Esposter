@@ -128,6 +128,7 @@ describe(buildItems, () => {
             id: GADGET_ITEM_ID,
             isEquipable: true,
             kind: GadgetKind.Detector,
+            maxPoints: 0,
             region: "",
           },
         ]);
