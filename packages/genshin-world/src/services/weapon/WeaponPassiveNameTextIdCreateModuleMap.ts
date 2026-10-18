@@ -94,6 +94,7 @@ import { createUnbendingPassiveModule } from "#src/services/weapon/passives/crea
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
+import { createWhiteFairysQueeningPassiveModule } from "#src/services/weapon/passives/createWhiteFairysQueeningPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
@@ -367,4 +368,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1054220683": createSunkenSongOfTheSandsPassiveModule,
   // Honed Flow (Haran Geppaku Futsu)
   "2204995987": createHonedFlowPassiveModule,
+  // White Fairy's Queening (A Teaspoon of Transcendence)
+  "1811953931": createWhiteFairysQueeningPassiveModule,
 };
