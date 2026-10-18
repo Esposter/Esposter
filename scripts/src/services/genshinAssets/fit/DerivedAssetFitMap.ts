@@ -43,7 +43,14 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
     runFits(await readRegionGroundFits(DerivedAssetComponent.Fontaine), only, options),
   [DerivedAssetComponent.Hud]: fitHud,
   [DerivedAssetComponent.Inazuma]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Inazuma), only, options),
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Inazuma)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
+      },
+      only,
+      options,
+    ),
   [DerivedAssetComponent.Liyue]: async (only, options) =>
     runFits(
       {
@@ -65,12 +72,26 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
       options,
     ),
   [DerivedAssetComponent.Natlan]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Natlan), only, options),
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Natlan)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Natlan, fitOptions),
+      },
+      only,
+      options,
+    ),
   [DerivedAssetComponent.NodKrai]: async (only, options) =>
     runFits(await readRegionGroundFits(DerivedAssetComponent.NodKrai), only, options),
   [DerivedAssetComponent.Snezhnaya]: async (only, options) =>
     runFits(await readRegionGroundFits(DerivedAssetComponent.Snezhnaya), only, options),
   [DerivedAssetComponent.Sumeru]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Sumeru), only, options),
+    runFits(
+      {
+        ...(await readRegionGroundFits(DerivedAssetComponent.Sumeru)),
+        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Sumeru, fitOptions),
+      },
+      only,
+      options,
+    ),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };
