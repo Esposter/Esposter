@@ -21,10 +21,11 @@ import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
-// A card at a hand index is played, as a fast action, or as a combat action that passes the turn when its module says so. A support takes its place in the support zone, equipment is equipped
-// To the target character, and an event is played and gone. The card's own module then takes its effect, with the choice
-// The duel screen gave it, if any. Refused, and the
-// Duel left as it was, when the card has no module, its target or zone is not one it may take, or its cost is not covered
+// A card at a hand index is played, as a fast action, or as a combat action that passes the turn
+// When its module says so. A support takes its place in the support zone, equipment is equipped to the target
+// Character, and an event is played and gone. The card's own module then takes its effect, with the choice the duel
+// Screen gave it, if any. Refused, and the duel left as it was, when the card has no module, its target or zone is not
+// One it may take, or its cost is not covered
 export const playGcgCard = (
   duel: GcgDuel,
   sideIndex: number,
@@ -48,7 +49,8 @@ export const playGcgCard = (
   placeGcgCard(side, card, targetIndex, module);
   const summonsBeforePlay = duel.sides.map(({ summons }) => [...summons]);
   module.play?.(context, targetIndex, choice);
-  for (const [index, summons] of summonsBeforePlay.entries()) notifyGcgSummonsDisappeared(duel, index, summons);
+  for (const [summonsSideIndex, summons] of summonsBeforePlay.entries())
+    notifyGcgSummonsDisappeared(duel, summonsSideIndex, summons);
   for (const zoneCard of listGcgFieldCards(side, undefined))
     GcgCardIdModuleMap.get(zoneCard.cardId)?.onCardPlayed?.(context, card, zoneCard);
   const switchIndex = module.switchOnPlay?.(context);
@@ -56,7 +58,7 @@ export const playGcgCard = (
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
   if (module.isCombatAction) passGcgTurn(duel, sideIndex);
-  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
+  for (const pruneSideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, pruneSideIndex);
   return GcgActionResult.Done;
 };
 
