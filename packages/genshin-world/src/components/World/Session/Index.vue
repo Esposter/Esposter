@@ -18,6 +18,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
+import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
@@ -35,6 +36,7 @@ import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
+import StatueScreen from "#src/components/Statue/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
@@ -180,7 +182,13 @@ import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/se
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
-import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
+import {
+  OCULUS_MINIMAP_DISTANCE,
+  OCULUS_REGION_ID,
+  OCULUS_TOUCH_RADIUS,
+  RESTORATIVE_POWER_PER_STATUE,
+} from "#src/services/statue/constants";
+import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
@@ -617,6 +625,11 @@ const { offerFrostbearingTree } = useWorldOfferings({
 // The regions whose statues the Traveler resonated with, which give its element and, once Welkin Moon's Homecoming is
 // Done, its bonuses. The unlocked landmarks, which hold the resonances, set them again as they change, below the map
 const resonatedRegionIds = shallowRef(getResonatedRegionIds(savedState.unlockedLandmarkIds));
+// The Restorative Power the Statue's Blessing holds, full to the statues resonated with. The save holds no pool, so it is kept for the session
+const restorativePower = shallowRef<RestorativePower>({
+  amount: RESTORATIVE_POWER_PER_STATUE * resonatedRegionIds.value.length,
+  changedAt: getWorldNow(),
+});
 const travelerElement = computed(() => computeTravelerElement(resonatedRegionIds.value));
 const travelerBonusLines = computed(() =>
   getTravelerElementBonusLines(resonatedRegionIds.value, finishedMainQuestIds.value.has(TRAVELER_BONUS_QUEST_ID)),
@@ -1188,6 +1201,7 @@ const interactables = computed<Interactable[]>(() => {
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
     abyssEntrance,
+    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueBlessing], getGroundHeight),
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
     ),
@@ -1500,6 +1514,11 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              unlockedLandmarkIds.value.has(interactable.id)
+            ) {
+              screenKind = ScreenKind.Blessing;
             } else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === DOMAIN_LEAVE_INTERACTABLE_ID
@@ -2053,6 +2072,17 @@ defineExpose({ jumpTo, readCameraPosition });
         gcgGameId = undefined;
         screenKind = ScreenKind.World;
       "
+    />
+    <StatueScreen
+      v-if="screenKind === ScreenKind.Blessing"
+      v-model:power="restorativePower"
+      :game-text
+      :get-max-health="(characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0"
+      :get-name="(characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ''] || ''"
+      :get-now="getWorldNow"
+      :party
+      :statue-count="resonatedRegionIds.length"
+      @close="screenKind = ScreenKind.World"
     />
     <CookingScreen
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
