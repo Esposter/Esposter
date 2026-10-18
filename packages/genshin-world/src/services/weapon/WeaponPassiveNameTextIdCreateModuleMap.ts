@@ -28,9 +28,12 @@ import { createInfusionBladePassiveModule } from "#src/services/weapon/passives/
 import { createInfusionNeedlePassiveModule } from "#src/services/weapon/passives/createInfusionNeedlePassiveModule";
 import { createInfusionScrollPassiveModule } from "#src/services/weapon/passives/createInfusionScrollPassiveModule";
 import { createInfusionStingerPassiveModule } from "#src/services/weapon/passives/createInfusionStingerPassiveModule";
+import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
+import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
+import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
@@ -192,4 +195,10 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "896844259": createRebelliousGuardianPassiveModule,
   // Debut (The Widsith)
   "4145255819": createDebutPassiveModule,
+  // Press the Advantage (Blackcliff Longsword)
+  "3117685819": createPressTheAdvantagePassiveModule,
+  // Justice (The Black Sword)
+  "1092738259": createJusticePassiveModule,
+  // Itinerant Hero (The Alley Flash)
+  "3197835587": createItinerantHeroPassiveModule,
 };
