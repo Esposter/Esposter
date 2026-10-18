@@ -5,10 +5,10 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { claimAbyssRewards } from "#src/services/reward/claimAbyssRewards";
+import { claimRewards } from "#src/services/reward/claimRewards";
 import { describe, expect, test } from "vitest";
 
-describe(claimAbyssRewards, () => {
+describe(claimRewards, () => {
   const REWARD_ID = 1;
   const MISSING_REWARD_ID = 2;
   const MATERIAL_ID = 3;
@@ -37,7 +37,7 @@ describe(claimAbyssRewards, () => {
     expect.hasAssertions();
 
     expect(
-      claimAbyssRewards(
+      claimRewards(
         [REWARD_ID],
         {
           [REWARD_ID]: [
@@ -60,7 +60,7 @@ describe(claimAbyssRewards, () => {
     expect.hasAssertions();
 
     expect(
-      claimAbyssRewards(
+      claimRewards(
         [REWARD_ID],
         { [REWARD_ID]: [{ count: 1, itemId: MATERIAL_ID }] },
         EMPTY_INVENTORY,
@@ -80,7 +80,7 @@ describe(claimAbyssRewards, () => {
     const { inventory: fullInventory } = addInventoryItem(EMPTY_INVENTORY, definition, MATERIAL_STACK_LIMIT);
 
     expect(
-      claimAbyssRewards(
+      claimRewards(
         [REWARD_ID],
         {
           [REWARD_ID]: [
@@ -100,7 +100,7 @@ describe(claimAbyssRewards, () => {
     expect.hasAssertions();
 
     expect(() =>
-      claimAbyssRewards([MISSING_REWARD_ID], {}, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap),
+      claimRewards([MISSING_REWARD_ID], {}, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 2, names no items in the rewards record]`,
     );

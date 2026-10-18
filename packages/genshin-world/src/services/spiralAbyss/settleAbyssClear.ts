@@ -10,7 +10,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PartyMember } from "#src/models/party/PartyMember";
 
-import { claimAbyssRewards } from "#src/services/reward/claimAbyssRewards";
+import { claimRewards } from "#src/services/reward/claimRewards";
 import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
 
 // A clear settled: the cycle's progress after it, the party's carry into the next chamber, and the bag and wallet its rewards paid
@@ -49,7 +49,7 @@ export const settleAbyssClear = ({
   wallet: Wallet;
 }): AbyssClearSettlement | undefined => {
   const recorded = recordAbyssChamberClear(progress, floor, chamber, challenge, reward, characterIdMemberMap);
-  const claim = claimAbyssRewards(recorded.givenRewardIds, rewardItems, inventory, wallet, names, materialDataMap);
+  const claim = claimRewards(recorded.givenRewardIds, rewardItems, inventory, wallet, names, materialDataMap);
   if (claim === undefined) return undefined;
   return { carry: recorded.carry, inventory: claim.inventory, progress: recorded.progress, wallet: claim.wallet };
 };
