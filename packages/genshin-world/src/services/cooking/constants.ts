@@ -26,6 +26,7 @@ export const MONDSTADT_COOKING_STOVE_BUILDING_NAME = "Restaurant";
 export const COOKING_STOVE_INTERACTABLE_ID = "cookingStove";
 // The stove's second row, which opens its processing screen beside the cooking one
 export const COOKING_PROCESSING_INTERACTABLE_ID = "cookingProcessing";
-// Provisional: the seconds the pointer takes to swing from one end of the indicator's bar to the other, and back again
-// For a full sweep of twice this. Not yet measured from a recording of the cooking screen
-export const COOKING_POINTER_SWEEP_SECONDS = 1.5;
+// Provisional: the seconds the pointer takes to cross the indicator's bar from one end to the other, measured off one
+// PC clip of the cooking screen from February 2026 and extrapolated from partial sweeps.
+// Whether it swings back or loops is not yet seen
+export const COOKING_POINTER_SWEEP_SECONDS = 3;
