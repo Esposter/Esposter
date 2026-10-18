@@ -66,3 +66,7 @@ export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   WeaponType.Polearm,
   WeaponType.Sword,
 ]);
+// The status a Natlan character carries while it is in its Nightsoul's Blessing, for the seconds the blessing lasts
+export const NIGHTSOUL_BLESSING_STATUS_ID = "nightsoul-blessing";
+// The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
+export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
