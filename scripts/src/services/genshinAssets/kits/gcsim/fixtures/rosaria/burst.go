@@ -19,9 +19,6 @@ func init() {
 }
 
 // Burst attack damage queue generator
-// Rosaria swings her weapon to slash surrounding opponents, then she summons a frigid Ice Lance that strikes the ground. Both actions deal Cryo DMG.
-// While active, the Ice Lance periodically releases a blast of cold air, dealing Cryo DMG to surrounding opponents.
-// Also includes the following effects: A4, C6
 func (c *char) Burst(p map[string]int) (action.Info, error) {
 	// Note - if a more advanced targeting system is added in the future
 	// hit 1 is technically only on surrounding enemies, hits 2 and dot are on the lance

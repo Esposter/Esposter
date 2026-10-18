@@ -18,7 +18,7 @@ describe(findQueuedAttack, () => {
     const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
 
     expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.line)).toStrictEqual([
-      69, 66, 66, 76,
+      59, 56, 56, 66,
     ]);
   });
 
