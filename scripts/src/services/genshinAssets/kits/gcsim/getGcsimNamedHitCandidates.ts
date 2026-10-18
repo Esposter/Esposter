@@ -67,12 +67,14 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
       if (index === undefined || namedHitCandidateMap.has(key)) continue;
       const namedHitCandidate: NamedHitCandidate = {
         fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf: leaf }),
-        queuedCalls: attackCalls.map(({ delay, delayLine, file, hitbox, site }) => ({
+        queuedCalls: attackCalls.map(({ delay, delayLine, file, hitbox, line, site }) => ({
           delay,
           fieldMap: readFieldMap(key, gcsim, tables, {
             areaHitbox: hitbox,
             hitmark: delay === undefined ? undefined : { file, line: delayLine, value: delay },
           }),
+          file,
+          line,
           site,
         })),
       };
