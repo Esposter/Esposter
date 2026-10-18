@@ -4,7 +4,7 @@
   "chargedAttack.hits.0.healParty.flatHealth": { "cause": "Unsourced", "value": 288.8908 },
   "chargedAttack.hits.0.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "chargedAttack.hits.0.healParty.maxHealthShare": { "cause": "Unsourced", "value": 0.03 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 41 },
+  "chargedAttack.hits.0.hitmarkFrames": { "file": "charge.go", "line": 14, "source": "Gcsim", "value": 55 },
   "frames.shiningMiracleHeal": { "file": "burst.go", "line": 31, "source": "Gcsim", "value": 77 },
   "frames.melodyLoopStart": { "file": "skill.go", "line": 18, "source": "Gcsim", "value": 3 },
   "frames.melodyLoopExtension": { "cause": "Unsourced", "value": 1 },
