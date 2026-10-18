@@ -116,7 +116,7 @@ Resonating with a statue SHALL change the Traveler's element to the element of t
 
 ### Requirement: F on a resonated statue opens the Worship Statue
 
-Pressing F at a resonated statue SHALL open the Worship Statue, which shows each level of the region and what each pays, and the Statue's Blessing SHALL be one switch away from it. The Statue's Blessing SHALL show the healing pool and the party's portraits, and a click on a portrait SHALL heal that member from the pool.
+Pressing F at a resonated statue SHALL open the Worship Statue, which shows each level of the region and what each pays, and the Statue's Blessing SHALL be one switch away from it. The Statue's Blessing SHALL show the healing pool and the party's portraits.
 
 #### Scenario: F on a resonated statue opens the Worship Statue
 
@@ -131,35 +131,6 @@ Pressing F at a resonated statue SHALL open the Worship Statue, which shows each
 - **WHEN** the player switches to the Statue's Blessing
 - **THEN** the Statue's Blessing opens
 - **AND** it shows the healing pool and the party's portraits
-
-#### Scenario: A click on a portrait heals that member from the pool
-
-- **GIVEN** the Statue's Blessing open with a party member hurt
-- **WHEN** the player clicks the member's portrait
-- **THEN** the member is healed from the pool
-
-### Requirement: Auto-recover revives and heals the party near a statue
-
-With auto-recover on and a threshold set, standing by a statue for two seconds SHALL revive the fallen and heal members under the threshold from the healing pool.
-
-#### Scenario: Standing by a statue for two seconds revives the fallen
-
-- **GIVEN** a fallen party member and auto-recover on near a statue
-- **WHEN** the player stands by the statue for two seconds
-- **THEN** the fallen member is revived at thirty-five percent of health
-
-#### Scenario: Members under the threshold are healed when the pool holds enough
-
-- **GIVEN** party members under the threshold and a pool that holds enough to heal them
-- **WHEN** the player stands by the statue for two seconds
-- **THEN** every member under the threshold is healed to it
-
-#### Scenario: A pool short of the threshold heals the first slots first
-
-- **GIVEN** party members under the threshold and a pool that holds too little to heal them all
-- **WHEN** the player stands by the statue for two seconds
-- **THEN** the first slots are healed first
-- **AND** the pool is empty
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
@@ -201,6 +172,58 @@ The statues' levels, levels claimed, held counts and found Oculi SHALL be kept w
 - **WHEN** the two saves are merged
 - **THEN** the merged save claims none of that level, so the account claims it again and is paid once from its own bag
 - **AND** the guest's rewards for it are lost with the guest's bag
+
+## MODIFIED Requirements
+
+### Requirement: A click heals a tenth of a member's maximum HP from the pool
+
+A click on a party member's portrait in the Statue's Blessing SHALL heal a standing party member who is hurt by a tenth of their maximum HP, paid from the pool, and SHALL heal nothing for a fallen member or a member at full HP.
+
+#### Scenario: Pool covers the full heal
+
+- **GIVEN** the Statue's Blessing open, a hurt standing party member and a pool holding at least a tenth of their maximum HP
+- **WHEN** the member's portrait is clicked
+- **THEN** the member is healed by a tenth of their maximum HP
+- **AND** that amount is taken from the pool
+
+#### Scenario: Pool runs short
+
+- **GIVEN** the Statue's Blessing open, a hurt standing party member and a pool holding less than a tenth of their maximum HP
+- **WHEN** the member's portrait is clicked
+- **THEN** the member is healed by what the pool holds
+- **AND** the pool is emptied
+
+#### Scenario: Fallen member not healed by a click
+
+- **GIVEN** the Statue's Blessing open and a fallen party member
+- **WHEN** the member's portrait is clicked
+- **THEN** the member is not healed
+- **AND** the pool is unchanged
+
+### Requirement: Auto-recover revives the fallen and heals the hurt to a threshold
+
+With auto-recover on and a threshold set, standing by a statue for two seconds SHALL revive the deployed team's fallen members at thirty-five percent of their HP at no cost to the pool, and then SHALL heal every member under the threshold up to that threshold from the pool, slot by slot.
+
+#### Scenario: Standing by a statue for two seconds revives the fallen
+
+- **GIVEN** a fallen party member and auto-recover on near a statue
+- **WHEN** the player stands by the statue for two seconds
+- **THEN** the fallen member is revived at thirty-five percent of health
+- **AND** the pool is unchanged by the revival
+
+#### Scenario: Members under the threshold are healed when the pool holds enough
+
+- **GIVEN** party members under the threshold and a pool that holds enough to heal them
+- **WHEN** the player stands by the statue for two seconds
+- **THEN** every member under the threshold is healed to it
+
+#### Scenario: A pool short of the threshold heals the first slots first
+
+- **GIVEN** party members under the threshold and a pool that holds too little to heal them all
+- **WHEN** the player stands by the statue for two seconds
+- **THEN** the first slots are healed first
+- **AND** the later slots stay where they stand
+- **AND** the pool is empty
 
 ## REMOVED Requirements
 

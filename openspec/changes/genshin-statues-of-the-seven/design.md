@@ -1,6 +1,6 @@
 # Statues of The Seven
 
-Each region's statues stand for its Archon, and they are the game's anchor for exploring it: a statue fills in its area of the map ([map unlocking](../genshin-map-unlocking/design.md)) and is a jump. The level rules, the maximum stamina they raise and the pool's heal are built and tested as rules, on the [Statues of The Seven](../../specs/genshin/statues-of-the-seven/design.md) page. What is left is the Oculi, the screen, the world's state those rules read, and the Traveler's element.
+Each region's statues stand for its Archon, and they are the game's anchor for exploring it: a statue fills in its area of the map ([map unlocking](../genshin-map-unlocking/design.md)) and is a jump. The level rules, the maximum stamina they raise and the pool's heal are built and tested as rules, on the [Statues of The Seven](../../specs/genshin/statues-of-the-seven/design.md) page. The Oculi, the screens, the world's state those rules read and the Traveler's element are built on them in the world; what is left is the stamina maximum's wiring, auto-recover's switch and the later regions.
 
 ## Decisions
 
@@ -38,18 +38,23 @@ flowchart TD
 
 **Today:** the levels, the stamina maximum and the pool's heal and auto-recover are built as rules and tested. The world holds the regions' levels, the Oculi found and the pool. A resonated statue's F opens the Worship Statue, which offers the held Oculi and claims each reached level, and the Blessing screen shows the pool and heals from it. Auto-recover's switch is not built.
 
-**This still adds, in order:**
+**Built, in order:**
 
 ```text
 packages/genshin-world/src/models/statue/StatueProgressSave.ts
 ```
 
-1. **The statues' state in the save, and an Oculus found.** `StatueProgressSave.ts` holds each region's `{ claimedLevel, heldCount, level }` by region id and `foundOculusIds`, its schema carrying no default as the [latest-shape rule](../../specs/architecture/persisted-data-latest-shape-only/design.md) sets, and `models/save/GenshinSave.ts` gains it as `statues`, with `services/save/toGenshinSave.ts`, `readGenshinSave.ts` and `mergeGenshinSave.ts` carrying it as they carry `reputation`. `services/statue/findOculus.ts` is pure: an Oculus id not yet found joins the found ids and its Oculus is held in its region's count, in a started region or not, since offering is the Worship Statue's act. A found id gives nothing a second time. The proof is `findOculus.test.ts`, and `mergeGenshinSave.test.ts` for the union of found ids and for each region's copy further on, including the copy with more levels claimed.
-2. **Oculi in the world**: each region's Oculi from its `oculi/<region>` record, fetched by key, drawn as a stand-in where none has been found, found by touch within a provisional `OCULUS_TOUCH_RADIUS`, paying its Adventure EXP and holding it in its region's count, and marked on the minimap within the provisional distance the owed `oculus-minimap.mkv` re-measures.
-3. **A first resonance starts its region and feeds the stamina**: resonating with a statue starts its region at level 1, reached but not paid until claimed, and `computeMaximumStamina` over the saved levels is the character's `staminaMaximum`.
-4. **The Statue's Blessing screen**, its pool and portraits built from the wiki and its layout provisional until `statue-blessing.mkv` records it. The Worship Statue (task 3.3) is built with its offer and claim, and auto-recover's switch and threshold (task 3.4) come after it.
-5. **The Traveler's resonance**, once the Traveler's kit follows its element, which the character kits unit the other machine holds is building.
-6. **Each later region's Oculi and levels**, with that region.
+1. **The statues' state in the save, and an Oculus found.** `StatueProgressSave.ts` holds each region's `{ claimedLevel, heldCount, level }` by region id and `foundOculusIds`, its schema carrying no default as the [latest-shape rule](../../specs/architecture/persisted-data-latest-shape-only/design.md) sets, and `models/save/GenshinSave.ts` carries it as `statues`, with `services/save/toGenshinSave.ts`, `readGenshinSave.ts` and `mergeGenshinSave.ts` carrying it as they carry `reputation`. `services/statue/findOculus.ts` is pure: an Oculus id not yet found joins the found ids and its Oculus is held in its region's count, in a started region or not, since offering is the Worship Statue's act. A found id gives nothing a second time. The proof is `findOculus.test.ts`, and `mergeGenshinSave.test.ts` for the union of found ids and for each region's copy further on, including the copy with more levels claimed.
+2. **Oculi in the world.** Each region's Oculi are fetched by key from its `oculi/<region>` record, drawn as a stand-in where none has been found, found by touch within a provisional `OCULUS_TOUCH_RADIUS`, paid their Adventure EXP and held in their region's count, and marked on the minimap within the provisional distance the owed `oculus-minimap.mkv` re-measures.
+3. **A first resonance starts its region.** Resonating with a statue starts its region at level 1, reached but not paid until claimed.
+4. **The Statue's Blessing screen and the Worship Statue.** The Blessing's pool and portraits are built from the wiki and its layout is provisional until `statue-blessing.mkv` records it. The Worship Statue (task 3.3) is built with its offer and claim.
+5. **The Traveler's resonance.** `computeTravelerElement` gives the element of the region resonated with last, which the Session passes on (task 2.3).
+
+**Still to add:**
+
+1. **The maximum stamina**: `computeMaximumStamina` over the saved levels as the character's `staminaMaximum`, which the character still takes as the constant `STAMINA_MAX`.
+2. **Auto-recover's switch and threshold** (task 3.4), which turn on the rule `autoRecoverParty` and its call (task 3.2).
+3. **Each later region's Oculi and levels**, with that region.
 
 ## Data and measures
 
