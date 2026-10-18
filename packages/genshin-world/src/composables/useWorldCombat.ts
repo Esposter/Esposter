@@ -202,6 +202,8 @@ export const useWorldCombat = ({
   // The world's combat state, which the character on the field steps into: it starts with the active character standing at
   // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
   // Seeded source, so a session's rolls repeat
+  // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps
+  const stamina = createStamina(STAMINA_MAX);
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -213,9 +215,8 @@ export const useWorldCombat = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
-    // The first step writes the character controller's pool over this one, before any kit reads it
     hexereiCount: 0,
-    stamina: createStamina(STAMINA_MAX),
+    stamina,
     oreStrikes: [],
     reactionTriggers: [],
     outbox: [],

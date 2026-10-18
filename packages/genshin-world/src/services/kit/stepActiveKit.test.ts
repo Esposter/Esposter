@@ -38,6 +38,7 @@ import {
   createGroundQuery,
   createLandmarkCollider,
   LocomotionState,
+  createStamina,
   STAMINA_MAX,
 } from "genshin-engine";
 import { Vector3 } from "three";
@@ -75,12 +76,13 @@ const createStrikeContext = (combatants: Combatant[], kitEffectState?: KitEffect
 });
 
 // The controls of a body standing at the origin on flat ground, its camera aiming along no yaw
-const createControls = (): ActiveKitControls => ({
+const createControls = (stamina = createStamina(STAMINA_MAX)): ActiveKitControls => ({
   aimYaw: 0,
   characterController: createCharacterController({
     ground: createGroundQuery(() => 0, -1),
     landmarkCollider: createLandmarkCollider(),
     position: new Vector3(),
+    stamina,
     staminaMaximum: STAMINA_MAX,
   }),
   isAimHeld: false,
@@ -124,6 +126,19 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
 
     expect(context.stamina).toBe(controls.characterController.stamina);
+  });
+
+  test("keeps a restore the kit makes to the party's stamina into the next step", () => {
+    expect.hasAssertions();
+    const stamina = createStamina(STAMINA_MAX);
+    stamina.value = 50;
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const controls = createControls(stamina);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+    context.stamina.restore(15);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+
+    expect([context.stamina.value, stamina.value]).toStrictEqual([65, 65]);
   });
 
   test("counts the Hexerei characters of the deployed team into the context", () => {

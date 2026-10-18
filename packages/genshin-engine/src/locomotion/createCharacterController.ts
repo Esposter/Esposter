@@ -45,6 +45,7 @@ export const createCharacterController = ({
   ground,
   landmarkCollider,
   position,
+  stamina: staminaPool,
   staminaMaximum,
 }: CharacterControllerOptions): CharacterController => {
   const previousPosition = position.clone();
@@ -58,7 +59,7 @@ export const createCharacterController = ({
   const capsule = new Capsule();
   const heldPresses = new Set<InputAction>();
   const phase: LocomotionPhase = { state: LocomotionState.Idle, stateSeconds: 0 };
-  const stamina = createStamina(staminaMaximum, getStaminaConsumptionMultiplier);
+  const stamina = staminaPool ?? createStamina(staminaMaximum, getStaminaConsumptionMultiplier);
   const contact: LocomotionContact = {
     isFacingWall: false,
     isGrounded: true,
