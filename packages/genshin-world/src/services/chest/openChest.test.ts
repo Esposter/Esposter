@@ -12,30 +12,42 @@ describe(openChest, () => {
   test("rolls each reward within its range and keeps the chest as opened", () => {
     expect.hasAssertions();
 
-    const lowest = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0);
+    const lowest = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil);
     expect(lowest.drops).toStrictEqual([
       { count: 1, itemId: 11_101 },
       { count: 4, itemId: 104_001 },
       { count: 1, itemId: 104_002 },
     ]);
     expect(lowest.openedChestIds).toStrictEqual(new Set([CHEST_ID]));
-    expect(lowest.wallet).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 257, [Currency.Primogem]: 0 });
+    expect(lowest.wallet).toStrictEqual({
+      ...EMPTY_WALLET,
+      [Currency.AnemoSigil]: 1,
+      [Currency.Mora]: 257,
+      [Currency.Primogem]: 0,
+    });
 
-    const highest = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999);
-    expect(highest.wallet).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 996, [Currency.Primogem]: 2 });
+    const highest = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, Currency.AnemoSigil);
+    expect(highest.wallet).toStrictEqual({
+      ...EMPTY_WALLET,
+      [Currency.AnemoSigil]: 3,
+      [Currency.Mora]: 996,
+      [Currency.Primogem]: 2,
+    });
   });
 
-  test("opening a chest adds its Adventure EXP", () => {
+  test("opening a chest adds its Adventure EXP and Sigils to the wallet", () => {
     expect.hasAssertions();
 
-    expect(openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0).adventureExp).toBe(30);
+    const opening = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil);
+    expect(opening.adventureExp).toBe(30);
+    expect(opening.wallet[Currency.AnemoSigil]).toBe(1);
   });
 
   test("opens a chest only once", () => {
     expect.hasAssertions();
 
     const opened = new Set([CHEST_ID]);
-    expect(openChest(commonChest, opened, EMPTY_WALLET, () => 0)).toStrictEqual({
+    expect(openChest(commonChest, opened, EMPTY_WALLET, () => 0, Currency.AnemoSigil)).toStrictEqual({
       adventureExp: 0,
       drops: [],
       openedChestIds: opened,
@@ -47,7 +59,7 @@ describe(openChest, () => {
     expect.hasAssertions();
 
     const luxuriousChest = { ...commonChest, kind: ChestKind.Luxurious };
-    expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0)).toStrictEqual({
+    expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0, Currency.AnemoSigil)).toStrictEqual({
       adventureExp: 0,
       drops: [],
       openedChestIds: NO_OPENED_CHESTS,
