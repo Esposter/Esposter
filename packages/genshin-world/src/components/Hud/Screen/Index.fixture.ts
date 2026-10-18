@@ -47,7 +47,7 @@ export const props = {
   catalogue: await readCatalogue(GAME_DATA_LOCAL_BASE_URL),
   characterDataMap,
   characterIdSkillGlyphsMap,
-  frame: { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, stamina: STAMINA_MAX },
+  frame: { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
