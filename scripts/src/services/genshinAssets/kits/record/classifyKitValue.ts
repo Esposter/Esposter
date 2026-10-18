@@ -22,20 +22,21 @@ export const classifyKitValue = (
   isTagPredated: boolean,
   talentMultiplierMap: KitTables["talentMultiplierMap"],
 ): KitOverlayEntry | undefined => {
-  const isEqual = (candidateValue: unknown) => checkIsKitValueResolvedEqual(candidateValue, value, talentMultiplierMap);
-  if (candidates.length > 0 && isEqual(candidates[0]?.value)) return undefined;
+  const checkIsEqual = (candidateValue: unknown) =>
+    checkIsKitValueResolvedEqual(candidateValue, value, talentMultiplierMap);
+  if (candidates.length > 0 && checkIsEqual(candidates[0]?.value)) return undefined;
   const withValue = (cause: KitProvisionalCause): KitOverlayEntry => ({ cause, value });
   const tagCandidate = findSourceCandidate(candidates, KitSource.Gcsim);
   const mainCandidate = findSourceCandidate(mainCandidates, KitSource.Gcsim);
   if (
     mainCandidate !== undefined &&
-    isEqual(mainCandidate.value) &&
-    (tagCandidate === undefined || !isEqual(tagCandidate.value))
+    checkIsEqual(mainCandidate.value) &&
+    (tagCandidate === undefined || !checkIsEqual(tagCandidate.value))
   )
     return withValue(isTagPredated ? KitProvisionalCause.Unclassified : KitProvisionalCause.ReadPastLicence);
   for (const source of SELECTABLE_SOURCES) {
     const candidate = findSourceCandidate(candidates, source);
-    if (candidate !== undefined && isEqual(candidate.value)) return { source };
+    if (candidate !== undefined && checkIsEqual(candidate.value)) return { source };
   }
   return withValue(
     candidates.some(({ provenance }) => provenance.source !== KitSource.Rule)
