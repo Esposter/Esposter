@@ -9,7 +9,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every attribute line a character carries: its own at its level and phase and those every level of it starts with,
 // Its weapon's at the weapon's, each artifact's main affix at its rarity and level and its minor affixes, and the
-// Bonuses of the sets its artifacts make, and for the Traveler the bonuses of the elements it holds
+// Bonuses of the sets its artifacts make, for the Traveler the bonuses of the elements it holds, and the party-wide bonuses
+// Every character holds
 export const getCharacterAttributeLines = (
   { artifacts, ascension, id, level, weapon }: Character,
   {
@@ -21,6 +22,7 @@ export const getCharacterAttributeLines = (
     weaponGrowCurveMap,
   }: StatTables,
   travelerBonusLines: AttributeLine[] = [],
+  partyBonusLines: AttributeLine[] = [],
 ): AttributeLine[] => {
   const characterData = characterDataMap.get(id);
   if (!characterData)
@@ -42,5 +44,6 @@ export const getCharacterAttributeLines = (
     }),
     ...getArtifactSetAttributeLines(artifacts, artifactSetDataMap),
     ...(id === TRAVELER_CHARACTER_ID ? travelerBonusLines : []),
+    ...partyBonusLines,
   ];
 };

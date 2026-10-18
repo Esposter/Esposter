@@ -70,4 +70,19 @@ describe(getCharacterAttributeLines, () => {
     );
     expect(getCharacterAttributeLines(characterOf(otherId), statTables, [bonusLine])).not.toContainEqual(bonusLine);
   });
+
+  test("a party-wide bonus line reaches every character, not only the Traveler", async () => {
+    expect.hasAssertions();
+
+    const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+    const otherId = [...statTables.characterDataMap.keys()].find((id) => id !== TRAVELER_CHARACTER_ID) ?? 0;
+    const partyBonusLine = { attribute: Attribute.AttackPercent, value: 0.2 };
+
+    expect(
+      getCharacterAttributeLines(characterOf(TRAVELER_CHARACTER_ID), statTables, [], [partyBonusLine]),
+    ).toContainEqual(partyBonusLine);
+    expect(getCharacterAttributeLines(characterOf(otherId), statTables, [], [partyBonusLine])).toContainEqual(
+      partyBonusLine,
+    );
+  });
 });
