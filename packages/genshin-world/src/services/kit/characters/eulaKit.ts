@@ -44,6 +44,7 @@ const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
 const LIGHTFALL_STACKS_RESOURCE_ID = "eula-lightfall-stacks";
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
+const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 // Constellation 6 starts the Sword with this many stacks, and each stack it gains rolls for one more
 const CONSTELLATION_6 = 6;
@@ -222,7 +223,7 @@ export const createEulaKitBehaviour = ({
             }));
           castKitSummon(kitEffectState, body, combatant, icewhirls);
           // Two stacks raise a Shattered Lightfall Sword at Ascension 1, which explodes on its own once the hold has begun
-          if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= 1)
+          if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= ASCENSION_1)
             castKitSummon(kitEffectState, body, combatant, [shatteredLightfall]);
           // Constellation 1's bonus lasts six seconds plus six for each stack consumed
           if (combatant.constellationCount >= 1)
