@@ -17,6 +17,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import type { StatueProgressSave, StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { TipSave } from "#src/models/tip/TipSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
@@ -229,6 +230,14 @@ const mergeMinedOutcrops = (account: MinedOutcropSave[], guest: MinedOutcropSave
   }
   return [...minedOutcropMap.values()];
 };
+// The tips shown in either copy stay shown, and a tip waiting in either copy waits only while neither has shown it
+const mergeTips = (account: TipSave, guest: TipSave): TipSave => {
+  const shown = new Set([...account.shown, ...guest.shown]);
+  return {
+    queued: [...new Set([...account.queued, ...guest.queued])].filter((id) => !shown.has(id)),
+    shown: [...shown],
+  };
+};
 // A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
 // Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
 // And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
@@ -368,7 +377,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave, now: 
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),
-    tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
+    tips: mergeTips(account.tips, guest.tips),
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {

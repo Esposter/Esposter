@@ -81,6 +81,7 @@ export interface GenshinSaveState {
   reputation: ReputationProgress;
   reputationBountyClaimedAts: readonly Temporal.Instant[];
   reputationBountyHunt: ReputationBountyHunt | undefined;
+  queuedTipIds: readonly number[];
   reputationRequestClaimedAts: readonly Temporal.Instant[];
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];

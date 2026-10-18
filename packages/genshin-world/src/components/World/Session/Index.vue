@@ -347,6 +347,7 @@ const {
   setEnemyRespawnAt,
   setInventory,
   setNamecardItemId,
+  queuedTipIds,
   setWallet,
   shownTipIds,
   travelerBirthday,
@@ -355,7 +356,7 @@ const {
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
-const { closeTip, showingTip } = useWorldTips({ events, shownTipIds, tips });
+const { closeTip, showingTip } = useWorldTips({ events, queuedTipIds, shownTipIds, tips });
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -1185,6 +1186,7 @@ useWorldSaveSync({
     reputationBountyHunt: bountyHunt.value,
     reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
+    queuedTipIds: queuedTipIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
     spiralAbyssProgressMap: abyssProgressMap.value,

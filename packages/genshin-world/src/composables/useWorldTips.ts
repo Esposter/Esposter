@@ -8,26 +8,32 @@ import { getTipsTriggered } from "#src/services/tip/getTipsTriggered";
 import { shallowRef } from "vue";
 
 // The tips the world shows: each tip a world event triggers and the save has not shown is shown in turn, the next only
-// Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save
+// Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save. A tip still
+// Waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
 export const useWorldTips = ({
   events,
+  queuedTipIds,
   shownTipIds,
   tips,
 }: {
   events: WorldEvents;
+  queuedTipIds: ShallowRef<readonly number[]>;
   shownTipIds: ShallowRef<ReadonlySet<number>>;
   tips: readonly Tip[];
 }) => {
   const showingTip = shallowRef<Tip>();
-  const queuedTips: Tip[] = [];
   const showTip = (tip: Tip) => {
     shownTipIds.value = new Set(shownTipIds.value).add(tip.id);
     showingTip.value = tip;
     events.emit("tipShown", tip);
   };
   const showNextTip = () => {
-    const nextTip = queuedTips.shift();
+    const [nextTipId] = queuedTipIds.value;
+    if (nextTipId === undefined) return;
+    queuedTipIds.value = queuedTipIds.value.slice(1);
+    const nextTip = tips.find(({ id }) => id === nextTipId);
     if (nextTip) showTip(nextTip);
+    else showNextTip();
   };
   const closeTip = () => {
     showingTip.value = undefined;
@@ -35,7 +41,10 @@ export const useWorldTips = ({
   };
   // The triggered tips join the queue behind the ones waiting, each once, and the first of them is shown if none is on screen
   const queueTips = (triggeredTips: Tip[]) => {
-    queuedTips.push(...triggeredTips.filter(({ id }) => !queuedTips.some((queuedTip) => queuedTip.id === id)));
+    queuedTipIds.value = [
+      ...queuedTipIds.value,
+      ...triggeredTips.map(({ id }) => id).filter((id) => !queuedTipIds.value.includes(id)),
+    ];
     if (!showingTip.value) showNextTip();
   };
   // A finished quest triggers the quest-or tips naming it, and the quest-all tips naming only it: a quest-all tip naming

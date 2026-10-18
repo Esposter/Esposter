@@ -281,9 +281,11 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
-  test("the tips shown return after a visit", () => {
+  test("the tips shown and the tips waiting return after a visit", () => {
     expect.hasAssertions();
-    expect(visit({ ...EMPTY_GENSHIN_SAVE, tips: { shown: [1001] } }).shownTipIds).toStrictEqual(new Set([1001]));
+    const saved = visit({ ...EMPTY_GENSHIN_SAVE, tips: { queued: [1002], shown: [1001] } });
+    expect(saved.shownTipIds).toStrictEqual(new Set([1001]));
+    expect(saved.queuedTipIds).toStrictEqual([1002]);
   });
 
   test("the deployed team and member on field return after a visit", () => {

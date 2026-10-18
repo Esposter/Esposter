@@ -421,7 +421,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   shopPurchases: [],
   spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
-  tips: { shown: [] },
+  tips: { queued: [], shown: [] },
   travelerName: "",
   unlockedLandmarks: [],
   wallet: {

@@ -119,6 +119,7 @@ export const readGenshinSave = (
     reputation,
     reputationBountyClaimedAts: reputationBountyClaimedAts.map((claimedAt) => Temporal.Instant.from(claimedAt)),
     reputationBountyHunt,
+    queuedTipIds: tips.queued,
     reputationRequestClaimedAts: reputationRequestClaimedAts.map((claimedAt) => Temporal.Instant.from(claimedAt)),
     settledSeelieIds: new Set(puzzles.settledSeelieIds),
     shopPurchases: toShopPurchases(shopPurchases),
