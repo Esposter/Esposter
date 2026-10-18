@@ -48,10 +48,15 @@ import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vec
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
+  // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
+  // As the save holds them
+  enemyRespawnMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which each spawn's kind, stats and drops are read from
   enemyTables: EnemyTables;
   // The world's ground at a point in its own coordinates, which each enemy stands on
   getGroundHeight: (x: number, z: number) => number;
+  // The world's clock, the server's where it is known, against which each defeat, load and jump is read
+  getWorldNow: () => Temporal.Instant;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
@@ -77,8 +82,10 @@ interface Props {
 
 const {
   enemyMap,
+  enemyRespawnMap,
   enemyTables,
   getGroundHeight,
+  getWorldNow,
   isHeld,
   kitEffectState,
   lastTeleportAt,
@@ -100,9 +107,16 @@ const emit = defineEmits<{
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   // A boss comes back at its spawn, so the blossom it left is gone
   respawn: [spawnKey: string];
+  // A defeated member of a camp with no boss comes back at this instant, which the save keeps
+  saveRespawn: [spawnKey: string, respawnAt: string];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 const { onBeforeRender } = useLoop();
+// The world's clock as a moment in the reader's own time zone, which the daily reset is read in
+const getZonedNow = () => getWorldNow().toZonedDateTimeISO(Temporal.Now.timeZoneId());
+// The enemy types of a camp's members, by which a defeated member comes back
+const getCampEnemyTypes = (members: EnemyCamp["members"]) =>
+  members.map(({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType);
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
 const loadedCampIds = new Set<string>();
@@ -129,25 +143,26 @@ watchImmediate(
     const campIds = new Set([...enemyCamps, ...fightingCamps].map(({ id }) => id));
     for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
     for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
-    const now = Temporal.Now.zonedDateTimeISO();
+    const now = getZonedNow();
     for (const { id, members } of enemyCamps) {
       if (loadedCampIds.has(id)) continue;
       loadedCampIds.add(id);
-      const campEnemyTypes = members.map(
-        ({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType,
-      );
+      const campEnemyTypes = getCampEnemyTypes(members);
       for (const member of members) {
         const spawnKey = getSpawnKey(id, member.id);
-        const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
-        if (defeatedAt) {
-          const respawnAt = computeEnemyRespawnTime(
-            campEnemyTypes,
-            defeatedAt,
-            trounceBlossoms.get(spawnKey),
-            lastTeleportAt,
-          );
-          if (!respawnAt || Temporal.ZonedDateTime.compare(respawnAt, now) > 0) continue;
-        }
+        const savedRespawnAt = enemyRespawnMap.get(spawnKey);
+        if (savedRespawnAt === undefined) {
+          const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
+          if (defeatedAt) {
+            const respawnAt = computeEnemyRespawnTime(
+              campEnemyTypes,
+              defeatedAt,
+              trounceBlossoms.get(spawnKey),
+              lastTeleportAt,
+            );
+            if (!respawnAt || Temporal.ZonedDateTime.compare(respawnAt, now) > 0) continue;
+          }
+        } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now.toInstant()) > 0) continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
         if (trounceBlossoms.has(spawnKey)) emit("respawn", spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
@@ -177,7 +192,8 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       isAnyDefeated = true;
       const enemyKind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
       const spawnKey = getSpawnKey(enemy.campId, enemy.id);
-      spawnKeyDefeatedAtMap.set(spawnKey, Temporal.Now.zonedDateTimeISO());
+      const defeatedAt = getZonedNow();
+      spawnKeyDefeatedAtMap.set(spawnKey, defeatedAt);
       emit(
         "defeat",
         enemy,
@@ -187,6 +203,9 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       const camp = [...regionDataMap.values()]
         .flatMap(({ enemyCamps }) => enemyCamps)
         .find(({ id }) => id === enemy.campId);
+      // A camp with no boss brings each defeated member back at an instant the save keeps
+      const respawnAt = camp && computeEnemyRespawnTime(getCampEnemyTypes(camp.members), defeatedAt);
+      if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toInstant().toString());
       const [firstMember] = camp?.members ?? [];
       if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))
         emit("campCleared", { id: camp.id, position: firstMember.position });

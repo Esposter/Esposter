@@ -4,6 +4,7 @@ import type { ArchiveSave } from "#src/models/archive/ArchiveSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -140,6 +141,19 @@ const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySa
 const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): ClearedCamp[] => [
   ...new Map([...account, ...guest].map((camp) => [camp.id, camp])).values(),
 ];
+// An enemy's respawn instant from both copies is the later of the two, as the later defeat is the one still held
+const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave): EnemyRespawnSave => {
+  const enemyRespawns = { ...account };
+  for (const [spawnKey, guestRespawnAt] of Object.entries(guest)) {
+    const accountRespawnAt = enemyRespawns[spawnKey];
+    if (
+      accountRespawnAt === undefined ||
+      Temporal.Instant.compare(Temporal.Instant.from(accountRespawnAt), Temporal.Instant.from(guestRespawnAt)) < 0
+    )
+      enemyRespawns[spawnKey] = guestRespawnAt;
+  }
+  return enemyRespawns;
+};
 // A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
 // Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
 // And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
@@ -194,6 +208,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       craftedCounts,
       learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],
     },
+    enemyRespawns: mergeEnemyRespawns(account.enemyRespawns, guest.enemyRespawns),
     homePlacements: account.homePlacements,
     inventory: account.inventory,
     offerings: {

@@ -22,6 +22,7 @@ import {
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
+  MAX_ENEMY_RESPAWN_COUNT,
   MAX_FOUND_OCULUS_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
@@ -141,6 +142,12 @@ describe("genshinSaveSchema", () => {
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
+      enemyRespawns: Object.fromEntries(
+        Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
+          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+          maxInstant,
+        ]),
+      ),
       homePlacements: Array.from({ length: MAX_HOME_PLACEMENT_COUNT }, () => ({
         areaId: maxNumber,
         furnishingItemId: maxNumber,

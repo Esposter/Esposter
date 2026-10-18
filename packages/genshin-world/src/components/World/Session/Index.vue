@@ -232,11 +232,13 @@ const {
   clearedDomainIds,
   craftedCountMap,
   craftingProgress,
+  enemyRespawnMap,
   foundOculusIds,
   frostbearingTreeProgress,
   inventory,
   openedChestIds,
   regionStatueProgressMap,
+  setEnemyRespawnAt,
   setInventory,
   setWallet,
   wallet,
@@ -726,6 +728,7 @@ useWorldSaveSync({
     clearedDomainIds: clearedDomainIds.value,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
+    enemyRespawnMap: enemyRespawnMap.value,
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
@@ -1153,10 +1156,12 @@ defineExpose({ jumpTo, readCameraPosition });
         :kit-effect-state="kitContext.kitEffectState"
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
+        :enemy-respawn-map="enemyRespawnMap"
         :enemy-tables
         :grass-trail
         :game-data-base-url
         :get-ground-height
+        :get-world-now
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
@@ -1180,6 +1185,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @camp-locks="(locks) => (campLockSources = locks)"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
+        @save-respawn="setEnemyRespawnAt"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>

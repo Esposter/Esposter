@@ -6,8 +6,9 @@ import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
-import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
+import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
+import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
@@ -51,6 +52,9 @@ export const genshinSaveSchema = z
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,
     crafting: craftingSaveSchema,
+    // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
+    // On the server's clock
+    enemyRespawns: enemyRespawnSaveSchema,
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
     inventory: inventorySaveSchema,

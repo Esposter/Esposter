@@ -33,6 +33,7 @@ export const useWorldSave = ({
     | "clearedDomainIds"
     | "craftedCountMap"
     | "craftingProgress"
+    | "enemyRespawnMap"
     | "foundOculusIds"
     | "frostbearingTreeProgress"
     | "inventory"
@@ -57,6 +58,7 @@ export const useWorldSave = ({
   const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
+  const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
   const openedChestIds = shallowRef<ReadonlySet<string>>(savedState.openedChestIds);
@@ -75,6 +77,7 @@ export const useWorldSave = ({
       clearedDomainIds,
       craftedCountMap,
       craftingProgress,
+      enemyRespawnMap,
       foundOculusIds,
       frostbearingTreeProgress,
       openedChestIds,
@@ -97,6 +100,10 @@ export const useWorldSave = ({
     if (clearedCamps.value.some(({ id }) => id === camp.id)) return;
     clearedCamps.value = [...clearedCamps.value, camp];
   });
+  // A defeated enemy's moment of coming back is the save's, so a defeat in a camp with no boss adds it
+  const setEnemyRespawnAt = (spawnKey: string, respawnAt: string) => {
+    enemyRespawnMap.value = new Map([...enemyRespawnMap.value, [spawnKey, respawnAt]]);
+  };
   return {
     achievementProgressMap,
     archiveKillsMap,
@@ -105,11 +112,13 @@ export const useWorldSave = ({
     clearedDomainIds,
     craftedCountMap,
     craftingProgress,
+    enemyRespawnMap,
     foundOculusIds,
     frostbearingTreeProgress,
     inventory,
     openedChestIds,
     regionStatueProgressMap,
+    setEnemyRespawnAt,
     setInventory,
     setWallet,
     wallet,

@@ -55,6 +55,8 @@ A region's data places its enemies in camps, each member with its kind, its leve
 
 The daily reset is the reader's own 04:00, since the world has no server to keep a time zone.
 
+A common or elite member's return is saved in the save as its instant on the server's clock, read through the offset the session holds, so a reload and another device read one moment. A boss camp's return is not saved, since it waits on the claim or the jump, so a reload brings the boss back.
+
 The world keeps every spawned enemy in one map by its spawn key, the camp's id and the member's id. A camp's leaving removes its enemies from the map and a spawn's return adds it back, and the character's kit and the enemies' steps read the same map.
 
 ## Drops
@@ -81,6 +83,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 | `packages/genshin-world/src/services/enemy/wakeEnemyCamps.ts`          | Camps waking together                                                                                   |
 | `packages/genshin-world/src/services/enemy/computeEnemyStats.ts`       | A kind's stats at a level from its curves                                                               |
 | `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts` | When a defeated spawn comes back, by its camp                                                           |
+| `packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`          | Each defeated enemy's respawn instant by its spawn key, in the save                                     |
 | `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`       | Mora, Character EXP and materials by level band                                                         |
 | `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`      | What the wiki gives of each kind: poise, energy and drop family                                         |
 | `packages/genshin-world/src/services/enemy/constants.ts`               | The AI's ranges, speeds and timings, the respawn timers, the hit's look                                 |
@@ -100,7 +103,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **The published tables hold a partial dump.** The `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels; `genshin:assets enemies` publishes every kind and curve from the dump when it is run over it.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
 - **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
-- **Defeats last the page's life.** A reload of the page brings every enemy back, until a saved game keeps when each was defeated.
+- **A boss's defeat lasts the page's life.** A boss's return waits on its blossom or the next jump, which the save does not hold, so a reload brings the boss back. Every other defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due.
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read.
 
 ## Sources
