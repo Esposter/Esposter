@@ -17,7 +17,7 @@ Odette's kit is its record and one behaviour module, `createOdetteKitBehaviour`,
 - **Her Dance Double is not built.** Adagio: Phantom Night Dancers summons a double that attacks nearby opponents periodically, with Plume and Wing hits that need named hit lists the record does not hold.
 - **Her burst's extra Stellar Glimmer damage is not built.** Presto: Bluebird Finale adds Stellar Glimmer damage for some time, and the combat's reactions carry it.
 - **The Stellar reactions are the combat's.** Stellar-Conduct, Stellar Swirl, the Radiance state and the Stellar Glimmer bonus are the combat change's to build, as `openspec/changes/genshin-combat/` describes. Odette's kit enables two of them through its Stellar Jubilee and places the gadgets they stand on.
-- **Her passives and constellations are not built.**
+- **Ascension 1 and 4 are not built.** Ascension 1, Spring Rite of the Chosen One, gives her Marvelous Splendor stacks while her Dance Double stands, so it waits on the Dance Double above. Ascension 4, Pathetique of Pateticheskaya, raises the Stellar Glimmer hits of her Coda recast and her Dance Double's Plume and Wing by her ATK, so it waits on both. Her constellations are the [constellations](../../../../changes/genshin-constellations/design.md) page's.
 
 ## Key files
 

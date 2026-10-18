@@ -5,14 +5,21 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLyneyKitBehaviour, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const LYNEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LYNEY_CHARACTER_ID);
 const getSummonHitmarkSeconds = (kitEffectState: KitEffectState): number | undefined => {
   const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
@@ -98,5 +105,56 @@ describe(createLyneyKitBehaviour, () => {
     const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
+  });
+  describe("ascension 4's DMG bonus", () => {
+    const strikeBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    // The DMG bonus a strike of his gains on an enemy with the given auras, as his team stands
+    const getDamageBonus = (
+      ascension: number,
+      deployedElements: (Element | undefined)[],
+      auras: AuraType[],
+    ): number => {
+      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      for (const aura of auras) enemy.elementalState.auras.set(aura, { decayRate: 0, gauge: 1, isImmutable: false });
+      return (
+        LYNEY_KIT.getStrikeDamageBonus?.(
+          {
+            body: strikeBody,
+            combatant: { ...createLyneyCombatant(), ascension, deployedElements },
+            hit: takeOne(LYNEY_KIT.chargedAttack.hits),
+          },
+          enemy,
+          createParty([LYNEY_CHARACTER_ID]),
+        ) ?? 0
+      );
+    };
+    // Lyney with another Pyro member, and a Hydro and a Cryo one
+    const TEAM = [Element.Pyro, Element.Pyro, Element.Hydro, Element.Cryo];
+
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getDamageBonus(4, TEAM, [AuraType.Pyro])).toBeCloseTo(0.8);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getDamageBonus(3, TEAM, [AuraType.Pyro])).toBe(0);
+    });
+
+    test("each other Pyro member adds 20%, up to 100%", () => {
+      expect.hasAssertions();
+
+      expect(getDamageBonus(4, [Element.Pyro], [AuraType.Pyro])).toBeCloseTo(0.6);
+      expect(getDamageBonus(4, [Element.Pyro, Element.Pyro, Element.Pyro, Element.Pyro], [AuraType.Pyro])).toBe(1);
+    });
+
+    test("it applies only to an enemy affected by Pyro, which a Burning enemy is", () => {
+      expect.hasAssertions();
+
+      expect(getDamageBonus(4, TEAM, [AuraType.Hydro])).toBe(0);
+      expect(getDamageBonus(4, TEAM, [AuraType.Burning])).toBeCloseTo(0.8);
+    });
   });
 });

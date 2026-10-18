@@ -7,6 +7,7 @@ import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
@@ -80,6 +81,14 @@ export interface Kit {
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
+  // The CRIT DMG a strike of the kit's own adds as it lands on an enemy, if a constellation raises it on the strike, given the
+  // Enemy as it stands, the deployed team and the effects on it
+  getStrikeCriticalDamageBonus?: (
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => number;
   highPlunge: KitAction;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it
@@ -93,6 +102,9 @@ export interface Kit {
   onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
   // Run on each step the character on the field sprints, to spend the sprint's seconds from the kit's state
   onSprint?: (context: KitContext, kitState: KitState) => void;
+  // Whether the kit refuses a fall its own character would take, given its own Combatant and the effects on it, which
+  // Leaves the character at 1 HP while the check holds, and a constellation's refusal starts its cooldown here
+  refusesFall?: (combatant: Combatant, kitEffectState: KitEffectState) => boolean;
   // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant and
   // The step's seconds, for a clock a constellation keeps while its character stands in the team
   onStep?: (context: KitContext, combatant: Combatant, stepSeconds: number) => void;

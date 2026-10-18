@@ -3,5 +3,11 @@
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
+  "chargedAttack.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.5 }
+  },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 84 }
 }

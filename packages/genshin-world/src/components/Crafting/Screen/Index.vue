@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
+import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
+import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { CraftingCell, CraftingMaterial } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import CraftingStrongbox from "#src/components/Crafting/Strongbox/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsRecipeOpen } from "#src/services/crafting/checkIsRecipeOpen";
 import { CombineTypeGameTextKeyMap } from "#src/services/crafting/CombineTypeGameTextKeyMap";
 import { computeCraftableCount } from "#src/services/crafting/computeCraftableCount";
 import { computeCraftAchievementEvent } from "#src/services/crafting/computeCraftAchievementEvent";
+import { computeCraftingTabCells } from "#src/services/crafting/computeCraftingTabCells";
 import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearnedRecipeCells";
-import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
+import { MYSTIC_OFFERING_TAB_ID, ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { getCraftingTabId } from "#src/services/crafting/getCraftingTabId";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
@@ -27,8 +34,10 @@ import { CraftingScreen, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
-  // The Adventure Rank the player has reached, which opens the recipes that name one
+  // The Adventure Rank the player has reached, which opens the recipes that name one, and the Mystic Offering
   adventureRank: number;
+  // The tables the Mystic Offering rolls its strongbox's artifact from
+  artifactDropTables: ArtifactDropTables;
   // The party's characters who can craft, the one picked cooking each craft's talent
   crafters: CraftingCell[];
   // The game's words in the reader's language
@@ -45,10 +54,29 @@ interface Props {
   random: () => number;
   // Every recipe the bench holds, in the game's order; the ones the player has not opened are not offered
   recipes: CraftingRecipe[];
+  // The pieces of each artifact set by item id, which the Mystic Offering's strongbox artifact is taken into the bag with
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  // The Mystic Offering's strongboxes, one for each set the player may choose
+  strongboxes: CraftingStrongboxData[];
+  // The weapons by item id, which the bag's entries are defined from
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }
 
-const { adventureRank, crafters, gameText, initialCrafterId, materialDataMap, nameText, progress, random, recipes } =
-  defineProps<Props>();
+const {
+  adventureRank,
+  artifactDropTables,
+  crafters,
+  gameText,
+  initialCrafterId,
+  materialDataMap,
+  nameText,
+  progress,
+  random,
+  recipes,
+  reliquaryPieceEntryMap,
+  strongboxes,
+  weaponDataMap,
+} = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
@@ -61,15 +89,21 @@ const tabId = ref(0);
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
 // One tab per bench tab the open recipes fall under, in order and named by the game's own text for the combine type each
 // Files under: a conversion's tab is apart from the craft tab of the same combine type
-const tabCells = computed(() =>
+const recipeTabCells = computed(() =>
   [...new Map(openRecipes.value.map((recipe): [number, number] => [getCraftingTabId(recipe), recipe.combineType]))]
     .toSorted(([firstTabId], [secondTabId]) => firstTabId - secondTabId)
     .map(([id, combineType]) => ({ id, name: gameText[takeOne(CombineTypeGameTextKeyMap, combineType)] })),
+);
+// The bench's tabs: the recipe tabs, then the Mystic Offering from its Adventure Rank
+const tabCells = computed(() =>
+  computeCraftingTabCells(recipeTabCells.value, adventureRank, gameText[GameTextKey.MysticOffering]),
 );
 // The tab the player picked, or the first tab while none is picked
 const pickedTabId = computed(() =>
   tabCells.value.some((tab) => tab.id === tabId.value) ? tabId.value : (tabCells.value.at(0)?.id ?? 0),
 );
+// Whether the player has picked the Mystic Offering's tab, which takes the bench's screen with its panel
+const isMysticOfferingPicked = computed(() => pickedTabId.value === MYSTIC_OFFERING_TAB_ID);
 const tabRecipes = computed(() => openRecipes.value.filter((recipe) => getCraftingTabId(recipe) === pickedTabId.value));
 const recipeCells = computed(() =>
   computeLearnedRecipeCells(recipes, {
@@ -117,6 +151,15 @@ const craftedLabel = computed(() =>
     craftedCountMap.value.get(pickedRecipe.value?.id ?? 0) ?? 0,
   ),
 );
+// The bag and wallet after the Mystic Offering gives up its artifacts and takes in its strongbox's artifact
+const applyOfferingPickUp = (pickUp: DroppedItemPickUp) => {
+  inventory.value = pickUp.inventory;
+  wallet.value = pickUp.wallet;
+};
+// Back from the Mystic Offering returns to the bench's first recipe tab, which the offering's own tab is not
+const closeMysticOffering = () => {
+  tabId.value = recipeTabCells.value.at(0)?.id ?? 0;
+};
 // The picked recipe's results, rolled through the crafter's talent: the bag and wallet after the craft, with the
 // Talent's extra items put in the bag after the craft's own results, one that finds no room left out
 const craft = () => {
@@ -144,8 +187,24 @@ const craft = () => {
 
 <template>
   <!-- The crafting bench, opened by an NPC or a world object: the recipes it holds open, the picked one's count and cost,
-       and the party's crafter who may pass a talent's extra on to the bag -->
-  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CraftingTitle]">
+       and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering, whose panel
+       takes the screen while that tab is picked -->
+  <CraftingStrongbox
+    v-if="isMysticOfferingPicked"
+    :artifact-drop-tables="artifactDropTables"
+    :game-text="gameText"
+    :inventory="inventory"
+    :material-data-map="materialDataMap"
+    :names="nameText"
+    :random="random"
+    :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+    :strongboxes="strongboxes"
+    :wallet="wallet"
+    :weapon-data-map="weaponDataMap"
+    @close="closeMysticOffering"
+    @craft="applyOfferingPickUp"
+  />
+  <GameScreen v-else role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CraftingTitle]">
     <CraftingScreen
       v-model:crafter-id="crafterId"
       :amount="pickedAmount"

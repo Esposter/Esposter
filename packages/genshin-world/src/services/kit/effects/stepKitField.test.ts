@@ -30,7 +30,7 @@ const stepFieldFrames = (field: KitField, context: KitContext, frames: number): 
   for (let frame = 0; frame < frames; frame++) stepKitField(field, FIXED_STEP_SECONDS, context);
 };
 
-describe(stepKitField, () => {
+describe("stepKitField", () => {
   const COMBATANT: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),
@@ -41,7 +41,40 @@ describe(stepKitField, () => {
     level: 90,
   };
 
-  test.each([13, 29, 48, 63, 104, 120, 162, 221])(
+  test("ticks on the frame its interval falls due, two seconds in, not a frame later", () => {
+    expect.hasAssertions();
+
+    const ticks: number[] = [];
+    const field: KitField = {
+      centre: { x: 0, z: 0 },
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: "field",
+      nextTickSeconds: 2,
+      onTick: (_context, tickIndex) => {
+        ticks.push(tickIndex);
+      },
+      radius: 10,
+      secondsRemaining: 10,
+      tickIndex: 0,
+      tickIntervalSeconds: 2,
+    };
+    const context = createKitTestContext({
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: TRAVELER_KIT,
+      level: 90,
+    });
+    for (let frame = 0; frame < 119; frame++) stepKitField(field, FIXED_STEP_SECONDS, context);
+    expect(ticks).toStrictEqual([]);
+
+    stepKitField(field, FIXED_STEP_SECONDS, context);
+    expect(ticks).toStrictEqual([0]);
+  });
+
+  test.each([13, 29, 48, 63, 104, 162, 221])(
     "a tick due at %i frames falls on that frame's step, not the one after",
     (dueFrames) => {
       expect.hasAssertions();

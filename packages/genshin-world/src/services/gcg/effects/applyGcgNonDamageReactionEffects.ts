@@ -18,6 +18,7 @@ import {
   GCG_SHIELD_LIMIT,
 } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
@@ -43,7 +44,7 @@ export const applyGcgNonDamageReactionEffects = (
     targetSide.characters.at(targetSide.activeIndex) === hit
   ) {
     const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, 1);
-    if (nextIndex !== undefined) targetSide.activeIndex = nextIndex;
+    if (nextIndex !== undefined) switchGcgSideActive(targetSide, nextIndex);
   } else if (reaction === GcgReactionKind.Burning)
     addGcgReactionCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame, GCG_BURNING_FLAME_MAX_USAGES);
   else if (reaction === GcgReactionKind.Bloom)

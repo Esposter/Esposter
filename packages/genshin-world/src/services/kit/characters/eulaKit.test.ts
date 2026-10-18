@@ -6,6 +6,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEulaKitBehaviour, EULA_CHARACTER_ID } from "#src/services/kit/characters/eulaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -14,6 +17,7 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const EULA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EULA_CHARACTER_ID);
 const createEulaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -74,8 +78,9 @@ describe(createEulaKitBehaviour, () => {
     const combatant = createEulaCombatant();
     const context = createKitTestContext(combatant, { kitEffectState });
 
-    press.onStrike(context, { body: context.body, combatant, hit: press });
-    press.onStrike(context, { body: context.body, combatant, hit: press });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    press.onStrike(context, { body: context.body, combatant, hit: press }, enemy);
+    press.onStrike(context, { body: context.body, combatant, hit: press }, enemy);
     // The second strike falls inside the press's 0.3 seconds of ICD, so only the one stack is gained
     expect(
       kitEffectState.effects.filter(

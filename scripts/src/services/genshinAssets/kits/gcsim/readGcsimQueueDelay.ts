@@ -6,10 +6,10 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-const QUEUE_OPEN_REGEX = /Tasks\.Add\(func\(\)\s*\{\s*$/u;
+const QUEUE_OPEN_REGEX = /(?:Tasks\.Add|QueueCharTask)\(func\(\)\s*\{\s*$/u;
 const QUEUE_CLOSE_REGEX = /^\}\s*,\s*(?<delay>.+?)\s*\)\s*$/u;
 
-// The delay a `Tasks.Add(func() {` block gives the lines inside it, from its closing `}, delay)` line at the block's own
+// The delay a `Tasks.Add(func() {` or `QueueCharTask(func() {` block gives the lines inside it, from its closing `}, delay)` line at the block's own
 // Indent, the first such line below the cited one. Undefined where that closing gives no number
 const readClosingDelay = (
   lines: readonly string[],
@@ -27,7 +27,7 @@ const readClosingDelay = (
   return undefined;
 };
 
-// The delay the `Tasks.Add(func() {` blocks around a line add to its value, nested blocks adding up from the inside out.
+// The delay the `Tasks.Add(func() {` and `QueueCharTask(func() {` blocks around a line add to its value, nested blocks adding up from the inside out.
 // Found by scanning up through each less-indented line to the block that opens it. Zero where no block queues the line,
 // Undefined where a queued block's delay is not a number, so the line's value is Unsourced
 export const readGcsimQueueDelay = (

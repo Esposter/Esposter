@@ -74,7 +74,14 @@ Each kind of claim, requests and bounties counted apart, SHALL be limited to thr
 
 - **GIVEN** three claims of a kind have been made this week across nations
 - **WHEN** a further claim of that kind is attempted
-- **THEN** the claim is refused until the weekly reset
+- **THEN** the claim is refused until the weekly reset, and the keeper offers no further request until then
+
+#### Scenario: A request taken before the limit pays past it
+
+- **GIVEN** a request was taken while the week's request claims were under the limit
+- **AND** three request claims have since been made this week across nations
+- **WHEN** that request finishes
+- **THEN** its reward pays and its claim is counted
 
 #### Scenario: The weekly reset restarts the count
 
