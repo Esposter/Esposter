@@ -33,6 +33,19 @@ describe(collectProcessingJobs, () => {
   };
   const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
 
+  test("queues with no unit done are returned as the same jobs", () => {
+    expect.hasAssertions();
+    const jobs = { [PROCESSING_ID]: { count: 3, startedAt: EPOCH } };
+
+    const result = collectProcessingJobs([recipe], jobs, {
+      getResultDefinition: () => createDefinition(RESULT_ID),
+      inventory: emptyInventory,
+      now: EPOCH.add({ seconds: UNIT_SECONDS / 2 }),
+    });
+
+    expect(result.jobs).toBe(jobs);
+  });
+
   test("units done by a moment are put into the bag", () => {
     expect.hasAssertions();
 

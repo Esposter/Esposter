@@ -1,0 +1,19 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/genshin-world/src/models/cooking/**",
+    "packages/genshin-world/src/models/save/**",
+    "packages/genshin-world/src/services/save/**",
+    "packages/genshin-world/src/services/cooking/**",
+    "packages/genshin-world/src/services/inventory/**",
+    "packages/genshin-world/src/components/Cooking/**",
+    "packages/genshin-world/src/components/World/Session/Index.vue",
+    "packages/genshin-world/src/composables/useWorldSave*.ts",
+    "packages/genshin-world/src/composables/useWorldCooking*.ts",
+    "packages/genshin-text/src/models/GameTextKey.ts",
+    "scripts/src/services/genshinAssets/items/**",
+  ]
+x-waiting: "2.3 and 2.4 wait on a publish: the items table must name the instruction items, which only `genshin:assets items` writes, run by the main session. No recording or PC export is needed."

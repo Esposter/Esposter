@@ -9,6 +9,7 @@ import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
 import { toParty } from "#src/services/save/toParty";
+import { toProcessingJobs } from "#src/services/save/toProcessingJobs";
 import { toShopPurchases } from "#src/services/save/toShopPurchases";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
@@ -25,6 +26,7 @@ export const readGenshinSave = (
     clearedDomains,
     commissionDay,
     companionshipExp,
+    cooking,
     crafting,
     enemyRespawns,
     homePlacements,
@@ -62,6 +64,7 @@ export const readGenshinSave = (
     clearedDomainIds: new Set(clearedDomains),
     commissionDay: toCommissionDay(commissionDay),
     companionshipExpMap,
+    cookingProgress: { learnedRecipeIds: cooking.learnedRecipeIds, proficiencies: cooking.proficiencies },
     craftedCountMap: new Map(
       Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
     ),
@@ -73,6 +76,7 @@ export const readGenshinSave = (
     inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
     openedChestIds: new Set(openedChests),
     party: toParty(party),
+    processingJobs: toProcessingJobs(cooking.processingJobs),
     quests: new Map(Object.entries(quests)),
     regionStatueProgressMap: new Map(Object.entries(statues.regions)),
     reputation,

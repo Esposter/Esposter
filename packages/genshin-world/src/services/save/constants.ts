@@ -78,6 +78,9 @@ export const MAX_CHARACTER_COUNT = 512;
 export const MAX_WISH_HISTORY_COUNT = 10_000;
 // The bench's recipes are the combine table's rows, each named by its id once in the learned list and once in the counts
 export const MAX_CRAFTING_RECIPE_COUNT = 512;
+// The cook table's rows, dishes and processings alike, each named by its id once in the learned list and once in each of
+// The proficiency and queue maps, so the cooking slice is bounded by the table's rows
+export const MAX_COOKING_RECIPE_COUNT = 512;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
 // World's data
 export const MAX_ACHIEVEMENT_COUNT: number = achievementCount.count;
@@ -173,6 +176,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
+  cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   enemyRespawns: {},
   homePlacements: [],
@@ -222,6 +226,10 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY *
     getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
+  MAX_COOKING_RECIPE_COUNT *
+    (getListEntryLength(MAX_SAVE_NUMBER) +
+      getRecordEntryLength(MAX_SAVE_NUMBER) +
+      getRecordEntryLength({ count: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT })) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
   MAX_SHOP_PURCHASE_COUNT *
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
@@ -279,6 +287,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
+  cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   enemyRespawns: {},
   homePlacements: [],

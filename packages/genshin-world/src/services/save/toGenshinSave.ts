@@ -7,6 +7,7 @@ import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
+import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
@@ -23,6 +24,7 @@ export const toGenshinSave = ({
   clearedDomainIds,
   commissionDay,
   companionshipExpMap,
+  cookingProgress,
   craftedCountMap,
   craftingProgress,
   enemyRespawnMap,
@@ -32,6 +34,7 @@ export const toGenshinSave = ({
   inventory,
   openedChestIds,
   party,
+  processingJobs,
   quests,
   regionStatueProgressMap,
   reputation,
@@ -56,6 +59,11 @@ export const toGenshinSave = ({
     ...companionshipExpMap,
     ...characters.map(({ friendshipExp, id }): [number, number] => [id, friendshipExp]),
   ]),
+  cooking: {
+    learnedRecipeIds: cookingProgress.learnedRecipeIds,
+    processingJobs: toProcessingJobSaves(processingJobs),
+    proficiencies: cookingProgress.proficiencies,
+  },
   crafting: { craftedCounts: Object.fromEntries(craftedCountMap), learnedRecipeIds: craftingProgress.learnedRecipeIds },
   enemyRespawns: Object.fromEntries(enemyRespawnMap),
   homePlacements,

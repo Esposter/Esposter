@@ -5,6 +5,7 @@ import { archiveSaveSchema } from "#src/models/archive/ArchiveSave";
 import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
+import { cookingSaveSchema } from "#src/models/cooking/CookingSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
@@ -51,6 +52,8 @@ export const genshinSaveSchema = z
     clearedDomains: clearedDomainSaveSchema,
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,
+    // The cooking: the dishes learned, each dish's proficiency and each processing's queue, each by its id
+    cooking: cookingSaveSchema,
     crafting: craftingSaveSchema,
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
