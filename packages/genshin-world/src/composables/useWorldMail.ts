@@ -123,9 +123,9 @@ export const useWorldMail = ({
   const markMailRead = (mailId: number) => {
     mails.value = mails.value.map((mail) => (mail.id === mailId && !mail.isRead ? { ...mail, isRead: true } : mail));
   };
-  const toggleMailStar = (mailId: number) => {
-    mails.value = mails.value.map((mail) => (mail.id === mailId ? { ...mail, isStarred: !mail.isStarred } : mail));
+  const toggleMailPin = (mailId: number) => {
+    mails.value = mails.value.map((mail) => (mail.id === mailId ? { ...mail, isPinned: !mail.isPinned } : mail));
   };
 
-  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailStar };
+  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailPin };
 };

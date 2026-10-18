@@ -281,6 +281,7 @@ describe("genshinSaveSchema", () => {
         deliveredAt: maxInstant,
         id: maxNumber - index,
         isClaimed: false,
+        isPinned: false,
         isRead: false,
       })),
       tips: { shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
@@ -378,6 +379,7 @@ describe("genshinSaveSchema", () => {
         deliveredAt: new Date(0).toISOString(),
         id: index + 1,
         isClaimed: false,
+        isPinned: false,
         isRead: false,
       })),
     };

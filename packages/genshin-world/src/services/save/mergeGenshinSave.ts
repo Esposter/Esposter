@@ -235,16 +235,15 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once by its id, and a read, claimed or starred mail stays so whichever save it was read, claimed or starred in
+  // A mail is kept once by its id, and a read, claimed or pinned mail stays so whichever save it was read, claimed or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find(({ id }) => id === accountMail.id);
     return guestMail
       ? {
           ...accountMail,
           isClaimed: accountMail.isClaimed || guestMail.isClaimed,
+          isPinned: accountMail.isPinned || guestMail.isPinned,
           isRead: accountMail.isRead || guestMail.isRead,
-          // Only a copy that stars the mail adds the key, so a mail starred on neither copy keeps no isStarred key
-          ...(accountMail.isStarred || guestMail.isStarred ? { isStarred: true } : {}),
         }
       : accountMail;
   });

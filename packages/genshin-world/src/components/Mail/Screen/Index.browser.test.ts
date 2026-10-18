@@ -47,6 +47,7 @@ const mail = (isClaimed: boolean): MailSave => ({
   deliveredAt: DELIVERED_AT,
   id: BIRTHDAY_MAIL_ID,
   isClaimed,
+  isPinned: false,
   isRead: false,
 });
 
@@ -98,11 +99,11 @@ describe("mailScreen", () => {
       .toBeDisabled();
   });
 
-  // A starred mail leaves the Mailbox and is listed under the Gift Mail Box tab
-  test("should list a starred mail under the gift mail box tab", async () => {
+  // A claimed birthday mail leaves the Mailbox and is listed under the Gift Mail Box tab
+  test("should list a claimed birthday mail under the gift mail box tab", async () => {
     expect.hasAssertions();
 
-    render(MailScreen, { ...props, mails: [{ ...mail(false), isStarred: true }] });
+    render(MailScreen, { ...props, mails: [mail(true)] });
 
     await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).not.toBeInTheDocument();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
@@ -123,15 +124,26 @@ describe("mailScreen", () => {
     expect(document.querySelector("time")?.getAttribute("datetime")).toBe(DELIVERED_AT);
   });
 
-  // The star pressed on the selected mail gives its id back to the screen's owner
-  test("should star the selected mail when its star is pressed", async () => {
+  // The pin pressed on the selected mail gives its id back to the screen's owner
+  test("should pin the selected mail when its pin is pressed", async () => {
     expect.hasAssertions();
 
-    const onStar = vi.fn<(mailId: number) => void>();
-    render(MailScreen, { ...props, mails: [mail(false)], onStar });
+    const onPin = vi.fn<(mailId: number) => void>();
+    render(MailScreen, { ...props, mails: [mail(false)], onPin });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailStar] }).click();
 
-    expect(onStar).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+    expect(onPin).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+  });
+
+  // A pinned mail offers to delete its pin in place of pinning it again
+  test("should offer to delete the pin of a pinned mail", async () => {
+    expect.hasAssertions();
+
+    render(MailScreen, { ...props, mails: [{ ...mail(false), isPinned: true }] });
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailCancelStar] }))
+      .toBeVisible();
   });
 });

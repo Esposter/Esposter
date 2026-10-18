@@ -21,6 +21,7 @@ describe(removeExpiredMails, () => {
     deliveredAt: new Date(0).toISOString(),
     id: ROW.id,
     isClaimed,
+    isPinned: false,
     isRead: false,
   });
   const PAST_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS + 1));
@@ -47,12 +48,10 @@ describe(removeExpiredMails, () => {
     expect(removeExpiredMails([mail(true)], rows, new Set([ROW.id]), PAST_EXPIRY)).toStrictEqual([mail(true)]);
   });
 
-  // A mail the player starred moves to the Gift Mail Box, which keeps it past its expiry, as it keeps a birthday mail
-  test("a starred mail is kept past its expiry", () => {
+  // A pinned mail is the player's place at the top of the list, not the Gift Mail Box, so it still expires
+  test("a pinned mail is deleted past its expiry", () => {
     expect.hasAssertions();
 
-    const starred: MailSave = { ...mail(false), isStarred: true };
-
-    expect(removeExpiredMails([starred], rows, new Set(), PAST_EXPIRY)).toStrictEqual([starred]);
+    expect(removeExpiredMails([{ ...mail(false), isPinned: true }], rows, new Set(), PAST_EXPIRY)).toStrictEqual([]);
   });
 });

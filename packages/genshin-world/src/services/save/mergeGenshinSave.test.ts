@@ -113,18 +113,18 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
   });
 
-  test("a mail starred on either copy stays starred after a merge", () => {
+  test("a mail pinned on either copy stays pinned after a merge", () => {
     expect.hasAssertions();
-    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isRead: false };
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isPinned: false, isRead: false };
     const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
-    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [{ ...mail, isStarred: true }] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [{ ...mail, isPinned: true }] };
 
-    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([{ ...mail, isStarred: true }]);
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([{ ...mail, isPinned: true }]);
   });
 
-  test("a mail starred on neither copy keeps no star after a merge", () => {
+  test("a mail pinned on neither copy stays unpinned after a merge", () => {
     expect.hasAssertions();
-    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isRead: false };
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isPinned: false, isRead: false };
     const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
     const guest = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
 
