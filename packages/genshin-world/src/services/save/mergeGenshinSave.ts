@@ -219,7 +219,8 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // Larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows. Each kind
 // Of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never
 // Mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet, the party, the opened
-// Chests and the realm's placements are the account's copy, except that a Primogem refill count from the same game day
+// Chests and the realm's placements are the account's copy, and so are the Adventure Rank rewards claimed, paid into the
+// bag and the wallet, except that a Primogem refill count from the same game day
 // Takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy changed
 // Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
 // Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
@@ -289,9 +290,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
-    adventureRankRewardsClaimed: [
-      ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
-    ].toSorted((firstRank, secondRank) => firstRank - secondRank),
+    adventureRankRewardsClaimed: account.adventureRankRewardsClaimed,
     archive: mergeArchive(account.archive, guest.archive),
     cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
     cardGameRewardedGameIds: [
