@@ -1,13 +1,2 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
-
-// The grounds the world lays over Windrise's, one a region: every region's but Mondstadt's, whose capital stands on
-// Windrise's own fitted ground
-export const REGION_GROUND_KEYS: readonly GameDataKey[] = [
-  "ground/fontaine",
-  "ground/inazuma",
-  "ground/liyue",
-  "ground/natlan",
-  "ground/nod-krai",
-  "ground/snezhnaya",
-  "ground/sumeru",
-];
+// The regions whose ground the world does not lay over Windrise's: Windrise's own base, and Mondstadt, whose capital stands on it
+export const UNLAID_GROUND_REGIONS: readonly string[] = ["mondstadt", "windrise"];
