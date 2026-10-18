@@ -182,3 +182,19 @@ From constellation 6, the burst and each Judication field SHALL give Day of the 
 - **GIVEN** Cyno is at constellation 6, the stance holds and a bolt fired less than 0.4 seconds ago
 - **WHEN** a normal attack strikes an enemy
 - **THEN** no bolt is fired
+
+### Requirement: Constellation 1 raises normal attack speed after Wolf's Swiftness
+
+From constellation 1, Sacred Rite: Wolf's Swiftness SHALL raise Cyno's normal attack speed by 20% for 10 seconds.
+
+#### Scenario: Wolf's Swiftness raises his normal attack speed from the first constellation
+
+- **GIVEN** Cyno is at constellation 1
+- **WHEN** the player uses Sacred Rite: Wolf's Swiftness
+- **THEN** his normal attack speed is raised by 20% for 10 seconds
+
+#### Scenario: Below the first constellation Wolf's Swiftness raises no attack speed
+
+- **GIVEN** Cyno is at constellation 0
+- **WHEN** the player uses Sacred Rite: Wolf's Swiftness
+- **THEN** his normal attack speed is unchanged

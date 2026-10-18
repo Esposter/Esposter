@@ -95,14 +95,22 @@ const checkIsC4Reaction = ({ element, reactionType }: Reaction): boolean =>
 
 export const CYNO_CHARACTER_ID = 10_000_071;
 
+// Constellation 1, Ordinance: Unceasing Vigil: for 10 seconds after Sacred Rite: Wolf's Swiftness, his normal attack speed rises
+// By 20%, as the wiki's constellation page gives it. The Judication refresh waits on Ascension 1's Judication event
+const CONSTELLATION_1 = 1;
+const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS = 0.2;
+const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_SECONDS = 10;
+const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID = "cyno-wolf-swiftness-attack-speed";
+
 // Cyno's behaviour: each normal attack's strike stacks Constellation 2's Electro DMG and, in Pactsworn, spends
 // Constellation 6's Day of the Jackal on a Duststalker Bolt. Sacred Rite: Wolf's Swiftness sets Pactsworn Pathclearer on
 // Him as a stance for the burst's seconds, its strikes taking Ascension 4's share of his Elemental Mastery and its skill
 // Mortuary Rite, which extends the stance and, under Endseer, fires Duststalker Bolts; the burst adds its Elemental
 // Mastery, and from Ascension 1 casts Judication, a field giving Endseer. Leaving the field ends the Elemental Mastery
 // And Judication. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while the stance holds, and
-// Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack speed and the
-// Plunges of Pactsworn Pathclearer are not built, as the kit has no hook for either
+// Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack speed is built,
+// Its Judication refresh in Chasmic Soulfarer is not built, and neither are the plunges of Pactsworn Pathclearer
+// The kit has no hook for the refresh or the plunges
 export const createCynoKitBehaviour = ({
   kit,
   readHit,
@@ -222,6 +230,11 @@ export const createCynoKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { ascension, characterId, constellationCount } = combatant;
         enterKitStance(kitEffectState, combatant, pactswornPathclearer, burstSeconds, { isEndedOnSwap: true });
+        if (constellationCount >= CONSTELLATION_1)
+          addKitStatus(kitEffectState, characterId, {
+            id: WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID,
+            secondsRemaining: WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_SECONDS,
+          });
         buffKitMember(kitEffectState, characterId, {
           amount: burstElementalMastery,
           attribute: Attribute.ElementalMastery,
@@ -242,6 +255,14 @@ export const createCynoKitBehaviour = ({
     },
     // Mortuary Rite's cooldown is the factor of Secret Rite's while Pactsworn Pathclearer holds, so the stance's skill
     // Press waits out three seconds rather than seven and a half
+    getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
+      checkHasKitStatus(
+        kitEffectState.effects,
+        activeCombatant.characterId,
+        WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID,
+      )
+        ? WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS
+        : 0,
     getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
       findKitStance(kitEffectState.effects, combatant.characterId) ? mortuaryRiteCooldownMultiplier : 1,
     normalAttacks: [
