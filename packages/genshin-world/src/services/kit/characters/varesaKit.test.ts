@@ -1,7 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -80,6 +82,23 @@ describe(createVaresaKitBehaviour, () => {
     VARESA_KIT.elementalSkill.onStart?.(context);
     VARESA_KIT.elementalSkill.onStart?.(context);
     expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
+  });
+
+  test("the skill's press raises a generation event for each press that gains points", () => {
+    expect.hasAssertions();
+    const events: KitEvent[] = [];
+    const combatant: Combatant = {
+      ...createVaresaCombatant(),
+      kit: { ...VARESA_KIT, onKitEvent: (event) => void events.push(event) },
+    };
+    const context = createKitTestContext(combatant);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    expect(events).toStrictEqual([
+      { characterId: VARESA_CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 20 },
+      { characterId: VARESA_CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 20 },
+    ]);
   });
 
   test("a plunge gains 25 Nightsoul points, and filling them to 40 enters the Blessing for 15 seconds", () => {

@@ -1,11 +1,14 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { gainKitNightsoulPoints } from "#src/services/kit/effects/gainKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 
 export const VARESA_CHARACTER_ID = 10_000_111;
 
@@ -17,8 +20,12 @@ const NIGHTSOUL_SKILL_POINTS = 20;
 const NIGHTSOUL_PLUNGE_POINTS = 25;
 const NIGHTSOUL_BLESSING_SECONDS = 15;
 
-const gainNightsoulPoints = (kitEffectState: KitEffectState, characterId: number, points: number): void => {
-  gainKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID, points, NIGHTSOUL_MAXIMUM);
+// Gains her points up to her maximum, and raises the points it added as a generation event, as gcsim's GeneratePoints does
+const gainNightsoulPoints = (context: KitContext, points: number): void => {
+  const { activeCombatant, kitEffectState } = context;
+  const { characterId } = activeCombatant;
+  const gained = gainKitNightsoulPoints(kitEffectState, characterId, points, NIGHTSOUL_MAXIMUM);
+  if (gained > 0) emitKitEvent({ characterId, kind: KitEventKind.NightsoulPointsGained, points: gained }, context);
 };
 
 // Enters the Blessing once her points are full, if she is not in it, with those points, as gcsim's plunge gain enters
@@ -46,27 +53,27 @@ const enterNightsoulAtMaximum = (kitEffectState: KitEffectState, characterId: nu
 // Constellation 6 needs Apex Drive's Energy and a CRIT DMG bonus, which no strike hook can apply here
 export const createVaresaKitBehaviour = (): KitBehaviour => ({
   burst: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
-      gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_MAXIMUM);
+    onStart: (context) => {
+      const { activeCombatant, kitEffectState } = context;
+      gainNightsoulPoints(context, NIGHTSOUL_MAXIMUM);
       enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
     },
   },
   plunges: {
     high: {
-      onStart: ({ activeCombatant, kitEffectState }) => {
-        gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_PLUNGE_POINTS);
+      onStart: (context) => {
+        const { activeCombatant, kitEffectState } = context;
+        gainNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS);
         enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
       },
     },
     low: {
-      onStart: ({ activeCombatant, kitEffectState }) => {
-        gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_PLUNGE_POINTS);
+      onStart: (context) => {
+        const { activeCombatant, kitEffectState } = context;
+        gainNightsoulPoints(context, NIGHTSOUL_PLUNGE_POINTS);
         enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
       },
     },
   },
-  skill: {
-    onStart: ({ activeCombatant, kitEffectState }) =>
-      gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_SKILL_POINTS),
-  },
+  skill: { onStart: (context) => gainNightsoulPoints(context, NIGHTSOUL_SKILL_POINTS) },
 });
