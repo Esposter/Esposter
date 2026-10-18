@@ -3,6 +3,7 @@ import type { MathExpressionSignature } from "#src/models/function/MathExpressio
 import { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 import { checkIsLarger } from "#src/services/function/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
+import { checkIsPrime } from "#src/services/function/checkIsPrime";
 import { checkIsSmaller } from "#src/services/function/checkIsSmaller";
 import { computeBellNumber } from "#src/services/function/computeBellNumber";
 import { computeBernoulliNumber } from "#src/services/function/computeBernoulliNumber";
@@ -22,7 +23,6 @@ import { computeGamma } from "#src/services/function/computeGamma";
 import { computeHypotenuse } from "#src/services/function/computeHypotenuse";
 import { computeIntegerGreatestCommonDivisor } from "#src/services/function/computeIntegerGreatestCommonDivisor";
 import { computeInverseCoth } from "#src/services/function/computeInverseCoth";
-import { computeIsPrime } from "#src/services/function/computeIsPrime";
 import { computeKullbackLeibler } from "#src/services/function/computeKullbackLeibler";
 import { computeLeastCommonMultiple } from "#src/services/function/computeLeastCommonMultiple";
 import { computeListComparison } from "#src/services/function/computeListComparison";
@@ -50,7 +50,6 @@ import { createBinarySignatures } from "#src/services/function/signature/createB
 import { createBitwiseFold } from "#src/services/function/signature/createBitwiseFold";
 import { createBitwisePair } from "#src/services/function/signature/createBitwisePair";
 import { createDigitSignatures } from "#src/services/function/signature/createDigitSignatures";
-import { createFixedSignatures } from "#src/services/function/signature/createFixedSignatures";
 import { createIdentitySignatures } from "#src/services/function/signature/createIdentitySignatures";
 import { createIntegerBinarySignatures } from "#src/services/function/signature/createIntegerBinarySignatures";
 import { createIntegerUnarySignatures } from "#src/services/function/signature/createIntegerUnarySignatures";
@@ -180,7 +179,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   isNaN: createUnarySignatures((value) => toNumber(Number.isNaN(value))),
   isNegative: createUnarySignatures((value) => toNumber(value < 0)),
   isPositive: createUnarySignatures((value) => toNumber(value > 0)),
-  isPrime: createUnarySignatures((value) => toNumber(computeIsPrime(value))),
+  isPrime: createUnarySignatures((value) => toNumber(checkIsPrime(value))),
   isZero: createUnarySignatures((value) => toNumber(value === 0)),
   kldivergence: [createListPairSignature(computeKullbackLeibler)],
   larger: createBinarySignatures((left, right) => toNumber(checkIsLarger(left, right))),
@@ -225,7 +224,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   ],
   multiplyScalar: createBinarySignatures((left, right) => left * right),
   norm: [
-    ...createFixedSignatures(1, computeNorm),
+    ...createRangedSignatures(1, 1, computeNorm),
     createListSignature(computeNorm),
     createSignature(
       [MathExpressionParameterType.List, MathExpressionParameterType.Number],
