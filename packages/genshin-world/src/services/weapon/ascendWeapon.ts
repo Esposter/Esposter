@@ -32,7 +32,7 @@ export const ascendWeapon = (
     inventory.items,
   );
   return {
-    inventory: { items, nextId: inventory.nextId },
+    inventory: { ...inventory, items },
     wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] - nextPhase.coinCost },
     weapon: { ...weapon, ascension: weapon.ascension + 1 },
   };

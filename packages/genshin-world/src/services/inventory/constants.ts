@@ -11,8 +11,12 @@ import { ItemCategory } from "genshin-interface";
 export const EQUIPMENT_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Weapon, ItemCategory.Artifact];
 // The tabs the game sorts from the highest quality down
 export const QUALITY_SORTED_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Gadget, ItemCategory.Quest];
-// A new weapon is at level 1 and a new artifact at 0
+// A new weapon is at level 1 in its first phase, with no EXP toward the next level and at refinement rank 1, and a new
+// Artifact is at level 0
 export const WEAPON_START_LEVEL = 1;
+export const WEAPON_START_ASCENSION = 0;
+export const WEAPON_START_EXPERIENCE = 0;
+export const WEAPON_START_REFINEMENT = 1;
 export const ARTIFACT_START_LEVEL = 0;
 // The currencies the foot of the bag shows where the sort is not, and those it files among its Precious Items, in the game's order
 export const INVENTORY_CURRENCIES: readonly Currency[] = [Currency.Primogem, Currency.Mora];

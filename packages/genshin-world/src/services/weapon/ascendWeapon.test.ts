@@ -61,6 +61,18 @@ describe(ascendWeapon, () => {
     });
   });
 
+  test("keeps the bag's equipped gadget when it takes the phase's items", () => {
+    expect.hasAssertions();
+    const weapon = { ascension: 0, experience: 0, id: 1, level: 20, refinement: 1 };
+    expect(
+      ascendWeapon(weapon, WEAPON_DATA, {
+        adventureRank: 15,
+        inventory: { equippedGadgetItemId: 9, items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
+      }).inventory,
+    ).toStrictEqual({ equippedGadgetItemId: 9, items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 });
+  });
+
   test("refuses an Adventure Rank below the phase's requirement", () => {
     expect.hasAssertions();
     const weapon = { ascension: 0, experience: 0, id: 1, level: 20, refinement: 1 };
