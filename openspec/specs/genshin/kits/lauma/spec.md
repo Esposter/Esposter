@@ -106,7 +106,7 @@ From Ascension 4, Lauma's Elemental Skill, its press and the Frostgrove Sanctuar
 
 ### Requirement: Her burst gives Pale Hymn, which Moon Song and reactions spend
 
-Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasting 15 seconds. A Dew Hymn of Eternal Rest spends during the burst SHALL give Moon Song six Pale Hymn a Dew, once in each burst, and a Dew spent outside it SHALL wait for the burst's gain for 15 seconds. Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction SHALL spend one Pale Hymn, Moon Song's before the burst's.
+Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasting 15 seconds. A Dew Hymn of Eternal Rest spends during the burst SHALL give Moon Song six Pale Hymn a Dew, once in each burst, and a Dew spent outside it SHALL wait for the burst's gain for 15 seconds. Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction SHALL spend one Pale Hymn, Moon Song's before the burst's. While the party holds Pale Hymn, each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction the party makes SHALL take base damage of her Elemental Mastery times the burst's increase at her talent level: the Bloom increase for Bloom, Hyperbloom and Burgeon, and the Lunar-Bloom increase for Lunar-Bloom.
 
 #### Scenario: The burst gives 18 Pale Hymn after 96 frames
 
@@ -119,18 +119,24 @@ Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasti
 - **WHEN** Hymn of Eternal Rest spends Dew
 - **THEN** Moon Song gives no more Pale Hymn in that burst
 
+#### Scenario: Pale Hymn adds her Elemental Mastery to each Bloom the party makes
+
+- **GIVEN** the party holds Pale Hymn
+- **WHEN** a Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction triggers
+- **THEN** its base damage takes her Elemental Mastery times the burst's increase for that reaction
+
 #### Scenario: A reaction spends Moon Song's Pale Hymn first
 
 - **GIVEN** the party holds Moon Song's Pale Hymn and the burst's
 - **WHEN** a Bloom reaction triggers
 - **THEN** one of Moon Song's stacks is spent
 
-### Requirement: Pale Hymn's Bloom bonus, Spirit Envoy and her other passives and constellations not yet built
+### Requirement: Spirit Envoy, Constellation 2 and her other passives and constellations not yet built
 
-Lauma's Pale Hymn Base DMG Bonus on Bloom and Lunar-Bloom, her Spirit Envoy state, and her other passives and constellations SHALL NOT take effect.
+Lauma's Spirit Envoy state, her Constellation 2 Pale Hymn scaling, and her other passives and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has her Pale Hymn Bloom bonus, the Spirit Envoy state or another passive or constellation unlocked
+- **GIVEN** Lauma has the Spirit Envoy state, Constellation 2 or another passive or constellation unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect
