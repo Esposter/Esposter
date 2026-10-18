@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import type { WindrisePlant } from "#src/models/windrise/WindrisePlant";
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
-import type { Impostor, LightUniforms, ToonNodeMaterial, TreeOptions } from "genshin-engine";
+import type {
+  Impostor,
+  InstanceCulling,
+  LightUniforms,
+  PlantCullingOptions,
+  ToonNodeMaterial,
+  TreeOptions,
+} from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
+import type { Node, UniformNode, WebGPURenderer } from "three/webgpu";
 
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 import {
   OAK_BARK_PART,
   OAK_LEAF_PART,
   PLANT_DOME_SCALE,
+  PLANT_DRAW_DISTANCE,
   TREE_PREFAB_NAME_PART,
 } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
@@ -16,14 +25,23 @@ import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { composePlantPlaceMatrix } from "#src/services/world/composePlantPlaceMatrix";
 import { withFinalizer } from "@esposter/shared";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
-import { createImpostorMaterial, createInstancedMesh, createToonMaterial, createTreeGeometry } from "genshin-engine";
-import { Group, InstancedMesh, Matrix4, PlaneGeometry, SphereGeometry, Vector3 } from "three";
+import {
+  createImpostorMaterial,
+  createInstanceMatrixBuffer,
+  createInstanceMatrixNode,
+  createPlantCulling,
+  createToonMaterial,
+  createTreeGeometry,
+} from "genshin-engine";
+import { Group, Matrix4, Mesh, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each plant stands on
   getGroundHeight: (x: number, z: number) => number;
   lightUniforms: LightUniforms;
+  // The world coordinate the scene's origin stands on, which the floating origin moves
+  origin: Vector3;
   // The plants the game places round the oak, each prefab's places
   plants: WindrisePlant[];
   rampTexture: DataTexture;
@@ -33,47 +51,83 @@ interface Props {
   treeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions>;
 }
 
-const { getGroundHeight, lightUniforms, plants, rampTexture, surfaces, treeSpeciesOptionsMap } = defineProps<Props>();
-const { renderer } = useTres();
+// Each kind of plant is one culling pass and one draw of all its places, the pass keeping the places in view
+interface PlantBatch {
+  clipFromModel: UniformNode<"mat4", Matrix4>;
+  culling: InstanceCulling;
+  material: ToonNodeMaterial;
+  mesh: Mesh;
+}
+
+const { getGroundHeight, lightUniforms, origin, plants, rampTexture, surfaces, treeSpeciesOptionsMap } =
+  defineProps<Props>();
+const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 const plantsGroup = new Group();
-const matrix = new Matrix4();
+const batches: PlantBatch[] = [];
+// The eye in the world's own coordinates, which the plants' places are in, so the draw distance is measured in them
+const eye = uniform(new Vector3());
 const domeFactor = new Vector3(...PLANT_DOME_SCALE);
 const domeGeometry = new SphereGeometry(1, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2);
-// The domes stand in the ground's own green and detail
-const domeMaterial = createToonMaterial({
-  color: surfaces.Ground.color,
-  detail: surfaces.Ground.detail,
-  lightUniforms,
-  rampTexture,
-});
-const oakTreeGeometries: BufferGeometry[] = [];
-const oakTreeMaterials: ToonNodeMaterial[] = [];
+// The unit dome's box: its base on the ground, its top at its height, and its radius to each side
+const domeBounds = { bottom: 0, halfWidth: 1, height: 1 };
 let oakImpostor: Impostor | undefined;
-// Each place's matrix, a prefab's instances in one instanced draw, each standing where the game places it
-const addInstances = (
+let treeGeometry: PlaneGeometry | undefined;
+const isTreePrefab = ({ name }: WindrisePlant): boolean => name.includes(TREE_PREFAB_NAME_PART);
+// Each place of a kind, composed where the game places it, the kind's prefabs' places flattened into one list
+const placeMatrices = (prefabs: WindrisePlant[], factor: Vector3): Matrix4[] =>
+  prefabs.flatMap(({ places }) =>
+    places.map((place) => composePlantPlaceMatrix(new Matrix4(), place, getGroundHeight, factor)),
+  );
+// A kind's places in one culling pass and one draw, which covers exactly the places its pass keeps
+const addPlantBatch = (
   geometry: BufferGeometry,
-  material: ToonNodeMaterial,
-  places: WindrisePlant["places"],
-  factor: Vector3,
+  matrices: Matrix4[],
+  bounds: PlantCullingOptions["bounds"],
+  createMaterial: (instanceMatrix: Node<"mat4">) => ToonNodeMaterial,
 ): void => {
-  const mesh = createInstancedMesh(geometry, material, places.length);
-  for (const [index, place] of places.entries())
-    mesh.setMatrixAt(index, composePlantPlaceMatrix(matrix, place, getGroundHeight, factor));
-  mesh.instanceMatrix.needsUpdate = true;
+  const attribute = createInstanceMatrixBuffer(matrices);
+  const clipFromModel = uniform(new Matrix4());
+  const culling = createPlantCulling({
+    attribute,
+    bounds,
+    clipFromModel,
+    drawDistance: PLANT_DRAW_DISTANCE,
+    eye,
+    indexCount: geometry.getIndex()?.count ?? 0,
+  });
+  geometry.setIndirect(culling.indirect);
+  const material = createMaterial(createInstanceMatrixNode(attribute, culling.survivor));
+  const mesh = new Mesh(geometry, material);
+  mesh.frustumCulled = false;
   plantsGroup.add(mesh);
+  batches.push({ clipFromModel, culling, material, mesh });
 };
 
-for (const { name, places } of plants)
-  if (!name.includes(TREE_PREFAB_NAME_PART)) addInstances(domeGeometry, domeMaterial, places, domeFactor);
+const domeMatrices = placeMatrices(
+  plants.filter((prefab) => !isTreePrefab(prefab)),
+  domeFactor,
+);
+if (domeMatrices.length > 0)
+  addPlantBatch(domeGeometry, domeMatrices, domeBounds, (instanceMatrix) =>
+    createToonMaterial({
+      color: surfaces.Ground.color,
+      detail: surfaces.Ground.detail,
+      instanceMatrix,
+      // The outline pass draws from the geometry's own place, which an instance's matrix moves, so the domes are unoutlined
+      isOutlined: false,
+      lightUniforms,
+      rampTexture,
+    }),
+  );
+
 // The oak's impostor is baked once from its mesh on the first frame the renderer can draw, then each tree is one card
-onBeforeRender(() => {
-  if (oakImpostor || !isWebGPURenderer(renderer)) return;
+const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
   const { branchGeometry, leafGeometry } = createTreeGeometry(treeSpeciesOptionsMap[TreeSpecies.GreatOak]);
-  oakImpostor = withFinalizer(
+  const impostor = withFinalizer(
     () =>
       bakeTreeImpostor(
-        renderer,
+        webGPURenderer,
         branchGeometry,
         leafGeometry,
         getWindrisePartColor(surfaces.Oak, OAK_BARK_PART),
@@ -84,27 +138,39 @@ onBeforeRender(() => {
       leafGeometry.dispose();
     },
   );
-  const { bottom, height, width } = oakImpostor;
-  const impostorGeometry = new PlaneGeometry(width, height).translate(0, bottom + height / 2, 0);
-  const impostorMaterial = createImpostorMaterial({
-    fade: uniform(1),
-    impostor: oakImpostor,
-    lightUniforms,
-    rampTexture,
-  });
-  oakTreeGeometries.push(impostorGeometry);
-  oakTreeMaterials.push(impostorMaterial);
-  for (const { name, places } of plants)
-    if (name.includes(TREE_PREFAB_NAME_PART))
-      addInstances(impostorGeometry, impostorMaterial, places, new Vector3(1, 1, 1));
+  oakImpostor = impostor;
+  const { bottom, height, width } = impostor;
+  const cardGeometry = new PlaneGeometry(width, height).translate(0, bottom + height / 2, 0);
+  treeGeometry = cardGeometry;
+  const treeMatrices = placeMatrices(
+    plants.filter((prefab) => isTreePrefab(prefab)),
+    new Vector3(1, 1, 1),
+  );
+  if (treeMatrices.length > 0)
+    addPlantBatch(cardGeometry, treeMatrices, { bottom, halfWidth: width / 2, height }, (instanceMatrix) =>
+      createImpostorMaterial({ fade: uniform(1), impostor, instanceMatrix, lightUniforms, rampTexture }),
+    );
+};
+
+// Every batch's pass runs each frame, its clip matrix taken from the camera the frame draws with, as the grass's is
+onBeforeRender(() => {
+  if (!isWebGPURenderer(renderer)) return;
+  if (!oakImpostor) bakeOakImpostor(renderer);
+  const activeCamera = camera.value;
+  if (!activeCamera) return;
+  eye.value.copy(activeCamera.position).add(origin);
+  for (const { clipFromModel, culling, mesh } of batches) {
+    clipFromModel.value
+      .multiplyMatrices(activeCamera.projectionMatrix, activeCamera.matrixWorldInverse)
+      .multiply(mesh.matrixWorld);
+    culling.cull(renderer);
+  }
 });
 
 onUnmounted(() => {
-  for (const child of plantsGroup.children) if (child instanceof InstancedMesh) child.dispose();
+  for (const { material } of batches) material.dispose();
   domeGeometry.dispose();
-  domeMaterial.dispose();
-  for (const geometry of oakTreeGeometries) geometry.dispose();
-  for (const material of oakTreeMaterials) material.dispose();
+  treeGeometry?.dispose();
   oakImpostor?.albedoTarget.dispose();
   oakImpostor?.normalTarget.dispose();
 });

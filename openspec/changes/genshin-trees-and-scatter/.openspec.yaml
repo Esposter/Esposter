@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "the oak's species waits on the roadmap's windrise-oak-shape row; the other plants' species wait on their mesh exports, none of which is extracted for Windrise but the oak's bark and leaves; and the GPU culling and the grass trail stand unverified until a render of Windrise's grass on the parity page shows them, no fixture drawing that scene yet"
+x-waiting: "the oak's species waits on the roadmap's windrise-oak-shape row; the other plants' species wait on their mesh exports, none of which is extracted for Windrise but the oak's bark and leaves; and the GPU culling of the grass and the plants, and the grass trail, stand unverified until a render of Windrise's grass and plants on the parity page shows them, no fixture drawing that scene yet"
 x-needs: [game-exports]
 x-touches:
   [
@@ -19,6 +19,19 @@ x-touches:
     "packages/genshin-engine/src/vegetation/constants.ts",
     "packages/genshin-engine/src/models/vegetation/GrassCullingOptions.ts",
     "packages/genshin-world/src/components/World/Grass/Index.vue",
+    "packages/genshin-world/src/components/World/Windrise/Index.vue",
+    "packages/genshin-world/src/services/windrise/constants.ts",
+    "packages/genshin-engine/src/culling/constants.ts",
+    "packages/genshin-engine/src/culling/createInstanceMatrixBuffer.ts",
+    "packages/genshin-engine/src/culling/createInstanceMatrixBuffer.test.ts",
+    "packages/genshin-engine/src/culling/createInstanceMatrixNode.ts",
+    "packages/genshin-engine/src/models/culling/PlantCullingOptions.ts",
+    "packages/genshin-engine/src/vegetation/createPlantCulling.ts",
+    "packages/genshin-engine/src/nodes/createToonMaterial.ts",
+    "packages/genshin-engine/src/nodes/createImpostorMaterial.ts",
+    "packages/genshin-engine/src/models/nodes/ToonMaterialOptions.ts",
+    "packages/genshin-engine/src/models/nodes/ImpostorMaterialOptions.ts",
+    "openspec/specs/genshin/trees/design.md",
     "openspec/specs/genshin/vegetation/design.md",
     "scripts/src/services/genshinAssets/scene/WindrisePlantArrangementFamilies.ts",
   ]
