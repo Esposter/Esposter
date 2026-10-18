@@ -18,18 +18,44 @@ describe(stepFishingReel, () => {
     expect.hasAssertions();
 
     expect(
-      stepFishingReel(reel, { attack: 4, gear: GEAR, isReeling: false, seconds: SECONDS, zone: WHOLE_ZONE }).hp,
+      stepFishingReel(reel, {
+        rod: { attackMag: 1, baseAttack: 4 },
+        gear: GEAR,
+        isReeling: false,
+        seconds: SECONDS,
+        zone: WHOLE_ZONE,
+      }).hp,
     ).toBe(6);
     expect(
-      stepFishingReel(reel, { attack: HP, gear: GEAR, isReeling: false, seconds: SECONDS, zone: WHOLE_ZONE }).phase,
+      stepFishingReel(reel, {
+        rod: { attackMag: 1, baseAttack: HP },
+        gear: GEAR,
+        isReeling: false,
+        seconds: SECONDS,
+        zone: WHOLE_ZONE,
+      }).phase,
     ).toBe(FishingPhase.Caught);
+  });
+
+  test("the rod's multiplier scales the wear inside its zone", () => {
+    expect.hasAssertions();
+
+    expect(
+      stepFishingReel(reel, {
+        gear: GEAR,
+        isReeling: false,
+        rod: { attackMag: 0.5, baseAttack: 4 },
+        seconds: SECONDS,
+        zone: WHOLE_ZONE,
+      }).hp,
+    ).toBe(8);
   });
 
   test("a tension out of its zone wears nothing down", () => {
     expect.hasAssertions();
 
     const stepped = stepFishingReel(reel, {
-      attack: 4,
+      rod: { attackMag: 1, baseAttack: 4 },
       gear: GEAR,
       isReeling: false,
       seconds: SECONDS,
@@ -44,10 +70,22 @@ describe(stepFishingReel, () => {
     expect.hasAssertions();
 
     expect(
-      stepFishingReel(reel, { attack: 0, gear: GEAR, isReeling: true, seconds: SECONDS, zone: WHOLE_ZONE }).tension,
+      stepFishingReel(reel, {
+        rod: { attackMag: 1, baseAttack: 0 },
+        gear: GEAR,
+        isReeling: true,
+        seconds: SECONDS,
+        zone: WHOLE_ZONE,
+      }).tension,
     ).toBe(TENSION + GEAR.inSpeed);
     expect(
-      stepFishingReel(reel, { attack: 0, gear: GEAR, isReeling: false, seconds: SECONDS, zone: OUTSIDE_ZONE }).tension,
+      stepFishingReel(reel, {
+        rod: { attackMag: 1, baseAttack: 0 },
+        gear: GEAR,
+        isReeling: false,
+        seconds: SECONDS,
+        zone: OUTSIDE_ZONE,
+      }).tension,
     ).toBe(TENSION - GEAR.outSpeed);
   });
 
@@ -57,7 +95,7 @@ describe(stepFishingReel, () => {
     expect(
       stepFishingReel(
         { ...reel, outOfZoneSeconds: REEL_LOST_OUT_OF_ZONE_SECONDS },
-        { attack: 4, gear: GEAR, isReeling: false, seconds: SECONDS, zone: OUTSIDE_ZONE },
+        { rod: { attackMag: 1, baseAttack: 4 }, gear: GEAR, isReeling: false, seconds: SECONDS, zone: OUTSIDE_ZONE },
       ).phase,
     ).toBe(FishingPhase.Lost);
   });
@@ -68,7 +106,13 @@ describe(stepFishingReel, () => {
     const caught = { ...reel, hp: 0, phase: FishingPhase.Caught };
 
     expect(
-      stepFishingReel(caught, { attack: 4, gear: GEAR, isReeling: false, seconds: SECONDS, zone: WHOLE_ZONE }),
+      stepFishingReel(caught, {
+        rod: { attackMag: 1, baseAttack: 4 },
+        gear: GEAR,
+        isReeling: false,
+        seconds: SECONDS,
+        zone: WHOLE_ZONE,
+      }),
     ).toBe(caught);
   });
 });

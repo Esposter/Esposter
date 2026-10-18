@@ -3,3 +3,4 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-touches: ["packages/genshin-world/src/services/fishing/**", "packages/genshin-world/src/models/fishing/**"]
+x-waiting: "4.2 waits on a proficiency source: no table gives proficiency per catch (a catch counts only its reward row), and the Fishing Associations' goods are absent from ShopGoodsExcelConfigData, so the exchange has no price or source yet"

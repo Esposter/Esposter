@@ -104,6 +104,7 @@ export const useWorldQuests = ({
   return {
     finishedMainQuestIds,
     questProgressMap,
+    quests,
     questsInProgress,
     questsOffered,
     questTargetId,
