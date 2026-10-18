@@ -77,7 +77,9 @@ export const addGcsimBladeRollerCandidates = (
             ? undefined
             : createBladeRollerHitbox(strikeIndex, dimensions, offsetY, hitboxes.line),
         attack,
-        hitmark: { file: frameList.file, line: strikeLine, value: strike.hitmarkFrames },
+        ...(strike.hitmarkFrames === undefined
+          ? {}
+          : { hitmark: { file: frameList.file, line: strikeLine, value: strike.hitmarkFrames } }),
         ...(poise !== undefined &&
           strikePoise !== undefined && { poiseDamage: { line: poise.line, value: strikePoise } }),
         talentLeaf: findGcsimTalentLeaf(config, "attackE", [strikeIndex]),
