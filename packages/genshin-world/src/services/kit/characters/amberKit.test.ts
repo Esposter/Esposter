@@ -6,6 +6,9 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -14,6 +17,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AMBER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AMBER_CHARACTER_ID);
 const createAmberCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -37,8 +41,9 @@ const OTHER_CHARACTER_ID = 10_000_999;
 const fireAimedShot = (combatant: Combatant, context: KitContext, opponents: number): void => {
   AMBER_KIT.chargedAttack.onStart?.(context);
   const hit = takeOne(AMBER_KIT.chargedAttack.hits);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   for (let opponent = 0; opponent < opponents; opponent++)
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
 };
 
 describe("amber kit", () => {

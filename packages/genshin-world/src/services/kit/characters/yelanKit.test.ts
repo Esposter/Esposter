@@ -8,6 +8,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYelanKitBehaviour, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
@@ -15,6 +18,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
 const createYelanCombatant = (): Combatant => ({
   ascension: 0,
@@ -81,7 +85,11 @@ describe(createYelanKitBehaviour, () => {
       const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects };
       const context = createKitTestContext(combatant, { kitEffectState });
-      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
+      lifelineHit.onStrike?.(
+        context,
+        { body: context.body, combatant, hit: lifelineHit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
       return kitEffectState.effects;
     };
     const field = castKitAction(YELAN_KIT.elementalBurst, createYelanCombatant()).effects.find(
@@ -99,7 +107,11 @@ describe(createYelanKitBehaviour, () => {
       const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects: [] };
       const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
-      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
+      lifelineHit.onStrike?.(
+        context,
+        { body: context.body, combatant, hit: lifelineHit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
       return countKitResource(kitEffectState.effects, YELAN_CHARACTER_ID, "yelan-breakthrough-barb");
     };
 

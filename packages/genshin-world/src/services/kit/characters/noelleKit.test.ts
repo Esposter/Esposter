@@ -211,9 +211,10 @@ describe("noelle kit", () => {
     getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
     const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
     const strike = { body: context.body, combatant, hit: takeOne(normalAttack.hits) };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let attack = 0; attack < 4; attack++) {
       normalAttack.onStart?.(context);
-      for (const hit of normalAttack.hits) hit.onStrike?.(context, strike);
+      for (const hit of normalAttack.hits) hit.onStrike?.(context, strike, enemy);
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(4);
   });
@@ -241,9 +242,10 @@ describe("noelle kit", () => {
     getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
     const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
     const strike = { body: attackContext.body, combatant, hit: takeOne(normalAttack.hits) };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let attack = 0; attack < 4; attack++) {
       normalAttack.onStart?.(attackContext);
-      for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike);
+      for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike, enemy);
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(5);
   });

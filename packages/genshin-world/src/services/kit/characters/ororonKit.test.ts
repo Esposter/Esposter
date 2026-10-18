@@ -117,8 +117,9 @@ describe(createOroronKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     ORORON_KIT.elementalBurst.onStart?.(context);
     const ritualHit = takeOne(ORORON_KIT.elementalBurst.hits);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const amounts = [0, 1, 2, 3].map(() => {
-      ritualHit.onStrike?.(context, { body: context.body, combatant, hit: ritualHit });
+      ritualHit.onStrike?.(context, { body: context.body, combatant, hit: ritualHit }, enemy);
       return context.kitEffectState.effects.find((effect) => effect.kind === "buff")?.amount;
     });
 
@@ -130,7 +131,11 @@ describe(createOroronKitBehaviour, () => {
     const combatant = createOroronCombatant(4);
     const context = createKitTestContext(combatant);
     const spiritOrbHit = takeOne(ORORON_KIT.elementalSkill.hits);
-    spiritOrbHit.onStrike?.(context, { body: context.body, combatant, hit: spiritOrbHit });
+    spiritOrbHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: spiritOrbHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
     getPartyMember(context.party, ORORON_CHARACTER_ID).energy = 0;
     const normalAttackEvent: KitDamageTakenEvent = {
       attackTag: AttackTag.NormalAttack,

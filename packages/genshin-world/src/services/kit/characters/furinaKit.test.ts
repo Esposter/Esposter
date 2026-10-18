@@ -218,7 +218,8 @@ describe(createFurinaKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     const { kitEffectState } = context;
     const hit = takeOne(takeOne(FURINA_KIT.normalAttacks).hits);
-    const strike = (): void => hit.onStrike?.(context, { body: context.body, combatant, hit });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const strike = (): void => hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
     const countArkheHits = (): number =>
       kitEffectState.effects.filter((effect) => effect.kind === "summon" && effect.attackTag === AttackTag.NormalAttack)
         .length;

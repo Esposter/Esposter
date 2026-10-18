@@ -12,12 +12,16 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const NAVIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NAVIA_CHARACTER_ID);
 const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -81,7 +85,11 @@ describe(createNaviaKitBehaviour, () => {
 
   // A hit landing on one enemy from the team's effects
   const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-    hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
+    hit.onStrike?.(
+      createKitTestContext(combatant, { kitEffectState }),
+      { body: kitBody, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";

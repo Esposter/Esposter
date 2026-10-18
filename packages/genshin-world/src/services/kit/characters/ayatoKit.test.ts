@@ -12,6 +12,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AYATO_CHARACTER_ID, createAyatoKitBehaviour } from "#src/services/kit/characters/ayatoKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -21,6 +24,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYATO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYATO_CHARACTER_ID);
 
 // The stance Kamisato Art: Kyouka leaves on the team, and the Shunsuiken strike at an index of its string
@@ -43,8 +47,9 @@ describe(createAyatoKitBehaviour, () => {
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
     const context = createKitTestContext(combatant, { kitEffectState });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let strike = 0; strike < 6; strike++)
-      shunsuikenHit.onStrike?.(context, { body: kitBody, combatant, hit: shunsuikenHit });
+      shunsuikenHit.onStrike?.(context, { body: kitBody, combatant, hit: shunsuikenHit }, enemy);
     return readStacks(shunsuikenHit, combatant);
   };
 
@@ -122,9 +127,10 @@ describe(createAyatoKitBehaviour, () => {
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const stacks = [0, 1, 2].map(() => {
       const stacksBefore = readStacks(shunsuikenHit, combatant);
-      shunsuikenHit.onStrike?.(context, { body: kitBody, combatant, hit: shunsuikenHit });
+      shunsuikenHit.onStrike?.(context, { body: kitBody, combatant, hit: shunsuikenHit }, enemy);
       return stacksBefore;
     });
 
@@ -162,11 +168,11 @@ describe(createAyatoKitBehaviour, () => {
     const combatant = createAyatoCombatant(0, 6);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-    shunsuikenHit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), {
-      body: kitBody,
-      combatant,
-      hit: shunsuikenHit,
-    });
+    shunsuikenHit.onStrike?.(
+      createKitTestContext(combatant, { kitEffectState }),
+      { body: kitBody, combatant, hit: shunsuikenHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
     const extraStrikes = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(
@@ -201,7 +207,11 @@ describe(createAyatoKitBehaviour, () => {
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-    shunsuikenHit.onStrike?.(context, { body: kitBody, combatant, hit: shunsuikenHit });
+    shunsuikenHit.onStrike?.(
+      context,
+      { body: kitBody, combatant, hit: shunsuikenHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
     AYATO_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: AYATO_CHARACTER_ID },
       context,

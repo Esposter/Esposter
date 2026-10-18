@@ -206,7 +206,11 @@ const createSpiritSooterContext = (healthShare: number) =>
 // One enemy struck by the given hit of Spirit Soother
 const strikeEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => {
   if (!hit?.onStrike) throw new Error("Spirit Soother's hit has no strike to land");
-  hit.onStrike(context, { body: context.body, combatant: context.activeCombatant, hit });
+  hit.onStrike(
+    context,
+    { body: context.body, combatant: context.activeCombatant, hit },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  );
 };
 // Spirit Soother's heal shares of Max HP at her first level, as gcsim v2.47.2 (MIT) hutao's proud skill group 4639 gives
 // The share above half of her HP, and the larger one at or under it

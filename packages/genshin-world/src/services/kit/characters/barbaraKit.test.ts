@@ -11,6 +11,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -25,6 +28,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const BARBARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BARBARA_CHARACTER_ID);
 
 // The Melody Loop among the team's effects, found by the interval it ticks on
@@ -80,8 +84,9 @@ const stepBarbaraSeconds = (context: KitContext, seconds: number): void => {
 const chargedAttackStrikes = (combatant: Combatant, context: KitContext, opponents: number): void => {
   BARBARA_KIT.chargedAttack.onStart?.(context);
   const hit = takeOne(BARBARA_KIT.chargedAttack.hits);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   for (let opponent = 0; opponent < opponents; opponent++)
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
 };
 
 describe(createBarbaraKitBehaviour, () => {
