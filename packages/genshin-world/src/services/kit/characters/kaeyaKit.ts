@@ -16,6 +16,7 @@ import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -90,11 +91,20 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
   const glacialWaltzSeconds = readSeconds("glacialWaltz");
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        // A recast replaces the Glacial Waltz standing, as gcsim's one burst does, so its icicles stop with it
+        removeKitEffects(
+          kitEffectState,
+          (effect) =>
+            effect.kind === "summon" &&
+            effect.id === GLACIAL_WALTZ_ID &&
+            effect.combatant.characterId === combatant.characterId,
+        );
         castKitSummon(kitEffectState, body, combatant, icicles, {
           id: GLACIAL_WALTZ_ID,
           secondsRemaining: glacialWaltzSeconds,
-        }),
+        });
+      },
     },
     // Constellation 1: his normal and charged attacks crit more often against Cryo-affected enemies
     getStrikeCriticalRateBonus: ({ attackTag, combatant }, enemy) =>

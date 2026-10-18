@@ -247,6 +247,22 @@ describe("kaeya kit", () => {
     expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBe(startSeconds);
   });
 
+  test("a recast of Glacial Waltz replaces the one standing, so constellation 2 extends the recast alone", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 2 };
+    const context = createKitTestContext(combatant);
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(5, context);
+
+    KAEYA_KIT.elementalBurst.onStart?.(context);
+    expect(getSummons(context.kitEffectState)).toHaveLength(1);
+    const recastSeconds = takeOne(getSummons(context.kitEffectState)).secondsRemaining;
+
+    defeatEnemy(combatant, context);
+
+    expect(takeOne(getSummons(context.kitEffectState)).secondsRemaining).toBe(recastSeconds + 2.5);
+  });
+
   test("constellation 2 does not extend Glacial Waltz once it has ended", () => {
     expect.hasAssertions();
     const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 2 };
