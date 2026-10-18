@@ -18,6 +18,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -48,7 +49,7 @@ const createNormalAttackStrike = (combatant: Combatant): KitStrike => ({
   hit: KIT.plungeCollision,
 });
 const landNormalAttack = (context: ReturnType<typeof createKitTestContext>) =>
-  emitKitEvent({ action: KIT.normalAttacks[0], kind: KitEventKind.NormalAttackLanded }, context);
+  emitKitEvent({ action: takeOne(KIT.normalAttacks, 0), kind: KitEventKind.NormalAttackLanded }, context);
 // The flat base DMG a Normal Attack of the wearer's adds as it stands, against the enemy
 const getValleyRiteBonus = (wearer: Combatant, kitEffectState: KitEffectState): number =>
   wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
@@ -56,6 +57,7 @@ const getValleyRiteBonus = (wearer: Combatant, kitEffectState: KitEffectState): 
     enemy,
     createParty([TRAVELER_CHARACTER_ID]),
     kitEffectState.effects,
+    new Map([[TRAVELER_CHARACTER_ID, wearer]]),
   ) ?? 0;
 
 describe(createEchoesOfAnOfferingSetModule, () => {

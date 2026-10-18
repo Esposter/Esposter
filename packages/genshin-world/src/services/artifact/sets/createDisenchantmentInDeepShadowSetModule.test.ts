@@ -3,6 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -54,12 +55,21 @@ describe(createDisenchantmentInDeepShadowSetModule, () => {
       party,
     });
     const reactionType = TransformativeReactionType.Superconduct;
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
     expect(
-      wearer.kit.getPartyReactionBonus?.(wearer, { combatant: wearer, reactionType }, context)?.damageBonus,
+      wearer.kit.getPartyReactionBonus?.(
+        wearer,
+        { combatant: wearer, element: Element.Cryo, enemy, reactionType },
+        context,
+      )?.damageBonus,
     ).toBeCloseTo(0.8);
     expect(
-      wearer.kit.getPartyReactionBonus?.(wearer, { combatant: other, reactionType }, context)?.damageBonus ?? 0,
+      wearer.kit.getPartyReactionBonus?.(
+        wearer,
+        { combatant: other, element: Element.Cryo, enemy, reactionType },
+        context,
+      )?.damageBonus ?? 0,
     ).toBe(0);
   });
 

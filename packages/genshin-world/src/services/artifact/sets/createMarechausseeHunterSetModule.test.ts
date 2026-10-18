@@ -75,7 +75,7 @@ describe(createMarechausseeHunterSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party });
     const { getPassiveBonuses, onKitEvent } = createMarechausseeHunterSetModule(bonusOf(4));
     const criticalRateBonus = () =>
-      (getPassiveBonuses?.(wearer, 1, [wearer], kitEffectState.effects) ?? []).reduce(
+      (getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects) ?? []).reduce(
         (total, { amount }) => total + amount,
         0,
       );
@@ -97,7 +97,7 @@ describe(createMarechausseeHunterSetModule, () => {
 
     onKitEvent?.(healthChangedOf(OTHER_CHARACTER_ID), context, wearer);
 
-    expect(getPassiveBonuses?.(wearer, 1, [wearer], kitEffectState.effects)).toStrictEqual([
+    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
       { amount: 0, attribute: Attribute.CriticalRate },
     ]);
   });

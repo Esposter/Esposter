@@ -86,7 +86,15 @@ const createTeam = (characterIds: number[]) => {
   const priceStrike = (striker: Combatant, attackTag: AttackTag) => {
     const strike = createStrike(striker, attackTag);
     if (striker.characterId === wearer.characterId)
-      return wearer.kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, kitEffectState.effects) ?? 0;
+      return (
+        wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
+          strike,
+          enemy,
+          party,
+          kitEffectState.effects,
+          characterIdCombatantMap,
+        ) ?? 0
+      );
     return (
       wearer.kit.getPartyStrikeBonus?.(wearer, strike, enemy, party, kitEffectState.effects, characterIdCombatantMap)
         ?.additiveBaseDamageBonus ?? 0

@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -37,7 +38,7 @@ const createWearer = (): Combatant => ({
   kit: getPassiveKit(KIT, [createVermillionHereafterSetModule(bonusOf(4))]),
   level: 1,
 });
-const createHpDecrease = () => ({
+const createHpDecrease = (): KitEvent => ({
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,

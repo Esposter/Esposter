@@ -71,7 +71,7 @@ describe(createDesertPavilionChronicleSetModule, () => {
       context,
       wearer,
     );
-    expect(getPassiveBonuses?.(wearer, 1, [wearer], kitEffectState.effects)).toStrictEqual([
+    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
       { amount: 0.1, attribute: Attribute.NormalAttackSpeed },
     ]);
     for (const attackTag of [AttackTag.NormalAttack, AttackTag.ChargedAttack, AttackTag.PlungingAttack])
