@@ -6,10 +6,12 @@ const BURST = CombatTalent.ElementalBurst;
 const NORMAL_ATTACK = CombatTalent.NormalAttack;
 const SKILL = CombatTalent.ElementalSkill;
 
-// The labels of each folder-less character, keyed by its avatar id. Nefer's Phantasm Performance replaces her charged
-// Attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her strikes, charged attack and Spirit Steed's
-// Stride while it holds, each stance read from its skill's labels. Illuga's Hold is his skill's hold, read from its Hold
-// DMG label. Vesna's skill tag is the wiki's, so her skill reads its label here like her burst
+// The labels a character's record slots read from its talent tables, keyed by avatar id. Its entries are folder-less
+// Characters, and Clorinde and Flins, who have gcsim folders and read these slots from the tables all the same. Nefer's
+// Phantasm Performance replaces her charged attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her
+// Strikes, charged attack and Spirit Steed's Stride while it holds, each stance read from its skill's labels. Illuga's
+// Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
+// Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
   // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
   // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
