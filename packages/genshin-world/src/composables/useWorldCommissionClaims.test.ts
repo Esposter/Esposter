@@ -22,7 +22,9 @@ import {
   LONG_TERM_RESIN_COST,
 } from "#src/services/commission/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
+import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { computed, shallowRef } from "vue";
 import { describe, expect, test, vi } from "vitest";
 
@@ -93,11 +95,13 @@ describe(useWorldCommissionClaims, () => {
   });
   const pointsOf = (halfPoints: number): EncounterPoints => ({ earnedOn: NOW, halfPoints });
   const createClaims = ({
+    clock = createWorldClock(NOW),
     day,
     halfPoints,
     longTermHalfPoints,
     resin,
   }: {
+    clock?: ReturnType<typeof createWorldClock>;
     day: CommissionDay;
     halfPoints: number;
     longTermHalfPoints: number;
@@ -135,7 +139,7 @@ describe(useWorldCommissionClaims, () => {
         { exp: 0, level: 1 },
         { exp: 100, level: 2 },
       ]),
-      getWorldNow: () => NOW,
+      getWorldNow: clock.getWorldNow,
       inventory,
       longTermEncounterPoints,
       materialDataMap,
@@ -146,6 +150,7 @@ describe(useWorldCommissionClaims, () => {
       setInventory,
       setWallet,
       wallet,
+      worldNow: clock.worldNow,
     });
     return { claims, commissionDay, encounterPoints, longTermEncounterPoints, wallet };
   };
@@ -192,6 +197,23 @@ describe(useWorldCommissionClaims, () => {
     expect(encounterPoints.value).toStrictEqual(pointsOf(2));
     expect(longTermEncounterPoints.value).toStrictEqual({ halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION });
     expect(wallet.value[Currency.OriginalResin]).toBe(0);
+  });
+
+  test("should offer the conversion once the Original Resin regenerates to its cost, with no wallet write", () => {
+    expect.hasAssertions();
+    const clock = createWorldClock(NOW);
+    const { claims } = createClaims({
+      clock,
+      day: dayWith(0),
+      halfPoints: 0,
+      longTermHalfPoints: 2,
+      resin: LONG_TERM_RESIN_COST - 1,
+    });
+    expect(claims.canConvertLongTermPoint.value).toBe(false);
+
+    clock.moveTo(NOW.add({ minutes: ORIGINAL_RESIN_REGEN_MINUTES }));
+
+    expect(claims.canConvertLongTermPoint.value).toBe(true);
   });
 
   test("should refuse Katheryne's bonus until the day's four commissions are claimed", () => {

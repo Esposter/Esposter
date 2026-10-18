@@ -43,6 +43,7 @@ export const useWorldMap = ({
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  getWorldNow,
   placedDoings,
   questStepTargets,
   recordedDoingIds,
@@ -60,6 +61,7 @@ export const useWorldMap = ({
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
+  getWorldNow: () => Temporal.Instant;
   // The placed doings the world holds, each a chest, an Oculus, a puzzle or a camp, by the point it stands at
   placedDoings: Readonly<Ref<PlacedDoing[]>>;
   questStepTargets: Readonly<Ref<{ named: ReadonlySet<string>; reached: ReadonlySet<string> }>>;
@@ -196,7 +198,7 @@ export const useWorldMap = ({
   // Request taken before the limit is not withheld, and its claim is recorded with the week's
   const requestClaimedAts = shallowRef<readonly Temporal.Instant[]>(savedRequestClaimedAts);
   const payRequestReward = (reward: ReputationReward) => {
-    requestClaimedAts.value = recordWeeklyReputationClaim(requestClaimedAts.value, Temporal.Now.instant());
+    requestClaimedAts.value = recordWeeklyReputationClaim(requestClaimedAts.value, getWorldNow());
     payReputationReward(reward);
   };
   // A finished quest pays the Reputation request or Reputation quest it is, once: the event is emitted on the move

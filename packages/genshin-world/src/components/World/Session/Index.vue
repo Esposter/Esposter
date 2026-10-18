@@ -211,6 +211,7 @@ import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionId
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
+import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
@@ -381,6 +382,12 @@ const {
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+// The world's clock as a ref the computeds read, set from getWorldNow once each game minute so a reset or a regeneration that
+// Passes is seen without a write
+const worldNow = shallowRef(getWorldNow());
+useIntervalFn(() => {
+  worldNow.value = getWorldNow();
+}, WORLD_CLOCK_INTERVAL_MS);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoint, openFishingPoint, stepFishing } =
   useWorldFishing({
@@ -442,6 +449,7 @@ const {
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
+  worldNow,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, readBook } = useWorldArchive({
@@ -847,6 +855,7 @@ const { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLo
     setInventory,
     setWallet,
     wallet,
+    worldNow,
   });
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
 const profileNamecards = computed(() =>
@@ -1090,6 +1099,7 @@ const {
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
+  getWorldNow,
   placedDoings,
   questStepTargets,
   recordedDoingIds,
@@ -1108,6 +1118,7 @@ const {
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty } =
   useWorldReputationBounty({
     events,
+    getWorldNow,
     payReputationReward,
     random: () => kitContext.random(),
     reputation,
@@ -1294,6 +1305,7 @@ const {
   setInventory,
   setWallet,
   wallet,
+  worldNow,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
@@ -1340,6 +1352,7 @@ const {
   unlockedLandmarks,
   weaponDataMap: statTables.weaponDataMap,
   wallet,
+  worldNow,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
 const fightingCamps = computed(() => [
@@ -2075,7 +2088,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           :landmarks="unlockedLandmarks"
           :recorded-doing-ids
-          :server-clock-offset-ms
+          :now="worldNow"
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
@@ -2124,7 +2137,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :mails
           :material-data-map="materialDataMap"
           :names="nameText"
-          :now="getWorldNow()"
+          :now="worldNow"
           :text-map="mailData.textMap"
           @claim="(mailId) => claimMail(mailId)"
           @claim-all="claimAllMails()"
@@ -2240,7 +2253,8 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :name-text
           :stat-tables
-          :server-clock-offset-ms
+          :get-world-now="getWorldNow"
+          :now="worldNow"
           :wish-schedule
           :stella-fortuna-name-text-id-map
           :trials
@@ -2256,10 +2270,12 @@ defineExpose({ jumpTo, readCameraPosition });
           :adventure-rank="rank"
           :character-data-map="statTables.characterDataMap"
           :game-text
+          :get-world-now="getWorldNow"
           :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
           :inventory
           :material-data-map
           :name-text
+          :now="worldNow"
           :rotation="paimonsBargainsRotation"
           :wallet
           :weapon-data-map="statTables.weaponDataMap"
@@ -2424,10 +2440,12 @@ defineExpose({ jumpTo, readCameraPosition });
       :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
       :game-text
+      :get-world-now="getWorldNow"
       :initial-crafter-id="crafting.crafterId"
       :inventory
       :material-data-map
       :name-text
+      :now="worldNow"
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
@@ -2491,10 +2509,12 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
       :game-text
+      :get-world-now="getWorldNow"
       :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :material-data-map
       :name-text
+      :now="worldNow"
       :reputation-level="reputation.level"
       :wallet
       @close="screenKind = ScreenKind.World"
@@ -2514,7 +2534,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :inventory
       :material-data-map
       :name-text
-      :now="getWorldNow()"
+      :now="worldNow"
       :random="kitContext.random"
       :region-statue-progress-map="regionStatueProgressMap"
       :wallet

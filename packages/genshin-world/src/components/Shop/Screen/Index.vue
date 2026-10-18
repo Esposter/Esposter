@@ -28,17 +28,22 @@ interface Props {
   adventureRank: number;
   // The game's words in the reader's language
   gameText: GameText;
+  // The world's clock as a purchase reads it at the moment the purchase is made
+  getWorldNow: () => Temporal.Instant;
   // The shop's goods as its slice holds them, before their sale dates and rank are checked
   goods: ShopGood[];
   // The game's material table by item id, which each good's item is named and defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
+  // The world's clock as the screen shows it, which the goods on offer and their limits and refreshes are read at
+  now: Temporal.Instant;
   // The Reputation level the player has reached, which a city shop's Mora prices are discounted at
   reputationLevel: number;
 }
 
-const { adventureRank, gameText, goods, materialDataMap, nameText, reputationLevel } = defineProps<Props>();
+const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
@@ -50,12 +55,11 @@ const goodId = ref(0);
 const tabId = ref(0);
 const tabs = computed(() => computeShopTabs(goods, gameText));
 const pickedTabId = computed(() => tabs.value.find(({ id }) => id === tabId.value)?.id ?? tabs.value[0]?.id);
-const now = computed(() => Temporal.Now.instant());
 // The goods on offer to this rank now, on the picked tab where the shop has tabs, priced at the reputation the player has. A
 // Good's costs are currencies, or items the bag holds, as a fish is
 const offeredGoods = computed(() =>
   goods.flatMap((good) =>
-    checkIsShopGoodOffered(good, adventureRank, now.value) &&
+    checkIsShopGoodOffered(good, adventureRank, now) &&
     (pickedTabId.value === undefined || good.tabId === pickedTabId.value)
       ? [discountShopGood(good, reputationLevel)]
       : [],
@@ -78,9 +82,9 @@ const balances = computed<CurrencyCount[]>(() =>
 );
 const goodCells = computed<ShopGoodCell[]>(() =>
   offeredGoods.value.map((good) => {
-    const left = computeShopGoodLeft(good, purchases.value, now.value);
+    const left = computeShopGoodLeft(good, purchases.value, now);
     const limitKey = ShopRefreshLimitGameTextKeyMap[good.refresh];
-    const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now.value);
+    const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now);
     return {
       id: good.goodsId,
       limitLabel:
@@ -92,7 +96,7 @@ const goodCells = computed<ShopGoodCell[]>(() =>
           ? undefined
           : fillGameTextValues(
               gameText[GameTextKey.ShopRefresh],
-              formatShopRefreshCountdown(now.value.until(nextRefreshTime)),
+              formatShopRefreshCountdown(now.until(nextRefreshTime)),
             ),
     };
   }),
@@ -102,7 +106,7 @@ const goodCells = computed<ShopGoodCell[]>(() =>
 const countMaximum = computed(() => {
   if (!pickedGood.value) return 0;
   const good = pickedGood.value;
-  const left = computeShopGoodLeft(good, purchases.value, now.value) ?? Number.POSITIVE_INFINITY;
+  const left = computeShopGoodLeft(good, purchases.value, now) ?? Number.POSITIVE_INFINITY;
   const affordable = Math.min(
     ...good.costs.map((cost) =>
       cost.count > 0 ? Math.floor(countShopCost(inventory.value, wallet.value, cost.itemId) / cost.count) : 1,
@@ -122,7 +126,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     shopGood,
     buyCount,
     adventureRank,
-    now.value,
+    getWorldNow(),
   );
   if (bought.purchases === purchases.value) return;
   inventory.value = bought.inventory;

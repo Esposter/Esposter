@@ -33,6 +33,7 @@ import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
+import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";
 import { claimPetrifiedTree } from "#src/services/domains/claimPetrifiedTree";
 import { computeDomainChallengeElapsed } from "#src/services/domains/computeDomainChallengeElapsed";
 import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevelRows";
@@ -122,6 +123,7 @@ export const useWorldDomains = ({
   unlockedLandmarks,
   weaponDataMap,
   wallet,
+  worldNow,
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
@@ -147,6 +149,7 @@ export const useWorldDomains = ({
   unlockedLandmarks: Ref<Landmark[]>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
+  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const unlockedDomainEntrances = computed(() =>
     unlockedLandmarks.value.filter(
@@ -161,7 +164,7 @@ export const useWorldDomains = ({
           domainSchedule.value,
           DOMAIN_CHALLENGE_LEVELS[domainEntrance.value.entryId] ?? {},
           rank.value,
-          getWorldNow(),
+          worldNow.value,
         )
       : [],
   );
@@ -255,7 +258,7 @@ export const useWorldDomains = ({
   });
 
   // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A level
-  // With no challenge data does not enter, and an arena already entered is not entered again
+  // With no challenge data or closed at the moment does not enter, and an arena already entered is not entered again
   const enterDomain = (dungeonId: number) => {
     const entrance = domainEntrance.value;
     const schedule = domainSchedule.value;
@@ -263,7 +266,9 @@ export const useWorldDomains = ({
     const scheduledLevel = schedule.levels.find((level) => level.dungeonId === dungeonId);
     const level = scheduledLevel && DOMAIN_CHALLENGE_LEVELS[entrance.entryId]?.[scheduledLevel.recommendedRank];
     if (!scheduledLevel || !level) return;
-    const now = getWorldNow().epochMilliseconds;
+    const now = getWorldNow();
+    // The row the player pressed was read at the world's clock, which can be a minute behind a reset that has passed since
+    if (!checkIsDomainLevelOpen(schedule.kind, scheduledLevel, rank.value, now)) return;
     const scenePose = computeDomainScenePose(entrance.arrival);
     const arena: DomainArena = {
       areaId: entrance.areaId,
@@ -275,7 +280,7 @@ export const useWorldDomains = ({
       isTopTier:
         scheduledLevel.recommendedRank >= Math.max(...schedule.levels.map(({ recommendedRank }) => recommendedRank)),
       level,
-      startedAt: now,
+      startedAt: now.epochMilliseconds,
       artifactSetIds: schedule.artifactSetIds,
       treeArtifacts: scheduledLevel.treeArtifacts,
       treeRewards: scheduledLevel.treeRewards,

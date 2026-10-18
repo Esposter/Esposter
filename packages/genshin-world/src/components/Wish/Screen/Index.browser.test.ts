@@ -17,10 +17,7 @@ const featuredCharacterOf = (): WishItem => {
   const openBanners = createBanners(
     props.statTables,
     props.nameText,
-    getOpenEventBanners(
-      props.wishSchedule,
-      Temporal.Now.instant().add({ milliseconds: props.serverClockOffsetMs }).epochMilliseconds,
-    ),
+    getOpenEventBanners(props.wishSchedule, props.now.epochMilliseconds),
   );
   const featured = openBanners
     .find(({ kind }) => kind === BannerKind.CharacterEvent)

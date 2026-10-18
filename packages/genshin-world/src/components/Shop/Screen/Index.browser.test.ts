@@ -65,10 +65,12 @@ describe("shopScreen", () => {
           h(ShopScreen, {
             adventureRank: 60,
             gameText,
+            getWorldNow: () => Temporal.Now.instant(),
             goods: [good(1, TREASURE_ITEM_ID, TREASURE_TAB_ID), good(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID)],
             inventory,
             materialDataMap,
             nameText,
+            now: Temporal.Now.instant(),
             purchases: [],
             reputationLevel: 1,
             wallet,

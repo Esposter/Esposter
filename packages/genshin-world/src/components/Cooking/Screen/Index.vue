@@ -45,12 +45,13 @@ const selectDish = (id: number) => {
   const selected = recipes.find((dish) => dish.id === id);
   if (selected) recipe.value = selected;
 };
+const MILLISECONDS_PER_SECOND = 1000;
 // The indicator's pointer swings from the moment the screen opens, and its place at a press is the one shown then
-const openedAt = Temporal.Now.instant();
+const openedAt = performance.now();
 const pointer = ref(0);
 let frameId = 0;
 const sweep = () => {
-  pointer.value = getCookingPointerPosition(Temporal.Now.instant().since(openedAt).total({ unit: "second" }));
+  pointer.value = getCookingPointerPosition((performance.now() - openedAt) / MILLISECONDS_PER_SECOND);
   frameId = requestAnimationFrame(sweep);
 };
 onMounted(() => {

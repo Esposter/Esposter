@@ -62,6 +62,7 @@ export const useWorldTrounceBlossoms = ({
   setInventory,
   setWallet,
   wallet,
+  worldNow,
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
@@ -81,6 +82,7 @@ export const useWorldTrounceBlossoms = ({
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
+  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(new Map());
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
@@ -99,7 +101,7 @@ export const useWorldTrounceBlossoms = ({
       },
     );
   const trounceBlossomInteractables = computed(() =>
-    computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, Temporal.Now.instant()),
+    computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, worldNow.value),
   );
   const writeTrounceBlossom = (spawnKey: string, trounceBlossom: TrounceBlossom) => {
     trounceBlossoms.value = new Map(trounceBlossoms.value).set(spawnKey, trounceBlossom);

@@ -70,6 +70,7 @@ flowchart TD
 ## Notes
 
 - The Enemies component times its defeats, jumps and claims on `getWorldNow`, the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
+- A computed that reads the clock takes `worldNow`, a ref Session sets from `getWorldNow` once each `WORLD_CLOCK_INTERVAL_MS`, so a reset or a regeneration that passes with no write reaches it within the minute. A function that runs on a click reads `getWorldNow` at the moment it runs, and re-checks a row a computed showed before it acts on the row.
 - `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` has no caller outside its tests until the domain screen is built.
 - The week's reset times are `computeLastWeeklyReset` and `computeNextWeeklyReset`, and the day's and month's are their pairs in the table above. The mining outcrop's respawn rule is in `checkIsMiningOutcropStanding`, and the game's zone, day start hour and reset days are the constants in `services/time/constants.ts`.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.

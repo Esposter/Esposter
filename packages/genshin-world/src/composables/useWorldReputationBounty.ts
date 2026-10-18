@@ -16,6 +16,7 @@ import { computed, shallowRef } from "vue";
 
 interface Props {
   events: WorldEvents;
+  getWorldNow: () => Temporal.Instant;
   payReputationReward: (reward: ReputationReward) => void;
   random: () => number;
   reputation: Readonly<Ref<ReputationProgress>>;
@@ -31,6 +32,7 @@ interface Props {
 // Both are the save's, so a reload finds the hunt and the week's count where they were left
 export const useWorldReputationBounty = ({
   events,
+  getWorldNow,
   payReputationReward,
   random,
   reputation,
@@ -72,7 +74,7 @@ export const useWorldReputationBounty = ({
     const city = reputationCity.value;
     const claim =
       city && bountyHunt.value
-        ? claimWeeklyReputationBounty(city, bountyHunt.value, bountyClaimedAts.value, Temporal.Now.instant())
+        ? claimWeeklyReputationBounty(city, bountyHunt.value, bountyClaimedAts.value, getWorldNow())
         : undefined;
     if (!claim) return;
     payReputationReward(claim.reward);

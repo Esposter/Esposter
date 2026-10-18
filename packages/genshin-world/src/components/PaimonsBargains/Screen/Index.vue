@@ -51,20 +51,34 @@ interface Props {
   characterDataMap: ReadonlyMap<number, CharacterData>;
   // The game's words in the reader's language
   gameText: GameText;
+  // The world's clock as a purchase reads it at the moment the purchase is made
+  getWorldNow: () => Temporal.Instant;
   // The Fates the shop sells, as its dataset holds them, before their sale dates and rank are checked
   goods: ShopGood[];
   // The game's material table by item id, which each Fate's name is read from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and characters in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
+  // The world's clock as the screen shows it, which the Fates and offers on show and their refreshes are read at
+  now: Temporal.Instant;
   // The rotation of characters and weapons the shop offers in turn
   rotation: PaimonsBargainsRotation;
   // The game's weapon table by weapon id, which each weapon on offer is named and defined from
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }
 
-const { adventureRank, characterDataMap, gameText, goods, materialDataMap, nameText, rotation, weaponDataMap } =
-  defineProps<Props>();
+const {
+  adventureRank,
+  characterDataMap,
+  gameText,
+  getWorldNow,
+  goods,
+  materialDataMap,
+  nameText,
+  now,
+  rotation,
+  weaponDataMap,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
@@ -73,7 +87,6 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 const count = ref(1);
 const goodId = ref(0);
-const now = computed(() => Temporal.Now.instant());
 // The currency a cost is paid in; a cost the wallet does not trade is a bad row, as nothing here could pay for it
 const currencyOf = (itemId: number): Currency => {
   const currency = ShopItemCurrencyMap[itemId];
@@ -83,11 +96,11 @@ const currencyOf = (itemId: number): Currency => {
 };
 const offers = computed<Offer[]>(() => {
   const fates = goods.flatMap((good): Offer[] =>
-    checkIsCurrencyOnlyGood(good) && checkIsShopGoodOffered(good, adventureRank, now.value)
+    checkIsCurrencyOnlyGood(good) && checkIsShopGoodOffered(good, adventureRank, now)
       ? [{ good, kind: ShopOfferKind.Fate }]
       : [],
   );
-  const { characterGoods, weaponGoods } = getPaimonsBargainsGoods(rotation, now.value);
+  const { characterGoods, weaponGoods } = getPaimonsBargainsGoods(rotation, now);
   return [
     ...fates,
     ...characterGoods.map((good): Offer => ({ good, kind: ShopOfferKind.Character })),
@@ -115,9 +128,9 @@ const balances = computed<CurrencyCount[]>(() =>
 const goodCells = computed<ShopGoodCell[]>(() =>
   offers.value.map((offer) => {
     const { good } = offer;
-    const left = computeShopGoodLeft(good, purchases.value, now.value);
+    const left = computeShopGoodLeft(good, purchases.value, now);
     const limitKey = ShopRefreshLimitGameTextKeyMap[good.refresh];
-    const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now.value);
+    const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now);
     return {
       id: good.goodsId,
       limitLabel:
@@ -137,7 +150,7 @@ const goodCells = computed<ShopGoodCell[]>(() =>
           ? undefined
           : fillGameTextValues(
               gameText[GameTextKey.ShopRefresh],
-              formatShopRefreshCountdown(now.value.until(nextRefreshTime)),
+              formatShopRefreshCountdown(now.until(nextRefreshTime)),
             ),
     };
   }),
@@ -148,7 +161,7 @@ const countMaximum = computed(() => {
   if (!pickedOffer.value) return 0;
   const { good, kind } = pickedOffer.value;
   if (kind !== ShopOfferKind.Fate) return 1;
-  const left = computeShopGoodLeft(good, purchases.value, now.value) ?? Number.POSITIVE_INFINITY;
+  const left = computeShopGoodLeft(good, purchases.value, now) ?? Number.POSITIVE_INFINITY;
   const affordable = Math.min(
     ...good.costs.map((cost) => (cost.count > 0 ? Math.floor(wallet.value[currencyOf(cost.itemId)] / cost.count) : 1)),
   );
@@ -165,7 +178,7 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
       offer.good,
       buyCount,
       adventureRank,
-      now.value,
+      getWorldNow(),
     );
     return bought.purchases === purchases.value ? undefined : { ...bought, characters: characters.value };
   }
@@ -176,7 +189,7 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
       purchases.value,
       offer.good,
       characterDataMap,
-      now.value,
+      getWorldNow(),
     );
     return bought && { ...bought, inventory: inventory.value };
   }
@@ -186,7 +199,7 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
     purchases.value,
     offer.good,
     getWeaponDefinition,
-    now.value,
+    getWorldNow(),
   );
   return bought && { ...bought, characters: characters.value };
 };
