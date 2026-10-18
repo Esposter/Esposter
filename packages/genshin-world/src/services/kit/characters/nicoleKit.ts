@@ -30,6 +30,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const NICOLE_CHARACTER_ID = 10_000_131;
 
@@ -221,7 +222,7 @@ const startC2Ticker = (
   characterId: number,
   seconds: number,
 ): void => {
-  const id = `${CONSTELLATION_2_TICKER_ID}-${characterId}`;
+  const id = `${CONSTELLATION_2_TICKER_ID}${ID_SEPARATOR}${characterId}`;
   castKitField(
     kitEffectState,
     nicoleCharacterId,
@@ -236,7 +237,7 @@ const startC2Ticker = (
           if (checkIsInKitHitbox(CONSTELLATION_2_HITBOX, tick.body.position, enemy.position))
             addEnemyStatus(enemy, {
               damageTakenBonus: 0,
-              id: `${CONSTELLATION_2_SOURCE}-${element}`,
+              id: `${CONSTELLATION_2_SOURCE}${ID_SEPARATOR}${element}`,
               resistanceReduction: { [element]: CONSTELLATION_2_RES_REDUCTION },
               secondsRemaining: CONSTELLATION_2_STATUS_SECONDS,
             });
