@@ -2,6 +2,8 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
+import { sumKitBonuses } from "#src/services/kit/sumKitBonuses";
+
 // A character's kit with passive modules answering beside it: each hook the kit has runs first and then each module's,
 // Its step among them, so the kit's own passives come before a weapon's or a set's. A module hears only the events
 // `answersEvent` takes
@@ -26,31 +28,16 @@ export const getPassiveKit = (
       ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
     ),
   getPartyReactionBonus: (member, reaction, context) =>
-    [kit, ...passiveModules].reduce(
-      (sum, { getPartyReactionBonus }) => {
-        const bonus = getPartyReactionBonus?.(member, reaction, context);
-        return {
-          additiveBaseDamageBonus: sum.additiveBaseDamageBonus + (bonus?.additiveBaseDamageBonus ?? 0),
-          criticalDamageBonus: sum.criticalDamageBonus + (bonus?.criticalDamageBonus ?? 0),
-          criticalRateBonus: sum.criticalRateBonus + (bonus?.criticalRateBonus ?? 0),
-          damageBonus: sum.damageBonus + (bonus?.damageBonus ?? 0),
-        };
-      },
-      { additiveBaseDamageBonus: 0, criticalDamageBonus: 0, criticalRateBonus: 0, damageBonus: 0 },
+    sumKitBonuses(
+      {},
+      [kit, ...passiveModules].map(({ getPartyReactionBonus }) => getPartyReactionBonus?.(member, reaction, context)),
     ),
   getPartyStrikeBonus: (member, strike, enemy, party, effects, characterIdCombatantMap) =>
-    [kit, ...passiveModules].reduce(
-      (sum, { getPartyStrikeBonus }) => {
-        const bonus = getPartyStrikeBonus?.(member, strike, enemy, party, effects, characterIdCombatantMap);
-        return {
-          additiveBaseDamageBonus: sum.additiveBaseDamageBonus + (bonus?.additiveBaseDamageBonus ?? 0),
-          criticalDamageBonus: sum.criticalDamageBonus + (bonus?.criticalDamageBonus ?? 0),
-          criticalRateBonus: sum.criticalRateBonus + (bonus?.criticalRateBonus ?? 0),
-          damageBonus: sum.damageBonus + (bonus?.damageBonus ?? 0),
-          defenseIgnored: sum.defenseIgnored + (bonus?.defenseIgnored ?? 0),
-        };
-      },
-      { additiveBaseDamageBonus: 0, criticalDamageBonus: 0, criticalRateBonus: 0, damageBonus: 0, defenseIgnored: 0 },
+    sumKitBonuses(
+      {},
+      [kit, ...passiveModules].map(({ getPartyStrikeBonus }) =>
+        getPartyStrikeBonus?.(member, strike, enemy, party, effects, characterIdCombatantMap),
+      ),
     ),
   getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects, characterIdCombatantMap) =>
     (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0) +
