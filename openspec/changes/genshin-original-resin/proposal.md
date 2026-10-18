@@ -20,7 +20,7 @@ Pressing F at a cleared challenge's blossom offers its claims, and choosing one 
 ## Waiting on
 
 - The first blossom a challenge places, from the ley line outcrops (each outcrop placed at a Ley Line Blossom point of the official map): `openspec/changes/genshin-ley-line-outcrops/`, or from the bosses: `openspec/changes/genshin-bosses/`.
-- Using an item from the bag, which Fragile Resin needs: `openspec/changes/genshin-inventory/`.
+- Using an item from the bag, which Fragile Resin needs: `openspec/changes/archive/2026-10-18-genshin-inventory/`.
 
 ## Impact
 

@@ -24,7 +24,7 @@ The character screen shows the chosen character as the game does and lets the pl
 ## Waiting on
 
 - `openspec/changes/genshin-characters/`: the character's model, which stands in the screen's middle.
-- `openspec/changes/genshin-inventory/`: the materials Level Up and Ascend spend.
+- `openspec/changes/archive/2026-10-18-genshin-inventory/`: the materials Level Up and Ascend spend.
 - Game install and game exports, which the screen's references and tables need.
 
 ## Impact
