@@ -12,6 +12,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
+import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 
@@ -43,6 +44,7 @@ export const landKitReactionReaches = (
     party,
     context.body.position,
   );
+  const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const [origin, reaction] of reaches) {
     const oreHit = readReactionOreHit(reaction.reactionType);
     if (oreHit) oreStrikes.push({ body: { facing: 0, height: 0, position: origin.position }, hit: oreHit });
@@ -53,6 +55,7 @@ export const landKitReactionReaches = (
       reaction,
       combatant,
       lunarReactionTypes,
+      stellarReactionTypes,
     )) {
       collectKitEnergyDrops(
         [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],

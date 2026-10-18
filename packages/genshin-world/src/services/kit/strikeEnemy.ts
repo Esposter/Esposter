@@ -1,4 +1,5 @@
 import type { Reaction } from "#src/models/combat/Reaction";
+import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -44,6 +45,7 @@ export const strikeEnemy = (
   random: () => number,
   moonsign?: PartyMoonsign,
   criticalRateBonus = 0,
+  stellarReactionTypes: readonly StellarReactionType[] = [],
 ): EnemyStrikeResult => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
@@ -69,7 +71,16 @@ export const strikeEnemy = (
         InternalCooldownTagGroupMap[internalCooldownTag] ?? DEFAULT_INTERNAL_COOLDOWN_GROUP,
         elementalState.seconds,
       );
-    reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant, moonsign?.lunarReactionTypes));
+    reactions.push(
+      ...applyEnemyElement(
+        enemy,
+        element,
+        gauge * share,
+        combatant,
+        moonsign?.lunarReactionTypes,
+        stellarReactionTypes,
+      ),
+    );
   }
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);

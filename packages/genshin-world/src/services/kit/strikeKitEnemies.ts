@@ -23,6 +23,7 @@ import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
+import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
@@ -48,6 +49,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
   } = context;
   let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
+  const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
     const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, context.body.position);
@@ -85,6 +87,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         random,
         moonsign,
         criticalRateBonus,
+        stellarReactionTypes,
       );
       collectKitEnergyDrops(
         [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],
