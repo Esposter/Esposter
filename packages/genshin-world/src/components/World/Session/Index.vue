@@ -4,6 +4,7 @@ import type { CharacterConstellationKit } from "#src/models/character/CharacterC
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
 import type { HudFrame } from "#src/models/hud/HudFrame";
@@ -1153,6 +1154,7 @@ const {
   setInventory,
   setWallet,
   unlockedLandmarks,
+  weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
 // The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
@@ -1442,7 +1444,7 @@ defineExpose({ jumpTo, readCameraPosition });
             screenKind = getNextScreenKind(
               screenKind,
               inputState.pressedActions,
-              checkIsSpecialStoryModeActive(questsInProgress.value, questProgressMap.value),
+              checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
             );
           if (!isPaused && screenKind === ScreenKind.World)
             stepShortcutWheel(
@@ -1547,10 +1549,7 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              unlockedLandmarkIds.value.has(interactable.id)
-            ) {
+            } else if (interactable?.kind === InteractionKind.Activate && unlockedLandmarkIds.has(interactable.id)) {
               screenKind = ScreenKind.Blessing;
             } else if (
               interactable?.kind === InteractionKind.Activate &&
@@ -1613,7 +1612,7 @@ defineExpose({ jumpTo, readCameraPosition });
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
               // And no shop opens before the world's clock is read, so its talk is a dialogue until then
-              const gameClockMinutes = windrise.value?.gameClock.minutes;
+              const gameClockMinutes = windrise?.gameClock.minutes;
               if (
                 screenKind === ScreenKind.Shop &&
                 (!checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels) ||
@@ -1725,7 +1724,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @enter-combat="events.emit('enterCombat')"
         @leave-combat="events.emit('leaveCombat')"
-        @poise-break="(enemy) => events.emit('poiseBreak', enemy)"
+        @poise-break="(enemy: Enemy) => events.emit('poiseBreak', enemy)"
         @ready="emit('ready')"
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"

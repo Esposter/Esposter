@@ -29,6 +29,7 @@ const STARWARD_SWORD_SECONDS = 8;
 // Constellation 1: the recast adds an Electro hit of 50% of ATK 3 frames into it and another at its own hitmark.
 // As gcsim v2.47.2 (MIT) keqing/skill.go gives them, the wiki's point-blank range is not checked either
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/skill.go
+const ELECTRO_INFUSION_SECONDS = 5;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_START_FRAMES = 3;
 const CONSTELLATION_1_TALENT_MULTIPLIER = 0.5;
@@ -78,7 +79,7 @@ const addConstellation6Bonus = (
 const addConstellation1Hits = (
   { activeCombatant: combatant, body, kitEffectState }: KitContext,
   recastHit: KitHit,
-): void =>
+): void => {
   castKitSummon(kitEffectState, body, combatant, [
     {
       ...recastHit,
@@ -89,6 +90,7 @@ const addConstellation1Hits = (
     },
     { ...recastHit, element: Element.Electro, poiseDamage: 0, talentMultiplier: CONSTELLATION_1_TALENT_MULTIPLIER },
   ]);
+};
 
 export const KEQING_CHARACTER_ID = 10_000_042;
 
