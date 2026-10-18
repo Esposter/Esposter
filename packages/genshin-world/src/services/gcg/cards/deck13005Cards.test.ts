@@ -6,6 +6,7 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
@@ -23,6 +24,7 @@ import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStarti
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
+import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -395,5 +397,52 @@ describe("kanten Senmyou Blessing", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
     expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+  });
+});
+
+describe("kanten Senmyou Blessing's switch clause", () => {
+  // Xingqiu is active, and Ayaka, who has Kanten equipped, stands by with three Cryo dice to pay with
+  const createSwitchDuel = (): GcgDuel => {
+    const duel = createDuel([
+      createSideState([
+        createCharacterState(1202),
+        {
+          ...createCharacterState(1105),
+          equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+        },
+      ]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
+    return duel;
+  };
+
+  test("a switch to Ayaka, who has it equipped, spends one die less", () => {
+    expect.hasAssertions();
+    const duel = createSwitchDuel();
+
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ activeIndex: 1, dice: [Element.Cryo, Element.Cryo, Element.Cryo] });
+  });
+
+  test("a switch away from Ayaka gets no reduction", () => {
+    expect.hasAssertions();
+    const duel = createSwitchDuel();
+    takeOne(duel.sides, 0).activeIndex = 1;
+
+    expect(switchGcgCharacter(duel, 0, 0, [])).toBe(GcgActionResult.Unpayable);
+    expect(switchGcgCharacter(duel, 0, 0, [0])).toBe(GcgActionResult.Done);
+  });
+
+  test("the reduction is taken once per Round", () => {
+    expect.hasAssertions();
+    const duel = createSwitchDuel();
+
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
+    duel.actingSideIndex = 0;
+    expect(switchGcgCharacter(duel, 0, 0, [0])).toBe(GcgActionResult.Done);
+    duel.actingSideIndex = 0;
+    expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Unpayable);
+    expect(switchGcgCharacter(duel, 0, 1, [0])).toBe(GcgActionResult.Done);
   });
 });
