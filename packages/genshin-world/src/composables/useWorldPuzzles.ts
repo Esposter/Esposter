@@ -3,6 +3,7 @@ import type { GroundPoint } from "genshin-engine";
 
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { checkIsSeelieFollowed } from "#src/services/puzzle/checkIsSeelieFollowed";
+import { computeSeelieChestPlaces } from "#src/services/puzzle/computeSeelieChestPlaces";
 import { stepSeelie } from "#src/services/puzzle/stepSeelie";
 import { computed, reactive } from "vue";
 
@@ -18,8 +19,9 @@ export const useWorldPuzzles = (seelies: Seelie[], savedSettledSeelieIds: Readon
   const settledSeelieIds = computed<ReadonlySet<string>>(
     () => new Set(puzzleSeelies.filter(({ state }) => state === SeelieState.Settled).map(({ id }) => id)),
   );
+  const seelieChestPlaces = computed(() => computeSeelieChestPlaces(puzzleSeelies));
   const stepWorldPuzzles = (deltaSeconds: number, position: GroundPoint): void => {
     for (const seelie of puzzleSeelies) stepSeelie(seelie, deltaSeconds, checkIsSeelieFollowed(seelie, position));
   };
-  return { puzzleSeelies, settledSeelieIds, stepWorldPuzzles };
+  return { puzzleSeelies, seelieChestPlaces, settledSeelieIds, stepWorldPuzzles };
 };
