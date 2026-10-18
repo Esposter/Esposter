@@ -25,8 +25,10 @@ describe("spiralAbyssEntry", () => {
 
     const onChoose = vi.fn<(floorId: number, chamberId: number) => void>();
     render(SpiralAbyssEntry, { attrs: { onChoose }, props });
-    await page.getByRole("button", { exact: true, name: "9" }).click();
-    await page.getByRole("button", { exact: true, name: "2" }).click();
+    await page.getByRole("button", { exact: true, name: String(takeOne(props.floors).index) }).click();
+    await page
+      .getByRole("button", { exact: true, name: String(takeOne(takeOne(props.floors).chambers, 1).index) })
+      .click();
 
     expect(onChoose).toHaveBeenCalledExactlyOnceWith(
       takeOne(props.floors).id,
