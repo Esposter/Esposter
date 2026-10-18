@@ -37,8 +37,7 @@ const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
 // Spends 70 of it, resets the cooldown on the Moonsign's Radiance, and the fourth Stride ends the shift. Her strikes outside
 // The shift, her burst and her plunges are her record's alone, and her frames and areas are provisional, read from a
 // Borrowed donor's gcsim hitmarks and areas.
-// Not built, each waiting on its own rule: a Spirit Steed's Stride with less than 70 Radiance still plays, since the action
-// Has no start gate and the stance cannot refuse one; the fourth normal attack's Moonsign gate, the extra instance of Geo
+// Not built, each waiting on its own rule: the fourth normal attack's Moonsign gate, the extra instance of Geo
 // DMG, which needs the instance's multiplier that the record does not carry; the normal attack's Radiance is read at the
 // Normal attack's first hit's hitmark, not at a hit on an enemy, since no event tells the two apart
 // Constellation 1 needs Heaven and Earth Made Manifest's effects, which the kit does not build
@@ -48,18 +47,17 @@ const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
 export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const lunarPhaseShiftSeconds = readParameter("lunarPhaseShiftSeconds");
   const spiritSteedStride: KitActionBehaviour = {
+    canStart: ({ activeCombatant: { characterId }, kitEffectState }) =>
+      countKitResource(kitEffectState.effects, characterId, PHASE_SHIFT_RADIANCE_STATUS_ID) >=
+      SPIRIT_STEED_STRIDE_RADIANCE,
     onStart: ({ activeCombatant: { characterId }, kitEffectState }) => {
-      if (
-        countKitResource(kitEffectState.effects, characterId, PHASE_SHIFT_RADIANCE_STATUS_ID) >=
-        SPIRIT_STEED_STRIDE_RADIANCE
-      )
-        gainKitResource(
-          kitEffectState,
-          characterId,
-          PHASE_SHIFT_RADIANCE_STATUS_ID,
-          -SPIRIT_STEED_STRIDE_RADIANCE,
-          PHASE_SHIFT_RADIANCE_MAXIMUM,
-        );
+      gainKitResource(
+        kitEffectState,
+        characterId,
+        PHASE_SHIFT_RADIANCE_STATUS_ID,
+        -SPIRIT_STEED_STRIDE_RADIANCE,
+        PHASE_SHIFT_RADIANCE_MAXIMUM,
+      );
       removeKitEffects(
         kitEffectState,
         (effect) =>

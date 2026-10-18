@@ -16,13 +16,12 @@ const PHANTASM_PERFORMANCES_PER_SHADOW_DANCE = 3;
 
 // Nefer's behaviour: Senet Strategy: Dance of a Thousand Nights enters Shadow Dance for her record's seconds, with her
 // Record's Verdant Dew charges, where her Charged Attack is Phantasm Performance, a stance of its own seven hits. Each
-// Phantasm Performance spends a Verdant Dew as it starts, and the third ends the state. Her strikes, skill hits, plunges
+// Phantasm Performance starts only with a Verdant Dew held, spends one as it starts, and the third ends the state. Her strikes, skill hits, plunges
 // And burst's hits are her record's alone, and her frames and areas are provisional, read from Borrowed donors' gcsim
 // Hitmarks and areas.
 // Not built, each waiting on its own rule: the Verdant Dew a Shadow Dance gains, whose Slither base amount the wiki does
-// Not give, and the Lunar-Bloom gain of her fourth passive; a Phantasm Performance with no Verdant Dew left still plays,
-// As the stance has no start gate; the burst's use of charges, since the wiki's burst spends Veils of Falsehood, not
-// Verdant Dew; Constellation 1's Lunar-Bloom base DMG; Constellation 2 needs the Ascension talent A Wager of Moonlight's
+// Not give, and the Lunar-Bloom gain of her fourth passive; the burst's use of charges, since the wiki's burst spends
+// Veils of Falsehood, not Verdant Dew; Constellation 1's Lunar-Bloom base DMG; Constellation 2 needs the Ascension talent A Wager of Moonlight's
 // Veil of Falsehood, which the kit does not build; Constellation 4 needs the Shadow Dance Charged Attack with Verdant Dew;
 // And Constellation 6 needs the Shadow Dance Charged Attack and Phantasm Performance
 export const createNeferKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
@@ -30,9 +29,10 @@ export const createNeferKitBehaviour = ({ readParameter, readStance }: KitRecord
   const verdantDewCharges = readParameter("phantasmPerformanceCharges");
   const phantasmPerformance = readStance("phantasmPerformance", {
     chargedAttack: {
+      canStart: ({ activeCombatant: { characterId }, kitEffectState }) =>
+        countKitResource(kitEffectState.effects, characterId, VERDANT_DEW_STATUS_ID) > 0,
       onStart: ({ activeCombatant: { characterId }, kitEffectState }) => {
-        if (countKitResource(kitEffectState.effects, characterId, VERDANT_DEW_STATUS_ID) > 0)
-          gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, -1, verdantDewCharges);
+        gainKitResource(kitEffectState, characterId, VERDANT_DEW_STATUS_ID, -1, verdantDewCharges);
         const performances = gainKitResource(
           kitEffectState,
           characterId,

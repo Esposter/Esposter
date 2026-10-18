@@ -97,4 +97,19 @@ describe(createNeferKitBehaviour, () => {
     playPhantasmPerformance();
     expect(isShadowDanceActive()).toBe(false);
   });
+
+  test("a phantasm performance starts only with a verdant dew held", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNeferCombatant());
+    NEFER_KIT.elementalSkill.onStart?.(context);
+    const performance = findKitStance(context.kitEffectState.effects, NEFER_CHARACTER_ID)?.combatant.kit.chargedAttack;
+    const verdantDew = () =>
+      countKitResource(context.kitEffectState.effects, NEFER_CHARACTER_ID, VERDANT_DEW_STATUS_ID);
+
+    expect(performance?.canStart?.(context)).toBe(true);
+
+    while (verdantDew() > 0) performance?.onStart?.(context);
+
+    expect(performance?.canStart?.(context)).toBe(false);
+  });
 });
