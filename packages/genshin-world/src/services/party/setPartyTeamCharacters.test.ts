@@ -40,4 +40,17 @@ describe(setPartyTeamCharacters, () => {
       `[InvalidOperationError: Invalid operation: Update, name: setPartyTeamCharacters, team 1 cannot hold 2, 2]`,
     );
   });
+
+  test("a character on expedition stays in the party", () => {
+    expect.hasAssertions();
+
+    // The party reads no expedition state, so a character who is away is set into the party like one at home
+    const party = createParty([1, 2]);
+    const result = setPartyTeamCharacters(party, 0, [2, 1]);
+
+    expect({ characterIds: party.teams[0]?.characterIds, result }).toStrictEqual({
+      characterIds: [2, 1],
+      result: PartyTeamResult.Done,
+    });
+  });
 });
