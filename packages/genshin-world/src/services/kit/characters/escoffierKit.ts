@@ -81,8 +81,7 @@ const getConstellation1CriticalDamage = (
 
 // The RES shred a hit of hers applies to the enemy it strikes, as the team stands
 const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
-  const shred =
-    ASCENSION_4_RES_SHREDS[countDeployedElements(combatant.deployedElements, [Element.Hydro, Element.Cryo])];
+  const shred = ASCENSION_4_RES_SHREDS[countDeployedElements(combatant.deployedElements, CRYO_HYDRO_ELEMENTS)];
   if (combatant.ascension < ASCENSION_4 || !shred) return undefined;
   return {
     damageTakenBonus: 0,
