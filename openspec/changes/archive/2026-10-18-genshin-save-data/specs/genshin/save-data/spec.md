@@ -1,3 +1,31 @@
+## MODIFIED Requirements
+
+### Requirement: The save holds what the player did and nothing derived
+
+The save SHALL hold the player's characters with their copies, wallet, bag, carried quest progress, unlocked landmarks, opened chests, achievement progress, learned recipes, wish counters, Adventure EXP, Reputation, Companionship EXP, World Level setting and chosen name, and SHALL hold nothing that is derived on load.
+
+#### Scenario: Items bought before a reload are still in the bag
+
+- **GIVEN** the player has bought an item and the save has been acknowledged
+- **WHEN** the page is reloaded
+- **THEN** the item is still in the bag
+
+#### Scenario: Wish counters survive a reload
+
+- **GIVEN** the player has made wishes and the save has been acknowledged
+- **WHEN** the page is reloaded
+- **THEN** the wish counters are as they were
+
+#### Scenario: A derived value is read from its source on load
+
+- **GIVEN** a character's Friendship Level is shown
+- **WHEN** the save is loaded
+- **THEN** the level is read from the character's Companionship EXP rather than from a saved level
+
+## REMOVED Requirements
+
+### Requirement: Systems not yet saved reset on reload
+
 ## ADDED Requirements
 
 ### Requirement: The save keeps the characters the player holds
@@ -61,3 +89,13 @@ The merge SHALL keep a character both saves hold as the copy further on by level
 - **GIVEN** a guest save holding a character the account save does not hold
 - **WHEN** the two saves are merged
 - **THEN** the merged save holds that character
+
+### Requirement: Systems not yet saved start fresh after a reload
+
+The save SHALL NOT hold commissions, expeditions, forge queues, enemy respawn times or exploration progress, and those SHALL start fresh after a reload.
+
+#### Scenario: A defeated enemy returns after a reload
+
+- **GIVEN** the player has defeated an enemy
+- **WHEN** the page is reloaded
+- **THEN** the enemy is back in its place

@@ -170,6 +170,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, taking the `genshin-world` dist from about 20 MB to about 2 MB.
 - The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load cut to what its first frame reads, its ready on the production build more than halved.
 - The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, the modules down to about a third of their lines and the kit tree to no duplicate code.
+- Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
 
 ## Key files
 
