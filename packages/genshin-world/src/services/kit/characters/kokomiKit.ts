@@ -26,6 +26,7 @@ const SKILL_DURATION_SECONDS = 12.5;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
 const ASCENSION_1 = 1;
+const CONSTELLATION_4 = 4;
 // Measured: gcsim (MIT) kokomi/cons.go, Constellation 4's energy: while she dons the garment, each normal attack that hits an
 // Opponent restores 0.8 energy to her, once every 0.2 seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/cons.go
@@ -47,7 +48,7 @@ const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
 
 // Constellation 4's energy, given to the striker by each garment normal attack that hits, once every 0.2 seconds
 const giveGarmentNormalAttackEnergy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
-  if (combatant.constellationCount < 4) return;
+  if (combatant.constellationCount < CONSTELLATION_4) return;
   if (
     !startKitCooldown(
       kitEffectState,
@@ -168,7 +169,8 @@ export const createKokomiKitBehaviour = ({
     },
     // Constellation 4, The Moon Overlooks the Waters: her Normal Attack SPD is raised while she dons the garment
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
-      activeCombatant.constellationCount >= 4 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
+      activeCombatant.constellationCount >= CONSTELLATION_4 &&
+      findKitStance(kitEffectState.effects, activeCombatant.characterId)
         ? 0.1
         : 0,
     getPassiveBonuses,
