@@ -117,3 +117,7 @@ export const BLESSING_TREE_ARTIFACT_ROWS: TreeArtifactRow[] = [
 // For a level below every row
 export const findTreeRow = <T extends { rank: number }>(rows: T[], rank: number): T =>
   rows.findLast((row) => row.rank <= rank) ?? rows[0];
+// The artifact sets each Domain of Blessing's claim draws its artifacts among, by entry id. None is set yet: the dump's text
+// Names no reliquary set, so the wiki's four sets per domain (Template:Domain_Levels/Blessing) have no ids to take, and a
+// Domain with none refuses its artifact draw rather than paying with none
+export const BLESSING_ARTIFACT_SET_IDS: Partial<Record<number, number[]>> = {};
