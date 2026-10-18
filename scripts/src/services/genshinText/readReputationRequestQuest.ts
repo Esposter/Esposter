@@ -7,9 +7,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { QuestKind, QuestObjectiveKind, questSchema } from "genshin-world";
 
 // A giving's objectives: each exact item collected its count, or, for a giving by group, one of the group's items collected
-// Its count, the first item as the target and the rest as its alternatives, which a single collect of an item names as well
+// Its count, the first item as the target and the rest as its alternatives, which a single collect of an item names as well.
+// A zero count is an exact giving's, since the dump's defaults write it into every row that leaves the count out
 const readGivingObjectives = (giving: DumpedGiving, groupItemIds: number[]): QuestObjective[] => {
-  if (giving.givingGroupCount === undefined)
+  if (!giving.givingGroupCount)
     return giving.exactItems.flatMap(({ count, id }) =>
       id === 0 ? [] : [{ count, kind: QuestObjectiveKind.Collect, targetId: String(id) }],
     );
