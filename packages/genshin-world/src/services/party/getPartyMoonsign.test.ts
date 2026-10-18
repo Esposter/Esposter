@@ -85,6 +85,17 @@ describe(getPartyMoonsign, () => {
     });
   });
 
+  test("reads the lit character's ATK as its buffs raise it, as the Ascendant Gleam is priced by its stats as they stand", () => {
+    expect.hasAssertions();
+
+    const effects: KitEffect[] = [
+      { characterId: 3, id: ASCENDANT_GLEAM_STATUS_ID, kind: "status", secondsRemaining: 1 },
+      { amount: 1000, attribute: Attribute.Attack, characterId: 3, kind: "buff", secondsRemaining: 1 },
+    ];
+
+    expect(getPartyMoonsign(characterIdCombatantMap, effects, party).reactionBonus).toBeCloseTo(0.27);
+  });
+
   test("gives every Lunar damage the bonus of the Ascendant Gleam a member lit, and none from it below Ascendant Gleam", () => {
     expect.hasAssertions();
 

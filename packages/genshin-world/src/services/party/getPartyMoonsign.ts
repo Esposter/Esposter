@@ -48,5 +48,11 @@ export const getPartyMoonsign = (
         )
       : undefined;
   const litCombatant = ascendantGleam && characterIdCombatantMap.get(ascendantGleam.characterId);
-  return { ...moonsign, level, reactionBonus: litCombatant ? getAscendantGleamBonus(litCombatant) : 0 };
+  return {
+    ...moonsign,
+    level,
+    reactionBonus: litCombatant
+      ? getAscendantGleamBonus(getBuffedCombatant(litCombatant, effects, party, characterIdCombatantMap, position))
+      : 0,
+  };
 };
