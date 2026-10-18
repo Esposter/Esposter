@@ -1,3 +1,4 @@
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -26,7 +27,7 @@ import { computed, shallowRef } from "vue";
 // Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or
 // Sends them to the bag where a drop would fall away there, and the chest is kept as opened. The chests the puzzles
 // Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
-// Than a wrong one
+// Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done
 export const useWorldChests = ({
   events,
   gainWorldAdventureExp,
@@ -34,6 +35,7 @@ export const useWorldChests = ({
   gameText,
   getGroundHeight,
   inventory,
+  lockSources,
   materialDataMap,
   nameText,
   openedChestIds,
@@ -50,6 +52,7 @@ export const useWorldChests = ({
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   inventory: Ref<Inventory>;
+  lockSources: Readonly<Ref<ChestLockSource[]>>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
@@ -80,6 +83,7 @@ export const useWorldChests = ({
       dugChestIds.value,
       gameText,
       getGroundHeight,
+      lockSources.value,
     ),
   );
   const digChestById = (chestId: string) => {

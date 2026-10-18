@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -15,6 +16,7 @@ import { advanceElementalState } from "#src/services/combat/aura/advanceElementa
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
 import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
+import { computeCampLockSources } from "#src/services/enemy/computeCampLockSources";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
 import {
   ENEMY_CAPACITY,
@@ -80,6 +82,8 @@ const {
 } = defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{
+  // Each camp as a lock on the chests within its reach, done once every member is dead or not spawned
+  campLocks: [locks: ChestLockSource[]];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
@@ -88,12 +92,21 @@ const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARAT
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
 const loadedCampIds = new Set<string>();
+// The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
+// Emits them
+let emittedCampLocksKey = "";
+const getCampLocks = (): ChestLockSource[] =>
+  computeCampLockSources(
+    [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps),
+    enemyMap,
+  );
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
 let spawnedWorldLevel = worldLevel;
 watchImmediate(
   () => [worldLevel, [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps)] as const,
   ([currentWorldLevel, enemyCamps]) => {
+    emittedCampLocksKey = "";
     if (currentWorldLevel !== spawnedWorldLevel) {
       spawnedWorldLevel = currentWorldLevel;
       enemyMap.clear();
@@ -143,6 +156,12 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
     for (const [spawnKey, { state, stateSeconds }] of enemyMap)
       if (state === EnemyState.Dead && stateSeconds >= ENEMY_DEATH_SECONDS) enemyMap.delete(spawnKey);
   wakeEnemyCamps([...enemyMap.values()]);
+  const campLocks = getCampLocks();
+  const campLocksKey = campLocks.map(({ isDone }) => (isDone ? "1" : "0")).join("");
+  if (campLocksKey !== emittedCampLocksKey) {
+    emittedCampLocksKey = campLocksKey;
+    emit("campLocks", campLocks);
+  }
 });
 // Every enemy is one capsule of one instanced draw, stood on the ground, turned to its heading and tinted by its state,
 // And one that was hit in the last moments is tinted by the hit, with a small flash drawn at its middle
