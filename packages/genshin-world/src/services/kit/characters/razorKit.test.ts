@@ -198,6 +198,28 @@ describe(createRazorKitBehaviour, () => {
     expect([readCriticalRateBonus(1, 0.2), readCriticalRateBonus(2, 0.3)]).toStrictEqual([0, 0]);
   });
 
+  test("constellation 4 lowers the DEF of each enemy Claw and Thunder's press strikes by 15% for 7 seconds", () => {
+    expect.hasAssertions();
+
+    const press = takeOne(RAZOR_KIT.elementalSkill.hits);
+
+    expect(press.enemyStatus?.(createRazorCombatant(0, 4))).toStrictEqual({
+      damageTakenBonus: 0,
+      defenseReduction: 0.15,
+      id: "razor-constellation-4",
+      secondsRemaining: 7,
+    });
+    expect(press.enemyStatus?.(createRazorCombatant(0, 3))).toBeUndefined();
+  });
+
+  test("claw and thunder's hold lowers no DEF at constellation 4", () => {
+    expect.hasAssertions();
+
+    const hold = takeOne(takeOne(RAZOR_KIT.elementalSkillHolds ?? []).action.hits);
+
+    expect(hold.enemyStatus?.(createRazorCombatant(0, 4))).toBeUndefined();
+  });
+
   test("constellation 1 raises Razor's all-DMG bonus by 10% for 8 seconds when he is on the field and a particle or orb is collected", () => {
     expect.hasAssertions();
 

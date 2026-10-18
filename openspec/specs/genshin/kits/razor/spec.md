@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, his constellations other than 1, 2 and 6, and his Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut and Bite's DEF cut built, and his other passives, his constellations other than 1, 2, 4 and 6, and his Hexerei kit left unbuilt.
 
 ## Requirements
 
@@ -123,9 +123,31 @@ From Constellation 1, a particle or orb collected while Razor is on the field SH
 - **WHEN** a particle or orb is collected
 - **THEN** his all-DMG bonus is unchanged
 
+### Requirement: Constellation 4 lowers the DEF of each enemy the press strikes
+
+From Constellation 4, each enemy Claw and Thunder's press strikes SHALL have its DEF lowered by 15% for 7 seconds.
+
+#### Scenario: A press lowers the DEF of each enemy it strikes
+
+- **GIVEN** Razor has Constellation 4
+- **WHEN** Claw and Thunder's press strikes an enemy
+- **THEN** that enemy's DEF is lowered by 15% for 7 seconds
+
+#### Scenario: The hold lowers no DEF
+
+- **GIVEN** Razor has Constellation 4
+- **WHEN** Claw and Thunder's hold strikes an enemy
+- **THEN** the enemy's DEF is unchanged
+
+#### Scenario: A press before Constellation 4 lowers no DEF
+
+- **GIVEN** Razor has Constellation 3
+- **WHEN** Claw and Thunder's press strikes an enemy
+- **THEN** the enemy's DEF is unchanged
+
 ### Requirement: Razor's other passives and Hexerei kit not yet built
 
-Razor's other passives, his constellations other than 1, 2 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
+Razor's other passives, his constellations other than 1, 2, 4 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
