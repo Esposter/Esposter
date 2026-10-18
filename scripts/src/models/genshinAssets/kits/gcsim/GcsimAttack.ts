@@ -13,6 +13,9 @@ export interface GcsimAttack {
   line: number;
   poiseDamage?: number;
   poiseDamageVariable?: string;
+  // The line of the declaration the attack is made from: its literal's, or a copy's own line, shared by every `Mult` set
+  // Under it, so the calls of one declaration can be told from another's
+  siteLine: number;
   talentVariable?: string;
   variableName?: string;
 }

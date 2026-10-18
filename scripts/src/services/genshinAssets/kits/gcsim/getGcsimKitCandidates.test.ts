@@ -152,6 +152,7 @@ describe(getGcsimKitCandidates, () => {
           fieldLineMap: {},
           file: "burst.go",
           line: 6,
+          siteLine: 6,
           variableName: "ai",
         },
       ],
