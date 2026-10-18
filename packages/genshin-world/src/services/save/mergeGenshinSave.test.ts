@@ -376,21 +376,33 @@ describe(mergeGenshinSave, () => {
 
   test("keeps the Frostbearing Tree's progress of the copy that has reached the further level", () => {
     expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 4, level: ACCOUNT_LEVEL } } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 9, level: GUEST_LEVEL } } };
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      offerings: { frostbearingTree: { heldCounts: { 1: 4 }, level: ACCOUNT_LEVEL } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      offerings: { frostbearingTree: { heldCounts: { 1: 9 }, level: GUEST_LEVEL } },
+    };
 
     expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
-      frostbearingTree: { heldCount: 9, level: GUEST_LEVEL },
+      frostbearingTree: { heldCounts: { 1: 9 }, level: GUEST_LEVEL },
     });
   });
 
   test("keeps the Frostbearing Tree's progress that holds more items on the same level", () => {
     expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 4, level: ACCOUNT_LEVEL } } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 9, level: ACCOUNT_LEVEL } } };
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      offerings: { frostbearingTree: { heldCounts: { 1: 4 }, level: ACCOUNT_LEVEL } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      offerings: { frostbearingTree: { heldCounts: { 1: 9 }, level: ACCOUNT_LEVEL } },
+    };
 
     expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
-      frostbearingTree: { heldCount: 9, level: ACCOUNT_LEVEL },
+      frostbearingTree: { heldCounts: { 1: 9 }, level: ACCOUNT_LEVEL },
     });
   });
 

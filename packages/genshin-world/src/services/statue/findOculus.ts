@@ -3,6 +3,7 @@ import type { StatueLevel } from "#src/models/statue/StatueLevel";
 
 import { offerItems } from "#src/services/offering/offerItems";
 import { OCULUS_ADVENTURE_EXP } from "#src/services/statue/constants";
+import { findStatueItemId } from "#src/services/statue/statueRegionProgress";
 
 // Touching an Oculus collects it once: its id joins the found ids, and a found id gives nothing a second time, its Adventure
 // EXP included, which the caller gains. In a Region already started the Oculus is offered at once, so the levels it
@@ -21,13 +22,20 @@ export const findOculus = (
   if (foundOculusIds.has(oculusId))
     return { adventureExp: 0, foundOculusIds, gainedLevels: [], progress: regionProgress };
   const nextFoundOculusIds = new Set([...foundOculusIds, oculusId]);
+  const oculus = { itemCount: 1, itemId: findStatueItemId(regionProgress.levels) };
   if (regionProgress.level === 0)
     return {
       adventureExp: OCULUS_ADVENTURE_EXP,
       foundOculusIds: nextFoundOculusIds,
       gainedLevels: [],
-      progress: { ...regionProgress, heldCount: regionProgress.heldCount + 1 },
+      progress: {
+        ...regionProgress,
+        heldCounts: {
+          ...regionProgress.heldCounts,
+          [oculus.itemId]: (regionProgress.heldCounts[oculus.itemId] ?? 0) + 1,
+        },
+      },
     };
-  const { gainedLevels, progress } = offerItems(regionProgress, 1);
+  const { gainedLevels, progress } = offerItems(regionProgress, [oculus]);
   return { adventureExp: OCULUS_ADVENTURE_EXP, foundOculusIds: nextFoundOculusIds, gainedLevels, progress };
 };

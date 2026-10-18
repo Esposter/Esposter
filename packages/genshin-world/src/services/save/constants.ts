@@ -52,6 +52,8 @@ export const MAX_SOLVED_PUZZLE_COUNT = 832;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
+// The kinds of item an offering holds at once, one entry each, bounded by the widest level's two kinds with room to spare
+export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
 // The entries a section of the Archive holds open, one each, bounded by the codex's largest section with room to spare
 export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
 // The Living Beings the Archive counts defeats of, one entry each, bounded by the codex's rows with room to spare
@@ -140,7 +142,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   homePlacements: [],
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
-  offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
+  offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
   openedChests: [],
   party: { activeIndex: MAX_SAVE_NUMBER, deployedTeamIndex: MAX_SAVE_NUMBER, downCharacterIds: [], teams: [] },
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
@@ -203,6 +205,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
+  MAX_OFFERING_ITEM_KIND_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_WISH_HISTORY_COUNT *
@@ -241,7 +244,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   homePlacements: [],
   inventory: EMPTY_INVENTORY_SAVE,
-  offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
+  offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },
   openedChests: [],
   party: EMPTY_PARTY_SAVE,
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },

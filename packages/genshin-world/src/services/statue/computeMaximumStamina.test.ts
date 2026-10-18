@@ -7,34 +7,33 @@ import { describe, expect, test } from "vitest";
 
 describe(computeMaximumStamina, () => {
   const levels: StatueLevel[] = [
-    { itemCount: 0, itemId: 0, level: 1, rewards: [], staminaShare: 0 },
-    { itemCount: 1, itemId: 107_001, level: 2, rewards: [], staminaShare: 7 },
-    { itemCount: 2, itemId: 107_001, level: 3, rewards: [], staminaShare: 8 },
+    { items: [], level: 1, rewards: [], staminaShare: 0 },
+    { items: [{ itemCount: 1, itemId: 107_001 }], level: 2, rewards: [], staminaShare: 7 },
+    { items: [{ itemCount: 2, itemId: 107_001 }], level: 3, rewards: [], staminaShare: 8 },
   ];
 
   test("the controller's start, raised by the levels each region has reached", () => {
     expect.hasAssertions();
 
-    expect(computeMaximumStamina([{ heldCount: 0, level: 3, levels }])).toBe(STAMINA_MAX + 15);
+    expect(computeMaximumStamina([{ heldCounts: {}, level: 3, levels }])).toBe(STAMINA_MAX + 15);
   });
 
   test("a level not yet reached adds nothing", () => {
     expect.hasAssertions();
 
-    expect(computeMaximumStamina([{ heldCount: 0, level: 1, levels }])).toBe(STAMINA_MAX);
+    expect(computeMaximumStamina([{ heldCounts: {}, level: 1, levels }])).toBe(STAMINA_MAX);
   });
 
   test("the maximum never passes the cap, whatever the regions reach", () => {
     expect.hasAssertions();
 
     const cappingLevel: StatueLevel = {
-      itemCount: 2,
-      itemId: 107_001,
+      items: [{ itemCount: 2, itemId: 107_001 }],
       level: 3,
       rewards: [],
       staminaShare: MAXIMUM_STAMINA_CAP,
     };
-    const regions = [{ heldCount: 0, level: 3, levels: [cappingLevel] }];
+    const regions = [{ heldCounts: {}, level: 3, levels: [cappingLevel] }];
 
     expect(computeMaximumStamina(regions)).toBe(MAXIMUM_STAMINA_CAP);
   });

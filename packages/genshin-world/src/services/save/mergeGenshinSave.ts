@@ -10,6 +10,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
+import { countHeldItems } from "#src/services/offering/countHeldItems";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 
@@ -53,7 +54,7 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
   checkIsFurtherByLevel(reputation, than, ({ exp }) => exp);
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
-  checkIsFurtherByLevel(progress, than, ({ heldCount }) => heldCount);
+  checkIsFurtherByLevel(progress, than, ({ heldCounts }) => countHeldItems(heldCounts));
 // The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
 // Tree's is, so a region only one copy holds is kept as it is
 const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => {

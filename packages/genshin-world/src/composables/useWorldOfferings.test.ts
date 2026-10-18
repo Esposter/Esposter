@@ -25,12 +25,14 @@ describe(useWorldOfferings, () => {
   test("offers the bag as it stands once the tree's levels arrive, gains the levels' Adventure EXP and drops what the bag has no room for at the tree", async () => {
     expect.hasAssertions();
 
-    const offeringLevel = levels.find(({ itemCount }) => itemCount > 0);
+    const offeringLevel = levels.find(({ items }) => items.length > 0);
     assert.exists(offeringLevel);
-    const definition = getItemDefinition(offeringLevel.itemId, englishNameText, materialDataMap);
+    const offeringItem = offeringLevel.items[0];
+    assert.exists(offeringItem);
+    const definition = getItemDefinition(offeringItem.itemId, englishNameText, materialDataMap);
     const inventory = ref<Inventory>({ items: [], nextId: 0 });
     const wallet = ref(EMPTY_WALLET);
-    const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCount: 0, level: 1 });
+    const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCounts: {}, level: 1 });
     const gainedAdventureExps: number[] = [];
     const frostbearingTreePlace: FrostbearingTreePlace = { id: "tree", position: { x: 1, z: 2 } };
     const placedDrops: [FrostbearingTreePlace, DroppedItem[]][] = [];
@@ -61,7 +63,7 @@ describe(useWorldOfferings, () => {
       wallet,
     });
     const offer = offerFrostbearingTree(frostbearingTreePlace);
-    inventory.value = { items: [{ definition, id: 0, quantity: offeringLevel.itemCount }], nextId: 1 };
+    inventory.value = { items: [{ definition, id: 0, quantity: offeringItem.itemCount }], nextId: 1 };
     const {
       adventureExp,
       inventory: offeredInventory,
@@ -81,7 +83,7 @@ describe(useWorldOfferings, () => {
     expect(wallet.value).toStrictEqual(paidWallet);
     expect(gainedAdventureExps).toStrictEqual([adventureExp]);
     expect(placedDrops).toStrictEqual([[frostbearingTreePlace, overflowItems]]);
-    expect(frostbearingTreeProgress.value).toStrictEqual({ heldCount: progress.heldCount, level: progress.level });
+    expect(frostbearingTreeProgress.value).toStrictEqual({ heldCounts: progress.heldCounts, level: progress.level });
     expect(achievementEvents).toStrictEqual([
       [
         {

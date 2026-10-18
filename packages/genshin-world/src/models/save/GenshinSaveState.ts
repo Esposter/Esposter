@@ -12,6 +12,7 @@ import type { OfferingProgressSave } from "#src/models/offering/OfferingProgress
 import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { BannerKind } from "genshin-interface/save";
@@ -43,7 +44,7 @@ export interface GenshinSaveState {
   openedChestIds: ReadonlySet<string>;
   party: Party;
   quests: ReadonlyMap<string, QuestProgress>;
-  regionStatueProgressMap: ReadonlyMap<string, OfferingProgressSave>;
+  regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
   settledSeelieIds: ReadonlySet<string>;
   solvedPuzzleIds: ReadonlySet<string>;
