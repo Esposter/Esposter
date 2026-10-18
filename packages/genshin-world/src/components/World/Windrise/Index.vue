@@ -16,6 +16,7 @@ import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GrassTrail, LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -153,6 +154,8 @@ interface Props {
   isPaused?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
+  // The pose of the last jump, which a teleport sets and which brings back a boss whose blossom is unclaimed
+  jumpPose?: WorldJumpPose;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
@@ -200,6 +203,7 @@ const {
   isHeld,
   isPaused,
   isTuning,
+  jumpPose,
   kitEffectState,
   landmarkCollider,
   oculusPlaces,
@@ -538,6 +542,7 @@ onUnmounted(() => {
       :enemy-tables
       :get-ground-height
       :is-held
+      :jump-pose="jumpPose"
       :light-uniforms
       :ramp-texture
       :region-data-map

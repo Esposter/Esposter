@@ -963,6 +963,7 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
+        :jump-pose="jumpPose"
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
