@@ -28,26 +28,31 @@ flowchart TD
 
 **Fitted and drawn:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`, and drawn in the world by `World/Waterfalls`. A sheet with no drop or no width is not drawn, a placement repeated at one lip is drawn once, and a region whose witness export stands in leaves its sheets out. A fall's mesh vertices are turned into three's axes before its placement carries them, because the witness layout's placements are already in three's axes round the origin, the frame the region's landmarks and capitals stand in. Regenerating from the witness reproduces the committed falls exactly.
 
-**Not yet:** where rivers stand in each region, which needs the game's own water surfaces, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
+**Fitted, not drawn:** Liyue's rivers, each read off its water surface (`Area_Ly_Water_*`) as the centreline, width and level of its course into its region data's `rivers`. A surface no longer than twice its width is a pond and has no course, and a course breaks where its surface has no vertices for more than four metres rather than bridging the hole. Nothing draws the rivers yet.
+
+**Not yet:** the rivers of the regions other than Liyue, since no other region's witness holds a water surface, the rivers drawn in the world, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 
 ## Key files
 
-| File                                                               | Role                                                                          |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`         | The water material, which takes a flow and a bend foam that gather its foam   |
-| `packages/genshin-engine/src/water/createWaterFlowUniforms.ts`     | The still water's flow, zero                                                  |
-| `packages/genshin-engine/src/water/createRiverGeometry.ts`         | The river ribbon along a course, with its bends' foam on their outer bank     |
-| `packages/genshin-engine/src/water/constants.ts`                   | The bend foam's attribute and how tight a bend gathers full foam, provisional |
-| `packages/genshin-engine/src/water/createWaterfallGeometry.ts`     | The waterfall sheet hung from its lip                                         |
-| `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`     | The waterfall's streaks falling down its sheet                                |
-| `packages/genshin-engine/src/models/water/RiverCoursePoint.ts`     | A point along a river's course                                                |
-| `packages/genshin-engine/src/models/water/WaterfallSheet.ts`       | A waterfall's lip, width and drop                                             |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`     | The falls of a region's witness, written to its region data as `waterfalls`   |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`  | A fall's mesh read as its sheet: lip, across, width and drop                  |
-| `packages/genshin-world/src/models/world/waterfallSheetSchema.ts`  | The region data's waterfall record                                            |
-| `packages/genshin-world/src/components/World/Water/Index.vue`      | The region's still water, passing it the zero flow                            |
-| `packages/genshin-world/src/components/World/Waterfalls/Index.vue` | The regions' sheets drawn as streaked falls, mounted beside the water         |
-| `packages/genshin-world/src/services/world/getDrawnWaterfalls.ts`  | The sheets drawn: no flat or zero-width sheet, a repeated placement once      |
+| File                                                                | Role                                                                               |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`          | The water material, which takes a flow and a bend foam that gather its foam        |
+| `packages/genshin-engine/src/water/createWaterFlowUniforms.ts`      | The still water's flow, zero                                                       |
+| `packages/genshin-engine/src/water/createRiverGeometry.ts`          | The river ribbon along a course, with its bends' foam on their outer bank          |
+| `packages/genshin-engine/src/water/constants.ts`                    | The bend foam's attribute and how tight a bend gathers full foam, provisional      |
+| `packages/genshin-engine/src/water/createWaterfallGeometry.ts`      | The waterfall sheet hung from its lip                                              |
+| `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`      | The waterfall's streaks falling down its sheet                                     |
+| `packages/genshin-engine/src/models/water/RiverCoursePoint.ts`      | A point along a river's course                                                     |
+| `packages/genshin-engine/src/models/water/WaterfallSheet.ts`        | A waterfall's lip, width and drop                                                  |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`      | The falls of a region's witness, written to its region data as `waterfalls`        |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`   | A fall's mesh read as its sheet: lip, across, width and drop                       |
+| `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`         | The water surfaces of a region's witness, written to its region data as `rivers`   |
+| `scripts/src/services/genshinAssets/fit/computeRiverCourses.ts`     | A water surface read as its courses: centreline, width and level, broken at a hole |
+| `packages/genshin-world/src/models/world/waterfallSheetSchema.ts`   | The region data's waterfall record                                                 |
+| `packages/genshin-world/src/models/world/riverCoursePointSchema.ts` | The region data's river course point                                               |
+| `packages/genshin-world/src/components/World/Water/Index.vue`       | The region's still water, passing it the zero flow                                 |
+| `packages/genshin-world/src/components/World/Waterfalls/Index.vue`  | The regions' sheets drawn as streaked falls, mounted beside the water              |
+| `packages/genshin-world/src/services/world/getDrawnWaterfalls.ts`   | The sheets drawn: no flat or zero-width sheet, a repeated placement once           |
 
 ## Notes
 

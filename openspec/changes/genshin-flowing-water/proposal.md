@@ -17,7 +17,7 @@ The capitals' waterfalls are drawn where the game places them, and the rivers fo
 
 ## Waiting on
 
-- The river courses and the falls outside the capitals' witnesses need the water prefabs' meshes exported before they can be fitted.
+- The rivers outside Liyue: no other region's witness holds a water surface, so there is no course to fit.
 - Swimming waits for the phase-three character controller, and is not part of this change.
 
 ## Impact
