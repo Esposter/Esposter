@@ -8,7 +8,7 @@
 ## 2. Banners
 
 - [x] 2.1 Match a banner's featured five-star to the trial of its character. Verify: findBannerTrial.test.ts, 'a banner offers the trial of its featured character' and 'a banner with no trial offers none'.
-- [ ] 2.2 Show the trial button on a matched banner, and open the trial's domain from it. Verify: the Wish screen's browser test, run by the main session.
+- [x] 2.2 Show the trial button on a matched banner, and open the trial's domain from it. Verify: the Wish screen's browser test, run by the main session. The button is labelled with the featured character's name until the trial's words have a game text key (see design).
 
 ## 3. Fight and reward
 

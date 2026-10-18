@@ -25,13 +25,15 @@ The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a cha
 
 ## Key files
 
-| File                                                                   | Role                                                                                        |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/wish/createBanners.ts`            | Builds each banner with its featured five-stars, which a trial is matched against           |
-| `packages/genshin-world/src/components/Wish/Screen/Index.vue`          | Shows the trial button on a banner whose featured character has a trial                     |
-| `packages/genshin-world/src/services/trial/createTrialCharacter.ts`    | Builds a trial's party member: its level, talents, artifacts and the weapon its build holds |
-| `packages/genshin-world/src/composables/useWorldTrials.ts`             | Enters a trial with its party member, runs its arena clock, and pays its first clear once   |
-| `packages/genshin-world/src/services/domains/createDomainArenaCamp.ts` | The arena camp a trial's enemies stand in                                                   |
+| File                                                                   | Role                                                                                                                 |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/wish/createBanners.ts`            | Builds each banner with its featured five-stars, which a trial is matched against                                    |
+| `packages/genshin-world/src/components/Wish/Screen/Index.vue`          | Shows the trial button on a banner whose featured character has a trial                                              |
+| `packages/genshin-world/src/services/trial/createTrialCharacter.ts`    | Builds a trial's party member: its level, talents, artifacts and the weapon its build holds                          |
+| `packages/genshin-world/src/composables/useWorldTrials.ts`             | Takes the player's roster for a trial's fight and gives it back, runs its arena clock, and pays its first clear once |
+| `packages/genshin-world/src/services/domains/createDomainArenaCamp.ts` | The arena camp a trial's enemies stand in                                                                            |
+| `packages/genshin-world/src/components/World/Session/Index.vue`        | Opens a trial from the Wish screen, steps its clock, and saves the player's roster while the trial holds it          |
+| `packages/genshin-interface/src/components/WishScreen/Index.vue`       | The trial button in the banner's link row, labelled by its prop and emitting the open                                |
 
 ## Notes
 
@@ -43,7 +45,9 @@ The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a cha
 - The party is the trial character alone, as the spec says. The wiki's Character Trial page says the trial character joins the player's party as a fifth character. The spec is followed; the difference is not decided here.
 - Constellations are not in the trial rows. Every level-90 wiki block reads 0 and an absent field is C0, so a trial party is C0 (cited).
 - A trial's arena has no enemies, so the design's clear, "every enemy defeated", is vacuously true the moment it starts. The arena instead ends when its clock runs out, and that end is the clear: `TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS`, 300 seconds, neither sourced from the wiki nor the dump. PROVISIONAL until the design names the timer or the objective.
-- A trial's fight is not yet run by the session: the trial's party member replacing the player's party and characters for the fight, and the jump to the trial's domain, are not built. The save does not carry the claimed stages yet either, so a claim lasts the session. Both belong with task 2.2 and a save decision.
+- The trial takes the player's roster for its fight: its party member alone, with a kit read at the trial's talents and no constellations, replaces the characters, the party and the kits, and the roster is given back when the arena ends, by the clock or by a party down. The jump is to the stand-in arena east of where the player stands, as a domain's arena is placed, which is PROVISIONAL until the trial's scene is read. The trial's end leaves the player there, not at an entrance (PROVISIONAL).
+- The trial button is labelled with the featured character's name, since the game's words for a trial have no text key in the genshin-text enum yet. The key is owed: its id is found with `genshin:text find` and written by the main session, and the button takes its words from that key (PROVISIONAL).
+- While a trial holds the roster, the save keeps the roster the player held before it, so the trial's party member is never saved in place of the player's characters.
 - The first-clear reward is claimed once and saved with the save, so the save gains a key and the stored saves owe a backfill when it lands.
 
 ## Sources
