@@ -96,7 +96,10 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   };
   // The attack a standing Dance Double does next, which a burst's Dance Double takes up rather than starting over. Each
   // Hit keeps its attack's area from the record, so the area names which attack the next hit is
-  const findNextDanceDoubleAttack = (kitEffectState: KitEffectState, characterId: number): number => {
+  const findNextDanceDoubleAttack = (
+    kitEffectState: KitEffectState,
+    characterId: number,
+  ): typeof PLUME | typeof WING => {
     const standing = findStandingKitSummon(kitEffectState.effects, DANCE_DOUBLE_ID, characterId);
     const nextHit = standing?.hits[standing.nextHitIndex];
     return nextHit?.hitArea === danceDoubleAttacks[WING].hit.hitArea ? WING : PLUME;
