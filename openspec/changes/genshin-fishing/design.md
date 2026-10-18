@@ -26,8 +26,9 @@ stateDiagram-v2
   Biting --> Aiming: not struck within its bite timeout
   Biting --> Reeling: struck
   Reeling --> Caught: its health worn to none
-  Reeling --> Aiming: the tension out of the zone too long
+  Reeling --> Lost: the tension out of the zone too long
   Caught --> [*]
+  Lost --> [*]
 ```
 
 ## Scope and order

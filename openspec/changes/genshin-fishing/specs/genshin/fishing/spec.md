@@ -56,7 +56,7 @@ The reel SHALL break the line when the tension stays out of the zone for too lon
 
 - **GIVEN** the reel is under way
 - **WHEN** the tension stays out of the zone for too long
-- **THEN** the line breaks and the cast returns to aiming
+- **THEN** the line breaks and the cast ends
 
 #### Scenario: A catch puts the fish in the bag
 
