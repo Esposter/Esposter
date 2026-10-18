@@ -16,7 +16,7 @@ describe(getMjmlAttributeFields, () => {
       {
         defaultValue: undefined,
         name: "width",
-        type: { allowsNegative: false, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px"] },
+        type: { isNegativeAllowed: false, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px"] },
       },
     ]);
   });

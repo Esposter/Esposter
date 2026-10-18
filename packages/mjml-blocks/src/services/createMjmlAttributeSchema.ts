@@ -7,8 +7,8 @@ import { checkIsAllowedUrl, exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
 
 // MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them
-const createUnitPattern = (units: string[], allowsNegative: boolean, minCount: number, maxCount: number): RegExp => {
-  const numeric = allowsNegative ? "-|\\d|,|\\." : "\\d|,|\\.";
+const createUnitPattern = (units: string[], isNegativeAllowed: boolean, minCount: number, maxCount: number): RegExp => {
+  const numeric = isNegativeAllowed ? "-|\\d|,|\\." : "\\d|,|\\.";
   const filteredUnits = units
     .filter((unit) => unit !== "auto")
     .map((unit) => RegExp.escape(unit))
@@ -30,7 +30,7 @@ const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
     case MjmlAttributeKind.String:
       return z.string();
     case MjmlAttributeKind.Unit:
-      return z.string().regex(createUnitPattern(type.units, type.allowsNegative, type.minCount, type.maxCount));
+      return z.string().regex(createUnitPattern(type.units, type.isNegativeAllowed, type.minCount, type.maxCount));
     default:
       return exhaustiveGuard(type);
   }

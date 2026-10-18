@@ -11,15 +11,15 @@ describe(parseMjmlAttributeType, () => {
     ["string", { kind: MjmlAttributeKind.String }],
     [
       "unit(px,%,)",
-      { allowsNegative: false, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px", "%", ""] },
+      { isNegativeAllowed: false, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px", "%", ""] },
     ],
     [
       "unit(px,%){1,4}",
-      { allowsNegative: false, kind: MjmlAttributeKind.Unit, maxCount: 4, minCount: 1, units: ["px", "%"] },
+      { isNegativeAllowed: false, kind: MjmlAttributeKind.Unit, maxCount: 4, minCount: 1, units: ["px", "%"] },
     ],
     [
       "unitWithNegative(px,em)",
-      { allowsNegative: true, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px", "em"] },
+      { isNegativeAllowed: true, kind: MjmlAttributeKind.Unit, maxCount: 1, minCount: 1, units: ["px", "em"] },
     ],
   ])("%s parses to its type", (grammar, type) => {
     expect.hasAssertions();

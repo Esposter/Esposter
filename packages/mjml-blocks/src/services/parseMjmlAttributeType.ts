@@ -27,7 +27,7 @@ export const parseMjmlAttributeType = (grammar: string): MjmlAttributeType => {
   if (unit) {
     const minCount = Number(unit.minCount ?? "1");
     return {
-      allowsNegative: unit.kind === "unitWithNegative",
+      isNegativeAllowed: unit.kind === "unitWithNegative",
       kind: MjmlAttributeKind.Unit,
       maxCount: Number(unit.maxCount ?? unit.minCount ?? "1"),
       minCount,
