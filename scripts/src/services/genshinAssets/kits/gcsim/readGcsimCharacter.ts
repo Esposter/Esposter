@@ -6,6 +6,7 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimAnimationFrameNames } from "#src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
+import { readGcsimGravityRipples } from "#src/services/genshinAssets/kits/gcsim/readGcsimGravityRipples";
 import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readGcsimTalentArrays } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays";
@@ -46,6 +47,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     filePaths: [...fileMap.keys()],
     folder,
     goSources,
+    gravityRipples: readGcsimGravityRipples(goSources),
     holdCooldowns: readGcsimHoldCooldowns(goSources, constantMap),
     queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap, config),
     talentArrayMap: readGcsimTalentArrays(talentSource),

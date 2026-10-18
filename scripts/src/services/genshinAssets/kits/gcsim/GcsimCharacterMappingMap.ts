@@ -5,6 +5,7 @@ import { addGcsimBladeRollerCandidates } from "#src/services/genshinAssets/kits/
 import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates";
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
+import { addGcsimGravityRippleCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimGravityRippleCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
 import { addGcsimMoondewCleanseCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
@@ -16,7 +17,10 @@ export const GcsimCharacterMappingMap: Partial<
   Record<string, (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter) => void>
 > = {
   chasca: addGcsimShellCandidates,
-  columbina: addGcsimMoondewCleanseCandidates,
+  columbina: (writer, gcsim) => {
+    addGcsimMoondewCleanseCandidates(writer, gcsim);
+    addGcsimGravityRippleCandidates(writer, gcsim);
+  },
   dahlia: addGcsimShieldRegenerationCandidates,
   iansan: addGcsimChargedAttackVariantCandidates,
   kinich: addGcsimLoopShotCandidates,
