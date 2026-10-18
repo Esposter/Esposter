@@ -15,6 +15,7 @@ import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
@@ -100,6 +101,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         context.reactionTriggers.push({ enemy, reactions });
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
       }
+      const element = getKitHitElement(hit, combatant);
+      if (element !== undefined)
+        emitKitEvent({ element, enemy, kind: KitEventKind.ElementalHit, striker: combatant }, context);
+      if (hit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {
           attackTag,
@@ -112,6 +117,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         },
         context,
       );
+      if (enemy.state === EnemyState.Dead)
+        emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
     }
     if (target === undefined) strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops);
 

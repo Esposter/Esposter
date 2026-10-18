@@ -7,6 +7,7 @@ import type { KitState } from "#src/models/kit/KitState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
+import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
@@ -125,8 +126,9 @@ export const stepActiveKit = (
   const isBurst =
     action !== undefined && (action === kit.elementalBurst || action === kit.elementalBurstVariant?.action);
   if (isBurst) emitKitEvent({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed }, context);
-  if (action && (isBurst || getKitSkillActions(kit).includes(action)))
-    lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
+  const isSkill = action !== undefined && getKitSkillActions(kit).includes(action);
+  if (isSkill) emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
+  if (isBurst || isSkill) lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body
   // Has moved
   action?.onStart?.({ ...context, body: copyKitBody(body) }, target);
@@ -136,11 +138,11 @@ export const stepActiveKit = (
   for (const hit of landedHits) strikePuzzle(body, readPuzzleHit(combatant, hit));
   // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
   if (landedHits.length > 0 || strikes.length > 0)
-    for (const normalAttack of kit.normalAttacks) {
-      const [firstHit] = normalAttack.hits;
-      if (firstHit && (landedHits.includes(firstHit) || strikes.some(({ hit }) => hit === firstHit)))
+    for (const normalAttack of kit.normalAttacks)
+      if (checkKitActionLanded(normalAttack, landedHits, strikes))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-    }
+  if (checkKitActionLanded(kit.chargedAttack, landedHits, strikes))
+    emitKitEvent({ action: kit.chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with

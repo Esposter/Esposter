@@ -53,4 +53,6 @@ export interface KitHit {
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;
   talentMultiplier: number;
+  // Whether the hit lands on an enemy's weak point, read as it lands; no kit sets it yet
+  weakPoint?: boolean;
 }
