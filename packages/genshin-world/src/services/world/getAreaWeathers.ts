@@ -1,6 +1,5 @@
+import { INAZUMA_REGION_ID } from "#src/services/world/constants";
 import { WeatherKind } from "genshin-engine";
-
-const INAZUMA_REGION_ID = "inazuma";
 
 // The weathers an area turns through: Inazuma's permanent thunderstorm is lifted in its areas unless the player has
 // Restored it, and an area whose only weather it is holds clear. Other regions keep their own weathers as they are
