@@ -17,13 +17,17 @@ export const computeDailyOutcrops = (
   unlockedCityIds: number[],
   random: () => number,
 ): Outcrop[] => {
-  const outcrops: Outcrop[] = [];
-  let freeIds = placements.map(({ id }) => id);
-  for (const kindRule of kindRules) {
-    if (!computeOutcropKindOpen(kindRule, adventureRank, unlockedCityIds) || freeIds.length === 0) continue;
-    const placeId = takeOne(drawPlaceIds(freeIds, 1, random), 0);
-    freeIds = freeIds.filter((id) => id !== placeId);
-    outcrops.push({ kind: kindRule.kind, placeId, stage: OutcropStage.Waiting });
-  }
-  return outcrops;
+  const openKindRules = kindRules.filter((kindRule) =>
+    computeOutcropKindOpen(kindRule, adventureRank, unlockedCityIds),
+  );
+  const placeIds = drawPlaceIds(
+    placements.map(({ id }) => id),
+    openKindRules.length,
+    random,
+  );
+  return placeIds.map((placeId, index) => ({
+    kind: takeOne(openKindRules, index).kind,
+    placeId,
+    stage: OutcropStage.Waiting,
+  }));
 };

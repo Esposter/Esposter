@@ -93,7 +93,9 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
       nextTickSeconds: drainFirstTickSeconds,
       onTick: ({ kitEffectState: tickKitEffectState, party }) => {
         if (!tickKitEffectState.effects.includes(infusion)) return;
-        damagePartyMember(party, characterId, getPartyMember(party, characterId).healthShare * drainShare, characterId);
+        damagePartyMember(party, characterId, getPartyMember(party, characterId).healthShare * drainShare, {
+          sourceCharacterId: characterId,
+        });
       },
       // The field lives a tenth of a second past its last drain, so the step that runs it still has it
       secondsRemaining: lastDrainSeconds + 0.1,

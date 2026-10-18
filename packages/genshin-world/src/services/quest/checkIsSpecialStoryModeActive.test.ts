@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 const QUEST_ID = "1";
 const OBJECTIVE = { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["1"] };
 
-describe("checkIsSpecialStoryModeActive", () => {
+describe(checkIsSpecialStoryModeActive, () => {
   test("a quest on a restricted step is restricted", () => {
     expect.hasAssertions();
 

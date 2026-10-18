@@ -24,14 +24,15 @@ const createCombatant = (characterId: number, element?: Element): Combatant => (
 });
 
 describe(getDeployedCombatants, () => {
+  const pyro = createCombatant(1, Element.Pyro);
+  const cryo = createCombatant(3, Element.Cryo);
+  const combatants = new Map([
+    [1, pyro],
+    [3, cryo],
+  ]);
+
   test("reads the deployed members' combatants in the team's order, leaving out a member with no combatant", () => {
     expect.hasAssertions();
-    const pyro = createCombatant(1, Element.Pyro);
-    const cryo = createCombatant(3, Element.Cryo);
-    const combatants = new Map([
-      [1, pyro],
-      [3, cryo],
-    ]);
     expect(getDeployedCombatants(createParty([1, 2, 3]), combatants)).toStrictEqual([
       createDeployedCombatant(pyro, { isOnField: true }),
       createDeployedCombatant(cryo, { isOnField: false }),
@@ -40,19 +41,9 @@ describe(getDeployedCombatants, () => {
 
   test("flags only the member at the active index as on the field", () => {
     expect.hasAssertions();
-    const pyro = createCombatant(1, Element.Pyro);
-    const cryo = createCombatant(3, Element.Cryo);
     const party = createParty([1, 3]);
     party.activeIndex = 1;
-    expect(
-      getDeployedCombatants(
-        party,
-        new Map([
-          [1, pyro],
-          [3, cryo],
-        ]),
-      ),
-    ).toStrictEqual([
+    expect(getDeployedCombatants(party, combatants)).toStrictEqual([
       createDeployedCombatant(pyro, { isOnField: false }),
       createDeployedCombatant(cryo, { isOnField: true }),
     ]);
@@ -60,7 +51,6 @@ describe(getDeployedCombatants, () => {
 
   test("reads the Energy each member holds in the party", () => {
     expect.hasAssertions();
-    const pyro = createCombatant(1, Element.Pyro);
     const party = createParty([1]);
     getPartyMember(party, 1).energy = 40;
     expect(getDeployedCombatants(party, new Map([[1, pyro]]))).toStrictEqual([

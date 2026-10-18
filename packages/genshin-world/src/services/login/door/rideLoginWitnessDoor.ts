@@ -1,5 +1,6 @@
 import type { Object3D } from "three";
 
+import { IN_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Matrix4 } from "three";
 
@@ -16,7 +17,7 @@ export const rideLoginWitnessDoor = (family: Object3D, doorPieces: readonly Obje
         throw new InvalidOperationError(Operation.Read, `${part.name} piece ${piece.name}`, "rides no piece of ours");
       piece.updateMatrix();
       const copy = piece.clone();
-      copy.userData.inFamily = new Matrix4().multiplyMatrices(part.matrix, piece.matrix);
+      copy.userData[IN_FAMILY_KEY] = new Matrix4().multiplyMatrices(part.matrix, piece.matrix);
       copy.traverse((object) => {
         object.castShadow = false;
         object.frustumCulled = false;

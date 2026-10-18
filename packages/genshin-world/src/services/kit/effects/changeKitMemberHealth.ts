@@ -24,13 +24,10 @@ export const changeKitMemberHealth = (
   const buffedMember = getKitBuffedCombatant(member, effects, party, characterIdCombatantMap);
   const maxHealth = buffedMember.attributes.maxHealth;
   if (health < 0) {
-    damagePartyMember(
-      party,
-      characterId,
-      -health / maxHealth,
-      source.characterId,
-      createKitFallRefusal(member, kitEffectState, maxHealth),
-    );
+    damagePartyMember(party, characterId, -health / maxHealth, {
+      fallRefusal: createKitFallRefusal(member, kitEffectState, maxHealth),
+      sourceCharacterId: source.characterId,
+    });
     return;
   }
   const healingBonus = getBuffedCombatant(source, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[

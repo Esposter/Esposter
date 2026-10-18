@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first and every other quest from the talk that offers it, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
+Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first, a quest a talk offers from that talk, and a quest with parent quests once they are all finished; a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
 
 ## Requirements
 
@@ -15,9 +15,9 @@ A quest SHALL be one of the game's five kinds, holding ordered steps, each with 
 - **THEN** each step lists its objectives in the order the game gives them
 - **AND** each objective is one of go to, talk to, defeat, collect or interact
 
-### Requirement: The Archon quests run in order and other quests start from their offering talk
+### Requirement: The Archon quests run in order and a talk-offered quest starts from its talk
 
-The Archon quests SHALL run in order from the prologue's first, and every other quest SHALL start at its first shown step once the talk offering it has ended.
+The Archon quests SHALL run in order from the prologue's first, and every quest a talk offers SHALL start at its first shown step once the talk offering it has ended, and in a series only once the quest before it is finished.
 
 #### Scenario: Archon quests started
 
@@ -27,15 +27,38 @@ The Archon quests SHALL run in order from the prologue's first, and every other 
 
 #### Scenario: Offering talk ends
 
-- **GIVEN** a talk that offers a quest ends
+- **GIVEN** a talk that offers a quest ends, and the quest is not in a series or is the first of its series
 - **WHEN** the talk ends
 - **THEN** the quest starts at its first shown step
+
+#### Scenario: Offering talk ends before the quest before it is finished
+
+- **GIVEN** a talk that offers a quest in a series ends, and the quest before it in the series is not yet finished
+- **WHEN** the talk ends
+- **THEN** the quest is not started
+- **AND** an offering talk that ends once the quest before it is finished starts it
 
 #### Scenario: Offering talk repeated
 
 - **GIVEN** a quest has already been started by its offering talk
 - **WHEN** the same talk ends again
 - **THEN** the quest is not started a second time
+
+### Requirement: A quest with parent quests starts once they are all finished
+
+A quest with parent quests SHALL start at its first shown step once every one of them is finished, whether or not a talk offers it, and its series' order does not hold it back.
+
+#### Scenario: Last parent finished
+
+- **GIVEN** a quest whose parent quests are all finished but one
+- **WHEN** a quest event finishes that one
+- **THEN** the quest starts at its first shown step
+
+#### Scenario: Parent the world does not carry
+
+- **GIVEN** a quest with a parent quest the world does not carry
+- **WHEN** the quests start
+- **THEN** the quest stays unstarted
 
 ### Requirement: The Traveler's doings advance the quests in progress
 
