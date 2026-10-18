@@ -124,4 +124,16 @@ describe(createXiaoKitBehaviour, () => {
       expect(damageBonuses).toStrictEqual(stackCounts.map((stacks) => (stacks === 0 ? undefined : 0.15 * stacks)));
     },
   );
+
+  test("a Constellation 1 switch adds one Lemniscatic Wind Cycling charge", () => {
+    expect.hasAssertions();
+
+    expect(XIAO_KIT.getSkillChargeBonus?.({ ...createXiaoCombatant(0), constellationCount: 1 })).toBe(1);
+  });
+
+  test("a Constellation 0 switch adds no Lemniscatic Wind Cycling charge", () => {
+    expect.hasAssertions();
+
+    expect(XIAO_KIT.getSkillChargeBonus?.({ ...createXiaoCombatant(0), constellationCount: 0 })).toBe(0);
+  });
 });
