@@ -72,6 +72,7 @@ import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/createStaffOfHomaPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
+import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
@@ -317,4 +318,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2787405899": createEssenceOfFalsityPassiveModule,
   // Reckless Cinnabar (Staff of Homa)
   "3284643059": createStaffOfHomaPassiveModule,
+  // Parsifal the Great (The First Great Magic)
+  "3257922883": createTheFirstGreatMagicPassiveModule,
 };
