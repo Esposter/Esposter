@@ -17,6 +17,10 @@ export const DORI_CHARACTER_ID = 10_000_068;
 // Summon from where it was cast. Her healing, energy regeneration, self-infusion and passives are not built: the healing
 // And energy wait on a field that heals on its own clock, and the self-infusion and the passives wait on hooks the kit
 // Does not yet offer
+// Constellation 1 needs the Troubleshooter Shots' After-Sales Service Rounds, which the kit does not build
+// Constellation 2 needs the Jinni's healing and its Toop shot, which wait on the Jinni's own clock to heal
+// Constellation 4 needs the buffs on the Jinni's connected member by its HP and Energy, which wait on the same healing
+// Constellation 6 needs Spirit-Warding Lamp's Electro infusion and Troubleshooter Cannon's shots, which are not built
 export const createDoriKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const connector = readHit("connector");
   const connectorFirstTickSeconds = readSeconds("connectorFirstTick");
