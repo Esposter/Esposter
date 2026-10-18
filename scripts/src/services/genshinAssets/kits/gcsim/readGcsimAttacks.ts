@@ -46,7 +46,7 @@ const readFunctionName = (tokens: readonly GoToken[], position: number): string 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
 // Strike type and element by their gcsim names, its durability and poise evaluated through the package's constants, and
 // The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. A field the code
-// Sets after the literal is not read
+// Sets after the literal is not read, but a `Mult` it sets after the literal is an attack of its own under that variable
 export const readGcsimAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -92,7 +92,7 @@ export const readGcsimAttacks = (
         talentVariable:
           multiplierField === undefined
             ? undefined
-            : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression)),
+            : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
         variableName: readVariableName(tokens, position),
       });
     }
