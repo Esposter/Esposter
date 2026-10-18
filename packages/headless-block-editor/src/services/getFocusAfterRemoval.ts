@@ -11,7 +11,7 @@ export const getFocusAfterRemoval = (document: BlockDocument, nodePointer: strin
     (value) => value,
     () => undefined,
   );
-  if (index === undefined || !Array.isArray(siblings)) return "";
+  if (index === undefined || !Array.isArray(siblings) || index >= siblings.length) return "";
 
   const slotPointer = toJsonPointer(segments.slice(0, -1));
   if (index + 1 < siblings.length) return `${slotPointer}/${index}`;
