@@ -7,12 +7,14 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
 import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world";
+import { z } from "zod";
 
 const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
 const CHARGED_ATTACK_TITLE_REGEX =
   /^(?:Charged Attack(?: (?:(?<number>\d+)-Hit|(?<letter>[A-Z])))?|Fully-Charged Aimed Shot)$/u;
 const HIT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";
+const internalCooldownTagSchema = z.enum(InternalCooldownTag);
 // The plunges' rows by their titles
 const WikiTitlePathMap: Partial<Record<string, string>> = {
   "High Plunge": `plunges.${KitPlunge.High}.hits.0`,
@@ -65,8 +67,7 @@ export const getWikiKitCandidates = (
           ? undefined
           : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag);
       // A tag the enum does not name is not written, as the record would reject it; the row's poise still stands
-      if (tag === undefined || (Object.values(InternalCooldownTag) as string[]).includes(tag))
-        add("internalCooldownTag", tag);
+      if (tag === undefined || internalCooldownTagSchema.safeParse(tag).success) add("internalCooldownTag", tag);
     }
     if (isElemental && gauge !== undefined) add("gauge", gauge);
   };
