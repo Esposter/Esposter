@@ -176,27 +176,26 @@ describe(createIttoKitBehaviour, () => {
   });
 });
 
-describe("bloodline of the Crimson Oni", () => {
-  // The DEF share each hit of the Arataki Kesagiri Itto holds the stacks for adds, as he strikes, at the given DEF
-  const readKesagiriDamageBonuses = (ascension: number): { bonuses: number[]; defense: number } => {
-    const combatant = {
-      ...createIttoCombatant(),
-      ascension,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.BaseHealth, value: 10_000 },
-        { attribute: Attribute.BaseDefense, value: 800 },
-      ]),
-    };
-    const context = createKitTestContext(combatant);
-    landNormalAttacks(context);
-    const { chargedAttack } =
-      findKitStance(context.kitEffectState.effects, ITTO_CHARACTER_ID)?.combatant.kit ?? ITTO_KIT;
-    return {
-      bonuses: chargedAttack.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant) ?? 0),
-      defense: combatant.attributes.defense,
-    };
+// The DEF share each hit of the Arataki Kesagiri Itto holds the stacks for adds, as he strikes, at the given DEF
+const readKesagiriDamageBonuses = (ascension: number): { bonuses: number[]; defense: number } => {
+  const combatant = {
+    ...createIttoCombatant(),
+    ascension,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: 10_000 },
+      { attribute: Attribute.BaseDefense, value: 800 },
+    ]),
   };
+  const context = createKitTestContext(combatant);
+  landNormalAttacks(context);
+  const { chargedAttack } = findKitStance(context.kitEffectState.effects, ITTO_CHARACTER_ID)?.combatant.kit ?? ITTO_KIT;
+  return {
+    bonuses: chargedAttack.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant) ?? 0),
+    defense: combatant.attributes.defense,
+  };
+};
 
+describe("bloodline of the Crimson Oni", () => {
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
     const { bonuses, defense } = readKesagiriDamageBonuses(4);

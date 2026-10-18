@@ -49,6 +49,10 @@ const BLOODLINE_DEFENSE_SHARE = 0.35;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/burst.go
 const BURST_NORMAL_ATTACK_SPEED_BONUS = 0.1;
 
+// Bloodline of the Crimson Oni: each slash of the Arataki Kesagiri adds its DEF share, from Ascension 4
+const addBloodlineDamage = (striker: Combatant): number =>
+  striker.ascension < ASCENSION_4 ? 0 : BLOODLINE_DEFENSE_SHARE * striker.attributes.defense;
+
 // Whether Itto is the Raging Oni King: his burst's Geo conversion is on him
 const checkIsRagingOniKing = (effects: readonly KitEffect[], characterId: number): boolean =>
   effects.some(
@@ -80,9 +84,6 @@ export const createIttoKitBehaviour = ({
   // Starts, and its stance lasts as long as it plays, so its slashes stay its charged attack's to the last. Each start
   // Reads its own seconds, which one behaviour given every action of the list cannot
   const kesagiris = readActions("kesagiris");
-  // Bloodline of the Crimson Oni: each slash of the Kesagiri adds its DEF share, from Ascension 4
-  const addBloodlineDamage = (striker: Combatant): number =>
-    striker.ascension < ASCENSION_4 ? 0 : BLOODLINE_DEFENSE_SHARE * striker.attributes.defense;
   for (const kesagiri of kesagiris) {
     for (const hit of kesagiri.hits) hit.additiveBaseDamageBonus = addBloodlineDamage;
     kesagiri.onStart = ({ activeCombatant: combatant, kitEffectState }) => {
