@@ -219,6 +219,8 @@ export enum GameTextKey {
   ForgeTitle = "UI_FORGE_PAGE_TITLE",
   ForgeTotalTime = "UI_FORGE_PAGE_NEED_TIME",
   Fowl = "1695194124",
+  // The claim prompt's row that restores Original Resin with a Fragile Resin, by the game's own words for it
+  FragileResinRestore = "UI_GUIDE_FRAGILE_RESIN",
   Friends = "UI_FRIEND_TITLE",
   Friendship = "3501231455",
   // The Frostbearing Tree's name on its prompt, as the game's own main-interface title says it
