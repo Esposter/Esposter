@@ -8,6 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
@@ -112,7 +113,7 @@ export const strikeEnemy = (
         attackerLevel: combatant.level,
         criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
         // The element's or the physical DMG Bonus, the all-damage bonus, the normal and charged attack bonus on those attacks,
-        // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads
+        // The plunging attack bonus on a plunge, a hit's own and an enemy's statuses' DMG taken add to the bonus each hit reads
         damageBonus:
           attributeTotalMap[
             element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
@@ -121,6 +122,7 @@ export const strikeEnemy = (
           (checkIsNormalOrChargedAttack(kitHit.attackTag)
             ? attributeTotalMap[Attribute.NormalAndChargedAttackDamageBonus]
             : 0) +
+          (kitHit.attackTag === AttackTag.PlungingAttack ? attributeTotalMap[Attribute.PlungingAttackDamageBonus] : 0) +
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
         defense,
