@@ -258,7 +258,10 @@ describe(getTableKitCandidates, () => {
       ]),
     });
     const readValueIndexes = (listName: string) =>
-      [0, 1, 2].map((hit) => candidateMap.get(`hits.${listName}.${hit}.multiplier`)?.[0]?.value.index);
+      [0, 1, 2].map(
+        (hit) =>
+          (candidateMap.get(`hits.${listName}.${hit}.multiplier`)?.[0]?.value as { index: number } | undefined)?.index,
+      );
 
     expect({
       normalShot: readValueIndexes("swiftHuntNormalShot"),
