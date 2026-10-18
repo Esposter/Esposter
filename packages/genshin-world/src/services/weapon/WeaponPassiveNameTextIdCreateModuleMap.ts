@@ -5,6 +5,7 @@ import { Element } from "#src/models/Element";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
+import { createBlackWingPassiveModule } from "#src/services/weapon/passives/createBlackWingPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
@@ -216,4 +217,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2700351571": createIwakuraSuccessionPassiveModule,
   // Wolfish Tracker (Wolf's Gravestone)
   "2660534475": createWolfishTrackerPassiveModule,
+  // Black Wing (Skyward Spine)
+  "2421341659": createBlackWingPassiveModule,
 };
