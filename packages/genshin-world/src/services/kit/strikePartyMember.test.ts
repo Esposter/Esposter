@@ -14,6 +14,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { createParty } from "#src/services/party/createParty";
@@ -55,6 +56,43 @@ describe(strikePartyMember, () => {
     strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] }, characterIdCombatantMap);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - damage / MAX_HEALTH);
+  });
+
+  test("a member's DMG Reduction lowers an enemy's strike on it, as its buffs leave it", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
+    const kitEffectState: KitEffectState = { effects: [] };
+    buffKitMember(kitEffectState, 1, {
+      amount: 0.35,
+      attribute: Attribute.DamageReduction,
+      secondsRemaining: 10,
+      source: "test",
+    });
+
+    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState, characterIdCombatantMap);
+
+    expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (damage * (1 - 0.35)) / MAX_HEALTH);
+  });
+
+  test("a DMG Reduction past the whole leaves an enemy's strike no damage", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const kitEffectState: KitEffectState = { effects: [] };
+    buffKitMember(kitEffectState, 1, {
+      amount: 1.2,
+      attribute: Attribute.DamageReduction,
+      secondsRemaining: 10,
+      source: "test",
+    });
+
+    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState, characterIdCombatantMap);
+
+    expect(getPartyMember(party, 1).healthShare).toBe(1);
   });
 
   test("a shield takes an enemy's strike first, and the damage past its health is what the member loses", () => {

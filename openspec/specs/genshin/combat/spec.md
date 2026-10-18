@@ -168,6 +168,22 @@ A Stellar reaction's damage SHALL take the Base DMG Bonus each deployed Stellar 
 - **WHEN** a Stellar Swirl is priced
 - **THEN** its base damage is raised by 14 percent
 
+### Requirement: A party member's DMG Reduction
+
+An enemy's strike on a party member SHALL be priced against the member as the team's buffs leave it, its DMG Bonus lowered by the member's DMG Reduction, and a DMG Reduction past the whole SHALL leave it no damage.
+
+#### Scenario: A member's DMG Reduction lowers an enemy's strike on it, as its buffs leave it
+
+- **GIVEN** a buff gives the member on the field a DMG Reduction of 35 percent
+- **WHEN** an enemy strikes it
+- **THEN** it loses 65 percent of the damage the strike would deal it without the buff
+
+#### Scenario: A DMG Reduction past the whole leaves an enemy's strike no damage
+
+- **GIVEN** a buff gives the member on the field a DMG Reduction of 120 percent
+- **WHEN** an enemy strikes it
+- **THEN** it loses no HP
+
 ### Requirement: A shield
 
 A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.

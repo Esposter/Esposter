@@ -9,7 +9,9 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
 
 // The damage an enemy's strike deals to a combatant: its ATK, less each of its statuses' cut of it, as physical damage
-// Through the combatant's defence and Physical resistance
+// Through the combatant's defence and Physical resistance, its DMG Bonus lowered by the combatant's DMG Reduction, which
+// Leaves it none past the whole, as the wiki's DMG Reduction has it
+// Https://genshin-impact.fandom.com/wiki/DMG_Reduction
 export const computeEnemyStrikeDamage = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -19,6 +21,7 @@ export const computeEnemyStrikeDamage = (
   const { attack } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemy.enemyKindId), enemy.level);
   return getDamage({
     attackerLevel: enemy.level,
+    damageBonus: -Math.min(attributeTotalMap[Attribute.DamageReduction], 1),
     defense,
     resistance: attributeTotalMap[Attribute.PhysicalResistance],
     stat: attack * (1 - enemy.statuses.reduce((total, { attackReduction }) => total + (attackReduction ?? 0), 0)),
