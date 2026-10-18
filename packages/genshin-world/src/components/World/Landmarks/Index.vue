@@ -161,6 +161,12 @@ onUnmounted(() => {
         :part-material
         :region-palettes
       />
+      <WorldLandmarkDomainEntrance
+        v-else-if="landmark.kind === LandmarkKind.DomainEntrance"
+        :get-ground-height
+        :landmark
+        :part-material
+      />
     </TresGroup>
   </primitive>
 </template>
