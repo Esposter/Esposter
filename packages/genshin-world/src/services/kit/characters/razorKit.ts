@@ -50,6 +50,7 @@ const CONSTELLATION_2_HEALTH_SHARE = 0.3;
 // Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
 // Fulguris's lightning
 // Constellation 4 needs an enemy DEF decrease on Claw and Thunder's hits, which EnemyStatus does not carry
+// Constellation 1 needs an all-damage DMG Bonus, which no buff attribute carries
 export const createRazorKitBehaviour = ({
   kit,
   readHits,
