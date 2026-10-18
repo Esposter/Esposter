@@ -12,7 +12,6 @@
   "burst.hits.3.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 15039 } },
   "burst.hits.length": { "cause": "Unclassified", "value": 4 },
   "frames.stellarVortex": { "cause": "Unclassified", "value": 181 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 15032 } },
   "stellarJubilee.stellarReactionTypes.length": { "cause": "Unclassified", "value": 2 },
   "stellarJubilee.stellarReactionTypes.0": { "cause": "Unclassified", "value": "StellarConduct" },
   "stellarJubilee.stellarReactionTypes.1": { "cause": "Unclassified", "value": "StellarSwirl" }
