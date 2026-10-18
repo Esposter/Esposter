@@ -10,7 +10,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000023, "path": "burst.hits.0.hitmarkFrames" }
   },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12739 } },
   "burst.hits.1.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000023, "path": "burst.hits.1.area" }
@@ -20,7 +19,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000023, "path": "burst.hits.1.hitmarkFrames" }
   },
-  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12739 } },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 106 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -88,9 +86,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "skill.hits.0.hitmarkFrames" }
   },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12732 } },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
   "skill.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
-  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 25 },
-  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12732 } }
+  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 25 }
 }

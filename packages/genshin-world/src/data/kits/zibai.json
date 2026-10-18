@@ -10,7 +10,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.0.hitmarkFrames" }
   },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12639 } },
   "burst.hits.1.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.1.area" }
@@ -20,7 +19,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.1.hitmarkFrames" }
   },
-  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12639 } },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 264 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 2 },
   "chargedAttack.hits.0.area": {
