@@ -12,7 +12,7 @@ import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-// The character the Character Event banner the fixture opens on features, at the clock the fixture holds
+// The first character the open Character Event banners feature, at the clock the fixture holds
 const featuredCharacterOf = (): WishItem => {
   const openBanners = createBanners(
     props.statTables,
@@ -22,10 +22,12 @@ const featuredCharacterOf = (): WishItem => {
       Temporal.Now.instant().add({ milliseconds: props.serverClockOffsetMs }).epochMilliseconds,
     ),
   );
+  // An open Character Event banner may feature weapons alone, so the first character any of them features is the one taken
   const featured = openBanners
-    .find(({ kind }) => kind === BannerKind.CharacterEvent)
-    ?.featuredFiveStars.find(({ kind }) => kind === WishItemKind.Character);
-  if (!featured) throw new Error("the fixture's Character Event banner features no character");
+    .filter(({ kind }) => kind === BannerKind.CharacterEvent)
+    .flatMap(({ featuredFiveStars }) => featuredFiveStars)
+    .find(({ kind }) => kind === WishItemKind.Character);
+  if (!featured) throw new Error("the fixture's open Character Event banners feature no character");
   return featured;
 };
 
@@ -54,5 +56,17 @@ describe("wishScreen", () => {
     expect(
       page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).query(),
     ).toBeNull();
+  });
+
+  // The back mark gives the wish screen's close back to its owner
+  test("should close the wish screen when its back is pressed", async () => {
+    expect.hasAssertions();
+
+    const onClose = vi.fn<() => void>();
+    render(WishScreen, { attrs: { onClose }, props: { ...props, trials: [], wishHistory: [] } });
+
+    await page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.Back] }).click();
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
