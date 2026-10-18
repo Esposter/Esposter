@@ -33,6 +33,7 @@ import {
   JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
   JAHODA_ASCENSION_4_SECONDS,
   JAHODA_ASCENSION_4_SOURCE,
+  JAHODA_CONSTELLATION_6_SOURCE,
 } from "#src/services/kit/characters/jahodaAscension";
 import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -62,7 +63,6 @@ const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_CRITICAL_RATE = 0.05;
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.4;
 const CONSTELLATION_6_SECONDS = 20;
-const CONSTELLATION_6_SOURCE = "jahoda-constellation-6";
 const MEOWBALL_FIELD_ID = "jahoda-meowball";
 const MEOWBALL_ENERGY_ICD_STATUS_ID = "jahoda-meowball-energy-icd";
 // A full flask's drain gives ten Meowballs, one for each tenth of its gauge, as gcsim (MIT, v2.47.2) jahoda/skill.go does
@@ -241,13 +241,13 @@ export const createJahodaKitBehaviour = ({
             amount: CONSTELLATION_6_CRITICAL_RATE,
             attribute: Attribute.CriticalRate,
             secondsRemaining: CONSTELLATION_6_SECONDS,
-            source: CONSTELLATION_6_SOURCE,
+            source: JAHODA_CONSTELLATION_6_SOURCE,
           });
           buffKitMember(kitEffectState, characterId, {
             amount: CONSTELLATION_6_CRITICAL_DAMAGE,
             attribute: Attribute.CriticalDamage,
             secondsRemaining: CONSTELLATION_6_SECONDS,
-            source: CONSTELLATION_6_SOURCE,
+            source: JAHODA_CONSTELLATION_6_SOURCE,
           });
         }
     castKitSummon(kitEffectState, body, combatant, [isFilled ? filledHit : unfilledHit]);

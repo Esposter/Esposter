@@ -14,6 +14,7 @@ export const JAHODA_ASCENSION_4_SECONDS = 6;
 export const JAHODA_ASCENSION_4_SOURCE = "jahoda-ascension-4";
 const JAHODA_CONSTELLATION_2 = 2;
 const JAHODA_CONSTELLATION_4 = 4;
+export const JAHODA_CONSTELLATION_6_SOURCE = "jahoda-constellation-6";
 const ASCENSION_1_ELEMENT_PRIORITY: readonly Element[] = [Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo];
 const ASCENSION_1_DAMAGE_MULTIPLIER = 1.3;
 const ASCENSION_1_HEAL_MULTIPLIER = 1.2;
