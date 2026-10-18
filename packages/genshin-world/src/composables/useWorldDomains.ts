@@ -2,6 +2,7 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
+import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
@@ -19,7 +20,6 @@ import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLan
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
-import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
 import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
 import type { DomainDisorderTrigger } from "#src/services/domains/applyDomainDisorders";
 import type { GroundPoint } from "genshin-engine";

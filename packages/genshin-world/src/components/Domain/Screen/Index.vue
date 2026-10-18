@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
+import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { GameText } from "genshin-text";
 
 import { DomainLevelState } from "#src/models/domains/DomainLevelState";
