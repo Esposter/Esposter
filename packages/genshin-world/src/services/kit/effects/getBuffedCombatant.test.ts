@@ -51,6 +51,23 @@ describe(getBuffedCombatant, () => {
     expect(getBuffedCombatant(combatant, [], party)).toBe(combatant);
   });
 
+  test("raises the attack by an ATK percentage buff on the base attack, as the attributes do", () => {
+    expect.hasAssertions();
+    const combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 100 }]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: DILUC_KIT,
+      level: 90,
+    };
+    const effects: KitEffect[] = [
+      { amount: 0.2, attribute: Attribute.AttackPercent, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 },
+    ];
+    expect(getBuffedCombatant(combatant, effects, party).attributes.attack).toBeCloseTo(120);
+  });
+
   test("raises a Geo team's hits by 15% while a shield holds it, so a hit deals 1.15 times its damage", () => {
     expect.hasAssertions();
 
