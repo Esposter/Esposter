@@ -3,7 +3,7 @@ import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
 import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
-import type { Quest } from "genshin-world";
+import type { Quest, QuestId } from "genshin-world";
 
 import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
@@ -30,6 +30,7 @@ import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTalkTables } from "#src/services/genshinText/readTalkTables";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readTitleQuestIds } from "#src/services/genshinText/readTitleQuestIds";
+import { mapCollectingFailures } from "#src/services/shared/mapCollectingFailures";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
@@ -75,7 +76,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   const talkTables = await readTalkTables();
   const mainQuestIds = new Set(mainQuestMap.keys());
   const mainIdBySubId = new Map([...subQuestMap].map(([subId, subQuest]) => [subId, subQuest.mainId] as const));
-  const quests: Quest[] = QuestIds.map((questId) => {
+  const buildQuest = (questId: QuestId): Quest => {
     const rewards = rewardsByQuest.get(questId) ?? [];
     if (ReputationRequestQuestIds.includes(questId)) {
       const subQuest = subQuestMap.get(Number(questId));
@@ -148,7 +149,8 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkTables)),
       titleTextId: String(mainQuest.titleTextMapHash),
     });
-  });
+  };
+  const quests = mapCollectingFailures(GameDataset.Quests, QuestIds, buildQuest);
   const parentQuestIds = quests.flatMap((quest) => quest.parentQuestIds);
   const uncarriedParentQuestIds = parentQuestIds.filter((parentQuestId) => !carriedQuestIds.has(parentQuestId));
   notes.push(
