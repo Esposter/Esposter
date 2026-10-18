@@ -1,7 +1,7 @@
 ## 1. Rule
 
 - [x] 1.1 Build the target-minute rule that clamps the advance and wraps past midnight. Verify: `getTimeTargetMinutes.test.ts` asserts the scenarios 'An advance under thirty minutes lands thirty minutes on', 'An advance beyond two days stops at two days' and 'An advance past midnight wraps onto the next day's hours', written first and seen failing.
-- [ ] 1.2 Clip the English PC client's Time screen from the public recording and name its reference frame in the parity reference map. Verify: `pnpm -C scripts recreation clip --directory ~/Esposter/genshin-parity/captures https://www.youtube.com/watch?v=a4_J84iMqR0 --from 0 --to 60 --name time` writes the clip, and the `menu-time` entry names its capture and second.
+- [x] 1.2 Clip the English PC client's Time screen from the public recording and name its reference frame in the parity reference map. Verify: `pnpm -C scripts recreation clip --directory ~/Esposter/genshin-parity/captures https://www.youtube.com/watch?v=a4_J84iMqR0 --from 0 --to 60 --name time` writes the clip, and the `menu-time` entry names its capture and second.
 
 ## 2. Screen
 

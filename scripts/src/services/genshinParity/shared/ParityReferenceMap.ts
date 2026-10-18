@@ -650,6 +650,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
+  // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
+  // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The fixture's hand rests half an hour on, so
+  // The compare differs at the hand and the target hour until the screen takes a dialled advance
+  "menu-time": {
+    capture: "yt-a4_J84iMqR0-time.mp4",
+    isBackdrop: true,
+    props: { clockMinutes: 232 },
+    screen: "MenuTime",
+    seconds: 10,
+  },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear
   // Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and east towers'
   // Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
