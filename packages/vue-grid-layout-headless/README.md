@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.
+A headless grid: `useGridLayout` returns the placement of items on a grid of cells and the pointer handlers that move, resize, drop and compact them, with no styling. The pure placement functions are also exported from its `/placement` entry.
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ pnpm i vue-grid-layout-headless
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-grid-layout-headless) to level up.
 
 ## <a name="license">⚖️ License</a>
 
