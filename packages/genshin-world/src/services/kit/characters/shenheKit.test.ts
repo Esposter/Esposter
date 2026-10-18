@@ -26,9 +26,11 @@ const createShenheCombatant = (ascension = 0): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-const castField = (ascension: number): KitField => {
+const castField = (ascension: number, constellationCount = 0): KitField => {
   const kitEffectState: KitEffectState = { effects: [] };
-  SHENHE_KIT.elementalBurst.onStart?.(createKitTestContext(createShenheCombatant(ascension), { kitEffectState }));
+  SHENHE_KIT.elementalBurst.onStart?.(
+    createKitTestContext({ ...createShenheCombatant(ascension), constellationCount }, { kitEffectState }),
+  );
   return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
 };
 // The effects a field's tick adds, from a field cast by a combatant of the given ascension
@@ -85,6 +87,12 @@ describe(createShenheKitBehaviour, () => {
     expect(field.tickIntervalSeconds).toBeCloseTo(117 / 60);
     expect(field.radius).toBe(7);
     expect(tickSummon(1)?.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60))).toStrictEqual([0, 32]);
+  });
+
+  test("a Constellation 2 burst's field lasts six seconds longer than a Constellation 0 burst's", () => {
+    expect.hasAssertions();
+
+    expect(castField(0, 2).secondsRemaining - castField(0).secondsRemaining).toBeCloseTo(6);
   });
 
   test("the field's Cryo DMG Bonus comes from Ascension 1, for the active character", () => {
