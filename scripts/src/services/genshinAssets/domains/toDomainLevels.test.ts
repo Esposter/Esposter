@@ -20,6 +20,7 @@ const createDungeon = (overrides: Partial<ExcelDungeonRow>): ExcelDungeonRow => 
   levelRevise: 37,
   limitLevel: 25,
   passRewardPreviewID: 20,
+  statueCostCount: 20,
   subType: "DUNGEON_SUB_TALENT",
   type: "DUNGEON_DAILY_FIGHT",
   ...overrides,
@@ -28,9 +29,12 @@ const createPreview = (id: number, itemIds: number[]): ExcelRewardPreviewRow => 
   id,
   previewItems: itemIds.map((itemId) => ({ id: itemId })),
 });
+
 // Three day lists of a talent domain, in the order Monday and Thursday, Tuesday and Friday, Wednesday and Saturday, and
 // Sunday's union of all three
 const talentEntry = createEntry({ descriptionCycleRewardList: [[101], [102], [103], [101, 102, 103]] });
+const blessingEntry = createEntry({ dungeonEntryId: 48, id: 1, type: "DUNGEN_ENTRY_TYPE_RELIQUARY" });
+const blessingPoint: DumpedScenePoint = { $type: "NKJPPNFAEEF", dungeonIds: [1001] };
 
 describe(toDomainLevels, () => {
   test("a talent domain's level takes the days of the pair its book is set for", () => {
@@ -39,7 +43,16 @@ describe(toDomainLevels, () => {
     expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [102])], {})).toStrictEqual({
       10: {
         kind: DomainKind.Mastery,
-        levels: [{ dungeonId: 1001, enemyLevel: 37, recommendedRank: 25, scheduledDaysOfWeek: [2, 5] }],
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 20,
+            scheduledDaysOfWeek: [2, 5],
+            treeRewards: [],
+          },
+        ],
       },
     });
   });
@@ -56,7 +69,16 @@ describe(toDomainLevels, () => {
     expect(toDomainLevels([entry], [dungeon], [createPreview(21, [203])], {})).toStrictEqual({
       2: {
         kind: DomainKind.Forgery,
-        levels: [{ dungeonId: 2001, enemyLevel: 37, recommendedRank: 25, scheduledDaysOfWeek: [3, 6] }],
+        levels: [
+          {
+            dungeonId: 2001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 20,
+            scheduledDaysOfWeek: [3, 6],
+            treeRewards: [],
+          },
+        ],
       },
     });
   });
@@ -82,15 +104,84 @@ describe(toDomainLevels, () => {
   test("a Blessing domain's levels are its entrance point's dungeons and open every day", () => {
     expect.hasAssertions();
 
-    const entry = createEntry({ dungeonEntryId: 48, id: 1, type: "DUNGEN_ENTRY_TYPE_RELIQUARY" });
-    const point: DumpedScenePoint = { $type: "NKJPPNFAEEF", dungeonIds: [1001] };
     const dungeon = createDungeon({ subType: "DUNGEON_SUB_RELIQUARY" });
-    expect(toDomainLevels([entry], [dungeon], [], { 48: point })).toStrictEqual({
+    expect(toDomainLevels([blessingEntry], [dungeon], [createPreview(20, [])], { 48: blessingPoint })).toStrictEqual({
       1: {
         kind: DomainKind.Blessing,
-        levels: [{ dungeonId: 1001, enemyLevel: 37, recommendedRank: 25, scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7] }],
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 20,
+            scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+            treeRewards: [],
+          },
+        ],
       },
     });
+  });
+
+  test("a level's tree rewards skip the padding and read the counts as numbers", () => {
+    expect.hasAssertions();
+
+    const preview: ExcelRewardPreviewRow = {
+      id: 20,
+      previewItems: [{ count: "100", id: 102 }, { id: 0 }, { count: "15", id: 105 }, { id: 0 }],
+    };
+    const dungeon = createDungeon({ statueCostCount: 40 });
+    expect(toDomainLevels([blessingEntry], [dungeon], [preview], { 48: blessingPoint })).toStrictEqual({
+      1: {
+        kind: DomainKind.Blessing,
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 40,
+            scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+            treeRewards: [
+              { count: 100, id: 102 },
+              { count: 15, id: 105 },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  test("a level's tree rewards leave out the drops whose counts are missing, fractional or a range", () => {
+    expect.hasAssertions();
+
+    const preview: ExcelRewardPreviewRow = {
+      id: 20,
+      previewItems: [{ id: 101 }, { count: "2.2", id: 103 }, { count: "3;4", id: 104 }, { count: "3", id: 102 }],
+    };
+    expect(toDomainLevels([blessingEntry], [createDungeon({})], [preview], { 48: blessingPoint })).toStrictEqual({
+      1: {
+        kind: DomainKind.Blessing,
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 20,
+            scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+            treeRewards: [{ count: 3, id: 102 }],
+          },
+        ],
+      },
+    });
+  });
+
+  test("a level with no reward preview is refused", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      toDomainLevels([blessingEntry], [createDungeon({})], [], { 48: blessingPoint }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: RewardPreviewExcelConfigData, has no reward preview 20]`,
+    );
   });
 
   test("a level naming several days' materials is open on Sunday only", () => {
@@ -99,7 +190,16 @@ describe(toDomainLevels, () => {
     expect(toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101, 102, 103])], {})).toStrictEqual({
       10: {
         kind: DomainKind.Mastery,
-        levels: [{ dungeonId: 1001, enemyLevel: 37, recommendedRank: 25, scheduledDaysOfWeek: [] }],
+        levels: [
+          {
+            dungeonId: 1001,
+            enemyLevel: 37,
+            recommendedRank: 25,
+            resinCost: 20,
+            scheduledDaysOfWeek: [],
+            treeRewards: [],
+          },
+        ],
       },
     });
   });
