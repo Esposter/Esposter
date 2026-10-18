@@ -30,6 +30,7 @@ describe(readModel, () => {
   let executions = 0;
   let readings: ModelReadings;
   let tensorCounts: { after: number; before: number };
+  let twoTonesReadings: ModelReadings;
 
   beforeAll(async () => {
     const model = await readShippedModel();
@@ -38,6 +39,7 @@ describe(readModel, () => {
     readings = await readModel(model, tone);
     tensorCounts = { after: memory().numTensors, before };
     executions = execute.mock.calls.length;
+    twoTonesReadings = await readModel(model, twoTones);
   });
 
   test("hears a tone's pitch", () => {
@@ -58,11 +60,8 @@ describe(readModel, () => {
     expect({ executions, frames: readings.frames.length }).toStrictEqual({ executions: 1, frames: 140 });
   });
 
-  test("hears the notes the TensorFlow.js export heard", async () => {
+  test("hears the notes the TensorFlow.js export heard", () => {
     expect.hasAssertions();
-
-    const model = await readShippedModel();
-    const twoTonesReadings = await readModel(model, twoTones);
 
     expect(
       createNotes(twoTonesReadings).map(({ durationFrames, pitchMidi, startFrame }) => ({
