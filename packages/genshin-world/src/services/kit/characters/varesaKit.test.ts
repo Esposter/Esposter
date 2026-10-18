@@ -104,4 +104,29 @@ describe(createVaresaKitBehaviour, () => {
     expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
     expect(hasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(true);
   });
+
+  test("a burst inside the Nightsoul Blessing is the Fiery Passion Flying Kick, and one outside it is her burst", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createVaresaCombatant());
+    expect(VARESA_KIT.elementalBurstVariant?.checkIsActive(context)).toBe(false);
+    VARESA_KIT.elementalBurst.onStart?.(context);
+    expect(VARESA_KIT.elementalBurstVariant?.checkIsActive(context)).toBe(true);
+  });
+
+  test("the Fiery Passion Flying Kick lands at 88 frames of 122 with Poise 150", () => {
+    expect.hasAssertions();
+    expect(
+      VARESA_KIT.elementalBurstVariant?.action.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
+    ).toStrictEqual([88]);
+    expect(VARESA_KIT.elementalBurstVariant?.action.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([150]);
+    expect(Math.round((VARESA_KIT.elementalBurstVariant?.action.seconds ?? 0) * 60)).toBe(122);
+  });
+
+  test("the Fiery Passion Flying Kick fills her Nightsoul points to 40, as her burst does", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createVaresaCombatant());
+    VARESA_KIT.elementalSkill.onStart?.(context);
+    VARESA_KIT.elementalBurstVariant?.action.onStart?.(context);
+    expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
+  });
 });

@@ -1,4 +1,5 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
@@ -35,21 +36,28 @@ const enterNightsoulAtMaximum = (kitEffectState: KitEffectState, characterId: nu
   });
 };
 
+// Fills her points to their maximum and enters the Blessing, as her burst and its Fiery Passion Flying Kick both do
+const fillNightsoulPoints = ({ activeCombatant, kitEffectState }: KitContext): void => {
+  gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_MAXIMUM);
+  enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
+};
+
 // Varesa's behaviour outside her Blessing: her Nightsoul points, the Blessing a full set enters for 15 seconds, from her
-// Skill's press, her high and low plunges and her burst, as gcsim's do. Not built: the Fiery Passion forms, which replace
-// Rush, Flying Kick and Volcanic Kablam in the Blessing and need a skill variant the kit lacks, and the apex state with its
-// Volcanic Kablam and the Follow-Up Strike after Rush. The points land at each action's start, where gcsim lands them at
+// Skill's press, her high and low plunges and her burst, as gcsim's do. Her burst inside the Blessing is the Fiery Passion
+// Flying Kick, which gcsim checks the Blessing for at the cast (burst.go:68). Not built: the Fiery Passion Rush, which
+// Replaces Rush in the Blessing and needs a skill variant the kit lacks, and the apex state with its Volcanic Kablam and
+// The Follow-Up Strike after Rush. The points land at each action's start, where gcsim lands them at
 // Their hitmarks, and her free Rush after a plunge enters the Blessing is not built, so its cooldown is not waived
 // Constellation 1 needs the Ascension talent Tag-Team Triple Jump's enhancement, which the kit does not build
 // Constellation 2 needs Apex Drive after a Plunging Attack, which the kit does not build
 // Constellation 4 needs the buffs by Varesa's state on Guardian Vent, which the kit does not build
 // Constellation 6 needs Apex Drive's Energy and a CRIT DMG bonus, which no strike hook can apply here
 export const createVaresaKitBehaviour = (): KitBehaviour => ({
-  burst: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
-      gainNightsoulPoints(kitEffectState, activeCombatant.characterId, NIGHTSOUL_MAXIMUM);
-      enterNightsoulAtMaximum(kitEffectState, activeCombatant.characterId);
-    },
+  burst: { onStart: fillNightsoulPoints },
+  burstVariant: {
+    checkIsActive: ({ activeCombatant, kitEffectState }) =>
+      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+    onStart: fillNightsoulPoints,
   },
   plunges: {
     high: {
