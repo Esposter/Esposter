@@ -70,8 +70,7 @@ const checkIsStrikeOn = (event: KitEvent, characterId: number): boolean =>
 // Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
 // Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
 // Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1
-// And 6 are built, the sixth's wave on a party member's elemental normal attack. Not built: Ascension 1's instant finish
-// Of a charge on a hit taken, which gcsim itself leaves to a TODO; Ascension 4's DMG and the Prayer's 20% DMG Bonus on the
+// And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's instant finish of a charge on a hit taken is built, see its design note. Not built: Ascension 4's DMG and the Prayer's 20% DMG Bonus on the
 // Team's normal attacks, as no hook reads another member's normal attack's DMG; Constellation 2's Max HP, as a buff on Max
 // HP is not read back into maxHealth; Constellation 4's shorter hold cooldown, as a hold's cooldown is one number on the
 // Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
