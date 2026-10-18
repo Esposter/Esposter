@@ -19,10 +19,10 @@ interface ArtifactSlotStats {
 interface Props {
   // The Enhance button's label, the game's word for raising a worn artifact's level with its EXP
   enhanceLabel: string;
+  // Per slot, whether Equip is disabled there, which it is while no artifact in the bag can be put on that slot
+  equipDisabledSlots: boolean[];
   // The Equip button's label, shown while the picked slot is empty
   equipLabel: string;
-  // Whether Equip is disabled, which it is while no artifact in the bag can be put on the picked slot
-  isEquipDisabled: boolean;
   // The words the set bonus block shows while no bonus is active
   noSetBonusLabel: string;
   // The set bonus block's heading, the game's word for its bonuses
@@ -39,8 +39,8 @@ interface Props {
 
 const {
   enhanceLabel,
+  equipDisabledSlots,
   equipLabel,
-  isEquipDisabled,
   noSetBonusLabel,
   setBonusHeading,
   setBonusLines,
@@ -112,7 +112,7 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
       <GameButton
         v-else
         class="button"
-        :disabled="isEquipDisabled"
+        :disabled="equipDisabledSlots[selectedIndex]"
         :kind="GameButtonKind.Pill"
         @click="emit('equip', selectedIndex)"
       >

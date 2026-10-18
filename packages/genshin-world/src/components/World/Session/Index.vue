@@ -2104,6 +2104,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :material-data-map
           :max-stamina="STAMINA_MAX"
           :name-text
+          :reliquary-sets
           :stat-tables
           :talent-upgrade-map
           :traveler-bonus-lines

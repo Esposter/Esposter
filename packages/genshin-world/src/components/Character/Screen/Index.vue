@@ -9,6 +9,7 @@ import type { Element } from "#src/models/Element";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
@@ -18,9 +19,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
+import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
 import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
+import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
@@ -84,6 +87,8 @@ interface Props {
   maxStamina: number;
   // The names the stat tables cite, in the reader's language, by their text id
   nameText: Readonly<Record<string, string>>;
+  // The game's artifact sets, by which a worn artifact's bag definition is rebuilt and the bag's pieces are named
+  reliquarySets: readonly ReliquarySetData[];
   // The game's tables the characters' attributes are summed from
   statTables: StatTables;
   // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
@@ -113,6 +118,7 @@ const {
   materialDataMap,
   maxStamina,
   nameText,
+  reliquarySets,
   statTables,
   talentUpgradeMap,
   travelerBonusLines = [],
@@ -323,6 +329,29 @@ const upgradeTalentAt = (index: number) => {
   inventory.value = raised.inventory;
   wallet.value = raised.wallet;
 };
+// The bag's best piece for the picked slot goes on the character, and the piece it wore goes back to the bag
+const equipArtifactAt = (index: number) => {
+  const slot = ARTIFACT_SLOT_ORDER[index];
+  if (!character.value || !slot) return;
+  const equipped = equipBagArtifact(inventory.value, character.value, slot, { names: nameText, reliquarySets });
+  characters.value = characters.value.map((item) => (item.id === equipped.character.id ? equipped.character : item));
+  inventory.value = equipped.inventory;
+};
+// The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag has no room for it
+const unequipArtifactAt = (index: number) => {
+  const slot = ARTIFACT_SLOT_ORDER[index];
+  if (!character.value || !slot) return;
+  const unequipped = unequipArtifactToBag(inventory.value, character.value, slot, { names: nameText, reliquarySets });
+  if (!unequipped) return;
+  characters.value = characters.value.map((item) =>
+    item.id === unequipped.character.id ? unequipped.character : item,
+  );
+  inventory.value = unequipped.inventory;
+};
+// Per slot, whether the bag holds no piece for it, which Equip is disabled on
+const equipDisabledSlots = computed(() =>
+  ARTIFACT_SLOT_ORDER.map((slot) => !inventory.value.items.some(({ artifact }) => artifact?.slot === slot)),
+);
 // The set the Activate button presses the next of, and whether that is refused now, a character with no set refused too
 const constellations = computed(() => characterIdConstellationsMap.get(characterId.value) ?? []);
 const isActivateDisabled = computed(
@@ -368,14 +397,16 @@ const activate = () => {
       <CharacterMenuArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
+        :equip-disabled-slots="equipDisabledSlots"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
-        is-equip-disabled
         :no-set-bonus-label="noSetBonusLabel"
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
         :set-bonus-lines="setBonusLines"
         :slot-names="artifactSlotNames"
         :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
+        @equip="equipArtifactAt"
+        @unequip="unequipArtifactAt"
       />
       <CharacterMenuConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"

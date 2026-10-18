@@ -2,8 +2,8 @@
 // The panel offers, which no artifact in the bag can take yet, and no set bonus active
 export const props = {
   enhanceLabel: "Enhance",
+  equipDisabledSlots: [true, true, true, true, true],
   equipLabel: "Equip",
-  isEquipDisabled: true,
   noSetBonusLabel: "No Set Bonus",
   setBonusHeading: "Set Bonus",
   setBonusLines: [],
