@@ -73,5 +73,5 @@
   "normalAttacks.4.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 31 },
   "normalAttacks.4.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 3131 } },
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 19.71 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }
