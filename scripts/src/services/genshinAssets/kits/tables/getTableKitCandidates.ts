@@ -4,7 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
-import { characterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/characterIdSlotHitLabelsMap";
+import { CharacterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/CharacterIdSlotHitLabelsMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CombatTalent, KitPlunge } from "genshin-world";
 
@@ -184,7 +184,7 @@ export const getTableKitCandidates = ({
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
     else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalBurst, tableLabel);
   }
-  const slotLabels = characterIdSlotHitLabelsMap.get(characterId);
+  const slotLabels = CharacterIdSlotHitLabelsMap.get(characterId);
   for (const [path, { combatTalent, labels }] of Object.entries(slotLabels?.hits ?? {}))
     addSlotHitLabels(path, combatTalent, labels);
   for (const [parent, { combatTalent, count, tableLabel }] of slotArrayLengthMap)

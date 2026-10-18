@@ -10,7 +10,7 @@ const SKILL = CombatTalent.ElementalSkill;
 // Attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her strikes, charged attack and Spirit Steed's
 // Stride while it holds, each stance read from its skill's labels. Illuga's Hold is his skill's hold, read from its Hold
 // DMG label. Vesna's skill tag is the wiki's, so her skill reads its label here like her burst
-export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
   // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
   // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
   [
