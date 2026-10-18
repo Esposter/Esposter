@@ -46,4 +46,13 @@ describe(removeExpiredMails, () => {
 
     expect(removeExpiredMails([mail(true)], rows, new Set([ROW.id]), PAST_EXPIRY)).toStrictEqual([mail(true)]);
   });
+
+  // A mail the player starred moves to the Gift Mail Box, which keeps it past its expiry, as it keeps a birthday mail
+  test("a starred mail is kept past its expiry", () => {
+    expect.hasAssertions();
+
+    const starred: MailSave = { ...mail(false), isStarred: true };
+
+    expect(removeExpiredMails([starred], rows, new Set(), PAST_EXPIRY)).toStrictEqual([starred]);
+  });
 });

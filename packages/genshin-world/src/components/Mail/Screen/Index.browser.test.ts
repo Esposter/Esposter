@@ -96,4 +96,28 @@ describe("mailScreen", () => {
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }))
       .toBeDisabled();
   });
+
+  // A starred mail leaves the Mailbox and is listed under the Gift Mail Box tab
+  test("should list a starred mail under the gift mail box tab", async () => {
+    expect.hasAssertions();
+
+    render(MailScreen, { ...props, mails: [{ ...mail(false), isStarred: true }] });
+
+    await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).not.toBeInTheDocument();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
+
+    await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).toBeVisible();
+  });
+
+  // The star pressed on the selected mail gives its id back to the screen's owner
+  test("should star the selected mail when its star is pressed", async () => {
+    expect.hasAssertions();
+
+    const onStar = vi.fn<(mailId: number) => void>();
+    render(MailScreen, { ...props, mails: [mail(false)], onStar });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailStar] }).click();
+
+    expect(onStar).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+  });
 });
