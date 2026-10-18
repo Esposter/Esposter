@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
@@ -62,6 +63,11 @@ const createNormalAttackDamageTaken = (striker: Combatant): KitDamageTakenEvent 
   isDefeated: false,
   kind: KitEventKind.DamageTaken,
   striker,
+});
+
+const createSkillDamageTaken = (striker: Combatant): KitDamageTakenEvent => ({
+  ...createNormalAttackDamageTaken(striker),
+  attackTag: AttackTag.ElementalSkill,
 });
 
 describe(createCandaceKitBehaviour, () => {
@@ -223,6 +229,43 @@ describe(createCandaceKitBehaviour, () => {
     landAttack();
 
     expect({ afterFirst, afterSecond: countSummons(kitEffectState) }).toStrictEqual({ afterFirst: 1, afterSecond: 1 });
+  });
+
+  test("constellation 2 gives Candace 20% Max HP for 15 seconds from each Heron's Sanctum hit on an opponent", () => {
+    expect.hasAssertions();
+    const combatant = createCandaceCombatant(2);
+    const kitEffectState: KitEffectState = { effects: [] };
+    CANDACE_KIT.onKitEvent?.(
+      createSkillDamageTaken(combatant),
+      createKitTestContext(combatant, { activeCombatant: combatant, kitEffectState }),
+      combatant,
+    );
+    const healthBuffs = kitEffectState.effects.filter(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.HealthPercent,
+    );
+
+    expect(
+      healthBuffs.map(({ amount, characterId, secondsRemaining }) => ({ amount, characterId, secondsRemaining })),
+    ).toStrictEqual([{ amount: 0.2, characterId: CANDACE_CHARACTER_ID, secondsRemaining: 15 }]);
+  });
+
+  test("below constellation 2, or on a skill hit another member strikes, no Max HP buff starts", () => {
+    expect.hasAssertions();
+    const combatant = createCandaceCombatant(1);
+    const swordMember = createCombatant(KUKI_CHARACTER_ID, WeaponType.Sword);
+    const kitEffectState: KitEffectState = { effects: [] };
+    CANDACE_KIT.onKitEvent?.(
+      createSkillDamageTaken(combatant),
+      createKitTestContext(combatant, { activeCombatant: combatant, kitEffectState }),
+      combatant,
+    );
+    CANDACE_KIT.onKitEvent?.(
+      createSkillDamageTaken(swordMember),
+      createKitTestContext(combatant, { activeCombatant: swordMember, kitEffectState }),
+      createCandaceCombatant(2),
+    );
+
+    expect(kitEffectState.effects.some((effect) => effect.kind === "buff")).toBeFalsy();
   });
 
   // Candace's combatant at an ascension, holding her skill for two steps with the given event heard after the first, and

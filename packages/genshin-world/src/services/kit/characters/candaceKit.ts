@@ -8,12 +8,14 @@ import type { KitField } from "#src/models/kit/KitField";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -35,6 +37,11 @@ const WAVES_STATUS_ID = "candace-waves";
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/candace
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_PRAYER_EXTRA_SECONDS = 3;
+// Constellation 2: Heron's Sanctum's hit on an opponent gives her Max HP 20% more for 15 seconds, and each hit restarts it
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_HEALTH_SHARE = 0.2;
+const CONSTELLATION_2_SECONDS = 15;
+const CONSTELLATION_2_SOURCE = "candace-constellation-2";
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 2.3;
 const CONSTELLATION_6_STATUS_ID = "candace-constellation-6";
@@ -69,13 +76,14 @@ const checkIsStrikeOn = (event: KitEvent, characterId: number): boolean =>
     event.sourceCharacterId === undefined) ||
   (event.kind === KitEventKind.ShieldAbsorbed && event.struckCharacterId === characterId);
 
-// Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
-// Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
-// Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1
-// And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's instant finish of a charge on a hit taken is built, see its design note. Not built: Ascension 4's DMG and the Prayer's 20% DMG Bonus on the
-// Team's normal attacks, as no hook reads another member's normal attack's DMG; Constellation 2's Max HP buff, as
-// No hook starts it on Heron's Sanctum's hit on an opponent; Constellation 4's shorter hold cooldown, as a hold's
-// Cooldown is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
+// Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands,
+// And Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on
+// The field, and on each swap while it holds infuses the one coming on and sets a wave off round the body.
+// Constellations 1, 2 and 6 are built: the sixth's wave on a party member's elemental normal attack, and the second's
+// Max HP buff from each Heron's Sanctum hit on an opponent. Ascension 1's instant finish of a charge on a hit taken is
+// Built, see its design note. Not built: Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks,
+// As no hook reads another member's normal attack's DMG; Constellation 4's shorter hold cooldown, as a hold's cooldown
+// Is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
 export const createCandaceKitBehaviour = ({
   kit,
   readHit,
@@ -139,6 +147,19 @@ export const createCandaceKitBehaviour = ({
       // Ascension 1: a strike on her while she holds her skill completes its charge, so its release plays the charged hold
       if (ascension >= ASCENSION_1 && checkIsStrikeOn(event, characterId))
         completeKitSkillCharge(kitEffectState, characterId);
+      // Constellation 2 needs no Prayer: Heron's Sanctum's hit on an opponent gives her Max HP the buff
+      if (
+        constellationCount >= CONSTELLATION_2 &&
+        event.kind === KitEventKind.DamageTaken &&
+        event.attackTag === AttackTag.ElementalSkill &&
+        event.striker.characterId === characterId
+      )
+        buffKitMember(kitEffectState, characterId, {
+          amount: CONSTELLATION_2_HEALTH_SHARE,
+          attribute: Attribute.HealthPercent,
+          secondsRemaining: CONSTELLATION_2_SECONDS,
+          source: CONSTELLATION_2_SOURCE,
+        });
       if (!findPrayerField(effects, characterId)) return;
       if (event.kind === KitEventKind.CharacterSwapped) {
         const incoming = characterIdCombatantMap.get(event.characterId);

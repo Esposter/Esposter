@@ -1,6 +1,6 @@
 ## Purpose
 
-Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1 and 6, and what is left to build, which includes Constellations 2 and 4.
+Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1, 2 and 6, and what is left to build, which includes Constellation 4.
 
 ## Requirements
 
@@ -136,12 +136,22 @@ At constellation 6, while the Prayer stands, an elemental normal attack by the c
 - **WHEN** another elemental normal attack lands
 - **THEN** no wave is set off
 
-### Requirement: Constellations 2 and 4 are not built
+### Requirement: Constellation 2 raises Max HP from Heron's Sanctum's hits
 
-Candace's Constellations 2 and 4 SHALL NOT take effect: Constellation 2's Max HP buff is not started by Heron's Sanctum's hit on an opponent, and Constellation 4's shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
+At constellation 2, each Heron's Sanctum hit by Candace on an opponent SHALL give her Max HP 20% more for 15 seconds, and each hit SHALL restart those 15 seconds.
 
-#### Scenario: Constellation 2 and 4 do nothing
+#### Scenario: A skill hit on an opponent raises Max HP
 
-- **GIVEN** Candace has Constellation 2 or Constellation 4
+- **GIVEN** Candace has Constellation 2
+- **WHEN** her Heron's Sanctum hits an opponent
+- **THEN** her Max HP is 20% higher for 15 seconds
+
+### Requirement: Constellation 4 is not built
+
+Candace's Constellation 4 SHALL NOT take effect: its shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
+
+#### Scenario: Constellation 4 does nothing
+
+- **GIVEN** Candace has Constellation 4
 - **WHEN** the player fights with Candace
 - **THEN** that constellation has no effect
