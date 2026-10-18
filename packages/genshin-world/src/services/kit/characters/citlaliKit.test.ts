@@ -2,9 +2,11 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
+import { Element } from "#src/models/Element";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -307,5 +309,27 @@ describe(createCitlaliKitBehaviour, () => {
     context.strikes.length = 0;
     stepKitEffects(FRAME_SECONDS, context);
     expect(context.strikes.at(-1)?.hit.additiveBaseDamageBonus?.(combatant)).toBe(900);
+  });
+
+  test("the Opal Shield comes 37 frames after the press, as a Cryo shield of Elemental Mastery times its share plus its flat health", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCitlaliCombatantAt(0, 1000));
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    stepFrames(context, 36);
+    expect(context.kitEffectState.effects.some((effect) => effect.kind === "shield")).toBe(false);
+    stepFrames(context, 1);
+    const shield = context.kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+    expect(shield?.element).toBe(Element.Cryo);
+    expect(shield?.health).toBeCloseTo(5.76 * 1000 + 1386.6759);
+  });
+
+  test("the Opal Shield lasts twenty seconds, then ends", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCitlaliCombatantAt(0, 1000));
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, toKitSeconds(37 + 19 * 60));
+    expect(context.kitEffectState.effects.some((effect) => effect.kind === "shield")).toBe(true);
+    stepKitSeconds(context, toKitSeconds(60));
+    expect(context.kitEffectState.effects.some((effect) => effect.kind === "shield")).toBe(false);
   });
 });

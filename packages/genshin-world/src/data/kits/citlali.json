@@ -1,6 +1,7 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.opalShield": { "file": "skill.go", "line": 72, "source": "Gcsim", "value": 37 },
   "hits.frostfallStorm.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -14,6 +15,12 @@
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.opalShieldElementalMasteryShare": {
+    "cause": "Unsourced",
+    "value": { "index": 1, "proudSkillGroupId": 10732 }
+  },
+  "parameters.opalShieldFlatHealth": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 10732 } },
+  "parameters.opalShieldSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 10732 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

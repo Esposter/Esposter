@@ -4,10 +4,12 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
@@ -15,6 +17,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 
@@ -53,14 +56,20 @@ const createElementalMasteryFlatDamage =
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
 // Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit
 // Not built: Ascension 1 and Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below
-// 50 points and outlast its points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres,
-// Which the burst's start cannot place since it reads no enemies but its target
+// 50 points and outlast its points, and the skulls her burst summons on enemies within 7 metres, which the burst's start
+// Cannot place since it reads no enemies but its target
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
-export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
+export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
   const frostfallStormHit = readHit("frostfallStorm", {
     additiveBaseDamageBonus: createElementalMasteryFlatDamage(FROSTFALL_STORM_ELEMENTAL_MASTERY_SHARE),
   });
+  // The Opal Shield as her record holds it: its share of Elemental Mastery and its flat health, which gcsim's shieldEM and
+  // ShieldFlat give at her talent level, its seconds, and the frames after the press it comes at
+  const opalShieldElementalMasteryShare = readParameter("opalShieldElementalMasteryShare");
+  const opalShieldFlatHealth = readParameter("opalShieldFlatHealth");
+  const opalShieldSeconds = readParameter("opalShieldSeconds");
+  const opalShieldStartSeconds = readSeconds("opalShield");
 
   // Strikes every living enemy in the Frostfall Storm's circle round the body, the circle gcsim centres on the player
   const strikeFrostfallStorm = (context: KitContext, combatant: Combatant) => {
@@ -137,6 +146,19 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
           secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
         });
         enterOpalFire(context);
+        // The Opal Shield comes from the press as gcsim's addShield does (skill.go line 72), with the Elemental Mastery Citlali
+        // holds when it comes, as shield.go reads it then
+        scheduleKitTask(kitEffectState, characterId, opalShieldStartSeconds, (tickContext) => {
+          const combatant = tickContext.characterIdCombatantMap.get(characterId);
+          if (combatant === undefined) return;
+          castKitShield(tickContext.kitEffectState, characterId, {
+            element: Element.Cryo,
+            health:
+              opalShieldElementalMasteryShare * combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] +
+              opalShieldFlatHealth,
+            secondsRemaining: opalShieldSeconds,
+          });
+        });
       },
     },
   };

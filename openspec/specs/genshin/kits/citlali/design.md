@@ -4,13 +4,13 @@ Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour
 
 ## Not yet built
 
-- **The Opal Shield is not built.** It is the shield the skill gives the party's active character at 37 frames, scaling with Elemental Mastery, and it waits on a timed shield the kit does not hold.
 - **The Spirit Vessel skulls are not built.** Ice Storm summons a skull on each of the first three enemies within 7 of Citlali as it is cast, and each lands at a random time between 87 and 117 frames after the burst's hit. The start is given the world's context, so it can read the enemies and draw those times from its random source, but no skull is written yet, and the burst's hit is Ice Storm alone.
 - **Citlali's Ascension 1 and Constellations 1, 2, 4 and 6 are not built.** Each is named with its wait in `citlaliKit.ts`.
 
 ## Decisions
 
 - **Ascension 4 gives points on each Nightsoul burst on the team, and flat damage from Elemental Mastery.** gcsim's `a4` subscribes to `OnNightsoulBurst` for the whole team (`asc.go` 57 to 64), so the kit answers the team's `NightsoulBurst` event whichever member is on the field. Its flat damage (`a4Dmg`, `asc.go` 66 to 76) is 12 times Elemental Mastery on Ice Storm and 0.9 times it on each Frostfall Storm, each priced by the hit's `additiveBaseDamageBonus` from its striker's Elemental Mastery.
+- **The Opal Shield comes 37 frames after the press, with the Elemental Mastery Citlali holds then.** gcsim's `addShield` (`skill.go` line 72) queues it 37 frames after the press, and `shield.go` lines 13 to 28 give it a Cryo health of its share of Elemental Mastery plus its flat health, for 20 seconds. Those are proud group 10732's indexes 1, 2 and 3, read at talent level 1 as the record holds them (5.76 times Elemental Mastery and 1386.7 flat, both matching gcsim's `shieldEM` and `shieldFlat` at level 1). The kit schedules it with `scheduleKitTask` and reads Citlali's Elemental Mastery from the team's combatants when it comes, as gcsim reads her stat then.
 - **The strikes land 10 frames after their hitmarks.** gcsim queues each strike with a 10-frame travel, so each lands at its hitmark plus 10, as the bow kits and Ororon do.
 - **Her strikes and charged attack give no poise.** gcsim gives them none, so `citlaliKit.ts` stands them at 0, as Ororon's do. A recording of the game's poise on them would settle it.
 - **Her skill's press enters the Blessing with its points plus 24, for 20 seconds, and her burst gives 24 points.** gcsim queues the entry 18 frames after the press (`skill.go`) and gives the burst's 24 at its delayed start (`burst.go`); the kit applies both when each action starts. The burst's 24 go through `generateKitNightsoulPoints`, so the generation event reaches the team's fields as gcsim's `GeneratePoints` raises it. With no Opal Fire state, the Blessing holds its points, as gcsim's does.
@@ -21,10 +21,10 @@ Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour
 
 ## Key files
 
-| File                                                                       | Role                                                                                                                                                                                                                                                   |
-| :------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/citlaliKit.ts`         | `createCitlaliKitBehaviour`, Citlali's strikes, charged attack, Obsidian Tzitzimitl, Ice Storm, plunges, the Nightsoul Blessing her skill enters, and the Opal Fire with Itzpapa's Frostfall Storm; the Opal Shield and the skulls wait on their hooks |
-| `packages/genshin-world/src/services/combat/internalCooldown/constants.ts` | `CITLALI_FROSTFALL_STORM_INTERNAL_COOLDOWN_GROUP`, the Frostfall group's restart and Cryo sequence, mapped by its tag in `InternalCooldownTagGroupMap.ts`                                                                                              |
+| File                                                                       | Role                                                                                                                                                                                                                                                               |
+| :------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/citlaliKit.ts`         | `createCitlaliKitBehaviour`, Citlali's strikes, charged attack, Obsidian Tzitzimitl, Ice Storm, plunges, the Nightsoul Blessing her skill enters, the Opal Fire with Itzpapa's Frostfall Storm, and the Opal Shield her skill casts; the skulls wait on their hook |
+| `packages/genshin-world/src/services/combat/internalCooldown/constants.ts` | `CITLALI_FROSTFALL_STORM_INTERNAL_COOLDOWN_GROUP`, the Frostfall group's restart and Cryo sequence, mapped by its tag in `InternalCooldownTagGroupMap.ts`                                                                                                          |
 
 ## Sources
 

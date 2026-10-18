@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. The Opal Shield, the Spirit Vessel skulls and her passives wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. The Spirit Vessel skulls and her passives wait on their hooks.
 
 ## Requirements
 
@@ -155,6 +155,26 @@ At Ascension 4 Citlali SHALL gain four Nightsoul points on each Nightsoul burst 
 - **GIVEN** Citlali is at Ascension 4 with 1000 Elemental Mastery
 - **WHEN** Ice Storm's hit is priced
 - **THEN** it adds 12000 flat damage
+
+### Requirement: The Opal Shield
+
+Citlali's skill press SHALL cast the Opal Shield 37 frames after it, as a Cryo shield of her Elemental Mastery times 5.76 plus 1386.7 health at talent level 1, lasting 20 seconds.
+
+#### Scenario: The Opal Shield comes 37 frames after the press
+
+- **GIVEN** Citlali presses Obsidian Tzitzimitl with 1000 Elemental Mastery
+- **WHEN** 36 frames pass
+- **THEN** no shield is on the team
+- **WHEN** one more frame passes
+- **THEN** the team holds a Cryo shield of about 7146.7 health
+
+#### Scenario: The Opal Shield lasts twenty seconds
+
+- **GIVEN** the Opal Shield has come
+- **WHEN** 19 seconds pass
+- **THEN** the shield is still on the team
+- **WHEN** another second passes
+- **THEN** the shield has ended
 
 ### Requirement: Strikes and charged attack deal no poise
 
