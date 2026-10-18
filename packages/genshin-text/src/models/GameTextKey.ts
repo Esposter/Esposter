@@ -75,6 +75,10 @@ export enum GameTextKey {
   BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The blossom of an outcrop that gives Character EXP materials, by its English name
+  BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
+  // The blossom of an outcrop that gives Mora, by its English name
+  BlossomOfWealth = "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
   BrilliantChrysanthemum = "2302571844",
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
@@ -588,6 +592,10 @@ export enum GameTextKey {
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Trishiraite = "239145148",
   Uid = "UI_PLAYER_PROFILE_UID",
+  // The offer that spends a Condensed Resin on a challenge's claim, by its English name
+  UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that spends Original Resin on a challenge's claim, by its English name
+  UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
   Viparyas = "3570846172",
   // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
