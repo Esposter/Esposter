@@ -5,6 +5,7 @@ import type { PuzzleKind } from "genshin-world";
 export const PuzzleKindLabelIdsMap: Record<PuzzleKind, number[]> = {
   ElementalMonument: [70],
   Seelie: [18, 148, 205],
+  SeelieCourt: [147],
   ShrineOfDepths: [212, 411, 509, 577, 703, 835],
   TimeTrialChallenge: [64],
 };
