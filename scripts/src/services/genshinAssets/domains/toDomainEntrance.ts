@@ -27,6 +27,6 @@ export const toDomainEntrance = (
     id: `domain-entrance-${entry.id}`,
     kind: LandmarkKind.DomainEntrance,
     position: { x: roundFitted(x - originX), z: roundFitted(originZ - z) },
-    rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS,
+    rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS || 0,
   };
 };

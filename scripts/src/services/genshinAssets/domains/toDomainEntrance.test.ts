@@ -45,6 +45,13 @@ describe(toDomainEntrance, () => {
     });
   });
 
+  test("a point with no turn faces zero, not negative zero", () => {
+    expect.hasAssertions();
+
+    const point: DumpedEntryPoint = { tranPos: { x: 150, y: 30, z: 300 } };
+    expect(toDomainEntrance(createEntry({}), point, ORIGIN)?.rotation).toBe(0);
+  });
+
   test("a normal entry gives no domain entrance", () => {
     expect.hasAssertions();
 
