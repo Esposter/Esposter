@@ -10,7 +10,6 @@
   },
   "hits.coordinatedAttack.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5232 } },
   "hits.coordinatedAttack.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.musouNoHitotachi.hitmarkFrames": { "cause": "DiffersFromSource", "value": 98 },
   "hits.musouNoHitotachi.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5239 } },
   "hits.musouNoHitotachi.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
