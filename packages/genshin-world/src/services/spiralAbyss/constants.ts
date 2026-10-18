@@ -9,6 +9,9 @@ export const ABYSS_CORRIDOR_LAST_FLOOR_INDEX = 8;
 
 // The key the Corridor's progress is saved under, the one cycle that never resets; a Moon Spire period is saved under its id
 export const ABYSS_CORRIDOR_CYCLE_KEY = "corridor";
+// The reward group the Corridor's floors pay from. Its floors 1 to 8 give the same rewards in groups 1, 2 and 13, so
+// The group read changes none
+export const ABYSS_CORRIDOR_REWARD_GROUP = 1;
 // The Adventure Rank the Abyss opens at, as the wiki's Spiral Abyss page gives it
 export const ABYSS_OPEN_ADVENTURE_RANK = 20;
 // A Ley Line Monolith starts at full health, and a chamber with none has no percent at all

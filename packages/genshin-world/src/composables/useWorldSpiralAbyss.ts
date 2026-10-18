@@ -27,7 +27,11 @@ import { getAbyssChamberBlessing } from "#src/services/spiralAbyss/getAbyssChamb
 import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChamberSeconds";
 import { getAbyssCycleKey } from "#src/services/spiralAbyss/getAbyssCycleKey";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
-import { ABYSS_CORRIDOR_LAST_FLOOR_INDEX, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import {
+  ABYSS_CORRIDOR_LAST_FLOOR_INDEX,
+  ABYSS_CORRIDOR_REWARD_GROUP,
+  ABYSS_ENTRANCE_POSITION,
+} from "#src/services/spiralAbyss/constants";
 import { readAbyssBenedictionChoices } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
 import { readAbyssEnemyKinds } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
 import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
@@ -209,15 +213,21 @@ export const useWorldSpiralAbyss = ({
     abyssChamberPeriod.value = undefined;
     bonusLines.value = [];
     if (!checkIsAbyssChallengeCleared(arena.challenge)) return;
-    const rewards = abyssRewards.value;
-    const reward = rewards?.floorRewards.find(({ floorIndex }) => floorIndex === arena.floor.index);
-    if (rewards === undefined || reward === undefined) {
-      console.error(`no rewards read for floor ${arena.floor.index}, so its stars are not recorded`);
-      return;
-    }
     const cycleKey = getAbyssCycleKey(arena.floor, period);
     if (cycleKey === undefined) {
       console.error(`no Moon Spire period for floor ${arena.floor.index}, so its stars are not recorded`);
+      return;
+    }
+    const rewards = abyssRewards.value;
+    // A Moon Spire floor's rewards are the group its period names, and the Corridor's its one fixed group, since the
+    // Record holds every group of a floor
+    const rewardGroup =
+      arena.floor.index <= ABYSS_CORRIDOR_LAST_FLOOR_INDEX ? ABYSS_CORRIDOR_REWARD_GROUP : period?.rewardGroup;
+    const reward = rewards?.floorRewards.find(
+      (floorReward) => floorReward.floorIndex === arena.floor.index && floorReward.rewardGroup === rewardGroup,
+    );
+    if (rewards === undefined || reward === undefined) {
+      console.error(`no rewards read for floor ${arena.floor.index}, so its stars are not recorded`);
       return;
     }
     const settlement = settleAbyssClear({

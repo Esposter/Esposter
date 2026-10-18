@@ -37,8 +37,11 @@ vi.mock(import("#src/services/spiralAbyss/readAbyssBenedictionChoices"), () => (
 vi.mock(import("#src/services/spiralAbyss/readAbyssFloorRewards"), () => ({
   readAbyssFloorRewards: () =>
     Promise.resolve({
-      floorRewards: [reward],
-      rewardItems: { [REWARD_ID]: [{ count: PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }] },
+      floorRewards: [otherGroupReward, reward],
+      rewardItems: {
+        [OTHER_REWARD_ID]: [{ count: OTHER_PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }],
+        [REWARD_ID]: [{ count: PRIMOGEM_COUNT, itemId: PRIMOGEM_ITEM_ID }],
+      },
     }),
 }));
 
@@ -49,7 +52,10 @@ const DESCRIBE_ID = 10_101;
 const FLOOR_ID = 1001;
 const FLOOR_INDEX = 9;
 const MONSTER_LEVEL = 24;
+const OTHER_PRIMOGEM_COUNT = 3;
+const OTHER_REWARD_ID = 102;
 const PERIOD_ID = 1;
+const PERIOD_REWARD_GROUP = 2;
 const PRIMOGEM_COUNT = 5;
 const PRIMOGEM_ITEM_ID = 201;
 const REWARD_ID = 101;
@@ -70,20 +76,22 @@ const period: AbyssPeriod = {
   closesAt: gameWallClock(NOW.add({ hours: 24 })),
   floorIds: [FLOOR_ID],
   id: PERIOD_ID,
-  rewardGroup: 1,
+  rewardGroup: PERIOD_REWARD_GROUP,
   startsAt: gameWallClock(NOW.subtract({ hours: 24 })),
 };
+// The period's reward group pays, not the first group the record holds for the floor, which sorts before it
 const reward: AbyssFloorReward = {
   chamberRewardIds: [REWARD_ID],
   floorIndex: FLOOR_INDEX,
   nineStarRewardId: 203,
-  rewardGroup: 1,
+  rewardGroup: PERIOD_REWARD_GROUP,
   sixStarRewardId: 202,
   threeStarRewardId: 201,
 };
+const otherGroupReward: AbyssFloorReward = { ...reward, chamberRewardIds: [OTHER_REWARD_ID], rewardGroup: 1 };
 
 describe(useWorldSpiralAbyss, () => {
-  test("a Moon Spire chamber's clear is recorded in its period's cycle, and its rewards are paid", async () => {
+  test("a Moon Spire chamber's clear is recorded in its period's cycle, and its period's group pays", async () => {
     expect.hasAssertions();
     const events = createWorldEvents();
     const setInventory = vi.fn<(inventory: Inventory) => void>();
