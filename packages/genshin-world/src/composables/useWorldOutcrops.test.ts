@@ -47,13 +47,15 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
     completedMainQuestIds: ref(new Set<string>()),
     enemyMap: new Map(),
     events,
+    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     gameText: {},
     getGroundHeight: () => 0,
     inventory,
-    kindRules: ref(KIND_RULES),
     materialDataMap: new Map(),
     nameText: {},
     placements: ref(PLACEMENTS),
+    rank: ref(30),
+    regionStatueProgressMap: ref(new Map()),
     setInventory: (nextInventory) => {
       inventory.value = nextInventory;
     },
@@ -62,7 +64,8 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
     },
     wallet,
   });
-  outcrops.resetOutcrops(30, [], () => 0);
+  outcrops.kindRules.value = KIND_RULES;
+  outcrops.drawDayOutcrops(epoch, () => 0);
   outcrops.touchOutcropsNear(0, 0, () => 0);
   // The defeat of the camp's only enemy, which reveals the blossom
   events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
@@ -123,5 +126,31 @@ describe("useWorldOutcrops", () => {
 
     expect(outcrops.claimPrompt.value).toBeUndefined();
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora]);
+  });
+
+  test("a draw stands until the next daily reset, which draws the outcrops again", () => {
+    expect.hasAssertions();
+
+    const { outcrops } = createOutcrops();
+    outcrops.drawDayOutcrops(epoch.add({ hours: 1 }), () => 0);
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
+    ]);
+
+    outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Waiting },
+    ]);
+  });
+
+  test("a day is not drawn while the region's kinds are not loaded", () => {
+    expect.hasAssertions();
+
+    const { outcrops } = createOutcrops();
+    outcrops.kindRules.value = [];
+    outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
+    expect(outcrops.outcrops.value).toStrictEqual([
+      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
+    ]);
   });
 });
