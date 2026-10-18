@@ -5,6 +5,7 @@ import type { ExcelReputationLevelRow } from "#src/models/genshinAssets/reputati
 import type { ExcelReputationRequestRow } from "#src/models/genshinAssets/reputation/ExcelReputationRequestRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
+import { DEFAULT_HUNTING_DIFFICULTY } from "#src/services/genshinAssets/reputation/constants";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
@@ -63,7 +64,7 @@ export const buildMondstadtReputation = (): Record<string, unknown> => {
     .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
     .toSorted((firstBounty, secondBounty) => firstBounty.id - secondBounty.id)
     .map((bountyRow) => ({
-      difficulty: bountyRow.difficulty,
+      difficulty: bountyRow.difficulty ?? DEFAULT_HUNTING_DIFFICULTY,
       id: bountyRow.id,
       regionId: bountyRow.regionId,
       reward: toReputationReward(
