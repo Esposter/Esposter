@@ -87,6 +87,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       );
       // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
       const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
+      // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
       const pricedStrike = { ...strike, combatant: pricedCombatant, hit: enemyHit };
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
