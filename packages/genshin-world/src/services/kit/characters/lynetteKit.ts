@@ -4,6 +4,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -65,6 +66,6 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
         });
       },
     },
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_4),
   };
 };

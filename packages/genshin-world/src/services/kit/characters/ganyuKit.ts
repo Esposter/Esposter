@@ -5,6 +5,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -108,7 +109,7 @@ export const createGanyuKitBehaviour = ({
         { enemyStatus: getFrostflakeStatus },
       ],
     },
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= 2 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(2),
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitTaunt(kitEffectState, body, combatant, {

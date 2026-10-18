@@ -1,5 +1,7 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
+
 export const XIANYUN_CHARACTER_ID = 10_000_093;
 
 const CONSTELLATION_1 = 1;
@@ -13,5 +15,5 @@ const CONSTELLATION_1 = 1;
 // Constellation 6 needs a CRIT DMG bonus on the Driftcloud Wave, which no strike hook can apply here
 export const createXianyunKitBehaviour = (): KitBehaviour => ({
   // Purifying Wind, from Constellation 1: White Clouds at Dawn gains one more charge
-  getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+  getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
 });

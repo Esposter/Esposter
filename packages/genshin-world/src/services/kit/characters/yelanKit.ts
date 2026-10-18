@@ -1,6 +1,7 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
@@ -50,7 +51,7 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
       },
     },
     // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
     // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's marked
     // Hit does while its burst status holds
     skill: {

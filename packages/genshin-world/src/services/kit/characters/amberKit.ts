@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 
@@ -73,7 +74,7 @@ export const createAmberKitBehaviour = ({
         );
       },
     },
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_4),
     getSkillCooldownMultiplier: ({ activeCombatant }) =>
       activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     skill: {

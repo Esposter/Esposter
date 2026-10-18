@@ -7,6 +7,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -123,7 +124,7 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
       combatant.constellationCount >= CONSTELLATION_4 && healthShare < CONSTELLATION_4_HEALTH_SHARE
         ? [{ amount: CONSTELLATION_4_DEFENSE_BONUS, attribute: Attribute.DefensePercent }]
         : [],
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
     skill: { onStart: castDash },
   };
 };
