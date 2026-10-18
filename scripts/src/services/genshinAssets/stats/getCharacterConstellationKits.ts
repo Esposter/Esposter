@@ -1,7 +1,9 @@
+import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { ExcelAvatarTalentRow } from "#src/models/genshinAssets/stats/ExcelAvatarTalentRow";
 import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSkillDepotRow";
 import type { CharacterConstellationKit, Constellation, ConstellationDepot } from "genshin-world";
 
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
@@ -24,6 +26,8 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
   const talentMap = new Map(
     readExcelTable<ExcelAvatarTalentRow>("AvatarTalentExcelConfigData").map((row) => [row.talentId, row]),
   );
+  // The materials by id, which hold each set's Stella Fortuna item, and the text id of its name
+  const materialMap = new Map(readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME).map((row) => [row.id, row]));
   const skillDepotMap = readSkillDepotMap();
   const skillMap = readSkillMap();
   const actionMap = readTalentActions();
@@ -69,6 +73,14 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
         toConstellationDepot.name,
         `depot ${depotRow.id} of one Stella Fortuna per constellation`,
       );
+    const [stellaFortunaItemId] = costItemIds;
+    const stellaFortunaItem = materialMap.get(stellaFortunaItemId);
+    if (stellaFortunaItem === undefined)
+      throw new InvalidOperationError(
+        Operation.Read,
+        toConstellationDepot.name,
+        `depot ${depotRow.id} with its Stella Fortuna item ${stellaFortunaItemId} in the material table`,
+      );
 
     const constellations: Constellation[] = [];
     for (const [position, talentRow] of talentRows.entries()) {
@@ -95,7 +107,11 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
         raise,
       });
     }
-    return { constellations, depotId: depotRow.id };
+    return {
+      constellations,
+      depotId: depotRow.id,
+      stellaFortuna: { itemId: stellaFortunaItemId, nameTextId: String(stellaFortunaItem.nameTextMapHash) },
+    };
   };
 
   return readPlayableAvatarRows().flatMap(({ candSkillDepotIds, id, skillDepotId }) => {

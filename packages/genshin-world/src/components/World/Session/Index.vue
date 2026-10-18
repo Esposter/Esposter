@@ -355,6 +355,15 @@ const characterIdConstellationsMap = computed(() => {
   }
   return map;
 });
+// The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
+const stellaFortunaNameTextIdMap = computed(() => {
+  const map = new Map<number, string>();
+  for (const { characterId, depots } of constellationKits.value) {
+    const [depot] = depots;
+    if (depots.length === 1 && depot) map.set(characterId, depot.stellaFortuna.nameTextId);
+  }
+  return map;
+});
 // The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the
 // Host's
 const {
@@ -898,6 +907,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :name-text
           :stat-tables
+          :stella-fortuna-name-text-id-map="stellaFortunaNameTextIdMap"
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
