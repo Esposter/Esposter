@@ -18,8 +18,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Unbending at its first rank: below seventy per cent HP, the rank's bonus on charged attacks
-const unbendingPassiveModule = createUnbendingPassiveModule([0.7, 0.3]);
+// Synthetic params, not the weapon's row: below half HP, a fifth bonus on charged attacks
+const unbendingPassiveModule = createUnbendingPassiveModule([0.5, 0.2]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -32,11 +32,11 @@ describe(createUnbendingPassiveModule, () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.4);
+    damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.6);
 
     expect(
       unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
-    ).toBeCloseTo(0.3);
+    ).toBeCloseTo(0.2);
   });
 
   test("a charged attack at the rank's HP share or above, or a normal attack below it, prices no bonus", () => {
@@ -47,7 +47,7 @@ describe(createUnbendingPassiveModule, () => {
       0,
     );
 
-    damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.4);
+    damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.6);
     expect(unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
       0,
     );

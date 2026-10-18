@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Unreturning at its first rank: its Movement SPD, ATK and seconds, read from the affix row's three numbers
-const unreturningPassiveModule = createUnreturningPassiveModule([0.1, 0.36, 10]);
+// Synthetic params, not the weapon's row: its Movement SPD, ATK and seconds, read from the params' three numbers
+const unreturningPassiveModule = createUnreturningPassiveModule([0.2, 0.3, 3]);
 const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
   attackTag,
   enemy,
@@ -31,15 +31,15 @@ const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
   striker: wielder,
 });
 describe(createUnreturningPassiveModule, () => {
-  test("a charged attack hit on a weak point raises movement speed and ATK for ten seconds", () => {
+  test("a charged attack hit on a weak point raises movement speed and ATK for three seconds", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wielder, { kitEffectState });
     unreturningPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack, true), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.1);
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.36);
+    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.3);
   });
 
   test("a charged attack off a weak point, or a normal attack on one, raises nothing", () => {

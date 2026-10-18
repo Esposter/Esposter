@@ -20,8 +20,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Wolf's Gravestone at its first rank: twenty per cent ATK for the wielder, and forty per cent for the team on a weak hit
-const wolfishTrackerPassiveModule = createWolfishTrackerPassiveModule([0.2, 0.4]);
+// Synthetic params, not the weapon's row: a quarter ATK for the wielder, and half for the team on a weak hit
+const wolfishTrackerPassiveModule = createWolfishTrackerPassiveModule([0.25, 0.5]);
 const weakEnemy: Enemy = { ...enemy, health: enemy.maxHealth * 0.2 };
 const createNormalAttackDamageTaken = (target: Enemy): KitEvent => ({
   attackTag: AttackTag.NormalAttack,
@@ -38,7 +38,7 @@ describe(createWolfishTrackerPassiveModule, () => {
     expect.hasAssertions();
 
     expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.AttackPercent },
+      { amount: 0.25, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -50,7 +50,7 @@ describe(createWolfishTrackerPassiveModule, () => {
 
     const buff = context.kitEffectState.effects.find((effect) => effect.kind === "buff");
     expect(buff).toStrictEqual({
-      amount: 0.4,
+      amount: 0.5,
       attribute: Attribute.AttackPercent,
       characterId: TRAVELER_CHARACTER_ID,
       kind: "buff",

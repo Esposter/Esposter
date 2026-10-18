@@ -19,8 +19,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Skyward Atlas at its first rank: twelve per cent Elemental DMG Bonus, a fifty per cent chance, 160% ATK, and a thirty-second cooldown
-const wanderingCloudsPassiveModule = createWanderingCloudsPassiveModule([0.12, 0.5, 1.6, 30]);
+// Synthetic params, not the weapon's row: a fifth Elemental DMG Bonus, a quarter chance, 200% ATK, and a two-second
+// Cooldown
+const wanderingCloudsPassiveModule = createWanderingCloudsPassiveModule([0.2, 0.25, 2, 2]);
 const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
   attackTag,
   enemy,
@@ -36,7 +37,7 @@ describe(createWanderingCloudsPassiveModule, () => {
     expect.hasAssertions();
 
     expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.2, attribute })),
     );
   });
 
@@ -47,7 +48,7 @@ describe(createWanderingCloudsPassiveModule, () => {
     wanderingCloudsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(1.6);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBe(2);
     expect(context.strikes[0]?.hit.element).toBeUndefined();
   });
 
@@ -63,13 +64,13 @@ describe(createWanderingCloudsPassiveModule, () => {
   test("a Normal Attack hit that rolls at the chance queues nothing", () => {
     expect.hasAssertions();
 
-    const context = createKitTestContext(wielder, { random: () => 0.5 });
+    const context = createKitTestContext(wielder, { random: () => 0.25 });
     wanderingCloudsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("a second cloud inside the thirty-second cooldown queues nothing, and one after it does", () => {
+  test("a second cloud inside the two-second cooldown queues nothing, and one after it does", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -78,7 +79,7 @@ describe(createWanderingCloudsPassiveModule, () => {
 
     expect(context.strikes).toHaveLength(1);
 
-    stepKitSeconds(context, 30.5);
+    stepKitSeconds(context, 2.5);
     wanderingCloudsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(1);

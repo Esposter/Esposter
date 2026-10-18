@@ -18,8 +18,8 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const party = createParty([TRAVELER_CHARACTER_ID]);
 const wielder: Combatant = createWielderCombatant();
-// Undying Admiration at its first rank: sixteen per cent DMG and six per cent CRIT Rate for an Elemental Skill
-const undyingAdmirationPassiveModule = createUndyingAdmirationPassiveModule([0.16, 0.06]);
+// Synthetic params, not the weapon's row: a quarter DMG and a tenth CRIT Rate for an Elemental Skill
+const undyingAdmirationPassiveModule = createUndyingAdmirationPassiveModule([0.25, 0.1]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -33,7 +33,7 @@ describe(createUndyingAdmirationPassiveModule, () => {
 
     expect(
       undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
-    ).toBe(0.16);
+    ).toBe(0.25);
     expect(
       undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
@@ -49,7 +49,7 @@ describe(createUndyingAdmirationPassiveModule, () => {
         party,
         [],
       ),
-    ).toBe(0.06);
+    ).toBe(0.1);
     expect(
       undyingAdmirationPassiveModule.getStrikeCriticalRateBonus?.(
         createStrike(AttackTag.NormalAttack),

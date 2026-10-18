@@ -18,9 +18,10 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createTurquoiseHuntPassiveModule, () => {
-  // Turquoise Hunt at its first rank: a stack for each Elemental Skill hit every half second, three stacks for a Burning or
-  // Burgeon a nearby party member triggers every two seconds, and 10% Elemental Skill and Burst DMG per stack for six seconds
-  const turquoiseHuntPassiveModule = createTurquoiseHuntPassiveModule([0.5, 2, 0.1, 6, 6]);
+  // Synthetic params, not the weapon's row: a stack for each Elemental Skill hit every quarter second, and three stacks
+  // For a Burning or Burgeon a nearby party member triggers every second, a fifth Elemental Skill and Burst DMG per
+  // Stack, lasting two seconds
+  const turquoiseHuntPassiveModule = createTurquoiseHuntPassiveModule([0.25, 1, 0.2, 2, 4]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
@@ -58,12 +59,12 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.kitEffectState.effects,
       );
 
-    expect(getBonus(AttackTag.ElementalSkill)).toBe(0.1);
-    expect(getBonus(AttackTag.ElementalBurst)).toBe(0.1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0.2);
+    expect(getBonus(AttackTag.ElementalBurst)).toBe(0.2);
     expect(getBonus(AttackTag.NormalAttack)).toBe(0);
   });
 
-  test("a second Elemental Skill hit inside the half second gains no stack, and the stack ends after six seconds", () => {
+  test("a second Elemental Skill hit inside the quarter second gains no stack, and the stack ends after two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -77,9 +78,9 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.kitEffectState.effects,
       );
 
-    expect(getSkillBonus()).toBe(0.1);
+    expect(getSkillBonus()).toBe(0.2);
 
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 2.1);
 
     expect(getSkillBonus()).toBe(0);
   });
@@ -101,7 +102,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.party,
         context.kitEffectState.effects,
       ),
-    ).toBe(0.1 * 3);
+    ).toBe(0.2 * 3);
   });
 
   test("a Burning the wielder itself triggers gains no stacks", () => {
