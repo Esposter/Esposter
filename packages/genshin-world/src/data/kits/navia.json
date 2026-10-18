@@ -42,7 +42,6 @@
   },
   "hits.cannonFireSupportShots.0.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.cannonFireSupportShots.0.hitmarkFrames": { "cause": "Unsourced", "value": 163 },
   "hits.cannonFireSupportShots.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9139 } },
   "hits.cannonFireSupportShots.0.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.1.area": {
@@ -204,14 +203,11 @@
     "value": { "index": 5, "proudSkillGroupId": 9139 }
   },
   "parameters.crystalShrapnelSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 9132 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.animationFrames": { "cause": "DiffersFromSource", "value": 41 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.681081512988468 }
   },
-  "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 20 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": 4.7376 },
   "skillCharges": { "cause": "Unsourced", "value": 2 },
   "skillHolds.length": { "cause": "Unsourced", "value": 1 },
