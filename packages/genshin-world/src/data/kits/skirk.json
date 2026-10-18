@@ -1,12 +1,12 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 6 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.4.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.5.area": {
-    "cause": "Unclassified",
+    "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.899494936611665 }
   },
   "burst.hits.5.element": { "cause": "Unsourced", "value": "Ice" },
@@ -32,7 +32,7 @@
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 86.7 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "skillCooldownSeconds": { "cause": "Unsourced", "value": 20.883333333333333 },
-  "skillHolds.length": { "cause": "Unclassified", "value": 0 },
+  "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.sevenPhaseFlash.burst.animationFrames": { "cause": "Unsourced", "value": 41 },
   "stances.sevenPhaseFlash.burst.hits.length": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
