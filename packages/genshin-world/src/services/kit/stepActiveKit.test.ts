@@ -150,6 +150,35 @@ describe(stepActiveKit, () => {
     ]);
   });
 
+  test("sends the team's kits a skill as it starts, with the member that used it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: KitEventKind.SkillUsed,
+    });
+  });
+
+  test("sends the team's kits a charged attack that lands, with the action it landed", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const kitState = createKitState();
+    const controls = createControls();
+    // A single press starts a normal attack, and the attack held past the press starts a charged one as that attack ends
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackHeld: true, isAttackPressed: true }, 0.1, context, controls);
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackHeld: true }, 2, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, 1, context, controls);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      action: TRAVELER_KIT.chargedAttack,
+      kind: KitEventKind.ChargedAttackLanded,
+    });
+  });
+
   test("hands a burst's start a copy of the body, so a field it casts keeps the place it began from", () => {
     expect.hasAssertions();
     const startBodies: KitBody[] = [];

@@ -77,9 +77,14 @@ flowchart TD
   STEP -->|"the outbox: tickEnemyStatuses puts on it a status's tick that falls due"| TICK["StatusTicked"]
   STEP -->|"a normal attack's first hitmark falls"| LANDED["NormalAttackLanded"]
   STEP -->|"a burst starts, ahead of its own start"| BURST["BurstUsed"]
+  STEP -->|"a skill starts, as a burst does"| SKILL["SkillUsed"]
+  STEP -->|"a charged attack's first hitmark falls"| CHARGED["ChargedAttackLanded"]
   STEP --> STRIKES["strikeKitEnemies: each strike on each enemy it reaches"]
   STRIKES -->|"the hit triggered reactions"| REACTION["ReactionTriggered"]
   STRIKES -->|"the enemy took its damage, CRIT or not, defeated or not"| DAMAGE["DamageTaken"]
+  STRIKES -->|"the hit was dealt as an element"| ELEMENTAL["ElementalHit"]
+  STRIKES -->|"the hit landed on a weak point"| WEAKPOINT["WeakPointHit"]
+  STRIKES -->|"the hit took the enemy's last health"| DEFEATED["EnemyDefeated"]
   STRIKES -->|"collectKitEnergyDrops: the enemy dropped energy, which the team took"| PARTICLE["EnergyParticleCollected"]
   STEP -->|"the outbox: Mora the character on the field picked up since the last step"| MORA["MoraPickedUp"]
   STEP -->|"last: each change to a member's HP the party recorded since the last step"| HEALTH["HealthChanged"]
@@ -94,6 +99,11 @@ flowchart TD
   PARTICLE --> EMIT
   MORA --> EMIT
   HEALTH --> EMIT
+  SKILL --> EMIT
+  CHARGED --> EMIT
+  ELEMENTAL --> EMIT
+  WEAKPOINT --> EMIT
+  DEFEATED --> EMIT
   EMIT --> EFFECTS["the kit's handler: summons, statuses, heals, energy, cooldowns"]
   EFFECTS -->|"its summons' hits, on a later step"| STEP
 ```
@@ -106,6 +116,11 @@ flowchart TD
 - **DamageTaken** carries an enemy, the hit as it struck, its kind of attack when it is one of its kit's own actions (`KitHit.attackTag`), the combatant that dealt it, whether it was a CRIT hit and whether it defeated the enemy. The Talisman's heal, A Glimpse into Arcanum, Ascetics of Frost, Frozen Skies, and Riptide's application and every strike it sets off answer it.
 - **StatusTicked** carries an enemy and the status on it whose tick fell due. Hydrospout answers Riptide's.
 - **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays. Resolve's stacks from another member's burst answer it.
+- **SkillUsed** carries the member that used its Elemental Skill, sent as the skill starts, as a burst is.
+- **ChargedAttackLanded** carries a charged attack of the character on the field as its first hitmark falls, whether or not it struck anything, as a normal attack does.
+- **ElementalHit** carries an enemy, the element a hit was dealt as (its own, or the striker's where it carries a gauge) and the striker, sent for each enemy the element lands on.
+- **WeakPointHit** carries an enemy and the striker of a hit whose `KitHit.weakPoint` is set. No kit sets the flag yet: the game data this repo reads carries no weak-point rows, so the event waits on its source.
+- **EnemyDefeated** carries the enemy and the striker of the strike that took its last health, sent after its `DamageTaken`. A defeat by anything but a strike, such as a status's tick or a reaction's reach, is not sent yet.
 - **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.
 - **MoraPickedUp** carries the character on the field as it picks up Mora lying in the world. A pick up is an interaction outside the step, so the pickups emit it as a world event (`pickUpMora`), which the combat puts on the outbox for the next step to send. Lucky Dog's four-piece answers it ([artifact enhancement](../artifact-enhancement/design.md)).
 - **HealthChanged** carries a recorded change to a member's HP, as the party's `healthChanges` hold it, with no character for an enemy's strike or a drown. `healPartyMember` and `damagePartyMember` record every change wherever it is made, so a strike between steps is heard as well as a kit's own, and the step sends the changes last and empties them: a change a handler makes as it hears one is sent on the next step. Let the People Rejoice's Fanfare and Endless Waltz answer it.
