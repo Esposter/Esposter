@@ -67,7 +67,7 @@ describe(getLorePickRequest, () => {
     });
   });
 
-  test("A recent pick is read by the next draw", () => {
+  test("a recent pick is read by the next draw", () => {
     expect.hasAssertions();
 
     const recentPicks: PickRecord[] = [
