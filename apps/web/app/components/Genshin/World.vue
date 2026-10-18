@@ -11,6 +11,7 @@ import {
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { useAccountCharacterPacks } from "@/composables/genshin/useAccountCharacterPacks";
+import { authClient } from "@/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { RoutePath } from "@esposter/shared";
 import { WorldScreen } from "genshin-world";
@@ -33,6 +34,8 @@ const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinS
 const containerBaseUrl = useContainerBaseUrl();
 const { accountCharacterPacks, isSignedIn, keepAccountCharacterPack, removeAccountCharacterPack } =
   useAccountCharacterPacks();
+// The signed-in player's picture and name, which the world's profile card shows
+const session = authClient.useSession();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URLs its server
 // Serves region data at and, in development alone, the developer's own character packs and exports of the game's
 // Scenes, and whether the tuning panel shows; quitting the game leaves for the app's home
@@ -43,8 +46,10 @@ onMounted(() => {
 
 <template>
   <WorldScreen
+    :account-avatar-url="session.data?.user.image ?? undefined"
     :account-character-packs
     :account-file-base-url="isSignedIn ? GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL : undefined"
+    :account-name="session.data?.user.name"
     :character-pack-base-url="IS_DEVELOPMENT ? GENSHIN_CHARACTER_PACK_BASE_URL : undefined"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"

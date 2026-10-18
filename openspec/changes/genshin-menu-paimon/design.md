@@ -7,7 +7,7 @@ This page builds on [screens](../../specs/genshin/screens/design.md) and the [Pa
 - **Paimon is drawn as a character is.** She appears to the right of the menu with her idle animations, as the game shows her. She is read from her official model and drawn by [characters](../genshin-characters/design.md)' reader and toon material, her motion fitted to the game's own clips, so nothing of the game's files ships.
 - **Paimon waits for an official model.** If HoYoverse's published packs hold no Paimon model, the menu ships without her: she is decoration, and the menu works whole without her. Characters are drawn only from official models, so no stand-in is made, and she is added once an official model is published.
 - **Community and Feedback are drawn disabled, Training Guide is not drawn.** The still draws Community and Feedback as entries, so they keep their tiles disabled; the world opens no page of their own. Training Guide is in no still the references hold, so it stays out of the contents while its screen remains in the model.
-- **The profile card shows what the world backs.** Signed in, it shows the account's name and avatar; signed out, the game's default name, Traveler. Adventure Rank and World Level join it with the [Adventure Rank](../genshin-adventure-rank/design.md) proposal's system, and the signature, namecard, birthday and UID each join when the system behind it lands.
+- **The profile card shows what the world backs.** Signed in, it shows the account's name and avatar, the avatar drawn over the Traveler's disc when the account has a picture; signed out, the game's default name, the text `Player_Default_Name`, which the English client shows as Traveler. Adventure Rank and World Level join it with the [Adventure Rank](../genshin-adventure-rank/design.md) proposal's system, and the signature, namecard, birthday and UID each join when the system behind it lands.
 
 ## How it works
 
@@ -22,7 +22,7 @@ flowchart TD
 
 ## Scope and order
 
-1. **The reference.** `menu-paimon-current.png`, the menu on the current build at 1080 high with no screen open, replaces the one still held, which is the 1.3 build's and lacks the entries the current build adds. `menu-paimon.mkv` times its open and close once its clip lands, read with `pnpm -C scripts genshin:parity frames <file> 60 <start> <seconds>`.
+1. **The reference.** `menu-paimon-current.png`, the menu on the current build at 1080 high with no screen open, is the frame at 25 seconds of `yt-jHr2bERjkYc`, a 2026 recording of the English PC client, and replaces the one still held, which is the 1.3 build's. The parity map's `paimon-menu` row names it. Its opening is read with `pnpm -C scripts genshin:parity frames <file> 25 21 3`. Its closing awaits `menu-paimon.mkv`, which must show Back closing the menu.
 2. **Paimon beside the menu** waits on her official model pack among the developer's extracted packs (the user, who downloads it), read as every character's is ([characters](../../specs/genshin/characters/README.md)).
 3. **The profile card's fields.** The signature, namecard, birthday and UID each join as the system behind it lands, its rank and World Level being built.
 
@@ -45,13 +45,17 @@ New files:
 ```text
 packages/genshin-world/src/components/Menu/Paimon/Index.fixture.ts
 packages/genshin-world/src/components/Menu/Paimon/Index.reference.ts
+packages/genshin-world/src/components/Menu/Paimon/Index.browser.test.ts
 ```
+
+The account's name and avatar reach the card through the world's props: the app's world host reads the session and passes it down the world screen, the session and the menu host, each of which takes the two props.
 
 ## Sources
 
 - [Paimon Menu](https://genshin-impact.fandom.com/wiki/Paimon_Menu), Genshin Impact Wiki: the menu's profile, contents and side bar, and Paimon floating to its right.
 - [Shortcut Wheel](https://genshin-impact.fandom.com/wiki/Shortcut_Wheel), Genshin Impact Wiki: the wheel's entries, the same screens as the menu's.
+- The Paimon Menu page's wikitext, read through the wiki's API (`api.php?action=parse&page=Paimon_Menu`) on 2026-10-18: most of the contents unlock with Adventure Rank, so more buttons appear as the rank rises; the list it gives includes Training Guide, Version Highlights and Survey, which the still-based contents above do not draw.
 
 ## Reference
 
-- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open; the one still held is the 1.3 build's, which lacks the entries the current build adds. Partly found 2026-10-11: the wiki's `File:Paimon Menu Version 1.3.png`; still sought: A current-build Paimon menu at 1080 high with no screen open.
+- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open, the frame at 25 seconds of `yt-jHr2bERjkYc` (`captures/yt-jHr2bERjkYc-logout-tech4gamers.mp4`, the frame cut to `references/menu-paimon/menu-paimon-current.png`, never committed). Found 2026-10-18: https://www.youtube.com/watch?v=jHr2bERjkYc, a Tech4Gamers logout tutorial of 56 seconds at 1920 by 1080 and 25 frames a second, dated 2026-05-15, the English PC client; the account is at Adventure Rank 2, so the contents show thirteen of the entries, and a tutorial's arrows and logo sit over the frame's edges. What the frames show beyond the reference: the menu's panel is whole in the frame at 22.52 seconds, within one 40 millisecond frame of the world at 22.48, so the 0.26 second fade the 2025 clip gives is not seen at this rate; the menu's closing is not in this clip, so `menu-paimon.mkv` stays owed for it. The frame also draws Version Highlights and Survey among the contents, which the as-built page leaves out for want of a still; that is a decision for the page, not built here.

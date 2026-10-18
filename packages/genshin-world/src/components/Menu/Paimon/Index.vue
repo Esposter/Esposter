@@ -23,6 +23,10 @@ import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen } from "
 import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The signed-in account's avatar and name, which the profile card shows in place of the Traveler's disc and the
+  // Default name when the player is signed out
+  accountAvatarUrl?: string;
+  accountName?: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
@@ -43,6 +47,8 @@ interface Props {
 }
 
 const {
+  accountAvatarUrl,
+  accountName,
   adventureExpProgress,
   adventureRank,
   checkIsBuilt,
@@ -139,7 +145,9 @@ onBeforeUnmount(() => {
       <div class="panel-layer">
         <div class="panel" />
         <div class="card" />
-        <div class="avatar" />
+        <img v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
+        <div v-else class="avatar" />
+        <p class="name">{{ accountName ?? gameText[GameTextKey.PlayerDefaultName] }}</p>
         <div class="edit" />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
         <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
@@ -305,7 +313,13 @@ onBeforeUnmount(() => {
   background: linear-gradient(#3a424f, #435366 30%, #4a6680 55%, #55799a 75%, #5e9cba 88%, #63a6c6);
 }
 
-.avatar {
+/* The account's own picture fills the Traveler's disc, cropped to it */
+.avatar-image {
+  object-fit: cover;
+}
+
+.avatar,
+.avatar-image {
   position: absolute;
   top: calc(var(--unit) * 41);
   left: calc(var(--unit) * 140);
@@ -391,6 +405,19 @@ onBeforeUnmount(() => {
 .birthday {
   left: calc(var(--unit) * 313.5);
   font-size: calc(var(--unit) * 26);
+}
+
+/* Provisional: the name's top and size are read beside the card's avatar, to be fitted to the whole frame by the parity
+   Compare */
+.name {
+  position: absolute;
+  top: calc(var(--unit) * 52);
+  left: calc(var(--unit) * 313.5);
+  margin: 0;
+  color: #e2e8ed;
+  font-size: calc(var(--unit) * 36);
+  font-weight: 600;
+  line-height: 1;
 }
 
 .rank-title {

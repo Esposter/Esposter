@@ -138,8 +138,10 @@ import { unref } from "vue";
 interface Props extends WorldScreenProps, WorldTables {}
 
 const {
+  accountAvatarUrl,
   accountCharacterPacks,
   accountFileBaseUrl,
+  accountName,
   adventureRankTables,
   cameraPose,
   catalogue,
@@ -1102,6 +1104,8 @@ defineExpose({ jumpTo, readCameraPosition });
     </HudScreen>
     <MenuScreen
       v-model:screen-kind="screenKind"
+      :account-avatar-url="accountAvatarUrl"
+      :account-name="accountName"
       :adventure-exp-progress
       :adventure-rank="rank"
       :game-text

@@ -7,10 +7,13 @@ import type { GameLanguage, GameText } from "genshin-text";
 
 // The props the world's screen takes from its host, which it loads the game's names and tables for before it opens
 export interface WorldScreenProps {
+  // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is signed in
+  accountAvatarUrl?: string;
   // The player's account's packs, and where its files are served, given while the player is signed in: a pack it lists
   // Draws its character ahead of the host's
   accountCharacterPacks?: AccountCharacterPack[];
   accountFileBaseUrl?: string;
+  accountName?: string;
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
   // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
