@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [game-exports]
+x-touches:
+  [
+    "packages/genshin-world/src/services/trial/**",
+    "packages/genshin-world/src/models/trial/**",
+    "packages/genshin-world/src/composables/useWorldTrials.ts",
+    "packages/genshin-world/src/components/Wish/Screen/**",
+  ]
