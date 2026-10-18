@@ -11,6 +11,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -25,7 +26,30 @@ const createAyakaCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
+// A normal attack's first hit on an enemy, with the team the context holds and Ayaka's Hyouka cooled as the test sets it
+const strikeWithFirstNormalAttack = (constellationCount: number, random: () => number): number => {
+  const combatant = createAyakaCombatant(constellationCount);
+  const context = createKitTestContext(combatant, { random });
+  const partyMember = getPartyMember(context.party, AYAKA_CHARACTER_ID);
+  partyMember.skillCooldownSeconds = 5;
+  const hit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
+  hit.onStrike?.(context, { body: context.body, combatant, hit });
+  return partyMember.skillCooldownSeconds;
+};
+
 describe(createAyakaKitBehaviour, () => {
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(strikeWithFirstNormalAttack(1, () => 0)).toBeCloseTo(4.7);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(strikeWithFirstNormalAttack(0, () => 0)).toBe(5);
+  });
+
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
