@@ -5,5 +5,5 @@
 
 ## 2. Spending
 
-- [ ] 2.1 Spend a recipe's materials from the bag and its mora from the wallet when it is crafted. Verify: a test named after the scenario 'A craft spends its materials and mora' written first and seen failing.
-- [ ] 2.2 Take Condensed Resin's resin from the Original Resin wallet. Verify: a test named after the scenario 'Condensed Resin draws its resin from the Original Resin wallet' written first and seen failing.
+- [x] 2.1 Spend a recipe's materials from the bag and its mora from the wallet when it is crafted. Verify: a test named after the scenario 'A craft spends its materials and mora' written first and seen failing.
+- [x] 2.2 Take Condensed Resin's resin from the Original Resin wallet. Verify: a test named after the scenario 'Condensed Resin draws its resin from the Original Resin wallet' written first and seen failing.
