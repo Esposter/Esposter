@@ -41,5 +41,13 @@
   "parameters.totemStrikeMultipliers.0": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 5832 } },
   "parameters.totemStrikeMultipliers.1": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5832 } },
   "parameters.totemStrikeMultipliers.2": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5832 } },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "burst.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
+  "burst.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.tenkoThunderbolts.0.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.tenkoThunderbolts.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.tenkoThunderbolts.1.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.tenkoThunderbolts.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.tenkoThunderbolts.2.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.tenkoThunderbolts.2.gauge": { "cause": "Unsourced", "value": 1 }
 }
