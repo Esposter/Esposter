@@ -3,7 +3,7 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.7677669529663689 }
   },
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.burstLastTickMargin": { "cause": "Unclassified", "value": 5 },
   "frames.burstFirstTick": { "cause": "Unclassified", "value": 137 },
