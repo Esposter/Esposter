@@ -9,11 +9,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // The Autumn Whirlwind's absorb check takes the first aura of Pyro, Hydro, Electro or Cryo an enemy within its reach
 // Carries, and each tick after it lands its elemental tick in that element just ahead of its Anemo tick, as gcsim v2.47.2
@@ -106,14 +105,13 @@ export const createKazuhaKitBehaviour = ({
         return;
       for (const { element, reactionType } of event.reactions) {
         if (reactionType !== ReactionType.Swirl || element === undefined) continue;
-        for (const characterId of getDeployedCharacterIds(party))
-          buffKitMember(kitEffectState, characterId, {
-            amount:
-              POETICS_ELEMENTAL_DAMAGE_BONUS_SHARE * combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
-            attribute: ElementDamageBonusAttributeMap[element],
-            secondsRemaining: POETICS_SECONDS,
-            source: POETICS_SOURCE,
-          });
+        buffKitTeam(kitEffectState, party, {
+          amount:
+            POETICS_ELEMENTAL_DAMAGE_BONUS_SHARE * combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
+          attribute: ElementDamageBonusAttributeMap[element],
+          secondsRemaining: POETICS_SECONDS,
+          source: POETICS_SOURCE,
+        });
       }
     },
     skill: { onStart: addInfusion },

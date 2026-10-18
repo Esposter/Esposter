@@ -39,15 +39,15 @@ export const KUKI_CHARACTER_ID = 10_000_065;
 const getElementalMastery = ({ attributes }: Combatant): number =>
   attributes.attributeTotalMap[Attribute.ElementalMastery];
 
-// Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
-// Hit's share of Elemental Mastery, and Gyoei Narukami Kariyama Rite's hits. Constellations 1 and 2 are built. Her
-// Ascension 1 healing bonus, and Constellations 4 and 6, are not, as each reads her HP
-// Breaking Free raises her Healing Bonus while her HP is at or under half
+// Breaking Free raises her Healing Bonus at Ascension 1 while her HP is at or under half
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_1 || healthShare > BREAKING_FREE_HEALTH_SHARE
     ? []
     : [{ amount: BREAKING_FREE_HEALING_BONUS, attribute: Attribute.HealingBonus }];
 
+// Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
+// Hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus. Constellations
+// 1 and 2 are built. Constellations 4 and 6 are not, as each reads her HP
 export const createKukiKitBehaviour = ({
   readHit,
   readHits,
