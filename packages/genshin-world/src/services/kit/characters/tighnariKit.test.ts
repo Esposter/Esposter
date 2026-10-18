@@ -1,4 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,6 +11,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTighnariKitBehaviour, TIGHNARI_CHARACTER_ID } from "#src/services/kit/characters/tighnariKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -16,6 +19,7 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TIGHNARI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TIGHNARI_CHARACTER_ID);
+const OTHER_CHARACTER_ID = 10_000_042;
 const createTighnariCombatant = (ascension: number, elementalMastery: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([
@@ -29,6 +33,19 @@ const createTighnariCombatant = (ascension: number, elementalMastery: number): C
   level: 90,
   weaponType: WeaponType.Bow,
 });
+
+// The buffs the burst gives the party as it starts, with a party of Tighnari and one other member
+const startBurst = (constellationCount: number): KitBuff[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
+  TIGHNARI_KIT.elementalBurst.onStart?.(
+    createKitTestContext(combatant, {
+      kitEffectState,
+      party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    }),
+  );
+  return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+};
 
 describe(createTighnariKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -112,30 +129,56 @@ describe(createTighnariKitBehaviour, () => {
 
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
+  describe("constellation 1's CRIT Rate", () => {
+    const strikeBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const strikeEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
+      TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
+        {
+          attackTag,
+          body: strikeBody,
+          combatant: { ...createTighnariCombatant(0, 0), constellationCount },
+          hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
+        },
+        strikeEnemy,
+      ) ?? 0;
 
-  const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
-    TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
-      {
-        attackTag,
-        body: kitBody,
-        combatant: { ...createTighnariCombatant(0, 0), constellationCount },
-        hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
-      },
-      enemy,
-    ) ?? 0;
+    test("a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
+      expect.hasAssertions();
 
-  test("a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
-    expect.hasAssertions();
+      expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
+    });
 
-    expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
+    test("a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
+      expect.hasAssertions();
+
+      expect([
+        getCriticalRateBonus(0, AttackTag.ChargedAttack),
+        getCriticalRateBonus(1, AttackTag.NormalAttack),
+      ]).toStrictEqual([0, 0]);
+    });
   });
+  describe("constellation 4's team Elemental Mastery", () => {
+    test("a Constellation 4 switch gives every member 60 Elemental Mastery for 8 seconds as the burst starts", () => {
+      expect.hasAssertions();
 
-  test("a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
-    expect.hasAssertions();
+      expect(
+        startBurst(4).map(({ amount, attribute, characterId, secondsRemaining }) => ({
+          amount,
+          attribute,
+          characterId,
+          secondsRemaining,
+        })),
+      ).toStrictEqual([
+        { amount: 60, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
+        { amount: 60, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
+      ]);
+    });
 
-    expect([
-      getCriticalRateBonus(0, AttackTag.ChargedAttack),
-      getCriticalRateBonus(1, AttackTag.NormalAttack),
-    ]).toStrictEqual([0, 0]);
+    test("a Constellation 3 switch gives no Elemental Mastery as the burst starts", () => {
+      expect.hasAssertions();
+
+      expect(startBurst(3)).toStrictEqual([]);
+    });
   });
 });

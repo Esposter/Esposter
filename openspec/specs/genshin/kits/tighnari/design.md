@@ -1,8 +1,8 @@
 # Tighnari
 
-Tighnari's kit is built from its record alone, on avatar 10000069, and `createTighnariKitBehaviour` holds no behaviour of its own: four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its Secondary Tanglevine Shaft. His multipliers are read from proud skill groups 6931, 6932 and 6939; Vijnana-Phala Mine's cooldown and Tanglevine Shaft's cooldown and energy cost are read from the same groups.
+Tighnari's kit is its record and one behaviour module, `createTighnariKitBehaviour`, on avatar 10000069: four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its Secondary Tanglevine Shaft. His multipliers are read from proud skill groups 6931, 6932 and 6939; Vijnana-Phala Mine's cooldown and Tanglevine Shaft's cooldown and energy cost are read from the same groups.
 
-Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a shot of its own while the suffusion lasts, since the kit offers no charged variant yet; and its Ascension 1 passive and Constellations 2, 4 and 6.
+Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a shot of its own while the suffusion lasts, since the kit offers no charged variant yet; its Ascension 1 passive, and Constellations 2 and 6. Constellations 1 and 4 are built, except Constellation 4's raise of the team's Elemental Mastery on a reaction the burst triggers.
 
 ## Decisions
 
@@ -10,6 +10,7 @@ Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged s
 - **Vijnana-Phala Mine's area is a circle of radius 6 round the primary target,** priced as the skill's targeting reach plus the circle, as the Celestial Shower's field is.
 - **Tighnari's arrows, Vijnana-Phala Mine and Tanglevine Shaft deal 0 poise.** gcsim gives them no poise, so its record reads each as 0.
 - **Constellation 1's CRIT Rate reads the Charged Attack tag.** It raises every strike tagged Charged Attack by 15%, as the Ascension 4 damage bonus reads the same tag.
+- **Constellation 4 buffs the team as the burst starts.** gcsim gives every character on the roster 60 Elemental Mastery for 8 seconds as the burst is cast, and the kit gives every deployed member the same. gcsim raises that to 120 when the burst triggers Burning, Bloom, Lunar-Bloom, Quicken or Spread. That raise is not built: a reaction event does not carry the attack tag of the hit that triggered it, which is how the kit would tell the burst's reactions apart.
 
 ## Key files
 
