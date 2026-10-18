@@ -52,6 +52,7 @@ import { createParticleHealPassiveModule } from "#src/services/weapon/passives/c
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
+import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
@@ -299,4 +300,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3167933899": createEchoesOfThePlentifulLandPassiveModule,
   // Flower-Feather Song (Chain Breaker)
   "4131533283": createFlowerFeatherSongPassiveModule,
+  // Protector's Virtue (Primordial Jade Cutter)
+  "1901402467": createProtectorsVirtuePassiveModule,
 };
