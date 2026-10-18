@@ -16,5 +16,7 @@ export enum MenuEntryIcon {
   PartySetup = "PartySetup",
   Quests = "Quests",
   Shop = "Shop",
+  Survey = "Survey",
+  VersionHighlights = "VersionHighlights",
   Wish = "Wish",
 }
