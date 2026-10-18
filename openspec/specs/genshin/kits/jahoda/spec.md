@@ -153,13 +153,13 @@ Jahoda's collision and two plunges SHALL land at once with the shared reach, and
 
 ### Requirement: A full flask's drain at Ascendant Gleam starts ten Meowballs
 
-At Ascendant Gleam, a full flask's drain SHALL start ten Meowballs, the first 129 frames after the drain and each 116 frames after the one before, each striking the living enemy nearest her body with the absorbed element.
+At Ascendant Gleam, a full flask's drain SHALL start ten Meowballs, the first 129 frames after the drain and each 116 frames after the one before, each striking the primary target, the enemy her last action turned to, with the absorbed element.
 
 #### Scenario: A full flask drains at Ascendant Gleam
 
 - **GIVEN** the deployed team is at Ascendant Gleam
 - **WHEN** Savvy Strategy's flask drains full with an element absorbed
-- **THEN** a Meowball strikes the nearest enemy 129 frames later, and each of the other nine 116 frames after the one before
+- **THEN** a Meowball strikes the primary target 129 frames later, and each of the other nine 116 frames after the one before
 
 #### Scenario: A full flask drains below Ascendant Gleam
 
