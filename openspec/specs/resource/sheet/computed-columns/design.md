@@ -40,7 +40,7 @@ Single-source transformations carry `sourceColumnId`; `StringPattern` carries `s
 
 ### Math
 
-An expression in the language of [math-expression-compiler](../../../../../packages/math-expression-compiler/README.md), mathjs's numeric language over plain numbers, with column values bound as variables:
+An expression in the [math expression language](../../../math-expression-compiler/language/design.md), which the [math-expression-compiler](../../../../../packages/math-expression-compiler/README.md) package compiles over plain numbers, with column values bound as variables:
 
 - `expression` — e.g. `col0 * (1 - col1)`; mathjs's operators and precedence, comparisons yielding `1` or `0`, and its numeric functions over numbers and flat lists (`abs`, `round`, `sqrt`, `sum([col0, col1])`, …).
 - `variables` — an ordered list of `{ name, sourceColumnId }` bindings. Names are auto-generated `col0`, `col1`, … — valid names in the language that never collide with its functions or constants; users insert them via the form rather than typing them.
@@ -84,23 +84,24 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 Paths relative to `apps/web`.
 
-| File                                                                                          | Role                                                                  |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                             |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                    |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                     |
-| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell        |
-| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set   |
-| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                   |
-| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                          |
-| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind)  |
-| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                           |
-| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | Parse and compile once, run per row over the variables' values        |
-| `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`                 | Edit form schemas: the math expression's parse and unbound-name check |
-| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                             |
-| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                        |
-| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                               |
-| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                               |
+| File                                                                                          | Role                                                                                      |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                                                 |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                                        |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                                         |
+| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell                            |
+| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set                       |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                                       |
+| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                                              |
+| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind)                      |
+| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                                               |
+| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | Parse and compile once, run per row over the variables' values                            |
+| `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`                 | Edit form schemas: the math expression's parse and unbound-name check                     |
+| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                                                 |
+| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                                            |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                                                   |
+| `app/store/resource/sheet/row.ts`                                                             | The grid's compiled columns as a computed value, and the reader bound to the rows in view |
+| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                                                   |
 
 ## Datasets
 

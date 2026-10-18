@@ -41,6 +41,19 @@ A math computed column SHALL evaluate its expression over the values of the sour
 - **THEN** the column is not saved
 - **AND** the form shows the parser's error
 
+#### Scenario: Expression naming an unbound column
+
+- **GIVEN** the owner enters an expression using a column variable no binding declares
+- **WHEN** the owner saves the column
+- **THEN** the column is not saved
+- **AND** the form names the unbound variable
+
+#### Scenario: A comparison shows one or zero
+
+- **GIVEN** a math column checks whether the price is over 50
+- **WHEN** the price is 80
+- **THEN** the cell shows 1
+
 ### Requirement: Empty source values count as zero in math
 
 Empty source values SHALL count as zero in a math expression.
@@ -188,6 +201,12 @@ A computed column that depends on itself, directly or through other computed col
 - **THEN** both columns show empty cells
 - **AND** no error is shown
 
+#### Scenario: Two math columns depend on each other
+
+- **GIVEN** two math columns each add one to the other
+- **WHEN** the sheet is shown
+- **THEN** both columns show empty cells
+
 ### Requirement: A dashboard reading the sheet receives its computed columns
 
 A dashboard reading a sheet's dataset SHALL receive the computed columns with their values.
@@ -207,3 +226,14 @@ A computed column SHALL behave in filters, statistics and charts as the type its
 - **GIVEN** a computed column produces numbers
 - **WHEN** the owner charts it
 - **THEN** it is charted as a number column
+
+### Requirement: A stored math expression never stops a sheet opening
+
+A sheet SHALL open whatever its stored math expressions hold, and a stored expression that cannot be parsed SHALL leave its column's cells empty.
+
+#### Scenario: A stored expression the parser refuses
+
+- **GIVEN** a sheet whose stored math column holds an expression that cannot be parsed
+- **WHEN** the owner opens the sheet
+- **THEN** the sheet opens
+- **AND** the math column's cells are empty
