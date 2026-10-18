@@ -34,6 +34,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Spotless Heart (provisional reading).** Elemental Skill strikes gain the rank's 40% of the wielder's DEF as flat base damage through getStrikeAdditiveBaseDamageBonus, while a status stands. A skill use sets a 1.5 s cooldown and the status; a skill hit shortens the status to 0.1 s, which is the reading of cleared 0.1s after the skill deals DMG. The rank's second value, 4000, is not described by the text and is not read.
 - **Sword of Descension (out of scope, platform exclusive).** The text makes it effective only on the PlayStation Network platform, which the game has no platform to gate on. The coordinator put it out of scope, so it is not built, and the table row names the gate.
 - **Iwakura Succession (provisional reading).** A skill use gains a seed as a hold of the rank's thirty seconds, up to three, once per five seconds. A burst releases every seed, and two seconds later the wielder gains the rank's six energy for each one released, through a delayed energy status. A burst with no seeds gives no energy.
+- **Wolf's Gravestone (Wolfish Tracker).** ATK is a passive bonus. A hit the wielder deals on an enemy under 30% of its HP raises the deployed team's ATK by the rank's 40% for 12 s, once every 30 s. The 12 s and 30 s are the text's, since the parameter list does not carry them. Provisional: all party members reads as the deployed team, as buffKitTeam does.
 
 ## How it works
 

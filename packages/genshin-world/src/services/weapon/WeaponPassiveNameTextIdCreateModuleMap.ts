@@ -46,6 +46,7 @@ import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
+import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
 // Found by the name its table gives it. A passive with no module here gives its wielder nothing
@@ -213,4 +214,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1348697123": createSpotlessHeartPassiveModule,
   // Iwakura Succession (Amenoma Kageuchi)
   "2700351571": createIwakuraSuccessionPassiveModule,
+  // Wolfish Tracker (Wolf's Gravestone)
+  "2660534475": createWolfishTrackerPassiveModule,
 };
