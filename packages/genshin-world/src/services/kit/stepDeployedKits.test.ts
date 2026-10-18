@@ -36,11 +36,33 @@ describe(stepDeployedKits, () => {
       party: createParty([TRAVELER_CHARACTER_ID, OFF_FIELD_CHARACTER_ID]),
     });
 
-    stepDeployedKits(context, 0.1);
+    stepDeployedKits(context, 0.1, 0);
 
     expect(onStep.mock.calls.map(([, combatant, stepSeconds]) => [combatant.characterId, stepSeconds])).toStrictEqual([
       [TRAVELER_CHARACTER_ID, 0.1],
       [OFF_FIELD_CHARACTER_ID, 0.1],
     ]);
+  });
+
+  test("gives each deployed member's kit the field body's movement across the step, with the step's seconds", () => {
+    expect.hasAssertions();
+    const onStep = vi.fn<NonNullable<Kit["onStep"]>>();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: { ...TRAVELER_KIT, onStep },
+      level: 90,
+    };
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([[TRAVELER_CHARACTER_ID, combatant]]),
+      party: createParty([TRAVELER_CHARACTER_ID]),
+    });
+
+    stepDeployedKits(context, 0.1, 2.5);
+
+    expect(onStep.mock.calls.map((call) => [call[2], call[3]])).toStrictEqual([[0.1, 2.5]]);
   });
 });

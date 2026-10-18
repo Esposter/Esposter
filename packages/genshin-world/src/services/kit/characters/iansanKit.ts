@@ -6,6 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
@@ -36,6 +37,25 @@ const NIGHTSOUL_RATE = { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_
 const BURST_POINTS = 15;
 const BURST_POINTS_FRAMES = 40;
 const BURST_RESTORE_SECONDS = 12;
+
+// The Kinetic Energy Scale the burst starts, which logs the movement of the field character, a point for each two metres
+// It moves in a second, as the wiki gives it. Constellation 6 lengthens the Scale and the restore three seconds, and an
+// Overflowing restore gives the field character Extreme Force, 25% DMG for three seconds, as gcsim (MIT) iansan/cons.go gives them
+const KINETIC_ENERGY_SCALE_ID = "iansan-kinetic-energy-scale";
+const METRES_PER_MOVEMENT_POINT = 2;
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_SCALE_SECONDS = 3;
+const EXTREME_FORCE_DAMAGE_BONUS = 0.25;
+const EXTREME_FORCE_SECONDS = 3;
+
+// The points the movement the Kinetic Energy Scale logged gives over the last second, which the Scale then forgets
+const takeKitScaleMovementPoints = (kitEffectState: KitEffectState, characterId: number): number => {
+  const scale = findKitStatus(kitEffectState.effects, characterId, KINETIC_ENERGY_SCALE_ID);
+  if (!scale) return 0;
+  const movement = scale.stacks ?? 0;
+  scale.stacks = 0;
+  return movement / METRES_PER_MOVEMENT_POINT;
+};
 
 // Constellation 1's energy, as gcsim (MIT) iansan/cons.go c1 gives it: each 6 points her blessing consumes restore her 15
 // Energy, then her cooldown of 18 seconds starts, and points consumed while it runs are not counted
@@ -105,15 +125,14 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
 // Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a gap of
 // A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and a second after it lands her restore
 // Starts, running for the burst's 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
-// Burst's Party ATK bonus and its conversion of the points into ATK, the restore's share of the movement of the other
-// Members on the field, which no kit event carries, so Warming Up does not heal on those points, and the points her
-// Constellations add. Her strikes and plunges are her record's alone
+// Burst's Party ATK bonus and its conversion of the points into ATK, and the points Constellations 2 and 4 add. Her
+// Strikes and plunges are her record's alone
 // Constellation 1's energy from each 6 Nightsoul points consumed is built
 // Ascension 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore
 // Ascension 4's Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
 // Constellation 2 needs Precise Movement on the burst, which the kit does not build
 // Constellation 4 needs the Surging Force stacks after another character's burst, which the kit does not read
-// Constellation 6 needs the Kinetic Energy Scale's extra 3 seconds and Extreme Force on overflow, not built
+// Constellation 6's Kinetic Energy Scale lasts three seconds longer, and an overflowing restore gives Extreme Force
 export const createIansanKitBehaviour = (): KitBehaviour => ({
   // The Electro Swift Stormflight plays in place of her charged attack while her blessing lasts
   chargedAttackVariant: {
@@ -186,9 +205,23 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     startKitCooldown(kitEffectState, characterId, CONSTELLATION_1_COOLDOWN_ID, CONSTELLATION_1_COOLDOWN_SECONDS);
     gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
   },
+  // Gcsim's OnMovement does for her burst's restore: the field character's movement is logged on the Kinetic Energy Scale
+  // While it is up, but none of Iansan's own, as she is not the active character then
+  onStep: ({ kitEffectState }, { characterId }, _stepSeconds, movement) => {
+    if (movement <= 0 || kitEffectState.fieldCharacterId === characterId) return;
+    const scale = findKitStatus(kitEffectState.effects, characterId, KINETIC_ENERGY_SCALE_ID);
+    if (scale && scale.secondsRemaining > 0) scale.stacks = (scale.stacks ?? 0) + movement;
+  },
   burst: {
     onStart: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
+      const { characterId, constellationCount } = activeCombatant;
+      const isConstellation6 = constellationCount >= CONSTELLATION_6;
+      const restoreSeconds = BURST_RESTORE_SECONDS + (isConstellation6 ? CONSTELLATION_6_SCALE_SECONDS : 0);
+      addKitStatus(kitEffectState, characterId, {
+        id: KINETIC_ENERGY_SCALE_ID,
+        secondsRemaining: restoreSeconds,
+        stacks: 0,
+      });
       scheduleKitTask(kitEffectState, characterId, toKitSeconds(BURST_POINTS_FRAMES), (context) => {
         if (hasKitNightsoulBlessing(context.kitEffectState.effects, characterId))
           generateKitNightsoulPoints(context, BURST_POINTS, NIGHTSOUL_POINTS, characterId);
@@ -202,14 +235,24 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
       schedulePeriodicKitTask(
         kitEffectState,
         characterId,
-        { firstSeconds: 1, intervalSeconds: 1, untilSeconds: BURST_RESTORE_SECONDS },
+        { firstSeconds: 1, intervalSeconds: 1, untilSeconds: restoreSeconds },
         (context) => {
           // The restore stops once the blessing it lands in ends, as gcsim's does when the blessing exits
           if (!hasKitNightsoulBlessing(context.kitEffectState.effects, characterId)) return;
-          const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
+          const points =
+            restorePreciseMovementPoints(context.kitEffectState, characterId) +
+            takeKitScaleMovementPoints(context.kitEffectState, characterId);
           if (points <= 0) return;
-          generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
-          healWarmingUp(context, characterId);
+          const gained = generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
+          // The points the restore could not hold overflow, and give the field character Extreme Force at Constellation 6
+          const { fieldCharacterId } = context.kitEffectState;
+          if (isConstellation6 && points > gained && fieldCharacterId !== undefined)
+            buffKitMember(context.kitEffectState, fieldCharacterId, {
+              amount: EXTREME_FORCE_DAMAGE_BONUS,
+              attribute: Attribute.AllDamageBonus,
+              secondsRemaining: EXTREME_FORCE_SECONDS,
+            });
+          if (points >= 1) healWarmingUp(context, characterId);
         },
       );
     },

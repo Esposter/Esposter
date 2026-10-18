@@ -1,6 +1,6 @@
 ## Purpose
 
-Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's, and what is left waiting on the Stormflight swap and the party ATK buff.
+Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's, her Kinetic Energy Scale and Constellation 6, and what is left waiting on the Stormflight swap, the party ATK buff and Constellations 2 and 4.
 
 ## Requirements
 
@@ -127,6 +127,34 @@ Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, enterin
 - **GIVEN** the blessing her burst landed in has run out of points
 - **WHEN** another second passes
 - **THEN** the burst's restore gives her no points
+
+### Requirement: Kinetic Energy Scale and Constellation 6
+
+Iansan's burst SHALL start a Kinetic Energy Scale for the 12 seconds its restore lasts. The Scale SHALL log each 2 metres the field character moves while it is up, and each second the restore SHALL give one point for the movement the Scale logged over the last second. Her own movement SHALL log nothing. From Constellation 6, the Scale and the restore SHALL last 3 seconds longer, and a restore whose points overflow the blessing SHALL give the field character Extreme Force, 25% DMG for 3 seconds.
+
+#### Scenario: The field character's movement gives points
+
+- **GIVEN** Iansan's burst is up and another character is on the field
+- **WHEN** that character moves 4 metres and the next second's restore falls
+- **THEN** the restore gives her 2 points
+
+#### Scenario: Her own movement gives nothing
+
+- **GIVEN** Iansan is on the field during her burst
+- **WHEN** she moves 4 metres and the next second's restore falls
+- **THEN** the restore gives her no movement points
+
+#### Scenario: Constellation 6 lengthens the Scale
+
+- **GIVEN** Iansan is at Constellation 6 and has just cast her burst
+- **WHEN** 14 seconds pass
+- **THEN** the Scale is still up
+
+#### Scenario: Overflow gives the field character Extreme Force
+
+- **GIVEN** Iansan is at Constellation 6 and her restore would overflow the blessing
+- **WHEN** the restore falls
+- **THEN** the field character gains 25% DMG for 3 seconds
 
 ### Requirement: Ascension 1's points
 

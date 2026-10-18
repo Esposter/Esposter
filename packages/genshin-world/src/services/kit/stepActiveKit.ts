@@ -18,6 +18,7 @@ import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { infuseKitHit } from "#src/services/kit/effects/infuseKitHit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { measureKitStepMovement } from "#src/services/kit/measureKitStepMovement";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
@@ -94,6 +95,13 @@ export const stepActiveKit = (
   const combatant = findKitStance(kitEffectState.effects, characterId)?.combatant ?? fieldCombatant;
   const { kit } = combatant;
   const { position } = characterController;
+  const movement = measureKitStepMovement({
+    characterId,
+    fieldCharacterId: kitEffectState.fieldCharacterId,
+    from: kitEffectState.fieldPosition ?? position,
+    to: position,
+  });
+  kitEffectState.fieldPosition = { x: position.x, z: position.z };
   body.facing = characterController.facing;
   body.height = input.height;
   body.position = position;
@@ -107,7 +115,7 @@ export const stepActiveKit = (
   sendKitOutbox(context);
   stepKitEffects(stepSeconds, context);
   for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-  stepDeployedKits(context, stepSeconds);
+  stepDeployedKits(context, stepSeconds, movement);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
   pickUpCrystallizeShards(kitEffectState, characterId, position, outbox);

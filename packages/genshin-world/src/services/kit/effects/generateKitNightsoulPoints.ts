@@ -12,8 +12,9 @@ export const generateKitNightsoulPoints = (
   points: number,
   maximum: number,
   characterId = context.activeCombatant.characterId,
-): void => {
+): number => {
   const { kitEffectState } = context;
   const gained = gainKitNightsoulPoints(kitEffectState, characterId, points, maximum);
   if (gained > 0) emitKitEvent({ characterId, kind: KitEventKind.NightsoulPointsGained, points: gained }, context);
+  return gained;
 };
