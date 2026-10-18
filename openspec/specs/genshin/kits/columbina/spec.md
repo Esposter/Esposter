@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew, Constellation 4 and her Ascension 4 left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction, her Dew and her Moondew Cleanse built, and her Lunar reactions, Constellation 4 and her Ascension 4's Lunar-Charged and Lunar-Crystallize hits left waiting on their hooks.
 
 ## Requirements
 
