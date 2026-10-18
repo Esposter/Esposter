@@ -10,9 +10,9 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
-// The Bell's Rebellious Guardian at its first rank: a shield of a fifth of Max HP, a cooldown of forty-five seconds and a
-// Twelve per cent DMG Bonus
-const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.2, 45, 0.12]);
+// Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a fifth DMG
+// Bonus
+const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.3, 3, 0.2]);
 
 describe(createRebelliousGuardianPassiveModule, () => {
   test("an enemy's strike that takes the wielder's HP generates its shield and the DMG Bonus while it lasts", () => {
@@ -34,12 +34,12 @@ describe(createRebelliousGuardianPassiveModule, () => {
     expect(context.kitEffectState.effects.filter(({ kind }) => kind !== "status")).toStrictEqual([
       {
         characterId: TRAVELER_CHARACTER_ID,
-        health: 0.2 * wielder.attributes.maxHealth,
+        health: 0.3 * wielder.attributes.maxHealth,
         kind: "shield",
         secondsRemaining: 10,
       },
       {
-        amount: 0.12,
+        amount: 0.2,
         attribute: Attribute.AllDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
@@ -80,7 +80,7 @@ describe(createRebelliousGuardianPassiveModule, () => {
     expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
-  test("a second loss inside the rank's forty-five seconds generates no second shield", () => {
+  test("a second loss inside the cooldown generates no second shield", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

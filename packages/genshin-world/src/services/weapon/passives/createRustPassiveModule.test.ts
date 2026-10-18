@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Rust at its first rank: forty per cent more normal attack DMG and ten per cent less charged attack DMG
-const rustPassiveModule = createRustPassiveModule([0.4, 0.1]);
+// Synthetic params, not the weapon's row: half more normal attack DMG and a fifth less charged attack DMG
+const rustPassiveModule = createRustPassiveModule([0.5, 0.2]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -33,10 +33,10 @@ describe(createRustPassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
       rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
-    ).toBeCloseTo(0.4);
+    ).toBeCloseTo(0.5);
     expect(
       rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
-    ).toBeCloseTo(-0.1);
+    ).toBeCloseTo(-0.2);
   });
 
   test("an elemental skill is not changed", () => {

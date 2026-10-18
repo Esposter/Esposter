@@ -19,9 +19,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Repentance and Redemption, Blade of Atonement at its first rank: sixty-four Elemental Mastery for an Elemental Reaction,
-// And sixteen per cent ATK for a Stellar Glimmer reaction, each for twelve seconds
-const repentanceAndRedemptionPassiveModule = createRepentanceAndRedemptionPassiveModule([64, 12, 0.16, 12]);
+// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds on an Elemental Reaction, and a fifth ATK
+// for three seconds on a Stellar Glimmer reaction
+const repentanceAndRedemptionPassiveModule = createRepentanceAndRedemptionPassiveModule([5, 2, 0.2, 3]);
 const createReaction = (reactionType: ReactionType, element: Element) => ({
   enemy,
   kind: KitEventKind.ReactionTriggered as const,
@@ -43,11 +43,11 @@ describe(createRepentanceAndRedemptionPassiveModule, () => {
     );
 
     expect(getBuffs(context.kitEffectState.effects)).toContainEqual({
-      amount: 64,
+      amount: 5,
       attribute: Attribute.ElementalMastery,
       characterId: TRAVELER_CHARACTER_ID,
       kind: "buff",
-      secondsRemaining: 12,
+      secondsRemaining: 2,
       source: "repentanceAndRedemption",
     });
   });
@@ -63,11 +63,11 @@ describe(createRepentanceAndRedemptionPassiveModule, () => {
     );
 
     expect(getBuffs(context.kitEffectState.effects)).toContainEqual({
-      amount: 0.16,
+      amount: 0.2,
       attribute: Attribute.AttackPercent,
       characterId: TRAVELER_CHARACTER_ID,
       kind: "buff",
-      secondsRemaining: 12,
+      secondsRemaining: 3,
       source: "repentanceAndRedemption",
     });
   });

@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// The Stringless at its first rank: twenty-four per cent more Elemental Skill and Elemental Burst DMG
-const skillAndBurstDamagePassiveModule = createSkillAndBurstDamagePassiveModule([0.24]);
+// A synthetic half more Elemental Skill and Elemental Burst DMG, not the weapon's row
+const skillAndBurstDamagePassiveModule = createSkillAndBurstDamagePassiveModule([0.5]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -33,10 +33,10 @@ describe(createSkillAndBurstDamagePassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
       skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
-    ).toBeCloseTo(0.24);
+    ).toBeCloseTo(0.5);
     expect(
       skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, []),
-    ).toBeCloseTo(0.24);
+    ).toBeCloseTo(0.5);
   });
 
   test("a normal attack is not raised", () => {

@@ -20,9 +20,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createSamuraiConductPassiveModule, () => {
-  // Samurai Conduct at its fifth rank: twelve per cent Elemental Skill DMG, three energy spent, five regenerated on each
-  // Two-second tick for six seconds, and a ten-second cooldown
-  const samuraiConductPassiveModule = createSamuraiConductPassiveModule([0.12, 3, 5, 6, 10]);
+  // Synthetic params, not the weapon's row: half Elemental Skill DMG, two energy spent, three regenerated on each two-second
+  // Tick for four seconds, and a five-second cooldown
+  const samuraiConductPassiveModule = createSamuraiConductPassiveModule([0.5, 2, 3, 4, 5]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   const createStrike = (attackTag: AttackTag): KitStrike => ({
@@ -47,7 +47,7 @@ describe(createSamuraiConductPassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
       samuraiConductPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
-    ).toBe(0.12);
+    ).toBe(0.5);
     expect(
       samuraiConductPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
@@ -60,11 +60,11 @@ describe(createSamuraiConductPassiveModule, () => {
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = 10;
     samuraiConductPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(7);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
 
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 4.1);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(22);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(14);
   });
 
   test("a second Elemental Skill hit inside the cooldown spends and regenerates nothing", () => {
@@ -75,9 +75,9 @@ describe(createSamuraiConductPassiveModule, () => {
     samuraiConductPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
     samuraiConductPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 4.1);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(22);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(14);
   });
 
   test("a normal attack hit spends and regenerates nothing", () => {
@@ -87,7 +87,7 @@ describe(createSamuraiConductPassiveModule, () => {
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = 10;
     samuraiConductPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 4.1);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(10);
   });

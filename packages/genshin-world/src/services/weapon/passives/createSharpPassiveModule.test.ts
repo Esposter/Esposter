@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Sharp at its first rank, which reads its DMG percentage from the affix row's first number
-const sharpPassiveModule = createSharpPassiveModule([0.24]);
+// A synthetic DMG percentage of half, not the weapon's row
+const sharpPassiveModule = createSharpPassiveModule([0.5]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -37,7 +37,7 @@ describe(createSharpPassiveModule, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBeCloseTo(0.24);
+    ).toBeCloseTo(0.5);
   });
 
   test("a charged attack its wielder deals is not raised", () => {
