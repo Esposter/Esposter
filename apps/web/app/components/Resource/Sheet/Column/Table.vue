@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
@@ -26,9 +27,13 @@ const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore)
 const { isOpen: isChartOpen, item: chartingColumn } = useSingletonDialog(chartingColumnName, () =>
   dataSource.columns.find(({ name }) => name === chartingColumnName.value),
 );
-const chartingColumnStatistics = computed(() =>
-  chartingColumn.value ? computeColumnStatisticsForColumn(dataSource, chartingColumn.value) : undefined,
-);
+const chartingColumnStatistics = computed(() => {
+  const column = chartingColumn.value;
+  if (!column) return undefined;
+  const readCell = compileSheetColumns(dataSource.columns)(dataSource.rows);
+  const values = dataSource.rows.map((row, rowIndex) => readCell(row, column, rowIndex));
+  return computeColumnStatisticsForColumn(column, values);
+});
 const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
   dataSource.columns.find(({ name }) => name === editingColumnName.value),
 );

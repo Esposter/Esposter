@@ -1,3 +1,6 @@
+import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
@@ -7,11 +10,21 @@ import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
+import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { createColumnStatistics } from "@/services/resource/sheet/column/createColumnStatistics.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+// Compiles the sheet and reads the column's cell on every row, as the grid's statistics do
+const computeStatistics = (dataSource: DataSource, column: Column) => {
+  const readCell = compileSheetColumns(dataSource.columns)(dataSource.rows);
+  return computeColumnStatisticsForColumn(
+    column,
+    dataSource.rows.map((row, rowIndex) => readCell(row, column, rowIndex)),
+  );
+};
 
 describe(computeColumnStatisticsForColumn, () => {
   test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
@@ -23,7 +36,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         average: 1.33,
         maximum: 2,
@@ -48,7 +61,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         average: 0.33,
         maximum: 1,
@@ -67,7 +80,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         average: 1,
         maximum: 1,
@@ -89,7 +102,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.Boolean,
         falseCount: 1,
@@ -109,7 +122,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.String,
         mostFrequentValue: "",
@@ -140,7 +153,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.Date,
         mostFrequentValue: epochDate,
@@ -158,7 +171,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({ nullCount: 1, nullPercentage: 100, summation: 0, uniqueCount: 0 }),
     );
   });
@@ -169,7 +182,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const dataSource = createDataSource([createNumberColumn("")]);
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({ summation: 0, uniqueCount: 0 }),
     );
   });
@@ -180,7 +193,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const dataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": null })]);
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.String,
         nullCount: 2,
@@ -208,7 +221,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
     const column = takeOne(dataSource.columns, 1);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         average: 1.33,
         columnName: " ",
@@ -229,7 +242,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const dataSource = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
     const column = takeOne(dataSource.columns);
 
-    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.String,
         mostFrequentValue: "",

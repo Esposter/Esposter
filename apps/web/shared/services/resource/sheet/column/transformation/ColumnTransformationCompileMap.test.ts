@@ -1,5 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { ColumnTransformationComputeContext } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationComputeContext";
+import type { ColumnTransformationBindContext } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationBindContext";
 
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDateColumn } from "#shared/models/resource/sheet/column/createDateColumn.test";
@@ -9,50 +9,42 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { DatePartType } from "#shared/models/resource/sheet/column/transformation/DatePartType";
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { ColumnTransformationComputeMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationComputeMap";
+import { ColumnTransformationCompileMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap";
 import { describe, expect, test } from "vitest";
 
-const createContext = (
-  sourceValue: null | string,
-  sourceColumn: Column | undefined,
-  rows?: ColumnTransformationComputeContext["rows"],
-  rowIndex?: number,
-): ColumnTransformationComputeContext => ({
-  computeSource: () => sourceValue,
-  findSource: () => sourceColumn,
-  rowIndex,
-  rows,
-});
+// Binds a source that reads one value on every row, so each transformation's per-value logic is what is under test
+const createBindContext = (sourceValue: null | string, rows: ColumnTransformationBindContext["rows"] = []) =>
+  ({ readSource: () => () => sourceValue, rows }) satisfies ColumnTransformationBindContext;
 
-describe("columnTransformationComputeMap", () => {
+describe("columnTransformationCompileMap", () => {
   const sourceColumnId = crypto.randomUUID();
   const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test(`${ColumnTransformationType.String} returns null for a null source value`, () => {
     expect.hasAssertions();
     expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.String](
+      ColumnTransformationCompileMap[ColumnTransformationType.String](
         {
           sourceColumnId,
           stringTransformationType: StringTransformationType.UpperCase,
           type: ColumnTransformationType.String,
         },
-        createContext(null, createColumn("")),
-      ),
+        () => createColumn(""),
+      )(createBindContext(null))(createRow({})),
     ).toBeNull();
   });
 
   test(`${ColumnTransformationType.StringSplit} returns null for a null source value`, () => {
     expect.hasAssertions();
     expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.StringSplit](
+      ColumnTransformationCompileMap[ColumnTransformationType.StringSplit](
         { delimiter: ",", segmentIndex: 0, sourceColumnId, type: ColumnTransformationType.StringSplit },
-        createContext(null, createColumn("")),
-      ),
+        () => createColumn(""),
+      )(createBindContext(null))(createRow({})),
     ).toBeNull();
   });
 
-  test(`${ColumnTransformationType.Aggregation} returns null without rows and rowIndex`, () => {
+  test(`${ColumnTransformationType.Aggregation} returns null without rowIndex`, () => {
     expect.hasAssertions();
 
     const transformation = {
@@ -63,16 +55,10 @@ describe("columnTransformationComputeMap", () => {
     const sourceColumn = createColumn("");
 
     expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.Aggregation](
+      ColumnTransformationCompileMap[ColumnTransformationType.Aggregation](
         transformation,
-        createContext(null, sourceColumn, undefined, 0),
-      ),
-    ).toBeNull();
-    expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.Aggregation](
-        transformation,
-        createContext(null, sourceColumn, [createRow({ "": 0 })]),
-      ),
+        () => sourceColumn,
+      )(createBindContext(null, [createRow({ "": 0 })]))(createRow({ "": 0 })),
     ).toBeNull();
   });
 
@@ -84,24 +70,14 @@ describe("columnTransformationComputeMap", () => {
       sourceColumnId,
       type: ColumnTransformationType.DatePart,
     } as const;
+    const readYear = (sourceColumn: Column | undefined) =>
+      ColumnTransformationCompileMap[ColumnTransformationType.DatePart](
+        transformation,
+        () => sourceColumn,
+      )(createBindContext(epochDate))(createRow({}), 0);
 
-    expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
-        transformation,
-        createContext(epochDate, createColumn("")),
-      ),
-    ).toBeNull();
-    expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
-        transformation,
-        createContext(epochDate, undefined),
-      ),
-    ).toBeNull();
-    expect(
-      ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
-        transformation,
-        createContext(epochDate, createDateColumn("", DateFormat["YYYY-MM-DD"])),
-      ),
-    ).toBe(1970);
+    expect(readYear(createColumn(""))).toBeNull();
+    expect(readYear(undefined)).toBeNull();
+    expect(readYear(createDateColumn("", DateFormat["YYYY-MM-DD"]))).toBe(1970);
   });
 });

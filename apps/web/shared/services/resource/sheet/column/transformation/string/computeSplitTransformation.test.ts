@@ -1,7 +1,7 @@
 import { computeSplitTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeSplitTransformation";
 import { describe, expect, test } from "vitest";
 
-// The null guard and String(...) coercion of the source value live in ColumnTransformationComputeMap; here only the
+// The null guard and String(...) coercion of the source value live in ColumnTransformationCompileMap; here only the
 // Segment selection
 describe(computeSplitTransformation, () => {
   test("returns the segment at the index", () => {

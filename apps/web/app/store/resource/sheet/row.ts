@@ -4,7 +4,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
+import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/column/buildColumnStatisticsComputeContext";
 import { ColumnStatisticsDefinitionMap } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
@@ -37,9 +37,11 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const displayRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
   const rowIdIndexMap = computed(() => new Map(displayRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
-  // Through `computeValue` rather than off the row
-  const getCellValue = (row: Row, column: Column) =>
-    computeValue(displayRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
+  // Through the compiled columns rather than off the row. Binding reads only the aggregations' source cells, so
+  // Vue's tracking rebinds exactly when one of those cells or the rows in view change
+  const compiledColumns = computed(() => compileSheetColumns(columnStore.columns));
+  const readCell = computed(() => compiledColumns.value(displayRows.value));
+  const getCellValue = (row: Row, column: Column) => readCell.value(row, column, rowIdIndexMap.value.get(row.id));
   const getCellText = (row: Row, column: Column) => getDisplayText(getCellValue(row, column), column);
   const tableColumns = computed<UiDataTableColumn<Row>[]>(() => [
     // The row's number leads, as a spreadsheet's row header does, so it is the column the table keeps in view

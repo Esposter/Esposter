@@ -2,13 +2,20 @@
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
+import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
+import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useResourceStore } from "@/store/resource";
+import { useSheetStore } from "@/store/resource/sheet";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
+import { takeOne } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
@@ -60,5 +67,29 @@ describe(useRowStore, () => {
     await flushPromises();
 
     expect(page.value).toBe(2);
+  });
+
+  // An aggregation keeps nothing in its row, so its cell follows its source's cells: an edit to one of them has to
+  // Reach the text the row shows
+  test("an aggregation's cell text follows an edit to its source cell", () => {
+    expect.hasAssertions();
+
+    const sourceColumn = createNumberColumn("");
+    const runningSummationColumn = createComputedColumn(" ", sourceColumn.id, {
+      aggregationTransformationType: AggregationTransformationType.RunningSummation,
+      sourceColumnId: sourceColumn.id,
+      type: ColumnTransformationType.Aggregation,
+    });
+    setupWithDataSource(
+      createDataSource([sourceColumn, runningSummationColumn], [createRow({ "": 1 }), createRow({ "": 2 })]),
+    );
+    const sheetStore = useSheetStore();
+    const rowStore = useRowStore();
+    const lastRow = takeOne(sheetStore.dataSource.rows, 1);
+    expect(rowStore.getCellText(lastRow, runningSummationColumn)).toBe("3");
+
+    takeOne(sheetStore.dataSource.rows).data[""] = 5;
+
+    expect(rowStore.getCellText(lastRow, runningSummationColumn)).toBe("7");
   });
 });

@@ -98,7 +98,7 @@ describe(useCopyRangeToClipboard, () => {
     expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("a\tb\n0\t0");
   });
 
-  // A range indexes the displayed columns, but computeValue resolves a computed column's source by id against
+  // A range indexes the displayed columns, but a computed column resolves its source by id against
   // The columns it is handed — narrow that context to the displayed set and a hidden source is simply missing,
   // So the grid shows a value while the clipboard gets an empty cell
   test("materializes a computed column whose source column is hidden", async () => {

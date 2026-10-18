@@ -18,7 +18,7 @@ export const useCopyRangeToClipboard = () => {
     if (!range) return;
     // Materialize through the shared export path so computed columns copy their displayed value
     // Instead of an empty cell; the row range bounds the clone/compute work to the selection while
-    // Each cell still resolves via computeValue against the full row/column context
+    // Each cell still resolves against the full row/column context, so a computed column reads its source
     const { columns, rows } = filterDataSourceRange(dataSource.value, displayRows.value, range);
     const rangeDataSource = { ...dataSource.value, columns, rows };
     await getResultAsync(() =>

@@ -1,5 +1,6 @@
 import type { ColumnStatisticsRow } from "@/models/resource/sheet/column/ColumnStatisticsRow";
 
+import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { useSheetStore } from "@/store/resource/sheet";
 
@@ -11,11 +12,13 @@ import { useSheetStore } from "@/store/resource/sheet";
 export const useColumnStatistics = () => {
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
-  return computed<ColumnStatisticsRow[]>(() =>
-    dataSource.value.columns.map((column) => ({
-      column,
-      id: column.id,
-      statistics: computeColumnStatisticsForColumn(dataSource.value, column),
-    })),
-  );
+  return computed<ColumnStatisticsRow[]>(() => {
+    const { columns, rows } = dataSource.value;
+    // Bound once for the whole run, so each aggregation of the sheet is built once rather than once a column
+    const readCell = compileSheetColumns(columns)(rows);
+    return columns.map((column) => {
+      const values = rows.map((row, rowIndex) => readCell(row, column, rowIndex));
+      return { column, id: column.id, statistics: computeColumnStatisticsForColumn(column, values) };
+    });
+  });
 };
