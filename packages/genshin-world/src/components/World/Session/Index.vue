@@ -19,6 +19,7 @@ import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
 import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
+import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
@@ -50,6 +51,8 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
+import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -57,6 +60,7 @@ import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -94,6 +98,8 @@ const {
   cameraPose,
   catalogue,
   characterPackBaseUrl,
+  craftingBenchPlace,
+  craftingRecipes,
   createTerrainWorker,
   enemyTables,
   frostbearingTreePlaces,
@@ -406,9 +412,17 @@ useWorldSaveSync({
 });
 // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
 const lockedJumpLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)));
+// The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
+const crafting = computed(() =>
+  computeCraftingCrafters(
+    getDeployedCharacterIds(party),
+    getActiveCharacterId(party),
+    (characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "",
+  ),
+);
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
-// Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
-// Stands on the ground beneath its point
+// Whose talk the world holds, named by its text, each jump landmark still locked, which it resonates with, and the
+// Crafting bench, named by its title. Each stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
   // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
@@ -430,6 +444,7 @@ const interactables = computed<Interactable[]>(() => {
     ...chestInteractables.value,
     ...frostbearingTrees,
     ...statues,
+    ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
   ];
 });
 const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
@@ -600,6 +615,8 @@ defineExpose({ jumpTo, readCameraPosition });
               offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
+            } else if (interactable?.kind === InteractionKind.Use) {
+              screenKind = ScreenKind.Crafting;
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               talkDuelGameId = getTalkDuelGameId(interactable.id);
@@ -893,6 +910,24 @@ defineExpose({ jumpTo, readCameraPosition });
         gcgGameId = undefined;
         screenKind = ScreenKind.World;
       "
+    />
+    <CraftingScreen
+      v-if="screenKind === ScreenKind.Crafting"
+      v-model:crafted-count-map="craftedCountMap"
+      :adventure-rank="rank"
+      :crafters="crafting.crafters"
+      :game-text
+      :initial-crafter-id="crafting.crafterId"
+      :inventory
+      :material-data-map="materialDataMap"
+      :name-text="nameText"
+      :progress="craftingProgress"
+      :random="kitContext.random"
+      :recipes="craftingRecipes"
+      :wallet
+      @close="screenKind = ScreenKind.World"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <div
       class="teleport-fade"
