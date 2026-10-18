@@ -270,7 +270,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 
 ### Next
 
-- [ ] **The world's ready budget, re-recorded from production runs on its machine.** [Load budget](../../specs/genshin/load-budget/design.md) holds `WorldScreen`'s ready at 11.8 s, recorded when the landmark collider's hierarchy landed, while the production median is now 10.7 s. Three production runs on the machine the budget names (`DESKTOP-B9KPH2V`) set the new figure, lowered in the same change as the measurement they rest on.
+- [ ] **The world's ready budget, re-recorded from production runs on its machine.** [Load budget](../../specs/genshin/load-budget/design.md) holds `WorldScreen`'s ready budget, recorded when the landmark collider's hierarchy landed, and the production median it is measured against is now lower than that budget. Three production runs on the machine the budget names (`DESKTOP-B9KPH2V`) set the new figure, lowered in the same change as the measurement they rest on.
 - [ ] **Inventory: the login's settings named.** [Recreation passes](../genshin-recreation-passes/design.md) matches each setting of the login's scripts to what it sets, and claims every effect, clip and sound the exports hold.
 - [ ] **Layout: the towers that stand off.** [Recreation passes](../genshin-recreation-passes/design.md) places the towers a dozen pixels or more off, which edges cannot place, by each tower's upper sky outline.
 - [ ] **References: every hour on the current build.** [Recreation passes](../genshin-recreation-passes/design.md) needs a title frame at each hour and the door at rest, from a current recording.
