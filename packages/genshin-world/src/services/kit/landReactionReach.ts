@@ -1,4 +1,5 @@
 import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -43,6 +44,7 @@ export const landReactionReach = (
   { element, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
+  stellarReactionTypes: readonly StellarReactionType[] = [],
 ): Map<Enemy, EnemyStrikeResult> => {
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
   const radius = TransformativeReactionReachRadiusMap[reactionType];
@@ -71,7 +73,7 @@ export const landReactionReach = (
       reactionType === TransformativeReactionType.Burning ? applyBurningInternalCooldown(elementalState) : spreadGauge;
     const reactions = reachPoiseDamage > 0 ? applyBluntHit(elementalState, reachPoiseDamage) : [];
     if (element !== undefined && gauge !== undefined)
-      reactions.push(...applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes));
+      reactions.push(...applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes, stellarReactionTypes));
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage } =

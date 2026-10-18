@@ -10,6 +10,7 @@ import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenedict
 import type { KitSkillChain } from "#src/models/kit/KitSkillChain";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
+import type { KitStellarJubilee } from "#src/models/kit/KitStellarJubilee";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitVariant } from "#src/models/kit/KitVariant";
 import type { Party } from "#src/models/party/Party";
@@ -60,4 +61,6 @@ export interface Kit {
   // The icons its skill and burst buttons carry, read with the kit from the hosted index by the character's own id, none
   // For a character the index lacks
   skillGlyphs?: SkillGlyphs;
+  // The character's Stellar Jubilee passive, if it has one, which enables Stellar reactions for its party
+  stellarJubilee?: KitStellarJubilee;
 }

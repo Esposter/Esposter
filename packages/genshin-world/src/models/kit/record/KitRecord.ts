@@ -6,6 +6,7 @@ import type { KitMoonsignBenedictionRecord } from "#src/models/kit/record/KitMoo
 import type { KitParameter } from "#src/models/kit/record/KitParameter";
 import type { KitSkillChainRecord } from "#src/models/kit/record/KitSkillChainRecord";
 import type { KitStanceRecord } from "#src/models/kit/record/KitStanceRecord";
+import type { KitStellarJubileeRecord } from "#src/models/kit/record/KitStellarJubileeRecord";
 
 import { attackAreaSchema } from "#src/models/kit/AttackArea";
 import { kitActionRecordSchema } from "#src/models/kit/record/KitActionRecord";
@@ -16,6 +17,7 @@ import { kitParameterSchema } from "#src/models/kit/record/KitParameter";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { kitSkillChainRecordSchema } from "#src/models/kit/record/KitSkillChainRecord";
 import { kitStanceRecordSchema } from "#src/models/kit/record/KitStanceRecord";
+import { kitStellarJubileeRecordSchema } from "#src/models/kit/record/KitStellarJubileeRecord";
 import { z } from "zod";
 
 const createNamedSchema = <T extends z.ZodType>(schema: T) => z.record(z.string(), z.union([schema, z.array(schema)]));
@@ -50,6 +52,7 @@ export interface KitRecord {
   skillHolds: KitHoldRecord[];
   skillMaximumHeldSeconds?: KitParameter;
   stances?: Record<string, KitStanceRecord>;
+  stellarJubilee?: KitStellarJubileeRecord;
 }
 
 export const kitRecordSchema = z.strictObject({
@@ -76,4 +79,5 @@ export const kitRecordSchema = z.strictObject({
   skillHolds: z.array(kitHoldRecordSchema),
   skillMaximumHeldSeconds: kitParameterSchema.optional(),
   stances: z.record(z.string(), kitStanceRecordSchema).optional(),
+  stellarJubilee: kitStellarJubileeRecordSchema.optional(),
 }) satisfies z.ZodType<KitRecord>;

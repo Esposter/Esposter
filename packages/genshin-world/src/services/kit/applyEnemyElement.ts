@@ -1,4 +1,5 @@
 import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -19,11 +20,13 @@ export const applyEnemyElement = (
   gauge: number,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
+  stellarReactionTypes: readonly StellarReactionType[] = [],
 ): Reaction[] => {
   const { auras } = enemy.elementalState;
   const reactions = applyElement(enemy.elementalState, element, gauge, {
     lunarReactionTypes,
     sourceId: combatant.characterId,
+    stellarReactionTypes,
   });
   if (gauge <= 0) return reactions;
   if ((element === Element.Electro || element === Element.Hydro) && checkIsElectroCharged(auras))
