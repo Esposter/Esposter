@@ -227,6 +227,18 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **THEN** the shield absorbs what it can
 - **AND** the excess passes to the character
 
+#### Scenario: An elemental shield absorbs an enemy's strike of its own element 250% as effectively
+
+- **GIVEN** the member on the field holds a Cryo shield
+- **WHEN** an enemy whose attacks carry Cryo strikes it
+- **THEN** each point of the shield's health absorbs 2.5 points of the strike
+
+#### Scenario: A shield that takes a strike reports the health it has left
+
+- **GIVEN** the member on the field holds a shield another member cast
+- **WHEN** an enemy's strike lands on it
+- **THEN** the shield's owner is told the damage the shield absorbed, the health it has left and the member the strike was on
+
 ### Requirement: A normal or charged attack's hit
 
 A normal or charged attack's hit SHALL give its character one energy at a chance set by its weapon, which rises with each hit that gives none.

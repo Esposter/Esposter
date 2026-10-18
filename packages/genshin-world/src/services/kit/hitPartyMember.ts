@@ -8,9 +8,9 @@ import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
-// A hit of a set amount on the member on the field: the team's shields take it first, and what none of them absorbs is
-// Taken from the member as the share of its Max HP it is. An enemy's strike, a boar's charge and the sheer cold's damage
-// All land this way
+// A hit of a set amount on the member on the field: the team's shields take it first, each against the hit's element, and
+// What none of them absorbs is taken from the member as the share of its Max HP it is. An enemy's strike, a boar's
+// Charge and the sheer cold's damage all land this way
 export const hitPartyMember = (
   party: Party,
   combatant: Combatant,
@@ -20,7 +20,7 @@ export const hitPartyMember = (
   element?: Element,
 ): void => {
   const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-  const overflow = absorbKitShield(kitEffectState.effects, combatant, damage);
+  const overflow = absorbKitShield(kitEffectState.effects, combatant, damage, element);
   damagePartyMember(
     party,
     combatant.characterId,
