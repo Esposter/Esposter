@@ -159,7 +159,7 @@ import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword
 import { tubby } from "#src/services/gcg/cards/tubby";
 import { ushi } from "#src/services/gcg/cards/ushi";
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
-import { vermillionHereafterBonus } from "#src/services/gcg/cards/vermillionHereafter";
+import { vermillionHereafterBonus } from "#src/services/gcg/cards/vermillionHereafterBonus";
 import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
 import { vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
 import { wagner } from "#src/services/gcg/cards/wagner";

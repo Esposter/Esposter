@@ -4,7 +4,7 @@ import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
-import { takeOne } from "@esposter/shared";
+import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 
 const YAKSHAS_MASK_ROUNDS = 2;
@@ -25,15 +25,7 @@ export const yakshasMask: GcgCardModule = {
       (dealt.damageType === Element.Anemo ? YAKSHAS_MASK_DAMAGE_BONUS : 0) + (isPlunge ? YAKSHAS_MASK_PLUNGE_BONUS : 0);
     return { ...dealt, value: dealt.value + bonus };
   },
-  onCostPaid: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).usedCardIds.push(YAKSHAS_MASK_ID);
-  },
-  reduceCost: (context, subject) => {
-    const side = takeOne(context.duel.sides, context.sideIndex);
-    return checkIsGcgSwitchCost(subject) &&
-      checkIsGcgActiveHolder(context) &&
-      !side.usedCardIds.includes(YAKSHAS_MASK_ID)
-      ? { count: 1 }
-      : undefined;
-  },
+  ...createGcgOncePerRoundCostReduction(YAKSHAS_MASK_ID, (context, subject) =>
+    checkIsGcgSwitchCost(subject) && checkIsGcgActiveHolder(context) ? { count: 1 } : undefined,
+  ),
 };
