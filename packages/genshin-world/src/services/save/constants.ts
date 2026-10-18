@@ -86,8 +86,10 @@ export const MAX_CHARACTER_COUNT = 512;
 // The draws the wish history keeps, the newest of those within its window and never more than this, so a year of draws is
 // Bounded
 export const MAX_WISH_HISTORY_COUNT = 10_000;
-// The bench's recipes are the combine table's rows, each named by its id once in the learned list and once in the counts
-export const MAX_CRAFTING_RECIPE_COUNT = 512;
+// The bench's recipes are the craft and conversion rows of the combine table, each named by its id once in the learned list
+// And once in the counts. The cap holds every row the bench holds with some room to spare, so a save that has crafted or
+// Converted each one is never refused
+export const MAX_CRAFTING_RECIPE_COUNT = 576;
 // The cook table's rows, dishes and processings alike, each named by its id once in the learned list and once in each of
 // The proficiency and queue maps, so the cooking slice is bounded by the table's rows
 export const MAX_COOKING_RECIPE_COUNT = 512;

@@ -15,3 +15,7 @@ export const CRAFTING_BENCH_INTERACTABLE_ID = "craftingBench";
 // The Adventure Rank the Mystic Offering opens at, from the wiki's Mystic Offering page, which the dump's tables for it do
 // Not hold
 export const MYSTIC_OFFERING_ADVENTURE_RANK = 45;
+
+// The bench's conversions are listed under tabs of their own, each the id of its combine type past this offset: the craft
+// Tabs run to the highest combine type the bench names, twelve, so the two sections never share a tab
+export const CONVERSION_TAB_ID_OFFSET = 100;

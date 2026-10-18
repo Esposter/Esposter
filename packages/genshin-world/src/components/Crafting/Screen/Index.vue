@@ -16,6 +16,7 @@ import { computeCraftAchievementEvent } from "#src/services/crafting/computeCraf
 import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearnedRecipeCells";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
+import { getCraftingTabId } from "#src/services/crafting/getCraftingTabId";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -58,24 +59,25 @@ const crafterId = ref(initialCrafterId);
 const recipeId = ref(0);
 const tabId = ref(0);
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
-// One tab per combine type the open recipes fall under, in the table's order and named by the game's own text
+// One tab per bench tab the open recipes fall under, in order and named by the game's own text for the combine type each
+// Files under: a conversion's tab is apart from the craft tab of the same combine type
 const tabCells = computed(() =>
-  [...new Set(openRecipes.value.map((recipe) => recipe.combineType))]
-    .toSorted((firstCombineType, secondCombineType) => firstCombineType - secondCombineType)
-    .map((combineType) => ({ id: combineType, name: gameText[takeOne(CombineTypeGameTextKeyMap, combineType)] })),
+  [...new Map(openRecipes.value.map((recipe): [number, number] => [getCraftingTabId(recipe), recipe.combineType]))]
+    .toSorted(([firstTabId], [secondTabId]) => firstTabId - secondTabId)
+    .map(([id, combineType]) => ({ id, name: gameText[takeOne(CombineTypeGameTextKeyMap, combineType)] })),
 );
 // The tab the player picked, or the first tab while none is picked
 const pickedTabId = computed(() =>
   tabCells.value.some((tab) => tab.id === tabId.value) ? tabId.value : (tabCells.value.at(0)?.id ?? 0),
 );
-const tabRecipes = computed(() => openRecipes.value.filter((recipe) => recipe.combineType === pickedTabId.value));
+const tabRecipes = computed(() => openRecipes.value.filter((recipe) => getCraftingTabId(recipe) === pickedTabId.value));
 const recipeCells = computed(() =>
   computeLearnedRecipeCells(recipes, {
     adventureRank,
-    combineType: pickedTabId.value,
     craftedCountMap: craftedCountMap.value,
     nameText,
     progress,
+    tabId: pickedTabId.value,
   }),
 );
 // The recipe the player picked in the tab, or the tab's first while none of its own is picked

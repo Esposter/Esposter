@@ -1,7 +1,11 @@
 import type { ExcelCombineRow } from "#src/models/genshinAssets/crafting/ExcelCombineRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
-import { COMBINE_RECIPE_TYPE, CONDENSED_RESIN_ITEM_ID } from "#src/services/genshinAssets/crafting/constants";
+import {
+  COMBINE_RECIPE_TYPE,
+  CONDENSED_RESIN_ITEM_ID,
+  CONVERT_RECIPE_TYPE,
+} from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";
 import { CraftingRecipeKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -42,6 +46,23 @@ describe(toCraftingRecipe, () => {
     scoinCost: 50,
     ...overrides,
   });
+
+  const CONVERT_COMBINE_TYPE = 9;
+  const CATALYST_ITEM_ID = 112_004;
+  // A conversion row as the table reads: its material and catalyst, then the empty slot the dump's defaults fill
+  const createConvertRow = (overrides: Partial<ExcelCombineRow>): ExcelCombineRow =>
+    createRow({
+      combineType: CONVERT_COMBINE_TYPE,
+      materialItems: [
+        { count: 1, id: 112_002 },
+        { count: 3, id: CATALYST_ITEM_ID },
+        { count: 0, id: 0 },
+      ],
+      playerLevel: 0,
+      recipeType: CONVERT_RECIPE_TYPE,
+      scoinCost: 0,
+      ...overrides,
+    });
 
   test("should write a tier as its three of one material, dropping the empty slots", () => {
     expect.hasAssertions();
@@ -125,6 +146,50 @@ describe(toCraftingRecipe, () => {
       toCraftingRecipe(createRow({ recipeType: "RECIPE_TYPE_CONVERT" }), { materialMap, unlockItemIds: [] }),
     ).toBeUndefined();
     expect(toCraftingRecipe(createRow({ combineType: 9 }), { materialMap, unlockItemIds: [] })).toBeUndefined();
+  });
+
+  test("a conversion takes its material and its catalyst", () => {
+    expect.hasAssertions();
+
+    expect(toCraftingRecipe(createConvertRow({}), { materialMap, unlockItemIds: [] })).toStrictEqual({
+      combineType: CONVERT_COMBINE_TYPE,
+      id: 11_002,
+      kind: CraftingRecipeKind.Convert,
+      materials: [
+        { count: 1, id: 112_002 },
+        { count: 3, id: CATALYST_ITEM_ID },
+      ],
+      mora: 0,
+      nameTextId: String(RESULT_NAME_TEXT_HASH),
+      playerLevel: 0,
+      resultCount: 1,
+      resultItemId: 112_003,
+      unlockItemIds: [],
+    });
+  });
+
+  test("a conversion that is not one material and its catalyst is refused", () => {
+    expect.hasAssertions();
+
+    const oneMaterialRow = createConvertRow({
+      materialItems: [
+        { count: 1, id: 112_002 },
+        { count: 0, id: 0 },
+        { count: 0, id: 0 },
+      ],
+    });
+
+    expect(() =>
+      toCraftingRecipe(oneMaterialRow, { materialMap, unlockItemIds: [] }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 11002, is not one material and the catalyst it takes]`,
+    );
+  });
+
+  test("the disassembly rows are not recipes", () => {
+    expect.hasAssertions();
+
+    expect(toCraftingRecipe(createConvertRow({ combineType: 11 }), { materialMap, unlockItemIds: [] })).toBeUndefined();
   });
 
   test("should write a hidden recipe only with an instruction to open it", () => {

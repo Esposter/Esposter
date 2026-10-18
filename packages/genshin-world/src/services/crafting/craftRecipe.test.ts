@@ -85,6 +85,45 @@ describe(craftRecipe, () => {
     expect(result?.wallet[Currency.Mora]).toBe(100);
   });
 
+  test("a conversion spends its material and its catalyst from the bag", () => {
+    expect.hasAssertions();
+
+    const CATALYST_ID = 112_005;
+    const catalystDefinition = createDefinition(CATALYST_ID);
+    const conversionRecipe: CraftingRecipe = {
+      ...tierRecipe,
+      combineType: 9,
+      kind: CraftingRecipeKind.Convert,
+      materials: [
+        { count: 1, id: MATERIAL_ID },
+        { count: 3, id: CATALYST_ID },
+      ],
+      mora: 0,
+      playerLevel: 0,
+    };
+    const inventory: Inventory = {
+      items: [
+        { definition: materialDefinition, id: 0, quantity: 2 },
+        { definition: catalystDefinition, id: 1, quantity: 7 },
+      ],
+      nextId: 2,
+    };
+    const result = craftRecipe(
+      conversionRecipe,
+      2,
+      resultDefinition,
+      craftingState(inventory, EMPTY_WALLET, { learnedRecipeIds: [] }),
+    );
+
+    expect(result?.inventory).toStrictEqual({
+      items: [
+        { definition: catalystDefinition, id: 1, quantity: 1 },
+        { definition: resultDefinition, id: 2, quantity: 2 },
+      ],
+      nextId: 3,
+    });
+  });
+
   test("should refuse a batch the Mora does not pay for, spending nothing", () => {
     expect.hasAssertions();
 
