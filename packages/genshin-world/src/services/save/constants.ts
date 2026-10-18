@@ -13,6 +13,7 @@ import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
@@ -177,18 +178,7 @@ export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
-  archive: {
-    kills: {},
-    progress: {
-      [ArchiveSection.Books]: [],
-      [ArchiveSection.Equipment]: [],
-      [ArchiveSection.Geography]: [],
-      [ArchiveSection.LivingBeings]: [],
-      [ArchiveSection.Materials]: [],
-      [ArchiveSection.TravelLog]: [],
-      [ArchiveSection.Tutorials]: [],
-    },
-  },
+  archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
