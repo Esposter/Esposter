@@ -1,7 +1,7 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Throws one error when any failure was collected, its message the given text and then every failure on its own line, so
-// The error names each one
+// Throws one error when any failure was collected, its message the given text and then every failure on its own
+// Line, so the error names each one
 export const throwCollectedFailures = (
   operation: Operation,
   subject: string,

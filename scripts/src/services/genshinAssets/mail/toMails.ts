@@ -2,8 +2,8 @@ import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { Mail } from "genshin-world";
 
-// The keys of a mail row this reader names; a row carrying any other key is one whose meaning is not known. Typed by the
-// Row, so a key the row gains is an error here until it is named
+// The keys of a mail row this reader names; a row carrying any other key is one whose meaning is not known. Typed by
+// The row, so a key the row gains is an error here until it is named
 const MAIL_NAMED_KEYS: Record<keyof ExcelMailRow, true> = {
   contentTextMapHash: true,
   expireDays: true,
