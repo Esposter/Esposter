@@ -1,5 +1,6 @@
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 
+import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { getPaimonsBargainsOffer } from "#src/services/shop/getPaimonsBargainsOffer";
 import { describe, expect, test } from "vitest";
 
@@ -18,9 +19,11 @@ describe(getPaimonsBargainsOffer, () => {
       [10_000_024, 10_000_034],
       [10_000_027, 10_000_025],
     ],
-    characterPrice: { buyLimit: 2, priceCount: 5, priceItemId: 221 },
+    characterGoodIds: [41, 42],
+    characterPrice: { buyLimit: 2, priceCount: 5, priceItemId: 221, refresh: ShopRefresh.Monthly },
     royalWeaponIds: [11_404, 12_404, 13_408, 14_404, 15_404],
-    weaponPrice: { buyLimit: 3, priceCount: 4, priceItemId: 221 },
+    weaponGoodIds: [51, 52, 53, 54, 55],
+    weaponPrice: { buyLimit: 3, priceCount: 4, priceItemId: 221, refresh: ShopRefresh.Monthly },
   };
 
   test("two characters are offered each month", () => {

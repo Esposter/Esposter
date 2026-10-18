@@ -1,4 +1,4 @@
-import type { ShopGood } from "#src/models/shop/ShopGood";
+import type { ShopGoodLimit } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { computeShopGoodBought } from "#src/services/shop/computeShopGoodBought";
@@ -6,7 +6,7 @@ import { computeShopGoodBought } from "#src/services/shop/computeShopGoodBought"
 // How many more of a good the player can buy before its limit is reached, its purchases counted from its refresh. Undefined
 // Where the good has no buy limit, a limit of zero being no limit
 export const computeShopGoodLeft = (
-  good: ShopGood,
+  good: ShopGoodLimit,
   purchases: ShopPurchase[],
   now: Temporal.Instant,
 ): number | undefined => {
