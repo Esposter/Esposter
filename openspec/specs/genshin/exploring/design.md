@@ -43,28 +43,29 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Key files
 
-| File                                                                   | Role                                                                      |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`        | Pairs each ground waypoint with a transport point and builds its landmark |
-| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`         | Writes each fitted region's waypoints into its region file                |
-| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`      | The `waypoints` command of `genshin:assets`                               |
-| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`       | A transport point as a landmark's arrival                                 |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`         | Gives each statue its arrival from its scene point                        |
-| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` | Reads every transport point of the scene                                  |
-| `scripts/src/services/genshinAssets/shared/constants.ts`               | `WAYPOINT_REGIONS`, the regions whose waypoints are written               |
-| `scripts/src/services/genshinAssets/points/constants.ts`               | `INTERACTIVE_MAP_FIT_BAR` and the waypoint's label on the official map    |
-| `packages/genshin-world/src/models/world/WaypointLandmark.ts`          | The Teleport Waypoint landmark, its arrival required                      |
-| `packages/genshin-world/src/models/world/LandmarkArrival.ts`           | A landmark's arrival: place, turn and height                              |
-| `packages/genshin-world/src/models/world/BaseLandmark.ts`              | The fields every landmark has, and the optional arrival                   |
-| `packages/genshin-world/src/services/map/constants.ts`                 | `JUMP_LANDMARK_KINDS`, the kinds a jump lands at                          |
-| `packages/genshin-world/src/services/map/computeJumpPose.ts`           | Where a jump lands and which way it faces                                 |
-| `packages/genshin-world/src/composables/useWorldMap.ts`                | Unlocks landmarks and offers the unlocked jump landmarks                  |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`           | Every region's jump landmarks, read once                                  |
-| `packages/genshin-world/src/data/regions/mondstadt.json`               | Mondstadt's landmarks, its waypoints among them                           |
+| File                                                                       | Role                                                                      |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | A landmark's scene point: a statue's by its map, a waypoint's by its id   |
+| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`            | Pairs each ground waypoint with a transport point and builds its landmark |
+| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`             | Writes each fitted region's waypoints into its region file                |
+| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`          | The `waypoints` command of `genshin:assets`                               |
+| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`           | A transport point as a landmark's arrival                                 |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`             | Gives each statue its arrival from its scene point                        |
+| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`     | Reads every transport point of the scene                                  |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                   | `WAYPOINT_REGIONS`, the regions whose waypoints are written               |
+| `scripts/src/services/genshinAssets/points/constants.ts`                   | `INTERACTIVE_MAP_FIT_BAR` and the waypoint's label on the official map    |
+| `packages/genshin-world/src/models/world/WaypointLandmark.ts`              | The Teleport Waypoint landmark, its arrival required                      |
+| `packages/genshin-world/src/models/world/LandmarkArrival.ts`               | A landmark's arrival: place, turn and height                              |
+| `packages/genshin-world/src/models/world/BaseLandmark.ts`                  | The fields every landmark has, and the optional arrival                   |
+| `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS`, the kinds a jump lands at                          |
+| `packages/genshin-world/src/services/map/computeJumpPose.ts`               | Where a jump lands and which way it faces                                 |
+| `packages/genshin-world/src/composables/useWorldMap.ts`                    | Unlocks landmarks and offers the unlocked jump landmarks                  |
+| `packages/genshin-world/src/composables/useJumpLandmarks.ts`               | Every region's jump landmarks, read once                                  |
+| `packages/genshin-world/src/data/regions/mondstadt.json`                   | Mondstadt's landmarks, its waypoints among them                           |
 
 ## Notes
 
-- **A waypoint whose point has a reward row pays on its first unlock.** `payFirstUnlockReward` reads the waypoint's point from the number its id ends in, through `computeLandmarkPointId`, and pays that row's Primogems and Adventure EXP. The transport point unlock still goes by `LandmarkIdStatuePointIdMap`, which names only Windrise's statue, so a waypoint counts no transport point unlock until its point is named there.
+- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in, so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the eleven waypoints the game's table gives no row pay nothing. The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names, so a waypoint's unlock counts toward it not at all.
 - **Only the regions in `WAYPOINT_REGIONS` have waypoints.** Each further region is added to that list once its map fit is checked.
 
 ## Sources
