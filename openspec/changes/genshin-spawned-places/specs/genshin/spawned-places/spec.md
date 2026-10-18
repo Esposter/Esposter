@@ -63,6 +63,37 @@ Enemy camps SHALL be formed by clustering a family's enemy marks by distance, ea
 - **WHEN** the region's camps are built from the map's enemy marks
 - **THEN** the stand-in camp is no longer in the region
 
+#### Scenario: Every kind a camp places is published to the enemies dataset
+
+- **GIVEN** the region's camps are built from the map's enemy marks
+- **WHEN** the enemies dataset is published from the region data
+- **THEN** every enemy kind a camp places is in the enemies dataset
+
+### Requirement: The camp clustering distance
+
+Enemy marks of one family SHALL join one camp when they lie within a single clustering distance of each other.
+
+**Provisional.** The distance is an estimate: the map gives no camp membership, and no source the proposal cites gives a camp's size. No measure here checks it, since each kind's count against the wiki's does not depend on clustering. It stays provisional until a camp's extent is read from the game.
+
+#### Scenario: Marks farther apart than the clustering distance form separate camps
+
+- **GIVEN** two enemy marks of one family more than the clustering distance apart
+- **WHEN** the region's camps are built
+- **THEN** the two marks form separate camps
+
+### Requirement: The world level band of a camp's levels
+
+Each enemy's estimated level SHALL be drawn from the world level band of its region.
+
+**Provisional.** The band is the design's own estimate. The map gives no level, and a region's camps hold levels only as the enemies page sets out: Windrise's camp level is ours until the game's own spawns are read. No measure in this change checks a level, since the wiki's counts do not reach one. The band stays provisional until a camp's level is read from the game.
+
+#### Scenario: A camp's level is a provisional estimate from its region's band
+
+- **GIVEN** a camp built in a region
+- **WHEN** its enemies' levels are set
+- **THEN** each level is the region's band's estimate
+- **AND** the level is recorded as provisional
+
 ### Requirement: Each kind's count in each region is checked against the wiki's count
 
 Each kind's count of places in each region SHALL be checked against the wiki's count, with each shortfall or surplus reported per kind.

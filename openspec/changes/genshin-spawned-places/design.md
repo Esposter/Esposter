@@ -26,7 +26,7 @@ flowchart TD
 
 **Still to add:**
 
-1. **The camps**, for [enemies](../../specs/genshin/enemies/design.md): each family label's points clustered into camps and written into its region's `enemyCamps`, replacing Mondstadt's stand-in camp, each enemy with its family's kind as `EnemyKindId`, its estimated level and its place, through the same region-axes step `placeMapPoints` takes. The gathering points are placed by the [gathering](../../specs/genshin/gathering/design.md) page.
+1. **The camps**, for [enemies](../../specs/genshin/enemies/design.md): each family label's points clustered into camps and written into its region's `enemyCamps`, replacing Mondstadt's stand-in camp, each enemy with its family's kind as `EnemyKindId`, its estimated level and its place, through the same region-axes step `placeMapPoints` takes. The kinds the camps place are then published to the enemies dataset by `genshin:assets enemies`, which reads them from the region data. The gathering points are placed by the [gathering](../../specs/genshin/gathering/design.md) page.
 
 ## Data and measures
 
