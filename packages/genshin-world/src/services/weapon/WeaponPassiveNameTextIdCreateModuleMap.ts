@@ -44,6 +44,7 @@ import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/pass
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
+import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createSkywardBladePassiveModule } from "#src/services/weapon/passives/createSkywardBladePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
@@ -228,4 +229,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1362579531": createAquilaFavoniaPassiveModule,
   // Sky-Piercing Fang (Skyward Blade)
   "2711925235": createSkywardBladePassiveModule,
+  // Sky-ripping Dragon Spine (Skyward Pride)
+  "3265578323": createSkyRippingDragonSpinePassiveModule,
 };
