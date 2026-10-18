@@ -94,7 +94,7 @@ export const stepKit = (
     if (isAllowed) {
       const speedBonus = kit.normalAttacks.includes(action)
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
-            ?.normalAttackSpeedBonus ?? 0)
+            ?.normalAttackSpeedBonus ?? 0) + (kit.getNormalAttackSpeedBonus?.(context) ?? 0)
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
