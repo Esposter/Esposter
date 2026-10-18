@@ -11,7 +11,7 @@ import { readTalentActions } from "#src/services/genshinAssets/stats/readTalentA
 import { toConstellationRaise } from "#src/services/genshinAssets/stats/toConstellationRaise";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { characterConstellationKitSchema, CombatTalent, CONSTELLATION_COUNT } from "genshin-world";
 
@@ -73,9 +73,9 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
         toConstellationDepot.name,
         `depot ${depotRow.id} of one Stella Fortuna per constellation`,
       );
-    const [stellaFortunaItemId] = costItemIds;
-    const stellaFortunaItem = stellaFortunaItemId === undefined ? undefined : materialMap.get(stellaFortunaItemId);
-    if (stellaFortunaItemId === undefined || stellaFortunaItem === undefined)
+    const stellaFortunaItemId = takeOne([...costItemIds], 0);
+    const stellaFortunaItem = materialMap.get(stellaFortunaItemId);
+    if (stellaFortunaItem === undefined)
       throw new InvalidOperationError(
         Operation.Read,
         toConstellationDepot.name,
