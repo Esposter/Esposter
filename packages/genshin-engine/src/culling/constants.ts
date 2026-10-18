@@ -10,4 +10,4 @@ export const CULLING_INSTANCE_COUNT_INDEX = 1;
 export const CULLING_MIN_SIZE = 0.0001;
 // A placed instance's matrix is read from storage as this many columns, each of this many floats, one instance after another
 export const CULLING_MATRIX_COLUMN_COUNT = 4;
-export const CULLING_MATRIX_ELEMENT_COUNT = CULLING_MATRIX_COLUMN_COUNT * CULLING_MATRIX_COLUMN_COUNT;
+export const CULLING_MATRIX_ELEMENT_COUNT: number = CULLING_MATRIX_COLUMN_COUNT * CULLING_MATRIX_COLUMN_COUNT;
