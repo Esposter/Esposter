@@ -25,6 +25,7 @@ import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpe
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { readRegionData } from "#src/services/world/readRegionData";
+import { GameTextKey } from "genshin-text";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { computed, ref, shallowRef } from "vue";
 
@@ -110,6 +111,7 @@ describe(useWorldMap, () => {
     kind: LandmarkKind.DomainEntrance,
     position: { x: 600, z: 0 },
     rotation: 0,
+    titleTextKey: GameTextKey.DomainEntrance24,
   };
   const region: RegionData = {
     enemyCamps: [],

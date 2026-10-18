@@ -5,16 +5,19 @@ import { DomainKind } from "#src/models/domains/DomainKind";
 import { baseLandmarkSchema } from "#src/models/world/BaseLandmark";
 import { landmarkArrivalSchema } from "#src/models/world/LandmarkArrival";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { GameTextKey } from "genshin-text";
 import { z } from "zod";
 
 // A domain's entrance, the place the player opens the domain's screen from and jumps to once unlocked. Its domain is the
 // Kind its game entry names, and its entry is the game's dungeon entry row it is read from. Its arrival is provisionally
-// Its own place, until the domain's scene export gives the transfer point a jump lands at
+// Its own place, until the domain's scene export gives the transfer point a jump lands at. Its name is the title its
+// Transport point gives it, the one its map pin and its jump list show
 export interface DomainEntranceLandmark extends BaseLandmark {
   arrival: LandmarkArrival;
   domainKind: DomainKind;
   entryId: number;
   kind: LandmarkKind.DomainEntrance;
+  titleTextKey: GameTextKey;
 }
 
 export const domainEntranceLandmarkSchema = baseLandmarkSchema.safeExtend({
@@ -22,4 +25,5 @@ export const domainEntranceLandmarkSchema = baseLandmarkSchema.safeExtend({
   domainKind: z.enum(DomainKind),
   entryId: z.int().positive(),
   kind: z.literal(LandmarkKind.DomainEntrance),
+  titleTextKey: z.enum(GameTextKey),
 }) satisfies z.ZodType<DomainEntranceLandmark>;

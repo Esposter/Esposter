@@ -14,11 +14,12 @@ describe(checkIsDomainKindOpenOnDay, () => {
   const TUESDAY = RESET_ZONED.add({ days: 5 }).toInstant();
   const SCHEDULED_DAYS_OF_WEEK = [1, 4];
 
-  test("a Domain of Blessing is open every day, whatever its set days are", () => {
+  test("a Domain of Blessing or Trounce is open every day, whatever its set days are", () => {
     expect.hasAssertions();
 
     expect(checkIsDomainKindOpenOnDay(DomainKind.Blessing, TUESDAY, [])).toBe(true);
     expect(checkIsDomainKindOpenOnDay(DomainKind.Blessing, SUNDAY, SCHEDULED_DAYS_OF_WEEK)).toBe(true);
+    expect(checkIsDomainKindOpenOnDay(DomainKind.Trounce, TUESDAY, [])).toBe(true);
   });
 
   test("a Domain of Forgery or Mastery is open on its set days and on every Sunday, and closed on any other day", () => {
