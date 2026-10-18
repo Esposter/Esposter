@@ -21,6 +21,10 @@ export const HEIZOU_CHARACTER_ID = 10_000_059;
 // Heizou's behaviour: Fudou Style Vacuum Slugger counts the enemies its aura check tags afresh each cast, and each it
 // Tags, up to 4 a cast, that holds an aura Windmuster Iris takes has an Iris cast where it stands, in the first of the
 // Four elements it holds. His passives and constellations are not built
+// Constellation 1 needs a Declension stack for Heartstopper Strike and the Normal Attack SPD, neither built
+// Constellation 2 needs Windmuster Kick's Arresting Windtunnel, whose pull and duration the kit does not build
+// Constellation 4 needs the explosions each Windmuster Kick counts, which the kit does not count, not built
+// Constellation 6 needs Heartstopper Strike's Declension stacks and Conviction, which are not built
 export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): KitBehaviour => {
   const [irisCheckHit] = kit.elementalBurst.hits;
   // Each Iris takes its element from the aura its enemy holds

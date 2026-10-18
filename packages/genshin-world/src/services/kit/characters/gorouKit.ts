@@ -48,6 +48,10 @@ export const GOROU_CHARACTER_ID = 10_000_055;
 // DMG Bonus from Crunch's count of Geo characters. Ascension 1 raises the party's DEF as Juuga is cast, and Ascension 4
 // Adds a share of his DEF to the skill's and the burst's hits. His constellations are not built, as no kit event reaches
 // Their values
+// Constellation 1 needs nearby characters' Geo DMG in General's War Banner or Glory, which no kit reads
+// Constellation 2 needs the Elemental Shard and Lunar-Crystallize events nearby, which no kit event reports
+// Constellation 4 needs General's Glory's Impregnable and Crunch states, and a heal every 1.5 seconds
+// Constellation 6 needs a CRIT DMG buff on nearby members' Geo DMG, scaled by the field's level, not built
 export const createGorouKitBehaviour = ({
   kit,
   readHit,
