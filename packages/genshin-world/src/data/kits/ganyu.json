@@ -2,7 +2,7 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 113 },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 2 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 113 },
+  "chargedAttack.hits.0.hitmarkFrames": { "file": "aimed.go", "line": 17, "source": "Gcsim", "value": 84 },
   "chargedAttack.hits.0.multiplier": {
     "cause": "DiffersFromSource",
     "value": { "index": 8, "proudSkillGroupId": 3731 }
