@@ -183,4 +183,49 @@ describe(createIfaKitBehaviour, () => {
     IFA_KIT.elementalSkill.onStart?.(context);
     expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
   });
+  test("a passive takes effect at its constellation: Constellation 2 counts the party's points above 60 three times over, so 80 points give Ifa 140 for her Swirl DMG", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(2, 1);
+    const context = createKitTestContext(combatant, { party: createParty([IFA_CHARACTER_ID, IANSAN_CHARACTER_ID]) });
+    enterKitNightsoulBlessing(context.kitEffectState, IFA_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBeCloseTo(2.1);
+    expect(partyDamageBonusOf(combatant, LunarReactionType.LunarCharged, context)).toBeCloseTo(0.28);
+  });
+
+  test("a passive takes effect at its constellation: Constellation 2 lifts the cap to 200 points, so 200 party points give Ifa 3.0 for her Swirl DMG", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(2, 1);
+    const context = createKitTestContext(combatant, { party: createParty([IFA_CHARACTER_ID, IANSAN_CHARACTER_ID]) });
+    enterKitNightsoulBlessing(context.kitEffectState, IFA_CHARACTER_ID, {
+      points: 100,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, {
+      points: 100,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBeCloseTo(3);
+  });
+
+  test("does not take effect below its constellation: at Constellation 1 the party's points above 60 count once, so 80 points give Ifa 80 for her Swirl DMG", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(1, 1);
+    const context = createKitTestContext(combatant, { party: createParty([IFA_CHARACTER_ID, IANSAN_CHARACTER_ID]) });
+    enterKitNightsoulBlessing(context.kitEffectState, IFA_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBeCloseTo(1.2);
+  });
 });
