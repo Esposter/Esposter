@@ -13,10 +13,8 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
   },
-  "hits.shootingStarStrike.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.shootingStarStrike.gauge": { "cause": "Unclassified", "value": 25 },
   "hits.shootingStarStrike.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
-  "hits.shootingStarStrike.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 7432 } },
+  "hits.shootingStarStrike.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7432 } },
   "hits.shootingStarStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.starlightSlugStrike.area": {
     "cause": "Unsourced",
