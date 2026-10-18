@@ -1,7 +1,7 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 
-import { KIT_TICK_TOLERANCE_SECONDS } from "#src/services/kit/constants";
+import { FLOAT_RESIDUE } from "#src/services/floatResidue";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { runDownSeconds } from "#src/services/runDownSeconds";
 
@@ -17,7 +17,7 @@ export const stepKitField = (field: KitField, stepSeconds: number, context: KitC
   }
   field.onStep?.(context, field, stepSeconds);
   field.nextTickSeconds = runDownSeconds(field.nextTickSeconds, stepSeconds);
-  while (field.nextTickSeconds <= KIT_TICK_TOLERANCE_SECONDS) {
+  while (field.nextTickSeconds <= FLOAT_RESIDUE) {
     if (checkIsInKitField(field, position)) field.onTick(context, field.tickIndex);
     field.tickIndex++;
     field.nextTickSeconds += field.tickIntervalSeconds;
