@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { CanvasRect } from "genshin-interface";
@@ -9,9 +10,11 @@ import type { GameText } from "genshin-text";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
 import { MAP_GROUND, MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
+import { playOculusSound } from "#src/services/statue/playOculusSound";
 import { GameRect } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { MathUtils } from "three";
+import { watch } from "vue";
 
 interface Props {
   camera: MapCamera;
@@ -22,12 +25,26 @@ interface Props {
   // The HUD's fitted rects, the minimap's back and its marks among them
   interfaceRects: HudInterfaceRects;
   landmarks: Landmark[];
+  // The Oculi near the player that are not yet found, each marked on the minimap with a sound as it comes near
+  nearOculusPlaces: OculusPlace[];
   // The resolved rect of `GrpMiniMap`, which the tree hangs the back and the marks under
   parent: CanvasRect;
 }
 
-const { camera, catalogue, gameText, interfaceRects, landmarks, parent } = defineProps<Props>();
+const { camera, catalogue, gameText, interfaceRects, landmarks, nearOculusPlaces, parent } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
+// Provisional: the mark's radius, until the owed minimap recording measures the Oculus's own mark
+const OCULUS_MARK_RADIUS = MINIMAP_RADIUS * 0.04;
+// The chime sounds as an Oculus comes into range, not on every frame it stays in range
+let nearOculusIds = new Set<string>();
+watch(
+  () => nearOculusPlaces,
+  (places) => {
+    const ids = new Set(places.map(({ id }) => id));
+    if ([...ids].some((id) => !nearOculusIds.has(id))) playOculusSound();
+    nearOculusIds = ids;
+  },
+);
 </script>
 
 <template>
@@ -41,6 +58,14 @@ const emit = defineEmits<{ open: [] }>();
       >
         <g :transform="`translate(${-camera.x} ${-camera.z})`">
           <MapDrawing :catalogue :landmarks :mark-radius="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" />
+          <circle
+            v-for="{ id, position } in nearOculusPlaces"
+            :key="id"
+            class="oculus"
+            :cx="position.x"
+            :cy="position.z"
+            :r="OCULUS_MARK_RADIUS"
+          />
         </g>
       </svg>
     </button>
@@ -122,6 +147,11 @@ const emit = defineEmits<{ open: [] }>();
   );
   clip-path: polygon(50% 100%, 0 31.4%, 0 0, 100% 0, 100% 31.4%);
   transform-origin: 50% 100%;
+}
+
+/* Provisional: the near Oculus's mark is a pale gold dot until the owed recording shows the game's icon */
+.oculus {
+  fill: rgb(255 210 127);
 }
 
 /* Provisional: the arrow's cyan, measured on the English PC client's world HUD */

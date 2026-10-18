@@ -7,6 +7,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -25,6 +26,7 @@ import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
+import WorldOculi from "#src/components/World/Oculi/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
@@ -134,6 +136,8 @@ interface Props {
   enemyTables: EnemyTables;
   // The Frostbearing Trees the official map marks, each stood in at its place
   frostbearingTreePlaces: FrostbearingTreePlace[];
+  // The Oculi not yet found, each stood in at its place
+  oculusPlaces: OculusPlace[];
   // Where the hosted game data is read from, which each region's palettes are read from as it comes within reach
   gameDataBaseUrl: string;
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
@@ -185,6 +189,7 @@ const {
   enemyMap,
   enemyTables,
   frostbearingTreePlaces,
+  oculusPlaces,
   gameDataBaseUrl,
   getGroundHeight,
   heldMinutes,
@@ -555,6 +560,7 @@ onUnmounted(() => {
       :places="frostbearingTreePlaces"
       :ramp-texture
     />
+    <WorldOculi v-if="!witness" :get-ground-height :light-uniforms :places="oculusPlaces" :ramp-texture />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />

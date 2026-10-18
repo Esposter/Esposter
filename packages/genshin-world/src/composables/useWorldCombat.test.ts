@@ -1,5 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import type { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -9,6 +10,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test } from "vitest";
+import { shallowRef } from "vue";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -27,6 +29,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      travelerElement: shallowRef<Element | undefined>(undefined),
       wildlifePlaces: [],
     });
 
@@ -46,6 +49,7 @@ describe(useWorldCombat, () => {
       savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      travelerElement: shallowRef<Element | undefined>(undefined),
       wildlifePlaces: [],
     });
     events.emit("chestOpened");

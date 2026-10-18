@@ -6,6 +6,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -56,6 +57,7 @@ import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -82,6 +84,9 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
+import { OCULUS_MINIMAP_DISTANCE, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
+import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -168,9 +173,11 @@ const {
   achievementProgressMap,
   craftedCountMap,
   craftingProgress,
+  foundOculusIds,
   frostbearingTreeProgress,
   inventory,
   openedChestIds,
+  regionStatueProgressMap,
   setInventory,
   setWallet,
   wallet,
@@ -327,6 +334,20 @@ const { quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory 
 const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(seelies, savedState.settledSeelieIds);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
+// The statues' Oculi and resonances, which pay their levels as the bag's offers do
+const { collectOculus, resonateStatue } = useWorldStatues({
+  foundOculusIds,
+  gainWorldAdventureExp,
+  gameDataBaseUrl,
+  inventory,
+  materialDataMap,
+  nameText,
+  placeWorldDrops,
+  regionStatueProgressMap,
+  setInventory,
+  setWallet,
+  wallet,
+});
 const { offerFrostbearingTree } = useWorldOfferings({
   events,
   frostbearingTreeProgress,
@@ -488,13 +509,13 @@ useWorldSaveSync({
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
-    foundOculusIds: savedState.foundOculusIds,
+    foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     inventory: inventory.value,
     openedChestIds: openedChestIds.value,
     party,
     quests: questProgressMap.value,
-    regionStatueProgressMap: savedState.regionStatueProgressMap,
+    regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
     settledSeelieIds: settledSeelieIds.value,
     solvedPuzzleIds: savedState.solvedPuzzleIds,
@@ -573,6 +594,23 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
 // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
+// Mondstadt's Oculi, the only region's published so far, read as the world starts. Those not yet found are stood in, a
+// Touch within the touch radius finds one, and those near the camera within the minimap's distance are marked on it
+const OCULUS_REGION_ID = "mondstadt";
+const oculusPlaces = shallowRef<OculusPlace[]>([]);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => readOculusPlaces(gameDataBaseUrl, OCULUS_REGION_ID)).match(
+  (places) => {
+    oculusPlaces.value = places;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
+const nearOculusPlaces = computed(() =>
+  getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, mapCamera.value, OCULUS_MINIMAP_DISTANCE),
+);
 // The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
 // One it points to lets the pointer go at once
 const pointedLandmark = shallowRef<Landmark>();
@@ -709,6 +747,13 @@ defineExpose({ jumpTo, readCameraPosition });
             trackedQuestId = trackerQuest.id;
           if (!isPaused && screenKind === ScreenKind.World) {
             const interactable = readInteraction(inputState, context.delta);
+            const [touchedOculus] = getNearOculusPlaces(
+              oculusPlaces.value,
+              foundOculusIds.value,
+              characterBody.position,
+              OCULUS_TOUCH_RADIUS,
+            );
+            if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
@@ -721,6 +766,7 @@ defineExpose({ jumpTo, readCameraPosition });
               offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
+              resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
             } else if (interactable?.kind === InteractionKind.Use) {
               screenKind = ScreenKind.Crafting;
             } else if (interactable?.kind === InteractionKind.Talk) {
@@ -774,6 +820,7 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
+        :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
@@ -839,6 +886,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :is-touch
       :landmarks="unlockedLandmarks"
       :max-stamina="STAMINA_MAX"
+      :near-oculus-places="nearOculusPlaces"
       :member="hudMember"
       :name-text-map="nameText"
       :party

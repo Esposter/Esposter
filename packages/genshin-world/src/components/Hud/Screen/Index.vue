@@ -5,6 +5,7 @@ import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Party } from "#src/models/party/Party";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestMark } from "#src/models/quest/QuestMark";
@@ -48,6 +49,7 @@ interface Props {
   // And the touch layout's action buttons are drawn
   isTouch: boolean;
   landmarks: Landmark[];
+  nearOculusPlaces: OculusPlace[];
   // The party's stamina pool, which the meter's arc holds whole
   maxStamina: number;
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
@@ -84,6 +86,7 @@ const {
   interfaceRects,
   isTouch,
   landmarks,
+  nearOculusPlaces,
   maxStamina,
   member,
   nameTextMap,
@@ -133,6 +136,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
             :game-text
             :interface-rects
             :landmarks
+            :near-oculus-places="nearOculusPlaces"
             :parent="miniMapRect"
             @open="emit('map')"
           />
