@@ -33,6 +33,9 @@ const HEAVEN_FALL_MAX_STACKS = 3;
 export const XIAO_CHARACTER_ID = 10_000_026;
 
 const CONSTELLATION_1 = 1;
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_DEFENSE_BONUS = 1;
+const CONSTELLATION_4_HEALTH_SHARE = 0.5;
 
 // Xiao's behaviour: Lemniscatic Wind Cycling's dash lands from a summon cast where he stands, carrying from Ascension 4
 // Heaven Fall's stacks of the dashes before it. Bane of All Evil is an Anemo infusion converting his attacks with its
@@ -114,6 +117,11 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
   return {
     burst: { onStart: castBaneOfAllEvil },
     // Dissolution Eon: Destroyer of Worlds, from Constellation 1: Lemniscatic Wind Cycling gains one more charge
+    // Transcension: Extinction of Suffering, from Constellation 4: while his HP is under half, he gains a 100% DEF Bonus
+    getPassiveBonuses: (combatant, healthShare) =>
+      combatant.constellationCount >= CONSTELLATION_4 && healthShare < CONSTELLATION_4_HEALTH_SHARE
+        ? [{ amount: CONSTELLATION_4_DEFENSE_BONUS, attribute: Attribute.DefensePercent }]
+        : [],
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     skill: { onStart: castDash },
   };
