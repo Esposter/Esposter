@@ -16,11 +16,10 @@ const GOLDEN_MAJESTY_COOLDOWN_SECONDS = 0.3;
 const GOLDEN_MAJESTY_MAXIMUM_STACKS = 5;
 const PROTECTED_MULTIPLIER = 2;
 
-// Golden Majesty at its rank: the wielder's Shield Strength rises by the rank's percentage. Each hit it scores adds a stack of
-// The rank's ATK, up to five and once every 0.3 seconds, each stack running the rank's seconds. While the wielder is on the
-// Field and protected by a shield, the stacks' ATK is doubled
+// Golden Majesty at its rank: its Shield Strength is the table's line, so the passive adds only ATK. Each hit it scores adds
+// A stack of the rank's ATK, up to five and once every 0.3 seconds, each stack running the rank's seconds. While the wielder
+// Is on the field and protected by a shield, the stacks' ATK is doubled
 export const createGoldenMajestyPassiveModule = (params: number[]): WeaponPassiveModule => {
-  const shieldStrength = takeOne(params, 0);
   const attackPerStack = takeOne(params, 1);
   const stackSeconds = takeOne(params, 2);
   return {
@@ -29,7 +28,6 @@ export const createGoldenMajestyPassiveModule = (params: number[]): WeaponPassiv
         deployedCombatants.find((member) => member.characterId === combatant.characterId)?.isOnField ?? false;
       const isProtected = isOnField && effects.some((effect) => checkIsKitShieldLive(effect));
       return [
-        { amount: shieldStrength, attribute: Attribute.ShieldStrength },
         {
           amount:
             attackPerStack *
