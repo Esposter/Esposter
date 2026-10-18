@@ -177,7 +177,7 @@ const hurtGcgCharacter = (character: GcgCharacterState, value: number, isPiercin
   character.hp = Math.max(0, character.hp - remainingValue);
 };
 
-// Clears what each character at no HP held, asks a side for a replacement when its active fell and another stands, and
+// Discards what each character at no HP held, asks a side for a replacement when its active fell and another stands, and
 // Ends the duel for the other side once a side has none standing
 const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
   const defeatedSideIndices: number[] = [];
@@ -189,10 +189,14 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
         side.hasDefeatedCharacter = true;
         defeatedSideIndices.push(sideIndex);
       }
+      // A defeat discards the character's equipment and statuses with its aura, Energy, Frozen and shield, as the rules state
+      // (Genius Invokation TCG/Rules, "Other Rules", the Defeated row)
       character.aura = GcgAura.None;
       character.energy = 0;
+      character.equipments = [];
       character.isFrozen = false;
       character.shield = 0;
+      character.statuses = [];
     }
     const isStanding = side.characters.some((character) => character.hp > 0);
     const active = side.characters.at(side.activeIndex);

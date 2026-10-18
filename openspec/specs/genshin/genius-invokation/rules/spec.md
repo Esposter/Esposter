@@ -276,9 +276,9 @@ An Overloaded active character SHALL be switched to the next standing character 
 - **WHEN** the reaction resolves
 - **THEN** the side switches to the next standing character in order without a choice
 
-### Requirement: A character at no health is cleared and its side owes a replacement or loses
+### Requirement: A character at no health is defeated and its side owes a replacement or loses
 
-A character at no health SHALL be cleared, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does.
+A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does. The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard.
 
 #### Scenario: Defeated character with a standing ally owes a replacement
 
@@ -291,3 +291,9 @@ A character at no health SHALL be cleared, and its side SHALL owe a replacement 
 - **GIVEN** a side has no character standing
 - **WHEN** the defeat is settled
 - **THEN** the side loses the duel
+
+#### Scenario: A defeat discards the character's cards
+
+- **GIVEN** a character with equipment and statuses attached is defeated by a hit
+- **WHEN** the defeat is settled
+- **THEN** its equipment and statuses are discarded, and its Energy is cleared

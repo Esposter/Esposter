@@ -56,7 +56,7 @@ flowchart TD
   KIND -->|"an element"| AURA{"Does the aura make a listed reaction?"}
   AURA -->|"no"| APPLY["An applying element sets the aura"]
   AURA -->|"yes"| REACT["The aura is consumed, the reaction's bonus joins the hit, and its effects follow"]
-  PIERCE --> DEFEAT["A character at no HP is cleared, and its side owes a replacement or loses"]
+  PIERCE --> DEFEAT["A character at no HP is defeated, its cards are discarded, and its side owes a replacement or loses"]
   FROZEN --> DEFEAT
   APPLY --> DEFEAT
   REACT --> DEFEAT

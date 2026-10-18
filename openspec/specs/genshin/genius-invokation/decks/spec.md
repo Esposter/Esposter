@@ -250,10 +250,16 @@ A card's surcharge on a switch SHALL add its dice to the switch cost the opposin
 
 ### Requirement: A depleted shield is answered by the card attached to its character
 
-A hit that takes a character's shield to 0 SHALL call each card attached to that character that answers depletion, and the piercing DMG the card names SHALL reach every opposing character, the active one and those on standby alike.
+A hit that takes a standing character's shield to 0 SHALL call each card attached to that character that answers depletion, and the piercing DMG the card names SHALL reach every opposing character, the active one and those on standby alike.
 
 #### Scenario: Aegis of Abyssal Flame answers the depletion of Abyss Lector's shield
 
 - **GIVEN** Abyss Lector has 2 shield points and Aegis of Abyssal Flame attached, and the opposing side has an active character and one on standby
 - **WHEN** a 3 Physical hit lands on Abyss Lector
 - **THEN** her shield is gone and she stands at 9 HP, each opposing character takes 1 piercing DMG, and the Aegis is spent
+
+#### Scenario: A hit that defeats the character leaves its Aegis with it
+
+- **GIVEN** Abyss Lector has 2 shield points and Aegis of Abyssal Flame attached, and the opposing side's only character stands at 1 HP
+- **WHEN** a 12 Physical hit defeats Abyss Lector
+- **THEN** the Aegis is discarded with her, no piercing DMG reaches the opposing side, and the opposing side wins the duel

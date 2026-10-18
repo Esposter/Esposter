@@ -338,6 +338,26 @@ describe("aegis of Abyssal Flame", () => {
     expect(defended?.shield).toBe(2);
     expect(defended?.statuses).toStrictEqual([{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }]);
   });
+
+  test("a hit that defeats the character the Aegis is on takes the Aegis with it, so no piercing reaches the opposing side", () => {
+    expect.hasAssertions();
+
+    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    abyss.shield = 2;
+    abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
+    const duel = createDuel([
+      createSideState([abyss]),
+      createSideState([{ ...createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), hp: 1 }]),
+    ]);
+
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 12 }, TEST_RULE);
+
+    expect({
+      defeatedStatuses: takeOne(takeOne(duel.sides, 0).characters, 0).statuses,
+      opposingHp: takeOne(duel.sides, 1).characters.map(({ hp }) => hp),
+      winnerSideIndex: duel.winnerSideIndex,
+    }).toStrictEqual({ defeatedStatuses: [], opposingHp: [1], winnerSideIndex: 1 });
+  });
 });
 
 describe("embers Rekindled", () => {
