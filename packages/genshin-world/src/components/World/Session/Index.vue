@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
+import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
-import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -70,7 +70,6 @@ import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
-import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
@@ -79,12 +78,13 @@ import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
@@ -523,6 +523,7 @@ const {
   reviveFallenParty,
   strikeParty,
 } = useWorldCombat({
+  characterIdConstellationsMap,
   enemyTables,
   events,
   gameDataBaseUrl,
@@ -533,7 +534,6 @@ const {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
     if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
   },
-  characterIdConstellationsMap,
   placeWorldDrops,
   savedCharacters: savedState.characters,
   savedParty: savedState.party,
@@ -722,9 +722,9 @@ useWorldSaveSync({
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
     clearedCamps: clearedCamps.value,
+    clearedDomainIds: clearedDomainIds.value,
     commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
-    clearedDomainIds: clearedDomainIds.value,
     cookingProgress: cookingProgress.value,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
@@ -1149,9 +1149,8 @@ defineExpose({ jumpTo, readCameraPosition });
       <WorldWindrise
         ref="windrise"
         :jump-pose
-        :last-teleport-at="lastTeleportAt"
-        :trounce-blossoms="trounceBlossoms"
-        @respawn="forgetTrounceBlossom"
+        :last-teleport-at
+        :trounce-blossoms
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
@@ -1162,7 +1161,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :kit-effect-state="kitContext.kitEffectState"
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
-        :enemy-respawn-map="enemyRespawnMap"
+        :enemy-respawn-map
         :enemy-tables
         :grass-trail
         :game-data-base-url
@@ -1191,7 +1190,8 @@ defineExpose({ jumpTo, readCameraPosition });
         @camp-locks="(locks) => (campLockSources = locks)"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
-        @save-respawn="setEnemyRespawnAt"
+        @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
+        @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>
@@ -1250,7 +1250,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :original-label="gameText[GameTextKey.UseOriginalResin]"
           :restore-label="gameText[GameTextKey.FragileResinRestore]"
           @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
-          @close="closeOutcropClaim"
+          @close="closeOutcropClaim()"
           @restore="restoreOutcropClaim(getWorldNow())"
         />
         <OfferChoice
@@ -1260,7 +1260,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :offers="trounceClaimPrompt.offers"
           :original-label="gameText[GameTextKey.UseOriginalResin]"
           @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
-          @close="closeTrounceBlossomClaim"
+          @close="closeTrounceBlossomClaim()"
         />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
@@ -1287,7 +1287,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
-          :recorded-doing-ids="recordedDoingIds"
+          :recorded-doing-ids
           :server-clock-offset-ms
           :wallet
           @close="screenKind = ScreenKind.World"
@@ -1395,12 +1395,12 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
-          :cooking-progress="cookingProgress"
+          :cooking-progress
           :dish-use-map
           :game-text
           :gadget-rows
           :initial-category="ItemCategory.Weapon"
-          :instruction-recipe-map="instructionRecipeMap"
+          :instruction-recipe-map
           :inventory
           :material-data-map
           :names="nameText"

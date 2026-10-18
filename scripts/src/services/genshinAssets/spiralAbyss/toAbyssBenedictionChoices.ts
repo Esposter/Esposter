@@ -3,7 +3,7 @@ import type { AbyssBenedictionChoice } from "genshin-world";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One choice of a chamber's list, a Benediction id and its weight written as `id:weight`
-const CHOICE_PATTERN = /^(?<towerBuffId>\d+):(?<weight>\d+)$/u;
+const CHOICE_REGEX = /^(?<towerBuffId>\d+):(?<weight>\d+)$/u;
 
 // The Benedictions a chamber's three lists offer, read off the level row's list strings, each a comma separated run of
 // `id:weight` choices, and each joined to its description's text hash by the tower buff table. A chamber without three lists,
@@ -22,7 +22,7 @@ export const toAbyssBenedictionChoices = (
     );
   return lists.map((list) =>
     list.split(",").map((choice) => {
-      const match = CHOICE_PATTERN.exec(choice);
+      const match = CHOICE_REGEX.exec(choice);
       if (!match?.groups)
         throw new InvalidOperationError(
           Operation.Read,

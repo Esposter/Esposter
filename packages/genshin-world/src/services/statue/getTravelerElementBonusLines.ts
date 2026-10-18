@@ -30,5 +30,5 @@ export const getTravelerElementBonusLines = (
     ...ELEMENTS_HELD_BEFORE_HOMECOMING,
     ...resonatedRegionIds.flatMap((regionId) => RegionIdTravelerElementMap[regionId] ?? []),
   ]);
-  return [...elements].map((element) => ELEMENT_BONUS_LINE_MAP[element]);
+  return Array.from(elements, (element) => ELEMENT_BONUS_LINE_MAP[element]);
 };

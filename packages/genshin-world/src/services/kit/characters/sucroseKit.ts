@@ -73,10 +73,6 @@ export const createSucroseKitBehaviour = ({
   const absorbCheckFirstSeconds = readSeconds("absorbCheckFirst");
   const absorbCheckIntervalSeconds = readSeconds("absorbCheckInterval");
   return {
-    // The burst's two fields are set as it is cast: the Anemo tick's, and the absorb check's, which lands the absorbed
-    // Element's hit on every tick once an enemy's aura is taken, and which takes one only once
-    // Clustered Vacuum Field, from Constellation 1, gives Astable Anemohypostasis Creation one more charge
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
@@ -118,6 +114,10 @@ export const createSucroseKitBehaviour = ({
         });
       },
     },
+    // The burst's two fields are set as it is cast: the Anemo tick's, and the absorb check's, which lands the absorbed
+    // Element's hit on every tick once an enemy's aura is taken, and which takes one only once
+    // Clustered Vacuum Field, from Constellation 1, gives Astable Anemohypostasis Creation one more charge
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const members = getDeployedCharacterIds(party);
       if (event.kind === KitEventKind.ReactionTriggered) {

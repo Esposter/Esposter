@@ -1,7 +1,7 @@
-import { Attribute } from "#src/models/character/Attribute";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";

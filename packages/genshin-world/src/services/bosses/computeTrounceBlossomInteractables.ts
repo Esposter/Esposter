@@ -2,8 +2,8 @@ import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
 import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
-import { GameTextKey } from "genshin-text";
 import { InteractionKind } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 // The interactables the claimable Trounce Blossoms are at the time given, each standing where its blossom lies on the ground
 export const computeTrounceBlossomInteractables = (

@@ -37,26 +37,26 @@ export interface Kit {
   elementalSkillMaximumHeldSeconds?: number;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
-  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
-  // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
-  getPassiveBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
-  // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
-  // Constellation raises it, given the kit's effects as they stand
-  getNormalAttackSpeedBonus?: (context: KitContext) => number;
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
   // Hit that landed
   getNormalAttackExtraHit?: (context: KitContext, hit: KitHit) => KitHit | undefined;
+  // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
+  // Constellation raises it, given the kit's effects as they stand
+  getNormalAttackSpeedBonus?: (context: KitContext) => number;
+  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
+  // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
+  getPassiveBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
-  // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
-  // Against some enemies only, given the enemy as it stands and the deployed team
-  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
   // The CRIT Rate a strike of the kit's own adds as its CRIT roll is made against an enemy, if a constellation raises it
   // Against some enemies only, given the enemy as it stands
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
+  // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
+  // Against some enemies only, given the enemy as it stands and the deployed team
+  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
   highPlunge: KitAction;
   lowPlunge: KitAction;
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign

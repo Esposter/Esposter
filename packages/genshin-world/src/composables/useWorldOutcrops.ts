@@ -11,8 +11,8 @@ import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
-import type { Party } from "#src/models/party/Party";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
+import type { Party } from "#src/models/party/Party";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -36,8 +36,8 @@ import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -129,7 +129,7 @@ export const useWorldOutcrops = ({
   );
   // The claims F offers at a cleared outcrop's blossom, and the place they are offered at, none where the held resin
   // Affords none and no Fragile Resin can restore it
-  const claimPrompt = shallowRef<undefined | (BlossomClaimPrompt & { placeId: number })>(undefined);
+  const claimPrompt = shallowRef<BlossomClaimPrompt & { placeId: number }>();
   // An event moves the one outcrop it names, and the place the other kind holds is kept out of its move
   const applyEvent = (placeId: number, event: OutcropEvent) => {
     outcrops.value = outcrops.value.map((outcrop) =>

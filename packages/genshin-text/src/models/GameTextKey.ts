@@ -130,10 +130,10 @@ export enum GameTextKey {
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // A dialog's action that goes ahead, the generic word the game's own dialogs share beside Cancel
   Confirm = "UI_BEYOND_CONFIRM",
-  // The cooking screen's title and the Stop button that ends its indicator
-  CookingStop = "UI_COOKING_QTE_END_BUTTON",
   // The button that makes a whole batch of a dish once its proficiency is full
   CookingAutoCook = "UI_COOKING_QTE_AUTO_MAKE_BUTTON",
+  // The cooking screen's title and the Stop button that ends its indicator
+  CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
@@ -709,14 +709,14 @@ export enum GameTextKey {
   WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
-  // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
-  // Their colour tags, and its button lowering the World Level by one or restoring it once lowered
-  WorldLevelInfo = "UI_WORLDLEVEL_INFO",
-  WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
   // the restoring's tips and label
   WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
+  // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
+  // Their colour tags, and its button lowering the World Level by one or restoring it once lowered
+  WorldLevelInfo = "UI_WORLDLEVEL_INFO",
+  WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
   WorldLevelLowered = "UI_WORLDLEVEL_ADJUST_DOWN_AIM_INFO",
   WorldLevelLowerQuestion = "UI_WORLDLEVEL_ADJUST_HINT_GETEASY_",
   WorldLevelLowerTips = "UI_WORLDLEVEL_ADJUST_DOWN_TIPS",

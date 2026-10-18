@@ -4,8 +4,8 @@ import type { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { GroundPoint } from "genshin-engine";
 
-import { findAreaAt } from "#src/services/map/findAreaAt";
 import { ExplorationKindWeightMap } from "#src/services/exploration/ExplorationKindWeightMap";
+import { findAreaAt } from "#src/services/map/findAreaAt";
 
 // A doing the world places at a point: a chest, an Oculus, a puzzle or a camp, by the id the save records it under
 export interface PlacedDoing {

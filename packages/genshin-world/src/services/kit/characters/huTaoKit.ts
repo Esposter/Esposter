@@ -82,6 +82,11 @@ export const createHuTaoKitBehaviour = ({
       checkIsActive: ({ activeCombatant: combatant, party }) =>
         getPartyMember(party, combatant.characterId).healthShare <= lowHealthShare,
     },
+    // Constellation 1, Crimson Bouquet: her charged attacks cost no stamina while Paramita Papilio holds her
+    getChargedAttackStaminaMultiplier: ({ activeCombatant, kitEffectState }) =>
+      activeCombatant.constellationCount >= 1 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
+        ? 0
+        : 1,
     getPassiveBonuses,
     // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
@@ -140,10 +145,5 @@ export const createHuTaoKitBehaviour = ({
         });
       },
     },
-    // Constellation 1, Crimson Bouquet: her charged attacks cost no stamina while Paramita Papilio holds her
-    getChargedAttackStaminaMultiplier: ({ activeCombatant, kitEffectState }) =>
-      activeCombatant.constellationCount >= 1 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
-        ? 0
-        : 1,
   };
 };

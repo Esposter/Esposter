@@ -2,8 +2,8 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
+import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";

@@ -79,9 +79,9 @@ export const toDomainLevels = (
   }
 
   return Object.fromEntries(
-    [...schedules].map(([entryId, { kind, levels }]): [string, DomainSchedule] => [
+    Array.from(schedules, ([entryId, { kind, levels }]): [string, DomainSchedule] => [
       String(entryId),
-      { kind, levels: levels.toSorted((a, b) => a.dungeonId - b.dungeonId) },
+      { kind, levels: levels.toSorted((firstLevel, secondLevel) => firstLevel.dungeonId - secondLevel.dungeonId) },
     ]),
   );
 };

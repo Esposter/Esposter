@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
+import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Enemy } from "#src/models/enemy/Enemy";
@@ -19,7 +20,6 @@ import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
-import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { GrassTrail, LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -139,8 +139,6 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
   enemyRespawnMap: ReadonlyMap<string, string>;
-  // The world's clock, which each defeat and each camp's load is read against
-  getWorldNow: () => Temporal.Instant;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
   // The Frostbearing Trees the official map marks, each stood in at its place
@@ -149,6 +147,8 @@ interface Props {
   gameDataBaseUrl: string;
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
+  // The world's clock, which each defeat and each camp's load is read against
+  getWorldNow: () => Temporal.Instant;
   // The bends the character leaves as it walks through the grass, which the grass parts round
   grassTrail: GrassTrail;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
@@ -161,12 +161,12 @@ interface Props {
   isPaused?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
-  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  lastTeleportAt?: Temporal.ZonedDateTime;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
+  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
+  lastTeleportAt?: Temporal.ZonedDateTime;
   // The Oculi not yet found, each stood in at its place
   oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
@@ -183,12 +183,12 @@ interface Props {
   sceneExportBaseUrl?: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
+  trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
   windriseData: WindriseData;
-  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
-  trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
   worldLevel: number;
   // The game's world level table, which raises the camps' levels under a World Level
@@ -216,9 +216,9 @@ const {
   isHeld,
   isPaused,
   isTuning,
-  lastTeleportAt,
   kitEffectState,
   landmarkCollider,
+  lastTeleportAt,
   oculusPlaces,
   origin,
   outcropCamps,
@@ -227,16 +227,16 @@ const {
   regionDataBaseUrl,
   sceneExportBaseUrl,
   seelies,
-  wildlifeList,
   trounceBlossoms,
+  wildlifeList,
   windriseData,
   worldLevel,
   worldLevelRows,
 } = defineProps<Props>();
 const emit = defineEmits<{
+  campCleared: [camp: ClearedCamp];
   campLocks: [locks: ChestLockSource[]];
   charge: [];
-  campCleared: [camp: ClearedCamp];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   respawn: [spawnKey: string];
@@ -563,8 +563,8 @@ onUnmounted(() => {
       :get-world-now
       :is-held
       :jump-pose
-      :last-teleport-at="lastTeleportAt"
-      :trounce-blossoms="trounceBlossoms"
+      :last-teleport-at
+      :trounce-blossoms
       :light-uniforms
       :outcrop-camps
       :ramp-texture

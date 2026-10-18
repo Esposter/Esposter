@@ -535,8 +535,8 @@ describe(mergeGenshinSave, () => {
       cooking: {
         ...EMPTY_GENSHIN_SAVE.cooking,
         processingJobs: {
-          [PROCESSING_ID]: { count: 1, startedAt: EARLIER_START },
           [OTHER_PROCESSING_ID]: { count: 2, startedAt: EARLIER_START },
+          [PROCESSING_ID]: { count: 1, startedAt: EARLIER_START },
         },
       },
     };
@@ -549,8 +549,8 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).cooking.processingJobs).toStrictEqual({
-      [PROCESSING_ID]: { count: 3, startedAt: LATER_START },
       [OTHER_PROCESSING_ID]: { count: 2, startedAt: EARLIER_START },
+      [PROCESSING_ID]: { count: 3, startedAt: LATER_START },
     });
   });
 

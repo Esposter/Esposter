@@ -1,5 +1,6 @@
-import { Attribute } from "#src/models/character/Attribute";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+
+import { Attribute } from "#src/models/character/Attribute";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 
 export const CLORINDE_CHARACTER_ID = 10_000_098;

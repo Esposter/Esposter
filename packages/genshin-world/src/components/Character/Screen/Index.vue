@@ -94,7 +94,7 @@ interface Props {
 // Outside the game's own screen
 defineSlots<{
   default?: (props: { characterId: number }) => unknown;
-  scene?: (props: { element: Element | undefined; tab: CharacterMenuTab }) => unknown;
+  scene?: (props: { element?: Element; tab: CharacterMenuTab }) => unknown;
 }>();
 const {
   activeCharacterId,
@@ -334,7 +334,7 @@ const activate = () => {
         v-if="character && tab === CharacterMenuTab.Attributes"
         :character
         :game-text
-        :ascend-rows="ascendRows"
+        :ascend-rows
         :is-ascendable="ascendResult !== undefined"
         :is-level-upable="levelUpResult !== undefined"
         :is-liftable
@@ -342,9 +342,9 @@ const activate = () => {
         :max-stamina
         :name="characterName"
         :stat-tables
-        @ascend="ascendCharacterAt"
-        @level-up="levelUpCharacterAt"
-        @lift="liftCharacter"
+        @ascend="ascendCharacterAt()"
+        @level-up="levelUpCharacterAt()"
+        @lift="liftCharacter()"
       />
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts

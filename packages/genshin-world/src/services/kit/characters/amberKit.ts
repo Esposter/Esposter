@@ -62,9 +62,6 @@ export const createAmberKitBehaviour = ({
   const everyArrowFindsItsTargetFieryRainArrows = widenFieryRainArrows(fieryRainArrows);
 
   return {
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
-    getSkillCooldownMultiplier: ({ activeCombatant }) =>
-      activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const hasEveryArrowFindsItsTarget = combatant.ascension >= EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION;
@@ -76,6 +73,9 @@ export const createAmberKitBehaviour = ({
         );
       },
     },
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
+    getSkillCooldownMultiplier: ({ activeCombatant }) =>
+      activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitTaunt(kitEffectState, body, combatant, {

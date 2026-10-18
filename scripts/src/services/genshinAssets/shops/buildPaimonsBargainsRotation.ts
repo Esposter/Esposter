@@ -66,7 +66,7 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
       return { buyLimit: row.buyLimit, priceCount: price.count, priceItemId: price.id, refresh };
     });
     const [price] = prices;
-    if (!price || prices.some((other) => !isSamePrice(other, price)))
+    if (!price || prices.some((other) => !checkIsSamePrice(other, price)))
       throw new InvalidOperationError(
         Operation.Read,
         "Paimon's Bargains rotation",
@@ -114,7 +114,7 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   return { [`${GameDataset.Shops}/paimonsBargainsRotation`]: rotation };
 };
 
-const isSamePrice = (first: PaimonsBargainsPrice, second: PaimonsBargainsPrice): boolean =>
+const checkIsSamePrice = (first: PaimonsBargainsPrice, second: PaimonsBargainsPrice): boolean =>
   first.buyLimit === second.buyLimit &&
   first.priceCount === second.priceCount &&
   first.priceItemId === second.priceItemId &&

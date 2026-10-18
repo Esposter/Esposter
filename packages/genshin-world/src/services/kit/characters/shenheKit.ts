@@ -62,8 +62,6 @@ export const createShenheKitBehaviour = ({
     createBurstTickHit(burstTickSecondHitSeconds + offsetSeconds),
   ]);
   return {
-    // Clarity of Heart, from Constellation 1, lets Spring Spirit Summoning be used one more time
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       // The field is cast ahead of the body, as far across as its DoT reaches, and its DoT and buff are summoned there, so
       // It stands where gcsim places it
@@ -87,5 +85,7 @@ export const createShenheKitBehaviour = ({
         });
       },
     },
+    // Clarity of Heart, from Constellation 1, lets Spring Spirit Summoning be used one more time
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
   };
 };
