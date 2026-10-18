@@ -234,11 +234,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's quit prompt on the current build at 1080 high, from a 2026 recording (`yt-jHr2bERjkYc`, 30
   // Seconds in), the dialog over the dimmed menu: "Are you sure you want to quit?" with Cancel and Confirm. Scored over
-  // The dialog's box above its buttons, clear of the tutorial's arrow. The page still draws the 2024 build's three
-  // Choices, which the prompt's own change re-specifies, so this row scores it apart until then
+  // The dialog's whole panel, 960 by 606 from (480, 237) in that frame. The tutorial's red arrow lies inside the panel above
+  // Confirm, an overlay the game does not draw, so the score counts its pixels as a difference
   "exit-prompt": {
     capture: "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
-    region: { height: 415, width: 960, x: 480, y: 235 },
+    region: { height: 606, width: 960, x: 480, y: 237 },
     screen: "MenuExit",
     seconds: 30,
   },
