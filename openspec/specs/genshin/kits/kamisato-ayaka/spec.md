@@ -1,6 +1,6 @@
 ## Purpose
 
-Kamisato Ayaka's kit as built: her strikes, charged attack and plunges, Kamisato Art: Hyouka, Soumetsu's storms and Senho's Cryo infusion, with Senho's Cryo application, her first and fourth ascension effects and her other constellations left unbuilt.
+Kamisato Ayaka's kit as built: her strikes, charged attack and plunges, Kamisato Art: Hyouka, Soumetsu's storms and Senho's Cryo infusion, with Senho's Cryo application, her first and fourth ascension effects, and her fourth and sixth constellations left unbuilt.
 
 ## Requirements
 
@@ -64,6 +64,22 @@ Kamisato Art: Senho SHALL infuse Ayaka's attacks with Cryo for five seconds afte
 - **WHEN** she sprints
 - **THEN** her attacks are infused with Cryo
 - **AND** the infusion runs out five seconds after the sprint ends
+
+### Requirement: First constellation cuts Hyouka's cooldown on her attacks
+
+From her first constellation, each of her normal or charged attacks' hits on an enemy SHALL have a 50% chance to cut Kamisato Art: Hyouka's running cooldown by 0.3 seconds, and the chance SHALL be rolled at most once every 0.1 seconds.
+
+#### Scenario: A hit cuts Hyouka's cooldown on the roll
+
+- **GIVEN** Ayaka is at constellation 1 and her Hyouka cooldown has 5 seconds left
+- **WHEN** a normal attack's hit strikes an enemy and the roll passes
+- **THEN** Hyouka's cooldown has 4.7 seconds left
+
+#### Scenario: Below the first constellation a hit cuts nothing
+
+- **GIVEN** Ayaka is at constellation 0 and her Hyouka cooldown has 5 seconds left
+- **WHEN** a normal attack's hit strikes an enemy
+- **THEN** Hyouka's cooldown has 5 seconds left
 
 ### Requirement: Second constellation adds two smaller storms
 
