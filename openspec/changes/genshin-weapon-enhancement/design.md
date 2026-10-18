@@ -78,6 +78,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Tome of the Eternal Flow (Aeon Wave, provisional reading).** Its HP line is the table's and is not repeated here. Each change in the wielder's current HP adds a stack of Charged Attack DMG, 14% per stack at rank one, up to three, once every 0.3 s, each for 4 s, through addPassiveStack. A third stack, or a refresh of it, restores 8 Energy once every 12 s through gainPartyMemberEnergy. Rank five reads 30% per stack and 12 Energy.
 - **Earth Shaker (Oath of Qhapaq Nan).** A Pyro-related reaction from any party member, on the field or not, adds the rank's Elemental Skill DMG for its seconds, with Pyro-related named as Vaporize, Melt, Overloaded, Burning, Burgeon, and a Pyro Swirl or Pyro Crystallize by its element. Provisional on that reaction list.
 - **Exaiphanes Blade (Traveler's Path).** Only while the Traveler wields it: a hit it deals raises its ATK by the rank's amount for the rank's seconds and regenerates the rank's Energy, once every cooldown, on the field or not. The Traveler-only reading is provisional until the game's text is checked.
+- **Hunter's Path (At the End of the Beast-Paths).** Its All Elemental DMG Bonus is a passive bonus. A Charged Attack obtains Tireless Hunt, once every cooldown, adding the rank's share of Elemental Mastery to the Charged Attacks it is obtained with, ended after the rank's Charged Attacks or seconds. It is the shared attack-instance factory's shape with the Charged Attack tag.
 
 ## How it works
 

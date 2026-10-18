@@ -4,6 +4,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { createAeonWavePassiveModule } from "#src/services/weapon/passives/createAeonWavePassiveModule";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
+import { createAtTheEndOfTheBeastPathsPassiveModule } from "#src/services/weapon/passives/createAtTheEndOfTheBeastPathsPassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBathhousesHawksAndNarukamiPassiveModule } from "#src/services/weapon/passives/createBathhousesHawksAndNarukamiPassiveModule";
@@ -347,4 +348,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2824611011": createOathOfQhapaqNanPassiveModule,
   // Traveler's Path (Exaiphanes Blade)
   "1043198987": createTravelersPathPassiveModule,
+  // At the End of the Beast-Paths (Hunter's Path)
+  "1173973395": createAtTheEndOfTheBeastPathsPassiveModule,
 };
