@@ -2387,6 +2387,10 @@ importers:
         version: 4.6.7
 
   packages/vue-grid-layout-headless:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'
