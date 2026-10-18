@@ -10,11 +10,24 @@ describe(computeGatheringRespawn, () => {
     expect(computeGatheringRespawn(epoch, GatheringRespawn.Specialty)).toStrictEqual(epoch.add({ hours: 46 }));
   });
 
-  test("a daily point comes back at the game's midnight after the pick, in the game's time zone", () => {
+  test("a daily point comes back at the first daily reset after the pick, 04:00 in the game's time zone", () => {
     expect.hasAssertions();
-    // Midnight in UTC+8 falls at 16:00 UTC, so a pick at 10:00 UTC on the first day comes back at 16:00 UTC that day
+    // The epoch is 08:00 on 1 January in UTC+8, so the reset at or before a pick at 18:00 that day is 04:00 that day, and the
+    // Next one is 04:00 on 2 January, 20 hours after the epoch
     expect(computeGatheringRespawn(epoch.add({ hours: 10 }), GatheringRespawn.Daily)).toStrictEqual(
-      epoch.add({ hours: 16 }),
+      epoch.add({ hours: 20 }),
+    );
+  });
+
+  test("a daily point picked before the day's reset comes back at that reset, and one picked at it at the next", () => {
+    expect.hasAssertions();
+    // 02:00 on 1 January in UTC+8 falls before that day's 04:00 reset, which the point comes back at
+    expect(computeGatheringRespawn(epoch.subtract({ hours: 6 }), GatheringRespawn.Daily)).toStrictEqual(
+      epoch.subtract({ hours: 4 }),
+    );
+    // A pick exactly at the reset is after it, so the point comes back at the reset of the day after
+    expect(computeGatheringRespawn(epoch.subtract({ hours: 4 }), GatheringRespawn.Daily)).toStrictEqual(
+      epoch.add({ hours: 20 }),
     );
   });
 

@@ -19,7 +19,8 @@ From Adventure Rank 30 each region's mining outcrops come daily, and investigati
 
 ## Waiting on
 
-- The ley line places, which the mining outcrops are drawn beside once they are placed.
+- The mining outcrops' draw and respawn, which are the mining outcrops' own and not built here. Their places are built by `genshin:assets mining-outcrops`, which the main session publishes.
+- The official map's Investigation label, which holds no points, so no investigation spot is placed.
 
 ## Impact
 
