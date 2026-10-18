@@ -101,4 +101,16 @@ describe(createShenheKitBehaviour, () => {
       },
     ]);
   });
+
+  test("a Constellation 1 switch adds one Spring Spirit Summoning charge", () => {
+    expect.hasAssertions();
+
+    expect(SHENHE_KIT.getSkillChargeBonus?.({ ...createShenheCombatant(), constellationCount: 1 })).toBe(1);
+  });
+
+  test("a Constellation 0 switch adds no Spring Spirit Summoning charge", () => {
+    expect.hasAssertions();
+
+    expect(SHENHE_KIT.getSkillChargeBonus?.({ ...createShenheCombatant(), constellationCount: 0 })).toBe(0);
+  });
 });
