@@ -14,6 +14,12 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/skill.go
 const SOLAR_ISOTOMA_ID = "albedo-solar-isotoma";
 const TRANSIENT_BLOSSOM_COOLDOWN_STATUS_ID = "albedo-transient-blossom-cooldown";
+// Calcite Might, as the dump's Albedo_PermanentSkill_1 row and gcsim v2.47.2 (MIT) albedo/asc.go give it: from Ascension
+// 1, a Transient Blossom deals 25% more DMG to an enemy under half its HP
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go
+const CALCITE_MIGHT_ASCENSION = 1;
+const CALCITE_MIGHT_HEALTH_SHARE = 0.5;
+const CALCITE_MIGHT_DAMAGE_BONUS = 0.25;
 // Measured: gcsim v2.47.2 (MIT) albedo/asc.go, A4: Rite of Progeniture: Tectonic Tide raises the Elemental Mastery of the
 // Party for 10 seconds by 125, as its A4 gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/asc.go
@@ -28,7 +34,8 @@ export const ALBEDO_CHARACTER_ID = 10_000_038;
 // Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a Transient
 // Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
 // Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the Elemental Mastery of
-// The deployed team. A1's damage to enemies at half HP or less and his constellations are not built
+// The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. His constellations are
+// Not built
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -57,6 +64,12 @@ export const createAlbedoKitBehaviour = ({
         });
       },
     },
+    getStrikeDamageBonus: ({ combatant, hit }, enemy) =>
+      combatant.ascension >= CALCITE_MIGHT_ASCENSION &&
+      hit === transientBlossom &&
+      enemy.health / enemy.maxHealth < CALCITE_MIGHT_HEALTH_SHARE
+        ? CALCITE_MIGHT_DAMAGE_BONUS
+        : 0,
     // A hit that lands on an enemy inside the standing Solar Isotoma's field sets off a Transient Blossom at that enemy, once
     // Every 2 seconds, while the cooldown Albedo carries is not up
     onKitEvent: (event, { kitEffectState }, combatant) => {

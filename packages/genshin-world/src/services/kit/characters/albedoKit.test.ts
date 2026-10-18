@@ -17,6 +17,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -61,6 +62,27 @@ const tectonicTideBuffs = (combatant: Combatant): KitBuff[] =>
   castEffects(ALBEDO_KIT.elementalBurst, [createStandingSolarIsotoma()], combatant).filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
   );
+
+// The DMG Bonus a Transient Blossom of Albedo's at the ascension takes on an enemy under half its HP
+const getBlossomDamageBonus = (ascension: number): number | undefined => {
+  const combatant = createAlbedoCombatant(ascension);
+  const solarIsotoma = createStandingSolarIsotoma();
+  const kitEffectState: KitEffectState = { effects: [solarIsotoma] };
+  ALBEDO_KIT.onKitEvent?.(
+    createDamageTaken({ x: 0, z: 0 }),
+    createKitTestContext(combatant, { kitEffectState }),
+    combatant,
+  );
+  const blossom = takeOne(
+    kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon" && effect !== solarIsotoma),
+  );
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  return ALBEDO_KIT.getStrikeDamageBonus?.(
+    { body: blossom.body, combatant, hit: takeOne(blossom.hits) },
+    { ...enemy, health: enemy.maxHealth / 4 },
+    createParty([ALBEDO_CHARACTER_ID]),
+  );
+};
 
 describe(createAlbedoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -149,5 +171,19 @@ describe(createAlbedoKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
+  });
+});
+
+describe("calcite Might", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getBlossomDamageBonus(1)).toBe(0.25);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getBlossomDamageBonus(0)).toBe(0);
   });
 });
