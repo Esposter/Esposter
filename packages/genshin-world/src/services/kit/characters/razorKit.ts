@@ -45,6 +45,7 @@ export const RAZOR_CHARACTER_ID = 10_000_020;
 // Resets the skill's cooldown from Ascension 1 and casts a strike's Soul Companion beside it. Awakening cuts the skill's
 // Cooldown from Ascension 1, and from six constellations a strike while his claymore is charged releases Lupus
 // Fulguris's lightning
+// Constellation 4 needs an enemy DEF decrease on Claw and Thunder's hits, which EnemyStatus does not carry
 export const createRazorKitBehaviour = ({
   kit,
   readHits,

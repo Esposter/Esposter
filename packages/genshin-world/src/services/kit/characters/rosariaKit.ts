@@ -21,6 +21,9 @@ export const ROSARIA_CHARACTER_ID = 10_000_045;
 // Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Her passives, her
 // Constellations other than 2, and her teleport behind the target are not built, as the kit events and the body do not
 // Reach them
+// Constellation 1 needs CRIT hits as an event and an ATK SPD bonus, which the kit does not carry
+// Constellation 4 needs Ravaging Confession's CRIT hits as an event, which the kit does not emit
+// Constellation 6 needs a Physical RES cut, which EnemyStatus cannot key, as Element has no Physical
 export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRecordReader): KitBehaviour => {
   const ritesLanceHit = takeOne(kit.elementalBurst.hits, 1);
   const ritesTickHit = readHit("ritesTick");
