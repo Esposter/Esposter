@@ -234,6 +234,20 @@ describe(useWorldMap, () => {
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
   });
 
+  test("a passed threshold does not pay again", async () => {
+    expect.hasAssertions();
+
+    // The statue is activated once, passing the threshold, and again: the second settle finds the percentage already held
+    const { activateLandmark, reputation, wallet } = createWorldMap();
+    await waitForReads();
+
+    activateLandmark(statue.id);
+    activateLandmark(statue.id);
+
+    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+  });
+
   test("a finished request pays its reward once", async () => {
     expect.hasAssertions();
 
