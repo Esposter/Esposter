@@ -13,11 +13,11 @@ The audit's feature rows show the cost of that. Twelve requested features were s
   - Its main entry holds `useGridLayout`, the gesture state the dashboard's component holds today.
 - **The dashboard's grid component keeps only its look:** the tiles, the handles and the placeholder, in the app's tokens.
 - **The twelve features are built,** each with its test.
-- **Records:** the package's area README holds its requirements and the Upstream table, and the dashboard grid's page keeps only how the dashboard uses the package.
+- **Records:** the package's capability holds its requirements, its area README the Upstream table, and the dashboard grid's page keeps only how the dashboard uses the package.
 
 ## Capabilities
 
-None changed in behaviour for the dashboard. The package's area README is written as built.
+- **vue-grid-layout-headless/grid-layout** (new). The dashboard's own grid changes nothing a reader sees.
 
 ## Waiting on
 

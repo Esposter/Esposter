@@ -20,9 +20,9 @@ The package splits along the line that `@vuetify/v0` draws under the UI library.
 
 ```mermaid
 flowchart TD
-  press["pointerdown on a tile or one of its handles"] -->|"nearest grid root is this grid's"| gesture["gesture recorded, pointer captured"]
-  press -->|"nearest grid root is a nested grid's"| skip["ignored: the nested grid owns it"]
-  gesture -->|"past the start distance"| move["pointermove"]
+  press["pointerdown on a tile or one of its handles"] -->|"nearest grid root is this grid's, no gesture held"| gesture["gesture recorded"]
+  press -->|"a nested grid's root, or another pointer's gesture held"| skip["ignored"]
+  gesture -->|"past the start distance"| move["pointer captured, then each pointermove"]
   move --> inside{"pointer over this grid?"}
   inside -->|yes| cell["getGestureCell, then the collision mode, then compaction"]
   inside -->|"no, over another mounted grid"| handoff["that grid previews the item at the pointer"]
@@ -62,7 +62,7 @@ The package itself:
 packages/vue-grid-layout-headless/src/placement/    the placement functions, framework-free, each with its test
 packages/vue-grid-layout-headless/src/composables/  useGridLayout and the mounted-grid registry
 packages/vue-grid-layout-headless/src/models/       GridItem, GridGesture, CompactType, CollisionMode, ResizeEdge
-openspec/specs/vue-grid-layout-headless/README.md   the package's requirements and its Upstream table
+openspec/specs/vue-grid-layout-headless/README.md   the area's index and its Upstream table
 ```
 
 ## Notes
