@@ -28,6 +28,8 @@ describe(createStaffOfHomaPassiveModule, () => {
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.HealthPercent },
+    ]);
+    expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 1)).toStrictEqual([
       { amount: 0.008 * 10000, attribute: Attribute.Attack },
     ]);
   });
@@ -37,6 +39,8 @@ describe(createStaffOfHomaPassiveModule, () => {
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.4, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.HealthPercent },
+    ]);
+    expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 0.4)).toStrictEqual([
       { amount: (0.008 + 0.01) * 10000, attribute: Attribute.Attack },
     ]);
   });
@@ -46,6 +50,8 @@ describe(createStaffOfHomaPassiveModule, () => {
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.5, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.HealthPercent },
+    ]);
+    expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 0.5)).toStrictEqual([
       { amount: 0.008 * 10000, attribute: Attribute.Attack },
     ]);
   });

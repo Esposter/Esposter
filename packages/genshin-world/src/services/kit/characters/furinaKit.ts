@@ -47,7 +47,8 @@ const SPIRITBREATH_THORN_COOLDOWN_STATUS_ID = "furina-spiritbreath-thorn-cooldow
 const SURGING_BLADE_COOLDOWN_STATUS_ID = "furina-surging-blade-cooldown";
 
 const SALON_STATUS_ID = "furina-salon-solitaire";
-const SALON_MEMBER_FIELD_ID = "furina-salon-member";
+// Each Salon member is its own field, named by its index in the Salon, so a recast of the Salon restarts each one
+const SALON_MEMBER_FIELD_ID_PREFIX = "furina-salon-member-";
 const SALON_ATTACK_SUMMON_ID = "furina-salon-attack";
 const SINGER_FIELD_ID = "furina-singer";
 // As gcsim (MIT) furina/skill.go gives it, as a Salon member attacks it drains every member above half HP by its share of
@@ -109,7 +110,7 @@ const endSalon = (kitEffectState: KitEffectState, characterId: number): void => 
   const checkIsSalonEffect = (effect: KitEffect): boolean =>
     (effect.kind === "field" &&
       effect.characterId === characterId &&
-      (effect.id === SALON_MEMBER_FIELD_ID || effect.id === SINGER_FIELD_ID)) ||
+      (effect.id?.startsWith(SALON_MEMBER_FIELD_ID_PREFIX) || effect.id === SINGER_FIELD_ID)) ||
     (effect.kind === "summon" && effect.combatant.characterId === characterId && effect.id === SALON_ATTACK_SUMMON_ID);
   for (const effect of kitEffectState.effects) if (checkIsSalonEffect(effect)) effect.secondsRemaining = 0;
   removeKitEffects(kitEffectState, checkIsSalonEffect);
@@ -335,13 +336,14 @@ export const createFurinaKitBehaviour = ({
     kitEffectState: KitEffectState,
     combatant: Combatant,
     salonMember: SalonMember,
+    index: number,
     centre: GroundPoint,
     delaySeconds: number,
     secondsRemaining: number,
   ): void =>
     castFollowingField(kitEffectState, combatant, centre, {
       delaySeconds,
-      id: SALON_MEMBER_FIELD_ID,
+      id: `${SALON_MEMBER_FIELD_ID_PREFIX}${index}`,
       initialTickSeconds: salonMember.initialTickSeconds,
       intervalSeconds: salonMember.intervalSeconds,
       onTick: (tick, field) => {
@@ -401,8 +403,8 @@ export const createFurinaKitBehaviour = ({
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, PNEUMA_STATUS_ID))
       castSinger(context, combatant, centre, delaySeconds, secondsRemaining);
     else
-      for (const salonMember of salonMembers)
-        castSalonMember(kitEffectState, combatant, salonMember, centre, delaySeconds, secondsRemaining);
+      for (const [index, salonMember] of salonMembers.entries())
+        castSalonMember(kitEffectState, combatant, salonMember, index, centre, delaySeconds, secondsRemaining);
   };
 
   // The charged attack's turn of her Arkhe, Ousia to Pneuma or back, which hands Salon Solitaire to the other Arkhe's

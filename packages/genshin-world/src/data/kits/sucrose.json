@@ -24,8 +24,6 @@
   },
   "parameters.forbiddenCreationSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 4339 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 24 },
   "plunges.high.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 46 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 24 },
   "plunges.low.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 45 }
 }

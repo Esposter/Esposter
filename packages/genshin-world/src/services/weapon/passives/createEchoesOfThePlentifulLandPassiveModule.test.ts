@@ -41,6 +41,31 @@ describe(createEchoesOfThePlentifulLandPassiveModule, () => {
     ).toBe(0.012);
   });
 
+  test("the stacks count the wielder's Max HP after its buffs, not its base Max HP", () => {
+    expect.hasAssertions();
+
+    const wielder = createWielder(1000);
+    const context = createKitTestContext(wielder, {
+      kitEffectState: {
+        effects: [
+          {
+            amount: 1000,
+            attribute: Attribute.Health,
+            characterId: TRAVELER_CHARACTER_ID,
+            kind: "buff",
+            secondsRemaining: 1,
+          },
+        ],
+      },
+    });
+    echoesOfThePlentifulLandPassiveModule.onKitEvent?.(createSkillUsed(), context, wielder);
+
+    expect(
+      getBuffedCombatant(wielder, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
+        .attributes.attributeTotalMap[Attribute.NormalAttackDamageBonus],
+    ).toBe(0.012);
+  });
+
   test("only whole thousands of Max HP count toward the bonus", () => {
     expect.hasAssertions();
 

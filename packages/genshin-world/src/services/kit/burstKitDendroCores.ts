@@ -10,7 +10,6 @@ import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches
 import { selectNearestEnemy } from "#src/services/kit/selectNearestEnemy";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 
 // The Dendro Cores whose seconds ran out bursting on the enemies round them, each priced from its character as the
 // Team's buffs leave it: a Bloom's own core about itself, only while the character whose Bloom left it stands in the
@@ -33,18 +32,14 @@ export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], contex
         ? selectNearestEnemy(position, enemyMap.values(), HYPERBLOOM_HOMING_RADIUS)
         : effect;
     if (!target) continue;
-    const reactionBonus = getDeployedCombatants(party, characterIdCombatantMap).reduce(
-      (bonus, member) => bonus + (member.kit.getPartyDendroCoreDamageBonus?.(member, coreKind, context) ?? 0),
-      0,
-    );
     landKitReactionReaches(
       [
         [
           { position: target.position },
           {
+            coreKind,
             element: Element.Dendro,
             reachRadius: coreKind === DendroCoreKind.Bountiful ? BOUNTIFUL_CORE_REACH_RADIUS : undefined,
-            reactionBonus,
             reactionType,
           },
         ],

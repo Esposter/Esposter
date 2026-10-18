@@ -1,6 +1,6 @@
 # Columbina
 
-Columbina's kit is its record and one behaviour module, `createColumbinaKitBehaviour`, avatar 10000125: three strikes, a charged attack, a collision and two plunges, her skill's press with the DoT field it sets going, and the burst's hit. Her multipliers are read from proud skill groups 12531, 12532 and 12539, with the skill's duration among them. Every hit is Hydro and deals its gauge of one.
+Columbina's kit is its record and one behaviour module, `createColumbinaKitBehaviour`, avatar 10000125: three strikes, a charged attack, a collision and two plunges, her skill's press with the DoT field it sets going and the gravity that field builds, the Gravity Ripple that gravity fires with Constellations 1 and 2, and the burst's hit. Her multipliers are read from proud skill groups 12531, 12532 and 12539, with the skill's duration among them. Every hit is Hydro and deals its gauge of one.
 
 Her skill and burst deal their multiplier on her max HP, as gcsim's `UseHP` gives them, so their talent multiplier is zero and the share of max HP is each hit's flat damage. A press while the DoT runs restarts its duration rather than stacking a second field, as gcsim restarts its status and keeps its ticks.
 
@@ -8,27 +8,29 @@ gcsim sources: her attack, charge, skill and burst files, with the table data in
 
 ## Decisions
 
+- **Gravity Interference's gravity builds from the team's Lunar reactions, and a Gravity Ripple fires at 60.** Each Lunar reaction in the team opens a two-second window in which the gravity builds 10 a second for the reaction's type, scaled by Constellation 2's 34%. At 60 a ripple fires and clears the gravity, on the type with the most; with none built, the reaction is the one the team's elements favour, Electro, Dendro or Geo in that order on a tie. A press while the skill stands keeps the gravity, and one with none standing starts from none. Constellation 1's ripple fires on each press, once every 15 seconds. gcsim (`columbina/skill.go`, `cons.go`) gives each of these.
 - **The skill's DoT reaches 4 metres, or 6 metres while the team is at Ascendant Gleam.** gcsim reaches 6 metres from Moonsign level 2 (`columbina/skill.go`), which the party's Moonsign level reads. She counts toward that level through her Benediction, as gcsim counts her, so a team of her and one other Moonsign character reads Ascendant Gleam where gcsim does.
 - **Her strikes and plunges deal no poise.** gcsim gives none, and no source gives Columbina's yet, so each one's poise is zero.
 - **The first strike's two-frame windup is not built.** gcsim adds it to a first strike that follows a strike or a charged attack. The kit keeps no record of the state the previous action left, so each strike lands on its gcsim hitmark without it.
 - **The charged attack's stamina is the catalyst's 50.** gcsim's default for a catalyst's charged attack is 50, and her table reads the same. gcsim makes it free while Dew is held, which waits on the Dew hook.
 - **The plunges borrow gcsim's Bennett plunge reach.** gcsim has no plunge file for Columbina, so the reach is the kit constants' borrowed one, and the 0.4 seconds are the wiki's standard, not measured.
 - **Her Moonsign Benediction turns her team's reactions Lunar, and adds Base DMG from her max HP.** Electro-Charged, Bloom and Hydro-Crystallize become Lunar-Charged, Lunar-Bloom and Lunar-Crystallize, the three types the record holds, through the engine's conversion. Her Base DMG bonus is 0.2% for every 1,000 of her max HP, up to 7%, as gcsim's `columbina/asc.go` gives it, and the benediction's text (TextMap 79900803) agrees. The curve is `columbinaBenediction.ts`, and the party sums it into the Lunar reaction damage the engine prices.
-- **Ascension 1's Lunacy gains a stack on each Gravity Interference tick, and its CRIT Rate is the stacks' share.** gcsim (`columbina/asc.go`, called from `skill.go`) gives 5% CRIT Rate per stack, up to three, and each gain restarts every stack's 10 seconds together. The kit's holds carry the stacks, and `getStrikeCriticalRateBonus` reads them for her own strikes.
+- **Ascension 1's Lunacy gains a stack on each Gravity Ripple, not on each Gravity Interference tick, and its CRIT Rate is the stacks' share.** gcsim (`columbina/asc.go`) gives 5% CRIT Rate per stack, up to three, and calls it from its gravity tick alone, so the DoT's ticks gain none. Each gain restarts every stack's 10 seconds together. The kit's holds carry the stacks, and `getStrikeCriticalRateBonus` reads them for her own strikes.
+- **Constellation 6's strike CRIT is a window and a buff per Lunar reaction.** gcsim's burst holds the team's 1.2-second window, and a Lunar reaction in it sets an 8-second buff on every party member for the elements that reaction covers: Lunar-Charged on Electro and Hydro, Lunar-Bloom on Dendro and Hydro, Lunar-Crystallize on Geo and Hydro. Each buff a striker holds adds 0.8 CRIT DMG to its strikes of those elements. A reaction of a kind refreshes its buff rather than stacking, while different kinds add (`columbina/cons.go`). The window is a status on Columbina set by her burst, and the buffs are statuses on each party member, read by `getPartyStrikeBonus` for her team and by `getStrikeCriticalDamageBonus` for her own strikes.
 
 ## Not built
 
 - **The Moondew Cleanse waits on the Lunar-Bloom hook.** Her charged attack's Lunar-Bloom follow-up is a reaction the kit cannot price yet, so the charged attack is its Hydro hit alone.
-- **The burst's field waits on the Lunar reaction hook.** The field's buff gives each character inside it a Lunar reaction bonus, and no kit reads a Lunar reaction yet. The burst is its hit alone.
-- **The skill's gravity waits on the Lunar reaction hook.** Her press clears the gravity that the Lunar reactions build, and each gravity tick deals the reaction's hit. Neither is built, so the press and the DoT are all the skill.
-- **Her Ascension 4 and constellations wait on the Lunar reactions and Dew.** Each reads one of them, so none is built.
+- **The burst's Lunar damage bonus waits on the Lunar reaction hook.** The burst opens the 1.2-second window that Constellation 6 reads, but the bonus the window gives each character's Lunar reaction damage is not applied, as no kit reads a Lunar reaction's damage yet. The burst's field is not built either.
+- **The Gravity Ripple's hit is not built.** The record holds none of the ripple's multipliers or hitmarks, so a ripple runs its Lunacy and constellation effects without damage. Gravity built from direct Lunar damage is not built either, as no kit reads a Lunar damage yet.
+- **Constellation 4 and Ascension 4 wait on the Gravity Ripple's hits and the Lunar reactions hook.** Constellation 4 needs the ripple's hits, its energy for each and its flat DMG. Ascension 4 needs the Lunar reactions hook. Constellation 6's strike CRIT is built, but its CRIT on the Lunar reaction's own damage waits on the reaction's element, which `KitReaction` does not carry.
 
 ## Key files
 
-| File                                                                         | Role                                                                                                                                         |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts`         | `createColumbinaKitBehaviour`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, burst hit and Benediction |
-| `packages/genshin-world/src/services/kit/characters/columbinaBenediction.ts` | The Benediction's Base DMG bonus: 0.2% for every 1,000 max HP, up to 7%                                                                      |
+| File                                                                         | Role                                                                                                                                                                              |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts`         | `createColumbinaKitBehaviour`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, burst hit and window, Constellation 6's buffs, and Benediction |
+| `packages/genshin-world/src/services/kit/characters/columbinaBenediction.ts` | The Benediction's Base DMG bonus: 0.2% for every 1,000 max HP, up to 7%                                                                                                           |
 
 ## Sources
 

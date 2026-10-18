@@ -3,6 +3,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -69,22 +70,31 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
         ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * masteryShare
         : 0,
   });
-  const waterBall: KitHit = { ...waterBallHit, hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds };
+  const waterBallBase: KitHit = {
+    ...waterBallHit,
+    hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds,
+  };
+  // A Water Ball is under the elemental burst's internal cooldown, as gcsim (MIT, main) aino/asc.go gives it
+  // https://github.com/genshinsim/gcsim/blob/main/internal/characters/aino/asc.go
+  const waterBall: KitHit = { ...waterBallBase, internalCooldownTag: InternalCooldownTag.ElementalBurst };
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
   const burstSeconds = readSeconds("burstDuration");
   const burstRadius = readParameter("burstRadius");
   // The ball Ascension 1 drops at Ascendant Gleam, whose reach is the burst's search radius with its own landing radius
+  // Its moon hit is under its own internal cooldown, as gcsim gives it at Ascension 1 at Ascendant Gleam
   const ascendantWaterBall: KitHit = {
     ...waterBall,
     hitArea: { ...waterBall.hitArea, radius: burstRadius + ASCENSION_1_WATER_BALL_RADIUS },
+    internalCooldownTag: InternalCooldownTag.AinoBurstMoonHit,
   };
   // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the burst's
+  // Its ball has no internal cooldown, as gcsim's cons.go gives it
   const constellation2WaterBall: KitHit = {
-    ...waterBall,
+    ...waterBallBase,
     additiveBaseDamageBonus: (combatant) =>
-      (waterBall.additiveBaseDamageBonus?.(combatant) ?? 0) +
+      (waterBallBase.additiveBaseDamageBonus?.(combatant) ?? 0) +
       combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * CONSTELLATION_2_MASTERY_SHARE,
-    hitArea: { ...waterBall.hitArea, radius: CONSTELLATION_2_RADIUS },
+    hitArea: { ...waterBallBase.hitArea, radius: CONSTELLATION_2_RADIUS },
     talentMultiplier: CONSTELLATION_2_ATTACK_SHARE,
   };
   const skillHits = kit.elementalSkill.hits;

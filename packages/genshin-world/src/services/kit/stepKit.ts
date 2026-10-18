@@ -10,11 +10,14 @@ import type { Stamina } from "genshin-engine";
 import {
   AIRBORNE_LOCOMOTION_STATES,
   HIGH_PLUNGE_MIN_HEIGHT,
+  MOVEMENT_LOCOMOTION_STATES,
   NORMAL_ATTACK_RESET_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { checkCanStartKitAction } from "#src/services/kit/checkCanStartKitAction";
+import { checkLandsKitHit } from "#src/services/kit/checkLandsKitHit";
 import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
@@ -24,6 +27,18 @@ import { queueKitHits } from "#src/services/kit/queueKitHits";
 import { startKitAction } from "#src/services/kit/startKitAction";
 import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { LocomotionState } from "genshin-engine";
+
+// The kit's action for the dash or the jump the body enters on this step, if it enters one
+const getEnteredMovementAction = (
+  kit: Kit,
+  previousState: LocomotionState,
+  state: LocomotionState,
+): KitAction | undefined => {
+  if (state === previousState) return undefined;
+  if (state === LocomotionState.Dash) return kit.dash;
+  if (state === LocomotionState.Jump) return kit.jump;
+  return undefined;
+};
 
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
 // Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster by
@@ -42,6 +57,7 @@ export const stepKit = (
 ): KitAction | undefined => {
   const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
+  const previousLocomotionState = kitState.locomotionState;
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
   // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it twice
@@ -65,8 +81,6 @@ export const stepKit = (
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;
 
-  // A state the kit holds can restrict a plunge as an attack, so its collisions and its landing strike nothing then
-  const canStartAttack = kit.checkCanStartAttack?.(context) !== false;
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
       endKitAction(kitState, kit, false);
@@ -76,17 +90,18 @@ export const stepKit = (
     kitState.actionSeconds += stepSeconds;
     while (kitState.actionSeconds >= PLUNGE_COLLISION_SECONDS) {
       kitState.actionSeconds -= PLUNGE_COLLISION_SECONDS;
-      if (canStartAttack) landedHits.push(kit.plungeCollision);
+      if (checkLandsKitHit(kit.plungeCollision, context)) landedHits.push(kit.plungeCollision);
     }
     return undefined;
   }
 
-  if (wasPlunging && canStartAttack && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
+  if (wasPlunging && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
     const drop = kitState.plungeStartHeight - height;
     // The first plunge variant whose check holds on the landing plays in place of the standard plunge
     const plungeVariant = kit.plungeVariants?.find((variant) => variant.checkIsActive(context));
     const standardPlunge = drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge;
-    return startKitAction(kitState, plungeVariant?.action ?? standardPlunge, landedHits);
+    const plunge = plungeVariant?.action ?? standardPlunge;
+    if (checkCanStartKitAction(plunge, context)) return startKitAction(kitState, plunge, landedHits, context);
   }
 
   let isStrikeEnded = false;
@@ -98,9 +113,11 @@ export const stepKit = (
       action === kit.elementalBurstVariant?.action ||
       kit.elementalSkillChain?.followUps.includes(action) === true ||
       kit.elementalSkillHolds?.some((hold) => hold.action === action || hold.variant?.action === action) === true;
+    const isMovement = action === kit.dash || action === kit.jump;
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
-      (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
+      (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState)) ||
+      (isMovement && MOVEMENT_LOCOMOTION_STATES.includes(locomotionState));
     if (isAllowed) {
       const speedBonus = kit.normalAttacks.includes(action)
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
@@ -120,7 +137,13 @@ export const stepKit = (
         kitState.actionLengthSeconds = decideLength.decide(context);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
       const landedCount = landedHits.length;
-      kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
+      kitState.nextHitIndex = landKitHits(
+        action.hits,
+        kitState.nextHitIndex,
+        kitState.actionSeconds,
+        landedHits,
+        context,
+      );
       // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's follow-up
       const chainIndex = kit.normalAttacks.indexOf(action);
       if (kit.getNormalAttackExtraHit && chainIndex !== -1)
@@ -140,5 +163,8 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
+  const movementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
+  if (movementAction && movementAction.canStart?.(context) !== false)
+    return startKitAction(kitState, movementAction, landedHits);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
 };

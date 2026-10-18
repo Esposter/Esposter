@@ -16,6 +16,8 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go, Surging Blade's circle centred ahead of the body
@@ -43,6 +45,13 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_GEO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_4_SECONDS = 8;
 const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
+
+// Measured: gcsim v2.47.2 (MIT) navia/cons.go, each Shrapnel a shot spends gives Navia 3 Energy and cuts her burst's cooldown
+// By one second, up to three of them
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_MAXIMUM_SHRAPNEL = 3;
+const CONSTELLATION_1_ENERGY_PER_SHRAPNEL = 3;
+const CONSTELLATION_1_BURST_SECONDS_PER_SHRAPNEL = 1;
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 2's CRIT Rate of 12% for each shrapnel the press consumes, three at
 // Most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the point of its hit.
@@ -82,9 +91,8 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 // Cooldown, and As the Sunlit Sky's Singing Salute casts Cannon Fire Support, the blast and the cannon's hits gaining
 // Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. From Ascension 4 each Pyro,
 // Electro, Cryo and Hydro party member adds 20% ATK, two at most. Not built: the Shrapnel gained from party Crystallize
-// Shards, and the pellets past three stacks of a shot, as no step gives a shard's reach to a hit. Constellations 2, 4 and 6
-// Are built, Constellation 6 keeping its excess Shrapnel, and the rest of her Constellations are not built:
-// Constellation 1 needs Energy and skill cooldown cuts per Shrapnel consumed, which the kit does not build yet
+// Shards, and the pellets past three stacks of a shot, as no step gives a shard's reach to a hit. Constellations 1, 2, 4 and
+// 6 are built, Constellation 6 keeping its excess Shrapnel, and the rest of her Constellations are not built:
 // Constellation 6's CRIT DMG per Shrapnel past three needs a strike CRIT DMG hook, which the kit cannot apply
 export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shrapnelSeconds = readParameter("crystalShrapnelSeconds");
@@ -147,7 +155,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
   // And fires the Surging Blade, unless its ICD still holds, which the kit sets on the shot and never clears early
   const castShot =
     (surgingBladeHit: KitHit) =>
-    ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
+    ({ activeCombatant: combatant, body, kitEffectState, party }: KitContext): void => {
       const { characterId } = combatant;
       if (combatant.ascension >= UNDISCLOSED_DISTRIBUTION_CHANNELS_ASCENSION)
         addKitEffect(kitEffectState, {
@@ -164,6 +172,16 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       if (shrapnel) {
         shrapnel.stacks = keptShrapnel;
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
+      }
+      // Constellation 1 rewards each shrapnel the shot spends, whether or not the blade's own cooldown lets it fire
+      if (combatant.constellationCount >= CONSTELLATION_1) {
+        const spentShrapnel = Math.min(stacks, CONSTELLATION_1_MAXIMUM_SHRAPNEL);
+        gainPartyMemberEnergy(party, combatant, spentShrapnel * CONSTELLATION_1_ENERGY_PER_SHRAPNEL);
+        const partyMember = getPartyMember(party, characterId);
+        partyMember.burstCooldownSeconds = Math.max(
+          0,
+          partyMember.burstCooldownSeconds - spentShrapnel * CONSTELLATION_1_BURST_SECONDS_PER_SHRAPNEL,
+        );
       }
       if (!startKitCooldown(kitEffectState, characterId, ARKHE_ICD_STATUS_ID, arkheIcdSeconds)) return;
       castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [

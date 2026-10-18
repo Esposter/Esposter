@@ -76,7 +76,10 @@ export const priceEnemyReactions = (
       if (reactionType === TransformativeReactionType.Overloaded)
         pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoiseDamage));
       const resistance = getEnemyResistance(kind, enemy, reactionElement);
-      const partyBonus = getDeployedReactionBonuses({ combatant, reactionType }, context);
+      const partyBonus = getDeployedReactionBonuses(
+        { combatant, element: reactionElement, enemy, reactionType },
+        context,
+      );
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
         (getTransformativeDamage(reactionType, level, elementalMastery, resistance, partyBonus.damageBonus) +

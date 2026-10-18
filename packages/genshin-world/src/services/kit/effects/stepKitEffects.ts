@@ -47,7 +47,8 @@ export const stepKitEffects = (stepSeconds: number, context: KitContext): void =
       if (strike) strikes.push(strike);
     }
     // A summon whose seconds had run out before the step, ended by its kit or a swap, lands nothing more
-    else if (effect.secondsRemaining + stepSeconds > 0) stepKitSummon(effect, stepSeconds, body.position, strikes);
+    else if (effect.secondsRemaining + stepSeconds > 0)
+      stepKitSummon(effect, stepSeconds, body.position, strikes, context);
     if (effect.secondsRemaining > 0) effects[keptCount++] = effect;
     else expiredEffects.push(effect);
   }
