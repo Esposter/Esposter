@@ -147,7 +147,7 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
           ...(checkIsDoneDealActive(kitEffectState, combatant.characterId) && { damageBonus: doneDealDamageBonus }),
           ...takeOne(chargedAttackHits, seals),
         };
-        castKitSummon(kitEffectState, body, combatant, [hit]);
+        castKitSummon(kitEffectState, body, combatant, [hit], { attackTag: AttackTag.ChargedAttack });
         if (combatant.ascension >= BLAZING_EYE_ASCENSION) blazingEyeArmedHits.add(hit);
         removeKitEffects(kitEffectState, (effect) => checkIsSealStatus(effect, combatant.characterId));
       },
@@ -177,9 +177,13 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
       )
         return;
       blazingEyeArmedHits.delete(event.hit);
-      castKitSummon(kitEffectState, { facing: 0, height: 0, position: event.enemy.position }, combatant, [
-        blazingEyeHit,
-      ]);
+      castKitSummon(
+        kitEffectState,
+        { facing: 0, height: 0, position: event.enemy.position },
+        combatant,
+        [blazingEyeHit],
+        { attackTag: AttackTag.ChargedAttack },
+      );
     },
     skill: { hits: [fullSealsHit] },
   };

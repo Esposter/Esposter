@@ -8,6 +8,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -90,13 +91,14 @@ const A1_LOCOMOTION_STATES = new Set<LocomotionState>([LocomotionState.Dash, Loc
 
 // A radish lands where it is thrown: its hit strikes the enemies its circle reaches, and the heal it gives reaches the
 // Character on the field from that point, only while the body stands within the circle as the radish lands, as gcsim's
-// Radish heal checks the player's position
+// Radish heal checks the player's position. Its hit is dealt as the attack tag given, which a Mega Radish leaves unset
 const landRadish = (
   context: KitContext,
   combatant: Combatant,
   target: GroundPoint,
   hit: KitHit,
   heal: (tick: KitContext) => void,
+  attackTag?: AttackTag,
 ): void => {
   const { kitEffectState } = context;
   castKitSummon(
@@ -104,6 +106,7 @@ const landRadish = (
     { facing: context.body.facing, height: context.body.height, position: target },
     combatant,
     [hit],
+    { ...(attackTag && { attackTag }) },
   );
   castKitField(kitEffectState, combatant.characterId, target, {
     nextTickSeconds: hit.hitmarkSeconds,
@@ -183,6 +186,7 @@ const landHealingRadish = (
   target: GroundPoint,
   hit: KitHit,
   { flat, healsTeam, maxHealthShare }: RadishHeal,
+  attackTag: AttackTag,
 ): void => {
   const maxHealth = getKitMaxHealth(
     combatant,
@@ -191,11 +195,18 @@ const landHealingRadish = (
     context.characterIdCombatantMap,
   );
   const healing = maxHealthShare * maxHealth + flat;
-  landRadish(context, combatant, target, hit, (tick) => {
-    if (healsTeam) changeKitTeamHealth(tick, combatant, healing);
-    else changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing);
-    applyRadishHealRiders(tick, combatant);
-  });
+  landRadish(
+    context,
+    combatant,
+    target,
+    hit,
+    (tick) => {
+      if (healsTeam) changeKitTeamHealth(tick, combatant, healing);
+      else changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing);
+      applyRadishHealRiders(tick, combatant);
+    },
+    attackTag,
+  );
 };
 
 // A Yuegui throws a radish at its target, and returns the target, for a Mega Radish to fly at the same one
@@ -205,9 +216,10 @@ const throwRadish = (
   yueguiCentre: GroundPoint,
   hit: KitHit,
   heal: RadishHeal,
+  attackTag: AttackTag,
 ): GroundPoint => {
   const target = pickRadishTarget(context, yueguiCentre);
-  landHealingRadish(context, combatant, target, hit, heal);
+  landHealingRadish(context, combatant, target, hit, heal, attackTag);
   return target;
 };
 
@@ -227,20 +239,32 @@ const throwMegaRadish = (context: KitContext, combatant: Combatant, target: Grou
 
 // Ascension 1's radish lands on a random enemy within the circle round Yaoyao, healing as a burst radish does, and none is
 // Thrown while no enemy stands there
-const throwAscensionRadish = (context: KitContext, combatant: Combatant, hit: KitHit, heal: RadishHeal): void => {
+const throwAscensionRadish = (
+  context: KitContext,
+  combatant: Combatant,
+  hit: KitHit,
+  heal: RadishHeal,
+  attackTag: AttackTag,
+): void => {
   const { body, enemyMap, random } = context;
   const enemy = selectRandomKitEnemy(body.position, YUEGUI_TARGET_RADIUS_METRES, enemyMap.values(), random);
-  if (enemy) landHealingRadish(context, combatant, enemy.position, hit, heal);
+  if (enemy) landHealingRadish(context, combatant, enemy.position, hit, heal, attackTag);
 };
 
 // Ascension 1's ticker: each interval of the burst it throws while Yaoyao dashes or jumps, and queues its next tick while the
 // Burst lasts, which a swap ends
-const scheduleAscensionTick = (context: KitContext, combatant: Combatant, hit: KitHit, heal: RadishHeal): void => {
+const scheduleAscensionTick = (
+  context: KitContext,
+  combatant: Combatant,
+  hit: KitHit,
+  heal: RadishHeal,
+  attackTag: AttackTag,
+): void => {
   scheduleKitTask(context.kitEffectState, combatant.characterId, A1_INTERVAL_SECONDS, (tick) => {
     const burst = findKitStatus(tick.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
     if (!burst || burst.secondsRemaining <= 0) return;
-    if (A1_LOCOMOTION_STATES.has(tick.locomotionState)) throwAscensionRadish(tick, combatant, hit, heal);
-    scheduleAscensionTick(tick, combatant, hit, heal);
+    if (A1_LOCOMOTION_STATES.has(tick.locomotionState)) throwAscensionRadish(tick, combatant, hit, heal, attackTag);
+    scheduleAscensionTick(tick, combatant, hit, heal, attackTag);
   });
 };
 
@@ -323,13 +347,21 @@ export const createYaoyaoKitBehaviour = ({
               isStacked: true,
               nextTickSeconds: yueguiFirstThrowSeconds,
               onTick: (throwContext) => {
-                throwRadish(throwContext, combatant, yueguiCentre, burstRadish, burstRadishHeal);
+                throwRadish(
+                  throwContext,
+                  combatant,
+                  yueguiCentre,
+                  burstRadish,
+                  burstRadishHeal,
+                  AttackTag.ElementalBurst,
+                );
               },
               secondsRemaining: burst.secondsRemaining,
               tickIntervalSeconds: yueguiThrowIntervalSeconds,
             });
           });
-        if (combatant.ascension >= ASCENSION_1) scheduleAscensionTick(context, combatant, burstRadish, burstRadishHeal);
+        if (combatant.ascension >= ASCENSION_1)
+          scheduleAscensionTick(context, combatant, burstRadish, burstRadishHeal, AttackTag.ElementalBurst);
       },
     },
     // Swapping off Yaoyao ends her burst and the Yuegui it spawned, which then throw nothing
@@ -349,7 +381,14 @@ export const createYaoyaoKitBehaviour = ({
           castKitField(tick.kitEffectState, combatant.characterId, yueguiCentre, {
             nextTickSeconds: yueguiFirstThrowSeconds,
             onTick: (throwContext, tickIndex) => {
-              const target = throwRadish(throwContext, combatant, yueguiCentre, skillRadish, skillRadishHeal);
+              const target = throwRadish(
+                throwContext,
+                combatant,
+                yueguiCentre,
+                skillRadish,
+                skillRadishHeal,
+                AttackTag.ElementalSkill,
+              );
               if (combatant.constellationCount >= CONSTELLATION_6 && C6_THROW_INDICES.has(tickIndex))
                 throwMegaRadish(throwContext, combatant, target, megaRadish);
             },
