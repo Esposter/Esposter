@@ -3,13 +3,15 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { ElementResistanceAttributeMap } from "#src/services/combat/damage/ElementResistanceAttributeMap";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
 
-// The damage an enemy's strike deals to a combatant: its ATK, less each of its statuses' cut of it, as physical damage
-// Through the combatant's defence and Physical resistance, its DMG Bonus lowered by the combatant's DMG Reduction, which
+// The damage an enemy's strike deals to a combatant: its ATK, less each of its statuses' cut of it, as damage of its
+// Kind's attack element, physical for a kind with none, through the combatant's defence and its RES to that element or
+// Its Physical RES, its DMG Bonus lowered by the combatant's DMG Reduction, which
 // Leaves it none past the whole, as the wiki's DMG Reduction has it
 // Https://genshin-impact.fandom.com/wiki/DMG_Reduction
 export const computeEnemyStrikeDamage = (
@@ -18,12 +20,16 @@ export const computeEnemyStrikeDamage = (
   combatant: Combatant,
 ): number => {
   const { attributeTotalMap, defense } = combatant.attributes;
+  const { attackElement } = enemy.traits;
   const { attack } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemy.enemyKindId), enemy.level);
   return getDamage({
     attackerLevel: enemy.level,
     damageBonus: -Math.min(attributeTotalMap[Attribute.DamageReduction], 1),
     defense,
-    resistance: attributeTotalMap[Attribute.PhysicalResistance],
+    resistance:
+      attributeTotalMap[
+        attackElement === undefined ? Attribute.PhysicalResistance : ElementResistanceAttributeMap[attackElement]
+      ],
     stat: attack * (1 - enemy.statuses.reduce((total, { attackReduction }) => total + (attackReduction ?? 0), 0)),
     talentMultiplier: ENEMY_STRIKE_TALENT_MULTIPLIER,
   });

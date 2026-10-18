@@ -184,6 +184,22 @@ A Stellar reaction's damage SHALL take the Base DMG Bonus each deployed Stellar 
 - **WHEN** a Stellar Swirl is priced
 - **THEN** its base damage is raised by 14 percent
 
+### Requirement: An enemy's strike's element
+
+An enemy's strike SHALL be resisted by the struck member's RES to its kind's attack element, and a kind with no attack element's by the member's Physical RES.
+
+#### Scenario: An elemental enemy's strike is priced against the member's RES to its element
+
+- **GIVEN** a member with 50 percent Pyro RES
+- **WHEN** an enemy whose attacks carry Pyro strikes it
+- **THEN** the strike's damage is resisted by the 50 percent, and not by the member's Physical RES
+
+#### Scenario: A physical enemy's strike is priced against the member's Physical RES
+
+- **GIVEN** a member with 50 percent Physical RES
+- **WHEN** an enemy whose attacks carry no element strikes it
+- **THEN** the strike's damage is resisted by the 50 percent
+
 ### Requirement: A party member's DMG Reduction
 
 An enemy's strike on a party member SHALL be priced against the member as the team's buffs leave it, its DMG Bonus lowered by the member's DMG Reduction, and a DMG Reduction past the whole SHALL leave it no damage.
