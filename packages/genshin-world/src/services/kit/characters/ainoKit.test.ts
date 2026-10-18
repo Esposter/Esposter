@@ -1,5 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,6 +12,7 @@ import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/cha
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -32,6 +36,31 @@ const getFirstWaterBallBonus = (combatant: Combatant): number => {
   AINO_KIT.elementalBurst.onStart?.(context);
   const { hit } = takeOne(stepKitTestEffects(20, context));
   return hit.additiveBaseDamageBonus?.(combatant) ?? 0;
+};
+
+// Two other members whose kits hold a Moonsign Benediction, declared here, to make a team at Ascendant Gleam with her
+const MOONSIGN_KIT: Kit = { ...AINO_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+const MOONSIGN_CHARACTER_IDS = [1, 2];
+const ASCENDANT_TEAM = [AINO_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS];
+
+// Casts the burst at the ascension in the team the characters make, and returns its field with the context it was cast in
+const castBurstInTeam = (ascension: number, characterIds: number[]) => {
+  const combatant = createAinoCombatant(ascension);
+  const characterIdCombatantMap = new Map<number, Combatant>(
+    characterIds.map((characterId): [number, Combatant] => [
+      characterId,
+      characterId === AINO_CHARACTER_ID ? combatant : { ...combatant, characterId, kit: MOONSIGN_KIT },
+    ]),
+  );
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, {
+    characterIdCombatantMap,
+    kitEffectState,
+    party: createParty(characterIds),
+  });
+  AINO_KIT.elementalBurst.onStart?.(context);
+  const [field] = kitEffectState.effects as KitField[];
+  return { context, field, kitEffectState };
 };
 
 describe(createAinoKitBehaviour, () => {
@@ -94,5 +123,24 @@ describe(createAinoKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(getFirstWaterBallBonus(createAinoCombatant(3))).toBe(0);
+  });
+
+  test("at Ascension 1 with the team at Ascendant Gleam, her burst's balls fall every 0.7 seconds", () => {
+    expect.hasAssertions();
+    expect(castBurstInTeam(1, ASCENDANT_TEAM).field?.tickIntervalSeconds).toBeCloseTo(0.7);
+  });
+
+  test("at Ascension 1 with the team at Ascendant Gleam, a Water Ball lands with a reach of fourteen metres", () => {
+    expect.hasAssertions();
+    const { context, field, kitEffectState } = castBurstInTeam(1, ASCENDANT_TEAM);
+    field?.onTick(context, 0);
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    expect(summon?.hits[0]?.hitArea.radius).toBe(14);
+  });
+
+  test("below Ascendant Gleam or below Ascension 1, her burst keeps the base beat", () => {
+    expect.hasAssertions();
+    expect(castBurstInTeam(0, ASCENDANT_TEAM).field?.tickIntervalSeconds).toBeCloseTo(1.5);
+    expect(castBurstInTeam(1, [AINO_CHARACTER_ID]).field?.tickIntervalSeconds).toBeCloseTo(1.5);
   });
 });
