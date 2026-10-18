@@ -127,8 +127,6 @@ export enum GameTextKey {
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // A dialog's action that goes ahead, the generic word the game's own dialogs share beside Cancel
   Confirm = "UI_BEYOND_CONFIRM",
-  // The quit prompt's Continue Game label, which the two-choice prompt no longer draws
-  ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",

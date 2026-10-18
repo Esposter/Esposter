@@ -32,7 +32,7 @@ flowchart TD
 
 - The frame's gold corners and the faint ornament inside the panel are not drawn. The corner glyph in `MenuDialogGlyphMap` is sized for the World Level dialog's frame, so reusing it on this panel is not verified.
 - The tutorial's red arrow sits inside the panel above Confirm. The region includes it, so the parity score counts its pixels as a difference.
-- `UI_LOGOUT_CONFIRM_CONTINUE_GAME` (`GameTextKey.ContinueGame`) is kept only for the Paimon browser test, which still expects a Continue Game button. No part of the prompt draws it, so that test fails until it is updated.
+- The three-choice prompt's Continue Game key, `UI_LOGOUT_CONFIRM_CONTINUE_GAME`, is removed with its choice, and the Paimon browser test now expects the two choices.
 - The prompt is not scored yet: `genshin:parity compare exit-prompt` is for the main session to run.
 
 ## Key files
