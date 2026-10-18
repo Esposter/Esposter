@@ -84,7 +84,7 @@ const createConstellation6Fixture = (constellationCount = 6) => {
       stepKitEffects(1 / 60, context);
     }
   };
-  const waitFor = (seconds: number) => stepKitEffects(seconds, context);
+  const waitFor = (seconds: number) => stepKitTestEffects(seconds, context);
   const getBonus = (attackTag: AttackTag) =>
     MONA_KIT.getStrikeDamageBonus?.(
       { attackTag, body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) },
