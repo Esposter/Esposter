@@ -46,7 +46,7 @@ describe(createBoundlessBlessingPassiveModule, () => {
       (effect): effect is KitBuff => effect.kind === "buff" && effect.source === BOUNDLESS_BLESSING_ID,
     );
     expect(buffs.map(({ attribute }) => attribute)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES);
-    expect(buffs.every(({ amount }) => Math.abs(amount - 0.08) < 1e-9)).toBe(true);
+    expect(buffs.map(({ amount }) => amount)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map(() => 0.08));
   });
 
   test("the stacks are at most four", () => {
