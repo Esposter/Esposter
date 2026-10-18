@@ -16,6 +16,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { countDeployedElements } from "#src/services/party/countDeployedElements";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -28,7 +29,7 @@ const SURGING_BLADE_AHEAD_METRES = 3.6;
 const ASCENSION_4 = 4;
 const ASCENSION_4_ATK_PER_MEMBER = 0.2;
 const ASCENSION_4_MAXIMUM_STACKS = 2;
-const ASCENSION_4_ELEMENTS = new Set([Element.Pyro, Element.Electro, Element.Cryo, Element.Hydro]);
+const ASCENSION_4_ELEMENTS: readonly Element[] = [Element.Pyro, Element.Electro, Element.Cryo, Element.Hydro];
 
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go and burst.go, Crystal Shrapnel gained by a cannon hit at most once each
 // Cooldown, six at most, and Ceremonial Crystalshot clears them all but the excess a Constellation keeps
@@ -200,7 +201,10 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       const stacks = Math.min(
         ASCENSION_4_MAXIMUM_STACKS,
-        deployedCombatants.filter(({ element }) => element !== undefined && ASCENSION_4_ELEMENTS.has(element)).length,
+        countDeployedElements(
+          deployedCombatants.map(({ element }) => element),
+          ASCENSION_4_ELEMENTS,
+        ),
       );
       return combatant.ascension >= ASCENSION_4 && stacks > 0
         ? [{ amount: ASCENSION_4_ATK_PER_MEMBER * stacks, attribute: Attribute.AttackPercent }]
