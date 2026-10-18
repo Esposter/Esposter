@@ -135,7 +135,6 @@ export const strikeEnemy = (
     appliedElement,
     energyDrops: damageEnemy(enemy, {
       damage: damage + transformativeDamage,
-      element,
       poiseDamage: poiseDamage + reactionPoiseDamage,
     }),
     isCritical,
