@@ -112,7 +112,11 @@ export const compareKitRecord = (
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
     if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
   return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables)).match(
-    (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
+    (built): KitComparison => ({
+      built,
+      failures: getMismatchedKitPaths(built.record, publishedRecord, tables.talentMultiplierMap),
+      overlay,
+    }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );
 };
