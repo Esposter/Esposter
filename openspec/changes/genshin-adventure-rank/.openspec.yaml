@@ -8,4 +8,8 @@ x-touches:
     "packages/genshin-world/src/composables/useWorldAdventureRank.ts",
     "packages/genshin-world/src/composables/useWorldMap.ts",
     "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/models/adventureRank/**",
+    "packages/genshin-world/src/services/adventureRank/**",
+    "scripts/src/models/genshinAssets/adventureRank/**",
+    "scripts/src/services/genshinAssets/adventureRank/**",
   ]
