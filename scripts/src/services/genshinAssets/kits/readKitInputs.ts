@@ -4,10 +4,12 @@ import type { KitRecord } from "genshin-world";
 
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
+import { addStanceMultiplierCandidates } from "#src/services/genshinAssets/kits/candidates/addStanceMultiplierCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIsGcsimValueGiven";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
+import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
@@ -94,6 +96,8 @@ export const readKitInputs = async ({
       getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables)),
       tableCandidateMap,
     );
+    const stance = gcsimFolder === undefined ? undefined : findGcsimStanceNormalAttack(gcsimFolder);
+    if (stance !== undefined) addStanceMultiplierCandidates(sourceCandidateMap, stance);
     inputs.push({
       characterId,
       gcsimFolder,

@@ -1,3 +1,5 @@
+import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
+
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
@@ -57,5 +59,10 @@ export const GCSIM_PLUNGE_FILE = "plunge.go";
 // Next, as the kits without one share Diluc's
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES = 72;
+// The normal attacks a character's stance gives, by the character's folder: Wriothesley's Chilling Penalty, whose enhanced
+// Normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
+export const GCSIM_STANCE_NORMAL_ATTACKS: Partial<Record<string, GcsimStanceNormalAttack>> = {
+  wriothesley: { factorLabel: "Enhanced Repelling Fist DMG", path: "stances.chillingPenalty.normalAttacks", state: 1 },
+};
 // Each character's authored overlay, `<character>.json` by its English name in kebab case
 export const KIT_OVERLAY_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "kits");
