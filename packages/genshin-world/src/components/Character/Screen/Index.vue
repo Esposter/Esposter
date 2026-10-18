@@ -20,6 +20,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
+import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
 import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
@@ -52,6 +53,7 @@ import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
+  ArtifactPicker,
   CharacterMenu,
   CharacterMenuArtifacts,
   CharacterMenuConstellation,
@@ -330,13 +332,29 @@ const upgradeTalentAt = (index: number) => {
   inventory.value = raised.inventory;
   wallet.value = raised.wallet;
 };
-// The bag's best piece for the picked slot goes on the character, and the piece it wore goes back to the bag
-const equipArtifactAt = (index: number) => {
-  const slot = ARTIFACT_SLOT_ORDER[index];
-  if (!character.value || !slot) return;
-  const equipped = equipBagArtifact(inventory.value, character.value, slot, { names: nameText, reliquarySets });
+// The slot Equip is open for, whose bag artifacts the picker lists for the player to choose one from
+const equipSlot = ref<ArtifactSlot>();
+const equipOptions = computed(() =>
+  equipSlot.value
+    ? getBagArtifactsForSlot(inventory.value, equipSlot.value).map(({ artifact, definition, id }) => ({
+        caption: `+${artifact.level}`,
+        id: String(id),
+        name: definition.name,
+        rarity: artifact.rarity,
+      }))
+    : [],
+);
+// The picked slot's Equip opens the picker over the bag's artifacts of that slot
+const openEquipAt = (index: number) => {
+  equipSlot.value = ARTIFACT_SLOT_ORDER[index];
+};
+// The artifact the player chose is worn, and the piece it wore goes back to the bag
+const chooseEquipEntry = (id: string) => {
+  if (!character.value) return;
+  const equipped = equipBagArtifact(inventory.value, character.value, Number(id), { names: nameText, reliquarySets });
   characters.value = characters.value.map((item) => (item.id === equipped.character.id ? equipped.character : item));
   inventory.value = equipped.inventory;
+  equipSlot.value = undefined;
 };
 // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag has no room for it
 const unequipArtifactAt = (index: number) => {
@@ -415,7 +433,7 @@ const activate = () => {
         :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
         :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
-        @equip="equipArtifactAt"
+        @equip="openEquipAt"
         @lock="toggleArtifactLockAt"
         @unequip="unequipArtifactAt"
       />
@@ -443,6 +461,14 @@ const activate = () => {
         :name-text
       />
     </CharacterMenu>
+    <ArtifactPicker
+      v-if="equipSlot && character"
+      :close-label="gameText[GameTextKey.Cancel]"
+      :options="equipOptions"
+      :title="gameText[GameTextKey.ArtifactActionEquip]"
+      @choose="chooseEquipEntry"
+      @close="equipSlot = undefined"
+    />
     <span class="grid" />
     <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>

@@ -54,11 +54,13 @@ Each built task names the test it was written first in, and each test is a scena
       change has landed on `eye`: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.
       Covered by `addInventoryArtifact.test.ts`'s "takes each artifact in as an entry of its own holding the artifact it
       was rolled as".
-- [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Built: the Artifacts tab's Equip puts the
-      bag's best piece for the slot on the character (highest rarity, then level), Unequip returns the worn piece to the
-      bag, and Equip is disabled where the bag holds no piece for the slot. The fodder service `takeFodderArtifacts`
+- [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Built: the Artifacts tab's Equip opens the
+      bag's pieces for the slot, listed highest rarity first and then highest level, and the player chooses one; the piece
+      worn goes back to the bag, Unequip returns the worn piece to the bag, and Equip is disabled where the bag holds no
+      piece for the slot. The fodder service `takeFodderArtifacts`
       takes unlocked artifacts out of the bag. Not built: the fodder picker, which waits on Enhance's picker. Tests:
-      `equipBagArtifact.test.ts`, `unequipArtifactToBag.test.ts`, `takeFodderArtifacts.test.ts`.
+      `getBagArtifactsForSlot.test.ts`, `equipBagArtifact.test.ts`, `unequipArtifactToBag.test.ts`,
+      `takeFodderArtifacts.test.ts`.
 - [x] 6.3 The main affix pools and the main stat's value. Each slot's pool is the attributes its main prop depot lists
       that the wiki's Artifact/Distribution page weighs for it, and the drop reads the pools through `rollPieceArtifact`.
       The main stat's value is the attribute's curve at the artifact's rarity and level (`getArtifactMainAffixValue`),

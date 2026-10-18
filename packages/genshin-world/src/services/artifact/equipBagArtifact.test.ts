@@ -1,7 +1,6 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
 import type { Character } from "#src/models/character/Character";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
-import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
@@ -35,7 +34,7 @@ const createCharacter = (artifacts: Artifact[]): Character => ({
 });
 
 describe(equipBagArtifact, () => {
-  const flowerDefinition: ItemDefinition = {
+  const flowerDefinition = {
     category: ItemCategory.Artifact,
     id: 101,
     name: "Flower Piece",
@@ -70,71 +69,58 @@ describe(equipBagArtifact, () => {
     quantity: 1,
   });
 
-  test("equipping a slot takes the bag's piece for it and wears it", () => {
+  test("the chosen piece is worn, and the piece it wore goes back to the bag as an entry of its own", () => {
     expect.hasAssertions();
 
-    const artifact = createArtifact(0);
+    const worn = createArtifact(0);
+    const chosen = createArtifact(4);
+    const other = createArtifact(2);
     expect(
       equipBagArtifact(
-        { items: [createEntry(artifact, 0)], nextId: 1, quickSwapItemIds: [] },
-        createCharacter([]),
-        ArtifactSlot.FlowerOfLife,
+        { items: [createEntry(chosen, 0), createEntry(other, 1)], nextId: 2, quickSwapItemIds: [] },
+        createCharacter([worn]),
+        0,
         options,
       ),
     ).toStrictEqual({
-      character: createCharacter([artifact]),
+      character: createCharacter([chosen]),
+      inventory: { items: [createEntry(other, 1), createEntry(worn, 2)], nextId: 3, quickSwapItemIds: [] },
+    });
+  });
+
+  test("a slot with no piece worn takes the chosen piece without returning one", () => {
+    expect.hasAssertions();
+
+    const chosen = createArtifact(4);
+    expect(
+      equipBagArtifact(
+        { items: [createEntry(chosen, 0)], nextId: 1, quickSwapItemIds: [] },
+        createCharacter([]),
+        0,
+        options,
+      ),
+    ).toStrictEqual({
+      character: createCharacter([chosen]),
       inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
     });
   });
 
-  test("the piece worn in the slot goes back to the bag as an entry of its own", () => {
-    expect.hasAssertions();
-
-    const worn = createArtifact(0);
-    const better = createArtifact(4);
-    expect(
-      equipBagArtifact(
-        { items: [createEntry(better, 0)], nextId: 1, quickSwapItemIds: [] },
-        createCharacter([worn]),
-        ArtifactSlot.FlowerOfLife,
-        options,
-      ),
-    ).toStrictEqual({
-      character: createCharacter([better]),
-      inventory: { items: [createEntry(worn, 1)], nextId: 2, quickSwapItemIds: [] },
-    });
-  });
-
-  test("the bag's best piece for the slot is taken, by rarity and then by level", () => {
-    expect.hasAssertions();
-
-    const lower = createArtifact(0);
-    const higher = createArtifact(4);
-    expect(
-      equipBagArtifact(
-        { items: [createEntry(lower, 0), createEntry(higher, 1)], nextId: 2, quickSwapItemIds: [] },
-        createCharacter([]),
-        ArtifactSlot.FlowerOfLife,
-        options,
-      ),
-    ).toStrictEqual({
-      character: createCharacter([higher]),
-      inventory: { items: [createEntry(lower, 0)], nextId: 2, quickSwapItemIds: [] },
-    });
-  });
-
-  test("a slot the bag holds no piece for is refused", () => {
+  test("an entry that holds no artifact is refused", () => {
     expect.hasAssertions();
 
     expect(() =>
       equipBagArtifact(
-        { items: [], nextId: 0, quickSwapItemIds: [] },
+        {
+          items: [{ definition: { ...flowerDefinition, category: ItemCategory.Material }, id: 0, quantity: 3 }],
+          nextId: 1,
+          quickSwapItemIds: [],
+        },
         createCharacter([]),
-        ArtifactSlot.FlowerOfLife,
+        0,
         options,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: equipBagArtifact, no artifact for EQUIP_BRACER in the bag]`,
+      `[InvalidOperationError: Invalid operation: Update, name: equipBagArtifact, entry 0 is not an artifact]`,
     );
   });
 });
