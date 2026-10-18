@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 35 },
   "frames.dragonBreathInterval.length": { "cause": "Unsourced", "value": 2 },
   "frames.dragonBreathInterval.0": { "cause": "Unclassified", "value": 145 },
   "frames.dragonBreathInterval.1": { "cause": "Unclassified", "value": 150 },
@@ -13,6 +13,6 @@
   "hitFields.dragonBreath.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "hitFields.dragonBreath.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 10139 } },
   "hitFields.dragonBreath.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }
