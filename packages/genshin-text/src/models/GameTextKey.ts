@@ -136,6 +136,8 @@ export enum GameTextKey {
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
+  // The Petrified Tree a cleared domain raises, the tree the claim prompt names
+  PetrifiedTree = "UI_ABYSSUS_CHEST_OPEN_TITLE",
   // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
   ProcessingStart = "1809596508",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
@@ -169,6 +171,10 @@ export enum GameTextKey {
   DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
   // The button that goes into an open domain from its entry screen
   DomainEnter = "UI_DUNGEON_ENTRY_47",
+  // The button that leaves the domain the player is in, as the game's leave prompt names it
+  DomainLeave = "INFO_AVATAR_TRANSPORT_DUNGEON_TITLE",
+  // The question the leave prompt asks before the player leaves a domain
+  DomainLeavePrompt = "UI_STC_Intee_DungeonExit",
   // The title of a domain's entry screen
   DomainTitle = "4043227537",
   Dracolite = "2859410932",
