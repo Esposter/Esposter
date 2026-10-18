@@ -959,7 +959,7 @@ const {
 const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
-// Started, and not kept with the save: a provisional rule until the weekly refresh is read
+// Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
 const reputationOffer = shallowRef<ReputationRequest>();
 const reputationOfferTitle = computed(() => {
   const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
@@ -973,6 +973,8 @@ const drawReputationOffer = () => {
     reputation.value.level,
     Math.random(),
     offerableQuestIds,
+    requestClaimedAts.value,
+    getWorldNow(),
   );
 };
 // Accepting the offer starts its quest, which the world then runs as any other
@@ -1036,6 +1038,7 @@ const {
   jumpTo,
   lockedJumpLandmarks,
   payReputationReward,
+  requestClaimedAts,
   unlockedLandmarkIds,
   unlockedLandmarks,
 } = useWorldMap({
@@ -1049,6 +1052,7 @@ const {
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
+  savedRequestClaimedAts: savedState.reputationRequestClaimedAts,
   setReputation: (nextReputation) => {
     reputation.value = nextReputation;
   },
@@ -1058,14 +1062,17 @@ const {
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
 // Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
-const { bountyCamps, bountyHunt, claimBounty, takeBounty } = useWorldReputationBounty({
-  events,
-  payReputationReward,
-  random: () => kitContext.random(),
-  reputation,
-  reputationCity,
-  worldLevel,
-});
+const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty } =
+  useWorldReputationBounty({
+    events,
+    payReputationReward,
+    random: () => kitContext.random(),
+    reputation,
+    reputationCity,
+    savedBountyClaimedAts: savedState.reputationBountyClaimedAts,
+    savedBountyHunt: savedState.reputationBountyHunt,
+    worldLevel,
+  });
 const reputationBountyOffer = computed(() => {
   if (bountyHunt.value) return bountyHunt.value.isTargetDefeated ? ReputationBountyOffer.Claim : undefined;
   return reputation.value.level >= REPUTATION_OFFER_FIRST_LEVEL && (reputationCity.value?.bounties.length ?? 0) > 0
@@ -1115,6 +1122,9 @@ useWorldSaveSync({
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
+    reputationBountyClaimedAts: bountyClaimedAts.value,
+    reputationBountyHunt: bountyHunt.value,
+    reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
@@ -1877,6 +1887,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         :scene-export-base-url
         :frostbearing-tree-places
+        :bounty-trail-ends="bountyTrailEnds"
         :seelies="puzzleSeelies"
         :wildlife-list="kitContext.wildlifeList"
         :windrise-data

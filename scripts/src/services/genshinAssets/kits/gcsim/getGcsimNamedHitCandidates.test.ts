@@ -1,5 +1,6 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 
@@ -13,6 +14,9 @@ import { describe, expect, test } from "vitest";
 
 const multiplierMap = (proudSkillGroupId: number) =>
   new Map([["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId }]]);
+
+// The cause of a value gcsim gives one, where only the variant of gcsim and rule values carries one
+const cause = (provenance: KitValueSource) => ("cause" in provenance ? provenance.cause : undefined);
 
 describe(getGcsimNamedHitCandidates, () => {
   const BURST_PROUD_SKILL_GROUP_ID = 2139;
@@ -141,13 +145,13 @@ describe(getGcsimNamedHitCandidates, () => {
     const joined = getNamedHitKitCandidates(multiplierMap(BURST_PROUD_SKILL_GROUP_ID), namedHitCandidateMap);
 
     expect(
-      joined.get("hits.fieryRainArrows.0.area")?.map(({ provenance, value }) => [provenance.cause, value]),
+      joined.get("hits.fieryRainArrows.0.area")?.map(({ provenance, value }) => [cause(provenance), value]),
     ).toStrictEqual([
       [KitProvisionalCause.TargetCentred, { angle: 2 * Math.PI, height: 2, radius: SKILL_TARGETING_AREA.radius }],
     ]);
     expect(joined.get("hits.fieryRainArrows.0.hitmarkFrames")?.map(({ value }) => value)).toStrictEqual([3]);
     expect(
-      joined.get("hits.fieryRainArrows.0.poiseDamage")?.map(({ provenance, value }) => [provenance.cause, value]),
+      joined.get("hits.fieryRainArrows.0.poiseDamage")?.map(({ provenance, value }) => [cause(provenance), value]),
     ).toStrictEqual([[KitProvisionalCause.NoPoiseSource, 0]]);
   });
 

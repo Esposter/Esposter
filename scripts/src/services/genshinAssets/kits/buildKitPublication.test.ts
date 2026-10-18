@@ -11,6 +11,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPublication";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
+import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { CombatTalent, GameDataset, KitPlunge, KitTargeting, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
@@ -110,7 +111,7 @@ describe(buildKitPublication, () => {
 
     // Amber's first overlay entry sourced from gcsim is a reference to a talent group none of the sources give
     expect(() =>
-      buildKitPublication([{ ...createInput(1, false), name: "Amber", overlayName: "amber" }]),
+      buildKitPublication([{ ...createInput(1, false, readKitOverlay("amber")), name: "Amber", overlayName: "amber" }]),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.multiplier, has no Gcsim value for the overlay to choose]`,
     );
