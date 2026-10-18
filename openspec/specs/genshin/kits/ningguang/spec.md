@@ -1,6 +1,6 @@
 ## Purpose
 
-Ningguang's kit as built: two strikes, a charged attack, her Star Jades, Jade Screen with Starshatter's gems, Shock Effect's reset and Piercing Fragments' wider gems, with Strategic Reserve and the screen's endurance not built.
+Ningguang's kit as built: two strikes, a charged attack, her Star Jades, Jade Screen with Starshatter's gems, Shock Effect's reset, Piercing Fragments' wider gems and Exquisite be the Jade's Elemental RES while a screen stands, with Strategic Reserve and the screen's endurance not built.
 
 ## Requirements
 
@@ -120,9 +120,25 @@ From one constellation, each strike's gem SHALL be a 3.5-metre circle, so it str
 - **THEN** the gem is a 3.5-metre circle centred on the primary target
 - **AND** it strikes enemies up to 8.5 metres from her
 
+### Requirement: Exquisite be the Jade from Constellation 4
+
+From Constellation 4, while a Jade Screen stands the active member SHALL hold 10% more RES to each element, and the bonus SHALL lapse within two steps of the screen's end or shatter, as the screen stands for nearby characters until a source measures its box.
+
+#### Scenario: Elemental RES while the screen stands
+
+- **GIVEN** Ningguang has Constellation 4
+- **WHEN** a Jade Screen stands and Ningguang is the active member
+- **THEN** the active member's RES to each element rises by 10%
+
+#### Scenario: Elemental RES lapses with the screen
+
+- **GIVEN** the Jade Screen has ended or been shattered
+- **WHEN** a step passes
+- **THEN** the active member's elemental RES bonus is gone within two steps
+
 ### Requirement: Unbuilt Ningguang effects
 
-Strategic Reserve, the screen's endurance, the skill's particles, Exquisite be the Jade and Outshining All Beneath SHALL NOT take effect.
+Strategic Reserve, the screen's endurance and the skill's particles SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
