@@ -17,7 +17,7 @@ Flins's kit is its record and one behaviour module, `createFlinsKitBehaviour`, o
 - **Northland Spearstorm waits on a stance's own skill cooldown.** Inside the stance, the skill is a box of 4 by 6 metres at 23 frames, Electro, on the table's skill multiplier at index 6. It has a cooldown of 6 seconds of its own, which a stance's action cannot hold yet, so the kit keeps the press in its place until the framework can give a stance's skill its own cooldown.
 - **Thunderous Symphony waits on the Lunar-Charged hook.** For six seconds after Spearstorm, the burst is a Lunar-Charged hit and an extra one at moonsign level 2. Both hits are Lunar-Charged, which the kit does not price yet, so the burst stays Cometh the Night.
 - **Cometh the Night's middle hits wait on the Lunar-Charged hook.** Its two middle hits, four at moonsign level 2, are Lunar-Charged, so the kit builds its initial and final hits alone.
-- **His passives and constellations are not built.** Most of them read the Lunar-Charged reaction, and Constellation 1 shortens Spearstorm's cooldown, which waits with Spearstorm.
+- **His passives, and Constellations 1, 2 and 6, are not built.** Most of them read the Lunar-Charged reaction, and Constellation 1 shortens Spearstorm's cooldown, which waits with Spearstorm. Constellation 4's ATK is built as a passive bonus; its Elemental Mastery part is 10% of his total ATK up to 220, and a passive bonus is given only the combatant and its health share, not the ATK total, so it is not built.
 
 ## Key files
 

@@ -1,9 +1,24 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createFlinsKitBehaviour, FLINS_CHARACTER_ID } from "#src/services/kit/characters/flinsKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const FLINS_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FLINS_CHARACTER_ID);
+const createFlinsCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: FLINS_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: FLINS_KIT,
+  level: 90,
+  weaponType: WeaponType.Polearm,
+});
 
 describe(createFlinsKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
@@ -66,5 +81,19 @@ describe(createFlinsKitBehaviour, () => {
       pressHits: [],
       skillHolds: undefined,
     });
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(4), 1)).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.AttackPercent },
+    ]);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(3), 1)).toStrictEqual([]);
   });
 });
