@@ -50,7 +50,6 @@ onMounted(async () => {
       :is-password-requested
       :is-password-wrong
       :pdf-document
-      :renderer
       @submit-password="(password) => submitPassword(password)"
     />
   </StyledDialog>

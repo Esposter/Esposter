@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { PdfRenderer } from "vue-pdfjs-headless";
+import type { PdfViewerApi } from "vue-pdfjs-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
+import { getResultAsync } from "@esposter/shared";
 import { usePdfViewer } from "vue-pdfjs-headless";
 
 interface Props {
@@ -13,13 +15,13 @@ interface Props {
   isPasswordRequested: boolean;
   isPasswordWrong: boolean;
   pdfDocument?: PDFDocumentProxy;
-  renderer?: PdfRenderer;
 }
 
-const { filename, isFailed, isPasswordRequested, isPasswordWrong, pdfDocument, renderer } = defineProps<Props>();
+const { filename, isFailed, isPasswordRequested, isPasswordWrong, pdfDocument } = defineProps<Props>();
 const emit = defineEmits<{ submitPassword: [password: string] }>();
 const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
+const viewerApi = shallowRef<PdfViewerApi>();
 const pageInput = ref("");
 const passwordInput = ref("");
 const {
@@ -47,8 +49,8 @@ const {
 } = usePdfViewer({
   container: () => container.value ?? undefined,
   pdfDocument: () => pdfDocument,
-  renderer: () => renderer,
   viewer: () => viewer.value ?? undefined,
+  viewerApi: () => viewerApi.value,
 });
 const matchesText = computed(() => {
   if (!searchQuery.value) return "";
@@ -59,6 +61,17 @@ const matchesText = computed(() => {
 const submitPassword = () => {
   emit("submitPassword", passwordInput.value);
 };
+
+onMounted(async () => {
+  await getResultAsync(loadPdfViewer).match(
+    (loaded) => {
+      viewerApi.value = loaded;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+});
 
 watch(currentPageNumber, (pageNumber) => {
   pageInput.value = String(pageNumber);

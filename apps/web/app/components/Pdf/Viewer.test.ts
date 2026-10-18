@@ -1,17 +1,32 @@
 // @vitest-environment nuxt
 import PdfViewer from "@/components/Pdf/Viewer.vue";
+import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+// The viewer's module never loads here, so each test sees the dialog at the state its props give
+vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
+  loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
+}));
 
 // The viewer's state is the package's, so this file asserts the dialog's own part: the failure, the password prompt
-// The password is handed back to the document, and no renderer is passed, so no document is ever shown
+// The password is handed back to the document, and no document is passed, so no page is ever shown
 const mountViewer = (props: { isFailed?: boolean; isPasswordRequested?: boolean; isPasswordWrong?: boolean }) =>
   mountSuspended(PdfViewer, {
     props: { filename: "report.pdf", isFailed: false, isPasswordRequested: false, isPasswordWrong: false, ...props },
   });
 
 describe("pdfViewer", () => {
+  // The viewer's components come in with its own mount, not with the attachment that opened it
+  test("the viewer loads its own module when it mounts", async () => {
+    expect.hasAssertions();
+
+    await mountViewer({});
+
+    expect(loadPdfViewer).toHaveBeenCalledExactlyOnceWith();
+  });
+
   test("a PDF that fails to load says so in place of its pages", async () => {
     expect.hasAssertions();
 
