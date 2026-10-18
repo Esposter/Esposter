@@ -27,7 +27,7 @@ describe(gainAdventureExp, () => {
     });
   });
 
-  test("eXP past the total at rank 60 is paid in Mora, ten a point", () => {
+  test("a gain at rank 60 pays ten Mora for each point", () => {
     expect.hasAssertions();
 
     const ascensionQuests = new Set(["25001", "25005", "25009", "25011"]);

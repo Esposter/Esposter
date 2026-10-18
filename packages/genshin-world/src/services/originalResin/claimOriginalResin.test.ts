@@ -16,7 +16,7 @@ describe(claimOriginalResin, () => {
   const wallet = { ...EMPTY_WALLET, [Currency.OriginalResin]: 100 };
   const resin = 20;
 
-  test("a claim spends its resin and gives five Adventure EXP a point", () => {
+  test("spent resin adds five Adventure EXP for each point spent", () => {
     expect.hasAssertions();
 
     expect(claimOriginalResin(adventureRankTables, wallet, resin, 0, noQuest, epoch)).toStrictEqual({
