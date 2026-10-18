@@ -78,6 +78,35 @@ describe(toGcgDeck, () => {
     });
   });
 
+  test("should name a weapon card's weapon kind from its tag, as a character's weapon is named", () => {
+    expect.hasAssertions();
+
+    const WEAPON_CARD_ID = 311_503;
+    const deckRow: ExcelGcgDeckRow = { cardList: [WEAPON_CARD_ID], characterList: [], id: DECK_ID };
+    const weaponRow: ExcelGcgCardRow = {
+      cardType: "GCG_CARD_MODIFY",
+      costList: [],
+      descTextMapHash: CARD_DESCRIPTION_TEXT_ID,
+      id: WEAPON_CARD_ID,
+      nameTextMapHash: CARD_NAME_TEXT_ID,
+      skillList: [],
+      tagList: ["GCG_TAG_WEAPON", "GCG_TAG_WEAPON_SWORD"],
+    };
+
+    expect(toGcgDeck(deckRow, [], [], [weaponRow], [], []).cards).toStrictEqual([
+      {
+        costs: [],
+        descriptionTextId: CARD_DESCRIPTION_TEXT_ID,
+        effects: [],
+        id: WEAPON_CARD_ID,
+        isLocation: false,
+        kind: GcgCardKind.Weapon,
+        nameTextId: CARD_NAME_TEXT_ID,
+        weapon: "SWORD",
+      },
+    ]);
+  });
+
   test("should leave out an empty cost slot, which the dump writes with no cost type", () => {
     expect.hasAssertions();
 
