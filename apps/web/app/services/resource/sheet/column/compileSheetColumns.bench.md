@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T07:59:35.735Z
-- Commit: 3c30311831
+- Date: 2026-10-18T10:33:15.307Z
+- Commit: 2dce06be30
 - Node: v26.12.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -18,28 +18,28 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## compileSheetColumns > a pass over 1000 rows
 
-| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------ | -------- | ------- |
-| stored cells | 1.00×   | 0.7384    | ±6.62% | 0.8604   | 10      |
-| every cell   | 0.16×   | 4.6035    | ±9.47% | 5.6007   | 10      |
+| task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------ | ------- | --------- | ------- | -------- | ------- |
+| stored cells | 1.00×   | 0.7916    | ±5.40%  | 0.8897   | 10      |
+| every cell   | 0.11×   | 6.8963    | ±25.65% | 11.7405  | 10      |
 
 ## compileSheetColumns > a pass over 10000 rows
 
 | task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------ | -------- | ------- |
-| stored cells | 1.00×   | 5.3700    | ±6.27% | 6.2558   | 10      |
-| every cell   | 0.14×   | 37.5046   | ±3.63% | 40.9863  | 10      |
+| stored cells | 1.00×   | 7.4231    | ±8.15% | 8.9971   | 10      |
+| every cell   | 0.16×   | 45.3888   | ±4.74% | 47.9700  | 10      |
 
 ## compileSheetColumns > the grid sorts 100 rows by the rank
 
 | task    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------- | ------- | --------- | ------- | -------- | ------- |
-| by rank | 1.00×   | 0.0295    | ±9.27%  | 0.0308   | 3       |
-| by a    | 0.75×   | 0.0394    | ±58.55% | 0.0480   | 3       |
+| by rank | 1.00×   | 0.0635    | ±17.73% | 0.0670   | 3       |
+| by a    | 0.88×   | 0.0719    | ±49.68% | 0.0879   | 3       |
 
 ## compileSheetColumns > the grid sorts 1000 rows by the rank
 
 | task    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------- | ------- | --------- | ------- | -------- | ------- |
-| by a    | 1.00×   | 0.2533    | ±60.98% | 0.3216   | 3       |
-| by rank | 0.91×   | 0.2799    | ±52.96% | 0.3453   | 3       |
+| by a    | 1.00×   | 0.7212    | ±24.53% | 0.7995   | 3       |
+| by rank | 0.99×   | 0.7287    | ±28.07% | 0.8196   | 3       |
