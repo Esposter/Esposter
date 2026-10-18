@@ -15,20 +15,42 @@ describe(enterKitNightsoulBlessing, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, 60, 10);
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, 20, 10);
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 60, secondsRemaining: 10 });
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 20, secondsRemaining: 10 });
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(20);
     expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)?.secondsRemaining).toBe(
       10,
     );
   });
 
+  test("keeps the rate the blessing runs on, and holds none when it has none", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const nightsoulRate = { maximum: 80, perSecond: -8 };
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, {
+      nightsoulRate,
+      points: 80,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(
+      findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)?.nightsoulRate,
+    ).toStrictEqual(nightsoulRate);
+    enterKitNightsoulBlessing(kitEffectState, OTHER_CHARACTER_ID, { points: 0, secondsRemaining: 10 });
+    expect(
+      findKitStatus(kitEffectState.effects, OTHER_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)?.nightsoulRate,
+    ).toBeUndefined();
+  });
+
   test("exits the blessing and drops its points, leaving another character's blessing and points as they were", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, 60, Number.POSITIVE_INFINITY);
-    enterKitNightsoulBlessing(kitEffectState, OTHER_CHARACTER_ID, 30, Number.POSITIVE_INFINITY);
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 60, secondsRemaining: Number.POSITIVE_INFINITY });
+    enterKitNightsoulBlessing(kitEffectState, OTHER_CHARACTER_ID, {
+      points: 30,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
     exitKitNightsoulBlessing(kitEffectState, CHARACTER_ID);
     expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBeUndefined();
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
