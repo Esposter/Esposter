@@ -24,6 +24,11 @@ export const MOVEMENT_LOCOMOTION_STATES: readonly LocomotionState[] = [
   LocomotionState.Dash,
   ...AIRBORNE_LOCOMOTION_STATES,
 ];
+// The states a queued dash or jump may start in as its action ends: on foot, or a movement's own states, not a glide
+export const QUEUED_MOVEMENT_LOCOMOTION_STATES: readonly LocomotionState[] = [
+  ...ON_FOOT_LOCOMOTION_STATES,
+  ...MOVEMENT_LOCOMOTION_STATES,
+];
 // Holding the attack past this many seconds makes the string's next strike a charged attack, once the strike ends
 // Provisional: the hold a recording of the attack clips' input reads, through `genshin:assets timings`
 export const CHARGED_ATTACK_HOLD_SECONDS = 0.3;

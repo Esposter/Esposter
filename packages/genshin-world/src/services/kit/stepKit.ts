@@ -13,6 +13,7 @@ import {
   MOVEMENT_LOCOMOTION_STATES,
   NORMAL_ATTACK_RESET_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
+  QUEUED_MOVEMENT_LOCOMOTION_STATES,
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -39,11 +40,6 @@ const getEnteredMovementAction = (
   if (state === LocomotionState.Jump) return kit.jump;
   return undefined;
 };
-
-// Whether a queued dash or jump may start in the state the body is in as its action ends: on foot, or in a state
-// A movement continues in, which a glide is not
-const checkIsQueuedMovementStartState = (state: LocomotionState): boolean =>
-  [...ON_FOOT_LOCOMOTION_STATES, ...MOVEMENT_LOCOMOTION_STATES].includes(state);
 
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
 // Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster
@@ -176,7 +172,8 @@ export const stepKit = (
   const { queuedMovementAction } = kitState;
   kitState.queuedMovementAction = undefined;
   const movementAction =
-    enteredMovementAction ?? (checkIsQueuedMovementStartState(locomotionState) ? queuedMovementAction : undefined);
+    enteredMovementAction ??
+    (QUEUED_MOVEMENT_LOCOMOTION_STATES.includes(locomotionState) ? queuedMovementAction : undefined);
   if (movementAction && checkCanStartKitAction(movementAction, context))
     return startKitAction(kitState, movementAction, landedHits, context);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
