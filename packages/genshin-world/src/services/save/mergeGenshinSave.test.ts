@@ -1,5 +1,6 @@
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
@@ -11,6 +12,9 @@ describe(mergeGenshinSave, () => {
   const LANDMARK_ID = "1";
   const OTHER_LANDMARK_ID = "2";
   const QUEST_ID = "3";
+  const ENTRY_ID = 1;
+  const OTHER_ENTRY_ID = 2;
+  const LIVING_BEING_ID = "3";
   const CHEST_ID = "chest-1";
   const OTHER_CHEST_ID = "chest-2";
   const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
@@ -66,6 +70,37 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [OTHER_LANDMARK_ID, LANDMARK_ID] };
 
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
+  });
+
+  test("unions the Archive's opened entries by section and keeps the larger defeat count of each Living Being", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      archive: {
+        kills: { [LIVING_BEING_ID]: ACCOUNT_COUNT },
+        progress: { ...EMPTY_GENSHIN_SAVE.archive.progress, [ArchiveSection.LivingBeings]: [ENTRY_ID] },
+      },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      archive: {
+        kills: { [LIVING_BEING_ID]: GUEST_COUNT },
+        progress: {
+          ...EMPTY_GENSHIN_SAVE.archive.progress,
+          [ArchiveSection.Books]: [ENTRY_ID],
+          [ArchiveSection.LivingBeings]: [OTHER_ENTRY_ID],
+        },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).archive).toStrictEqual({
+      kills: { [LIVING_BEING_ID]: GUEST_COUNT },
+      progress: {
+        ...EMPTY_GENSHIN_SAVE.archive.progress,
+        [ArchiveSection.Books]: [ENTRY_ID],
+        [ArchiveSection.LivingBeings]: [ENTRY_ID, OTHER_ENTRY_ID],
+      },
+    });
   });
 
   test("keeps the account's opened chests over the guest's", () => {

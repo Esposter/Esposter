@@ -1,5 +1,6 @@
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
 import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
+import type { ArchiveSave } from "#src/models/archive/ArchiveSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
@@ -7,6 +8,9 @@ import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
+import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
+import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
@@ -69,6 +73,25 @@ const mergeCharacters = (account: CharacterSave[], guest: CharacterSave[]): Char
     ...guest.filter(({ id }) => !accountCharacterIds.has(id)),
   ];
 };
+// The Archive's opened entries union by section, and each Living Being's defeats keep the larger, as both only grow
+const mergeArchive = (account: ArchiveSave, guest: ArchiveSave): ArchiveSave => {
+  const kills = { ...account.kills };
+  for (const [livingBeingId, guestCount] of Object.entries(guest.kills))
+    kills[livingBeingId] = Math.max(kills[livingBeingId] ?? 0, guestCount);
+  const accountProgressMap = toArchiveProgressMap(account.progress);
+  const guestProgressMap = toArchiveProgressMap(guest.progress);
+  return {
+    kills,
+    progress: toArchiveProgressSave(
+      new Map(
+        Object.values(ArchiveSection).map((section): [ArchiveSection, Set<number>] => [
+          section,
+          new Set([...(accountProgressMap.get(section) ?? []), ...(guestProgressMap.get(section) ?? [])]),
+        ]),
+      ),
+    ),
+  };
+};
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
   adjustment: WorldLevelAdjustmentSave,
@@ -85,7 +108,8 @@ const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySa
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
 
 // A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements
-// Are Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the
+// Are Grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by
+// Section, and each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the
 // Larger. A quest keeps the further of the two steps, since a step is never undone, and on the same step each
 // Objective's count takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a
 // Counter only grows. Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its
@@ -123,6 +147,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
+    archive: mergeArchive(account.archive, guest.archive),
     characters: mergeCharacters(account.characters, guest.characters),
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
@@ -138,7 +163,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? guest.offerings.frostbearingTree
         : account.offerings.frostbearingTree,
     },
-    archive: account.archive,
     openedChests: account.openedChests,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
