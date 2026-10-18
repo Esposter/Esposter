@@ -38,18 +38,22 @@ const mergeQuestProgress = (
     stepIndex: account.stepIndex,
   };
 };
+// Whether a progress is further on than another: by its level, and on the same level by its count toward the next one
+const checkIsFurtherByLevel = <T extends { level: number }>(
+  progress: T,
+  than: T,
+  getCount: (progress: T) => number,
+): boolean => (progress.level === than.level ? getCount(progress) > getCount(than) : progress.level > than.level);
 // Mondstadt's Reputation is the further of the two, by its level and then by the EXP toward the next
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
-  reputation.level === than.level ? reputation.exp > than.exp : reputation.level > than.level;
+  checkIsFurtherByLevel(reputation, than, ({ exp }) => exp);
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
-  progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
+  checkIsFurtherByLevel(progress, than, ({ heldCount }) => heldCount);
 // A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts stay
 // One copy's. A tie on both keeps the account's
 const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
-  character.level === than.level
-    ? character.constellationCount > than.constellationCount
-    : character.level > than.level;
+  checkIsFurtherByLevel(character, than, ({ constellationCount }) => constellationCount);
 // The characters both copies hold merge to the copy further on, with the larger copy count, and a character only the
 // Guest holds is kept after the account's
 const mergeCharacters = (account: CharacterSave[], guest: CharacterSave[]): CharacterSave[] => {
