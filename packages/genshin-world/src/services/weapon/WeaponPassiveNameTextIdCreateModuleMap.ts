@@ -55,6 +55,7 @@ import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passive
 import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
+import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
@@ -264,4 +265,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "706623635": createFallIntoPlacePassiveModule,
   // Phantom Flash (Snare Hook)
   "3123029499": createPhantomFlashPassiveModule,
+  // Solemn Silence (Serenity's Call)
+  "2280400315": createSolemnSilencePassiveModule,
 };

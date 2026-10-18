@@ -50,6 +50,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Tip of the Spear (Rightful Reward, provisional reading).** After the wielder is healed, it restores 8 Energy, at most once every 10 s, whether or not the wielder is on the field. The cooldown is a status on the wielder, held as Heritage holds its cooldown.
 - **Fall Into Place (Master Key, provisional reading).** After the wielder causes a reaction, its Elemental Mastery rises by the rank's 60 for 12 s, and by 60 more while the deployed team is Ascendant Gleam, read when the reaction lands, through createReactionBuffPassiveModule. The reaction counts whether or not the wielder is on the field.
 - **Phantom Flash (Snare Hook, provisional reading).** The same reaction buff as Fall Into Place: Elemental Mastery rises by the rank's 60 for 12 s after the wielder's reaction, and by 60 more under Ascendant Gleam, through createReactionBuffPassiveModule.
+- **Solemn Silence (Serenity's Call, provisional reading).** After the wielder causes a reaction, its Max HP rises by the rank's 16% for 12 s, and by 16% more while the deployed team is Ascendant Gleam, through createReactionBuffPassiveModule with the Max HP attribute. The reaction counts whether or not the wielder is on the field.
 - **Benthic Pulse (Song of Stillness, provisional reading).** After the wielder is healed, all DMG rises by the rank's 16% for 8 s, through the same heal-buff helper as Tidal Shadow, with the all-DMG attribute in place of ATK.
 
 ## How it works
