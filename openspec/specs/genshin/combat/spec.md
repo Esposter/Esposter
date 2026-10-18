@@ -233,6 +233,12 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **WHEN** an enemy whose attacks carry Cryo strikes it
 - **THEN** each point of the shield's health absorbs 2.5 points of the strike
 
+#### Scenario: A Shield Strength buff raises what a shield absorbs
+
+- **GIVEN** the member on the field holds a shield and carries a buff of 25% Shield Strength
+- **WHEN** an enemy's strike lands on it
+- **THEN** each point of the shield's health absorbs 1.25 points of the strike
+
 #### Scenario: A shield that takes a strike reports the health it has left
 
 - **GIVEN** the member on the field holds a shield another member cast

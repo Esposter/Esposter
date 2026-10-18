@@ -8,9 +8,8 @@ import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShield
 
 // An enemy's strike on the character on the field, taken by every live shield on the team at once: each one absorbs the
 // Full damage through the combat shield's absorption against the strike's element, physical for none, at the struck
-// Character's shield strength, written in place, and the
-// Member takes the least any of them passes on, so none while one holds it all and the whole damage with none up. A shield
-// Whose health is spent is ended, and the next step drops it
+// Character's Shield Strength, written in place, and the member takes the least any of them passes on, so none while
+// One holds it all and the whole damage with none up. A spent shield is ended, and the next step drops it
 export const absorbKitShield = (
   effects: readonly KitEffect[],
   combatant: Combatant,
