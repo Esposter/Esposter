@@ -18,6 +18,10 @@ export const KINICH_CHARACTER_ID = 10_000_101;
 // Frames, as gcsim counts it. Not built: the Nightsoul Blessing the press enters, with its Scalespiker Cannon and Loop
 // Shots and its Nightsoul Points. The blessing is a stance that runs on those points, which wait on the Nightsoul hook, so
 // The press deals nothing until then
+// Constellation 1 needs Movement SPD after a mid-air swing, which no attribute carries, and Cannon CRIT DMG
+// Constellation 2 needs the Dendro RES cut on his skill's hits, and the first Scalespiker shot after the blessing
+// Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's energy, which wait on it
+// Constellation 6 needs its bounce hit, which the kit does not build
 export const createKinichKitBehaviour = ({
   readFrames,
   readFramesList,

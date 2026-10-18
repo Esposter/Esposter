@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -69,6 +70,24 @@ describe(createKokomiKitBehaviour, () => {
 
     expect(garment.secondsRemaining).toBe(10);
     expect(bonus).toBeCloseTo(0.0484 * MAX_HEALTH);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKokomiCombatant(), constellationCount: 4 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KOKOMI_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(KOKOMI_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0.1);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKokomiCombatant(), constellationCount: 3 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KOKOMI_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(KOKOMI_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
   });
 });
 
