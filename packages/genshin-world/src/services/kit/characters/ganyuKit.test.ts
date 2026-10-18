@@ -65,29 +65,37 @@ describe(createGanyuKitBehaviour, () => {
     expect(Math.round(GANYU_KIT.chargedAttack.seconds * 60)).toBe(113);
   });
 
-  test("the arrows after the first get Undivided Heart's CRIT Rate, from Ascension 1", () => {
-    expect.hasAssertions();
-    const kitEffectState: KitEffectState = { effects: [] };
-    const hit = takeOne(GANYU_KIT.chargedAttack.hits);
-    const strike = (ascension: number): void => {
-      const combatant = createGanyuCombatant(ascension);
+  describe("the Ascension 1 passive, Undivided Heart", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const kitEffectState: KitEffectState = { effects: [] };
+      const hit = takeOne(GANYU_KIT.chargedAttack.hits);
+      const combatant = createGanyuCombatant(1);
       const context = createKitTestContext(combatant, { kitEffectState });
       hit.onStrike?.(context, { body: context.body, combatant, hit });
-    };
 
-    strike(0);
-    expect(kitEffectState.effects).toStrictEqual([]);
-    strike(1);
-    expect(kitEffectState.effects).toStrictEqual([
-      {
-        amount: 0.2,
-        attribute: Attribute.CriticalRate,
-        characterId: GANYU_CHARACTER_ID,
-        kind: "buff",
-        secondsRemaining: 5,
-        source: "ganyu-undivided-heart",
-      },
-    ]);
+      expect(kitEffectState.effects).toStrictEqual([
+        {
+          amount: 0.2,
+          attribute: Attribute.CriticalRate,
+          characterId: GANYU_CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 5,
+          source: "ganyu-undivided-heart",
+        },
+      ]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const kitEffectState: KitEffectState = { effects: [] };
+      const hit = takeOne(GANYU_KIT.chargedAttack.hits);
+      const combatant = createGanyuCombatant(0);
+      const context = createKitTestContext(combatant, { kitEffectState });
+      hit.onStrike?.(context, { body: context.body, combatant, hit });
+
+      expect(kitEffectState.effects).toStrictEqual([]);
+    });
   });
 
   test("the Ice Lotus explodes 373 frames after it is cast, when its taunt runs out", () => {
@@ -118,19 +126,27 @@ describe(createGanyuKitBehaviour, () => {
     expect(tickSummon?.hits[0]?.hitmarkSeconds).toBeCloseTo(8 / 60);
   });
 
-  test("the Harmony between Heaven and Earth gives the active character 20% Cryo DMG Bonus from Ascension 4", () => {
-    expect.hasAssertions();
-    expect(getTickBuffs(3)).toStrictEqual([]);
-    expect(getTickBuffs(4)).toStrictEqual([
-      {
-        amount: 0.2,
-        attribute: Attribute.CryoDamageBonus,
-        characterId: GANYU_CHARACTER_ID,
-        kind: "buff",
-        secondsRemaining: 1,
-        source: "ganyu-harmony",
-      },
-    ]);
+  describe("the Ascension 4 passive, Harmony between Heaven and Earth", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getTickBuffs(4)).toStrictEqual([
+        {
+          amount: 0.2,
+          attribute: Attribute.CryoDamageBonus,
+          characterId: GANYU_CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 1,
+          source: "ganyu-harmony",
+        },
+      ]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getTickBuffs(3)).toStrictEqual([]);
+    });
   });
 
   test("each Celestial Shower tick's hit lands from where it was cast, whatever the body does after", () => {
