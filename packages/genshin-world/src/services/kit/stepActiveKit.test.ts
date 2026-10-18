@@ -126,6 +126,18 @@ describe(stepActiveKit, () => {
     expect(context.stamina).toBe(controls.characterController.stamina);
   });
 
+  test("counts the Hexerei characters of the deployed team into the context", () => {
+    expect.hasAssertions();
+    // The count reads each member's id alone, so the Fischl member is given the Traveler's kit, which only the active one plays
+    const context = createContext([
+      createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT),
+      createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT),
+    ]);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(context.hexereiCount).toBe(1);
+  });
+
   test("gives the context the locomotion state the input steps in", () => {
     expect.hasAssertions();
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);

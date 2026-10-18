@@ -9,6 +9,7 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
+import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -67,6 +68,7 @@ export const stepActiveKit = (
 ): void => {
   context.locomotionState = input.locomotionState;
   context.stamina = characterController.stamina;
+  context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {
     body,
     characterIdCombatantMap,
