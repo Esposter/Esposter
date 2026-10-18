@@ -195,6 +195,7 @@ const LONGEST_ABYSS_CYCLE_SAVE = {
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  cardGameExp: MAX_SAVE_NUMBER,
   adventureRankRewardsClaimed: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
@@ -321,6 +322,7 @@ export const EMPTY_PARTY_SAVE: PartySave = {
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  cardGameExp: 0,
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],

@@ -13,6 +13,7 @@ import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
 import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
+import { cardGameExpSaveSchema } from "#src/models/gcg/CardGameExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
@@ -55,6 +56,7 @@ export const genshinSaveSchema = z
     ),
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
+    cardGameExp: cardGameExpSaveSchema,
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The character trials' stages whose first clear has paid its reward, each by its id
