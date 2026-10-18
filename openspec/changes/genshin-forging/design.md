@@ -9,12 +9,14 @@ The [forging](../../specs/genshin/forging/design.md) page holds the recipes, que
 - **The refusal is the ore's own line.** An order past the day's forge points shows, in place of Start, the refusal line of the enhancement ore its recipe yields: `104011` the Normal, `104012` the Fine and `104013` the Mystic, mapped in `ForgeRefusalGameTextKeyMap` to the three refusal keys `genshin-text` holds. The Mystic's recipe rows name their own refusal text, which repeats the same English.
 - **A queue is the order in its place.** Queue `n` holds the `n`th order of the forge state, since `startForge` appends each order. An obtained order is taken out of the list, so the orders behind it move forward a queue; the state keeps no queue number, so a queue that keeps its place through an obtain is open.
 - **A finished queue keeps the cooking screen's Obtain.** `UI_FORGE_PAGE_ITEM_GET` reads "Obtained", the status once the item is taken, not the button that takes it, so the button keeps `UI_COOKING_FETCH_BUTTON`, as the genshin-text key already records.
+- **The forge's state lives with the session (provisional).** The save holds no forge slice, and the forging spec has queues not survive a reload, so the learned diagrams and the forge points go with it too. A save slice for them would owe a backfill, which is not built; the main session decides.
+- **A forged weapon counts at its rarity, from the screen.** The screen reads the weapons an order took in, the bag's new weapon entries, and emits one `WeaponForged` per weapon at its rarity, which `TRIGGER_FORGE_WEAPON` names in slot 0. A weapon from a quest or a shop is no forge doing.
 
 ## Scope and order
 
 **Still to build, in order:**
 
-1. **The blacksmith's place.** Reads Mondstadt's `Blacksmith` building point from the hosted `sceneGroups/scene3` record; the screen is reached through its fixture, since the game's menus hold no forge.
+1. **The blacksmith's place.** Reads Mondstadt's `Blacksmith` building point from the hosted `sceneGroups/scene3` record; the screen is reached from the blacksmith's point in the world, as the bench is.
 2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. Its words are the forge page's own, under the manual ids `find --id "^UI_FORGE_PAGE_"` lists: `UI_FORGE_PAGE_OK_BUTTON` (Start), `UI_FORGE_PAGE_FORMULA_BUTTON` (Materials), `UI_FORGE_PAGE_ITEM_GET` (Obtained), the queue's `UI_FORGE_PAGE_QUEUE_*` and the rest.
 
 ## Data and measures

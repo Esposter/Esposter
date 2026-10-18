@@ -35,6 +35,7 @@ import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
+import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
@@ -72,6 +73,7 @@ import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
+import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
@@ -105,6 +107,11 @@ import {
   DOMAIN_LEAVE_INTERACTABLE_ID,
   DOMAIN_TREE_INTERACTABLE_ID,
 } from "#src/services/domains/constants";
+import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
+import { computeForgeInteractables } from "#src/services/forging/computeForgeInteractables";
+import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
+import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
+import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
@@ -165,7 +172,7 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useLocalStorage, useMediaQuery, useRafFn } from "@vueuse/core";
+import { useEventListener, useIntervalFn, useLocalStorage, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createGrassTrail,
@@ -177,7 +184,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { CharacterMenuTab, InteractionKind, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, ForgeTab, InteractionKind, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -638,6 +645,19 @@ const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 // Is held here while the screen is open
 const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes } =
   useWorldCooking(gameDataBaseUrl);
+const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
+// The forge's state for this session: the save holds no forge slice, so a reload empties it, and its clock is read again each
+// Interval while the forge screen is open so its queues' time left moves
+const forgeAmount = ref(1);
+const forgeDefinitions = computed(() => computeForgeDefinitions(forgeRecipes.value, materialDataMap, nameText));
+const forgeNow = shallowRef(getWorldNow());
+const forgeProgress = shallowRef(createForgeProgress(getWorldNow()));
+const forgeRecipeId = ref(FIRST_FORGE_RECIPE_ID);
+const forgeTab = ref(ForgeTab.Materials);
+const forgeWeapons = computed(() => computeForgeWeapons(forgeRecipes.value, statTables.weaponDataMap, nameText));
+useIntervalFn(() => {
+  if (screenKind.value === ScreenKind.Forge) forgeNow.value = getWorldNow();
+}, FORGE_CLOCK_INTERVAL_MS);
 const cookingRecipe = shallowRef<CookingRecipe>();
 // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
 const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
@@ -1042,6 +1062,7 @@ const interactables = computed<Interactable[]>(() => {
       { cooking: gameText[GameTextKey.CookingTitle], processing: gameText[GameTextKey.ProcessingStart] },
       getGroundHeight,
     ),
+    ...computeForgeInteractables(blacksmithPlace.value, gameText[GameTextKey.ForgeTitle], getGroundHeight),
     ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
     computeHomePotInteractable(gameText, getGroundHeight),
   ];
@@ -1376,6 +1397,9 @@ defineExpose({ jumpTo, readCameraPosition });
             } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
               openFishingPoint(interactable.id);
               screenKind = ScreenKind.Fishing;
+            } else if (interactable?.id === FORGE_INTERACTABLE_ID) {
+              forgeNow = getWorldNow();
+              screenKind = ScreenKind.Forge;
             } else if (interactable?.kind === InteractionKind.Use) {
               screenKind = ScreenKind.Crafting;
             } else if (interactable?.kind === InteractionKind.Talk) {
@@ -1932,6 +1956,31 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :name-text
       @choose="chooseAbyssBenediction"
+    />
+    <ForgeScreen
+      v-if="screenKind === ScreenKind.Forge"
+      v-model:adventure-exp="adventureExp"
+      v-model:amount="forgeAmount"
+      v-model:progress="forgeProgress"
+      v-model:recipe-id="forgeRecipeId"
+      v-model:tab="forgeTab"
+      :adventure-rank="rank"
+      :adventure-rank-tables="adventureRankTables"
+      :completed-main-quest-ids="completedMainQuestIds"
+      :definitions="forgeDefinitions"
+      :game-text
+      :inventory
+      :is-in-realm="false"
+      :now="forgeNow"
+      :party-character-ids="getDeployedCharacterIds(party)"
+      :random="kitContext.random"
+      :recipes="forgeRecipes"
+      :wallet
+      :weapons="forgeWeapons"
+      @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
+      @close="screenKind = ScreenKind.World"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <ShopScreen
       v-if="screenKind === ScreenKind.Shop"

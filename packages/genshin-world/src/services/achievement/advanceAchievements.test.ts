@@ -364,4 +364,30 @@ describe(advanceAchievements, () => {
       ),
     ).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 4 }]]) });
   });
+
+  test("a forge trigger counts a weapon forged at its named rarity, and no other", () => {
+    expect.hasAssertions();
+
+    const forged: Achievement = {
+      ...counted,
+      progress: 1,
+      trigger: { parameters: [["4"]], type: "TRIGGER_FORGE_WEAPON" },
+    };
+    expect(
+      advanceAchievements(
+        [forged],
+        new Map(),
+        { kind: AchievementEventKind.WeaponForged, quantity: 1, targetId: "3" },
+        EPOCH,
+      ),
+    ).toStrictEqual({ primogems: 0, progressMap: new Map() });
+    expect(
+      advanceAchievements(
+        [forged],
+        new Map(),
+        { kind: AchievementEventKind.WeaponForged, quantity: 1, targetId: "4" },
+        EPOCH,
+      ),
+    ).toStrictEqual({ primogems: PRIMOGEMS, progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]) });
+  });
 });
