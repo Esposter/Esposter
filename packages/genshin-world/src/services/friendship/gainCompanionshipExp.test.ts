@@ -4,7 +4,6 @@ import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 describe(gainCompanionshipExp, () => {
@@ -34,11 +33,9 @@ describe(gainCompanionshipExp, () => {
     weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
   };
 
-  test("should give the whole EXP to each deployed character but the Traveler, and none to a benched one", () => {
+  test("should give the whole EXP to each character named but the Traveler, and none to one not named", () => {
     expect.hasAssertions();
 
-    const party = createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID, SECOND_CHARACTER_ID]);
-    party.teams[1] = { characterIds: [BENCHED_CHARACTER_ID], name: "" };
     const characters = [
       { ...CHARACTER, id: TRAVELER_CHARACTER_ID },
       { ...CHARACTER, id: FIRST_CHARACTER_ID },
@@ -46,7 +43,14 @@ describe(gainCompanionshipExp, () => {
       { ...CHARACTER, id: BENCHED_CHARACTER_ID },
     ];
 
-    expect(gainCompanionshipExp(characters, party, GAIN_EXP, FRIENDSHIP_LEVELS)).toStrictEqual([
+    expect(
+      gainCompanionshipExp(
+        characters,
+        [TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID, SECOND_CHARACTER_ID],
+        GAIN_EXP,
+        FRIENDSHIP_LEVELS,
+      ),
+    ).toStrictEqual([
       { ...CHARACTER, id: TRAVELER_CHARACTER_ID },
       { ...CHARACTER, friendshipExp: GAIN_EXP, id: FIRST_CHARACTER_ID },
       { ...CHARACTER, friendshipExp: GAIN_EXP, id: SECOND_CHARACTER_ID },
@@ -57,13 +61,14 @@ describe(gainCompanionshipExp, () => {
   test("should stop each character at the top level's EXP, and leave one already there at it", () => {
     expect.hasAssertions();
 
-    const party = createParty([FIRST_CHARACTER_ID, SECOND_CHARACTER_ID]);
     const characters = [
       { ...CHARACTER, friendshipExp: TOP_EXP - 2 },
       { ...CHARACTER, friendshipExp: TOP_EXP, id: SECOND_CHARACTER_ID },
     ];
 
-    expect(gainCompanionshipExp(characters, party, GAIN_EXP, FRIENDSHIP_LEVELS)).toStrictEqual([
+    expect(
+      gainCompanionshipExp(characters, [FIRST_CHARACTER_ID, SECOND_CHARACTER_ID], GAIN_EXP, FRIENDSHIP_LEVELS),
+    ).toStrictEqual([
       { ...CHARACTER, friendshipExp: TOP_EXP },
       { ...CHARACTER, friendshipExp: TOP_EXP, id: SECOND_CHARACTER_ID },
     ]);

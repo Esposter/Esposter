@@ -156,12 +156,13 @@ A garden's fields SHALL grow their seeds, and a pond SHALL hold its fish, as rea
 - **WHEN** real time passes
 - **THEN** the seeds grow into crops
 
-### Requirement: A companion living in the realm earns Companionship EXP
+### Requirement: A companion living in the realm earns Companionship EXP from the realm's Realm Bounty
 
-A companion living in the realm SHALL earn Companionship EXP as Realm Bounty accrues.
+A companion living in the realm SHALL earn Companionship EXP when the realm's Realm Bounty is claimed, the whole of the bounty its store holds to each companion.
 
 #### Scenario: A companion living in the realm earns Companionship EXP
 
-- **GIVEN** a companion living in the realm
-- **WHEN** real time passes in the realm
-- **THEN** the companion's Companionship EXP rises
+- **GIVEN** a companion living in the realm and a Realm Bounty store holding some bounty
+- **WHEN** the player claims the store
+- **THEN** the companion's Companionship EXP rises by the bounty the store held
+- **AND** every companion living in the realm gains the whole of it, not a share
