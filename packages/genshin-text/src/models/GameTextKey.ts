@@ -77,6 +77,8 @@ export enum GameTextKey {
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
   Chat = "UI_CHAT_CHAT_BUTTON",
+  // The chest a buried place holds once dug up, as the game names a chest with no tier
+  Chest = "219181593",
   // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
   CityReputation = "81370119",
   ClearwaterJade = "2720928108",
@@ -122,6 +124,8 @@ export enum GameTextKey {
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
+  // The Dig prompt on the ground of a buried chest, as the game names it
+  Dig = "102754774",
   Dracolite = "2859410932",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",

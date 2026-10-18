@@ -8,12 +8,16 @@ describe(computeChestInteractables, () => {
   const GROUND_HEIGHT = 3;
   const getGroundHeight = () => GROUND_HEIGHT;
   const gameText = {
+    [GameTextKey.Chest]: "Chest",
     [GameTextKey.CommonChest]: "Common Chest",
+    [GameTextKey.Dig]: "Dig",
     [GameTextKey.ExquisiteChest]: "Exquisite Chest",
-    [GameTextKey.PreciousChest]: "Precious Chest",
     [GameTextKey.LuxuriousChest]: "Luxurious Chest",
+    [GameTextKey.PreciousChest]: "Precious Chest",
   };
   const position = { x: 1, z: 2 };
+  const groundPosition = { x: 1, y: GROUND_HEIGHT, z: 2 };
+  const NO_IDS: ReadonlySet<string> = new Set();
 
   test("offers each unopened chest of a rewarded kind, named by its kind", () => {
     expect.hasAssertions();
@@ -21,13 +25,12 @@ describe(computeChestInteractables, () => {
     expect(
       computeChestInteractables(
         [{ id: "common", kind: ChestKind.Common, position }],
-        new Set(),
+        NO_IDS,
+        NO_IDS,
         gameText,
         getGroundHeight,
       ),
-    ).toStrictEqual([
-      { id: "common", kind: InteractionKind.Open, name: "Common Chest", position: { x: 1, y: GROUND_HEIGHT, z: 2 } },
-    ]);
+    ).toStrictEqual([{ id: "common", kind: InteractionKind.Open, name: "Common Chest", position: groundPosition }]);
   });
 
   test("offers an unopened Luxurious chest, named by its kind", () => {
@@ -36,21 +39,45 @@ describe(computeChestInteractables, () => {
     expect(
       computeChestInteractables(
         [{ id: "luxurious", kind: ChestKind.Luxurious, position }],
-        new Set(),
+        NO_IDS,
+        NO_IDS,
         gameText,
         getGroundHeight,
       ),
     ).toStrictEqual([
-      {
-        id: "luxurious",
-        kind: InteractionKind.Open,
-        name: "Luxurious Chest",
-        position: { x: 1, y: GROUND_HEIGHT, z: 2 },
-      },
+      { id: "luxurious", kind: InteractionKind.Open, name: "Luxurious Chest", position: groundPosition },
     ]);
   });
 
-  test("leaves out an opened chest, and a chest of a kind with no reward yet", () => {
+  test("a buried chest offers Dig at its place", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(
+        [{ id: "buried", kind: ChestKind.Buried, position }],
+        NO_IDS,
+        NO_IDS,
+        gameText,
+        getGroundHeight,
+      ),
+    ).toStrictEqual([{ id: "buried", kind: InteractionKind.Dig, name: "Dig", position: groundPosition }]);
+  });
+
+  test("a dug chest appears once dug", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeChestInteractables(
+        [{ id: "buried", kind: ChestKind.Buried, position }],
+        NO_IDS,
+        new Set(["buried"]),
+        gameText,
+        getGroundHeight,
+      ),
+    ).toStrictEqual([{ id: "buried", kind: InteractionKind.Open, name: "Chest", position: groundPosition }]);
+  });
+
+  test("leaves out an opened chest, and a sealed chest", () => {
     expect.hasAssertions();
 
     expect(
@@ -58,9 +85,9 @@ describe(computeChestInteractables, () => {
         [
           { id: "opened", kind: ChestKind.Common, position },
           { id: "sealed", kind: ChestKind.Sealed, position },
-          { id: "buried", kind: ChestKind.Buried, position },
         ],
         new Set(["opened"]),
+        NO_IDS,
         gameText,
         getGroundHeight,
       ),

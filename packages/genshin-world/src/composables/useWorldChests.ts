@@ -19,10 +19,12 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
-// Mondstadt's chests, fetched by their key as the world opens, and each unopened one offered to open on the ground
-// Beneath its point. Opening a chest rolls its Primogems and Mora into the wallet, pays its Adventure EXP to the
-// Adventure Rank and pours its drops out where it stands, or sends them to the bag where a drop would fall away there,
-// And the chest is kept as opened. A load that fails is logged and left off, so no chest is offered rather than a wrong one
+// Mondstadt's chests, fetched by their key as the world opens, and each one offered on the ground beneath its point: an
+// Unopened chest to open, and a buried one to dig up. Digging a buried chest holds it dug for the session only, and a
+// Dug chest is offered to open, paying nothing until its tier is measured. Opening a chest rolls its Primogems and Mora
+// Into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or sends them to
+// The bag where a drop would fall away there, and the chest is kept as opened. A load that fails is logged and left off,
+// So no chest is offered rather than a wrong one
 export const useWorldChests = ({
   events,
   gainWorldAdventureExp,
@@ -64,9 +66,14 @@ export const useWorldChests = ({
       console.error(error);
     },
   );
+  // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
+  const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
   const chestInteractables = computed<Interactable[]>(() =>
-    computeChestInteractables(chestPlaces.value, openedChestIds.value, gameText, getGroundHeight),
+    computeChestInteractables(chestPlaces.value, openedChestIds.value, dugChestIds.value, gameText, getGroundHeight),
   );
+  const digChestById = (chestId: string) => {
+    dugChestIds.value = new Set([...dugChestIds.value, chestId]);
+  };
   // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept as opened.
   // Drops that fall away go straight into the bag, and what the bag has no room for is poured out where the chest stands
   const openChestById = (chestId: string, random: () => number) => {
@@ -101,5 +108,5 @@ export const useWorldChests = ({
       events.emit("chestOpened");
     }
   };
-  return { chestInteractables, openChestById };
+  return { chestInteractables, digChestById, openChestById };
 };

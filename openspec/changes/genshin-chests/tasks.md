@@ -13,7 +13,7 @@
 
 ## 4. Digging and seals
 
-- [ ] 4.1 Offer Dig at each buried place and reveal the chest once dug, paying no reward until the tier is measured. Verify: tests named after the scenarios 'a buried chest offers Dig at its place', 'a dug chest appears once dug' and 'a dug chest pays no reward until its tier is measured', seen failing first.
+- [x] 4.1 Offer Dig at each buried place and reveal the chest once dug, paying no reward until the tier is measured. Verify: tests named after the scenarios 'a buried chest offers Dig at its place', 'a dug chest appears once dug' and 'a dug chest pays no reward until its tier is measured', seen failing first.
 - [ ] 4.2 Free each sealed chest by Pyro for vines or ice, and by a blunt or poise-damaging attack for rock. Verify: tests named after the scenarios 'a chest sealed in vines is freed by Pyro', 'a chest sealed in rock is freed by a blunt attack' and 'a chest sealed in vines is not freed by an attack of another element', seen failing first.
 
 ## 5. Locks by puzzles
@@ -22,4 +22,4 @@
 
 ## 6. Achievements and exploration
 
-- [ ] 6.1 Count each opened chest once toward its area's exploration and its region's chest achievements. Verify: tests named after the scenarios 'an opened chest counts once toward its area's exploration' and 'reopening a chest adds nothing to the count', seen failing first.
+- [ ] 6.1 Count each opened chest once, through its own opened record with no join to the game's chest records, toward its area's exploration and its region's chest achievements. Blocked: no chest-to-area mapping exists yet (the places name no catalogue area, and Windrise waits on the region outlines), and the achievements match the game's chest ids, which a placed chest does not carry. Verify: tests named after the scenarios 'an opened chest counts once toward its area's exploration' and 'reopening a chest adds nothing to the count', seen failing first.

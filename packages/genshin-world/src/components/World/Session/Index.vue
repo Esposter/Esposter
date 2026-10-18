@@ -308,7 +308,7 @@ const {
   wallet,
 });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
-const { chestInteractables, openChestById } = useWorldChests({
+const { chestInteractables, digChestById, openChestById } = useWorldChests({
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -713,6 +713,7 @@ defineExpose({ jumpTo, readCameraPosition });
               pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
+            else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
               offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {
