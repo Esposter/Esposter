@@ -102,6 +102,36 @@ const findClosingBrace = (tokens: readonly GoToken[], openingPosition: number): 
   return undefined;
 };
 
+// The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2 {`,
+// Its values the counts from zero, and its body's braces, else Undefined
+const readRangeLoop = (
+  tokens: readonly GoToken[],
+  forPosition: number,
+  resolveName: (name: string) => GoValue | undefined,
+): ConstantLoop | undefined => {
+  const isNamed = checkIsGoPunctuation(tokens[forPosition + 2], ":=") && tokens[forPosition + 3]?.text === "range";
+  const variable = isNamed ? tokens[forPosition + 1] : undefined;
+  if (isNamed ? variable?.kind !== GoTokenKind.Identifier : tokens[forPosition + 1]?.text !== "range") return undefined;
+  const boundStart = forPosition + (isNamed ? 4 : 2);
+  const bound = parseGoExpression(tokens, boundStart);
+  const boundValue = evaluateGoNumber(bound.expression, resolveName);
+  if (
+    !checkIsGoPunctuation(tokens[bound.end], "{") ||
+    typeof boundValue !== "number" ||
+    boundValue > MAX_LOOP_ITERATIONS
+  )
+    return undefined;
+  const bodyEnd = findClosingBrace(tokens, bound.end);
+  return bodyEnd === undefined
+    ? undefined
+    : {
+        bodyEnd,
+        bodyStart: bound.end,
+        values: Array.from({ length: Math.max(0, boundValue) }, (_, value) => value),
+        variable: variable?.text ?? "",
+      };
+};
+
 // The `for` loop opening at the position when it counts a variable from a constant start up to a constant bound in
 // Constant steps, its values and its body's braces, else Undefined
 const readConstantLoop = (
@@ -109,6 +139,8 @@ const readConstantLoop = (
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
 ): ConstantLoop | undefined => {
+  const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
+  if (rangeLoop !== undefined) return rangeLoop;
   const variable = tokens[forPosition + 1];
   if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
     return undefined;

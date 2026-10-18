@@ -255,4 +255,38 @@ describe(readGcsimQueuedAttacks, () => {
       64, 88,
     ]);
   });
+
+  test("repeats a queue call in a loop ranging over a constant count, `for i := range 3` and `for range 2`, once per count", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package ayaka",
+          "",
+          "const burstHitmark = 104",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := range 3 {",
+          "\t\tc.Core.QueueAttack(ai, ap, burstHitmark, burstHitmark+i*15, cb)",
+          "\t}",
+          "\tfor range 2 {",
+          "\t\tc.Core.QueueAttack(aiC2, ap, burstHitmark, burstHitmark, cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
+      [7, 104],
+      [7, 119],
+      [7, 134],
+      [10, 104],
+      [10, 104],
+    ]);
+  });
 });
