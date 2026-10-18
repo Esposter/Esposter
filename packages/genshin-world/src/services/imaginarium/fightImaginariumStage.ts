@@ -9,12 +9,12 @@ import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChall
 export const fightImaginariumStage = (
   principalCast: ImaginariumMember[],
   progress: DomainChallengeProgress,
-  partyDown: boolean,
+  isPartyDown: boolean,
 ): ImaginariumStageFight => {
   if (!checkIsImaginariumStageReady(principalCast)) return { isFought: false, principalCast };
   return {
     isFought: true,
-    outcome: resolveDomainChallenge(progress, { partyDown }),
+    outcome: resolveDomainChallenge(progress, { partyDown: isPartyDown }),
     principalCast: performImaginariumStage(principalCast),
   };
 };
