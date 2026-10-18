@@ -1,6 +1,6 @@
 ## Purpose
 
-The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the cooking proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing and campfires. The stove, the cooking screen and what a dish does once eaten are not built yet.
+The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the cooking proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing and campfires. The stove opens the cooking and processing screens in the world session, and what a dish does once eaten is the inventory's.
 
 ## Requirements
 
@@ -33,6 +33,22 @@ A dish cooked by hand SHALL take the quality of the zone the indicator stops in,
 - **WHEN** the player leaves the minigame before it stops
 - **THEN** no ingredient is spent
 - **AND** no dish is made
+
+### Requirement: The indicator's pointer sweeps along its bar
+
+The pointer of the cooking indicator SHALL swing from one end of its bar to the other and back at a set speed while the cooking screen is open, and a stop SHALL cook where the pointer stands at the press.
+
+#### Scenario: The indicator sweeps from one end of its bar to the other and back
+
+- **GIVEN** the cooking screen is open
+- **WHEN** time passes
+- **THEN** the pointer swings from the left end to the right end and back at the sweep time
+
+#### Scenario: A time before the start stands the indicator at the left end
+
+- **GIVEN** the cooking screen has not been opened
+- **WHEN** the pointer is read
+- **THEN** it stands at the left end
 
 ### Requirement: A Delicious dish adds one proficiency up to its maximum
 
@@ -168,6 +184,34 @@ A processing SHALL be queued only once it is known.
 - **GIVEN** a processing that is not known from the start
 - **WHEN** a unit of it is asked to be queued
 - **THEN** the unit is refused
+
+### Requirement: A stove offers its cooking and its processing beside it
+
+A city's stove SHALL offer the cooking screen and the processing screen as two rows of the prompts at its place, and a city with no stove SHALL offer neither.
+
+#### Scenario: A city stove cooks where a campfire would be out
+
+- **GIVEN** a city with a stove in its scene group record
+- **WHEN** the player stands within reach of the stove
+- **THEN** the stove's cooking row is offered, with no campfire needed
+
+#### Scenario: A stove offers processing beside cooking
+
+- **GIVEN** a city with a stove
+- **WHEN** the player stands within reach of the stove
+- **THEN** the processing row is offered beside the cooking row
+
+#### Scenario: A city with no stove offers none
+
+- **GIVEN** a city with no stove in its scene group record
+- **WHEN** the prompts are computed
+- **THEN** no stove row is offered
+
+#### Scenario: A stove offers no prompt out of reach
+
+- **GIVEN** a city with a stove
+- **WHEN** the player stands beyond the interaction reach
+- **THEN** no stove row is offered
 
 ### Requirement: Pyro lights a campfire and the other elements put it out
 

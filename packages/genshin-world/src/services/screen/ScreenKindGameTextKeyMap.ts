@@ -22,6 +22,7 @@ export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTex
   [ScreenKind.PaimonsBargains]: GameTextKey.PaimonsBargains,
   [ScreenKind.PartySetup]: GameTextKey.PartySetup,
   [ScreenKind.PhotoMode]: GameTextKey.TakePhoto,
+  [ScreenKind.Processing]: GameTextKey.ProcessingStart,
   [ScreenKind.Quests]: GameTextKey.Quests,
   [ScreenKind.Reputation]: GameTextKey.CityReputation,
   [ScreenKind.Settings]: GameTextKey.Settings,
