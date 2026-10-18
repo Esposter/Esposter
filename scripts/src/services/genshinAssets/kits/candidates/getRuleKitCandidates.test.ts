@@ -69,4 +69,19 @@ describe(getRuleKitCandidates, () => {
       ]),
     );
   });
+
+  test("gives a stance's skill the skill targeting a kit's own skill takes", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([
+        ["stances.blessing.normalAttacks.length", 0],
+        ["stances.blessing.skill.animationFrames", 52],
+      ]),
+    );
+
+    expect(candidateMap.get("stances.blessing.skill.targeting")?.map(({ value }) => value)).toStrictEqual([
+      KitTargeting.Skill,
+    ]);
+  });
 });

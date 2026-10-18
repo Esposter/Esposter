@@ -13,6 +13,8 @@ import { KitPlunge, KitTargeting } from "genshin-world";
 // Does
 // Every stance's normal attacks, whichever stance a kit names, by the length its normal attacks carry
 const STANCE_NORMAL_ATTACKS_LENGTH_REGEX = /^(?<actionsPath>stances\.[^.]+\.normalAttacks)\.length$/u;
+// The stance a path names, read from the path's first two segments
+const STANCE_PATH_REGEX = /^(?<stance>stances\.[^.]+)\./u;
 
 export const getRuleKitCandidates = (valueMap: ReadonlyMap<string, unknown>): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
@@ -33,12 +35,16 @@ export const getRuleKitCandidates = (valueMap: ReadonlyMap<string, unknown>): Ma
       ? []
       : Array.from({ length: readLength(actionsPath) }, (_value, index) => `${actionsPath}.${index}`);
   });
+  const stanceSkillPaths = [
+    ...new Set(nodePaths.flatMap((path) => STANCE_PATH_REGEX.exec(path)?.groups?.stance ?? [])),
+  ].map((stance) => `${stance}.skill`);
   const actionTargetingEntries: [string, KitTargeting][] = [
     ...Array.from({ length: readLength("normalAttacks") }, (_value, index): [string, KitTargeting] => [
       `normalAttacks.${index}`,
       KitTargeting.Strike,
     ]),
     ...stanceNormalAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
+    ...stanceSkillPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Skill]),
     ["chargedAttack", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],

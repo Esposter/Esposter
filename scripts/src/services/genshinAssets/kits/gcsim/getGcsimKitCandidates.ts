@@ -9,6 +9,7 @@ import { addGcsimNormalAttackCandidates } from "#src/services/genshinAssets/kits
 import { addGcsimPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates";
 import { addGcsimSkillAndBurstCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates";
 import { addGcsimSkillHoldCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates";
+import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 
 // Every value gcsim gives a character's kit at one ref, by its path in the record, read where gcsim's character folders
@@ -37,6 +38,7 @@ export const getGcsimKitCandidates = (
   addGcsimPlungeCandidates(writer, gcsim, plungeFallback, plungeFallbackWriter);
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);
+  GcsimCharacterMappingMap[gcsim.folder]?.(writer, gcsim);
   addGcsimNamedConstantCandidates(writer, gcsim, bagPaths);
   return candidateMap;
 };
