@@ -252,6 +252,23 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **THEN** the team holds the shard's Crystallize shield
 - **AND** every deployed member's kit is told that member picked up a shard of that element
 
+### Requirement: A kit's pick-up
+
+A pick-up a kit leaves in the world SHALL be picked up by the member on the field within its radius once it may be, and SHALL then do what its kit gives it to do. One never picked up SHALL run out as an effect expiring.
+
+#### Scenario: A pick-up in reach is picked up once it may be
+
+- **GIVEN** a kit's pick-up lies within its radius of the member on the field, and may be picked up
+- **WHEN** the member's step runs
+- **THEN** the pick-up does what picking it up does
+- **AND** it is taken off the team's effects with no effect expiring
+
+#### Scenario: A pick-up too new or out of reach is left where it lies
+
+- **GIVEN** a kit's pick-up that may not yet be picked up, or lies past its radius
+- **WHEN** the member's step runs
+- **THEN** the pick-up stays where it lies
+
 ### Requirement: A normal or charged attack's hit
 
 A normal or charged attack's hit SHALL give its character one energy at a chance set by its weapon, which rises with each hit that gives none.

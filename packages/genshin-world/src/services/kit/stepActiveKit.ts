@@ -21,6 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
+import { pickUpKitPickUps } from "#src/services/kit/pickUpKitPickUps";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { sendKitOutbox } from "#src/services/kit/sendKitOutbox";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
@@ -110,6 +111,7 @@ export const stepActiveKit = (
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
   pickUpCrystallizeShards(kitEffectState, characterId, position, outbox);
+  pickUpKitPickUps(context, position);
   tickEnemyStatuses(enemyMap.values(), stepSeconds, outbox);
   sendKitOutbox(context);
   strikeElementalTicks(context);
