@@ -47,9 +47,9 @@ describe(createGoldenMajestyPassiveModule, () => {
   test("the passive adds no Shield Strength, the table's line being the only one", () => {
     expect.hasAssertions();
 
-    expect(goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, [])).toStrictEqual([
-      { amount: 0, attribute: Attribute.AttackPercent },
-    ]);
+    expect(
+      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, deployedOnField, []),
+    ).toStrictEqual([{ amount: 0, attribute: Attribute.AttackPercent }]);
   });
 
   test("a hit the wielder scores gains a stack of ATK for eight seconds", () => {
@@ -59,13 +59,23 @@ describe(createGoldenMajestyPassiveModule, () => {
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(
-      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
+      goldenMajestyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedOnField,
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.04, attribute: Attribute.AttackPercent }]);
 
     stepKitSeconds(context, 8.1);
 
     expect(
-      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
+      goldenMajestyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedOnField,
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0, attribute: Attribute.AttackPercent }]);
   });
 
@@ -77,7 +87,12 @@ describe(createGoldenMajestyPassiveModule, () => {
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
     expect(
-      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
+      goldenMajestyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedOnField,
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.04, attribute: Attribute.AttackPercent }]);
   });
 
@@ -98,7 +113,12 @@ describe(createGoldenMajestyPassiveModule, () => {
     }
 
     expect(
-      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
+      goldenMajestyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedOnField,
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.04 * 5, attribute: Attribute.AttackPercent }]);
   });
 
@@ -110,7 +130,12 @@ describe(createGoldenMajestyPassiveModule, () => {
     castKitShield(context.kitEffectState, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 
     expect(
-      goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
+      goldenMajestyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedOnField,
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.04 * 2, attribute: Attribute.AttackPercent }]);
   });
 
@@ -124,7 +149,7 @@ describe(createGoldenMajestyPassiveModule, () => {
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(
         wielder,
-        1,
+        { energyShare: 0, healthShare: 1 },
         [{ ...wielder, isOnField: false }],
         context.kitEffectState.effects,
       ),

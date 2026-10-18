@@ -124,7 +124,9 @@ describe(getBuffedCombatant, () => {
       elementalResonances: [],
       kit: {
         ...DILUC_KIT,
-        getPassiveBonuses: (_combatant, healthShare) => [{ amount: healthShare, attribute: Attribute.CriticalRate }],
+        getPassiveBonuses: (_combatant, memberState) => [
+          { amount: memberState.healthShare, attribute: Attribute.CriticalRate },
+        ],
       },
       level: 90,
     };
@@ -145,7 +147,7 @@ describe(getBuffedCombatant, () => {
       elementalResonances: [],
       kit: {
         ...DILUC_KIT,
-        getPassiveBonuses: (_combatant, _healthShare, deployedCombatants) => [
+        getPassiveBonuses: (_combatant, _memberState, deployedCombatants) => [
           { amount: 0.1 * deployedCombatants.length, attribute: Attribute.CriticalRate },
         ],
       },

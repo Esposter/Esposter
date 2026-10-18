@@ -13,7 +13,7 @@ export const createTheFirstGreatMagicPassiveModule = (params: number[]): WeaponP
   const attackShares = params.slice(1, 4);
   const movementSpeedShares = params.slice(4, 7);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+    getPassiveBonuses: (combatant, _memberState, deployedCombatants) => {
       const gimmickStacks = deployedCombatants.filter((member) => member.element === combatant.element).length;
       const theatricsStacks = deployedCombatants.length - gimmickStacks;
       return [

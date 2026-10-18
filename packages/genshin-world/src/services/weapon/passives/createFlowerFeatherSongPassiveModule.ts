@@ -13,7 +13,7 @@ export const createFlowerFeatherSongPassiveModule = (params: number[]): WeaponPa
   const attackPercentPerMember = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+    getPassiveBonuses: (combatant, _memberState, deployedCombatants) => {
       const count = deployedCombatants.filter(
         (member) =>
           member.characterId !== combatant.characterId &&

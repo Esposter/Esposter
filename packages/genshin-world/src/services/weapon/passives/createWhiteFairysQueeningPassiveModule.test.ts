@@ -56,7 +56,7 @@ describe(createWhiteFairysQueeningPassiveModule, () => {
     const context = createKitTestContext(wielder);
     expect(
       whiteFairysQueeningPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
     ).toBe(0.28);
   });

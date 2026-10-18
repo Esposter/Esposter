@@ -43,9 +43,9 @@ describe(createBlackWingPassiveModule, () => {
   test("the rank's CRIT Rate is the table's line, so the passive keeps only the Normal Attack SPD bonus", () => {
     expect.hasAssertions();
 
-    expect(blackWingPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([
-      { amount: 0.12, attribute: Attribute.NormalAttackSpeed },
-    ]);
+    expect(
+      blackWingPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []) ?? [],
+    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.NormalAttackSpeed }]);
   });
 
   test("a normal attack that rolls under the chance queues a vacuum blade at the rank's multiplier", () => {

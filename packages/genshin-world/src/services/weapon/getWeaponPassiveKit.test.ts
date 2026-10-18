@@ -60,7 +60,7 @@ const getCriticalRateLines = (refinement: number, kit: Kit = KIT) => {
     kit: weaponKit,
     level: 90,
   };
-  return (weaponKit.getPassiveBonuses?.(combatant, 1, [], []) ?? []).filter(
+  return (weaponKit.getPassiveBonuses?.(combatant, { energyShare: 0, healthShare: 1 }, [], []) ?? []).filter(
     ({ attribute }) => attribute === Attribute.CriticalRate,
   );
 };
@@ -125,7 +125,7 @@ describe(getWeaponPassiveKit, () => {
     // A base kit whose one line counts the deployed team it is given, beside Full HP Critic Up's line at full HP
     const teamCountKit: Kit = {
       ...KIT,
-      getPassiveBonuses: (_combatant, _healthShare, deployedCombatants) => [
+      getPassiveBonuses: (_combatant, _memberState, deployedCombatants) => [
         { amount: deployedCombatants.length, attribute: Attribute.CriticalRate },
       ],
     };
@@ -151,7 +151,12 @@ describe(getWeaponPassiveKit, () => {
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     expect(
-      weaponKit.getPassiveBonuses?.(combatant, 1, getDeployedCombatants(party, characterIdCombatantMap), []),
+      weaponKit.getPassiveBonuses?.(
+        combatant,
+        { energyShare: 0, healthShare: 1 },
+        getDeployedCombatants(party, characterIdCombatantMap),
+        [],
+      ),
     ).toStrictEqual([
       { amount: 2, attribute: Attribute.CriticalRate },
       { amount: 0.14, attribute: Attribute.CriticalRate },
@@ -164,7 +169,7 @@ describe(getWeaponPassiveKit, () => {
     // A base kit whose one line counts the team's effects it is given, beside Full HP Critic Up's line at full HP
     const effectCountKit: Kit = {
       ...KIT,
-      getPassiveBonuses: (_combatant, _healthShare, _deployedCombatants, effects) => [
+      getPassiveBonuses: (_combatant, _memberState, _deployedCombatants, effects) => [
         { amount: effects.length, attribute: Attribute.CriticalRate },
       ],
     };
@@ -189,7 +194,9 @@ describe(getWeaponPassiveKit, () => {
       seconds: Number.POSITIVE_INFINITY,
     });
 
-    expect(weaponKit.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([
+    expect(
+      weaponKit.getPassiveBonuses?.(combatant, { energyShare: 0, healthShare: 1 }, [], context.kitEffectState.effects),
+    ).toStrictEqual([
       { amount: 1, attribute: Attribute.CriticalRate },
       { amount: 0.14, attribute: Attribute.CriticalRate },
     ]);

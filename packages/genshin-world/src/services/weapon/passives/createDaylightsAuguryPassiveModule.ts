@@ -25,7 +25,7 @@ export const createDaylightsAuguryPassiveModule = (params: number[]): WeaponPass
   const stackSeconds = takeOne(params, 1);
   const attackShares = params.slice(2, 6);
   return {
-    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
+    getPassiveBonuses: (combatant, _memberState, _deployedCombatants, effects) => [
       {
         amount: getStackShare(attackShares, countKitHolds(effects, combatant.characterId, ASHEN_NIGHTSTAR_ID)),
         attribute: Attribute.AttackPercent,

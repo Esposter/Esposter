@@ -13,7 +13,7 @@ export const createSeasonedSymphonyPassiveModule = (params: number[]): WeaponPas
   const sweetEchoesAttackPercent = takeOne(params, 2);
   const sweetEchoesSeconds = takeOne(params, 3);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+    getPassiveBonuses: (combatant, _memberState, deployedCombatants) => {
       const isOnField =
         deployedCombatants.find((member) => member.characterId === combatant.characterId)?.isOnField ?? false;
       return isOnField ? [] : [{ amount: offFieldAttackPercent, attribute: Attribute.AttackPercent }];

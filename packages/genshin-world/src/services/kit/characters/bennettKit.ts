@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { PassiveMemberState } from "#src/models/kit/PassiveMemberState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -62,9 +63,13 @@ export const BENNETT_CHARACTER_ID = 10_000_032;
 const IMPASSE_CONQUEROR_CONSTELLATION = 2;
 const IMPASSE_CONQUEROR_ENERGY_RECHARGE = 0.3;
 const IMPASSE_CONQUEROR_HP_THRESHOLD = 0.7;
-// Impasse Conqueror's Energy Recharge, read off the HP share a passive is given, as the character stands
-const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
-  combatant.constellationCount >= IMPASSE_CONQUEROR_CONSTELLATION && healthShare < IMPASSE_CONQUEROR_HP_THRESHOLD
+// Impasse Conqueror's Energy Recharge, read off the member state a passive is given, as the character stands
+const getPassiveBonuses = (
+  combatant: Combatant,
+  memberState: PassiveMemberState,
+): { amount: number; attribute: Attribute }[] =>
+  combatant.constellationCount >= IMPASSE_CONQUEROR_CONSTELLATION &&
+  memberState.healthShare < IMPASSE_CONQUEROR_HP_THRESHOLD
     ? [{ amount: IMPASSE_CONQUEROR_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge }]
     : [];
 

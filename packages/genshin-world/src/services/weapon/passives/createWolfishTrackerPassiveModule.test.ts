@@ -45,7 +45,9 @@ describe(createWolfishTrackerPassiveModule, () => {
   test("the rank's ATK share is the table's line, so the passive adds no ATK bonus", () => {
     expect.hasAssertions();
 
-    expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([]);
+    expect(
+      wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []) ?? [],
+    ).toStrictEqual([]);
   });
 
   test("a hit on an enemy under thirty per cent of its HP raises the team's ATK", () => {

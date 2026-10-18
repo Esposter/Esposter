@@ -54,7 +54,7 @@ const getPassiveBonuses = (ascension: number, healthShare: number) =>
       kit: GAMING_KIT,
       level: 90,
     },
-    healthShare,
+    { energyShare: 0, healthShare },
     [],
     [],
   );

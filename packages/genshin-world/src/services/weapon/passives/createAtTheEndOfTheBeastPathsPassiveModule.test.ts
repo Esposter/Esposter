@@ -124,7 +124,12 @@ describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     expect(
-      atTheEndOfTheBeastPathsPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      atTheEndOfTheBeastPathsPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
   });
 });

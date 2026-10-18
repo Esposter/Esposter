@@ -35,9 +35,9 @@ describe(createItinerantHeroPassiveModule, () => {
   test("the DMG bonus is priced on the wielder as a passive", () => {
     expect.hasAssertions();
 
-    expect(itinerantHeroPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.12, attribute: Attribute.AllDamageBonus },
-    ]);
+    expect(
+      itinerantHeroPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AllDamageBonus }]);
   });
 
   test("taking DMG takes the bonus off for five seconds, once however much DMG is taken", () => {

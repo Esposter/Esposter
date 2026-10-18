@@ -53,9 +53,14 @@ describe(createFocusPassiveModule, () => {
     focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
     focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.08 * 2, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
+    ).toStrictEqual([{ amount: 0.08 * 2, attribute: Attribute.CriticalRate }]);
   });
 
   test("the stacks stop at five", () => {
@@ -64,9 +69,14 @@ describe(createFocusPassiveModule, () => {
     const context = createKitTestContext(wielder);
     for (let hit = 0; hit < 6; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.08 * 5, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
+    ).toStrictEqual([{ amount: 0.08 * 5, attribute: Attribute.CriticalRate }]);
   });
 
   test("a critical hit removes every stack and adds none", () => {
@@ -76,9 +86,14 @@ describe(createFocusPassiveModule, () => {
     for (let hit = 0; hit < 3; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
     focusPassiveModule.onKitEvent?.(createDamageTaken(true), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
+    ).toStrictEqual([{ amount: 0, attribute: Attribute.CriticalRate }]);
   });
 
   test("a Lunar reaction the wielder contributes to rolls with the stacks' CRIT Rate", () => {

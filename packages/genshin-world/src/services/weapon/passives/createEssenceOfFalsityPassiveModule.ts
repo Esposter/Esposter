@@ -23,7 +23,7 @@ export const createEssenceOfFalsityPassiveModule = (params: number[]): WeaponPas
   const moonOfTruthSeconds = takeOne(params, 3);
   const bothIncrease = takeOne(params, 4);
   return {
-    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => {
+    getPassiveBonuses: (combatant, _memberState, _deployedCombatants, effects) => {
       const isSecretOfLies = checkIsKitStatusActive(effects, combatant.characterId, SECRET_OF_LIES_ID);
       const isMoonOfTruth = checkIsKitStatusActive(effects, combatant.characterId, MOON_OF_TRUTH_ID);
       const increase = isSecretOfLies && isMoonOfTruth ? 1 + bothIncrease : 1;

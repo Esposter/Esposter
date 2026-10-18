@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { PassiveMemberState } from "#src/models/kit/PassiveMemberState";
 
 import { Attribute } from "#src/models/character/Attribute";
 
@@ -14,7 +15,10 @@ const ASCENSION_4_HYDRO_DAMAGE_BONUS_PER_HEALTH_SHARE = 0.6;
 const ASCENSION_4_HYDRO_DAMAGE_BONUS_MAX = 0.3;
 
 // Ascension 4's Hydro DMG Bonus, read from the character's HP as a share of its Max HP, as a passive bonus is priced
-const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
+const getPassiveBonuses = (
+  combatant: Combatant,
+  memberState: PassiveMemberState,
+): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4
     ? []
     : [
@@ -23,7 +27,8 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
             ASCENSION_4_HYDRO_DAMAGE_BONUS_MAX,
             Math.max(
               0,
-              (healthShare - ASCENSION_4_HEALTH_SHARE_FLOOR) * ASCENSION_4_HYDRO_DAMAGE_BONUS_PER_HEALTH_SHARE,
+              (memberState.healthShare - ASCENSION_4_HEALTH_SHARE_FLOOR) *
+                ASCENSION_4_HYDRO_DAMAGE_BONUS_PER_HEALTH_SHARE,
             ),
           ),
           attribute: Attribute.HydroDamageBonus,

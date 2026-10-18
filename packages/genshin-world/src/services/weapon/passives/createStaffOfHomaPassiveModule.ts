@@ -11,10 +11,11 @@ export const createStaffOfHomaPassiveModule = (params: number[]): WeaponPassiveM
   const attackShare = takeOne(params, 1);
   const lowHealthAttackShare = takeOne(params, 2);
   return {
-    getPassiveBonuses: (combatant, healthShare) => [
+    getPassiveBonuses: (combatant, memberState) => [
       {
         amount:
-          (attackShare + (healthShare < LOW_HEALTH_SHARE ? lowHealthAttackShare : 0)) * combatant.attributes.maxHealth,
+          (attackShare + (memberState.healthShare < LOW_HEALTH_SHARE ? lowHealthAttackShare : 0)) *
+          combatant.attributes.maxHealth,
         attribute: Attribute.Attack,
       },
     ],

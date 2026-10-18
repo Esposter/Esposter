@@ -218,7 +218,7 @@ describe("undisclosed Distribution Channels", () => {
     const bonusesOf = (elements: Element[]) =>
       NAVIA_KIT.getPassiveBonuses?.(
         navia,
-        1,
+        { energyShare: 0, healthShare: 1 },
         elements.map((element) => createNaviaTeamMember(element)),
         [],
       );
@@ -230,7 +230,12 @@ describe("undisclosed Distribution Channels", () => {
     ]);
     expect(bonusesOf([Element.Anemo, Element.Geo])).toStrictEqual([]);
     expect(
-      NAVIA_KIT.getPassiveBonuses?.(createNaviaCombatant(), 1, [createNaviaTeamMember(Element.Pyro)], []),
+      NAVIA_KIT.getPassiveBonuses?.(
+        createNaviaCombatant(),
+        { energyShare: 0, healthShare: 1 },
+        [createNaviaTeamMember(Element.Pyro)],
+        [],
+      ),
     ).toStrictEqual([]);
   });
 });

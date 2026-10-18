@@ -77,13 +77,23 @@ describe(createDaylightsAuguryPassiveModule, () => {
       daylightsAuguryPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
 
     expect(
-      daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      daylightsAuguryPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.48, attribute: Attribute.AttackPercent }]);
 
     daylightsAuguryPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(
-      daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      daylightsAuguryPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.48, attribute: Attribute.AttackPercent }]);
   });
 
@@ -94,13 +104,23 @@ describe(createDaylightsAuguryPassiveModule, () => {
     daylightsAuguryPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(
-      daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      daylightsAuguryPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.1, attribute: Attribute.AttackPercent }]);
 
     stepKitSeconds(context, 12.1);
 
     expect(
-      daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      daylightsAuguryPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0, attribute: Attribute.AttackPercent }]);
   });
 });

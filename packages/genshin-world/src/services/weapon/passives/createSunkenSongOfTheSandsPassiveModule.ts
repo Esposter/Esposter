@@ -42,7 +42,7 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Weapo
   const teamShare = takeOne(params, 4);
   const teamSeconds = takeOne(params, 5);
   return {
-    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
+    getPassiveBonuses: (combatant, _memberState, _deployedCombatants, effects) => [
       {
         amount:
           countKitHolds(effects, combatant.characterId, GRAND_HYMN_ID) *

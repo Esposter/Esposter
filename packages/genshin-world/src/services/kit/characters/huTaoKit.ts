@@ -4,6 +4,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { PassiveMemberState } from "#src/models/kit/PassiveMemberState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -54,8 +55,11 @@ export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Constellation 2 needs Blood Blossom's DMG by 10% of her Max HP, and Spirit Soother applying it, not built
 // Constellation 4 needs the defeat of an enemy her Blood Blossom marked, which no kit event reports
 // Constellation 6 needs the lethal-strike check and the 10 seconds of RES, which the kit does not build
-const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
-  combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
+const getPassiveBonuses = (
+  combatant: Combatant,
+  memberState: PassiveMemberState,
+): { amount: number; attribute: Attribute }[] =>
+  combatant.ascension < ASCENSION_4 || memberState.healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
     : [{ amount: SANGUINE_ROUGE_PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }];
 

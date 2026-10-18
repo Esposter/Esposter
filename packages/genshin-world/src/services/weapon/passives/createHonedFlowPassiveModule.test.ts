@@ -47,7 +47,12 @@ describe(createHonedFlowPassiveModule, () => {
     const context = createKitTestContext(wielder);
     expect(
       honedFlowPassiveModule
-        .getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], context.kitEffectState.effects)
+        .getPassiveBonuses?.(
+          wielder,
+          { energyShare: 0, healthShare: 1 },
+          [{ ...wielder, isOnField: true }],
+          context.kitEffectState.effects,
+        )
         ?.filter(({ attribute }) => ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.includes(attribute)),
     ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
   });

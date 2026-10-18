@@ -119,8 +119,8 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
     burst: { onStart: castBaneOfAllEvil },
     // Dissolution Eon: Destroyer of Worlds, from Constellation 1: Lemniscatic Wind Cycling gains one more charge
     // Transcension: Extinction of Suffering, from Constellation 4: while his HP is under half, he gains a 100% DEF Bonus
-    getPassiveBonuses: (combatant, healthShare) =>
-      combatant.constellationCount >= CONSTELLATION_4 && healthShare < CONSTELLATION_4_HEALTH_SHARE
+    getPassiveBonuses: (combatant, memberState) =>
+      combatant.constellationCount >= CONSTELLATION_4 && memberState.healthShare < CONSTELLATION_4_HEALTH_SHARE
         ? [{ amount: CONSTELLATION_4_DEFENSE_BONUS, attribute: Attribute.DefensePercent }]
         : [],
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),

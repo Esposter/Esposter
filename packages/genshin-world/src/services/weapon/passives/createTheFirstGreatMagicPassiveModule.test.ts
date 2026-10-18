@@ -77,7 +77,14 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
       createMember(3, Element.Cryo),
     ];
 
-    expect(theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
+    expect(
+      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedCombatants,
+        [],
+      ),
+    ).toStrictEqual([
       { amount: 0.32, attribute: Attribute.AttackPercent },
       { amount: 0.07, attribute: Attribute.MovementSpeed },
     ]);
@@ -93,7 +100,14 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
       createMember(3, Element.Pyro),
     ];
 
-    expect(theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
+    expect(
+      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedCombatants,
+        [],
+      ),
+    ).toStrictEqual([
       { amount: 0.48, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.MovementSpeed },
     ]);
@@ -103,7 +117,12 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []),
+      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [{ ...wielder, isOnField: true }],
+        [],
+      ),
     ).toStrictEqual([
       { amount: 0.16, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.MovementSpeed },

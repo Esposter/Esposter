@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 export const createFullHPCriticUpPassiveModule = (params: number[]): WeaponPassiveModule => {
   const criticalRate = takeOne(params, 0);
   return {
-    getPassiveBonuses: (_combatant, healthShare) =>
-      healthShare > 0.9 ? [{ amount: criticalRate, attribute: Attribute.CriticalRate }] : [],
+    getPassiveBonuses: (_combatant, memberState) =>
+      memberState.healthShare > 0.9 ? [{ amount: criticalRate, attribute: Attribute.CriticalRate }] : [],
   };
 };

@@ -58,7 +58,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, otherMemberCharacterId]) });
   const readElementalMastery = (context: ReturnType<typeof createContext>) =>
     sunkenSongOfTheSandsPassiveModule
-      .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+      .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
       ?.find(({ attribute }) => attribute === Attribute.ElementalMastery)?.amount;
 
   test("an Elemental Skill hit gives the wielder Elemental Mastery of 0.12% of its Max HP", () => {

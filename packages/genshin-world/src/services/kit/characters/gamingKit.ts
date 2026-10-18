@@ -23,8 +23,8 @@ const AIR_OF_PROSPERITY_HEALTH_SHARE = 0.5;
 const AIR_OF_PROSPERITY_INCOMING_HEALING_BONUS = 0.2;
 
 export const createGamingKitBehaviour = (): KitBehaviour => ({
-  getPassiveBonuses: (combatant, healthShare) =>
-    combatant.ascension >= ASCENSION_4 && healthShare < AIR_OF_PROSPERITY_HEALTH_SHARE
+  getPassiveBonuses: (combatant, memberState) =>
+    combatant.ascension >= ASCENSION_4 && memberState.healthShare < AIR_OF_PROSPERITY_HEALTH_SHARE
       ? [{ amount: AIR_OF_PROSPERITY_INCOMING_HEALING_BONUS, attribute: Attribute.IncomingHealingBonus }]
       : [],
   onKitEvent: (event, { kitEffectState }, combatant) => {

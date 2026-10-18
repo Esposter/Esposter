@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { PassiveMemberState } from "#src/models/kit/PassiveMemberState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
@@ -40,8 +41,11 @@ const getElementalMastery = ({ attributes }: Combatant): number =>
   attributes.attributeTotalMap[Attribute.ElementalMastery];
 
 // Breaking Free raises her Healing Bonus at Ascension 1 while her HP is at or under half
-const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
-  combatant.ascension < ASCENSION_1 || healthShare > BREAKING_FREE_HEALTH_SHARE
+const getPassiveBonuses = (
+  combatant: Combatant,
+  memberState: PassiveMemberState,
+): { amount: number; attribute: Attribute }[] =>
+  combatant.ascension < ASCENSION_1 || memberState.healthShare > BREAKING_FREE_HEALTH_SHARE
     ? []
     : [{ amount: BREAKING_FREE_HEALING_BONUS, attribute: Attribute.HealingBonus }];
 

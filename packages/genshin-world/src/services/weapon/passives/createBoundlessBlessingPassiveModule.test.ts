@@ -40,9 +40,9 @@ describe(createBoundlessBlessingPassiveModule, () => {
   test("the rank's Movement SPD is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 
-    expect(boundlessBlessingPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.1, attribute: Attribute.MovementSpeed },
-    ]);
+    expect(
+      boundlessBlessingPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual([{ amount: 0.1, attribute: Attribute.MovementSpeed }]);
   });
 
   test("on the field a stack is gained every four seconds, each raising every element's DMG Bonus by the rank's amount", () => {

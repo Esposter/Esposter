@@ -38,7 +38,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     const context = createKitTestContext(wielder);
     expect(
       extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
         ?.filter(({ attribute }) => ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.includes(attribute)),
     ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
   });
@@ -52,7 +52,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
 
     expect(
       extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
     ).toBe(2 * attackBonusPerSecond);
   });
@@ -66,7 +66,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
 
     expect(
       extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
     ).toBe(6 * attackBonusPerSecond);
   });
@@ -80,7 +80,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
 
     expect(
       extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, offField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, offField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
     ).toBe(4 * attackBonusPerSecond);
   });
@@ -94,7 +94,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
 
     expect(
       extinguishingPreceptPassiveModule
-        .getPassiveBonuses?.(wielder, 1, onField, context.kitEffectState.effects)
+        .getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, onField, context.kitEffectState.effects)
         ?.find(({ attribute }) => attribute === Attribute.AttackPercent)?.amount,
     ).toBe(0);
   });

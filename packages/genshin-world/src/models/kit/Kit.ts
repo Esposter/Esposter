@@ -15,6 +15,7 @@ import type { KitState } from "#src/models/kit/KitState";
 import type { KitStellarJubilee } from "#src/models/kit/KitStellarJubilee";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitVariant } from "#src/models/kit/KitVariant";
+import type { PassiveMemberState } from "#src/models/kit/PassiveMemberState";
 import type { Party } from "#src/models/party/Party";
 
 // A character's combat kit: its normal attack's string, its charged attack, its plunges, its skill and burst with their
@@ -46,13 +47,13 @@ export interface Kit {
   // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
   // Constellation raises it, given the kit's effects as they stand
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
-  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands, its
-  // HP as a share of its Max HP, which a bonus at low or high HP reads, and the deployed team's built combatants, each
-  // Flagged with whether it is on the field, which a bonus gated on the field reads, and the effects on the team, which
-  // A bonus gated on a status reads
+  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands,
+  // The member's HP and energy as shares, which a bonus at low or high HP or on its energy reads, and the deployed
+  // Team's built combatants, each flagged with whether it is on the field, which a bonus gated on the field reads, and
+  // The effects on the team, which a bonus gated on a status reads
   getPassiveBonuses?: (
     combatant: Combatant,
-    healthShare: number,
+    memberState: PassiveMemberState,
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];

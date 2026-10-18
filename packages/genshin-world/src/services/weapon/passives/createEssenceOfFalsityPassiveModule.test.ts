@@ -45,7 +45,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     const context = createKitTestContext(wielder);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects) ?? [],
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ) ?? [],
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
@@ -59,7 +64,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     essenceOfFalsityPassiveModule.onKitEvent?.(createSkillUsed(), context, wielder);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([
       { amount: 80, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
@@ -68,7 +78,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     stepKitSeconds(context, 12.1);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
@@ -82,7 +97,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     essenceOfFalsityPassiveModule.onKitEvent?.(createLunarBloom(), context, wielder);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0.24, attribute: Attribute.CriticalDamage },
@@ -91,7 +111,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     stepKitSeconds(context, 4.1);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.ElementalMastery },
       { amount: 0, attribute: Attribute.CriticalDamage },
@@ -106,7 +131,12 @@ describe(createEssenceOfFalsityPassiveModule, () => {
     essenceOfFalsityPassiveModule.onKitEvent?.(createLunarBloom(), context, wielder);
 
     expect(
-      essenceOfFalsityPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      essenceOfFalsityPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([
       { amount: 120, attribute: Attribute.ElementalMastery },
       { amount: 0.24 * 1.5, attribute: Attribute.CriticalDamage },

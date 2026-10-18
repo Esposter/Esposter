@@ -43,9 +43,9 @@ describe(createWanderingCloudsPassiveModule, () => {
   test("the rank's Elemental DMG Bonus is a passive bonus on every element", () => {
     expect.hasAssertions();
 
-    expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
-    );
+    expect(
+      wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
   });
 
   test("a Normal Attack hit that rolls under the chance queues a physical AoE at the rank's multiplier", () => {

@@ -20,7 +20,7 @@ export const createExtinguishingPreceptPassiveModule = (params: number[]): Weapo
   const maximumStacks = takeOne(params, 3);
   const seconds = takeOne(params, 4);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) => {
+    getPassiveBonuses: (combatant, _memberState, deployedCombatants, effects) => {
       const { characterId } = combatant;
       const consummation = findKitStatus(effects, characterId, CONSUMMATION_ID);
       const stacks =

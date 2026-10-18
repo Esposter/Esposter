@@ -31,9 +31,9 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
 
     const wielder = createWielder(1.5);
 
-    expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.28 * 0.5, attribute: Attribute.AttackPercent },
-    ]);
+    expect(
+      timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual([{ amount: 0.28 * 0.5, attribute: Attribute.AttackPercent }]);
   });
 
   test("the ATK bonus stops at the rank's maximum", () => {
@@ -41,9 +41,9 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
 
     const wielder = createWielder(5);
 
-    expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.8, attribute: Attribute.AttackPercent },
-    ]);
+    expect(
+      timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual([{ amount: 0.8, attribute: Attribute.AttackPercent }]);
   });
 
   test("an Elemental Burst's Energy Recharge counts toward the ATK bonus while it lasts", () => {
@@ -58,7 +58,12 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
     );
 
     expect(
-      timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
+      timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [],
+        context.kitEffectState.effects,
+      ),
     ).toStrictEqual([{ amount: 0.28 * 0.8, attribute: Attribute.AttackPercent }]);
   });
 });

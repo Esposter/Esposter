@@ -45,7 +45,9 @@ describe(createHamayumiPassiveModule, () => {
   test("a normal and a charged attack each raise the bonus of their own kind by the rank's amount", () => {
     expect.hasAssertions();
 
-    expect(hamayumiPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
+    expect(
+      hamayumiPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []),
+    ).toStrictEqual([
       { amount: 0.16, attribute: Attribute.NormalAttackDamageBonus },
       { amount: 0.12, attribute: Attribute.ChargedAttackDamageBonus },
     ]);

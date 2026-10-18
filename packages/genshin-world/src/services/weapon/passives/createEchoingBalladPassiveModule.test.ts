@@ -42,7 +42,9 @@ describe(createEchoingBalladPassiveModule, () => {
   test("the rank's CRIT DMG is the table's line, so the passive adds no bonus", () => {
     expect.hasAssertions();
 
-    expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([]);
+    expect(
+      echoingBalladPassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []) ?? [],
+    ).toStrictEqual([]);
   });
 
   test("a hit of the wielder's own attack that rolls under the chance queues a physical AoE at the rank's multiplier", () => {

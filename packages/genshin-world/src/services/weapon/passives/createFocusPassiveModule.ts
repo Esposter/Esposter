@@ -17,7 +17,7 @@ const FOCUS_MAXIMUM_STACKS = 5;
 export const createFocusPassiveModule = (params: number[]): WeaponPassiveModule => {
   const criticalRateBonus = takeOne(params, 0);
   return {
-    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
+    getPassiveBonuses: (combatant, _memberState, _deployedCombatants, effects) => [
       {
         amount: criticalRateBonus * countKitHolds(effects, combatant.characterId, FOCUS_ID),
         attribute: Attribute.CriticalRate,

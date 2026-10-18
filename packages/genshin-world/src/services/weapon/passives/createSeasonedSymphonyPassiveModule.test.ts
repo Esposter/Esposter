@@ -43,10 +43,20 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []) ?? [],
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [{ ...wielder, isOnField: true }],
+        [],
+      ) ?? [],
     ).toStrictEqual([]);
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: false }], []) ?? [],
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        [{ ...wielder, isOnField: false }],
+        [],
+      ) ?? [],
     ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AttackPercent }]);
   });
 

@@ -33,7 +33,7 @@ export const createTimelessDreamEternalStovePassiveModule = (params: number[]): 
   const energyRecharge = takeOne(params, 2);
   const seconds = takeOne(params, 3);
   return {
-    getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
+    getPassiveBonuses: (combatant, _memberState, _deployedCombatants, effects) => [
       {
         amount: Math.min(
           Math.max(getEnergyRecharge(combatant, effects) - ENERGY_RECHARGE_BASE, 0) * attackPerEnergyRecharge,

@@ -21,7 +21,7 @@ const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribut
         kit: NEUVILLETTE_KIT,
         level: 90,
       },
-      healthShare,
+      { energyShare: 0, healthShare },
       [],
       [],
     ) ?? []

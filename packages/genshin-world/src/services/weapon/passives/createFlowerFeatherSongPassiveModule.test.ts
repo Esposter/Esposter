@@ -39,7 +39,14 @@ describe(createFlowerFeatherSongPassiveModule, () => {
       createMember(3, Element.Pyro),
     ];
 
-    expect(flowerFeatherSongPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
+    expect(
+      flowerFeatherSongPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedCombatants,
+        [],
+      ),
+    ).toStrictEqual([
       { amount: 0.048 * 2, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.ElementalMastery },
     ]);
@@ -55,7 +62,14 @@ describe(createFlowerFeatherSongPassiveModule, () => {
       createMember(3, Element.Cryo),
     ];
 
-    expect(flowerFeatherSongPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
+    expect(
+      flowerFeatherSongPassiveModule.getPassiveBonuses?.(
+        wielder,
+        { energyShare: 0, healthShare: 1 },
+        deployedCombatants,
+        [],
+      ),
+    ).toStrictEqual([
       { amount: 0.048 * 3, attribute: Attribute.AttackPercent },
       { amount: 24, attribute: Attribute.ElementalMastery },
     ]);
@@ -67,7 +81,12 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     const natlanWielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Pyro, "natlan");
 
     expect(
-      flowerFeatherSongPassiveModule.getPassiveBonuses?.(natlanWielder, 1, [{ ...natlanWielder, isOnField: true }], []),
+      flowerFeatherSongPassiveModule.getPassiveBonuses?.(
+        natlanWielder,
+        { energyShare: 0, healthShare: 1 },
+        [{ ...natlanWielder, isOnField: true }],
+        [],
+      ),
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.ElementalMastery },

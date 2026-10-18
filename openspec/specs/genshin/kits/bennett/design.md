@@ -9,7 +9,7 @@ Bennett's kit is its record and one behaviour module, `createBennettKitBehaviour
 - **Fearnaught's no-launch is the Level 2 hold's shorter animation.** Inside Fantastic Voyage's field at Ascension 4, the Level 2 hold plays gcsim's 175 frames in place of 343, with the same two hits and explosion, all of which land before it ends. The wiki's Fearnaught page gives the effect, and gcsim the animation. Bennett's launch is not modelled, so only the animation changes.
 - **Bennett's hold boxes are circles.** The 3 by 3 box of the hold's second hit is priced as the circle to its far corner, 2.12 metres, as the other boxes are.
 
-- **Impasse Conqueror is a passive, read at the HP share the pricing passes.** At constellation 2 and up, Bennett's Energy Recharge is 30% while his HP is under 70% of his Max HP, and none from 70% on. The kit's passive hook takes that share as the character stands, so the bonus follows his HP without a field or a timer. The wiki's constellation table gives the effect.
+- **Impasse Conqueror is a passive, read at the member state the pricing passes.** At constellation 2 and up, Bennett's Energy Recharge is 30% while his HP is under 70% of his Max HP, and none from 70% on. The kit's passive hook takes that member state's HP share as the character stands, so the bonus follows his HP without a field or a timer. The wiki's constellation table gives the effect.
 
 ## Provisional constants
 

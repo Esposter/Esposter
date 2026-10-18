@@ -10,7 +10,7 @@ export const createBerserkerSetModule = ({ params }: ArtifactSetBonus): Artifact
   const criticalRate = takeOne(params, 0);
   const maxHealthShare = takeOne(params, 1);
   return {
-    getPassiveBonuses: (_combatant, healthShare) =>
-      healthShare < maxHealthShare ? [{ amount: criticalRate, attribute: Attribute.CriticalRate }] : [],
+    getPassiveBonuses: (_combatant, memberState) =>
+      memberState.healthShare < maxHealthShare ? [{ amount: criticalRate, attribute: Attribute.CriticalRate }] : [],
   };
 };

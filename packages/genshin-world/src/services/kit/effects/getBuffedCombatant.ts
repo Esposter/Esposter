@@ -25,10 +25,13 @@ export const getBuffedCombatant = (
   const buffs = effects.filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === combatant.characterId,
   );
+  const partyMember = getPartyMember(party, combatant.characterId);
+  // A burst that costs no energy has no share of it to hold, so a member's energy share is none rather than NaN
+  const energyShare = combatant.kit.burstEnergyCost === 0 ? 0 : partyMember.energy / combatant.kit.burstEnergyCost;
   const passiveBonuses =
     combatant.kit.getPassiveBonuses?.(
       combatant,
-      getPartyMember(party, combatant.characterId).healthShare,
+      { energyShare, healthShare: partyMember.healthShare },
       getDeployedCombatants(party, characterIdCombatantMap),
       effects,
     ) ?? [];

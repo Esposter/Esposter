@@ -26,8 +26,8 @@ describe(createProtectorsVirtuePassiveModule, () => {
   test("the rank's HP is the table's line, so the passive keeps only the ATK bonus of its share of Max HP", () => {
     expect.hasAssertions();
 
-    expect(protectorsVirtuePassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([
-      { amount: 0.012 * 10000, attribute: Attribute.Attack },
-    ]);
+    expect(
+      protectorsVirtuePassiveModule.getPassiveBonuses?.(wielder, { energyShare: 0, healthShare: 1 }, [], []) ?? [],
+    ).toStrictEqual([{ amount: 0.012 * 10000, attribute: Attribute.Attack }]);
   });
 });

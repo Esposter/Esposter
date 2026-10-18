@@ -23,7 +23,7 @@ export const createGoldenMajestyPassiveModule = (params: number[]): WeaponPassiv
   const attackPerStack = takeOne(params, 1);
   const stackSeconds = takeOne(params, 2);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) => {
+    getPassiveBonuses: (combatant, _memberState, deployedCombatants, effects) => {
       const isOnField =
         deployedCombatants.find((member) => member.characterId === combatant.characterId)?.isOnField ?? false;
       const isProtected = isOnField && effects.some((effect) => checkIsKitShieldLive(effect));
