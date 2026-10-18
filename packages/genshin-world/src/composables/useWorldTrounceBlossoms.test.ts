@@ -1,13 +1,22 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
+import { Currency } from "#src/models/inventory/Currency";
+import { MaterialType } from "#src/models/inventory/MaterialType";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
+import { NORMAL_BOSS_ADVENTURE_EXP } from "#src/services/bosses/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { createParty } from "#src/services/party/createParty";
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { InteractionKind } from "genshin-interface";
@@ -16,7 +25,10 @@ import { ref, shallowRef } from "vue";
 
 vi.mock(import("#src/services/friendship/readFriendshipLevels"));
 
+const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const SPAWN_KEY = "spawn";
+const UNIQUE_DROP_ID = 9003;
+const UNIQUE_DROP_NAME_TEXT_ID = "9003";
 // The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after that week's reset
 const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 const nextWeek = epoch.add({ hours: 4 * 24 });
@@ -57,5 +69,58 @@ describe(useWorldTrounceBlossoms, () => {
     expect(trounceBlossomInteractables.value).toStrictEqual([
       { id: SPAWN_KEY, kind: InteractionKind.Claim, name: "", position: { x: 1, y: 0, z: 2 } },
     ]);
+  });
+
+  test("a normal boss's claim pays its Adventure EXP once, the resin's own EXP not written back", async () => {
+    expect.hasAssertions();
+    vi.mocked(readFriendshipLevels).mockResolvedValue([{ exp: 0, level: 1 }]);
+    const adventureExp = ref(0);
+    const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
+      adventureExp,
+      adventureRankTables,
+      characters: ref([]),
+      completedMainQuestIds: shallowRef(new Set<string>()),
+      enemyKindMap: new Map(),
+      events: createWorldEvents(),
+      gainWorldAdventureExp: (amount) => {
+        adventureExp.value += amount;
+      },
+      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+      gameText: {},
+      getGroundHeight: () => 0,
+      getWorldNow: () => epoch,
+      inventory: ref<Inventory>(EMPTY_INVENTORY),
+      materialDataMap: new Map<number, MaterialData>([
+        [
+          UNIQUE_DROP_ID,
+          {
+            id: UNIQUE_DROP_ID,
+            materialType: MaterialType.Exchange,
+            nameTextId: UNIQUE_DROP_NAME_TEXT_ID,
+            rank: 0,
+            rarity: 0,
+            stackLimit: 99,
+          },
+        ],
+      ]),
+      nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
+      party: createParty([TRAVELER_CHARACTER_ID]),
+      setInventory: vi.fn(),
+      setWallet: vi.fn(),
+      wallet: ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] }),
+      worldNow: ref(epoch),
+    });
+    trounceBlossoms.value = new Map<string, TrounceBlossom>([
+      [
+        SPAWN_KEY,
+        { claimedAts: [], kind: BlossomKind.NormalBoss, place: { x: 1, z: 2 }, uniqueDropId: UNIQUE_DROP_ID },
+      ],
+    ]);
+    await flushReads();
+
+    openTrounceBlossomClaim(SPAWN_KEY, epoch);
+    chooseTrounceBlossomClaim(epoch, 0, () => 0);
+
+    expect(adventureExp.value).toStrictEqual(NORMAL_BOSS_ADVENTURE_EXP);
   });
 });

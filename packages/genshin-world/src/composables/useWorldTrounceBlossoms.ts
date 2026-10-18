@@ -200,7 +200,6 @@ export const useWorldTrounceBlossoms = ({
     if (!claim) return;
     setWallet(claim.wallet);
     setInventory(claim.inventory);
-    adventureExp.value = claim.adventureExp;
     // A weekly boss's EXP is read by its row, the one its World Level reads for the reward
     if (trounceBlossom.kind === BlossomKind.WeeklyBoss)
       grantBossExp(WEEKLY_BOSS_ADVENTURE_EXP, takeOne(WEEKLY_BOSS_COMPANIONSHIP_EXP, computeWeeklyBossRow(worldLevel)));
