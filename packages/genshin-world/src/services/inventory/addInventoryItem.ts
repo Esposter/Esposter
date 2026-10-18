@@ -30,9 +30,12 @@ export const addInventoryItem = (
       "takes an artifact only as its rolled one",
     );
   const { items, nextId } = inventory;
-  const categoryRoom = ItemCategoryRoomMap[definition.category];
+  const { category } = definition;
+  const categoryRoom = category === undefined ? undefined : ItemCategoryRoomMap[category];
   const tabRoom =
-    categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
+    category === undefined || categoryRoom === undefined
+      ? Infinity
+      : categoryRoom - countCategoryPieces(items, category);
   if (definition.category === ItemCategory.Weapon) {
     const addedCount = Math.max(Math.min(quantity, tabRoom), 0);
     const addedItems = Array.from({ length: addedCount }, (_value, index) => ({
@@ -62,7 +65,10 @@ export const addInventoryItem = (
     };
   }
 
-  const kindCount = items.filter((item) => ItemCategoryRoomMap[item.definition.category] === undefined).length;
+  const kindCount = items.filter(
+    ({ definition: { category: itemCategory } }) =>
+      itemCategory === undefined || ItemCategoryRoomMap[itemCategory] === undefined,
+  ).length;
   const addedCount =
     categoryRoom === undefined && kindCount >= INVENTORY_KIND_LIMIT
       ? 0

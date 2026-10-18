@@ -19,6 +19,8 @@ export const MaterialTypeItemCategoryMap = {
   [MaterialType.FurnitureFormula]: ItemCategory.Furnishing,
   [MaterialType.Namecard]: ItemCategory.PreciousItem,
   [MaterialType.NoticeAddHp]: ItemCategory.Food,
+  // The material table files a talent material on no bag page, so the bag holds it and draws it in no tab
+  [MaterialType.Talent]: undefined,
   [MaterialType.WeaponExpStone]: ItemCategory.Material,
   [MaterialType.Widget]: ItemCategory.Gadget,
-} as const satisfies Record<MaterialType, ItemCategory>;
+} as const satisfies Record<MaterialType, ItemCategory | undefined>;
