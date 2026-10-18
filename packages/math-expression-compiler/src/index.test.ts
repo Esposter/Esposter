@@ -9,7 +9,7 @@ describe("math-expression-compiler", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 67.56 KB (69182 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 68.22 KB (69855 bytes)"`);
   });
 
   test("types size", () => {

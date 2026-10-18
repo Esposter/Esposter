@@ -211,4 +211,12 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(9007199254740994)")).toBe(0);
     expect(evaluateFormula("isPrime(1e16)")).toBe(0);
   });
+
+  test("a Stirling number of a large count is read over its narrower band", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("stirlingS2(5000, 1)")).toBe(1);
+    expect(evaluateFormula("stirlingS2(3000, 2999)")).toBe(4498500);
+    expect(evaluateFormula("stirlingS2(2000, 1000)")).toBe(Number.POSITIVE_INFINITY);
+  });
 });

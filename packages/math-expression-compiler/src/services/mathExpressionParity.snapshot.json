@@ -8529,5 +8529,14 @@
 {"formula":"multiply([1, 2], [1, 2], 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":10},
 {"formula":"multiply([], [])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's multiply throws for two empty vectors, as its dot product does, where the sum of no products is zero","value":0}},
 {"formula":"dot([], [])","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's dot product throws for two empty vectors, where the sum of no products is zero","value":0}},
-{"formula":"xor(2, 2, 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's xor takes exactly two operands, so three is an error, where ours folds them as xor is associative","value":1}}
+{"formula":"xor(2, 2, 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null,"fix":{"cause":"mathjs's xor takes exactly two operands, so three is an error, where ours folds them as xor is associative","value":1}},
+{"formula":"stirlingS2(5000, 1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1},
+{"formula":"stirlingS2(3000, 2999)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":4498500},
+{"formula":"stirlingS2(2000, 1000)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
+{"formula":"stirlingS2(3000, 1500)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity","fix":{"cause":"ours leaves a Stirling number to an error once its count times its band passes four million, where mathjs answers Infinity","value":null}},
+{"formula":"stirlingS2(3, 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3},
+{"formula":"stirlingS2(5, 2)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":15},
+{"formula":"stirlingS2(50, 49)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1225},
+{"formula":"stirlingS2(100, 50)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":4.309832370093664e+101},
+{"formula":"stirlingS2(200, 100)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":2.283943596473855e+234}
 ]}
