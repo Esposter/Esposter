@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2339 } },
   "burst.hits.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
