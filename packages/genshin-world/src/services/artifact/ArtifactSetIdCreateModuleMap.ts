@@ -24,6 +24,7 @@ import {
   MAIDEN_BELOVED_ARTIFACT_SET_ID,
   MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID,
   MARTIAL_ARTIST_ARTIFACT_SET_ID,
+  MIRRORED_NYMPH_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
   OBSIDIAN_CODEX_ARTIFACT_SET_ID,
   OCEAN_HUED_CLAM_ARTIFACT_SET_ID,
@@ -59,6 +60,7 @@ import { createLuckyDogSetModule } from "#src/services/artifact/sets/createLucky
 import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/createMaidenBelovedSetModule";
 import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/createMarechausseeHunterSetModule";
 import { createMartialArtistSetModule } from "#src/services/artifact/sets/createMartialArtistSetModule";
+import { createMirroredNymphSetModule } from "#src/services/artifact/sets/createMirroredNymphSetModule";
 import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
 import { createObsidianCodexSetModule } from "#src/services/artifact/sets/createObsidianCodexSetModule";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
@@ -99,6 +101,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [MAIDEN_BELOVED_ARTIFACT_SET_ID]: createMaidenBelovedSetModule,
   [MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID]: createMarechausseeHunterSetModule,
   [MARTIAL_ARTIST_ARTIFACT_SET_ID]: createMartialArtistSetModule,
+  [MIRRORED_NYMPH_ARTIFACT_SET_ID]: createMirroredNymphSetModule,
   [NOBLESSE_OBLIGE_ARTIFACT_SET_ID]: createNoblesseObligeSetModule,
   [OBSIDIAN_CODEX_ARTIFACT_SET_ID]: createObsidianCodexSetModule,
   [OCEAN_HUED_CLAM_ARTIFACT_SET_ID]: createOceanHuedClamSetModule,
