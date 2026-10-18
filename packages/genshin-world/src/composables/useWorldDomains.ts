@@ -2,10 +2,10 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
@@ -44,7 +44,7 @@ interface DomainArena {
   // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
   startedAt: number;
   level: DomainChallengeLevel;
-  treeRewards: ItemCount[];
+  treeRewards: RewardItem[];
 }
 
 // A challenge run in the arena: the camp of the wave in play, and the defeats and the time it has counted so far
@@ -267,7 +267,8 @@ export const useWorldDomains = ({
       wallet.value,
       inventory.value,
       offer,
-      () => arena.treeRewards,
+      arena.treeRewards,
+      random,
       adventureExp.value,
       completedMainQuestIds.value,
       now,
