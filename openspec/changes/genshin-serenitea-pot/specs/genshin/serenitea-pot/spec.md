@@ -30,7 +30,7 @@ The realm SHALL be left by the Serenitea Pot gadget or by any teleport in the op
 
 - **GIVEN** a player inside the realm
 - **WHEN** the player teleports in the open world
-- **THEN** the realm is left and the player arrives at the teleport's destination
+- **THEN** the realm is left and the player arrives back at the open-world place they entered the realm from
 
 #### Scenario: A pot placed on an invalid surface is not placed
 
