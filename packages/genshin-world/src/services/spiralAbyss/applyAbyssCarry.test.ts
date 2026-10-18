@@ -24,7 +24,7 @@ describe(applyAbyssCarry, () => {
       [FIRST_CHARACTER_ID, firstMember],
       [SECOND_CHARACTER_ID, createMember(10, 1)],
     ]);
-    const carry = takeAbyssCarry([FIRST_CHARACTER_ID, SECOND_CHARACTER_ID], characterIdMemberMap);
+    const carry = takeAbyssCarry(characterIdMemberMap);
     // The party heals and gains energy after the clear, which the next chamber does not start from
     Object.assign(firstMember, { energy: 60, healthShare: 1 });
 

@@ -40,7 +40,7 @@ export const recordAbyssChamberClear = (
   ];
   const givenRewardIds = candidateRewardIds.filter((rewardId) => !progress.claimedRewardIds.has(rewardId));
   return {
-    carry: takeAbyssCarry([...characterIdMemberMap.keys()], characterIdMemberMap),
+    carry: takeAbyssCarry(characterIdMemberMap),
     givenRewardIds,
     progress: { chamberIdProgressMap, claimedRewardIds: new Set([...progress.claimedRewardIds, ...givenRewardIds]) },
   };
