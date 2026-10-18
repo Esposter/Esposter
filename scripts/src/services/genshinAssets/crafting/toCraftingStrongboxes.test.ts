@@ -4,6 +4,7 @@ import type { ExcelReliquaryOfferPurchaseRow } from "#src/models/genshinAssets/c
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 
+import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingStrongboxes } from "#src/services/genshinAssets/crafting/toCraftingStrongboxes";
 import { describe, expect, test } from "vitest";
 
@@ -24,7 +25,7 @@ describe(toCraftingStrongboxes, () => {
   };
   const previewRow: ExcelRewardPreviewRow = { id: PREVIEW_ID, previewItems: [{ id: DISPLAY_ITEM_ID }] };
   const displayItemRow: ExcelDisplayItemRow = {
-    displayType: "RELIQUARY_ITEM_SMELT",
+    displayType: RELIQUARY_SMELT_DISPLAY_TYPE,
     id: DISPLAY_ITEM_ID,
     nameTextMapHash: NAME_TEXT_HASH,
     param: SET_ID,
