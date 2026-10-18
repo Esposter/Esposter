@@ -7,7 +7,7 @@
 
 ## 2. Upstream triage
 
-- [ ] 2.1 Give every mathjs issue in the design's triage scope a verdict in the Upstream table, reproducing each defect against mathjs. Verify: each in-scope defect has a regression test naming its issue, and it fails against mathjs.
+- [x] 2.1 Give every mathjs issue in the design's triage scope a verdict in the Upstream table, reproducing each defect against mathjs. Verify: each in-scope defect has a regression test naming its issue, and it fails against mathjs.
 - [ ] 2.2 Fix each in-scope defect in the evaluator, and list it in the parity snapshot as a fix. Verify: the parity test and each defect's regression test pass.
 
 ## 3. Swap
