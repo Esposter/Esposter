@@ -21,7 +21,8 @@ export const createEnemy = (
   worldLevel = 0,
 ): Enemy => {
   const spawnLevel = computeSpawnLevel(worldLevelRows, level, worldLevel);
-  const { maxHealth } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemyKindId), spawnLevel);
+  const enemyKind = getEnemyKind(enemyKindMap, enemyKindId);
+  const { maxHealth } = computeEnemyStats(enemyLevelCurves, enemyKind, spawnLevel);
   const { length } = PoiseTypeSettingsMap[EnemyKindTraitsMap[enemyKindId].poiseType];
   return {
     attackCooldownSeconds: 0,
@@ -29,6 +30,7 @@ export const createEnemy = (
     droppedThresholdCount: 0,
     elementalReactions: [],
     elementalState: createElementalState(),
+    enemyFamily: enemyKind.enemyFamily,
     enemyKindId,
     heading: 0,
     health: maxHealth,

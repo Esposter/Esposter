@@ -1,6 +1,7 @@
 import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 import type { Reaction } from "#src/models/combat/Reaction";
+import type { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
@@ -27,6 +28,7 @@ export interface Enemy {
   // The reactions its elements brought on their own as they aged, held until the kit on the field prices them
   elementalReactions: Reaction[];
   elementalState: ElementalState;
+  enemyFamily: EnemyFamily;
   enemyKindId: EnemyKindId;
   heading: number;
   health: number;
