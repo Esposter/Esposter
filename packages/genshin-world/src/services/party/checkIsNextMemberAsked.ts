@@ -1,6 +1,7 @@
 import type { Party } from "#src/models/party/Party";
 
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
+import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Whether the player is asked for the next member: the fall of the member on the field has played out, that member is
@@ -12,6 +13,6 @@ export const checkIsNextMemberAsked = (party: Party): boolean => {
     party.fallSecondsRemaining === 0 &&
     fieldCharacterId !== undefined &&
     checkIsCharacterDown(party, fieldCharacterId) &&
-    characterIds.some((characterId) => !checkIsCharacterDown(party, characterId))
+    !checkIsPartyDown(party)
   );
 };
