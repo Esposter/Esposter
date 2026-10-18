@@ -50,8 +50,10 @@ export const serveSessionChild = async (
       getOrCreate(sessionEventMap, sessionId, () => []).push(
         ...events.filter(({ type }) => !EphemeralAgentEventTypes.includes(type)),
       );
-      if (events.some((event) => event.type === AgentEventType.SessionState && event.state === SessionState.Closed))
+      if (events.some((event) => event.type === AgentEventType.SessionState && event.state === SessionState.Closed)) {
         sessionEventMap.delete(sessionId);
+        sideChatSessionIdSet.delete(sessionId);
+      }
       send({ events, sessionId, type: ChildMessageType.Events });
     },
     onSessionOpen: (sessionId, isSideChat) => {
