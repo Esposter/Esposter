@@ -6,7 +6,7 @@
 
 ## 2. Node types
 
-- [ ] 2.1 Build the webpage types with their accessible output, declaring the survey invite's survey prop through `createResourceLinkSchema`. Verify: tests named after the scenarios 'An image without alternative text cannot be saved', 'A decorative image publishes marked as decorative', 'A video or map without a title cannot be saved', 'Tabs publish as tabs that move with the arrow keys', 'Typed text stands still for a reader who prefers reduced motion' and 'A countdown does not announce each tick'.
+- [ ] 2.1 Build the webpage types with their accessible output, declaring the survey invite's survey prop through `createResourceLinkSchema`. Verify: tests named after the scenarios 'An image without alternative text cannot be saved', 'A decorative image publishes marked as decorative', 'A video without a title cannot be saved', 'Tabs publish as tabs that move with the arrow keys', 'Typed text stands still for a reader who prefers reduced motion' and 'A countdown does not announce each tick'.
 
 ## 3. Safe output
 

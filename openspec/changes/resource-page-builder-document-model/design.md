@@ -69,14 +69,14 @@ A container whose children are always one type uses a slot that allows only that
 
 The webpage types carry the blocks the editor offers today, rebuilt to these contracts:
 
-| Category | Types                                                                                                            |
-| -------- | ---------------------------------------------------------------------------------------------------------------- |
-| Layout   | Section (a semantic tag of header, main, section, footer or div), Columns of Column                              |
-| Content  | Text, Button (a link drawn as a button, which also replaces the bare link block), Image, Video, Map, Custom HTML |
-| Extra    | Countdown, Tabs of Tab, Tooltip, Typed text                                                                      |
-| Survey   | Survey invite, one block per published survey, from `useReadPublishedSurveys` as today                           |
+| Category | Types                                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Layout   | Section (a semantic tag of header, main, section, footer or div), Columns of Column                                            |
+| Content  | Text, Button (a link drawn as a button, which also replaces the bare link block), Image, Video (an uploaded file), Custom HTML |
+| Extra    | Countdown, Tabs of Tab, Tooltip, Typed text                                                                                    |
+| Survey   | Survey invite, one block per published survey, from `useReadPublishedSurveys` as today                                         |
 
-Each type's contract makes its published output accessible by construction rather than by review: an Image requires its `alt` or an explicit decorative flag, a Video or Map frame requires its title, Tabs emit the tablist pattern with the arrow keys in their script, Typed text keeps its whole text in the accessible name and stands still under reduced motion, a Countdown is a timer whose live region stays off, and a Button is a real link. The regression lessons of the absorbed modules carry across as tests on the types that inherit them — a video with no default source, raw HTML that keeps a placeholder when emptied, a countdown that reads a date as local midnight, writes its end text as text and stops its own timer once detached. The forms plugin's types go with no successor, since the editor offers no form block.
+Each type's contract makes its published output accessible by construction rather than by review: an Image requires its `alt` or an explicit decorative flag, a Video requires its title as its accessible name, Tabs emit the tablist pattern with the arrow keys in their script, Typed text keeps its whole text in the accessible name and stands still under reduced motion, a Countdown is a timer whose live region stays off, and a Button is a real link. The regression lessons of the absorbed modules carry across as tests on the types that inherit them — a video with no default source, raw HTML that keeps a placeholder when emptied, a countdown that reads a date as local midnight, writes its end text as text and stops its own timer once detached. The forms plugin's types go with no successor, since the editor offers no form block. A Video plays a file uploaded to the resource through the page's own `<video>` element, which `media-src` already allows; a provider's frame and a Map type are [deferred](../../deferred/resource/page-builder-provider-embeds/design.md), since the content policy names no `frame-src` and admitting one names a third party every reader contacts.
 
 ## Rendering and publishing
 

@@ -7,7 +7,6 @@
 ## 2. Phase two: webpage editor
 
 - [ ] 2.1 Build the canvas, the style panel and their keyboard paths, as the canvas and style-panel changes specify. Verify: a test named after the scenario 'A block can be moved with the keyboard alone'.
-- [ ] 2.2 Decide whether the Video and Map types ship with their providers' origins named in the content policy, or ship as uploaded video only, once the editor origin check in the performance-and-proof change shows what the policy blocks. The options are naming the providers' origins, or uploaded video only; this task decides nothing. Verify: the decision is recorded in this change before the Video and Map types are built.
 
 ## 3. Phase three: email editor
 

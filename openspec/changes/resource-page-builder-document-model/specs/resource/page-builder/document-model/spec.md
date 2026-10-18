@@ -42,9 +42,9 @@ Each node type SHALL publish output that meets its accessibility contract, and S
 - **WHEN** the webpage is published
 - **THEN** the published image is marked as decorative
 
-#### Scenario: A video or map without a title cannot be saved
+#### Scenario: A video without a title cannot be saved
 
-- **GIVEN** a video or map with no title
+- **GIVEN** a video with no title
 - **WHEN** the owner saves the document
 - **THEN** the save is refused
 
