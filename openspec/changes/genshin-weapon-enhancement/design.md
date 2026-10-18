@@ -46,6 +46,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Smoke-and-Mirror Mystery (Flute of Ezpitzal, provisional reading).** Using an Elemental Skill raises DEF by the rank's 16% for 15 s, through createSkillBuffPassiveModule, which restarts the buff on each skill. The same helper builds Pact of Flowing Springs and The Law's Equilibrium.
 - **Pact of Flowing Springs (Footprint of the Rainbow, provisional reading).** The same skill buff as Smoke-and-Mirror Mystery: DEF rises by the rank's 16% for 15 s after the wielder's Elemental Skill, through createSkillBuffPassiveModule.
 - **The Law's Equilibrium (Covenant of Frost and Snow, provisional reading).** After the wielder's Elemental Skill, its Elemental Mastery rises by the rank's 120 for 12 s, through the same skill-buff helper as the DEF weapons. The rank's 240 at five stars is the same shape.
+- **White Cruising Wave (Tidal Shadow, provisional reading).** After the wielder is healed, ATK rises by the rank's 24% for 8 s, through createHealBuffPassiveModule. A heal is a change of HP with a positive share; the text's 'even when not on the field' is read as the kit's events reaching every member, which the engine delivers.
 
 ## How it works
 

@@ -53,6 +53,7 @@ import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/p
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
+import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
@@ -249,4 +250,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4067649747": createPactOfFlowingSpringsPassiveModule,
   // The Law's Equilibrium (Covenant of Frost and Snow)
   "1419973003": createLawsEquilibriumPassiveModule,
+  // White Cruising Wave (Tidal Shadow)
+  "4049199251": createTidalShadowPassiveModule,
 };
