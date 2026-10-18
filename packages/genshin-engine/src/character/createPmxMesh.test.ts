@@ -66,8 +66,14 @@ describe(createPmxMesh, () => {
     // Each bone's rest skin, its world times its inverse, is the identity: a vertex the file places stays where it is
     expect(
       boneInverses.map((boneInverse, index) =>
-        bones[index]?.matrixWorld.clone().multiply(boneInverse).elements.map(roundToTen),
+        bones[index]?.matrixWorld
+          .clone()
+          .multiply(boneInverse)
+          .elements.map((element) => roundToTen(element)),
       ),
-    ).toStrictEqual([new Matrix4().elements.map(roundToTen), new Matrix4().elements.map(roundToTen)]);
+    ).toStrictEqual([
+      new Matrix4().elements.map((element) => roundToTen(element)),
+      new Matrix4().elements.map((element) => roundToTen(element)),
+    ]);
   });
 });
