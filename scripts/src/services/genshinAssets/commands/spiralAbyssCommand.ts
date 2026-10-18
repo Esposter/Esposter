@@ -10,7 +10,7 @@ export const spiralAbyssCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish the Spiral Abyss's floors with their chambers, their rewards in every reward group and the Moon Spire's periods from the tower tables to the game data",
+      "Publish the Spiral Abyss's floors with their chambers, their rewards in every reward group, the Moon Spire's periods with their blessings and each chamber's Benedictions from the tower tables to the game data",
     name: "spiral-abyss",
   },
   run: async ({ args }) => {
