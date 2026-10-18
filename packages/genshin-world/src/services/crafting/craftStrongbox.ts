@@ -43,6 +43,7 @@ export const craftStrongbox = (
   const remaining: Inventory = {
     items: inventory.items.filter((item) => !pickedIds.includes(item.id)),
     nextId: inventory.nextId,
+    quickSwapItemIds: inventory.quickSwapItemIds,
   };
   return pickUpDroppedItem(
     rollStrongboxArtifact(strongbox, random, artifactDropTables),

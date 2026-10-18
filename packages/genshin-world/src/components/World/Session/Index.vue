@@ -42,7 +42,6 @@ import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
-import GameOverScreen from "#src/components/GameOver/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
@@ -156,7 +155,6 @@ import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/con
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
-import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
 import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
@@ -395,17 +393,6 @@ const {
   savedAdventureExp: savedState.adventureExp,
   savedAdventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
-  setWallet,
-  wallet,
-});
-// The rewards each quest's finish pays into the bag, the wallet and the rank, as it finishes
-const { grantRewards } = useWorldQuestRewards({
-  events,
-  gainAdventureExp: gainWorldAdventureExp,
-  inventory,
-  materialDataMap,
-  names: nameText,
-  setInventory,
   setWallet,
   wallet,
 });
@@ -715,7 +702,7 @@ const {
   wildlifePlaces,
 });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
-useWorldQuestRewards({
+const { grantRewards } = useWorldQuestRewards({
   characters,
   events,
   gainAdventureExp: gainWorldAdventureExp,

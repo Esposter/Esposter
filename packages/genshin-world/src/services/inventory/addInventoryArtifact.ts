@@ -10,16 +10,20 @@ import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap
 // And its stats, so each artifact keeps its own. The artifacts tab's room decides whether it fits, and one that does not
 // Is left over
 export const addInventoryArtifact = (
-  { items, nextId }: Inventory,
+  { items, nextId, quickSwapItemIds }: Inventory,
   definition: ItemDefinition,
   artifact: Artifact,
 ): InventoryAddition => {
   const categoryRoom = ItemCategoryRoomMap[definition.category];
   const tabRoom =
     categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
-  if (tabRoom < 1) return { inventory: { items, nextId }, overflow: 1 };
+  if (tabRoom < 1) return { inventory: { items, nextId, quickSwapItemIds }, overflow: 1 };
   return {
-    inventory: { items: [...items, { artifact, definition, id: nextId, quantity: 1 }], nextId: nextId + 1 },
+    inventory: {
+      items: [...items, { artifact, definition, id: nextId, quantity: 1 }],
+      nextId: nextId + 1,
+      quickSwapItemIds,
+    },
     overflow: 0,
   };
 };

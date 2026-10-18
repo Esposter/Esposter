@@ -1,7 +1,7 @@
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 
 // A row of the birthday mail table: the mail sent on the birthday, and the game time from which it is the one in force
 export interface BirthdayMailRow {
