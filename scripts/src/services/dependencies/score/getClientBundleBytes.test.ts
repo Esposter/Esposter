@@ -44,8 +44,8 @@ describe(getClientBundleBytes, () => {
     expect(getClientBundleBytes(REPORT, WORKSPACE_PACKAGES)).toStrictEqual(
       new Map([
         ["@esposter/web", { bytes: 1, entryBytes: 1 }],
-        ["genshin-world", { bytes: 2, entryBytes: 0 }],
         ["@vue/shared", { bytes: 7, entryBytes: 3 }],
+        ["genshin-world", { bytes: 2, entryBytes: 0 }],
         ["vue-phaserjs", { bytes: 5, entryBytes: 0 }],
       ]),
     );
