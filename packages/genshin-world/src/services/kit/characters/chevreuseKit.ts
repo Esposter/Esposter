@@ -50,6 +50,10 @@ const grantVerticalForce = ({
 
 // Chevreuse's behaviour: an Overloaded reaction sets the Overcharged Ball going, and the hold casts the ball in place of
 // Its own shot while it is going, spending it
+// Constellation 1 needs the Coordinated Tactics status on other members, which the kit does not apply
+// Constellation 2 needs the chain explosions after Short-Range Rapid Interdiction Fire's hold hits a target, not built
+// Constellation 4 needs the hold's cooldown exemption after Ring of Bursting Grenades, which no cooldown read holds
+// Constellation 6 needs the hold's 12-second healing effect and the team heals it triggers, which are not built
 export const createChevreuseKitBehaviour = (): KitBehaviour => ({
   // Overloaded from any source sets the ball going on the team's Chevreuse, as gcsim's subscription does, until a hold
   // Casts it. The status has no end, so it stands until a hold spends it
