@@ -11,7 +11,7 @@ Kamisato Ayaka's kit is its record and one behaviour module, `createAyakaKitBeha
 
 ## Not built
 
-- **Ayaka's A1 and her other constellations are not built.** A1's 30% DMG bonus for her normal and charged attacks has nowhere to go: a buff adds to an element's DMG Bonus, which Hyouka and Soumetsu read too, and a hit's own DMG Bonus is fixed on the hit or added by an infusion, which would change her attacks' element too. C6's charged attack bonus waits for the same reason, C1's cooldown cut on a Cryo hit and C4's DEF reduction have no hook in a hit, and C3 and C5 raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds.
+- **Ayaka's A1, C4 and C6 are not built.** A1's 30% DMG bonus for her normal and charged attacks has nowhere to go: a buff adds to an element's DMG Bonus, which Hyouka and Soumetsu read too, and a hit's own DMG Bonus is fixed on the hit or added by an infusion, which would change her attacks' element too. C6's charged attack bonus waits for the same reason. C4's DEF reduction has no hook, as no status on an enemy changes its defence, and C3 and C5 raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds.
 
 ## Key files
 
