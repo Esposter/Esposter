@@ -193,10 +193,10 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `sharp`                                 | —                     | Keep — engine     | image processing                                                                                       |
 | `sirv`                                  | —                     | Keep — tooling    | the static file server Vite's public middleware runs on, serving `public/` in dev                      |
 | `superjson`                             | —                     | Keep — spec       | tRPC's wire transformer                                                                                |
-| `survey-core`                           | —                     | Keep — engine     | the survey engine                                                                                      |
-| `survey-creator-core`                   | —                     | Keep — engine     | the survey engine                                                                                      |
-| `survey-creator-vue`                    | —                     | Keep — engine     | the survey engine                                                                                      |
-| `survey-vue3-ui`                        | —                     | Keep — engine     | the survey engine                                                                                      |
+| `survey-core`                           | —                     | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
+| `survey-creator-core`                   | —                     | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
+| `survey-creator-vue`                    | —                     | Keep — engine     | the survey engine's creator, in the chunk of the survey editor alone                                   |
+| `survey-vue3-ui`                        | —                     | Keep — engine     | the survey engine, loaded with the survey's own components rather than at startup                      |
 | `temporal-polyfill`                     | —                     | Keep — hold       | until every target ships `Temporal`                                                                    |
 | `three`                                 | —                     | Keep — engine     | the 3D engine                                                                                          |
 | `three-globe`                           | —                     | Keep — engine     | the globe                                                                                              |
