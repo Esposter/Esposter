@@ -105,4 +105,16 @@ describe(createYelanKitBehaviour, () => {
 
     expect([rollStrike(0.33), rollStrike(0.34)]).toStrictEqual([1, 0]);
   });
+
+  test("a Constellation 1 switch adds one Lingering Lifeline charge", () => {
+    expect.hasAssertions();
+
+    expect(YELAN_KIT.getSkillChargeBonus?.({ ...createYelanCombatant(), constellationCount: 1 })).toBe(1);
+  });
+
+  test("a Constellation 0 switch adds no Lingering Lifeline charge", () => {
+    expect.hasAssertions();
+
+    expect(YELAN_KIT.getSkillChargeBonus?.({ ...createYelanCombatant(), constellationCount: 0 })).toBe(0);
+  });
 });
