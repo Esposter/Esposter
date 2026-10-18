@@ -62,6 +62,9 @@ const loadFirstPage = async () => {
     const page = await pdfDocument.getPage(1);
     if (loadingTask === task) firstPage = page;
   }).match(drawPage, (error) => {
+    // A load a url change tore down rejects too, and it is the newer load that stands
+    if (generation !== loadGeneration) return;
+
     isFailed.value = true;
     console.error(error);
   });

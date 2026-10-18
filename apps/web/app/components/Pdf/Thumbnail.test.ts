@@ -16,6 +16,7 @@ describe("pdfThumbnail", () => {
   const PAGE_HEIGHT = 792;
   const PAGE_WIDTH = 612;
   const url = "/files/document.pdf";
+  const otherUrl = "/files/other.pdf";
   const FIRST_WIDTH = 300;
   const SECOND_WIDTH = 600;
   const LARGE_WIDTH = 4096;
@@ -141,5 +142,26 @@ describe("pdfThumbnail", () => {
     await flushPromises();
 
     expect(task.destroy).toHaveBeenCalledOnce();
+  });
+
+  // The first url's load is torn down by the change, and its rejection lands after the newer load has reset the failure,
+  // so the rejection must not show the failure over the document that did load
+  test("A load a url change tears down does not fail the newer one", async () => {
+    expect.hasAssertions();
+
+    const firstLoad = Promise.withResolvers<unknown>();
+    vi.mocked(loadPdfDocument)
+      .mockResolvedValueOnce(createTask(firstLoad.promise))
+      .mockResolvedValueOnce(createTask(Promise.resolve({ getPage: () => Promise.resolve(page) })));
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
+    const component = await mountThumbnail(url);
+    await flushPromises();
+    await component.setProps({ url: otherUrl });
+    await flushPromises();
+    firstLoad.reject(new Error(" "));
+    await flushPromises();
+
+    expect(component.find("canvas").isVisible()).toBe(true);
+    expect(component.text()).not.toContain("could not be loaded");
   });
 });
