@@ -12,6 +12,7 @@ import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/eva
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readGoNumberToken } from "#src/services/genshinAssets/kits/gcsim/readGoNumberToken";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -79,7 +80,7 @@ const readLocalNumberMap = (
       value?.kind === GoTokenKind.Number
         ? readGoNumberToken(value)
         : value?.kind === GoTokenKind.Identifier
-          ? constantMap.get(value.text)?.value
+          ? readGoNumber(constantMap.get(value.text)?.value)
           : undefined;
     if (
       token.kind === GoTokenKind.Identifier &&
@@ -131,9 +132,9 @@ const readConstantLoop = (
   const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3);
   const stepEnd = step === undefined ? stepStart + 2 : step.end;
   if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
-  const startValue = evaluateGoExpression(start.expression, resolveName);
-  const boundValue = evaluateGoExpression(bound.expression, resolveName);
-  const stepValue = step === undefined ? 1 : evaluateGoExpression(step.expression, resolveName);
+  const startValue = readGoNumber(evaluateGoExpression(start.expression, resolveName));
+  const boundValue = readGoNumber(evaluateGoExpression(bound.expression, resolveName));
+  const stepValue = step === undefined ? 1 : readGoNumber(evaluateGoExpression(step.expression, resolveName));
   if (
     typeof startValue !== "number" ||
     typeof boundValue !== "number" ||
@@ -205,8 +206,9 @@ export const readGcsimQueuedAttacks = (
           : undefined;
       for (const iteration of readIterations(loops, position)) {
         const resolveIteration = (name: string) => iteration.get(name) ?? resolveName(name);
-        const delayValue =
-          delayExpression === undefined ? undefined : evaluateGoExpression(delayExpression, resolveIteration);
+        const delayValue = readGoNumber(
+          delayExpression === undefined ? undefined : evaluateGoExpression(delayExpression, resolveIteration),
+        );
         queuedAttacks.push({
           attackLine,
           attackName,

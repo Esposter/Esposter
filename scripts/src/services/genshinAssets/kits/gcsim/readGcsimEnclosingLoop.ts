@@ -2,6 +2,7 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -18,8 +19,8 @@ const COUNTING_HEADER_REGEX =
 const readLoopCount = (bound: string, resolveName: (name: string) => GoValue | undefined): number | undefined => {
   const tokens = tokenizeGo(bound);
   const { expression } = parseGoExpression(tokens, 0);
-  const value: GoValue | undefined = evaluateGoExpression(expression, resolveName);
-  return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : undefined;
+  const value = readGoNumber(evaluateGoExpression(expression, resolveName));
+  return value !== undefined && Number.isInteger(value) && value >= 0 ? value : undefined;
 };
 
 // The `for` loop a line sits in, found by scanning up to the nearest block opener above it, where the loop's header is a

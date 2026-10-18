@@ -2,10 +2,12 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
+import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
@@ -39,7 +41,8 @@ export const addGcsimNormalAttackCandidates = (
       normalFrames !== undefined &&
       strikeFrames !== undefined &&
       !Array.isArray(strikeFrames) &&
-      typeof strikeFrames === "object"
+      typeof strikeFrames === "object" &&
+      !checkIsGoFloat(strikeFrames)
     )
       add(
         `${path}.animationFrames`,
@@ -49,7 +52,7 @@ export const addGcsimNormalAttackCandidates = (
       );
     const strikePoise = Array.isArray(poiseVariable?.value) ? poiseVariable.value[strikeIndex] : undefined;
     for (const [hitIndex, hitmark] of hitmarks.entries()) {
-      const hitPoise = Array.isArray(strikePoise) ? strikePoise[hitIndex] : strikePoise;
+      const hitPoise = readGoNumber(Array.isArray(strikePoise) ? strikePoise[hitIndex] : strikePoise);
       addHit(
         `${path}.hits.${hitIndex}`,
         {

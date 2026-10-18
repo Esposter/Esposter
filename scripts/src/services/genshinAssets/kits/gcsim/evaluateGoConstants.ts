@@ -11,8 +11,10 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
+import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
 
 const DECLARATION_KEYWORDS = new Set(["const", "var"]);
 
@@ -21,7 +23,7 @@ const DECLARATION_KEYWORDS = new Set(["const", "var"]);
 interface FieldWrite {
   file: string;
   line: number;
-  value?: number;
+  value?: GoValue;
 }
 
 const ARITHMETIC_OPERATORS = new Set(["%", "&", "*", "+", "-", "/", "<", ">", "^", "|"]);
@@ -95,7 +97,7 @@ const readFieldWrites = (tokens: readonly GoToken[], file: string, fieldWriteMap
     else if (checkIsGoPunctuation(operator, "=")) {
       const { end, expression } = parseGoExpression(tokens, position + 4);
       const isLiteral = expression.kind === GoExpressionKind.Number && tokens[end]?.kind === GoTokenKind.Newline;
-      writes.push({ file, line, value: isLiteral ? expression.value : undefined });
+      writes.push({ file, line, value: isLiteral ? toGoNumberValue(expression.value, expression.isFloat) : undefined });
     } else if (
       operator?.kind === GoTokenKind.Punctuation &&
       ARITHMETIC_OPERATORS.has(operator.text) &&
@@ -240,9 +242,9 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
   for (const { expression, file, indexes, line, name } of elementAssignments) {
     const constant = constantMap.get(name);
     const value = evaluateGoExpression(expression, resolveName);
-    const indexValues = indexes.map((index) => evaluateGoExpression(index, resolveName));
+    const indexValues = indexes.map((index) => readGoNumber(evaluateGoExpression(index, resolveName)));
     if (constant === undefined || value === undefined || !Array.isArray(constant.value)) continue;
-    if (!indexValues.every((index) => typeof index === "number")) continue;
+    if (!indexValues.every((index) => index !== undefined)) continue;
     // An intermediate level the package never made leaves no slice to assign into, so the assignment is skipped
     let target: GoValue[] | undefined = constant.value;
     for (const index of indexValues.slice(0, -1)) {

@@ -8,6 +8,7 @@ import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
@@ -28,7 +29,8 @@ export const addGcsimSkillHoldCandidates = (
         framesName,
         hitmarks: { ...hitmarks, line: hitmarks.elementLines[levelIndex] ?? hitmarks.line, values: toGoNumbers(level) },
       }));
-    const hitmarkValues = typeof hitmarks?.value === "number" ? [hitmarks.value] : undefined;
+    const hitmarkValue = readGoNumber(hitmarks?.value);
+    const hitmarkValues = hitmarkValue === undefined ? undefined : [hitmarkValue];
     if (hitmarks === undefined && !constantMap.has(framesName)) return [];
     return [{ framesName, ...(hitmarks !== undefined && { hitmarks: { ...hitmarks, values: hitmarkValues } }) }];
   });

@@ -3,6 +3,7 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import { countTabs } from "#src/services/genshinAssets/kits/gcsim/countTabs";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -22,8 +23,7 @@ const readClosingDelay = (
     if (countTabs(line) !== indent || !line.trimStart().startsWith("}")) continue;
     const delayText = QUEUE_CLOSE_REGEX.exec(line.trim())?.groups?.delay;
     if (delayText === undefined) return undefined;
-    const value = evaluateGoExpression(parseGoExpression(tokenizeGo(delayText), 0).expression, resolveName);
-    return typeof value === "number" ? value : undefined;
+    return readGoNumber(evaluateGoExpression(parseGoExpression(tokenizeGo(delayText), 0).expression, resolveName));
   }
   return undefined;
 };
