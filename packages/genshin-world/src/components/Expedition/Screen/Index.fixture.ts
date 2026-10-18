@@ -1,6 +1,7 @@
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
+import { MONDSTADT_EXPEDITION_PIN_LAYOUT } from "#src/services/expedition/constants";
 import { readExpeditionLimitAdds } from "#src/services/expedition/readExpeditionLimitAdds";
 import { readMondstadtExpeditionPlaces } from "#src/services/expedition/readMondstadtExpeditionPlaces";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -13,14 +14,6 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 // At 1080 high, so each place's rank, quest and statue are read as the open ones the map shows
 const places = await readMondstadtExpeditionPlaces(GAME_DATA_LOCAL_BASE_URL);
 const pinnedPlaces = places.slice(0, 6);
-const pinLayout = [
-  { x: 815, y: 195 },
-  { x: 565, y: 410 },
-  { x: 1053, y: 338 },
-  { x: 1118, y: 455 },
-  { x: 745, y: 530 },
-  { x: 1175, y: 660 },
-];
 const now = Temporal.Instant.fromEpochMilliseconds(0);
 
 export const props = {
@@ -46,7 +39,9 @@ export const props = {
   nameText: englishNameText,
   now,
   picking: false,
-  pinPositions: new Map(pinnedPlaces.map(({ id }, index) => [id, pinLayout[index] ?? { x: 0, y: 0 }] as const)),
+  pinPositions: new Map(
+    pinnedPlaces.map(({ id }, index) => [id, MONDSTADT_EXPEDITION_PIN_LAYOUT[index] ?? { x: 0, y: 0 }] as const),
+  ),
   // Wolvendom is the fifth pinned place, the one the clip has picked
   place: pinnedPlaces.at(4)?.id,
   places,

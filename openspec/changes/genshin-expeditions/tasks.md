@@ -5,7 +5,7 @@
 
 ## 2. Katheryne and the party
 
-- [ ] 2.1 Wire Katheryne's talk to open the expedition screen once the residents' join places her. Verify: a test named after the scenario 'Talking to Katheryne opens the expedition screen' written first and seen failing.
+- [x] 2.1 Wire Katheryne's talk to open the expedition screen once the residents' join places her. Verify: a test named after the scenario 'talking to Katheryne opens the expedition screen' written first and seen failing.
 - [x] 2.2 Keep characters on expedition usable in the party. Verify: a test named after the scenario 'A character on expedition stays in the party' written first and seen failing.
 
 ## 3. Bonus and talents
