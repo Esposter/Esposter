@@ -117,6 +117,20 @@ describe(stepActiveKit, () => {
     expect(kitState).toStrictEqual(createKitState());
   });
 
+  test("gives the context the locomotion state the input steps in", () => {
+    expect.hasAssertions();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    stepActiveKit(
+      createKitState(),
+      { ...IDLE_INPUT, locomotionState: LocomotionState.Dash },
+      0.1,
+      context,
+      createControls(),
+    );
+
+    expect(context.locomotionState).toBe(LocomotionState.Dash);
+  });
+
   test("sends the team's kits a swap, an effect that runs out and a normal attack that lands", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();

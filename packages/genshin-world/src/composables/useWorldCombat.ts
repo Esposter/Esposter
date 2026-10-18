@@ -45,7 +45,7 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
-import { createSeededRandom } from "genshin-engine";
+import { createSeededRandom, LocomotionState } from "genshin-engine";
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -212,6 +212,7 @@ export const useWorldCombat = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    locomotionState: LocomotionState.Idle,
     oreStrikes: [],
     reactionTriggers: [],
     outbox: [],
