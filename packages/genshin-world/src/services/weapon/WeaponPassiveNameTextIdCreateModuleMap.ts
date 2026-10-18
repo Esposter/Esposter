@@ -18,6 +18,7 @@ import { createChordPassiveModule } from "#src/services/weapon/passives/createCh
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
 import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/createCritEnergyPassiveModule";
+import { createCrownOfTheFinalScionPassiveModule } from "#src/services/weapon/passives/createCrownOfTheFinalScionPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
 import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/createCullTheWeakPassiveModule";
 import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
@@ -390,4 +391,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3108076563": createPurifyingCrownPassiveModule,
   // Many Oaths of Dawn and Dusk (Verdict)
   "2378883547": createManyOathsOfDawnAndDuskPassiveModule,
+  // Crown of the Final Scion (Angelos' Heptades)
+  "788659619": createCrownOfTheFinalScionPassiveModule,
 };
