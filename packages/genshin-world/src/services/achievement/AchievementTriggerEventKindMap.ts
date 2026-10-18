@@ -39,10 +39,13 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
     levelSlot: 1,
     targetSlot: 0,
   },
+  // Provisional: the game's chest ids in the first slot are not joined to the placed chests, so a chest counts by its
+  // Region alone, the chest id not matched
   TRIGGER_OPEN_WORLD_CHEST: {
     countsQuantity: false,
     kind: AchievementEventKind.ChestOpened,
     scopeSlot: 1,
+    targetIsRegionOnly: true,
     targetSlot: 0,
   },
   TRIGGER_UNLOCK_TRANS_POINT: { countsQuantity: false, kind: AchievementEventKind.TransPointUnlocked, targetSlot: 2 },

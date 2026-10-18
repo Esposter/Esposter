@@ -32,7 +32,7 @@ The same run publishes every title and description of a kept achievement, and ev
 
 ### Counting a doing
 
-`AchievementTriggerEventKindMap` names the trigger types the world watches. Four are watched: the AND and OR forms of a finished quest and of a finished parent quest. An AND trigger names one id and an OR trigger names a list, which the reader splits into one parameter each. `advanceAchievements` takes an `AchievementEvent`, a kind and the id it finished, and each achievement that watches the kind and names the id is counted once more, up to its count. An achievement already finished never moves, and one whose tier before it is not finished does not count yet, so the tiers of a chain are done in order.
+`AchievementTriggerEventKindMap` names the trigger types the world watches. Four are watched: the AND and OR forms of a finished quest and of a finished parent quest. An AND trigger names one id and an OR trigger names a list, which the reader splits into one parameter each. `advanceAchievements` takes an `AchievementEvent`, a kind and the id it finished, and each achievement that watches the kind and names the id is counted once more, up to its count. An achievement already finished never moves, and one whose tier before it is not finished does not count yet, so the tiers of a chain are done in order. `TRIGGER_OPEN_WORLD_CHEST` is the one trigger whose target is region-only, provisional, per the [chests spec](../chests/design.md).
 
 When an achievement reaches its count it is finished, its moment is kept, and its Primogems are returned for the caller to pay into the wallet. Every reward row of the table pays Primogems alone, so the Primogems are the whole of an achievement's reward.
 
