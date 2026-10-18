@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -197,6 +198,13 @@ describe(createAinoKitBehaviour, () => {
     field?.onTick(context, 0);
     const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     expect(summon?.hits[0]?.hitArea.radius).toBe(14);
+  });
+
+  test("a Water Ball is dealt as an Elemental Burst, the kind of attack her burst names", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createAinoCombatant(0), { kitEffectState: { effects: [] } });
+    AINO_KIT.elementalBurst.onStart?.(context);
+    expect(takeOne(stepKitTestEffects(20, context)).attackTag).toBe(AttackTag.ElementalBurst);
   });
 
   test("a Water Ball's hitmark counts from the tick that drops it, ten frames on, not from the burst's start", () => {

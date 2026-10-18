@@ -133,7 +133,7 @@ export const createAyatoKitBehaviour = ({
       const constellation6 = findKitStatus(effectState.effects, characterId, CONSTELLATION_6_STATUS_ID);
       if (!constellation6) return;
       constellation6.secondsRemaining = 0;
-      castKitSummon(effectState, body, combatant, constellation6Hits);
+      castKitSummon(effectState, body, combatant, constellation6Hits, { attackTag: AttackTag.NormalAttack });
     },
     talentMultiplier,
   });
@@ -147,9 +147,13 @@ export const createAyatoKitBehaviour = ({
       isFollowing: true,
       nextTickSeconds: bloomwaterBladeFirstTickSeconds,
       onTick: ({ kitEffectState: tickKitEffectState }) =>
-        castKitSummon(tickKitEffectState, { facing, height, position: gardenOfPurity.centre }, combatant, [
-          bloomwaterBlade,
-        ]),
+        castKitSummon(
+          tickKitEffectState,
+          { facing, height, position: gardenOfPurity.centre },
+          combatant,
+          [bloomwaterBlade],
+          { attackTag: AttackTag.ElementalBurst },
+        ),
       secondsRemaining: bloomwaterBladeFirstTickSeconds + gardenOfPuritySeconds,
       tickIntervalSeconds: bloomwaterBladeIntervalSeconds,
     });
