@@ -38,12 +38,34 @@ export const useRegionData = (
   const regionGroundMap = shallowReactive(new Map<string, RegionGround>());
   const groundKeys = selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key)));
   const pendingGroundKeys = new Set<string>();
-  const requestedGroundKeys = new Set<string>();
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
   const settle = () => {
     isRegionDataSettled.value = pendingRegionIds.size === 0 && pendingGroundKeys.size === 0;
+  };
+  // A load is requested once and held pending until it settles. One that fails leaves its id out of both, so the next
+  // Check requests it again
+  const requestLoad = <TLoaded>(
+    pendingIds: Set<string>,
+    id: string,
+    load: () => Promise<TLoaded>,
+    onLoaded: (loaded: TLoaded) => void,
+  ) => {
+    pendingIds.add(id);
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
+    getResultAsync(() => measureLoadStep("regions", load())).match(
+      (loaded) => {
+        pendingIds.delete(id);
+        onLoaded(loaded);
+        settle();
+      },
+      (error) => {
+        pendingIds.delete(id);
+        console.error(error);
+        settle();
+      },
+    );
   };
   const checkIsRecheckDue = createRecheckDueCheck();
 
@@ -54,21 +76,13 @@ export const useRegionData = (
     const z = activeCamera.position.z + origin.z;
     if (!checkIsRecheckDue(x, z)) return;
     for (const key of selectGroundKeysInReach(catalogue.regions, groundKeys, x, z)) {
-      if (requestedGroundKeys.has(key)) continue;
-      requestedGroundKeys.add(key);
-      pendingGroundKeys.add(key);
-      // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
-      getResultAsync(() => measureLoadStep("regions", readGameData(gameDataBaseUrl, key, regionGroundSchema))).match(
+      if (regionGroundMap.has(key) || pendingGroundKeys.has(key)) continue;
+      requestLoad(
+        pendingGroundKeys,
+        key,
+        () => readGameData(gameDataBaseUrl, key, regionGroundSchema),
         (ground) => {
-          pendingGroundKeys.delete(key);
           regionGroundMap.set(key, ground);
-          settle();
-        },
-        (error) => {
-          pendingGroundKeys.delete(key);
-          requestedGroundKeys.delete(key);
-          console.error(error);
-          settle();
         },
       );
     }
@@ -82,19 +96,13 @@ export const useRegionData = (
 
       wantedRegionIds.add(id);
       if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
-      pendingRegionIds.add(id);
-      // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
-      getResultAsync(() => measureLoadStep("regions", readLoadedRegion(regionDataBaseUrl, gameDataBaseUrl, id))).match(
+      requestLoad(
+        pendingRegionIds,
+        id,
+        () => readLoadedRegion(regionDataBaseUrl, gameDataBaseUrl, id),
         (regionData) => {
-          pendingRegionIds.delete(id);
           // A region that left reach while it was fetching is not kept
           if (wantedRegionIds.has(id)) regionDataMap.set(id, regionData);
-          settle();
-        },
-        (error) => {
-          pendingRegionIds.delete(id);
-          console.error(error);
-          settle();
         },
       );
     }
