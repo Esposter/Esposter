@@ -47,6 +47,8 @@ export const addGcsimShellCandidates = (
     shape: GcsimHitboxShape.Circle,
   };
   const hitmark = { file: hitmarks.file, line: hitmarks.elementLines[0] ?? hitmarks.line, value: firstHitmark };
+  // Gcsim sets no poise on the galesplitting attack (burst.go:42-53) or on the shell cases (burst.go:77-88)
+  // The overlay holds each shell's zero poise under NoPoiseSource rather than a source value
   const attack = {
     ...galesplitting,
     fieldLineMap: { ...galesplitting.fieldLineMap, ICDTag: SHELL_ICD_LINE },
