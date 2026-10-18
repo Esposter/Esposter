@@ -1,4 +1,3 @@
-import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { ExcelReliquaryAffixRow } from "#src/models/genshinAssets/stats/ExcelReliquaryAffixRow";
 import type { ExcelReliquaryMainPropRow } from "#src/models/genshinAssets/stats/ExcelReliquaryMainPropRow";
 import type { ExcelTrialAvatarActivityRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarActivityRow";
@@ -9,6 +8,7 @@ import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import { readReliquaryPieces } from "#src/services/genshinAssets/trials/readReliquaryPieces";
 import {
@@ -41,9 +41,7 @@ export const characterTrialsCommand: SubCommandsDef[string] = defineCommand({
             mainPropRows: readExcelTable<ExcelReliquaryMainPropRow>("ReliquaryMainPropExcelConfigData"),
             pieceMap: readReliquaryPieces(),
             reliquaryRows: readExcelTable<ExcelTrialReliquaryRow>(TRIAL_RELIQUARY_TABLE_NAME),
-            rewardMap: new Map(
-              readExcelTable<ExcelRewardRow>("RewardExcelConfigData").map((reward) => [reward.rewardId, reward]),
-            ),
+            rewardMap: readRewardMap(),
             stageRows: readExcelTable<ExcelTrialAvatarActivityRow>(TRIAL_STAGE_TABLE_NAME),
             templateRows: readExcelTable<ExcelTrialAvatarTemplateRow>(TRIAL_TEMPLATE_TABLE_NAME),
             wikiBuilds: WIKI_TRIAL_BUILDS,
