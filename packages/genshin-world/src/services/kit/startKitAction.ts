@@ -7,6 +7,7 @@ import { landKitHits } from "#src/services/kit/landKitHits";
 // An action begun in place at the start of its seconds, its queued press spent and the hits at its start landed
 export const startKitAction = (kitState: KitState, action: KitAction, landedHits: KitHit[]): KitAction => {
   kitState.action = action;
+  kitState.actionLengthSeconds = action.seconds;
   kitState.actionSeconds = 0;
   kitState.isAttackQueued = false;
   kitState.nextHitIndex = landKitHits(action.hits, 0, 0, landedHits);
