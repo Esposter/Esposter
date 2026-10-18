@@ -16,8 +16,9 @@
   "hits.waterBall.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "parameters.burstRadius": { "file": "burst.go", "line": 44, "source": "Gcsim", "value": 10 },
   "parameters.ascension4MasteryShare": { "file": "asc.go", "line": 19, "source": "Gcsim", "value": 0.5 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12132 } },
   "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12132 } },
-  "hits.waterBall.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "hits.waterBall.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.waterBall.hitmarkFrames": { "cause": "DiffersFromSource", "value": 10 }
 }
