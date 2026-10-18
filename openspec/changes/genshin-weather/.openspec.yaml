@@ -7,5 +7,7 @@ x-touches:
   [
     "packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts",
     "packages/genshin-world/src/services/world/getNextAreaWeather.ts",
+    "packages/genshin-world/src/services/world/computeShownAreaWeather.ts",
+    "packages/genshin-world/src/composables/useAreaWeather.ts",
     "scripts/src/services/genshinText/constants.ts",
   ]

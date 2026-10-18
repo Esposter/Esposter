@@ -12,10 +12,14 @@ describe(getNextAreaWeather, () => {
     expect(getNextAreaWeather(WeatherKind.Clear, AREA_WEATHERS, () => 0.99)).toBe(WeatherKind.Thunderstorm);
   });
 
-  test("never turns rain into rain", () => {
+  test("rain always turns to clear or cloudy at the next change", () => {
     expect.hasAssertions();
 
-    expect(getNextAreaWeather(WeatherKind.Rain, AREA_WEATHERS, () => 0.5)).not.toBe(WeatherKind.Rain);
+    const rainTurns = Array.from({ length: 1000 }, (_, index) =>
+      getNextAreaWeather(WeatherKind.Rain, AREA_WEATHERS, () => index / 1000),
+    );
+
+    expect(new Set(rainTurns)).toStrictEqual(new Set([WeatherKind.Clear, WeatherKind.Cloudy]));
   });
 
   test("holds snow, which the chain names no next weather for", () => {
