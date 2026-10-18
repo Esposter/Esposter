@@ -22,7 +22,7 @@ Her Fiery Passion forms, the apex state that opens Volcanic Kablam and the Follo
 - **Rush's box is gcsim's, marked provisional.** gcsim queues Rush as a box 0.1 metres wide and 2 metres long centred on the primary target and marks it "TODO: approximated". The kit ships it as gcsim gives it, priced as the target's reach plus the box's far corner. The roadmap's manual verification has the question.
 - **The Fiery Passion Flying Kick's area is Unsourced at radius 22.5.** gcsim's kick is a circle of radius 7.5 on the primary target (`burst.go:76`), and the target-centred convention stores that as 15 plus the radius, the 15 being `SKILL_TARGETING_AREA`'s (`services/kit/constants.ts`), so 22.5. The overlay holds the value Unsourced until the reader's burst talent-variable join reads gcsim's circle, when the entry becomes a Gcsim value at that line.
 - **Rush's particles are not built.** Its hit gives particles in gcsim, which the framework does not yet produce, so Rush's energy is not generated, as the kit page's shared gap records.
-- **The low plunge's hitmark, 37 frames, is Unsourced.** gcsim plays it at 37 from the air, which the reader gives no candidate for, so the value stands and removing it breaks the build. Reading the air plunge settles it.
+- **The low plunge's hitmark and frames come from the air plunge's constants.** gcsim's air low plunge names them `xianyunLowPlungeHitmark` and `xianyunLowPlungeFrames`, which its package copied from Xianyun's, so the reader reads 37 frames and the 75-frame animation under those names, cited to `plunge.go`.
 
 ## Key files
 

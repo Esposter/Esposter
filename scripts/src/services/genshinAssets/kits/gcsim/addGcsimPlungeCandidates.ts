@@ -25,15 +25,17 @@ export const addGcsimPlungeCandidates = (
     addFallbackPlungeCandidates(donorWriter, plungeFallback);
     return;
   }
-  for (const [plunge, prefix, hitboxName] of [
-    [KitPlunge.Low, "low", "Low_Plunge"],
-    [KitPlunge.High, "high", "High_Plunge"],
+  // Varesa's air low plunge names its constants after Xianyun's, which gcsim copied into her package
+  // The low's alternate prefix names that copy, and the high's repeats its own, so one lookup serves both
+  for (const [plunge, prefix, hitboxName, alternatePrefix] of [
+    [KitPlunge.Low, "low", "Low_Plunge", "xianyunLow"],
+    [KitPlunge.High, "high", "High_Plunge", "high"],
   ] as const) {
     const path = `plunges.${plunge}`;
     const hitbox = findGcsimHitbox(config, "plunge", hitboxName);
-    const hitmark = findGcsimConstant(constantMap, `${prefix}PlungeHitmark`);
+    const hitmark = findGcsimConstant(constantMap, `${prefix}PlungeHitmark`, `${alternatePrefix}PlungeHitmark`);
     add(`${path}.hits.length`, 1, toFile(plungeFile), hitmark?.line ?? 1);
-    addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`);
+    addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`, `${alternatePrefix}PlungeFrames`);
     addHit(
       `${path}.hits.0`,
       {

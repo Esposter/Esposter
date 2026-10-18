@@ -1000,6 +1000,52 @@ describe(getGcsimKitCandidates, () => {
     ]).toStrictEqual([[[67, KitProvisionalCause.NoActionFile]], [[36, KitProvisionalCause.NoActionFile]]]);
   });
 
+  test("reads a low plunge's hitmark and frames from the air low plunge's constants, which the package names after another character", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["highPlungeHitmark", plungeConstant(37, 29)],
+        ["xianyunLowPlungeFrames", plungeConstant(frames(75), 81)],
+        ["xianyunLowPlungeHitmark", plungeConstant(37, 35)],
+      ]),
+      filePaths: ["plunge.go"],
+      folder: "varesa",
+      queuedAttacks: [],
+      talentArrayMap: new Map(),
+      talentFile: "varesa.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Varesa",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["plunges.low.animationFrames", "plunges.low.hits.0.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ provenance, value }) => [value, provenance]),
+      ),
+    ).toStrictEqual([
+      [[75, { file: "internal/characters/varesa/plunge.go", line: 81, source: KitSource.Gcsim }]],
+      [[37, { file: "internal/characters/varesa/plunge.go", line: 35, source: KitSource.Gcsim }]],
+    ]);
+  });
+
   test("gives a hold's hit no area from a hitbox when two calls fire at its hitmark, as it gives it no attack", () => {
     expect.hasAssertions();
 
