@@ -76,6 +76,7 @@ import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/pass
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
+import { createTurquoiseHuntPassiveModule } from "#src/services/weapon/passives/createTurquoiseHuntPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
@@ -320,4 +321,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3284643059": createStaffOfHomaPassiveModule,
   // Parsifal the Great (The First Great Magic)
   "3257922883": createTheFirstGreatMagicPassiveModule,
+  // Turquoise Hunt (Fang of the Mountain King)
+  "3276718187": createTurquoiseHuntPassiveModule,
 };
