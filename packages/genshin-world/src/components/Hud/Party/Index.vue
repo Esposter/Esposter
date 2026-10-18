@@ -3,22 +3,27 @@ import type { CharacterData } from "#src/models/character/CharacterData";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Party } from "#src/models/party/Party";
 import type { Input } from "genshin-engine";
+import type { GameText } from "genshin-text";
 
 import HudKeyCap from "#src/components/Hud/KeyCap/Index.vue";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
+import { checkIsNextMemberAsked } from "#src/services/party/checkIsNextMemberAsked";
 import { PARTY_MEMBER_INPUT_ACTIONS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { takeOne } from "@esposter/shared";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The party's characters' data, whose text id names each row
   characterDataMap: ReadonlyMap<number, CharacterData>;
   // The world's frame, whose clock the switch's cooldown counts down by
   frame: HudFrame;
+  // The game's own words, which the prompt for the next member is read from
+  gameText: GameText;
   input: Input;
   // Whether the rows are laid out for a touch screen, which caps no row with its key
   isTouch: boolean;
@@ -30,7 +35,7 @@ interface Props {
   travelerName: string;
 }
 
-const { characterDataMap, frame, input, isTouch, nameTextMap, party, travelerName } = defineProps<Props>();
+const { characterDataMap, frame, gameText, input, isTouch, nameTextMap, party, travelerName } = defineProps<Props>();
 // The share of the switch's cooldown left, which darkens every row but the one on the field
 const switchCooldownShare = computed(() =>
   Math.max(0, 1 - (frame.seconds - party.switchedSeconds) / PARTY_SWITCH_COOLDOWN_SECONDS),
@@ -76,6 +81,8 @@ const rows = computed(() =>
       </button>
     </li>
   </ol>
+  <!-- Once the member on the field has fallen and another stands, the game asks for the next one, under the team -->
+  <p v-if="checkIsNextMemberAsked(party)" class="prompt">{{ gameText[GameTextKey.PleaseSelectCharacter] }}</p>
 </template>
 
 <style scoped>
@@ -103,6 +110,17 @@ const rows = computed(() =>
   height: calc(var(--canvas-unit) * 80);
   justify-content: flex-end;
   align-items: center;
+}
+
+/* Provisional: the prompt's place under the team and its look wait on a recording of the English client at 1080 high */
+.prompt {
+  position: absolute;
+  top: 100%;
+  right: calc(var(--canvas-unit) * 33);
+  margin: 0;
+  color: #ece5d8;
+  text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
+  white-space: nowrap;
 }
 
 .touch {
