@@ -50,11 +50,11 @@ export const STORMTERROR_MOVES: BossMove[] = [
 // Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
 // (youtu.be/j62DdUZXczM) and is not measured in a recording of this game yet
 export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
-  { phase: 1, shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: "Caelestinum Finale Termini" },
-  { phase: 2, shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
-  { phase: 3, shieldLimit: 5, timeLimitSeconds: 120, transitionAttack: "Energy Lightning" },
-  { phase: 4, shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
-  { phase: 5, shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
+  { shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: "Caelestinum Finale Termini" },
+  { shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
+  { shieldLimit: 5, timeLimitSeconds: 120, transitionAttack: "Energy Lightning" },
+  { shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
+  { shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
 ];
 
 // Dvalin's shield, which each phase's breaks count against: non-elemental and a fifth of his max HP, from the same page. Once it
