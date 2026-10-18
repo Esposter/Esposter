@@ -12,7 +12,6 @@
   },
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 6831 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.connectorFirstTick": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 28 },
   "frames.connector": { "cause": "Unsourced", "value": 773 },
   "frames.connectorTickInterval": { "cause": "Unclassified", "value": 24 },
