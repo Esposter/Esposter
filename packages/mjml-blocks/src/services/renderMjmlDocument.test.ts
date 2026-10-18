@@ -1,6 +1,6 @@
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlDocument } from "#src/models/MjmlDocument";
-import type { BlockDocument } from "headless-block-editor";
+import type { BlockDocument, BlockNode } from "headless-block-editor";
 
 import {
   TEST_BUTTON_ID,
@@ -53,29 +53,30 @@ const EMAIL_DOCUMENT: BlockDocument = {
 };
 
 describe(renderMjmlDocument, () => {
+  // A section of one column holding one text, with the props given set on that text
+  const createTextSection = (textProps: Record<string, unknown> = {}): BlockNode => ({
+    props: {
+      children: [
+        {
+          props: {
+            children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: "mj-text" }],
+            id: TEST_COLUMN_ID,
+          },
+          type: "mj-column",
+        },
+      ],
+      id: TEST_SECTION_ID,
+    },
+    type: "mj-section",
+  });
+
   test("rendering where there is no document object model", () => {
     expect.hasAssertions();
 
     expect(Reflect.has(globalThis, "document")).toBe(false);
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
-                  id: TEST_COLUMN_ID,
-                },
-                type: "mj-column",
-              },
-            ],
-            id: TEST_SECTION_ID,
-          },
-          type: "mj-section",
-        },
-      ],
+      content: [createTextSection()],
       root: { props: {} },
     });
     expect(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS)).toStrictEqual({
@@ -258,28 +259,7 @@ describe(renderMjmlDocument, () => {
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
       content: [
         {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    {
-                      props: {
-                        children: [
-                          { props: { content: "Hi", "font-family": "Test", id: TEST_TEXT_ID }, type: "mj-text" },
-                        ],
-                        id: TEST_COLUMN_ID,
-                      },
-                      type: "mj-column",
-                    },
-                  ],
-                  id: TEST_SECTION_ID,
-                },
-                type: "mj-section",
-              },
-            ],
-            id: TEST_WRAPPER_ID,
-          },
+          props: { children: [createTextSection({ "font-family": "Test" })], id: TEST_WRAPPER_ID },
           type: "mj-wrapper",
         },
       ],
@@ -302,31 +282,7 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    {
-                      props: {
-                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
-                        id: TEST_COLUMN_ID,
-                      },
-                      type: "mj-column",
-                    },
-                  ],
-                  id: TEST_SECTION_ID,
-                },
-                type: "mj-section",
-              },
-            ],
-            id: TEST_WRAPPER_ID,
-          },
-          type: "mj-wrapper",
-        },
-      ],
+      content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: "mj-wrapper" }],
       root: { props: { attributes: { all: { "font-family": "Arial" } } } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
@@ -339,23 +295,7 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
-                  id: TEST_COLUMN_ID,
-                },
-                type: "mj-column",
-              },
-            ],
-            id: TEST_SECTION_ID,
-          },
-          type: "mj-section",
-        },
-      ],
+      content: [createTextSection()],
       root: { props: { body: { width: "800px" } } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
