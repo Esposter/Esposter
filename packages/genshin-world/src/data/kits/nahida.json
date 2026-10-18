@@ -11,5 +11,33 @@
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 332 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7332 } },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unsourced", "value": 5 },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "areas.illusoryHeart": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 20 } },
+  "frames.illusoryHeartStart": { "cause": "Unsourced", "value": 66 },
+  "frames.illusoryHeartFirstTick": { "cause": "DiffersFromSource", "value": 96 },
+  "frames.illusoryHeartTickInterval": { "cause": "Unsourced", "value": 30 },
+  "parameters.illusoryHeartSeconds": { "cause": "Unsourced", "value": 15 },
+  "parameters.illusoryHeartHydroExtension.length": { "cause": "Unsourced", "value": 2 },
+  "parameters.illusoryHeartHydroExtension.0": {
+    "cause": "Unsourced",
+    "value": { "index": 4, "proudSkillGroupId": 7339 }
+  },
+  "parameters.illusoryHeartHydroExtension.1": {
+    "cause": "Unsourced",
+    "value": { "index": 5, "proudSkillGroupId": 7339 }
+  },
+  "parameters.triKarmaElectroIntervalCut.length": { "cause": "Unsourced", "value": 2 },
+  "parameters.triKarmaElectroIntervalCut.0": {
+    "cause": "Unsourced",
+    "value": { "index": 2, "proudSkillGroupId": 7339 }
+  },
+  "parameters.triKarmaElectroIntervalCut.1": {
+    "cause": "Unsourced",
+    "value": { "index": 3, "proudSkillGroupId": 7339 }
+  },
+  "parameters.triKarmaElementalMastery": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 7332 } },
+  "parameters.triKarmaPyroDamageBonus.length": { "cause": "Unsourced", "value": 2 },
+  "parameters.triKarmaPyroDamageBonus.0": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 7339 } },
+  "parameters.triKarmaPyroDamageBonus.1": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 7339 } },
+  "hits.triKarmaPurification.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 7332 } }
 }
