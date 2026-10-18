@@ -50,6 +50,8 @@ An image zooms on the wheel and pans on a drag once it is past the fitted size, 
 moves to another file; a video renders with its own controls and does neither. Download is the same
 `downloadUrl` anchor the file card's own options menu calls.
 
+A PDF is not in this viewer's gallery, and it does not open here at all. Its row draws the first page as a thumbnail, and its own dialog holds the viewer, both over the renderer that `pdfjs-dist` ships; the [PDF viewer](../../architecture/pdf-viewer/design.md) page covers the loader, the toolbar and the config.
+
 ## Data model
 
 Two columns on `rooms` (`packages/db-schema/src/schema/message/roomsInMessage.ts`):
@@ -81,6 +83,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `apps/web/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
 | `apps/web/app/components/Message/Model/Message/File/ViewerDialog.vue`            | The media viewer — one file, the gallery around it          |
 | `apps/web/app/store/message/file/dialog.ts`                                      | The viewer's target id                                      |
+| `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue`                     | The PDF's thumbnail in the row, and the dialog holding its viewer |
 | `apps/web/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
 | `apps/web/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
 | `apps/web/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer        |

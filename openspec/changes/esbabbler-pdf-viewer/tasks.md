@@ -1,12 +1,12 @@
 ## 1. Loading and the thumbnail
 
-- [ ] 1.1 Write the loader and the thumbnail's tests first and see them fail: the scenarios 'The row changes width', 'A draw cancelled by a newer one', 'A page larger than the device can draw' and 'The file cannot be fetched', with the upstream issue titles #20, #52, #28 and #261 the design names. Verify: `pnpm test app/components/Pdf app/services/pdf --run` from `apps/web` reports them failing.
-- [ ] 1.2 Build `loadPdfDocument`, the canvas scale function and `PdfThumbnail`, and draw the row's first page with it. Verify: the same command passes.
+- [x] 1.1 Write the loader and the thumbnail's tests first and see them fail: the scenarios 'The row changes width', 'A draw cancelled by a newer one', 'A page larger than the device can draw' and 'The file cannot be fetched', with the upstream issue titles #20, #52, #28 and #261 the design names. Verify: `pnpm test app/components/Pdf app/services/pdf --run` from `apps/web` reports them failing.
+- [x] 1.2 Build `loadPdfDocument`, the canvas scale function and `PdfThumbnail`, and draw the row's first page with it. Verify: the same command passes.
 
 ## 2. The viewer
 
-- [ ] 2.1 Build `PdfViewer` over `PDFViewer`, `PDFLinkService` and `PDFFindController`, with the password prompt and the load error, and mount it in the dialog. Verify: `pnpm test app/components/Message/Model/FileRenderer/Pdf.test.ts --run` from `apps/web` passes with the scenarios 'Opening the viewer' and 'A preview opens nothing'.
-- [ ] 2.2 Build the toolbar: page, zoom and fit, search with the match count, rotate, download and print. Verify: a test per control's wiring in the viewer's suite, written first and failing, then passing.
+- [x] 2.1 Build `PdfViewer` over `PDFViewer`, `PDFLinkService` and `PDFFindController`, with the password prompt and the load error, and mount it in the dialog. Verify: `pnpm test app/components/Message/Model/FileRenderer/Pdf.test.ts --run` from `apps/web` passes with the scenarios 'Opening the viewer' and 'A preview opens nothing'.
+- [x] 2.2 Build the toolbar: page, zoom and fit, search with the match count, rotate, download and print. Verify: a test per control's wiring in the viewer's suite, written first and failing, then passing.
 
 ## 3. The removal
 
