@@ -48,6 +48,8 @@ import { maskOfSolitudeBasalt } from "#src/services/gcg/cards/maskOfSolitudeBasa
 import { masterOfWeaponry } from "#src/services/gcg/cards/masterOfWeaponry";
 import { mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
 import { mondstadtHashBrown } from "#src/services/gcg/cards/mondstadtHashBrown";
+import { mushroomPizza } from "#src/services/gcg/cards/mushroomPizza";
+import { mushroomPizzaInEffect } from "#src/services/gcg/cards/mushroomPizzaInEffect";
 import { naganoharaMeteorSwarm } from "#src/services/gcg/cards/naganoharaMeteorSwarm";
 import { niwabiEnshou } from "#src/services/gcg/cards/niwabiEnshou";
 import { northernSmokedChicken } from "#src/services/gcg/cards/northernSmokedChicken";
@@ -125,6 +127,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [213051, naganoharaMeteorSwarm],
   [222011, streamingSurge],
   [225011, transcendentAutomaton],
+  [303_305, mushroomPizzaInEffect],
   [311_101, magicGuide],
   [311201, ravenBow],
   [311301, whiteIronGreatsword],
@@ -177,6 +180,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [333_003, lotusFlowerCrisp],
   [333_005, sweetMadame],
   [333_006, mondstadtHashBrown],
+  [333_007, mushroomPizza],
   [333_008, mintyMeatRolls],
   [333_009, teyvatFriedEgg],
   [GCG_BURNING_FLAME_ID, burningFlame],
