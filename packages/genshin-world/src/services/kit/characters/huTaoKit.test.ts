@@ -288,6 +288,7 @@ describe("spirit Soother", () => {
         characterId: HU_TAO_CHARACTER_ID,
         // The shares are summed and subtracted as floats, so they are compared to the digits the game gives
         healthShare: expect.closeTo(SPIRIT_SOOTHER_REGEN_SHARE, 10),
+        isFallRefused: false,
         overflowHealthShare: expect.closeTo(0, 10),
         sourceCharacterId: HU_TAO_CHARACTER_ID,
       },
@@ -331,6 +332,7 @@ describe("constellation 4 and 6", () => {
           bondOfLifeShare: 0,
           characterId: HU_TAO_CHARACTER_ID,
           healthShare: -0.1,
+          isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
         },

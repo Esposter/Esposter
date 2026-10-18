@@ -77,8 +77,22 @@ describe(hitPartyMember, () => {
     damagePartyMember(party, 1, 0.25, 2);
 
     expect(party.healthChanges).toStrictEqual([
-      { bondOfLifeShare: 0, characterId: 1, element: Element.Pyro, healthShare: -0.25, overflowHealthShare: 0 },
-      { bondOfLifeShare: 0, characterId: 1, healthShare: -0.25, overflowHealthShare: 0, sourceCharacterId: 2 },
+      {
+        bondOfLifeShare: 0,
+        characterId: 1,
+        element: Element.Pyro,
+        healthShare: -0.25,
+        isFallRefused: false,
+        overflowHealthShare: 0,
+      },
+      {
+        bondOfLifeShare: 0,
+        characterId: 1,
+        healthShare: -0.25,
+        isFallRefused: false,
+        overflowHealthShare: 0,
+        sourceCharacterId: 2,
+      },
     ]);
   });
 });

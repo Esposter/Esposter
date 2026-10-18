@@ -34,6 +34,7 @@ const clearHealth = (bondOfLifeShare: number) => ({
   bondOfLifeShare,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0,
+  isFallRefused: false,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
 });

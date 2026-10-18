@@ -264,6 +264,7 @@ describe(createCandaceKitBehaviour, () => {
     bondOfLifeShare: 0,
     characterId: CANDACE_CHARACTER_ID,
     healthShare: -0.1,
+    isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
   });
@@ -271,6 +272,7 @@ describe(createCandaceKitBehaviour, () => {
     bondOfLifeShare: 0,
     characterId: KUKI_CHARACTER_ID,
     healthShare: -0.1,
+    isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
   });
