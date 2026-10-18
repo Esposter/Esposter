@@ -7,6 +7,7 @@ import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuWorldLevelDialog from "#src/components/Menu/WorldLevelDialog/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
+import { checkIsSystemOpen } from "#src/services/adventureRank/checkIsSystemOpen";
 import {
   PAIMON_MENU_CLOSE_MS,
   PAIMON_MENU_CONTENTS,
@@ -184,7 +185,7 @@ onBeforeUnmount(() => {
             v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
             :key="screenKind"
             class="entry"
-            :disabled="!checkIsBuilt(screenKind)"
+            :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank)"
             :kind="GameButtonKind.Row"
             @click="emit('open', screenKind)"
           >
@@ -210,6 +211,7 @@ onBeforeUnmount(() => {
       :is-world-level-adjustable
       :is-world-level-lowered
       :server-clock-offset-ms
+      :world-level
       :world-level-changed-at
       @close="closeWorldLevelDialog()"
       @toggle-world-level="emit('toggleWorldLevel')"
