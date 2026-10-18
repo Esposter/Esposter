@@ -1,12 +1,14 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -18,7 +20,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -101,6 +103,25 @@ describe(strikeElementalTicks, () => {
     expect(near.maxHealth - near.health).toBeCloseTo(burningDamage);
     expect(near.elementalState.auras.has(AuraType.Pyro)).toBe(true);
     expect([far.health, far.elementalState.auras.size]).toStrictEqual([STURDY_HEALTH, 0]);
+  });
+
+  test("sends the team's kits a defeat for a Burning tick that takes its enemy's health to nothing", () => {
+    expect.hasAssertions();
+
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const kitCombatant: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, onKitEvent } };
+    const burning = createSturdyEnemy(0);
+    burning.health = 1;
+    burning.burningCombatant = kitCombatant;
+    burning.elementalReactions.push(BURNING_TICK);
+
+    strikeElementalTicks(createKitTestContext(kitCombatant, { enemyMap: new Map([["", burning]]), enemyTables }));
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      enemy: burning,
+      kind: KitEventKind.EnemyDefeated,
+      striker: kitCombatant,
+    });
   });
 
   test.each<[string, Reaction]>([
