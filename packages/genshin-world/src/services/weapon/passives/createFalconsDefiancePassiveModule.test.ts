@@ -8,7 +8,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { createAquilaFavoniaPassiveModule } from "#src/services/weapon/passives/createAquilaFavoniaPassiveModule";
+import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
@@ -27,7 +27,7 @@ const wielder: Combatant = {
 };
 // Falcon's Defiance at its first rank: the ATK share it adds is a static line, so its params carry a heal of 100% of ATK,
 // A hit of 200% of ATK and a cooldown of fifteen seconds
-const aquilaFavoniaPassiveModule = createAquilaFavoniaPassiveModule([0.2, 1, 2, 15]);
+const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0.2, 1, 2, 15]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
@@ -35,7 +35,7 @@ const createEnemyStrikeLoss = () => ({
   overflowHealthShare: 0,
 });
 
-describe(createAquilaFavoniaPassiveModule, () => {
+describe(createFalconsDefiancePassiveModule, () => {
   test("taking DMG heals the wielder by the rank's share of ATK and queues its hit on the surrounding opponents", () => {
     expect.hasAssertions();
 

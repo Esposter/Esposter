@@ -14,7 +14,7 @@ const SKYWARD_BLADE_MIGHT_ID = "skypiercingMight";
 // Gives the wielder Movement SPD and Normal Attack SPD by the rank's shares, and its Normal and Charged Attack hits deal the
 // Rank's share of ATK as base damage, for the rank's seconds. The share is the wielder's ATK as it stands, without the
 // Team's buffs, since a flat-damage hook is given no buffed combatant to read them from
-export const createSkywardBladePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSkyPiercingFangPassiveModule = (params: number[]): WeaponPassiveModule => {
   const movementSpeedShare = takeOne(params, 1);
   const normalAttackSpeedShare = takeOne(params, 2);
   const damageShare = takeOne(params, 3);
