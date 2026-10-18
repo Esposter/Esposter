@@ -156,8 +156,8 @@ const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: Inve
   setInventory(nextInventory);
   setWallet(nextWallet);
 };
-// The player's characters' copies, which no save holds yet
-const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
+// The copies of each character the player holds, from the save's counts and as the wish screen grants them
+const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
   finishedMainQuestIds,
@@ -326,6 +326,7 @@ const {
     if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
   },
   placeWorldDrops,
+  savedCharacters: savedState.characters,
   startingCharacterIdKitMap,
   statTables,
 });
@@ -386,6 +387,8 @@ useWorldSaveSync({
   getSaveState: () => ({
     achievementProgressMap: achievementProgressMap.value,
     adventureExp: adventureExp.value,
+    characterCopyCountMap: characterCopyCountMap.value,
+    characters: characters.value,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,

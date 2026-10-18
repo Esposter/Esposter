@@ -4,6 +4,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { toAchievementProgressMap } from "#src/services/save/toAchievementProgressMap";
+import { toCharacters } from "#src/services/save/toCharacters";
 import { toInventory } from "#src/services/save/toInventory";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
@@ -14,6 +15,7 @@ export const readGenshinSave = (
   {
     achievements,
     adventureExp,
+    characters,
     companionshipExp,
     crafting,
     inventory,
@@ -30,24 +32,29 @@ export const readGenshinSave = (
   nameText: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
-): GenshinSaveState => ({
-  achievementProgressMap: toAchievementProgressMap(achievements),
-  adventureExp,
-  companionshipExpMap: new Map(
+): GenshinSaveState => {
+  const companionshipExpMap = new Map(
     Object.entries(companionshipExp).map(([characterId, exp]) => [Number(characterId), exp]),
-  ),
-  craftedCountMap: new Map(
-    Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
-  ),
-  craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
-  frostbearingTreeProgress: offerings.frostbearingTree,
-  inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
-  openedChestIds: new Set(openedChests),
-  quests: new Map(Object.entries(quests)),
-  reputation,
-  travelerName,
-  unlockedLandmarkIds: new Set(unlockedLandmarks),
-  wallet: toWallet(wallet),
-  wishPityMap: wishPity,
-  worldLevelAdjustment: toWorldLevelAdjustment(worldLevelAdjustment),
-});
+  );
+  return {
+    achievementProgressMap: toAchievementProgressMap(achievements),
+    adventureExp,
+    characterCopyCountMap: new Map(characters.map(({ copyCount, id }) => [id, copyCount])),
+    characters: toCharacters(characters, companionshipExpMap),
+    companionshipExpMap,
+    craftedCountMap: new Map(
+      Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
+    ),
+    craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
+    frostbearingTreeProgress: offerings.frostbearingTree,
+    inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
+    openedChestIds: new Set(openedChests),
+    quests: new Map(Object.entries(quests)),
+    reputation,
+    travelerName,
+    unlockedLandmarkIds: new Set(unlockedLandmarks),
+    wallet: toWallet(wallet),
+    wishPityMap: wishPity,
+    worldLevelAdjustment: toWorldLevelAdjustment(worldLevelAdjustment),
+  };
+};

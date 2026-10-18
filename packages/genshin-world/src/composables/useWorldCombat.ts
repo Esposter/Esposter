@@ -36,6 +36,7 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
+import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
@@ -46,6 +47,7 @@ export const useWorldCombat = ({
   gameDataBaseUrl,
   onPartyRevived,
   placeWorldDrops,
+  savedCharacters,
   startingCharacterIdKitMap,
   statTables,
 }: {
@@ -54,11 +56,16 @@ export const useWorldCombat = ({
   gameDataBaseUrl: string;
   onPartyRevived: () => void;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
+  savedCharacters: Character[];
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
 }) => {
-  // The player's characters, the Traveler alone as a new player's, on the field, and their party
-  const characters = shallowRef<Character[]>([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
+  // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party
+  const characters = shallowRef<Character[]>(
+    savedCharacters.length > 0
+      ? savedCharacters
+      : [createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)],
+  );
   const party = createWorldParty([...STARTING_TEAM_CHARACTER_IDS]);
   // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
   // Changes to take it in, its module and multipliers read on demand

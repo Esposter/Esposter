@@ -3,10 +3,16 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import achievementCount from "#src/data/achievements/achievementCount.json";
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
+import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { BannerKind } from "genshin-interface/save";
 
@@ -44,11 +50,48 @@ const MAX_SAVE_ID = "x".repeat(MAX_SAVE_ID_LENGTH);
 const getRecordEntryLength = (value: unknown): number => JSON.stringify({ [MAX_SAVE_ID]: value }).length - 1;
 // The serialized length of a list's entry at its longest, with the comma that follows it
 const getListEntryLength = (value: unknown): number => JSON.stringify(value).length + 1;
+// The longest member of a string-valued enum, so an entry holding any member is counted at the longest it can be
+const getLongestMember = (members: readonly string[]): string =>
+  members.reduce((longest, member) => (member.length > longest.length ? member : longest));
+const LONGEST_ATTRIBUTE = getLongestMember(Object.values(Attribute));
+const LONGEST_ARTIFACT_SLOT = getLongestMember(Object.values(ArtifactSlot));
+// A character at its longest: every number at its largest, every enum at its longest member, an attribute's value at the
+// Longest a finite number is written, and every list at its cap
+const LONGEST_CHARACTER_SAVE = {
+  artifacts: Array.from({ length: Object.values(ArtifactSlot).length }, () => ({
+    experience: MAX_SAVE_NUMBER,
+    isLocked: true,
+    level: MAX_SAVE_NUMBER,
+    mainAffix: LONGEST_ATTRIBUTE,
+    minorAffixes: Array.from({ length: MAX_MINOR_AFFIX_COUNT }, () => ({
+      attribute: LONGEST_ATTRIBUTE,
+      value: -Number.MAX_VALUE,
+    })),
+    rarity: MAX_SAVE_NUMBER,
+    setId: MAX_SAVE_NUMBER,
+    slot: LONGEST_ARTIFACT_SLOT,
+  })),
+  ascension: MAX_SAVE_NUMBER,
+  constellationCount: CONSTELLATION_COUNT,
+  copyCount: MAX_SAVE_NUMBER,
+  id: MAX_SAVE_NUMBER,
+  level: MAX_SAVE_NUMBER,
+  stellaFortunaCount: MAX_SAVE_NUMBER,
+  talentLevels: Object.fromEntries(Object.values(CombatTalent).map((combatTalent) => [combatTalent, MAX_SAVE_NUMBER])),
+  weapon: {
+    ascension: MAX_SAVE_NUMBER,
+    experience: MAX_SAVE_NUMBER,
+    id: MAX_SAVE_NUMBER,
+    level: MAX_SAVE_NUMBER,
+    refinement: MAX_WEAPON_REFINEMENT,
+  },
+};
 // The save at its longest outside its collections: every number at its largest, every instant at its longest and every
 // Collection empty, so the ceiling below adds only the entries of each collection
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  characters: [],
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: { items: [], nextId: MAX_SAVE_NUMBER },
@@ -87,6 +130,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
 export const MAX_GENSHIN_SAVE_LENGTH: number =
   SKELETON_GENSHIN_SAVE_LENGTH +
   MAX_ACHIEVEMENT_COUNT * getRecordEntryLength({ count: MAX_SAVE_NUMBER, finishedAt: MAX_SAVE_INSTANT }) +
+  MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
   MAX_QUEST_COUNT *
@@ -112,6 +156,7 @@ export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  characters: [],
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: EMPTY_INVENTORY_SAVE,

@@ -1,5 +1,11 @@
+import type { CharacterSave } from "#src/models/character/CharacterSave";
+
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute, Attributes } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
+import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import {
   EMPTY_GENSHIN_SAVE,
@@ -14,10 +20,29 @@ import {
   MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
 } from "#src/services/save/constants";
+import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
+import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
 describe("genshinSaveSchema", () => {
+  // A character the player holds at its least: level one, one copy, and nothing worn or wielded beyond its own weapon
+  const CHARACTER: CharacterSave = {
+    artifacts: [],
+    ascension: 0,
+    constellationCount: 0,
+    copyCount: 1,
+    id: 1,
+    level: 1,
+    stellaFortunaCount: 0,
+    talentLevels: {
+      [CombatTalent.ElementalBurst]: 1,
+      [CombatTalent.ElementalSkill]: 1,
+      [CombatTalent.NormalAttack]: 1,
+    },
+    weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
+  };
+
   // The ceiling is each collection's cap times its longest entry, so a save with every collection at its cap, each
   // Number at its largest and each instant at its longest, is under it and passes the refine
   test("accepts a save at every cap, each number and instant at its longest", () => {
@@ -33,6 +58,35 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
+        artifacts: Object.values(ArtifactSlot).map((slot) => ({
+          experience: maxNumber,
+          isLocked: true,
+          level: maxNumber,
+          mainAffix: Attribute.Health,
+          minorAffixes: Attributes.slice(0, MAX_MINOR_AFFIX_COUNT).map((attribute) => ({
+            attribute,
+            value: maxNumber,
+          })),
+          rarity: maxNumber,
+          setId: maxNumber,
+          slot,
+        })),
+        ascension: maxNumber,
+        constellationCount: CONSTELLATION_COUNT,
+        copyCount: maxNumber,
+        id: maxNumber - index,
+        level: maxNumber,
+        stellaFortunaCount: maxNumber,
+        talentLevels: Object.fromEntries(Object.values(CombatTalent).map((combatTalent) => [combatTalent, maxNumber])),
+        weapon: {
+          ascension: maxNumber,
+          experience: maxNumber,
+          id: maxNumber,
+          level: maxNumber,
+          refinement: MAX_WEAPON_REFINEMENT,
+        },
+      })),
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),
@@ -91,6 +145,17 @@ describe("genshinSaveSchema", () => {
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);
+  });
+
+  // A save holding more characters than the limit is refused, so none of them is read
+  test("a save past the character limit is refused", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      characters: Array.from({ length: MAX_CHARACTER_COUNT + 1 }, (_value, index) => ({ ...CHARACTER, id: index + 1 })),
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
   // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the

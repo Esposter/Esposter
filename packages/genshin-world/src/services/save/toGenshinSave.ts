@@ -2,6 +2,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
+import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
@@ -10,6 +11,8 @@ import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjus
 export const toGenshinSave = ({
   achievementProgressMap,
   adventureExp,
+  characterCopyCountMap,
+  characters,
   companionshipExpMap,
   craftedCountMap,
   craftingProgress,
@@ -26,7 +29,11 @@ export const toGenshinSave = ({
 }: GenshinSaveState): GenshinSave => ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
-  companionshipExp: Object.fromEntries(companionshipExpMap),
+  characters: toCharacterSaves(characters, characterCopyCountMap),
+  companionshipExp: Object.fromEntries([
+    ...companionshipExpMap,
+    ...characters.map(({ friendshipExp, id }): [number, number] => [id, friendshipExp]),
+  ]),
   crafting: { craftedCounts: Object.fromEntries(craftedCountMap), learnedRecipeIds: craftingProgress.learnedRecipeIds },
   inventory: toInventorySave(inventory),
   offerings: { frostbearingTree: frostbearingTreeProgress },

@@ -1,6 +1,14 @@
+import type { Artifact } from "#src/models/artifact/Artifact";
+import type { Character } from "#src/models/character/Character";
+import type { CharacterSave } from "#src/models/character/CharacterSave";
+import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
+import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
@@ -14,7 +22,9 @@ describe(readGenshinSave, () => {
   const ACHIEVEMENT_ID = "5";
   const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const ADVENTURE_EXP = 1200;
-  const CHARACTER_ID = "6";
+  const CHARACTER_ID = 6;
+  const CHARACTER_COPY_COUNT = 2;
+  const CHARACTER_LEVEL = 5;
   const COMPANIONSHIP_EXP = 300;
   const RECIPE_ID = 22_007;
   const CRAFTED_COUNT = 4;
@@ -73,10 +83,57 @@ describe(readGenshinSave, () => {
   const LANDMARK_ID = "1";
   const CHEST_ID = "chest-1";
   const QUEST_ID = "3";
+  const ARTIFACT: Artifact = {
+    experience: 120,
+    isLocked: true,
+    level: 4,
+    mainAffix: Attribute.Health,
+    minorAffixes: [{ attribute: Attribute.Defense, value: 10 }],
+    rarity: 4,
+    setId: 1,
+    slot: ArtifactSlot.FlowerOfLife,
+  };
+  const TALENT_LEVELS: TalentLevels = {
+    [CombatTalent.ElementalBurst]: 2,
+    [CombatTalent.ElementalSkill]: 3,
+    [CombatTalent.NormalAttack]: 4,
+  };
+  const WEAPON: Weapon = { ascension: 1, experience: 300, id: 1, level: 20, refinement: 2 };
+  // A character a wish granted at level five with two copies, wearing an artifact and wielding a weapon
+  const HELD_CHARACTER_SAVE: CharacterSave = {
+    artifacts: [ARTIFACT],
+    ascension: 1,
+    constellationCount: 0,
+    copyCount: CHARACTER_COPY_COUNT,
+    id: CHARACTER_ID,
+    level: CHARACTER_LEVEL,
+    stellaFortunaCount: 0,
+    talentLevels: TALENT_LEVELS,
+    weapon: WEAPON,
+  };
+  // The same character as the world holds it, its Companionship EXP none while the save holds none
+  const HELD_CHARACTER: Character = {
+    artifacts: [ARTIFACT],
+    ascension: 1,
+    constellationCount: 0,
+    friendshipExp: 0,
+    id: CHARACTER_ID,
+    level: CHARACTER_LEVEL,
+    stellaFortunaCount: 0,
+    talentLevels: TALENT_LEVELS,
+    weapon: WEAPON,
+  };
+  // A rostered character keeps its Companionship EXP's key in the save, at none while it has earned none
+  const HELD_SAVE: GenshinSave = {
+    ...EMPTY_GENSHIN_SAVE,
+    characters: [HELD_CHARACTER_SAVE],
+    companionshipExp: { [CHARACTER_ID]: 0 },
+  };
   const POPULATED_SAVE: GenshinSave = {
     ...EMPTY_GENSHIN_SAVE,
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
+    characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     inventory: {
@@ -109,6 +166,34 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       POPULATED_SAVE,
     );
+  });
+
+  test("a held character survives a reload", () => {
+    expect.hasAssertions();
+    const { characterCopyCountMap, characters } = readGenshinSave(HELD_SAVE, NAMES, WEAPON_DATA_MAP, new Map());
+
+    expect(characters).toStrictEqual([HELD_CHARACTER]);
+    expect(characterCopyCountMap).toStrictEqual(new Map([[CHARACTER_ID, CHARACTER_COPY_COUNT]]));
+    expect(toGenshinSave(readGenshinSave(HELD_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(HELD_SAVE);
+  });
+
+  test("companionship EXP is restored on the character it was earned by", () => {
+    expect.hasAssertions();
+    const { characters } = readGenshinSave(
+      { ...HELD_SAVE, companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP } },
+      NAMES,
+      WEAPON_DATA_MAP,
+      new Map(),
+    );
+
+    expect(characters).toStrictEqual([{ ...HELD_CHARACTER, friendshipExp: COMPANIONSHIP_EXP }]);
+  });
+
+  test("a character missing from the roster keeps its saved Companionship EXP", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP } };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
   });
 
   test("reads a bag's forged and wished weapons back as weapons, each named and rarity from its own data", () => {
