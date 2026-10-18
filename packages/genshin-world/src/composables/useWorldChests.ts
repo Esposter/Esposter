@@ -13,13 +13,15 @@ import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChest
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
-// Mondstadt's chests, fetched by their key as the world opens, and each unopened one offered to open on the ground beneath
-// Its point. Opening a chest rolls its Primogems and Mora into the wallet and pours its drops out where it stands, and the
-// Chest is kept as opened. A load that fails is logged and left off, so no chest is offered rather than a wrong one
+// Mondstadt's chests, fetched by their key as the world opens, and each unopened one offered to open on the ground
+// Beneath its point. Opening a chest rolls its Primogems and Mora into the wallet, pays its Adventure EXP to the
+// Adventure Rank and pours its drops out where it stands, and the chest is kept as opened. A load that fails is logged
+// And left off, so no chest is offered rather than a wrong one
 export const useWorldChests = ({
   events,
   gameDataBaseUrl,
   gameText,
+  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -29,6 +31,7 @@ export const useWorldChests = ({
   events: WorldEvents;
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
+  gainWorldAdventureExp: (amount: number) => void;
   getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
@@ -55,6 +58,7 @@ export const useWorldChests = ({
     const previousOpenedChestIds = openedChestIds.value;
     const opening = openChest(chestPlace, previousOpenedChestIds, wallet.value, random);
     setWallet(opening.wallet);
+    gainWorldAdventureExp(opening.adventureExp);
     openedChestIds.value = opening.openedChestIds;
     placeWorldDrops(chestPlace, opening.drops);
     if (opening.openedChestIds !== previousOpenedChestIds)
