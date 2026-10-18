@@ -10,7 +10,7 @@ export const domainLevelsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish each challenge domain's kind and levels, by its entrance's entry id, from the dungeon, reward preview and entry tables and the scene's entrance points: each level's recommended Adventure Rank, enemies' level and the days its pair is set for",
+      "Publish each challenge domain's kind and levels, by its entrance's entry id, from the dungeon, reward preview and entry tables and the scene's entrance points: each level's recommended Adventure Rank, enemies' level, the days its pair is set for, the resin its tree costs and the tree's rewards",
     name: "domain-levels",
   },
   run: async ({ args }) => {
