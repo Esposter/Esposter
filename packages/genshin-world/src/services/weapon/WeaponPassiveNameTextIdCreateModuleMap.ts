@@ -25,6 +25,7 @@ import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/cre
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
+import { createEssenceOfFalsityPassiveModule } from "#src/services/weapon/passives/createEssenceOfFalsityPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
@@ -311,4 +312,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2260847683": createBathhousesHawksAndNarukamiPassiveModule,
   // Seasoned Symphony (Symphonist of Scents)
   "2664303051": createSeasonedSymphonyPassiveModule,
+  // Essence of Falsity (Reliquary of Truth)
+  "2787405899": createEssenceOfFalsityPassiveModule,
 };
