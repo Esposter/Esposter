@@ -38,8 +38,8 @@ describe(createSmashedStonePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.04);
-    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBeCloseTo(0.04);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.04);
+    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBe(0.04);
   });
 
   test("a hit inside the rank's cooldown adds no stack, and one after it stacks to two", () => {
@@ -50,12 +50,12 @@ describe(createSmashedStonePassiveModule, () => {
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.04);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.04);
 
     stepKitSeconds(context, 0.35);
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.08);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.08);
   });
 
   test("a skill hit adds no stack", () => {
