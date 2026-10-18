@@ -57,7 +57,7 @@ describe(createDeathlyPactPassiveModule, () => {
     deathlyPactPassiveModule.onKitEvent?.(bondOfLifeIncreased, context, wielder);
     stepKitSeconds(context, 6.1);
 
-    expect(readBuffs(context.kitEffectState.effects).filter(({ amount }) => amount > 0)).toStrictEqual([]);
+    expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([]);
   });
 
   test("a heal that adds no Bond of Life obtains nothing", () => {
