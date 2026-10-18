@@ -47,8 +47,8 @@ const OTHER_CHARACTER_ID = 10_000_052;
 const THIRD_CHARACTER_ID = 10_000_029;
 
 // Gorou at the constellation, with the given combatants beside him on the team, the Geo ones counted for Crunch and Constellation 6
-const createTeam = (constellationCount: number, others: Combatant[]) => {
-  const combatant = { ...createGorouCombatant(), constellationCount };
+const createTeam = (constellationCount: number, others: Combatant[], gorou = createGorouCombatant()) => {
+  const combatant = { ...gorou, constellationCount };
   const members = [combatant, ...others];
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(members.map(({ characterId }) => characterId));
@@ -93,12 +93,18 @@ const getA1Buffs = (ascension: number): KitEffect[] =>
     (effect) => effect.kind === "buff" && effect.source === "gorou-a1",
   );
 
-// Gorou with 1,000 DEF at the ascension
+// Gorou with 1,000 DEF and the 10,000 base HP his combatant has, at the ascension
 const createGorouWithDefense = (ascension: number): Combatant => ({
   ...createGorouCombatant(),
   ascension,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.Defense, value: 1000 }]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.Defense, value: 1000 },
+  ]),
 });
+
+// The burst's hit, from which Constellation 4's heal chain starts its first 1.5 seconds
+const readBurstHitmarkSeconds = (): number => takeOne(GOROU_KIT.elementalBurst.hits).hitmarkSeconds;
 describe(createGorouKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -330,5 +336,64 @@ describe(createGorouKitBehaviour, () => {
     );
 
     expect(getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds).toBe(8);
+  });
+
+  test("constellation 4 heals the active character by half Gorou's DEF every 1.5 seconds from the burst's hit, with two Geo characters on the team", () => {
+    expect.hasAssertions();
+    const { context, party } = createTeam(4, [createGorouCombatant(OTHER_CHARACTER_ID)], createGorouWithDefense(0));
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    const member = getPartyMember(party, GOROU_CHARACTER_ID);
+    member.healthShare = 0.5;
+
+    stepKitTestEffects(readBurstHitmarkSeconds() + 1.5, context);
+    expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1000) / 10_000, 10);
+  });
+
+  test("constellation 4's heal stops once General's Glory ends", () => {
+    expect.hasAssertions();
+    const { context, party } = createTeam(4, [createGorouCombatant(OTHER_CHARACTER_ID)], createGorouWithDefense(0));
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    const member = getPartyMember(party, GOROU_CHARACTER_ID);
+    member.healthShare = 0.5;
+
+    stepKitTestEffects(12, context);
+    const healthShareAtGloryEnd = member.healthShare;
+    expect(healthShareAtGloryEnd).toBeGreaterThan(0.5);
+    stepKitTestEffects(30, context);
+    expect(member.healthShare).toBe(healthShareAtGloryEnd);
+  });
+
+  test("constellation 4 heals nothing with one Geo character on the team, the burst's heal waiting on two", () => {
+    expect.hasAssertions();
+    const { context, party } = createTeam(4, [], createGorouWithDefense(0));
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    const member = getPartyMember(party, GOROU_CHARACTER_ID);
+    member.healthShare = 0.5;
+
+    stepKitTestEffects(readBurstHitmarkSeconds() + 1.5, context);
+    expect(member.healthShare).toBe(0.5);
+  });
+
+  test("constellation 4's heal is not given below Constellation 4", () => {
+    expect.hasAssertions();
+    const { context, party } = createTeam(3, [createGorouCombatant(OTHER_CHARACTER_ID)], createGorouWithDefense(0));
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    const member = getPartyMember(party, GOROU_CHARACTER_ID);
+    member.healthShare = 0.5;
+
+    stepKitTestEffects(readBurstHitmarkSeconds() + 1.5, context);
+    expect(member.healthShare).toBe(0.5);
+  });
+
+  test("a new burst replaces the heal standing, so one heal comes every 1.5 seconds rather than two", () => {
+    expect.hasAssertions();
+    const { context, party } = createTeam(4, [createGorouCombatant(OTHER_CHARACTER_ID)], createGorouWithDefense(0));
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    GOROU_KIT.elementalBurst.onStart?.(context);
+    const member = getPartyMember(party, GOROU_CHARACTER_ID);
+    member.healthShare = 0.5;
+
+    stepKitTestEffects(readBurstHitmarkSeconds() + 1.5, context);
+    expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1000) / 10_000, 10);
   });
 });

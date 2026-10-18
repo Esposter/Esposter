@@ -119,6 +119,34 @@ At Constellation 1 Gorou SHALL cut Inuzaka All-Round Defense's cooldown by 2 sec
 - **WHEN** a Hydro hit lands inside the circle, a Geo hit by Gorou lands inside it, or a Geo hit by another character lands outside it
 - **THEN** the cooldown is not cut
 
+### Requirement: Constellation 4 heals the active character while General's Glory stands
+
+At Constellation 4 Gorou SHALL heal the active character by half his DEF every 1.5 seconds from Juuga's burst hit while General's Glory stands, when two Geo characters are on the team at the cast.
+
+#### Scenario: The heal reaches the active character every 1.5 seconds
+
+- **GIVEN** Gorou is at Constellation 4 and two Geo characters are on the team
+- **WHEN** Juuga is cast
+- **THEN** the active character is healed by half of Gorou's DEF at the cast, first 1.5 seconds after the burst's hit and every 1.5 seconds after, while General's Glory stands
+
+#### Scenario: The heal ends with General's Glory
+
+- **GIVEN** the heal has been ticking
+- **WHEN** General's Glory ends
+- **THEN** no further heal is given
+
+#### Scenario: A new Juuga replaces the heal standing rather than adding to it
+
+- **GIVEN** the heal is ticking
+- **WHEN** Juuga is cast again
+- **THEN** one heal every 1.5 seconds is given, not two
+
+#### Scenario: One Geo character, or Constellation 3, gives no heal
+
+- **GIVEN** Gorou is at Constellation 4 with no other Geo character on the team, or is at Constellation 3 with two
+- **WHEN** Juuga is cast
+- **THEN** no heal is given
+
 ### Requirement: Constellation 6 gives the party CRIT DMG on Geo for 12 seconds after a skill or burst
 
 At Constellation 6 Gorou SHALL give every party member 10% CRIT DMG on Geo for 12 seconds after Inuzaka All-Round Defense or Juuga, at 20% with two Geo characters on the team and 40% with three or more.

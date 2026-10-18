@@ -13,9 +13,11 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) gorou/skill.go, the General's War Banner placed two metres ahead of the body, where
@@ -48,6 +50,13 @@ const CONSTELLATION_6 = 6;
 // Constellation 6's CRIT DMG on Geo lasts 12 seconds from each skill or burst, at the level the team's Geo count sets then
 const CONSTELLATION_6_SECONDS = 12;
 const CONSTELLATION_6_SOURCE = "gorou-c6";
+const CONSTELLATION_4 = 4;
+// Constellation 4 heals the active character half his DEF at the cast, every 1.5 seconds from the burst's hit, while General's Glory stands
+const CONSTELLATION_4_DEFENCE_SHARE = 0.5;
+const CONSTELLATION_4_SECONDS = 1.5;
+// The heal waits on two Geo characters at the cast, General's Glory's Impregnable state, as gcsim gates it
+const CONSTELLATION_4_GEO_COUNT = 2;
+const CONSTELLATION_4_HEAL_ID = "gorou-c4-heal";
 
 // The Geo characters among a team's, which the Crunch count and Constellation 6's level read
 const countGeoCharacters = (characterIdCombatantMap: KitContext["characterIdCombatantMap"]): number =>
@@ -82,13 +91,28 @@ const createDefenseDamageBonus =
 
 export const GOROU_CHARACTER_ID = 10_000_055;
 
+// Constellation 4's heal on the active character, the share of the DEF Gorou had at the cast, healed at his Healing Bonus as it lands
+const createConstellation4Heal =
+  (defenceAtCast: number) =>
+  (context: KitContext): void => {
+    const gorou = context.characterIdCombatantMap.get(GOROU_CHARACTER_ID);
+    if (gorou)
+      changeKitMemberHealth(
+        context,
+        gorou,
+        context.activeCombatant.characterId,
+        defenceAtCast * CONSTELLATION_4_DEFENCE_SHARE,
+      );
+  };
+
 // Gorou's behaviour: Inuzaka All-Round Defense places the General's War Banner ahead of him, unless Juuga's field
 // Stands, and Juuga puts the banner out for its own field, which follows the body, and casts Crystal Collapse, one summon
 // Following the body with its ticks set out at the cast. Each field's ticks buff the active character's DEF, and its Geo
 // DMG Bonus from Crunch's count of Geo characters. Ascension 1 raises the party's DEF as Juuga is cast, and Ascension 4
-// Adds a share of his DEF to the skill's and the burst's hits. Constellations 1 and 6 are built, from the Geo hits the field's
-// Circle sees and the Geo count at each cast. Constellation 2 needs the Elemental Shard and Lunar-Crystallize events nearby, which
-// No kit event reports. Constellation 4 needs General's Glory's Impregnable and Crunch states, and a heal every 1.5 seconds
+// Adds a share of his DEF to the skill's and the burst's hits. Constellations 1, 4 and 6 are built.
+// Constellation 1 counts the Geo hits in the field's circle, once every 10 seconds, and Constellation 6 reads the Geo count at each cast.
+// Constellation 4 heals the active character every 1.5 seconds on half his DEF at the cast, while General's Glory stands.
+// Constellation 2 needs the Elemental Shard and Lunar-Crystallize events nearby, which no kit event reports.
 export const createGorouKitBehaviour = ({
   kit,
   readHit,
@@ -141,7 +165,7 @@ export const createGorouKitBehaviour = ({
       hits: [{ additiveBaseDamageBonus: burstDefenseDamageBonus }],
       // Juuga takes the banner's place, so a banner standing is put out, and from Ascension 1 the party's DEF rises
       onStart: (context) => {
-        const { activeCombatant: combatant, body, kitEffectState, party } = context;
+        const { activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party } = context;
         for (const effect of kitEffectState.effects)
           if (effect.kind === "field" && effect.id === WAR_BANNER_ID) effect.secondsRemaining = 0;
         castKitField(kitEffectState, combatant.characterId, body.position, {
@@ -162,6 +186,20 @@ export const createGorouKitBehaviour = ({
             attribute: Attribute.DefensePercent,
             secondsRemaining: A1_SECONDS,
             source: A1_SOURCE,
+          });
+        // The heal chain is a non-stacked field keyed by its id, so a new burst replaces the one standing, as gcsim's qFieldSrc does
+        if (
+          combatant.constellationCount >= CONSTELLATION_4 &&
+          countGeoCharacters(characterIdCombatantMap) >= CONSTELLATION_4_GEO_COUNT
+        )
+          castKitField(kitEffectState, combatant.characterId, body.position, {
+            id: CONSTELLATION_4_HEAL_ID,
+            nextTickSeconds: burstHitmarkSeconds + CONSTELLATION_4_SECONDS,
+            onTick: createConstellation4Heal(
+              getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes.defense,
+            ),
+            secondsRemaining: burstHitmarkSeconds + juugaSeconds,
+            tickIntervalSeconds: CONSTELLATION_4_SECONDS,
           });
         if (combatant.constellationCount >= CONSTELLATION_6) addConstellation6CriticalDamage(context);
       },
