@@ -1,22 +1,31 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/characters/ainoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AINO_CHARACTER_ID);
+const AINO_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 const createAinoCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -61,6 +70,22 @@ const castBurstInTeam = (ascension: number, characterIds: number[]) => {
   AINO_KIT.elementalBurst.onStart?.(context);
   const [field] = kitEffectState.effects as KitField[];
   return { context, field, kitEffectState };
+};
+
+// Strikes one of the skill's hits on the enemy, the kit taking the event as the party's kit does
+const strikeSkillHit = (context: KitContext, hit: KitHit): void => {
+  AINO_KIT.onKitEvent?.(
+    {
+      enemy: AINO_ENEMY,
+      hit,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: context.activeCombatant,
+    },
+    context,
+    context.activeCombatant,
+  );
 };
 
 describe(createAinoKitBehaviour, () => {
@@ -142,5 +167,35 @@ describe(createAinoKitBehaviour, () => {
     expect.hasAssertions();
     expect(castBurstInTeam(0, ASCENDANT_TEAM).field?.tickIntervalSeconds).toBeCloseTo(1.5);
     expect(castBurstInTeam(1, [AINO_CHARACTER_ID]).field?.tickIntervalSeconds).toBeCloseTo(1.5);
+  });
+
+  describe("constellation 4's skill energy", () => {
+    test("a Constellation 4 switch gives Aino 10 energy on a skill hit, once every 10 seconds", () => {
+      expect.hasAssertions();
+      const combatant = { ...createAinoCombatant(0), constellationCount: 4 };
+      const party = createParty([AINO_CHARACTER_ID]);
+      const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+      const energy = (): number => getPartyMember(party, AINO_CHARACTER_ID).energy;
+      const energies: number[] = [];
+      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+      energies.push(energy());
+      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits.slice(1)));
+      energies.push(energy());
+      stepKitTestEffects(10, context);
+      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+      energies.push(energy());
+
+      expect(energies).toStrictEqual([10, 10, 20]);
+    });
+
+    test("a Constellation 3 switch gives Aino no energy on a skill hit", () => {
+      expect.hasAssertions();
+      const combatant = { ...createAinoCombatant(0), constellationCount: 3 };
+      const party = createParty([AINO_CHARACTER_ID]);
+      const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+      strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
+
+      expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
+    });
   });
 });
