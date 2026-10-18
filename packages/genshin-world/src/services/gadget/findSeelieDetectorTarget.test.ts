@@ -15,7 +15,7 @@ describe(findSeelieDetectorTarget, () => {
   const regionPuzzlePlaces = [nearest, farther, settled, court];
   const player = { x: 0, z: 0 };
 
-  test("a Seelie detector points to the nearest crystal in its city", () => {
+  test("a Seelie detector points to the nearest crystal in its region", () => {
     expect.hasAssertions();
 
     expect(findSeelieDetectorTarget(regionPuzzlePlaces, new Set([settled.id]), player)).toBe(nearest);
