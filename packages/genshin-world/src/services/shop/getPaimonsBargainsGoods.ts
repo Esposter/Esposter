@@ -30,7 +30,6 @@ const toGood = (goodsId: number, price: PaimonsBargainsPrice, itemId: number): P
   goodsId,
   itemCount: 1,
   itemId,
-  priceCount: price.priceCount,
-  priceItemId: price.priceItemId,
+  costs: price.costs,
   refresh: price.refresh,
 });

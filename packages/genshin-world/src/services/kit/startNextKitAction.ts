@@ -42,7 +42,10 @@ export const startNextKitAction = (
     if (stamina.checkCanSpend(chargedAttackStamina)) {
       // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
       if (chargedAttackStamina > 0) stamina.spend(chargedAttackStamina);
-      return startKitAction(kitState, kit.chargedAttack, landedHits);
+      const chargedAttackAction = kit.chargedAttackVariant?.checkIsActive(context)
+        ? kit.chargedAttackVariant.action
+        : kit.chargedAttack;
+      return startKitAction(kitState, chargedAttackAction, landedHits);
     }
   }
 

@@ -52,20 +52,20 @@ Daily and monthly refreshes SHALL happen at four in the morning in the game's ti
 - **WHEN** the monthly buy limit is counted
 - **THEN** the purchase counts toward the month before
 
-### Requirement: A purchase takes its price from the wallet and gives the item's currency
+### Requirement: A purchase takes every cost from the wallet or the bag and gives the good
 
-A purchase SHALL take its price from the wallet and give the item's currency, and SHALL be refused when the wallet cannot pay.
+A purchase SHALL take each cost of a good, from the wallet for a currency and from the bag for an item, and SHALL give the good. It SHALL be refused when the player holds too few of any one cost.
 
-#### Scenario: A purchase takes the price and gives the currency
+#### Scenario: A purchase takes the costs and gives the item
 
-- **GIVEN** the wallet holds a good's price
+- **GIVEN** the player holds every cost of a good
 - **WHEN** the player buys the good
-- **THEN** the price is taken from the wallet
-- **AND** the good's item currency is given to the player
+- **THEN** each cost is taken from the wallet or the bag
+- **AND** the good's item is given to the player
 
 #### Scenario: A purchase the wallet cannot pay is refused
 
-- **GIVEN** the wallet does not hold a good's price
+- **GIVEN** the player does not hold one of a good's costs
 - **WHEN** the player buys the good
 - **THEN** the purchase is refused and the wallet is unchanged
 

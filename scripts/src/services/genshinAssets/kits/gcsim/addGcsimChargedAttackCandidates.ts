@@ -7,6 +7,7 @@ import {
   NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES,
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
+import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -93,6 +94,8 @@ export const addGcsimChargedAttackCandidates = (
       targetingArea: STRIKE_TARGETING_AREA,
     });
   }
+
+  addGcsimChargedAttackVariantCandidates(writer, gcsim);
 
   if (
     findGcsimConstant(constantMap, "chargeFrames", "aimedFrames") === undefined &&

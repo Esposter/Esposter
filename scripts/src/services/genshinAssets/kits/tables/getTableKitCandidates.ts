@@ -35,6 +35,8 @@ const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
 // The numbered array a slot's path sits in, `normalAttacks` for `normalAttacks.3`, and the element's index
 const SLOT_ARRAY_PATH_REGEX = /^(?<parent>.+?)\.(?<index>\d+)(?:\.|$)/u;
 // The length of a named list of hits a skill's label gives, which is the count its label repeats
+// The numbered array a slot's path sits in, `normalAttacks` for `normalAttacks.3`, and the element's index
+const SLOT_ARRAY_PATH_REGEX = /^(?<parent>.+?)\.(?<index>\d+)(?:\.|$)/u;
 const NAMED_HIT_LIST_LENGTH_PATHS: ReadonlyMap<string, string> = new Map([
   ["Etched Into Bone and Soul DMG", "hits.etchedIntoBoneAndSoul.length"],
 ]);
@@ -117,10 +119,9 @@ export const getTableKitCandidates = ({
     { combatTalent: CombatTalent; count: number; tableLabel: KitTableLabel }
   >();
   const addSlotHitLabels = (path: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
-    const tableLabels = labelNames.map((labelName) => {
-      const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === labelName);
-      if (tableLabel === undefined)
-        throw new InvalidOperationError(Operation.Read, labelName, "has no label in its talent");
+    const tableLabels = labelNames.map((name) => {
+      const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === name);
+      if (tableLabel === undefined) throw new InvalidOperationError(Operation.Read, name, "has no label in its talent");
       return tableLabel;
     });
     let hitIndex = 0;

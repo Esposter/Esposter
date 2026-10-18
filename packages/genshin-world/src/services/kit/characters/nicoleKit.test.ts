@@ -1,7 +1,9 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitShield } from "#src/models/kit/KitShield";
 import type { Mock } from "vitest";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -103,7 +105,7 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 7 / 60);
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "shield")).toStrictEqual([]);
     stepKitSeconds(context, 1 / 60);
-    const shields = context.kitEffectState.effects.filter(({ kind }) => kind === "shield");
+    const shields = context.kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield");
     expect(shields.map(({ characterId, element, health }) => ({ characterId, element, health }))).toStrictEqual([
       {
         characterId: NICOLE_CHARACTER_ID,
@@ -130,7 +132,7 @@ describe(createNicoleKitBehaviour, () => {
     NICOLE_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8 / 60);
 
-    const buffs = context.kitEffectState.effects.filter(({ kind }) => kind === "buff");
+    const buffs = context.kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
     expect(buffs.map(({ amount, attribute, characterId }) => ({ amount, attribute, characterId }))).toStrictEqual([
       { amount: expected, attribute: Attribute.Attack, characterId: NICOLE_CHARACTER_ID },
       { amount: expected, attribute: Attribute.Attack, characterId: TRAVELER_CHARACTER_ID },

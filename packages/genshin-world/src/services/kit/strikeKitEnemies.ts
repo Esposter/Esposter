@@ -122,7 +122,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
             combatant.characterId,
             getKitHitElement(enemyHit, combatant),
           ) +
-          (combatant.kit.getStrikeCriticalDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeCriticalDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.criticalDamageBonus,
         criticalRateBonus:
           (enemyHit.criticalRateBonus ?? 0) +
           (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +

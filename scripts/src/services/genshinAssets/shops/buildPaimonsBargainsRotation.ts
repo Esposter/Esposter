@@ -14,7 +14,7 @@ import {
   SHOP_REFRESH_BY_TABLE_TYPE,
   SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
-import { getShopGoodPrice } from "#src/services/genshinAssets/shops/getShopGoodPrice";
+import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
@@ -22,8 +22,7 @@ import { GameDataset } from "genshin-world";
 // The price, limit and refresh a Paimon's Bargains set is sold at, as its goods give them
 interface PaimonsBargainsPrice {
   buyLimit: number;
-  priceCount: number;
-  priceItemId: number;
+  costs: { count: number; itemId: number }[];
   refresh: ShopRefresh;
 }
 
@@ -55,15 +54,15 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   const priceOfRotations = (rotateIds: readonly number[]): PaimonsBargainsPrice => {
     const prices = rotateIds.map((rotateId) => {
       const row = goodOfRotation(rotateId);
-      const price = getShopGoodPrice(row);
+      const costs = getShopGoodCosts(row);
       const refresh = SHOP_REFRESH_BY_TABLE_TYPE[row.refreshType ?? SHOP_REFRESH_NONE_TABLE_TYPE];
-      if (!price || !refresh)
+      if (costs.length === 0 || !refresh)
         throw new InvalidOperationError(
           Operation.Read,
           "Paimon's Bargains rotation",
           `rotation ${rotateId} has no priced good with a known refresh`,
         );
-      return { buyLimit: row.buyLimit, priceCount: price.count, priceItemId: price.id, refresh };
+      return { buyLimit: row.buyLimit, costs, refresh };
     });
     const [price] = prices;
     if (!price || prices.some((other) => !checkIsSamePrice(other, price)))
@@ -116,6 +115,8 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
 
 const checkIsSamePrice = (first: PaimonsBargainsPrice, second: PaimonsBargainsPrice): boolean =>
   first.buyLimit === second.buyLimit &&
-  first.priceCount === second.priceCount &&
-  first.priceItemId === second.priceItemId &&
+  first.costs.length === second.costs.length &&
+  first.costs.every(
+    ({ count, itemId }, index) => count === second.costs[index]?.count && itemId === second.costs[index]?.itemId,
+  ) &&
   first.refresh === second.refresh;

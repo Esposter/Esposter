@@ -38,8 +38,7 @@ describe(buyPaimonsBargainsCharacter, () => {
     goodsId: 102_005,
     itemCount: 1,
     itemId: CHARACTER_ID,
-    priceCount: CHARACTER_PRICE,
-    priceItemId: STARGLITTER_ITEM_ID,
+    costs: [{ count: CHARACTER_PRICE, itemId: STARGLITTER_ITEM_ID }],
     refresh: ShopRefresh.Monthly,
   };
   const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: CHARACTER_PRICE * 2 };
