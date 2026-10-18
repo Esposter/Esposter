@@ -15,6 +15,7 @@ import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/stormterror";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
@@ -127,12 +128,12 @@ describe("stepDomainChallenge", () => {
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));
     // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
-    expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
     // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
     events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));
-    expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
   });
 });
 

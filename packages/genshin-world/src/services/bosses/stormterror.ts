@@ -44,6 +44,9 @@ export const STORMTERROR_MOVES: BossMove[] = [
   },
 ];
 
+// The attack the phases one, two and four end with, by identifier, as no move of Dvalin's carries its English name
+export const STORMTERROR_FINALE_ATTACK = "finaleAttack";
+
 // The phases of the fight from the wiki's Stormterror Dvalin page, each with its shield's time limit and the number of shield
 // Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end. Timings
 // Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
@@ -56,10 +59,10 @@ export interface StormterrorPhase {
 }
 
 export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
-  { phase: 1, shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: "Caelestinum Finale Termini" },
-  { phase: 2, shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
+  { phase: 1, shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: STORMTERROR_FINALE_ATTACK },
+  { phase: 2, shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
   { phase: 3, shieldLimit: 5, timeLimitSeconds: 120, transitionAttack: "Energy Lightning" },
-  { phase: 4, shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
+  { phase: 4, shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
   { phase: 5, shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
 ];
 
