@@ -577,6 +577,20 @@ describe(createColumbinaKitBehaviour, () => {
       expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
     });
 
+    test("a Moondew Cleanse spends no stamina, and her normal charged attack spends the table's", () => {
+      expect.hasAssertions();
+
+      const context = createKitTestContext(createColumbinaCombatant(), {
+        party: createParty([COLUMBINA_CHARACTER_ID]),
+      });
+      const readSpentStamina = (): number =>
+        COLUMBINA_KIT.chargedAttackStamina * (COLUMBINA_KIT.getChargedAttackStaminaMultiplier?.(context) ?? 1);
+      expect(readSpentStamina()).toStrictEqual(COLUMBINA_KIT.chargedAttackStamina);
+
+      context.party.moonridgeDew = 1;
+      expect(readSpentStamina()).toStrictEqual(0);
+    });
+
     test("a Moondew Cleanse spends one Dew, from the verdant first", () => {
       expect.hasAssertions();
 
