@@ -44,11 +44,11 @@ export enum GameTextKey {
   ArtifactActionLock = "EQUIP_LOCK_TIP_1",
   ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
   ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
-  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
-  // Is active
   ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
   ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
   ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
+  // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
+  // Is active
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
@@ -141,10 +141,10 @@ export enum GameTextKey {
   CandlecapMushroom = "767225220",
   Carrot = "3407195260",
   Cecilia = "3828726124",
-  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
-  ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
   // The namecard picker's title, the Change Namecard the Paimon profile opens with
   ChangeNamecard = "3755125824",
+  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
+  ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
@@ -190,10 +190,6 @@ export enum GameTextKey {
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
-  // The Petrified Tree a cleared domain raises, the tree the claim prompt names
-  PetrifiedTree = "UI_ABYSSUS_CHEST_OPEN_TITLE",
-  // The realm's word for placing a furnishing, which the game shows as Place
-  HomeDeploy = "UI_HOMEWORLD_DEPLOY",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
@@ -223,12 +219,6 @@ export enum GameTextKey {
   Dig = "102754774",
   // The button that goes into an open domain from its entry screen
   DomainEnter = "UI_DUNGEON_ENTRY_47",
-  // The button that leaves the domain the player is in, as the game's leave prompt names it
-  DomainLeave = "INFO_AVATAR_TRANSPORT_DUNGEON_TITLE",
-  // The question the leave prompt asks before the player leaves a domain
-  DomainLeavePrompt = "UI_STC_Intee_DungeonExit",
-  // The title of a domain's entry screen
-  DomainTitle = "4043227537",
   // A domain's entrance, named as its entry's own title text id names it, the one name every entrance's map pin shows
   DomainEntrance1142 = "UI_DUNGEON_ENTRY_1142",
   DomainEntrance1151 = "UI_DUNGEON_ENTRY_1151",
@@ -269,9 +259,13 @@ export enum GameTextKey {
   DomainEntrance859 = "UI_DUNGEON_ENTRY_859",
   DomainEntrance865 = "UI_DUNGEON_ENTRY_865",
   DomainEntrance982 = "UI_DUNGEON_ENTRY_982",
+  // The button that leaves the domain the player is in, as the game's leave prompt names it
+  DomainLeave = "INFO_AVATAR_TRANSPORT_DUNGEON_TITLE",
+  // The question the leave prompt asks before the player leaves a domain
+  DomainLeavePrompt = "UI_STC_Intee_DungeonExit",
+  // The title of a domain's entry screen
+  DomainTitle = "4043227537",
   Dracolite = "2859410932",
-  // The enemies' level on a domain's entry screen, filled with the level
-  EnemyLevel = "669745132",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
   ElectroSigil = "1061302548",
@@ -279,6 +273,8 @@ export enum GameTextKey {
   ElementalBurst = "CONTROL_SKILL5",
   ElementalSkill = "CONTROL_SKILL2",
   EmbercoreFlower = "3599966252",
+  // The enemies' level on a domain's entry screen, filled with the level
+  EnemyLevel = "669745132",
   EnhancementOre = "2429162676",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   // The picker of the characters a send is made with, headed as the game heads its character list
@@ -384,6 +380,8 @@ export enum GameTextKey {
   HealthNotice = "684850635",
   HealthNoticeTitle = "1737243758",
   HennaBerry = "3448878388",
+  // The realm's word for placing a furnishing, which the game shows as Place
+  HomeDeploy = "UI_HOMEWORLD_DEPLOY",
   Horsetail = "1247603844",
   HydroSigil = "33541556",
   IcyPebble = "2856476780",
@@ -548,6 +546,8 @@ export enum GameTextKey {
   PartyDefaultName3 = "UI_TEAM_DEFAULT_NAME3",
   PartyDefaultName4 = "UI_TEAM_DEFAULT_NAME4",
   PartySetup = "UI_TEAM_TITLE",
+  // The Petrified Tree a cleared domain raises, the tree the claim prompt names
+  PetrifiedTree = "UI_ABYSSUS_CHEST_OPEN_TITLE",
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
   Pinecone = "4200020428",
@@ -625,11 +625,11 @@ export enum GameTextKey {
   // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
   ReputationRequestAccept = "REPUTATION_REQUEST_BUTTON_1",
   ReputationReward = "REPUTATION_CITY_REWARD",
-  // The game over screen's button that revives the team at the nearest teleport waypoint
   // The notice a furnishing shows when the realm's area already holds its count of furnishings
   RetHomeFurnitureArrangeLimit = "RetHomeFurnitureArrangeLimit",
   // The notice a furnishing shows when the realm's area would pass its load
   RetHomeFurnitureExceedLimit = "RetHomeFurnitureExceedLimit",
+  // The game over screen's button that revives the team at the nearest teleport waypoint
   Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
@@ -789,12 +789,12 @@ export enum GameTextKey {
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
   TimeConfirm = "UI_STC_LEVELUP_DIALOG_OK",
-  // The tip popup's heading, the game's own word for a tutorial
-  TipHeading = "UI_PUSHTIPS_NEW_TIP",
-  // The tip popup's button that closes it, in the game's own words for Got it
-  TipDismiss = "507052072",
   // The label over the hour the Time screen's dial points at, before the player confirms it
   TimeWaitUntil = "UI_CLOCK_PAGE_TO_TIME",
+  // The tip popup's button that closes it, in the game's own words for Got it
+  TipDismiss = "507052072",
+  // The tip popup's heading, the game's own word for a tutorial
+  TipHeading = "UI_PUSHTIPS_NEW_TIP",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
   TitleLicence = "3231160485",
   TrainingGuide = "UI_TRAININGGUIDE_TITLE",
