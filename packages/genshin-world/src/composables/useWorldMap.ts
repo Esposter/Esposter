@@ -8,6 +8,7 @@ import type { Ref } from "vue";
 
 import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeNationExplorationPercentage } from "#src/services/exploration/computeNationExplorationPercentage";
@@ -120,6 +121,11 @@ export const useWorldMap = ({
     payFirstUnlockReward(landmarkId);
     settleExplorationThresholds();
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
+    const pointId = LandmarkIdStatuePointIdMap[landmarkId];
+    if (pointId !== undefined)
+      events.emit("achievementEvents", [
+        { kind: AchievementEventKind.TransPointUnlocked, quantity: 1, targetId: String(pointId) },
+      ]);
   };
 
   // A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the character

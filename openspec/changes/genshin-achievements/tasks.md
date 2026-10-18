@@ -1,6 +1,6 @@
 ## 1. Exploring triggers
 
-- [ ] 1.1 Add each exploring trigger type to the watched set as its page's rule gains a caller in the world. Verify: a test named after the scenario 'an exploring trigger counts a doing once its rule is called', seen failing first.
+- [x] 1.1 Add each exploring trigger type to the watched set as its page's rule gains a caller in the world. Verify: a test named after the scenario 'an exploring trigger counts a doing once its rule is called', seen failing first.
 - [x] 1.2 Keep an unwatched trigger type's achievements at zero. Verify: a test named after the scenario 'an unwatched trigger leaves its achievements at zero', seen failing first.
 
 ## 2. Quest triggers

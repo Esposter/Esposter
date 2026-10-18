@@ -3,8 +3,10 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { computeChestInteractables } from "#src/services/chest/computeChestInteractables";
 import { openChest } from "#src/services/chest/openChest";
 import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
@@ -15,6 +17,7 @@ import { computed, shallowRef } from "vue";
 // Its point. Opening a chest rolls its Primogems and Mora into the wallet and pours its drops out where it stands, and the
 // Chest is kept as opened. A load that fails is logged and left off, so no chest is offered rather than a wrong one
 export const useWorldChests = ({
+  events,
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
@@ -23,6 +26,7 @@ export const useWorldChests = ({
   setWallet,
   wallet,
 }: {
+  events: WorldEvents;
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
@@ -48,10 +52,13 @@ export const useWorldChests = ({
   const openChestById = (chestId: string, random: () => number) => {
     const chestPlace = chestPlaces.value.find(({ id }) => id === chestId);
     if (!chestPlace) return;
-    const opening = openChest(chestPlace, openedChestIds.value, wallet.value, random);
+    const previousOpenedChestIds = openedChestIds.value;
+    const opening = openChest(chestPlace, previousOpenedChestIds, wallet.value, random);
     setWallet(opening.wallet);
     openedChestIds.value = opening.openedChestIds;
     placeWorldDrops(chestPlace, opening.drops);
+    if (opening.openedChestIds !== previousOpenedChestIds)
+      events.emit("achievementEvents", [{ kind: AchievementEventKind.ChestOpened, quantity: 1, targetId: chestId }]);
   };
   return { chestInteractables, openChestById };
 };

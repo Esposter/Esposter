@@ -5,8 +5,10 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { getResultAsync } from "@esposter/shared";
@@ -18,6 +20,7 @@ import { getResultAsync } from "@esposter/shared";
 // And the bag is read once they have arrived, so an offer made while another's levels are still arriving offers the bag
 // That one left
 export const useWorldOfferings = ({
+  events,
   frostbearingTreeProgress,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -29,6 +32,7 @@ export const useWorldOfferings = ({
   setWallet,
   wallet,
 }: {
+  events: WorldEvents;
   frostbearingTreeProgress: ShallowRef<OfferingProgressSave>;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -44,6 +48,7 @@ export const useWorldOfferings = ({
   const offerFrostbearingTree = (frostbearingTreePlace: FrostbearingTreePlace) =>
     getResultAsync(() => readFrostbearingTreeLevels(gameDataBaseUrl)).match(
       (levels) => {
+        const previousLevel = frostbearingTreeProgress.value.level;
         const offer = offerBagItems(
           inventory.value,
           wallet.value,
@@ -56,6 +61,14 @@ export const useWorldOfferings = ({
         gainWorldAdventureExp(offer.adventureExp);
         placeWorldDrops(frostbearingTreePlace, offer.overflowItems);
         frostbearingTreeProgress.value = { heldCount: offer.progress.heldCount, level: offer.progress.level };
+        events.emit(
+          "achievementEvents",
+          Array.from({ length: offer.progress.level - previousLevel }, (_, index) => ({
+            kind: AchievementEventKind.OfferingLevelReached,
+            quantity: 1,
+            targetId: String(previousLevel + index + 1),
+          })),
+        );
       },
       (error) => {
         console.error(error);

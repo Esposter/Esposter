@@ -32,7 +32,7 @@ describe(toAchievement, () => {
     preStageAchievementId: 0,
     progress: 1,
     titleTextMapHash: 6,
-    triggerConfig: { paramList: ["7010232,7519704", "", "", ""], triggerType: "TRIGGER_FINISH_QUEST_OR" },
+    triggerConfig: { paramList: ["11,12;13", "", "21", ""], triggerType: "TRIGGER_FINISH_QUEST_OR" },
   };
 
   test("should leave out an achievement the game no longer offers", () => {
@@ -40,7 +40,7 @@ describe(toAchievement, () => {
     expect(toAchievement({ ...row, isDisuse: true }, rewardMap)).toBeUndefined();
   });
 
-  test("should split an OR trigger's ids into parameters and pay only the Primogems of its reward", () => {
+  test("should split each slot's ids on commas and semicolons into its own parameters, and pay only the Primogems of its reward", () => {
     expect.hasAssertions();
     expect(toAchievement(row, rewardMap)).toStrictEqual({
       categoryId: 3,
@@ -52,7 +52,7 @@ describe(toAchievement, () => {
       primogems: PRIMOGEM_COUNT,
       progress: 1,
       titleTextId: "6",
-      trigger: { parameters: ["7010232", "7519704"], type: "TRIGGER_FINISH_QUEST_OR" },
+      trigger: { parameters: [["11", "12", "13"], [], ["21"], []], type: "TRIGGER_FINISH_QUEST_OR" },
     });
   });
 });

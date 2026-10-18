@@ -13,6 +13,7 @@ import type { GameText } from "genshin-text";
 import type { Ref, ShallowRef } from "vue";
 
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { openArchiveBook } from "#src/services/archive/openArchiveBook";
@@ -169,10 +170,14 @@ export const useWorldPickups = ({
         oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value, [id, brokenShare]]);
         continue;
       }
+      const dropCount = rollOreDropCount(random);
       placeWorldDrops(
         { id, position },
-        Array.from({ length: rollOreDropCount(random) }, () => ({ count: 1, itemId: kind })),
+        Array.from({ length: dropCount }, () => ({ count: 1, itemId: kind })),
       );
+      events.emit("achievementEvents", [
+        { kind: AchievementEventKind.MaterialObtained, quantity: dropCount, targetId: String(kind) },
+      ]);
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [id, now]]);
       oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
     }

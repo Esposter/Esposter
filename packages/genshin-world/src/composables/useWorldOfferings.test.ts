@@ -11,6 +11,7 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { assert, describe, expect, test } from "vitest";
 import { ref, shallowRef } from "vue";
 
@@ -31,6 +32,7 @@ describe(useWorldOfferings, () => {
     const frostbearingTreePlace: FrostbearingTreePlace = { id: "tree", position: { x: 1, z: 2 } };
     const placedDrops: [FrostbearingTreePlace, DroppedItem[]][] = [];
     const { offerFrostbearingTree } = useWorldOfferings({
+      events: createWorldEvents(),
       frostbearingTreeProgress,
       gainWorldAdventureExp: (amount) => {
         gainedAdventureExps.push(amount);
