@@ -6,6 +6,7 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 
 ## Sub-pages
 
+- [Headless core](../resource-page-builder-headless-core/design.md) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
 - [Document model](../resource-page-builder-document-model/design.md) — the typed node tree, the node types a registry holds for each editor, and how a document renders and publishes
 - [Canvas](../resource-page-builder-canvas/design.md) — the same-origin frame, its overlays, and the pointer, keyboard and layers paths that select and move nodes
 - [Style panel](../resource-page-builder-style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
@@ -78,7 +79,7 @@ The editor shell is library parts: `UiTabs` over the Content, Style and Theme pa
 
 Phases one to three build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fourth is the swap.
 
-1. **The model and its output.** The document and node-type models, the registry contract and the recursive document schema; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests, the render and patch benches, and the MJML defaults test.
+1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then the webpage and email node types over it; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests, the render and patch benches, and the MJML defaults test.
 2. **The webpage editor.** The canvas frame, overlays and toolbar; the pointer drag and every keyboard path; the layers tree; the palette; the content, style and theme panels; text editing; device widths; Export. Component tests and a browser suite for what only a layout engine can show.
 3. **The email editor.** The email canvas components, Preview, merge fields, the preview text, survey invites, and the personalized export from compiled HTML.
 4. **The cutover.** One change, below.
@@ -100,7 +101,7 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 - A Video or Map embed is a third-party frame, and the security config names no `frame-src`, so `default-src 'self'` refuses those frames in the canvas and inside the published view's frame, which inherits the app's policy — reading the policy says the current blocks embed nothing that loads. Phase 2 confirms it in the browser, and the two types ship either with the providers' origins named or as uploaded video only.
 - An external image loads in the canvas and on the published page only from the hosts the image whitelist names, for the same reason, so the image field offers upload first and says why a pasted address from elsewhere shows nothing.
 - [Program invites](../../specs/resource/program-resource/design.md) (shipped) took the compile per participant from the live editor: the bound email's captured html is read server-side, so the export needs no mounted editor.
-- [AI-native resources](../architecture-ai-native-resources-program/design.md) is this editor's agent surface. Its content tools apply the same JSON Patch operations an edit here records, on the server and through the same document schema, so a webpage or an email is an agent's to edit the day the cutover lands, with nothing built for it here; `applyPatches` is written once for both, in the app's `shared/` layer rather than `@esposter/shared`, since both its consumers live in `apps/web`.
+- [AI-native resources](../architecture-ai-native-resources-program/design.md) is this editor's agent surface. Its content tools apply the same JSON Patch operations an edit here records, on the server and through the same document schema, so a webpage or an email is an agent's to edit the day the cutover lands, with nothing built for it here. `applyPatches` is written once for all three of its consumers, in `@esposter/shared`, since the headless core is a package and cannot import the app.
 
 ## Key files
 
@@ -113,9 +114,10 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 New code lands here:
 
 ```text
-apps/web/shared/models/pageBuilder/            the document, node, slot, element-tree and style models
-apps/web/shared/services/pageBuilder/          the document schema, serialiser, CSS emitter
-apps/web/shared/services/jsonPatch/            applyPatches, the RFC 6902 applier the content tools share
+packages/headless-block-editor/                the tree, registry contract, document schema, commands, navigation, history
+packages/shared/src/services/jsonPatch/        applyPatches, the RFC 6902 applier the core and the content tools share
+apps/web/shared/models/pageBuilder/            the webpage and email documents, the element-tree and style models
+apps/web/shared/services/pageBuilder/          the serialiser, CSS emitter
 apps/web/shared/services/pageBuilder/webpage/  WebpageNodeType, WebpageNodeTypeMap, one module per type
 apps/web/shared/services/pageBuilder/email/    EmailNodeType, EmailNodeTypeMap, one module per type, the MJML render
 apps/web/server/services/emailEditor/          the MJML compile service

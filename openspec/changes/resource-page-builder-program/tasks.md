@@ -1,7 +1,8 @@
 ## 1. Phase one: model and output
 
-- [ ] 1.1 Build the document model and undo as patches, as the document-model and undo-as-patches changes specify. Verify: a test named after the scenario 'Undo reverts the last edit and redo restores it'.
-- [ ] 1.2 Render each type's output on the server, and compile each email there. Verify: a test named after the scenario 'A published page is produced on the server'.
+- [ ] 1.1 Build the headless core, as the headless-core change specifies. Verify: a test named after the scenario 'Reversing a move' in that change.
+- [ ] 1.2 Build the document model and undo as patches over the headless core, as the document-model and undo-as-patches changes specify. Verify: a test named after the scenario 'Undo reverts the last edit and redo restores it'.
+- [ ] 1.3 Render each type's output on the server, and compile each email there. Verify: a test named after the scenario 'A published page is produced on the server'.
 
 ## 2. Phase two: webpage editor
 

@@ -23,7 +23,7 @@ The Flowchart editor offers the standard set of six shapes in place of one recta
 
 ## Waiting on
 
-None.
+The [flowchart's future](../../deferred/resource/flowchart-on-editor-core/design.md), deferred until the headless editor core ships: a rebuild on the core or a removal would discard this change's Vue Flow work.
 
 ## Impact
 

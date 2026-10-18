@@ -1,0 +1,99 @@
+## ADDED Requirements
+
+### Requirement: A document is valid only against its own registry
+
+The editor core SHALL accept a document only when every node's type is in the registry it was checked against, every slot holds only the child types it allows, every id is unique, and the node count is within the consumer's limit.
+
+#### Scenario: A child its slot does not allow
+
+- **GIVEN** a registry whose list type allows only items in its slot
+- **WHEN** a document holding a list with a heading in that slot is checked
+- **THEN** the document is refused
+- **AND** the refusal names the slot
+
+#### Scenario: A document from another registry
+
+- **GIVEN** a document built with one editor's registry
+- **WHEN** it is checked against a second editor's registry that lacks one of its types
+- **THEN** the document is refused
+
+### Requirement: Every edit can be reversed exactly
+
+Every command of the editor core SHALL produce an edit whose reversal restores a document equal to the one before it, and SHALL leave every part of the document the edit did not reach unchanged.
+
+#### Scenario: Reversing a move
+
+- **GIVEN** a document of two sections each holding nodes
+- **WHEN** a node is moved from the first section into the second and the edit is reversed
+- **THEN** the document equals the one before the move
+
+#### Scenario: An edit that cannot apply
+
+- **GIVEN** an edit addressing a node that is no longer in the document
+- **WHEN** the edit is applied
+- **THEN** the edit is refused
+- **AND** the document is unchanged
+
+### Requirement: A node moves only into a slot that accepts it
+
+A structural move SHALL place a node only in a slot that accepts its type, and SHALL leave the document unchanged when no such slot is in reach.
+
+#### Scenario: Moving into a sibling that refuses the node
+
+- **GIVEN** a node whose previous sibling has no slot accepting its type
+- **WHEN** the node is moved into its previous sibling
+- **THEN** no edit is made
+- **AND** the document is unchanged
+
+### Requirement: Removing a node names where focus goes next
+
+Removing a node SHALL name the node that takes focus after it: its next sibling, else its previous sibling, else its parent.
+
+#### Scenario: Removing the last child
+
+- **GIVEN** a section whose only child is selected
+- **WHEN** the child is removed
+- **THEN** the section is named as the node that takes focus
+
+### Requirement: Pasted nodes never share an id with the document
+
+Pasting nodes SHALL give every pasted node a fresh id, and SHALL refuse nodes whose types the destination's registry does not hold.
+
+#### Scenario: Pasting a node twice
+
+- **GIVEN** a copied node with a child
+- **WHEN** it is pasted into the same document twice
+- **THEN** every node in the document has an id of its own
+
+#### Scenario: Pasting into another editor
+
+- **GIVEN** a node copied from one editor's document
+- **WHEN** it is pasted into a document whose registry lacks its type
+- **THEN** the paste is refused
+- **AND** the document is unchanged
+
+### Requirement: The history undoes and redoes edits in order within its bound
+
+The editor core's history SHALL undo edits newest first and redo them in the order they were undone, SHALL drop the redo entries when a new edit is made, and SHALL drop its oldest entry once it holds as many as the consumer's limit.
+
+#### Scenario: A new edit after undo
+
+- **GIVEN** a history with one undone edit
+- **WHEN** a new edit is pushed
+- **THEN** there is nothing to redo
+
+#### Scenario: The bound is reached
+
+- **GIVEN** a history holding as many entries as its limit
+- **WHEN** one more edit is pushed
+- **THEN** the oldest entry can no longer be undone
+
+### Requirement: The core runs where there is no document object model
+
+The editor core SHALL check, edit and reverse a document in a runtime that has no document object model and no user interface framework.
+
+#### Scenario: An agent edits on the server
+
+- **GIVEN** a server process with no document object model
+- **WHEN** it applies a command to a stored document and reverses it
+- **THEN** the result equals the stored document
