@@ -457,6 +457,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Raiden Shogun](raiden-shogun/design.md)   | The Eye and Musou Isshin                                                                                      |
 | [Razor](razor/design.md)                   | Electro Sigils, the Wolf Within and Lightning Fang                                                            |
 | [Rosaria](rosaria/design.md)               | Ravaging Confession and Rites of Termination                                                                  |
+| [Sandrone](sandrone/design.md)             | Three strikes, the charged attack, Prism Shot and the burst's four hits; Power Overdrive not built            |
 | [Sayu](sayu/design.md)                     | Fuufuu Windwheel and Muji-Muji Daruma                                                                         |
 | [Sethos](sethos/design.md)                 | Fully-charged Aimed Shot and Ancient Rite: Thunderous Roar of Sand                                            |
 | [Shenhe](shenhe/design.md)                 | Spring Spirit Summoning and Divine Maiden's Deliverance                                                       |
