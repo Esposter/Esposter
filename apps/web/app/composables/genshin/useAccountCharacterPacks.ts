@@ -30,6 +30,7 @@ export const useAccountCharacterPacks = () => {
     isSignedIn.value ? data.value : undefined,
   );
   const keepAccountCharacterPack = async ({ characterId, files, modelName, packHash }: CharacterPack) => {
+    const keepId = crypto.randomUUID();
     const uploadedFiles = await Promise.all(
       Array.from(files, async ([path, blob]) => ({
         blob,
@@ -43,6 +44,7 @@ export const useAccountCharacterPacks = () => {
         () =>
           $trpc.genshin.generateCharacterPackUploadSasUrls.mutate({
             files: uploadedFiles.map(({ sha256, size }) => ({ sha256, size })),
+            keepId,
           }),
         { key: "generateCharacterPackUploadSasUrls" },
       ),
@@ -54,6 +56,7 @@ export const useAccountCharacterPacks = () => {
           $trpc.genshin.keepCharacterPack.mutate({
             characterId,
             files: uploadedFiles.map(({ path, sha256, size }) => ({ path, sha256, size })),
+            keepId,
             modelName,
             packHash,
           }),

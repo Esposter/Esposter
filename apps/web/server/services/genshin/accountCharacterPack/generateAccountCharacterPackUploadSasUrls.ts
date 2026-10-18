@@ -8,13 +8,13 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { AzureContainer } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
-// One write target per file, each under the player's own staging name for its hash, so a file is uploaded whether or not
+// One write target per file, each under its keep's staging name for its hash, so a file is uploaded whether or not
 // The account already keeps its bytes: the server reads what lands there before it refers to it. Each is held against the
 // Player's quota for its declared size, as a resource's staged save is
 export const generateAccountCharacterPackUploadSasUrls = (
   db: Context["db"],
   userId: string,
-  { files }: GenerateCharacterPackUploadSasUrlsInput,
+  { files, keepId }: GenerateCharacterPackUploadSasUrlsInput,
 ): Promise<string[]> => {
   const totalSize = files.reduce((total, { size }) => total + size, 0);
   if (totalSize > MAX_CHARACTER_PACK_SIZE)
@@ -29,7 +29,7 @@ export const generateAccountCharacterPackUploadSasUrls = (
         db,
         userId,
         AzureContainer.GenshinAssets,
-        getAccountCharacterPackStagingBlobName(userId, sha256),
+        getAccountCharacterPackStagingBlobName(userId, keepId, sha256),
         size,
       ),
     ),
