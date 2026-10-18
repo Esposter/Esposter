@@ -70,6 +70,7 @@ import { starsigns } from "#src/services/gcg/cards/starsigns";
 import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
+import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
 import { thunderSummonersCrown } from "#src/services/gcg/cards/thunderSummonersCrown";
@@ -169,6 +170,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [333_005, sweetMadame],
   [333_006, mondstadtHashBrown],
   [333_008, mintyMeatRolls],
+  [333_009, teyvatFriedEgg],
   [GCG_BURNING_FLAME_ID, burningFlame],
   [GCG_CATALYZING_FIELD_ID, catalyzingField],
   [GCG_DENDRO_CORE_ID, dendroCore],
