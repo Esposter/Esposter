@@ -109,11 +109,12 @@ export const GCG_TOSS_UP_REROLL_COUNT = 2;
 // The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
 export const GCG_PLAYER_SIDE_INDEX = 0;
 export const GCG_OPPONENT_SIDE_INDEX = 1;
-// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst
+// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst, then a Technique
 export const GCG_SKILL_KIND_DISPLAY_ORDER: GcgSkillKind[] = [
   GcgSkillKind.NormalAttack,
   GcgSkillKind.ElementalSkill,
   GcgSkillKind.ElementalBurst,
+  GcgSkillKind.Technique,
 ];
 // The action card kinds that are equipped to a character, so a click on one waits for the character it goes onto
 export const GCG_EQUIPMENT_CARD_KINDS = new Set<GcgCardKind>([
