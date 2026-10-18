@@ -15,6 +15,15 @@ export const EXILE_ARTIFACT_SET_ID = 10_009;
 export const LUCKY_DOG_ARTIFACT_SET_ID = 10_011;
 // Traveling Doctor's id in the set table
 export const TRAVELING_DOCTOR_ARTIFACT_SET_ID = 10_013;
+// The set table's ids for the sets without a name in the text the repository reads, by their id
+export const ARTIFACT_SET_10003_ID = 10_003;
+export const ARTIFACT_SET_10006_ID = 10_006;
+export const ARTIFACT_SET_14004_ID = 14_004;
+export const ARTIFACT_SET_15001_ID = 15_001;
+export const ARTIFACT_SET_15003_ID = 15_003;
+export const ARTIFACT_SET_15007_ID = 15_007;
+export const ARTIFACT_SET_15015_ID = 15_015;
+export const ARTIFACT_SET_15016_ID = 15_016;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
