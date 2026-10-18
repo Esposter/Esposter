@@ -353,26 +353,27 @@ mathjs's tracker is triaged for the part this change rewrites: every issue label
 
 ## Key files
 
-| Path                                                                                         | Role                                                                                    |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `packages/math-expression-compiler/src/models/shared/MathExpressionNode.ts`                  | the parsed tree, a list among its nodes                                                 |
-| `packages/math-expression-compiler/src/models/function/MathExpressionSignature.ts`           | a function's signature: its arities, its parameter kinds and its computation            |
-| `packages/math-expression-compiler/src/services/parser/parseMathExpression.ts`               | the recursive descent parser, returning the tree or a positioned error                  |
-| `packages/math-expression-compiler/src/services/compiler/compileMathExpression.ts`           | the compiler: a tree and its variable names to a function of numbers                    |
-| `packages/math-expression-compiler/src/services/shared/matchMathExpressionSignature.ts`      | the signature a call's arguments fit, for the parser's check and the compiler's binding |
-| `packages/math-expression-compiler/src/services/names/getMathExpressionNames.ts`             | the free names a tree reads, in evaluation order, for the form's unbound-name check     |
-| `packages/math-expression-compiler/src/services/function/MathExpressionFunctionMap.ts`       | each function's signatures, under its mathjs name                                       |
-| `packages/math-expression-compiler/src/services/shared/getMathExpressionSignatures.ts`       | the own-key read of the function table                                                  |
-| `packages/math-expression-compiler/src/services/shared/MathExpressionConstantMap.ts`         | the named constants                                                                     |
-| `packages/math-expression-compiler/src/services/function/computeExtreme.ts`                  | the tolerant fold `max`, `min` and the infinity norms share                             |
-| `packages/math-expression-compiler/src/services/function/computeHypotenuse.ts`               | mathjs's running rescale for `hypot`, comparing exactly                                 |
-| `packages/math-expression-compiler/src/services/compiler/mathExpressionParity.snapshot.json` | mathjs's answers over the corpus, recorded before it left, with each fix and its cause  |
-| `packages/math-expression-compiler/src/services/compiler/mathExpressionParity.test.ts`       | the corpus evaluated with ours, a test per fix cause                                    |
-| `apps/web/shared/models/resource/sheet/column/transformation/MathTransformation.ts`          | the stored schema: a string within the content limit                                    |
-| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`       | the edit form schema, where the parse and the name check run                            |
-| `apps/web/shared/services/resource/sheet/column/transformation/compileMathTransformation.ts` | a math column compiled: parse and compile once, a finite number or empty                |
-| `apps/web/shared/services/resource/sheet/column/compileSheetColumns.ts`                      | the sheet's computed columns compiled once, cycles found, bound to rows                 |
-| `apps/web/app/store/resource/sheet/row.ts`                                                   | the grid's compiled columns and bound reader, as computed values                        |
+| Path                                                                                         | Role                                                                                         |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `packages/math-expression-compiler/src/models/shared/MathExpressionNode.ts`                  | the parsed tree, a list among its nodes                                                      |
+| `packages/math-expression-compiler/src/models/function/MathExpressionSignature.ts`           | a function's signature: its arities, its parameter kinds and its computation                 |
+| `packages/math-expression-compiler/src/services/parser/parseMathExpression.ts`               | the recursive descent parser, returning the tree or a positioned error                       |
+| `packages/math-expression-compiler/src/services/compiler/compileMathExpression.ts`           | the compiler: a tree and its variable names to a function of numbers                         |
+| `packages/math-expression-compiler/src/services/compiler/MathExpressionNodeCompileMap.ts`    | each node type's compiler, keyed by the node's type, which the context hands its children to |
+| `packages/math-expression-compiler/src/services/shared/matchMathExpressionSignature.ts`      | the signature a call's arguments fit, for the parser's check and the compiler's binding      |
+| `packages/math-expression-compiler/src/services/names/getMathExpressionNames.ts`             | the free names a tree reads, in evaluation order, for the form's unbound-name check          |
+| `packages/math-expression-compiler/src/services/function/MathExpressionFunctionMap.ts`       | each function's signatures, under its mathjs name                                            |
+| `packages/math-expression-compiler/src/services/shared/getMathExpressionSignatures.ts`       | the own-key read of the function table                                                       |
+| `packages/math-expression-compiler/src/services/shared/MathExpressionConstantMap.ts`         | the named constants                                                                          |
+| `packages/math-expression-compiler/src/services/function/computeExtreme.ts`                  | the tolerant fold `max`, `min` and the infinity norms share                                  |
+| `packages/math-expression-compiler/src/services/function/computeHypotenuse.ts`               | mathjs's running rescale for `hypot`, comparing exactly                                      |
+| `packages/math-expression-compiler/src/services/compiler/mathExpressionParity.snapshot.json` | mathjs's answers over the corpus, recorded before it left, with each fix and its cause       |
+| `packages/math-expression-compiler/src/services/compiler/mathExpressionParity.test.ts`       | the corpus evaluated with ours, a test per fix cause                                         |
+| `apps/web/shared/models/resource/sheet/column/transformation/MathTransformation.ts`          | the stored schema: a string within the content limit                                         |
+| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`       | the edit form schema, where the parse and the name check run                                 |
+| `apps/web/shared/services/resource/sheet/column/transformation/compileMathTransformation.ts` | a math column compiled: parse and compile once, a finite number or empty                     |
+| `apps/web/shared/services/resource/sheet/column/compileSheetColumns.ts`                      | the sheet's computed columns compiled once, cycles found, bound to rows                      |
+| `apps/web/app/store/resource/sheet/row.ts`                                                   | the grid's compiled columns and bound reader, as computed values                             |
 
 ## Sources
 
