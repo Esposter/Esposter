@@ -6,7 +6,7 @@ import { defineCommand } from "citty";
 export const fetchCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description:
-      "Fetch the readable texts and every table from AnimeGameData's main branch, the install's build, each file the dump lacks or holds at another size",
+      "Fetch the readable texts, every table, every text map and each binary the dump holds from AnimeGameData's main branch, the install's build, each file the dump lacks or holds at another size",
     name: "fetch",
   },
   run: async () => {

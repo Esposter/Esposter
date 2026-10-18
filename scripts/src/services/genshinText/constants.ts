@@ -8,7 +8,8 @@ import { dirname, join } from "node:path";
 // AnimeGameData Repository lays it out per patch, and `TextMap/`, which `decode` writes from the installed game's own
 // Chunks. Only the strings a consumer names, which `write` reads out of it, enter a package
 export const GAME_TEXT_DIRECTORY: string = process.env.GENSHIN_TEXT_DIRECTORY ?? join(PARITY_DIRECTORY, "text");
-export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "TextMap");
+export const TEXT_MAP_DIRECTORY_NAME = "TextMap";
+export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, TEXT_MAP_DIRECTORY_NAME);
 export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput");
 // The readable texts the game's books and letters are read from, one folder a language named by its code, fetched into the
 // Dump from the AnimeGameData repository's `Readable/` like the tables, never committed
@@ -25,7 +26,8 @@ export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";
 // The trigger table, each trigger a quest fires by its id with the scene and the group that hold it
 export const TRIGGER_TABLE_NAME = "TriggerExcelConfigData";
 export const NPC_TABLE_NAME = "NpcExcelConfigData";
-export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
+export const BIN_OUTPUT_DIRECTORY = "BinOutput";
+export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY, "Quest");
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
 // Text map is split across the chunks of its kind's folder, numbered from its range's first to its last
 export const EXCEL_BIN_OUTPUT_PATH = "Data/_ExcelBinOutput";
