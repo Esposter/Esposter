@@ -1,6 +1,6 @@
 ## Purpose
 
-Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and her passives and Constellations 2, 4 and 6, with Constellation 1's charge built.
+Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and Constellations 2, 4 and 6, with Constellation 1's charge and her Ascension 1 and 4 passives built.
 
 ## Requirements
 
@@ -64,9 +64,9 @@ From Constellation 1, Lingering Lifeline SHALL have one more charge than its bas
 - **WHEN** her skill's charges are read
 - **THEN** no charge is added
 
-### Requirement: Breakthrough Barb and passives not built
+### Requirement: Breakthrough Barb and Constellations 2, 4 and 6 not built
 
-Breakthrough Barb, Yelan's passives and her Constellations 2, 4 and 6 SHALL have no effect yet.
+Breakthrough Barb and Yelan's Constellations 2, 4 and 6 SHALL have no effect yet.
 
 #### Scenario: Lifeline hits without Barb
 
