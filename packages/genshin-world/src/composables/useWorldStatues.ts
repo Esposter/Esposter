@@ -5,10 +5,12 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
+import { computeStatueLevelEvents } from "#src/services/statue/computeStatueLevelEvents";
 import { findOculus } from "#src/services/statue/findOculus";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
@@ -20,6 +22,7 @@ import { getResultAsync } from "@esposter/shared";
 // And a resonance starts its region, each paying the levels it reaches and their rewards as a bag offer does. What the bag
 // Has no room for drops where the touch or the resonance was made
 export const useWorldStatues = ({
+  events,
   foundOculusIds,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -32,6 +35,7 @@ export const useWorldStatues = ({
   setWallet,
   wallet,
 }: {
+  events: WorldEvents;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -46,7 +50,10 @@ export const useWorldStatues = ({
 }) => {
   // The levels of the region's statues are read from the game's table as a statue is touched or resonated with, and the
   // Region's progress is kept as the save holds it, its levels left to the table
+  // A level the region rises to is an achievement event for its city, read against the level the region held before it
   const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
+    const achievementEvents = computeStatueLevelEvents(regionId, getRegionProgress(regionId).level, progress.level);
+    if (achievementEvents.length > 0) events.emit("achievementEvents", achievementEvents);
     regionStatueProgressMap.value = new Map([...regionStatueProgressMap.value, [regionId, progress]]);
   };
   // A region's progress as the save holds it, which a region no save holds yet starts from at none

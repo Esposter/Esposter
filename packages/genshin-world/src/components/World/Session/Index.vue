@@ -462,6 +462,7 @@ const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, stepQuickUse } = 
 // Whose rewards the bag has no room for drop at the tree
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
 const { collectOculus, resonateStatue } = useWorldStatues({
+  events,
   foundOculusIds,
   gainWorldAdventureExp,
   gameDataBaseUrl,
