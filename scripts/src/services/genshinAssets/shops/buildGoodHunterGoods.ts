@@ -5,8 +5,7 @@ import { readCityDiscountLevel } from "#src/services/genshinAssets/shops/readCit
 // The Good Hunter's goods, the food, cooking ingredients and recipes Sara sells, as one record of the shops dataset. Its
 // Shop takes the discount of its city, Mondstadt, at the level the city's shops give, as the grocery does
 export const buildGoodHunterGoods = (): Record<string, unknown> =>
-  buildShopGoodSlice(
-    (row) => row.shopType === GOOD_HUNTER_SHOP_TYPE,
-    "goodHunter",
-    readCityDiscountLevel(MONDSTADT_CITY_ID),
-  );
+  buildShopGoodSlice((row) => row.shopType === GOOD_HUNTER_SHOP_TYPE, "goodHunter", {
+    level: readCityDiscountLevel(MONDSTADT_CITY_ID),
+    shopTypes: [GOOD_HUNTER_SHOP_TYPE],
+  });
