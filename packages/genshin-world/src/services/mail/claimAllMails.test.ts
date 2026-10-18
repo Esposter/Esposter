@@ -22,9 +22,9 @@ describe(claimAllMails, () => {
   const STATE: MailboxState = {
     inventory: EMPTY_INVENTORY,
     mails: [
-      { deliveredAt, id: 1, isClaimed: false, isRead: false },
-      { deliveredAt, id: 2, isClaimed: false, isRead: false },
-      { deliveredAt, id: 3, isClaimed: true, isRead: true },
+      { deliveredAt, id: 1, isClaimed: false },
+      { deliveredAt, id: 2, isClaimed: false },
+      { deliveredAt, id: 3, isClaimed: true },
     ],
     wallet: EMPTY_WALLET,
   };
@@ -36,9 +36,9 @@ describe(claimAllMails, () => {
     expect(claimAllMails(STATE, mailRows, {}, new Map())).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       mails: [
-        { deliveredAt, id: 1, isClaimed: true, isRead: true },
-        { deliveredAt, id: 2, isClaimed: true, isRead: true },
-        { deliveredAt, id: 3, isClaimed: true, isRead: true },
+        { deliveredAt, id: 1, isClaimed: true },
+        { deliveredAt, id: 2, isClaimed: true },
+        { deliveredAt, id: 3, isClaimed: true },
       ],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT * 2 },
     });

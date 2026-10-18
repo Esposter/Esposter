@@ -235,16 +235,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once by its id, and a read or claimed mail stays so whichever save it was read or claimed in
+  // A mail is kept once by its id, and a claimed mail stays so whichever save it was claimed in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find(({ id }) => id === accountMail.id);
-    return guestMail
-      ? {
-          ...accountMail,
-          isClaimed: accountMail.isClaimed || guestMail.isClaimed,
-          isRead: accountMail.isRead || guestMail.isRead,
-        }
-      : accountMail;
+    return guestMail ? { ...accountMail, isClaimed: accountMail.isClaimed || guestMail.isClaimed } : accountMail;
   });
   mails.push(...guest.mails.filter(({ id }) => !account.mails.some((accountMail) => accountMail.id === id)));
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;

@@ -10,7 +10,6 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
@@ -267,7 +266,6 @@ describe("genshinSaveSchema", () => {
         deliveredAt: maxInstant,
         id: maxNumber - index,
         isClaimed: false,
-        isRead: false,
       })),
       tips: { shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
       travelerBirthday: { day: 31, month: 12 },
@@ -364,7 +362,6 @@ describe("genshinSaveSchema", () => {
         deliveredAt: new Date(0).toISOString(),
         id: index + 1,
         isClaimed: false,
-        isRead: false,
       })),
     };
 
