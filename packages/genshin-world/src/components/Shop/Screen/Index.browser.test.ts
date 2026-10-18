@@ -33,7 +33,7 @@ const materialDataMap = new Map<number, MaterialData>(
 const good = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
   beginTime: new Date(0).toISOString(),
   buyLimit: 0,
-  endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ days: 36_500 }).toString(),
+  endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 876_000 }).toString(),
   goodsId,
   itemCount: 1,
   itemId,
