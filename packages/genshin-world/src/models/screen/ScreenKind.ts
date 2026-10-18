@@ -12,6 +12,7 @@ export enum ScreenKind {
   CoOp = "CoOp",
   Crafting = "Crafting",
   Dialogue = "Dialogue",
+  Domain = "Domain",
   Events = "Events",
   Expedition = "Expedition",
   Fishing = "Fishing",
