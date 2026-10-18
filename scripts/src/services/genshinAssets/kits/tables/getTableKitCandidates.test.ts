@@ -272,10 +272,10 @@ describe(getTableKitCandidates, () => {
         [ELEMENTAL_SKILL_GROUP_ID, [...CLORINDE_SKILL_LABELS, { indexes: [0, 1], label: "Swift Hunt DMG" }]],
       ]),
     });
+    const candidateValues = readCandidateValues(candidateMap);
     const readValueIndexes = (listName: string) =>
       [0, 1, 2].map(
-        (hit) =>
-          (candidateMap.get(`hits.${listName}.${hit}.multiplier`)?.[0]?.value as { index: number } | undefined)?.index,
+        (hit) => (candidateValues[`hits.${listName}.${hit}.multiplier`] as { index: number } | undefined)?.index,
       );
 
     expect({
