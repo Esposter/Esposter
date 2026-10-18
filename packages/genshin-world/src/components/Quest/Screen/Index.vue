@@ -166,9 +166,9 @@ useEventListener("keydown", (event) => {
           <template v-for="{ chapter, chapterQuests } of chapters" :key="chapter.id">
             <p class="chapter" role="heading" aria-level="3">
               <MenuGlyph :glyph="QuestGlyphMap[QuestGlyph.Series]" />
-              <span class="chapter-title">{{ textMap[chapter.titleTextId] }}</span>
-              <span v-if="chapter.numberTextId" class="chapter-number">{{ textMap[chapter.numberTextId] }}</span>
-              <span class="chapter-region">{{ textMap[chapter.regionTextId] }}</span>
+              <span class="chapter-title">{{ textMap[chapter.titleTextId] ?? "" }}</span>
+              <span v-if="chapter.numberTextId" class="chapter-number">{{ textMap[chapter.numberTextId] ?? "" }}</span>
+              <span class="chapter-region">{{ textMap[chapter.regionTextId] ?? "" }}</span>
             </p>
             <div class="chapter-quests">
               <QuestRow
@@ -190,7 +190,7 @@ useEventListener("keydown", (event) => {
         <p class="detail-title" role="heading" aria-level="1">{{ textMap[selectedQuest.titleTextId] }}</p>
         <MenuGlyph class="place" :glyph="QuestGlyphMap[QuestGlyph.Place]" />
         <template v-if="selectedChapter">
-          <p class="journal">{{ textMap[selectedChapter.journalTextId] }}</p>
+          <p class="journal">{{ textMap[selectedChapter.journalTextId] ?? "" }}</p>
           <span class="journal-emblem" />
         </template>
         <span class="divider" />
