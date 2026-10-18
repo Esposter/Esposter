@@ -3,7 +3,7 @@ import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLe
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe("domain challenge levels", () => {
+describe("domainChallengeLevels", () => {
   test("a level defeats as many enemies as its waves hold", () => {
     expect.hasAssertions();
 
