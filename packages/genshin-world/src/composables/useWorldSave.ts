@@ -10,6 +10,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
+import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
 import { ref, shallowRef, watch } from "vue";
 
 // The bag, the wallet, the wish counters, the achievements' progress, the bench's crafting and the Archive's entries and
@@ -82,10 +83,13 @@ export const useWorldSave = ({
     },
     { flush: "pre" },
   );
-  // Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in
+  // Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in, and the
+  // Achievements count what it takes in as their obtain doings
   const setInventory = (nextInventory: Inventory) => {
+    const obtainEvents = computeBagObtainEvents(inventory.value.items, nextInventory.items);
     inventory.value = nextInventory;
     events.emit("bagChange", nextInventory);
+    if (obtainEvents.length > 0) events.emit("achievementEvents", obtainEvents);
   };
   const setWallet = (nextWallet: Wallet) => {
     wallet.value = nextWallet;

@@ -9,7 +9,7 @@
 
 ## 3. Server-fired achievements
 
-- [ ] 3.1 Write each server-fired achievement's check when the page building its subject lands. Verify: a test named after the scenario 'a server-fired achievement advances when its own doing happens', seen failing first.
+- [ ] 3.1 Write each server-fired achievement's check when the page building its subject lands. Verify: a test named after the scenario 'a server-fired achievement advances when its own doing happens', seen failing first. Partly built: the obtain rows (6) count the bag's gains through `computeBagObtainEvents`; the rest stay in the change's x-waiting.
 
 ## 4. Namecard grant
 
