@@ -1253,6 +1253,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :water-level="windriseData.water.level"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
+          @party-health-changed="(change) => events.emit('partyHealthChanged', change)"
           @reaction-triggered="(enemy, reactions) => events.emit('reactionTriggered', enemy, reactions)"
           @strike-ore="(body, hit) => strikeGatheringOres(body, hit, kitContext.random)"
           @strike-puzzle="(body, hit) => strikeWorldPuzzles(body, hit)"

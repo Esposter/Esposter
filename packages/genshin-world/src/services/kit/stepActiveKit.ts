@@ -52,7 +52,16 @@ export const stepActiveKit = (
   input: KitInput,
   stepSeconds: number,
   context: KitContext,
-  { aimYaw, characterController, isAimHeld, landedHits, strikeOre, strikePuzzle, triggerReaction }: ActiveKitControls,
+  {
+    aimYaw,
+    characterController,
+    isAimHeld,
+    landedHits,
+    strikeOre,
+    strikePuzzle,
+    triggerHealthChange,
+    triggerReaction,
+  }: ActiveKitControls,
 ): void => {
   const {
     body,
@@ -169,8 +178,11 @@ export const stepActiveKit = (
   // It, and a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;
   const sentCount = healthChanges.length;
-  for (let index = 0; index < sentCount; index++)
-    emitKitEvent({ ...takeOne(healthChanges, index), kind: KitEventKind.HealthChanged }, context);
+  for (let index = 0; index < sentCount; index++) {
+    const healthChange = takeOne(healthChanges, index);
+    triggerHealthChange(healthChange);
+    emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
+  }
   healthChanges.copyWithin(0, sentCount);
   healthChanges.length -= sentCount;
 };

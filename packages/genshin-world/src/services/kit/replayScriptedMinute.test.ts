@@ -168,6 +168,7 @@ export const replayScriptedMinute = ({
         strikeOre: noop,
         strikePuzzle: noop,
         triggerReaction: noop,
+        triggerHealthChange: noop,
       },
     );
   }

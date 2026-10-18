@@ -52,6 +52,7 @@ import {
 } from "genshin-engine";
 import { PerspectiveCamera, Vector2, Vector3 } from "three";
 import { onBeforeUnmount } from "vue";
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 
 interface Props {
   // What the character is drawn on, which the scene places in the floating origin's group: it is stood at the body's
@@ -99,6 +100,7 @@ const { party } = kitContext;
 const emit = defineEmits<{
   clearKitEffects: [];
   drown: [];
+  partyHealthChanged: [change: PartyHealthChange];
   reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
   strikeOre: [body: KitBody, hit: OreHit];
   strikePuzzle: [body: KitBody, hit: PuzzleHit];
@@ -198,6 +200,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       landedHits,
       strikeOre: (kitBody, oreHit) => emit("strikeOre", kitBody, oreHit),
       triggerReaction: (enemy, reactions) => emit("reactionTriggered", enemy, reactions),
+      triggerHealthChange: (change) => emit("partyHealthChanged", change),
       strikePuzzle: (kitBody, puzzleHit) => emit("strikePuzzle", kitBody, puzzleHit),
     },
   );

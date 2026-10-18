@@ -11,6 +11,7 @@ export const createWorldEvents = (): WorldEvents => {
     defeatEnemy: [],
     finishQuest: [],
     parentQuestFinish: [],
+    partyHealthChanged: [],
     pickUpMora: [],
     questEvent: [],
     reactionTriggered: [],
