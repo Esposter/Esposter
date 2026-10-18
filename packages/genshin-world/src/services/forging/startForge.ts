@@ -76,7 +76,7 @@ export const startForge = (
   );
   const gameDay = computeGameDay(now);
   const forgedPoints = progress.forgedPointsDay.equals(gameDay) ? progress.forgedPoints : 0;
-  const takenInventory = { items: takeItemCounts(inventory.items, bagMaterials, count), nextId: inventory.nextId };
+  const takenInventory = { ...inventory, items: takeItemCounts(inventory.items, bagMaterials, count) };
   return {
     inventory: refundForgeOres(takenInventory, recipe, count, talents, definitions),
     progress: {

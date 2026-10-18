@@ -14,12 +14,13 @@ import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 // Offers every offering item the bag holds at once: each item the levels take is taken out of the bag and counted into
 // The offering, which reaches the levels it now covers, and those levels' rewards are paid as payOfferingLevels pays them
 export const offerBagItems = (
-  { items, nextId }: Inventory,
+  inventory: Inventory,
   wallet: Wallet,
   progress: OfferingProgress<OfferingLevel>,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): OfferingOffer => {
+  const { items } = inventory;
   const offeringItemIds = new Set(
     progress.levels.flatMap((offeringLevel) => offeringLevel.items.map(({ itemId }) => itemId)),
   );
@@ -28,7 +29,7 @@ export const offerBagItems = (
   const { gainedLevels, progress: offeredProgress } = offerItems(progress, offeredItems);
   const paid = payOfferingLevels(
     gainedLevels,
-    { items: takeItemCounts(items, itemCounts, 1), nextId },
+    { ...inventory, items: takeItemCounts(items, itemCounts, 1) },
     wallet,
     names,
     materialDataMap,

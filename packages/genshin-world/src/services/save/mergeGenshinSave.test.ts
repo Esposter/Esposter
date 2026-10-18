@@ -45,6 +45,8 @@ describe(mergeGenshinSave, () => {
     rotation: 0,
     sceneId: 2001,
   };
+  const QUICK_SWAP_ITEM_ID = 9;
+  const OTHER_QUICK_SWAP_ITEM_ID = 10;
   const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
   const OTHER_REFILL_DAY = Temporal.PlainDate.from(REFILL_DAY).add({ days: 1 }).toString();
   const ACCOUNT_REFILL_COUNT = 2;
@@ -175,6 +177,21 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, homePlacements: [OTHER_PLACEMENT] };
 
     expect(mergeGenshinSave(account, guest).homePlacements).toStrictEqual([PLACEMENT]);
+  });
+
+  // The bag is the account's, so the quick swap slots it holds are the account's too
+  test("keeps the account's quick swap slots over the guest's", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      inventory: { ...EMPTY_GENSHIN_SAVE.inventory, quickSwapItemIds: [QUICK_SWAP_ITEM_ID] },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      inventory: { ...EMPTY_GENSHIN_SAVE.inventory, quickSwapItemIds: [OTHER_QUICK_SWAP_ITEM_ID] },
+    };
+
+    expect(mergeGenshinSave(account, guest).inventory.quickSwapItemIds).toStrictEqual([QUICK_SWAP_ITEM_ID]);
   });
 
   test("keeps the further step of a quest", () => {

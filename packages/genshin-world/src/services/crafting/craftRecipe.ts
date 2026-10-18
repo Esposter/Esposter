@@ -41,7 +41,7 @@ export const craftRecipe = (
   const items = recipe.materials
     .filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID)
     .reduce((bagItems, material) => takeInventoryItems(bagItems, material.id, material.count * count), inventory.items);
-  const addition = addInventoryItem({ items, nextId: inventory.nextId }, resultDefinition, recipe.resultCount * count);
+  const addition = addInventoryItem({ ...inventory, items }, resultDefinition, recipe.resultCount * count);
   if (addition.overflow > 0) return undefined;
   return {
     inventory: addition.inventory,

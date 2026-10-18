@@ -12,6 +12,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
@@ -180,7 +181,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   enemyRespawns: {},
   homePlacements: [],
-  inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
+  inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER, quickSwapItemIds: [] },
   offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
   openedChests: [],
   party: { activeIndex: MAX_SAVE_NUMBER, deployedTeamIndex: MAX_SAVE_NUMBER, downCharacterIds: [], teams: [] },
@@ -260,9 +261,10 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_WISH_HISTORY_COUNT *
     getListEntryLength({ bannerKind: LONGEST_BANNER_KIND, itemId: MAX_SAVE_NUMBER, time: MAX_SAVE_INSTANT }) +
+  QUICK_SWAP_GADGET_LIMIT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH;
 // A new player's bag, which holds nothing until the world gives it something
-export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0 };
+export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0, quickSwapItemIds: [] };
 // Mondstadt's Reputation at its first level, with no EXP toward the next
 export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
 // A new player's party as the game starts one: the four default teams, the starting team deployed with its characters on

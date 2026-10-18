@@ -20,10 +20,11 @@ import { ItemCategory } from "genshin-interface";
 // Holds fewer kinds than its limit. A tab counted on its own takes no more pieces than its room, and whatever does not
 // Fit is left over
 export const addInventoryItem = (
-  { items, nextId }: Inventory,
+  inventory: Inventory,
   definition: ItemDefinition,
   quantity: number,
 ): InventoryAddition => {
+  const { items, nextId } = inventory;
   const categoryRoom = ItemCategoryRoomMap[definition.category];
   const tabRoom =
     categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
@@ -44,7 +45,7 @@ export const addInventoryItem = (
         : { level: ARTIFACT_START_LEVEL }),
     }));
     return {
-      inventory: { items: [...items, ...addedItems], nextId: nextId + addedCount },
+      inventory: { ...inventory, items: [...items, ...addedItems], nextId: nextId + addedCount },
       overflow: quantity - addedCount,
     };
   }
@@ -54,8 +55,8 @@ export const addInventoryItem = (
     const addedCount = Math.max(Math.min(quantity, definition.stackLimit - stack.quantity, tabRoom), 0);
     return {
       inventory: {
+        ...inventory,
         items: items.map((item) => (item === stack ? { ...item, quantity: item.quantity + addedCount } : item)),
-        nextId,
       },
       overflow: quantity - addedCount,
     };
@@ -66,10 +67,14 @@ export const addInventoryItem = (
     categoryRoom === undefined && kindCount >= INVENTORY_KIND_LIMIT
       ? 0
       : Math.max(Math.min(quantity, definition.stackLimit, tabRoom), 0);
-  if (addedCount === 0) return { inventory: { items, nextId }, overflow: quantity };
+  if (addedCount === 0) return { inventory, overflow: quantity };
   else
     return {
-      inventory: { items: [...items, { definition, id: nextId, quantity: addedCount }], nextId: nextId + 1 },
+      inventory: {
+        ...inventory,
+        items: [...items, { definition, id: nextId, quantity: addedCount }],
+        nextId: nextId + 1,
+      },
       overflow: quantity - addedCount,
     };
 };

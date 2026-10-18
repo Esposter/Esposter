@@ -47,5 +47,5 @@ export const eatDish = (
       else buffKitMember(kitEffectState, eaterId, buff);
     }
   }
-  return { items: takeInventoryItems(inventory.items, itemId, 1), nextId: inventory.nextId };
+  return { ...inventory, items: takeInventoryItems(inventory.items, itemId, 1) };
 };
