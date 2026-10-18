@@ -117,7 +117,30 @@ export const BLESSING_TREE_ARTIFACT_ROWS: TreeArtifactRow[] = [
 // For a level below every row
 export const findTreeRow = <T extends { rank: number }>(rows: T[], rank: number): T =>
   rows.findLast((row) => row.rank <= rank) ?? rows[0];
-// The artifact sets each Domain of Blessing's claim draws its artifacts among, by entry id. None is set yet: the dump's text
-// Names no reliquary set, so the wiki's four sets per domain (Template:Domain_Levels/Blessing) have no ids to take, and a
-// Domain with none refuses its artifact draw rather than paying with none
-export const BLESSING_ARTIFACT_SET_IDS: Partial<Record<number, number[]>> = {};
+// The four artifact sets of each Domain of Blessing, by entry id, as each domain's wiki infobox gives them: the `sets`
+// Line of its page on https://genshin-impact.fandom.com/wiki/Domain_of_Blessing. A name is resolved to its set id through
+// The dump's equip affixes by resolveBlessingArtifactSetIds, so no set id is typed in
+export const BLESSING_ARTIFACT_SET_NAMES: Readonly<Record<number, readonly string[]>> = {
+  1: ["Thundering Fury", "Thundersoother", "Resolution of Sojourner", "Adventurer"],
+  6: ["Viridescent Venerer", "Maiden Beloved", "Tiny Miracle", "Traveling Doctor"],
+  7: ["Archaic Petra", "Retracing Bolide", "Brave Heart", "Lucky Dog"],
+  8: ["Crimson Witch of Flames", "Lavawalker", "Defender's Will", "Martial Artist"],
+  9: ["Bloodstained Chivalry", "Noblesse Oblige", "Gambler", "Scholar"],
+  12: ["Blizzard Strayer", "Heart of Depth", "Defender's Will", "Gambler"],
+  13: ["Tenacity of the Millelith", "Pale Flame", "Brave Heart", "Martial Artist"],
+  16: ["Shimenawa's Reminiscence", "Emblem of Severed Fate", "Resolution of Sojourner", "Tiny Miracle"],
+  17: ["Husk of Opulent Dreams", "Ocean-Hued Clam", "Defender's Will", "Brave Heart"],
+  18: ["Vermillion Hereafter", "Echoes of an Offering", "Martial Artist", "Gambler"],
+  20: ["Deepwood Memories", "Gilded Dreams", "Tiny Miracle", "Gambler"],
+  22: ["Desert Pavilion Chronicle", "Flower of Paradise Lost", "Resolution of Sojourner", "Brave Heart"],
+  23: ["Nymph's Dream", "Vourukasha's Glow", "Martial Artist", "Scholar"],
+  26: ["Marechaussee Hunter", "Golden Troupe", "Resolution of Sojourner", "Defender's Will"],
+  27: ["Song of Days Past", "Nighttime Whispers in the Echoing Woods", "Tiny Miracle", "Martial Artist"],
+  28: ["Fragment of Harmonic Whimsy", "Unfinished Reverie", "Brave Heart", "Scholar"],
+  31: ["Scroll of the Hero of Cinder City", "Obsidian Codex", "Resolution of Sojourner", "Gambler"],
+  32: ["Long Night's Oath", "Finale of the Deep Galleries", "Tiny Miracle", "Scholar"],
+  35: ["Night of the Sky's Unveiling", "Silken Moon's Serenade", "Resolution of Sojourner", "Gambler"],
+  36: ["Aubade of Morningstar and Moon", "A Day Carved From Rising Winds", "Tiny Miracle", "Instructor"],
+  37: ["Celestial Gift", "Disenchantment in Deep Shadow", "Berserker", "The Exile"],
+  40: ["Scarlet Proof", "Heart of the Furnace", "The Exile", "Brave Heart"],
+};
