@@ -9,6 +9,8 @@ export const COMPOUND_TABLE_NAME = "CompoundExcelConfigData";
 export const UNLOCK_COOK_RECIPE_USE_OP = "ITEM_USE_UNLOCK_COOK_RECIPE";
 // The bonus type of a character's special dish, which replaces the dish cooked in its recipe at a chance
 export const COOK_BONUS_REPLACE_TYPE = "COOK_BONUS_REPLACE";
+// The proud skill table, whose cooking talents are the rows of a cooking effect
+export const PROUD_SKILL_TABLE_NAME = "ProudSkillExcelConfigData";
 // The compound type of a processing row, the one the bench's processing of ingredients is built from. A random row
 // Draws its output from a drop table this build does not read, so it is left out
 export const COMPOUND_COOK_TYPE = "COMPOUND_COOK";

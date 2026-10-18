@@ -1,5 +1,6 @@
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 
+import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
 import { pickDishItemId } from "#src/services/cooking/pickDishItemId";
 import { describe, expect, test } from "vitest";
@@ -10,6 +11,7 @@ describe(pickDishItemId, () => {
   const SPECIAL_ITEM_ID = 108_014;
   const RESULT_ITEM_ID = 108_013;
   const recipe: CookingRecipe = {
+    foodType: CookingFoodType.Heal,
     id: 1001,
     ingredients: [{ count: 1, id: 100_011 }],
     isDefaultUnlocked: true,

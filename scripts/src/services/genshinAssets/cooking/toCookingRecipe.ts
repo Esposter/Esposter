@@ -5,7 +5,7 @@ import type { CookingRecipe, CookingSpecialty } from "genshin-world";
 
 import { COOK_BONUS_REPLACE_TYPE, FoodQualityCookingQualityMap } from "#src/services/genshinAssets/cooking/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CookingQuality } from "genshin-world";
+import { cookingFoodTypeSchema, CookingQuality } from "genshin-world";
 
 // The quality a dish's result is, read off the food quality of its item row
 const toResultQuality = (itemId: number, materialMap: Map<number, MaterialRow>): CookingQuality => {
@@ -59,6 +59,7 @@ export const toCookingRecipe = (
   if (qteCentre === undefined || qteWidth === undefined)
     throw new InvalidOperationError(Operation.Read, String(row.id), "has no zone parameters");
   return {
+    foodType: cookingFoodTypeSchema.parse(row.foodType),
     id: row.id,
     ingredients: row.inputVec.filter(({ count }) => count > 0).map(({ count, id }) => ({ count, id })),
     isDefaultUnlocked: row.isDefaultUnlocked,

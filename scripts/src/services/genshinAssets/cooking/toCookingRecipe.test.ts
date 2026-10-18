@@ -4,7 +4,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { COOK_BONUS_REPLACE_TYPE } from "#src/services/genshinAssets/cooking/constants";
 import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRecipe";
-import { CookingQuality } from "genshin-world";
+import { CookingFoodType, CookingQuality } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const createMaterial = (id: number, foodQuality: string): MaterialRow => ({
@@ -32,6 +32,7 @@ describe(toCookingRecipe, () => {
   ]);
   const createRow = (qualityOutputIds: number[]): CookRecipeRow => ({
     cookMethod: "",
+    foodType: "COOK_FOOD_HEAL",
     id: RECIPE_ID,
     inputVec: [{ count: 1, id: 100_011 }],
     isDefaultUnlocked: true,
@@ -63,6 +64,18 @@ describe(toCookingRecipe, () => {
       [CookingQuality.Regular]: ORDINARY_ITEM_ID,
       [CookingQuality.Suspicious]: STRANGE_ITEM_ID,
     });
+  });
+
+  test("should read the dish's kind as the table spells it", () => {
+    expect.hasAssertions();
+
+    const recipe = toCookingRecipe(createRow([STRANGE_ITEM_ID, ORDINARY_ITEM_ID, DELICIOUS_ITEM_ID]), {
+      bonusRows: [],
+      materialMap,
+      unlockItemIds: [],
+    });
+
+    expect(recipe.foodType).toBe(CookingFoodType.Heal);
   });
 
   test("should give each quality the chance its place among the results holds", () => {
