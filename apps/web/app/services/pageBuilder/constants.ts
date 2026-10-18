@@ -4,7 +4,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 export const MAX_PAGE_BUILDER_HISTORY_SIZE = 100;
 // The palette group every page builder command is listed under
 export const PAGE_BUILDER_COMMAND_GROUP = "Page builder";
-// A node's label in the layers tree, Move to's paths and the move announcements
+// The title each webpage node type is shown by
 export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, string>> = Object.freeze({
   [WebpageNodeType.Button]: "Button",
   [WebpageNodeType.Column]: "Column",
