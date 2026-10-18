@@ -29,7 +29,6 @@
   },
   "parameters.maxWaveCount": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 7239 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 7232 } },
   "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
