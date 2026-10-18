@@ -10,5 +10,7 @@ export interface ConfigWidgetRow {
   coolDownOnFail?: number;
   gatherPointType?: number;
   isEquipable?: boolean;
+  maxCountByPlayer?: number;
+  maxCountInScene?: number;
   maxPoints?: number;
 }
