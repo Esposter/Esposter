@@ -49,15 +49,11 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                                               | Role after the change                                                                                                            |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/composables/useWorldMap.ts`                            | Unlocks on activation, emits the scene point, pays a waypoint's first unlock, and keeps a hidden waypoint out of the locked ones |
-| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`         | A landmark's scene point, by its statue or its waypoint id                                                                       |
-| `packages/genshin-world/src/services/map/constants.ts`                             | `JUMP_LANDMARK_KINDS` takes the statues and the waypoints                                                                        |
-| `packages/genshin-world/src/services/transPoint/computeHiddenTransPointIds.ts`     | The listed points a step names and no step has reached, which the map keeps out                                                  |
-| `packages/genshin-world/src/services/quest/computeQuestStepTargets.ts`             | The Interact targets the quests name, and those their reached steps name                                                         |
-| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointUnlocks.ts` | Fetches the unlock record by its key, checking it against its shape                                                              |
-| `scripts/src/services/genshinAssets/transPoints/buildTransPointUnlocks.ts`         | Builds the open world's unlock record, for publishing                                                                            |
+| File                                                                       | Role after the change                                                            |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/composables/useWorldMap.ts`                    | Unlocks on activation, emits the scene point, and pays a waypoint's first unlock |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | Reads a waypoint's point from its id, to find its reward row                     |
+| `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS` takes the statues and the waypoints                        |
 
 ## Sources
 
