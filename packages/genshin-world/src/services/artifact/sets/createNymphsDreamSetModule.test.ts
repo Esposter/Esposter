@@ -5,8 +5,8 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { MIRRORED_NYMPH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
-import { createMirroredNymphSetModule } from "#src/services/artifact/sets/createMirroredNymphSetModule";
+import { NYMPHS_DREAM_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createNymphsDreamSetModule } from "#src/services/artifact/sets/createNymphsDreamSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -27,7 +27,7 @@ const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const bonusOf = (pieceCount: number) => {
   const bonus = statTables.artifactSetDataMap
-    .get(MIRRORED_NYMPH_ARTIFACT_SET_ID)
+    .get(NYMPHS_DREAM_ARTIFACT_SET_ID)
     ?.bonuses.find((b) => b.pieceCount === pieceCount);
   assert.exists(bonus);
   return bonus;
@@ -38,7 +38,7 @@ const createWearer = (): Combatant => ({
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
-  kit: getPassiveKit(KIT, [createMirroredNymphSetModule(bonusOf(4))]),
+  kit: getPassiveKit(KIT, [createNymphsDreamSetModule(bonusOf(4))]),
   level: 1,
 });
 // An enemy the given combatant's attack of the given kind hits, as the kit sends it
@@ -63,7 +63,7 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   return { attack: sumOf(Attribute.AttackPercent), hydro: sumOf(Attribute.HydroDamageBonus) };
 };
 
-describe(createMirroredNymphSetModule, () => {
+describe(createNymphsDreamSetModule, () => {
   test("each hit the wearer's attack lands on an enemy adds a stack, and one, two and three or more stacks raise ATK and Hydro DMG by their tier", () => {
     expect.hasAssertions();
 
