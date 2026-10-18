@@ -1,6 +1,6 @@
 ## Purpose
 
-Sethos's kit as built, with his three strikes, the fully-charged Aimed Shot, Ancient Rite: Thunderous Roar of Sand and the plunges, and what is left of Shadowpiercing Shot, Secret Rite's Dusk Bolts, his energy refunds and his constellations.
+Sethos's kit as built, with his three strikes, the fully-charged Aimed Shot, Ancient Rite: Thunderous Roar of Sand and the plunges, with Constellation 1 built, and what is left of Shadowpiercing Shot, Secret Rite's Dusk Bolts, his energy refunds and his other constellations.
 
 ## Requirements
 
@@ -51,9 +51,25 @@ Sethos's plunge attacks SHALL land on the enemies within reach as their action s
 - **WHEN** the player starts a plunge attack
 - **THEN** the plunge lands on the enemies within reach as its action starts
 
+### Requirement: Constellation 1's CRIT Rate on the charged attack
+
+Constellation 1 SHALL add 15% CRIT Rate to the fully-charged Aimed Shot alone, and to no normal attack.
+
+#### Scenario: Constellation 1 raises the fully-charged Aimed Shot's CRIT Rate
+
+- **GIVEN** Sethos has Constellation 1
+- **WHEN** the fully-charged Aimed Shot is priced
+- **THEN** its CRIT Rate gains 15%
+
+#### Scenario: Normal attacks get no CRIT Rate from Constellation 1
+
+- **GIVEN** Sethos has Constellation 1
+- **WHEN** a normal attack is priced
+- **THEN** its CRIT Rate gains nothing from Constellation 1
+
 ### Requirement: Unbuilt Sethos effects
 
-Shadowpiercing Shot, the plain Aimed Shot, Secret Rite's Dusk Bolts, Ancient Rite's energy refund on a reaction, and Sethos's ascension and constellation passives SHALL NOT take effect.
+Shadowpiercing Shot, the plain Aimed Shot, Secret Rite's Dusk Bolts, Ancient Rite's energy refund on a reaction, and Sethos's ascension passives and Constellations 2, 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
