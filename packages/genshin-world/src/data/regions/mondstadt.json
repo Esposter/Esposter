@@ -15221,217 +15221,217 @@
   ],
   "residents": [
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -315.68, "z": -233.07 }, "rotation": 1.5708 },
       "id": "1002",
       "nameTextId": "2219684877",
       "talkId": "30603"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -316.54, "z": -233.71 }, "rotation": -3.0457 },
       "id": "1029",
       "nameTextId": "3833498965",
       "talkId": "1012004"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -294.74, "z": -148.24 }, "rotation": 0 },
       "id": "30048",
       "nameTextId": "948516309",
       "talkId": "63004801"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 131.41, "z": -392.65 }, "rotation": 0.91 },
       "id": "30234",
       "nameTextId": "672986112",
       "talkId": "4008814"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 137.01, "z": -411.34 }, "rotation": 1.9206 },
       "id": "30235",
       "nameTextId": "3181225400",
       "talkId": "4008802"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 134.95, "z": -403.55 }, "rotation": 1.4118 },
       "id": "30266",
       "nameTextId": "3862519136",
       "talkId": "4008809"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 133.8, "z": -397.94 }, "rotation": 0.8664 },
       "id": "30267",
       "nameTextId": "2907616536",
       "talkId": "4008808"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 118.08, "z": -415.83 }, "rotation": 2.7264 },
       "id": "30250",
       "nameTextId": "2616517896",
       "talkId": "4008803"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 115.93, "z": -365.62 }, "rotation": -1.3956 },
       "id": "30236",
       "nameTextId": "508266744",
       "talkId": "4008805"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 130.63, "z": -421.17 }, "rotation": 2.8151 },
       "id": "30240",
       "nameTextId": "4218110008",
       "talkId": "4007950"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 125.83, "z": -400.04 }, "rotation": 0 },
       "id": "30251",
       "nameTextId": "1978460448",
       "talkId": "4008807"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 133.66, "z": -397.19 }, "rotation": 1.5696 },
       "id": "30243",
       "nameTextId": "1192629520",
       "talkId": "4008812"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 134.94, "z": -402.97 }, "rotation": 1.1921 },
       "id": "30244",
       "nameTextId": "3862063600",
       "talkId": "4008813"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 126.41, "z": -405.35 }, "rotation": 1.319 },
       "id": "30237",
       "nameTextId": "1565221960",
       "talkId": "4008810"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 124.1, "z": -421.52 }, "rotation": -2.7837 },
       "id": "30173",
       "nameTextId": "3023303072",
       "talkId": "4008811"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 124.22, "z": -368.86 }, "rotation": -1.0501 },
       "id": "30248",
       "nameTextId": "3022000568",
       "talkId": "7368001"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 131.14, "z": -391.85 }, "rotation": 0 },
       "id": "30274",
       "nameTextId": "2967878712",
       "talkId": "4007801"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 81.82, "z": -406.4 }, "rotation": -1.0565 },
       "id": "30277",
       "nameTextId": "1904922624",
       "talkId": "4008895"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 82.81, "z": -407.53 }, "rotation": 2.4038 },
       "id": "30280",
       "nameTextId": "3370415312",
       "talkId": "4008895"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 130.35, "z": -406.75 }, "rotation": -0.0176 },
       "id": "30275",
       "nameTextId": "1847627872",
       "talkId": "4008801"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 114.17, "z": -371.37 }, "rotation": -1.6703 },
       "id": "30265",
       "nameTextId": "1743362224",
       "talkId": "4008076"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 234.58, "z": -402.59 }, "rotation": 1.6552 },
       "id": "30264",
       "nameTextId": "1844246776",
       "talkId": "4008075"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -856.24, "z": -612.51 }, "rotation": 0 },
       "id": "12251",
       "nameTextId": "1660244165",
       "talkId": "4002609"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -83.27, "z": -954.61 }, "rotation": -2.7962 },
       "id": "30246",
       "nameTextId": "3102489920",
       "talkId": "7367801"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -80.66, "z": -426.29 }, "rotation": 2.9813 },
       "id": "30247",
       "nameTextId": "3924686168",
       "talkId": "7367701"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -150.81, "z": -903.86 }, "rotation": 1.5911 },
       "id": "30263",
       "nameTextId": "131034392",
       "talkId": "4008074"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -770.57, "z": -842.84 }, "rotation": 3.0492 },
       "id": "30268",
       "nameTextId": "443852104",
       "talkId": "7367902"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -81.03, "z": -424.96 }, "rotation": -0.3787 },
       "id": "30245",
       "nameTextId": "79753496",
       "talkId": "7367701"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -58.06, "z": -335 }, "rotation": -0.4813 },
       "id": "30249",
       "nameTextId": "1130332328",
       "talkId": "7368201"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -28.27, "z": -411.67 }, "rotation": -2.2689 },
       "id": "1250",
       "nameTextId": "1785579581",
       "talkId": "34705"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -42.83, "z": -398.11 }, "rotation": 2.0944 },
       "id": "1251",
       "nameTextId": "4077173957",
@@ -15445,70 +15445,70 @@
       "talkId": "34707"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -90.33, "z": -884.66 }, "rotation": -1.0472 },
       "id": "1253",
       "nameTextId": "2731744301",
       "talkId": "34708"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -128.95, "z": -846.71 }, "rotation": -3.1416 },
       "id": "1254",
       "nameTextId": "4050179325",
       "talkId": "34709"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -443.18, "z": -247.12 }, "rotation": 0 },
       "id": "20209",
       "nameTextId": "1943146837",
       "talkId": "2007391"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -532.11, "z": -209.78 }, "rotation": 0 },
       "id": "20210",
       "nameTextId": "2165625205",
       "talkId": "2007392"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -573.79, "z": -144.51 }, "rotation": -1.5606 },
       "id": "20211",
       "nameTextId": "2629079533",
       "talkId": "2007393"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -688.91, "z": -470.66 }, "rotation": 0 },
       "id": "11004",
       "nameTextId": "2763181101",
       "talkId": "61021601"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -688.49, "z": -468.6 }, "rotation": 0 },
       "id": "2003041",
       "nameTextId": "3244078285",
       "talkId": "1104511"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -694.93, "z": -475.63 }, "rotation": 0 },
       "id": "2003042",
       "nameTextId": "3660517653",
       "talkId": "1104512"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -695.83, "z": -467.01 }, "rotation": 0 },
       "id": "12252",
       "nameTextId": "1503145437",
       "talkId": "4002813"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -699.54, "z": -471.67 }, "rotation": 0 },
       "id": "2003039",
       "nameTextId": "1413639581",
@@ -15522,7 +15522,7 @@
       "talkId": "4008070"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 759.2, "z": 468.07 }, "rotation": -2.5958 },
       "id": "30262",
       "nameTextId": "1356555304",
@@ -15536,7 +15536,7 @@
       "talkId": "1020021"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 290.65, "z": 472.91 }, "rotation": -0.2618 },
       "id": "1255",
       "nameTextId": "1183869285",
@@ -15557,14 +15557,14 @@
       "talkId": "30303"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 676.13, "z": 56.62 }, "rotation": 2.8978 },
       "id": "1201",
       "nameTextId": "3921969453",
       "talkId": "31141"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "brightcrown-mountains",
       "day": { "position": { "x": 752.86, "z": -1443.18 }, "rotation": -1.3425 },
       "id": "1204",
       "nameTextId": "3657837837",
@@ -15823,49 +15823,49 @@
       "talkId": "4141313"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 313.03, "z": 459.46 }, "rotation": 2.1526 },
       "id": "20127",
       "nameTextId": "1930040781",
       "talkId": "7101261"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 737.24, "z": 1106.23 }, "rotation": 0 },
       "id": "20089",
       "nameTextId": "2008457645",
       "talkId": "7101225"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "brightcrown-mountains",
       "day": { "position": { "x": 762.77, "z": -1413.28 }, "rotation": 0 },
       "id": "94",
       "nameTextId": "4252210229",
       "talkId": "31258"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "brightcrown-mountains",
       "day": { "position": { "x": 762.76, "z": -1412.14 }, "rotation": 0 },
       "id": "10922",
       "nameTextId": "469479525",
       "talkId": "31259"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -591.2, "z": -462.68 }, "rotation": 0 },
       "id": "20173",
       "nameTextId": "2334872677",
       "talkId": "7010206"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -713.59, "z": -242.2 }, "rotation": 0.6427 },
       "id": "1272",
       "nameTextId": "1092526165",
       "talkId": "30310"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -736.18, "z": -233.11 }, "rotation": 0 },
       "id": "20181",
       "nameTextId": "2309224573",
@@ -15879,28 +15879,28 @@
       "talkId": "7012304"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -789.72, "z": -611.55 }, "rotation": 0 },
       "id": "20182",
       "nameTextId": "1771751605",
       "talkId": "7012303"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -585.48, "z": -333.74 }, "rotation": 0 },
       "id": "20204",
       "nameTextId": "1819936213",
       "talkId": "7010308"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -591.62, "z": -331.48 }, "rotation": -1.6509 },
       "id": "20198",
       "nameTextId": "2407967965",
       "talkId": "7010302"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -781.21, "z": -262.81 }, "rotation": -1.2895 },
       "id": "20184",
       "nameTextId": "2691685677",
@@ -15914,14 +15914,14 @@
       "talkId": "7012402"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -739.31, "z": -739.18 }, "rotation": 0.3889 },
       "id": "20186",
       "nameTextId": "1777237253",
       "talkId": "7012403"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -660.09, "z": -552.44 }, "rotation": 0 },
       "id": "20187",
       "nameTextId": "2580858341",
@@ -15935,168 +15935,168 @@
       "talkId": "7012405"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1044.97, "z": -611.23 }, "rotation": 0.3246 },
       "id": "20189",
       "nameTextId": "28597261",
       "talkId": "7012406"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -902.74, "z": -232.35 }, "rotation": 1.0713 },
       "id": "20190",
       "nameTextId": "929984725",
       "talkId": "7012407"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -516.66, "z": -150.51 }, "rotation": -0.4633 },
       "id": "20191",
       "nameTextId": "4003101141",
       "talkId": "7012408"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1094.85, "z": -351.07 }, "rotation": 0.9424 },
       "id": "20199",
       "nameTextId": "2490142021",
       "talkId": "7010303"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -705.24, "z": -310.93 }, "rotation": 0 },
       "id": "20201",
       "nameTextId": "1175790965",
       "talkId": "7010305"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -852, "z": -773.02 }, "rotation": -1.4864 },
       "id": "20205",
       "nameTextId": "1072867341",
       "talkId": "7010309"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1285.12, "z": -100.21 }, "rotation": 0 },
       "id": "20197",
       "nameTextId": "3683447285",
       "talkId": "7010301"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1281.77, "z": -109.7 }, "rotation": 0 },
       "id": "20202",
       "nameTextId": "133396525",
       "talkId": "7010306"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -709.5, "z": -682.26 }, "rotation": -2.7527 },
       "id": "20200",
       "nameTextId": "3258804605",
       "talkId": "7010304"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -880.92, "z": -271.03 }, "rotation": -0.3343 },
       "id": "20203",
       "nameTextId": "3443034205",
       "talkId": "7010307"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -956.51, "z": -581.32 }, "rotation": -1.6862 },
       "id": "20195",
       "nameTextId": "3309942237",
       "talkId": "7010104"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -947.2, "z": -125.06 }, "rotation": 0.0648 },
       "id": "20208",
       "nameTextId": "836945173",
       "talkId": "7010109"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -988.76, "z": -714.13 }, "rotation": 0 },
       "id": "20206",
       "nameTextId": "3309125861",
       "talkId": "7010107"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -862.18, "z": -766.47 }, "rotation": 0 },
       "id": "20207",
       "nameTextId": "3811196373",
       "talkId": "7010108"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1153.89, "z": -205.85 }, "rotation": -2.9199 },
       "id": "20214",
       "nameTextId": "3546243085",
       "talkId": "7012701"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1276.33, "z": -172.95 }, "rotation": 0 },
       "id": "20215",
       "nameTextId": "1831571509",
       "talkId": "7012702"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1359.47, "z": -69.06 }, "rotation": 0 },
       "id": "20216",
       "nameTextId": "4203040813",
       "talkId": "7012801"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -1213.94, "z": -424.03 }, "rotation": 0 },
       "id": "2003040",
       "nameTextId": "2999408925",
       "talkId": "1104507"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 134.29, "z": -376.79 }, "rotation": 1.3265 },
       "id": "30003",
       "nameTextId": "1667691893",
       "talkId": "4111106"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 139.77, "z": -389.29 }, "rotation": 1.6179 },
       "id": "30004",
       "nameTextId": "2336851973",
       "talkId": "4111115"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 134.73, "z": -400.87 }, "rotation": 0.5149 },
       "id": "30002",
       "nameTextId": "1721268629",
       "talkId": "4111114"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 65.15, "z": 234.86 }, "rotation": 1.4135 },
       "id": "30015",
       "nameTextId": "1998042421",
       "talkId": "4111501"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 132.65, "z": -402.02 }, "rotation": -1.864 },
       "id": "30011",
       "nameTextId": "481547749",
       "talkId": "4111114"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 141.28, "z": -392.96 }, "rotation": 1.7925 },
       "id": "30017",
       "nameTextId": "1471767949",
@@ -16108,6 +16108,56 @@
       "id": "30001",
       "nameTextId": "2205569333",
       "talkId": "4100101"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 375.47, "z": -370.92 }, "rotation": 1.1519 },
+      "id": "1423",
+      "nameTextId": "127025653",
+      "talkId": "40165"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 358.54, "z": -361.63 }, "rotation": 1.0891 },
+      "id": "1435",
+      "nameTextId": "3218942421",
+      "talkId": "40172"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 323.72, "z": -343.22 }, "rotation": -2.0696 },
+      "id": "1638",
+      "nameTextId": "261096581",
+      "talkId": "6163801"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 341.52, "z": -352.43 }, "rotation": -1.9832 },
+      "id": "1512",
+      "nameTextId": "3398505741",
+      "talkId": "6151202"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 440.19, "z": -379.42 }, "rotation": 0 },
+      "id": "1663",
+      "keepsReputation": true,
+      "nameTextId": "2945467501",
+      "talkId": "6166301"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 427.72, "z": -277.63 }, "rotation": 0 },
+      "id": "1673",
+      "nameTextId": "2162311469",
+      "talkId": "6167301"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 412.25, "z": -345.69 }, "rotation": 0 },
+      "id": "1465",
+      "nameTextId": "1805371541",
+      "talkId": "40189"
     }
   ],
   "waterfalls": [

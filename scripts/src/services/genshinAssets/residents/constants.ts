@@ -13,3 +13,15 @@ export const RESIDENT_DUEL_GAME_ID_MAP: ReadonlyMap<string, number> = new Map<st
 export const REPUTATION_KEEPER_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
   ["Reputation", 1663],
 ]);
+// The scene's building points that stand for the NPC who keeps them, each by the point's id: Mondstadt's General Goods,
+// Souvenir and Blacksmith shops, the Adventurers' Guild, the Fishing Association and Angel's Share's bartender. A vendor
+// Has no birth in the scene, so her place is her point, an estimate the residents carry as provisional. The Adventurers'
+// Guild's NPC is the base Katheryne, 1512, which the NPC table gives the lowest id, not confirmed against the scene
+export const BUILDING_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
+  ["63", 1423],
+  ["64", 1435],
+  ["65", 1638],
+  ["98", 1512],
+  ["391", 1673],
+  ["511", 1465],
+]);

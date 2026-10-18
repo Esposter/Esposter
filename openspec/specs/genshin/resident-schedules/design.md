@@ -39,7 +39,7 @@ flowchart TD
   DAY --> DATA["The region's residents in its data"]
 ```
 
-The record's NPCs are filled from the dump's NPC births, which give one place for most residents, so most have a day spot and no night spot, and stand at their day spot through the night. Most of the game's people stand in one place day and night, so absence is recorded only where the data says so, as `absentAtNight`. A resident the record places more than once in a region is the same NPC at nearly the same spot rather than a day and a night, so only its first place is kept. The wiki gives a resident's daytime and nighttime location as gallery pictures captioned by the hour, not as text naming a place, so no place is matched to a night spot from it.
+The record's NPCs are filled from the dump's NPC births, which give one place for most residents, so most have a day spot and no night spot, and stand at their day spot through the night. Most of the game's people stand in one place day and night, so absence is recorded only where the data says so, as `absentAtNight`. A resident the record places more than once in a region is the same NPC at nearly the same spot rather than a day and a night, so only its first place is kept. The wiki gives a resident's daytime and nighttime location as gallery pictures captioned by the hour, not as text naming a place, so no place is matched to a night spot from it. A shopkeeper or keeper the births do not hold is placed at the scene's building point of her shop or service: `BUILDING_NPC_ID_MAP` names each point's id and its NPC, and Hertha keeps the point named Reputation through `REPUTATION_KEEPER_NPC_ID_MAP`. Each such place is an estimate of the NPC's standing place, provisional until the scene's group export places them.
 
 ## Key files
 
