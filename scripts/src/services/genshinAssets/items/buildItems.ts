@@ -11,6 +11,7 @@ import {
   MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/items/constants";
 import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
+import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -39,7 +40,7 @@ const checkIsAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boole
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields and every instruction that teaches it, every gadget of the gadgets slice, every offering the Frostbearing
-// Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery sells, each Fishing Association's goods and their fish, and every item a
+// Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery and the Good Hunter sell, each Fishing Association's goods and their fish, and every item a
 // Carried quest's finish pays, each read from the game's material table with its name's text id, which `genshin:text names`
 // Writes into the name-text chunks.
 // The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
@@ -79,6 +80,10 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       costItems.flatMap(({ count = 0, id = 0 }) => (count > 0 && id > 0 ? [id] : [])),
     ),
   ];
+  // The food, cooking ingredients and recipes the Good Hunter sells, the goods of its shop as the goods table names them
+  const goodHunterGoods = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData").filter(
+    (row) => row.shopType === GOOD_HUNTER_SHOP_TYPE,
+  );
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const cookingRecipes = readCookingRecipes();
   const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
@@ -99,6 +104,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
       ...fishingGoodItemIds,
+      ...goodHunterGoods.map(({ itemId }) => itemId),
       ...materialRows.filter((row) => checkIsAddItemConsumable(row)).map(({ id }) => id),
       ...questRewardItemIds,
     ]),
