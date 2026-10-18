@@ -719,6 +719,7 @@ const recordedDoingIds = computed<ReadonlySet<string>>(
 const {
   activateLandmark,
   explorationAreas,
+  jumpLandmarks,
   jumpPose,
   jumpTo,
   lockedJumpLandmarks,
@@ -726,6 +727,7 @@ const {
   unlockedLandmarks,
 } = useWorldMap({
   catalogue,
+  completedMainQuestIds,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -976,12 +978,9 @@ const enterDomainLevel = (dungeonId: number) => {
 // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
 const handbookDomains = computed(() =>
   toHandbookDomains(
-    [
-      ...unlockedDomainEntrances.value,
-      ...lockedJumpLandmarks.value.filter(
-        (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
-      ),
-    ],
+    jumpLandmarks.value.filter(
+      (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
+    ),
     {
       adventureRank: rank.value,
       clearedDomainIds: clearedDomainIds.value,

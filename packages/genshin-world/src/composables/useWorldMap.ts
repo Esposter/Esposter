@@ -17,6 +17,7 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { computeNationExplorationPercentage } from "#src/services/exploration/computeNationExplorationPercentage";
 import { placeExplorationDoings } from "#src/services/exploration/placeExplorationDoings";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
+import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
@@ -50,6 +51,8 @@ export const useWorldMap = ({
   wallet,
 }: {
   catalogue: Catalogue;
+  // The main quests the player has done, which open a weekly boss's Trounce Domain entrance
+  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -105,15 +108,16 @@ export const useWorldMap = ({
   );
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
   const unlockedLandmarks = computed(() =>
-    computeUnlockedJumpLandmarks(jumpLandmarks.value, unlockedLandmarkIds.value),
+    computeUnlockedJumpLandmarks(jumpLandmarks.value, unlockedLandmarkIds.value, completedMainQuestIds.value),
   );
   // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to.
   // A domain entrance is one of them, as a statue or a waypoint is. A waypoint the game hides until its step is left out
   // Of them
   const lockedJumpLandmarks = computed(() =>
-    jumpLandmarks.value.filter(({ id }) => {
-      if (unlockedLandmarkIds.value.has(id)) return false;
-      const pointId = computeLandmarkPointId(id);
+    jumpLandmarks.value.filter((landmark) => {
+      // A weekly boss's entrance opens by its quests, so there is nothing to resonate with
+      if (checkIsWeeklyBossEntrance(landmark) || unlockedLandmarkIds.value.has(landmark.id)) return false;
+      const pointId = computeLandmarkPointId(landmark.id);
       return pointId === undefined || !hiddenTransPointIds.value.has(pointId);
     }),
   );
