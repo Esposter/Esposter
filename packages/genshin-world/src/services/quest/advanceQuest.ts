@@ -10,7 +10,7 @@ export const advanceQuest = (quest: Quest, progress: QuestProgress, questEvent: 
   if (!questStep) return progress;
   const objectiveCounts = questStep.objectives.map((objective, index) => {
     const objectiveCount = progress.objectiveCounts[index] ?? 0;
-    return objective.kind === questEvent.kind && objective.targetId === questEvent.targetId
+    return objective.kind === questEvent.kind && objective.targetIds.includes(questEvent.targetId)
       ? Math.min(objectiveCount + 1, objective.count)
       : objectiveCount;
   });

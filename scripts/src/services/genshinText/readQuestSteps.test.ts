@@ -17,7 +17,7 @@ describe(readQuestSteps, () => {
     expect(readQuestSteps(questBinary, 2001, checkIsText).steps).toStrictEqual([
       {
         id: "2001",
-        objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" }],
+        objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] }],
         textId: String(TEXT_HASH),
       },
     ]);
@@ -47,8 +47,8 @@ describe(readQuestSteps, () => {
         {
           id: "100",
           objectives: [
-            { count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" },
-            { count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" },
+            { count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["0"] },
+            { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] },
           ],
           textId: String(TEXT_HASH),
         },
@@ -79,12 +79,12 @@ describe(readQuestSteps, () => {
       steps: [
         {
           id: "100",
-          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" }],
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] }],
           textId: String(TEXT_HASH),
         },
         {
           id: "101",
-          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["0"] }],
           textId: String(TEXT_HASH),
         },
       ],
@@ -134,7 +134,7 @@ describe(readQuestSteps, () => {
       steps: [
         {
           id: "100",
-          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" }],
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] }],
           textId: String(TEXT_HASH),
         },
       ],
@@ -164,7 +164,7 @@ describe(readQuestSteps, () => {
       steps: [
         {
           id: "101",
-          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "12" }],
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["12"] }],
           textId: String(TEXT_HASH),
         },
       ],

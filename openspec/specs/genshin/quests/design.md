@@ -27,21 +27,21 @@ flowchart TD
 
 ### A quest
 
-A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, the talks it runs, the talks that offer it, none for a quest that starts otherwise, and the items its finish pays, which the finish grants to the bag and the wallet. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, a target and a count:
+A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, the talks it runs, the talks that offer it, none for a quest that starts otherwise, and the items its finish pays, which the finish grants to the bag and the wallet. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, its targets and a count. Its targets are the list of what the game's condition names, any one of which meets it, so a collect of a food group lists each of the group's items:
 
-| Kind     | What it asks                    | Its target, as the game's own condition names it |
-| :------- | :------------------------------ | :----------------------------------------------- |
-| GoTo     | reach a place                   | the place's trigger                              |
-| TalkTo   | finish a talk                   | the talk                                         |
-| Defeat   | defeat enemies, a count of them | the enemy                                        |
-| Collect  | collect items, a count of them  | the item                                         |
-| Interact | act on a thing                  | the thing, or the waypoint unlocked              |
+| Kind     | What it asks                    | Its targets, as the game's own condition names them |
+| :------- | :------------------------------ | :-------------------------------------------------- |
+| GoTo     | reach a place                   | the place's trigger                                 |
+| TalkTo   | finish a talk                   | the talk                                            |
+| Defeat   | defeat enemies, a count of them | the enemy                                           |
+| Collect  | collect items, a count of them  | the item, or any of a food group's items            |
+| Interact | act on a thing                  | the thing, or the waypoint unlocked                 |
 
 The kinds are the game's five, and the quest screen files them under the game's four lists. An event's quests are listed among the world quests, as the game's own quest types have it.
 
 ### Progress
 
-A quest's progress is the step it is on, which equals the number of steps once it is finished, and how many times each of that step's objectives has been met. `advanceQuest` takes a `QuestEvent`, the kind of the Traveler's doing and the id it names. Each objective of the current step that the event names is met once more, held at its count. Once every objective is met, the quest moves on to its next step with nothing met. An event no objective names leaves the quest where it was, and so does any event once the quest is finished.
+A quest's progress is the step it is on, which equals the number of steps once it is finished, and how many times each of that step's objectives has been met. `advanceQuest` takes a `QuestEvent`, the kind of the Traveler's doing and the id it names. Each objective of the current step that names the event's target is met once more, held at its count. Once every objective is met, the quest moves on to its next step with nothing met. An event no objective names leaves the quest where it was, and so does any event once the quest is finished.
 
 ### Starting and finishing
 
@@ -74,7 +74,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | File                                                                     | Role                                                                             |
 | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps, talks, finish rewards and schema                |
-| `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, target and count                         |
+| `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, targets and count                        |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                  |
 | `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk          |
 | `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events          |

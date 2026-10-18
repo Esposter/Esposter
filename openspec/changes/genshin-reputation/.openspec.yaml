@@ -38,6 +38,13 @@ x-touches:
     "scripts/src/services/genshinText/readGitHubHeaders.test.ts",
     "scripts/src/services/genshinText/readQuestSteps.ts",
     "scripts/src/services/genshinText/readQuestSteps.test.ts",
+    "packages/genshin-world/src/services/quest/**",
+    "packages/genshin-world/src/services/dialogue/getTalkOffers.ts",
+    "packages/genshin-world/src/services/dialogue/getTalkOffers.test.ts",
+    "packages/genshin-world/src/components/Quest/Screen/Index.fixture.ts",
+    "packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts",
+    "scripts/src/services/genshinText/readReputationRequestQuest.ts",
+    "scripts/src/services/genshinText/readReputationRequestQuest.test.ts",
     ".agents/skills/genshin-text/SKILL.md",
     ".agents/skills/genshin-parity/references/data-sources.md",
   ]

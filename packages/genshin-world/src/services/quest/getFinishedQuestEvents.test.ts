@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 
 const createStep = (id: string) => ({
   id,
-  objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }],
+  objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }],
   textId: "textId",
 });
 

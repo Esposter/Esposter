@@ -15,9 +15,9 @@ describe(getQuestTargetId, () => {
     parentQuestIds: [],
     rewards: [],
     steps: [
-      { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "talk" }], textId: "0" },
-      { id: "1", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "lone-talk" }], textId: "1" },
-      { id: "2", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "place" }], textId: "2" },
+      { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["talk"] }], textId: "0" },
+      { id: "1", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["lone-talk"] }], textId: "1" },
+      { id: "2", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["place"] }], textId: "2" },
     ],
     talks: [
       { id: "talk", lines: [], npcIds: ["paimon", "amber"], startLineId: "0" },

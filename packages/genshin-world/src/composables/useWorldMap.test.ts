@@ -49,7 +49,7 @@ const createQuest = (questId: number): Quest => ({
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],
-  steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetId: "1" }], textId: "text" }],
+  steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetIds: ["1"] }], textId: "text" }],
   talks: [],
   titleTextId: "title",
 });
@@ -385,7 +385,7 @@ describe(useWorldMap, () => {
       steps: [
         {
           id: "step",
-          objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetId: String(TRANS_POINT_ID) }],
+          objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetIds: [String(TRANS_POINT_ID)] }],
           textId: "step",
         },
       ],

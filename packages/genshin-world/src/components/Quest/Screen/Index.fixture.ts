@@ -13,7 +13,7 @@ const createQuest = (id: string, kind: QuestKind): Quest => ({
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],
-  steps: [{ id, objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: id }], textId: id }],
+  steps: [{ id, objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: [id] }], textId: id }],
   talks: [],
   titleTextId: id,
 });
@@ -79,7 +79,7 @@ export const props = {
       steps: [
         {
           id: "collect-fragments",
-          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "eye-of-graeae-fragment" }],
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["eye-of-graeae-fragment"] }],
           textId: "collect-fragments",
         },
       ],

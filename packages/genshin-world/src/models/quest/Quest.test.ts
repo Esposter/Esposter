@@ -15,7 +15,7 @@ describe("questSchema", () => {
     parentQuestIds: [],
     rewards: [],
     steps: [
-      { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: TALK.id }], textId: "textId" },
+      { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: [TALK.id] }], textId: "textId" },
     ],
     talks: [TALK],
     titleTextId: "titleTextId",

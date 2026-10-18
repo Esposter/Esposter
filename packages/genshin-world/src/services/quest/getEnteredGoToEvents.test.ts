@@ -15,7 +15,9 @@ const quest: Quest = {
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],
-  steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "place" }], textId: "textId" }],
+  steps: [
+    { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["place"] }], textId: "textId" },
+  ],
   talks: [],
   titleTextId: "titleTextId",
 };

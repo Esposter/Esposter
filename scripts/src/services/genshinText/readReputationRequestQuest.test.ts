@@ -27,7 +27,11 @@ describe(readReputationRequestQuest, () => {
       parentQuestIds: [],
       rewards: [],
       steps: [
-        { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
+        {
+          id: "900101",
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["9001"] }],
+          textId: "3",
+        },
       ],
       talks: [],
       titleTextId: "1",

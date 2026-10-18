@@ -15,8 +15,12 @@ describe(computeQuestStepTargets, () => {
     offerTalkIds: [],
     parentQuestIds: [],
     steps: [
-      { id: "first", objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetId: "9" }], textId: "first" },
-      { id: "second", objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetId: "7" }], textId: "second" },
+      { id: "first", objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetIds: ["9"] }], textId: "first" },
+      {
+        id: "second",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetIds: ["7"] }],
+        textId: "second",
+      },
     ],
     talks: [],
     titleTextId: "",

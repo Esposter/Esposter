@@ -19,7 +19,7 @@ describe(getFinishedReputationRewards, () => {
     offerTalkIds: [],
     parentQuestIds: [],
     rewards: [],
-    steps: [{ id: "1", objectives: [{ count, kind, targetId: TARGET_ID }], textId: "step" }],
+    steps: [{ id: "1", objectives: [{ count, kind, targetIds: [TARGET_ID] }], textId: "step" }],
     talks: [],
     titleTextId: "title",
   });
