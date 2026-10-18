@@ -1,6 +1,6 @@
 # Game data formats
 
-The game's files are references, read locally and never shipped ([derived assets](../derived-assets/design.md)). This page is what each kind of data holds and how it is read, as decoded while deriving the login scene. Every entry names the tool that reads it, so a later session reads the data rather than rediscovering the format. What each component's data is, block by block, is its reference, beside it (below).
+The game's files are references, read locally and never shipped, except its text, which ships as generated slices ([derived assets](../derived-assets/design.md), [game text](../game-text/design.md)). This page is what each kind of data holds and how it is read, as decoded while deriving the login scene. Every entry names the tool that reads it, so a later session reads the data rather than rediscovering the format. What each component's data is, block by block, is its reference, beside it (below).
 
 ## Which kind of data answers what
 

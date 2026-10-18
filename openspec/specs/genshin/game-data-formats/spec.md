@@ -6,13 +6,19 @@ How each kind of the game's data reads once the community's asset extractor has 
 
 ### Requirement: Game files stay local and are never shipped
 
-Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be shipped with the product or committed to the repository.
+Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be shipped with the product or committed to the repository. The one exception is game text: its strings and dialogue SHALL be committed as the generated slices the package that reads them loads.
 
 #### Scenario: Derived assets publish only derived values
 
 - **GIVEN** a derived asset is published
 - **WHEN** a reviewer checks what the publish contains
 - **THEN** only derived values are present and no game file is included
+
+#### Scenario: Game text slices are committed, binaries are not
+
+- **GIVEN** the repository is checked for game-derived files
+- **WHEN** a reviewer lists them
+- **THEN** the text slices of `genshin-text` and the persona plugin are present, and no image, audio, model, mesh or table is
 
 #### Scenario: Missing community table is fetched locally, never committed
 

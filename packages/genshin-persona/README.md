@@ -171,7 +171,7 @@ pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```
 
-The plugin holds no image, audio or text from the game: the character data arrives through its MIT-licensed dependency, and every persona card is written in our own words.
+The plugin holds no image or audio from the game. Its game text, the character lines and the game's strings in fifteen languages, is committed as generated slices; the character data arrives through its MIT-licensed dependency, and every persona card is written in our own words.
 
 ## <a name="license">⚖️ License</a>
 
