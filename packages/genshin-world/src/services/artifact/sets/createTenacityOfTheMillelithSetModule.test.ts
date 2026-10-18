@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -65,7 +66,7 @@ describe(createTenacityOfTheMillelithSetModule, () => {
 
     expect(
       kitEffectState.effects
-        .filter(({ kind }) => kind === "buff")
+        .filter((effect): effect is KitBuff => effect.kind === "buff")
         .map(({ amount, attribute, characterId, secondsRemaining }) => ({
           amount,
           attribute,

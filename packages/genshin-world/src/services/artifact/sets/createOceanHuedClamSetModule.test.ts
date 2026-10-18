@@ -1,8 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { OCEAN_HUED_CLAM_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
@@ -57,7 +57,7 @@ const createWearer = (maxHealth = 10_000, characterId = TRAVELER_CHARACTER_ID): 
   };
 };
 // A heal of the given share of the healed member's Max HP, by the given source
-const createHeal = (healthShare: number, sourceCharacterId: number) => ({
+const createHeal = (healthShare: number, sourceCharacterId: number): KitEvent => ({
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare,
@@ -90,7 +90,7 @@ describe(createOceanHuedClamSetModule, () => {
     expect(enemy.health).toBe(healthBefore);
 
     stepKitSeconds(context, 0.2);
-    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Physical));
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, undefined));
     expect(healthBefore - enemy.health).toBeCloseTo(0.9 * healedHp * physicalMultiplier);
   });
 
@@ -116,7 +116,7 @@ describe(createOceanHuedClamSetModule, () => {
     const capped = damageFor([{ healthShare: 1, sourceCharacterId: TRAVELER_CHARACTER_ID }]);
 
     expect(capped).toBeCloseTo(
-      0.9 * 30_000 * getResistanceMultiplier(getEnemyResistance(kind, createSturdyEnemy(), Element.Physical)),
+      0.9 * 30_000 * getResistanceMultiplier(getEnemyResistance(kind, createSturdyEnemy(), undefined)),
     );
     expect(
       damageFor([
@@ -145,7 +145,7 @@ describe(createOceanHuedClamSetModule, () => {
 
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     stepKitSeconds(context, 3);
-    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, near, Element.Physical));
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, near, undefined));
     expect(1e9 - near.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
     expect(far.health).toBe(1e9);
   });
@@ -162,7 +162,7 @@ describe(createOceanHuedClamSetModule, () => {
       kitEffectState,
       party: createParty([TRAVELER_CHARACTER_ID]),
     });
-    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Physical));
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, undefined));
     const healedHp = 0.2 * wearer.attributes.maxHealth;
 
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
@@ -200,7 +200,7 @@ describe(createOceanHuedClamSetModule, () => {
       kitEffectState,
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });
-    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Physical));
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, enemy, undefined));
 
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     emitKitEvent(createHeal(0.5, OTHER_CHARACTER_ID), context);

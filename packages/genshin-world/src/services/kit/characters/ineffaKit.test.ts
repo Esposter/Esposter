@@ -68,7 +68,7 @@ const readLunarHitFrames = (
   enemyHits: Map<number, { attackTag: AttackTag; enemy: Enemy }>,
 ): number[] => {
   const context = createKitTestContext(combatant, {
-    enemyMap: new Map(enemies.map((enemy, index) => [index, enemy])),
+    enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
     enemyTables,
     party: createParty([INEFFA_CHARACTER_ID]),
   });
@@ -117,7 +117,7 @@ const readEnergyAfterSkill = (random: () => number, frames: number): number => {
   const party = createParty([INEFFA_CHARACTER_ID]);
   const kitEffectState = castKitAction(INEFFA_KIT.elementalSkill, combatant);
   const context = createKitTestContext(combatant, {
-    enemyMap: new Map([[1, enemy]]),
+    enemyMap: new Map([["1", enemy]]),
     enemyTables,
     kitEffectState,
     party,

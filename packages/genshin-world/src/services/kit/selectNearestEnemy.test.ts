@@ -10,7 +10,7 @@ import { selectNearestEnemy } from "#src/services/kit/selectNearestEnemy";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createEnemyAt = (x: number, state = EnemyState.Alive): Enemy => ({
+const createEnemyAt = (x: number, state = EnemyState.Idle): Enemy => ({
   ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, ""),
   state,
 });

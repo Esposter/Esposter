@@ -51,7 +51,13 @@ const getDamageBonus = (
   attackTag: AttackTag,
   kitEffectState: KitEffectState,
   combatant: Combatant = wearer,
-) => module.getStrikeDamageBonus?.(createStrike(attackTag, combatant), enemy, [], kitEffectState.effects) ?? 0;
+) =>
+  module.getStrikeDamageBonus?.(
+    createStrike(attackTag, combatant),
+    enemy,
+    createParty([TRAVELER_CHARACTER_ID]),
+    kitEffectState.effects,
+  ) ?? 0;
 // The wearer's HP lost to an enemy's strike of the given share, as the party records it
 const takeEnemyHit = (
   module: ReturnType<typeof createVourukashasGlowSetModule>,

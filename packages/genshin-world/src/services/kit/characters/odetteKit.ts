@@ -36,7 +36,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const danceDoubleDurationSeconds = readSeconds("danceDoubleDuration");
   const recastDanceDoubleFirstTickSeconds = readSeconds("danceDoubleRecastFirstTick");
   // Each attack's hit, and the seconds gcsim waits from it to the other attack
-  const danceDoubleAttacks = [
+  const danceDoubleAttacks: [{ hit: KitHit; intervalSeconds: number }, { hit: KitHit; intervalSeconds: number }] = [
     { hit: readHit("plume"), intervalSeconds: readSeconds("plumeTickInterval") },
     { hit: readHit("wing"), intervalSeconds: readSeconds("wingTickInterval") },
   ];
@@ -52,7 +52,11 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const stellarVortexSeconds = readSeconds("stellarVortex");
 
   // The Dance Double's hits from its summon, alternating from the attack given on each attack's interval, while its status runs
-  const createDanceDoubleHits = (firstAttack: number, firstTickSeconds: number, spawnSeconds: number): KitHit[] => {
+  const createDanceDoubleHits = (
+    firstAttack: typeof PLUME | typeof WING,
+    firstTickSeconds: number,
+    spawnSeconds: number,
+  ): KitHit[] => {
     const hits: KitHit[] = [];
     let attack = firstAttack;
     for (let hitmarkSeconds = firstTickSeconds; hitmarkSeconds < danceDoubleDurationSeconds;) {
@@ -68,7 +72,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
     kitEffectState: KitEffectState,
     body: KitBody,
     combatant: Combatant,
-    firstAttack: number,
+    firstAttack: typeof PLUME | typeof WING,
     { firstTickSeconds, spawnSeconds }: { firstTickSeconds: number; spawnSeconds: number },
   ): void => {
     for (const effect of kitEffectState.effects)
@@ -92,7 +96,10 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   };
   // The attack a standing Dance Double does next, which a burst's Dance Double takes up rather than starting over. Each
   // Hit keeps its attack's area from the record, so the area names which attack the next hit is
-  const findNextDanceDoubleAttack = (kitEffectState: KitEffectState, characterId: number): number => {
+  const findNextDanceDoubleAttack = (
+    kitEffectState: KitEffectState,
+    characterId: number,
+  ): typeof PLUME | typeof WING => {
     const standing = findStandingKitSummon(kitEffectState.effects, DANCE_DOUBLE_ID, characterId);
     const nextHit = standing?.hits[standing.nextHitIndex];
     return nextHit?.hitArea === danceDoubleAttacks[WING].hit.hitArea ? WING : PLUME;

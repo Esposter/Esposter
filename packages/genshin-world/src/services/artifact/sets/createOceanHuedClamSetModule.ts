@@ -6,7 +6,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
@@ -53,7 +52,7 @@ const createSeaDyedFoamBurst =
         ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
         checkIsInKitField({ centre, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
       )
-        strikeReactionDamage(enemy, Element.Physical, damageShare * gatheredHp, owner, context);
+        strikeReactionDamage(enemy, undefined, damageShare * gatheredHp, owner, context);
   };
 
 // Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three seconds on

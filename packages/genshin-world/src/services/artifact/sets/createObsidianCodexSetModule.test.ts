@@ -92,7 +92,7 @@ describe(createObsidianCodexSetModule, () => {
       wearer,
     );
 
-    expect(getPassiveBonuses?.(wearer, 1, [wearer], kitEffectState.effects)).toStrictEqual([
+    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
       { amount: 0.4, attribute: Attribute.CriticalRate },
     ]);
   });
@@ -111,7 +111,7 @@ describe(createObsidianCodexSetModule, () => {
       wearer,
     );
 
-    expect(getPassiveBonuses?.(wearer, 1, [wearer], kitEffectState.effects)).toStrictEqual([
+    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
       { amount: 0, attribute: Attribute.CriticalRate },
     ]);
   });

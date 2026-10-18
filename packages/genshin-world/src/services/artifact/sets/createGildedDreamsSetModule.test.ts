@@ -18,6 +18,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -97,7 +98,7 @@ describe(createGildedDreamsSetModule, () => {
       party: createParty([TRAVELER_CHARACTER_ID, SAME_ELEMENT_CHARACTER_ID, PYRO_CHARACTER_ID, CRYO_CHARACTER_ID]),
     });
 
-    triggerReaction(members[2], context);
+    triggerReaction(takeOne(members, 2), context);
     expect(getGildedBuffs(kitEffectState)).toStrictEqual([]);
 
     triggerReaction(wearer, context);

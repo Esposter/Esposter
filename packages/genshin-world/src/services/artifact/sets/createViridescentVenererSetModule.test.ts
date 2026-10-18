@@ -54,7 +54,8 @@ const createTeam = (characterIds: number[]) => {
   const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
   // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
   const reactionDamageBonus = (combatant: Combatant, reactionType: TransformativeReactionType | StellarReactionType) =>
-    wearer.kit.getPartyReactionBonus?.(wearer, { combatant, reactionType }, context)?.damageBonus ?? 0;
+    wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
+      ?.damageBonus ?? 0;
   // A hit the striker lands on the enemy, which triggers the given reactions on it
   const trigger = (
     striker: Combatant,
