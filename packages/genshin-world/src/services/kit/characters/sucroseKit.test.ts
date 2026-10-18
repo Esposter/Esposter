@@ -139,4 +139,16 @@ describe(createSucroseKitBehaviour, () => {
       },
     ]);
   });
+
+  test("a Constellation 1 switch adds one Astable Anemohypostasis Creation charge", () => {
+    expect.hasAssertions();
+
+    expect(SUCROSE_KIT.getSkillChargeBonus?.(createSucroseCombatant(0, 1))).toBe(1);
+  });
+
+  test("a Constellation 0 switch adds no Astable Anemohypostasis Creation charge", () => {
+    expect.hasAssertions();
+
+    expect(SUCROSE_KIT.getSkillChargeBonus?.(createSucroseCombatant(0, 0))).toBe(0);
+  });
 });

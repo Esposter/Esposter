@@ -1,6 +1,6 @@
 ## Purpose
 
-Sucrose's kit as built: Astable Anemohypostasis Creation-6308 with its Swirl and Forbidden Creation's absorbing Anemo field, with Ascension 1 and 4 and Constellations 2 and 6 built and the skill's pull, Constellation 4 and her Hexerei team bonus left out.
+Sucrose's kit as built: Astable Anemohypostasis Creation-6308 with its Swirl and Forbidden Creation's absorbing Anemo field, with Ascension 1 and 4 and Constellations 1, 2 and 6 built and the skill's pull, Constellation 4 and her Hexerei team bonus left out.
 
 ## Requirements
 
@@ -51,9 +51,9 @@ Forbidden Creation SHALL leave an Anemo field whose absorb check runs every 18 f
 - **THEN** the absorbed element strikes the enemies on that tick
 - **AND** the enemy's aura is left in place
 
-### Requirement: Ascension 1, Ascension 4 and Constellations 2 and 6
+### Requirement: Ascension 1, Ascension 4 and Constellations 1, 2 and 6
 
-Sucrose's Ascension 1 Swirl Elemental Mastery share, her Ascension 4 team share of Elemental Mastery on each skill and burst hit, and Constellations 2 and 6 SHALL take effect.
+Sucrose's Ascension 1 Swirl Elemental Mastery share, her Ascension 4 team share of Elemental Mastery on each skill and burst hit, and Constellations 1, 2 and 6 SHALL take effect.
 
 #### Scenario: Ascension 4 shares Elemental Mastery
 

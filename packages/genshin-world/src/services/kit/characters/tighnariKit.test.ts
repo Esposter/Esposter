@@ -112,4 +112,33 @@ describe(createTighnariKitBehaviour, () => {
 
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
+  describe("constellation 1's CRIT Rate", () => {
+    const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
+      TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
+        {
+          attackTag,
+          body: kitBody,
+          combatant: { ...createTighnariCombatant(0, 0), constellationCount },
+          hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
+        },
+        enemy,
+      ) ?? 0;
+
+    test("a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
+      expect.hasAssertions();
+
+      expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
+    });
+
+    test("a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
+      expect.hasAssertions();
+
+      expect([
+        getCriticalRateBonus(0, AttackTag.ChargedAttack),
+        getCriticalRateBonus(1, AttackTag.NormalAttack),
+      ]).toStrictEqual([0, 0]);
+    });
+  });
 });
