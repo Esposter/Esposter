@@ -13,14 +13,14 @@ Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`,
 
 ## Not built
 
-- **The Nightsoul state waits on its hook.** Her skill's press enters a timed state three frames after it, in which her Nightsoul points drain and her charged attack becomes the Electro Swift Stormflight. Her burst adds points and gives the party a flat ATK bonus converted from her ATK, up to her table's maximum, on whichever character is active. The points and the conversion wait on the Nightsoul state hook, and until then the press deals only its activation hit. The conversion of her ATK into a bonus on the active character waits on the party ATK buff hook, since a kit's buff holds a fixed amount.
+- **The skill's press enters the Nightsoul Blessing; the rest waits on the hook.** The press enters the blessing with 54 points for 16 seconds, which drain six a second as gcsim's do. gcsim enters it three frames after the press, and the kit enters it at the press. Her burst's points and party ATK bonus, and the Electro Swift Stormflight that swaps her charged attack, are not built.
 - **Ascension 1, Ascension 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul state hook.** Each reads the points the state holds, the state itself or the party ATK bonus.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                                              |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/iansanKit.ts` | `createIansanKitBehaviour`, Iansan's strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, the Nightsoul state and party ATK bonus waiting on their hooks |
+| File                                                              | Role                                                                                                                                                                                                                                              |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/iansanKit.ts` | `createIansanKitBehaviour`, Iansan's strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing, and the Stormflight and party ATK bonus waiting on the hook |
 
 ## Sources
 
