@@ -14,6 +14,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { healKitPerStrike } from "#src/services/kit/healKitPerStrike";
@@ -112,7 +113,12 @@ export const createHuTaoKitBehaviour = ({
   const paramita = readStance("paramita", { chargedAttack: { hits: [{ enemyStatus: createBloodBlossomStatus }] } });
   // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it strikes
   const healOnSpiritSootherStrike = (context: KitContext, strike: KitStrike) => {
-    const { attributes, characterId } = strike.combatant;
+    const { attributes, characterId } = getBuffedCombatant(
+      strike.combatant,
+      context.kitEffectState.effects,
+      context.party,
+      context.characterIdCombatantMap,
+    );
     const { healthShare } = getPartyMember(context.party, characterId);
     healKitPerStrike(context, strike, {
       health: (healthShare <= lowHealthShare ? lowRegenShare : regenShare) * attributes.maxHealth,

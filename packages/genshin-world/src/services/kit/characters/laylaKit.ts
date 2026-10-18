@@ -10,6 +10,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
@@ -99,9 +100,9 @@ export const createLaylaKitBehaviour = ({
   const starlightSlugStartSeconds = readSeconds("starlightSlugStart");
   const starlightSlugSeconds = readSeconds("starlightSlugDuration");
   const starlightSlugTickIntervalSeconds = readSeconds("starlightSlugTickInterval");
-  const createStarlightSlugStrike = ({ attributes: { maxHealth } }: Combatant): KitHit => ({
+  const createStarlightSlugStrike = (): KitHit => ({
     ...starlightSlugBaseStrike,
-    additiveBaseDamageBonus: () => starlightSlugMaxHealthShare * maxHealth,
+    additiveBaseDamageBonus: createMaxHealthScaledBonus(starlightSlugMaxHealthShare),
   });
   // The Shooting Star as its record holds it, its travel in frames by the Night Stars it is fired with, four first
   const shootingStarStrike = readHit("shootingStarStrike");
@@ -216,7 +217,7 @@ export const createLaylaKitBehaviour = ({
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        const starlightSlugStrike = createStarlightSlugStrike(combatant);
+        const starlightSlugStrike = createStarlightSlugStrike();
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: starlightSlugStartSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
