@@ -76,7 +76,7 @@ describe(claimCommissionWithPoints, () => {
     finishProgress: FINISH_PROGRESS,
     id,
     kind: CommissionKind.Scene,
-    nameTextId: "1",
+    nameTextId: NAME_TEXT_ID,
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
