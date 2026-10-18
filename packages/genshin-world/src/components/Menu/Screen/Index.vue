@@ -6,7 +6,7 @@ import type { VNode } from "vue";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import MenuPlaceholder from "#src/components/Menu/Placeholder/Index.vue";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { checkIsNpcScreenKind } from "#src/services/screen/checkIsNpcScreenKind";
+import { checkIsTitledScreenKind } from "#src/services/screen/checkIsTitledScreenKind";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 
 interface Props {
@@ -55,23 +55,9 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
     @quit="emit('quit')"
     @toggle-world-level="emit('toggleWorldLevel')"
   />
-  <slot
-    v-else-if="
-      screenKind !== ScreenKind.World &&
-      screenKind !== ScreenKind.Dialogue &&
-      screenKind !== ScreenKind.GameOver &&
-      !checkIsNpcScreenKind(screenKind) &&
-      slots[screenKind]
-    "
-    :name="screenKind"
-  />
+  <slot v-else-if="checkIsTitledScreenKind(screenKind) && slots[screenKind]" :name="screenKind" />
   <MenuPlaceholder
-    v-else-if="
-      screenKind !== ScreenKind.World &&
-      screenKind !== ScreenKind.Dialogue &&
-      screenKind !== ScreenKind.GameOver &&
-      !checkIsNpcScreenKind(screenKind)
-    "
+    v-else-if="checkIsTitledScreenKind(screenKind)"
     :game-text
     :title="gameText[ScreenKindGameTextKeyMap[screenKind]]"
     @close="screenKind = ScreenKind.World"
