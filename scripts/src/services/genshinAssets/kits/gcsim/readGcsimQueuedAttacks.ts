@@ -14,11 +14,9 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
-import {
-  readGoEnclosingFunction,
-  readGoMethodCallSites,
-  readGoNamedFunctions,
-} from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
+import { readGoMethodCallSites } from "#src/services/genshinAssets/kits/gcsim/readGoMethodCallSites";
+import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 

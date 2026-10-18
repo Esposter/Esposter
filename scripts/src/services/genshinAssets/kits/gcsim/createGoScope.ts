@@ -2,7 +2,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
-import type { GoNamedFunction } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -11,10 +11,8 @@ import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/eva
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import {
-  readGoEnclosingFunction,
-  readGoNamedFunctions,
-} from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
+import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 
 // How many calls a value is followed through, so a cycle of calls gives no value
 const MAX_DEPTH = 4;
