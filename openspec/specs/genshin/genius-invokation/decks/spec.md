@@ -230,7 +230,7 @@ A character about to fall SHALL first be offered to the cards attached to it. A 
 
 ### Requirement: A skill prepared for a side runs as its turn begins
 
-A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn. While the opponent has declared its round's end, the side keeps the turn without a new one beginning, so its prepared skills SHALL wait for the turn it next takes.
+A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn. While the opponent has declared its round's end, the side keeps the turn without a new one beginning, so its prepared skills SHALL wait for the turn it next takes. The cards on a preparer's field hear its prepared skill as a skill used, so a Crowfeather Cover on that character spends a usage on a prepared Elemental Skill.
 
 #### Scenario: Rock-Paper-Scissors Combo's preparations run at the next turn
 
@@ -243,6 +243,12 @@ A side's prepared skills SHALL run when the turn passes to that side, before its
 - **GIVEN** Electro Hypostasis prepared Paper in its own Combat Action, and the opposing side has declared its Round end
 - **WHEN** Electro Hypostasis keeps taking actions
 - **THEN** Paper deals nothing and stays prepared, and it deals its 3 Electro DMG when the turn next passes to that side
+
+#### Scenario: A prepared Elemental Skill spends the holder's Crowfeather Cover usage
+
+- **GIVEN** Electro Hypostasis has a Crowfeather Cover and its prepared Paper is due
+- **WHEN** the turn passes to that side
+- **THEN** Paper deals 4 Electro DMG with the cover's +1, and the cover has one usage left
 
 ### Requirement: A card on one side surcharges the other side's switch once a round
 
