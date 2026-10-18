@@ -69,6 +69,8 @@ export const SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID = 15_019;
 export const OCEAN_HUED_CLAM_ARTIFACT_SET_ID = 15_022;
 // Vermillion Hereafter's id in the set table
 export const VERMILLION_HEREAFTER_ARTIFACT_SET_ID = 15_023;
+// Echoes of an Offering's id in the set table
+export const ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID = 15_024;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one

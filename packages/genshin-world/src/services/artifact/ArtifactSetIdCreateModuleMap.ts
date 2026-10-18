@@ -10,6 +10,7 @@ import {
   DEEPWOOD_MEMORIES_ARTIFACT_SET_ID,
   DEFENDERS_WILL_ARTIFACT_SET_ID,
   DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
+  ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID,
   EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID,
   EXILE_ARTIFACT_SET_ID,
   FINALE_OF_THE_DEEP_GALLERIES_ARTIFACT_SET_ID,
@@ -44,6 +45,7 @@ import { createBraveHeartSetModule } from "#src/services/artifact/sets/createBra
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
 import { createDefendersWillSetModule } from "#src/services/artifact/sets/createDefendersWillSetModule";
 import { createDesertPavilionChronicleSetModule } from "#src/services/artifact/sets/createDesertPavilionChronicleSetModule";
+import { createEchoesOfAnOfferingSetModule } from "#src/services/artifact/sets/createEchoesOfAnOfferingSetModule";
 import { createEmblemOfSeveredFateSetModule } from "#src/services/artifact/sets/createEmblemOfSeveredFateSetModule";
 import { createExileSetModule } from "#src/services/artifact/sets/createExileSetModule";
 import { createFinaleOfTheDeepGalleriesSetModule } from "#src/services/artifact/sets/createFinaleOfTheDeepGalleriesSetModule";
@@ -83,6 +85,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [DEEPWOOD_MEMORIES_ARTIFACT_SET_ID]: createDeepwoodMemoriesSetModule,
   [DEFENDERS_WILL_ARTIFACT_SET_ID]: createDefendersWillSetModule,
   [DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID]: createDesertPavilionChronicleSetModule,
+  [ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID]: createEchoesOfAnOfferingSetModule,
   [EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID]: createEmblemOfSeveredFateSetModule,
   [EXILE_ARTIFACT_SET_ID]: createExileSetModule,
   [FINALE_OF_THE_DEEP_GALLERIES_ARTIFACT_SET_ID]: createFinaleOfTheDeepGalleriesSetModule,
