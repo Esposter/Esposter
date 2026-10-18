@@ -614,6 +614,51 @@ describe(getGcsimKitCandidates, () => {
     expect(valuesAt("hits.soulseekerShell.area")).toStrictEqual([createTargetedHitArea(SKILL_TARGETING_AREA, 6)]);
   });
 
+  test("gives a cloud its explosion on the target and its timings as frames, its first hit landing after its travel", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("mizuki", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArt",
+          durability: 25,
+          element: "attributes.Anemo",
+          fieldLineMap: { Durability: 186, Element: 185, ICDTag: 181 },
+          file: "skill.go",
+          internalCooldownTag: "attacks.ICDTagElementalArt",
+          line: 177,
+          poiseDamage: 20,
+          talentVariable: "cloudDMG",
+          variableName: "cloudAttack",
+        },
+      ],
+      constants: [
+        ["cloudExplosionRadius", attackConstant(4, 32, "skill.go")],
+        ["cloudTravelTime", attackConstant(30, 33, "skill.go")],
+        ["cloudFirstHit", attackConstant(18, 34, "skill.go")],
+        ["cloudHitInterval", attackConstant(45, 35, "skill.go")],
+      ],
+      talentParameters: [["skill|Continuous Attack DMG", { indexes: [0], line: 3 }]],
+      talentVariables: [
+        {
+          leaves: [{ path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: "skill" } }],
+          name: "cloudDMG",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect([
+      valuesAt("frames.cloudTravelTime"),
+      valuesAt("frames.cloudFirstHit"),
+      valuesAt("frames.cloudHitInterval"),
+      valuesAt("hits.cloud.hitmarkFrames"),
+      valuesAt("hits.cloud.multiplier"),
+    ]).toStrictEqual([[30], [18], [45], [18], [{ index: 0, proudSkillGroupId: 2 }]]);
+    expect(valuesAt("hits.cloud.area")).toStrictEqual([createTargetedHitArea(SKILL_TARGETING_AREA, 4)]);
+  });
+
   test("gives Fiery Passion's skill the rush's frames and multiplier, and its flying kick the burst variant's", () => {
     expect.hasAssertions();
 

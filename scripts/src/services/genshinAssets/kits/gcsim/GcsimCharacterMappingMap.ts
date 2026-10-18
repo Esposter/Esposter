@@ -2,6 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
 import { addGcsimBladeRollerCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates";
+import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates";
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
 
@@ -9,4 +10,9 @@ import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/
 // Folder is read by, each written on top of them. A folder with no mapping takes the shared readers alone
 export const GcsimCharacterMappingMap: Partial<
   Record<string, (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter) => void>
-> = { chasca: addGcsimShellCandidates, varesa: addGcsimFieryPassionCandidates, xilonen: addGcsimBladeRollerCandidates };
+> = {
+  chasca: addGcsimShellCandidates,
+  mizuki: addGcsimCloudCandidates,
+  varesa: addGcsimFieryPassionCandidates,
+  xilonen: addGcsimBladeRollerCandidates,
+};
