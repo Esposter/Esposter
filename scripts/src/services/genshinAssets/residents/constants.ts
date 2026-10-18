@@ -1,26 +1,26 @@
-import type { ResidentSpot, ResidentWeekGame } from "genshin-world";
+import type { ResidentSpot } from "genshin-world";
 
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { join } from "node:path";
 
 // The region data files the residents are written into, one per region, beside its landmarks and camps
 export const REGION_DATA_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "regions");
-// The residents who duel the player, each by its resident id and the game of the card game's table it duels with. Marjorie
-// Keeps her Souvenir shop, so her duel sits on her shop row, NPC 1435, whose talk the wiki's Adventure Challenge is in;
-// Ellin (9704) stands at the Knights' headquarters point, and Kimiya (9715) beside Sumeru's crafting bench, each as an
-// Estimate the residents carry as provisional. Furuya Noboru, Patton and Kurisu have no point the scene names, so they
-// Are not seated: their wiki locations name a city or a tavern's outside, not a place the scene holds
+// The residents who duel the player from the talk they begin, each by its resident id and the game of the card game's table
+// It duels with: Ellin (9704) and Kimiya (9715), whose games are rows of their week tables. Ellin stands at the Knights of
+// Favonius headquarters' point, and Kimiya beside Sumeru's crafting bench, each as an estimate the residents carry as
+// Provisional. Marjorie (1435) duels from her world-level row, which the world table seats. Furuya Noboru, Patton and
+// Kurisu have no point the scene names, so they are not seated: their wiki locations name a city or a tavern's outside,
+// Not a place the scene holds
 export const RESIDENT_DUEL_GAME_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
-  ["1435", 1021],
   ["9704", 1031],
   ["9715", 1104],
 ]);
-// The week games the residents offer in their weekly guest challenge, each at the seat of the NPC who offers it. Kimiya's week
-// Row (110) names game 1103 at level 5 among the five games the row lists, and the Lucky Coins and Player EXP are the
-// week's reward at that level, from the GCGWeekReward rows at level 5
-export const RESIDENT_WEEK_GAME_MAP: ReadonlyMap<string, ResidentWeekGame> = new Map<string, ResidentWeekGame>([
-  ["9715", { gameId: 1103, gcgLevel: 5, luckyCoins: 900, playerExp: 200 }],
-]);
+// The residents whose week table offers them a weekly guest challenge, by NPC id: the writer seats their week games and the
+// Games builder publishes them, both read from the week table's rows for these NPCs
+export const RESIDENT_WEEK_GAME_NPC_IDS: number[] = [9704, 9706, 9715];
+// The residents whose world-level row offers them a duel, by NPC id: the writer seats their duels and the games builder
+// Publishes them, both read from the world-level table's rows for these NPCs
+export const RESIDENT_WORLD_LEVEL_DUEL_NPC_IDS: number[] = [1423, 1435, 2304, 2308];
 // The night spots of the residents outside Nod-Krai, each by its NPC id. The map fills from the PC's NPC placements export,
 // Which the wiki's NPC pages cannot stand in for: they give each NPC's location by name and no coordinates. Until that export
 // Is read, the map is empty and no resident gains a night spot

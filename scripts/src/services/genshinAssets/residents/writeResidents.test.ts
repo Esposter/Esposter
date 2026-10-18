@@ -58,6 +58,7 @@ describe(writeResidents, () => {
       [
         `${REGION}: 0 placed with talks, 0 with a day spot only, 0 with a night spot`,
         "0 at a crafting bench, 0 with no name, 0 with no talk, 0 repeat placements of a resident already placed, and 0 of 0 placed NPCs in no fitted region",
+        "0 placed residents seated at a world-level duel, and 0 NPCs with two world-level rows left unseated",
         "nothing written",
       ].join("\n"),
     );
@@ -98,6 +99,7 @@ describe(writeResidents, () => {
       [
         `${REGION}: 1 placed with talks, 1 with a day spot only, 0 with a night spot`,
         "0 at a crafting bench, 0 with no name, 0 with no talk, 0 repeat placements of a resident already placed, and 0 of 1 placed NPCs in no fitted region",
+        "0 placed residents seated at a world-level duel, and 0 NPCs with two world-level rows left unseated",
         "nothing written",
       ].join("\n"),
     );
@@ -126,6 +128,11 @@ describe(writeResidents, () => {
     vi.mocked(readDialogSpeakers).mockReturnValueOnce([{ speakerId: npcId, talkId }]);
   };
 
+  // The dump's week and world tables, by name, for the seats the two tests below read
+  const mockGcgTables = (tables: Partial<Record<string, unknown[]>>): void => {
+    vi.mocked(readExcelTable).mockImplementation((name) => (tables[name] ?? []) as never[]);
+  };
+
   test("a seated challenger's talk opens the duel", async () => {
     expect.hasAssertions();
     // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her week row names
@@ -152,6 +159,37 @@ describe(writeResidents, () => {
     );
   });
 
+  test("a world-level duelist is seated at its world-level game and talk, not the talk the dialog names", async () => {
+    expect.hasAssertions();
+    // Marjorie keeps her Souvenir shop, building 64, and her world-level row names game 11004 offered from talk 6143506
+    const SOUVENIR_SHOP_POINT_ID = "64";
+    const MARJORIE_NPC_ID = 1435;
+    const MARJORIE_NAME_TEXT_HASH = 3218942421;
+    const MARJORIE_DIALOG_TALK_ID = 40172;
+    const MARJORIE_DUEL_GAME_ID = 11_004;
+    const MARJORIE_DUEL_TALK_ID = "6143506";
+    seatChallenger(SOUVENIR_SHOP_POINT_ID, MARJORIE_NPC_ID, MARJORIE_NAME_TEXT_HASH, MARJORIE_DIALOG_TALK_ID);
+    mockGcgTables({
+      GCGWorldLevelExcelConfigData: [{ levelId: MARJORIE_DUEL_GAME_ID, npcId: MARJORIE_NPC_ID, talkId: 6_143_506 }],
+    });
+
+    await writeResidents({ isDryRun: false });
+
+    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      expect.objectContaining({
+        residents: [
+          expect.objectContaining({
+            duelGameId: MARJORIE_DUEL_GAME_ID,
+            duelTalkId: MARJORIE_DUEL_TALK_ID,
+            id: String(MARJORIE_NPC_ID),
+            talkId: String(MARJORIE_DIALOG_TALK_ID),
+          }),
+        ],
+      }),
+    );
+  });
+
   test("a seated challenger's week game is written with its game, the level it is offered at, and its reward", async () => {
     expect.hasAssertions();
     // Kimiya stands at Sumeru's crafting bench, building 526, and his week row names game 1103 at level 5, while his duel sits at
@@ -163,6 +201,18 @@ describe(writeResidents, () => {
     const KIMIYA_DUEL_GAME_ID = 1104;
     const KIMIYA_WEEK_GAME = { gameId: 1103, gcgLevel: 5, luckyCoins: 900, playerExp: 200 };
     seatChallenger(CRAFTING_BENCH_BUILDING_ID, KIMIYA_NPC_ID, KIMIYA_NAME_TEXT_HASH, KIMIYA_TALK_ID);
+    mockGcgTables({
+      GCGWeekLevelExcelConfigData: [{ levelCondList: [{ gcgLevel: 5, levelId: 1103 }], npcId: KIMIYA_NPC_ID }],
+      GCGWeekRewardExcelConfigData: [
+        {
+          gcgLevel: 5,
+          items: [
+            { itemId: 107_021, NIEOALBMDMB: 900 },
+            { itemId: 146, NIEOALBMDMB: 200 },
+          ],
+        },
+      ],
+    });
 
     await writeResidents({ isDryRun: false });
 
@@ -173,7 +223,7 @@ describe(writeResidents, () => {
           expect.objectContaining({
             duelGameId: KIMIYA_DUEL_GAME_ID,
             id: String(KIMIYA_NPC_ID),
-            weekGame: KIMIYA_WEEK_GAME,
+            weekGames: [KIMIYA_WEEK_GAME],
           }),
         ],
       }),

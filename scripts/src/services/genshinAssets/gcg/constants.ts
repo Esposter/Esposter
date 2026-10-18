@@ -1,4 +1,4 @@
-import { RESIDENT_DUEL_GAME_ID_MAP, RESIDENT_WEEK_GAME_MAP } from "#src/services/genshinAssets/residents/constants";
+import { RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
 import { Element } from "genshin-world";
 
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
@@ -15,8 +15,6 @@ export const GCG_STANDARD_RULE_ID = 2;
 // The other challengers' games wait for their decks, since a game whose enemy deck has no slice is refused
 export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
 export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS];
-// The week games the residents offer in their weekly guest challenge, read from the seats. They publish beside the duels' games
-export const GCG_CHALLENGER_WEEK_GAME_IDS: number[] = [...RESIDENT_WEEK_GAME_MAP.values()].map(({ gameId }) => gameId);
 // The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
 export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;

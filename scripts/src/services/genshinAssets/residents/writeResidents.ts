@@ -1,3 +1,6 @@
+import type { ExcelGcgWeekLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgWeekLevelRow";
+import type { ExcelGcgWeekRewardRow } from "#src/models/genshinAssets/gcg/ExcelGcgWeekRewardRow";
+import type { ExcelGcgWorldLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgWorldLevelRow";
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
@@ -10,9 +13,9 @@ import {
   BUILDING_NPC_ID_MAP,
   CRAFTING_BENCH_NPC_ID_MAP,
   REPUTATION_KEEPER_NPC_ID_MAP,
-  RESIDENT_DUEL_GAME_ID_MAP,
   RESIDENT_NIGHT_SPOT_MAP,
-  RESIDENT_WEEK_GAME_MAP,
+  RESIDENT_WEEK_GAME_NPC_IDS,
+  RESIDENT_WORLD_LEVEL_DUEL_NPC_IDS,
 } from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
@@ -20,6 +23,9 @@ import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpea
 import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDialogSpeakers";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
+import { toResidentSeats } from "#src/services/genshinAssets/residents/toResidentSeats";
+import { toResidentWeekGames } from "#src/services/genshinAssets/residents/toResidentWeekGames";
+import { toWorldLevelDuels } from "#src/services/genshinAssets/residents/toWorldLevelDuels";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
@@ -65,6 +71,19 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
     return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];
   });
   const npcs = readExcelTable<DumpedNpc>(NPC_TABLE_NAME);
+  // A world-level duel is seated from its NPC's own row, and a week game from its NPC's week row, priced at the level's reward
+  const { duelMap: worldLevelDuelMap, twoRowNpcIds } = toWorldLevelDuels(
+    readExcelTable<ExcelGcgWorldLevelRow>("GCGWorldLevelExcelConfigData"),
+    RESIDENT_WORLD_LEVEL_DUEL_NPC_IDS,
+  );
+  const weekGamesMap = toResidentWeekGames(
+    readExcelTable<ExcelGcgWeekLevelRow>("GCGWeekLevelExcelConfigData"),
+    readExcelTable<ExcelGcgWeekRewardRow>("GCGWeekRewardExcelConfigData", {
+      gcgLevel: "gcgLevel",
+      items: "PPILLAAKFOA",
+    }),
+    RESIDENT_WEEK_GAME_NPC_IDS,
+  );
   const nameTextIdMap = new Map(
     npcs.flatMap(({ id, nameTextMapHash }) => (nameTextMapHash === 0 ? [] : [[id, String(nameTextMapHash)] as const])),
   );
@@ -87,9 +106,7 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
         .array()
         .parse(
           (residentJoin.regions.get(region) ?? []).map((resident) =>
-            Object.assign(resident, {
-              duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id),
-              weekGame: RESIDENT_WEEK_GAME_MAP.get(resident.id),
+            Object.assign(resident, toResidentSeats(resident.id, worldLevelDuelMap, weekGamesMap), {
               keepsReputation: reputationKeeperIds.has(resident.id) ? true : undefined,
             }),
           ),
@@ -100,9 +117,13 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
       return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
     }),
   );
+  const seatedCount = regionFiles
+    .flatMap(({ region }) => residentJoin.regions.get(region) ?? [])
+    .filter(({ id }) => worldLevelDuelMap.has(id)).length;
   return [
     ...reports,
     `${residentJoin.craftingBench} at a crafting bench, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
+    `${seatedCount} placed residents seated at a world-level duel, and ${twoRowNpcIds.length} NPCs with two world-level rows left unseated`,
     ...(isDryRun ? ["nothing written"] : []),
   ].join("\n");
 };
