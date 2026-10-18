@@ -1,7 +1,6 @@
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
-import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import {
   TEST_DOCUMENT,
   TEST_DOCUMENT_NODE_COUNT,
@@ -10,6 +9,7 @@ import {
   TEST_REGISTRY,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
+import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { describe, expect, test } from "vitest";
 
 describe(createBlockDocumentSchema, () => {

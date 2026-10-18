@@ -1,8 +1,8 @@
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 import { parseArrayIndex } from "#src/services/jsonPatch/parseArrayIndex";
 import { toJsonPointer } from "#src/services/jsonPatch/toJsonPointer";
 import { checkIsPlainObject } from "#src/util/object/checkIsPlainObject";
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 
 export const readJsonValue = (document: unknown, segments: string[]): unknown => {
   let value = document;

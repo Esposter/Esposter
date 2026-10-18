@@ -1,7 +1,5 @@
 import type { BlockNode } from "#src/models/BlockNode";
 
-import { applyPatches } from "@esposter/shared";
-import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import {
   TEST_DOCUMENT,
   TEST_DOCUMENT_NODE_COUNT,
@@ -9,7 +7,9 @@ import {
   TEST_REGISTRY,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
+import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { pasteBlockNodes } from "#src/services/pasteBlockNodes";
+import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(pasteBlockNodes, () => {

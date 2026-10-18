@@ -43,7 +43,7 @@ export const usePdfThumbnails = ({
       pageNumber,
       pdfDocument: currentDocument,
     });
-    watch(canvas, (element, _, onCleanup) => {
+    watch(canvas, (element, _previousElement, onCleanup) => {
       if (!element) return;
 
       rows.set(element, thumbnail);
@@ -79,7 +79,9 @@ export const usePdfThumbnails = ({
       scope = effectScope();
       thumbnails.value =
         scope.run(() =>
-          Array.from({ length: loaded.numPages }, (_, index) => createThumbnail(index + 1, loaded, currentObserver)),
+          Array.from({ length: loaded.numPages }, (_value, index) =>
+            createThumbnail(index + 1, loaded, currentObserver),
+          ),
         ) ?? [];
     },
     { immediate: true },

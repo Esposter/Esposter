@@ -9,7 +9,7 @@ describe(clonePlainDeep, () => {
 
     const data = { series: [{ data: [1] }] };
     const clone = clonePlainDeep(data);
-    takeOne(clone.series).data.splice(0);
+    takeOne(clone.series).data[0] = 2;
 
     expect(data).toStrictEqual({ series: [{ data: [1] }] });
   });

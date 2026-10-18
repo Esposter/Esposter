@@ -1,5 +1,5 @@
-import type { ApplyPatchesResult, JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument } from "#src/models/BlockDocument";
+import type { ApplyPatchesResult, JsonPatchOperation } from "@esposter/shared";
 import type { Result } from "neverthrow";
 
 import { applyPatches, getResult } from "@esposter/shared";

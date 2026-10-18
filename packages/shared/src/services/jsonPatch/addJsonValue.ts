@@ -1,6 +1,8 @@
 import type { ApplyPatchesResult } from "#src/models/jsonPatch/ApplyPatchesResult";
 
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { JsonPatchOperationType } from "#src/models/jsonPatch/JsonPatchOperationType";
+import { Operation } from "#src/models/shared/Operation";
 import { APPEND_SEGMENT } from "#src/services/jsonPatch/constants";
 import { parseArrayIndex } from "#src/services/jsonPatch/parseArrayIndex";
 import { parseJsonPointer } from "#src/services/jsonPatch/parseJsonPointer";
@@ -8,8 +10,6 @@ import { readJsonValue } from "#src/services/jsonPatch/readJsonValue";
 import { toJsonPointer } from "#src/services/jsonPatch/toJsonPointer";
 import { updateJsonValue } from "#src/services/jsonPatch/updateJsonValue";
 import { checkIsPlainObject } from "#src/util/object/checkIsPlainObject";
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 
 export const addJsonValue = (document: unknown, path: string, value: unknown): ApplyPatchesResult<unknown> => {
   const segments = parseJsonPointer(path);

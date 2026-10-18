@@ -7,10 +7,10 @@ export interface PdfViewerState {
   actualSize: () => void;
   currentPageNumber: Ref<number>;
   download: (filename: string) => void;
-  fitPage: () => void;
-  fitWidth: () => void;
   findNext: () => void;
   findPrevious: () => void;
+  fitPage: () => void;
+  fitWidth: () => void;
   followBookmark: (item: PdfOutline[number]) => void;
   goToPage: (pageNumber: number) => void;
   isFullscreen: Ref<boolean>;

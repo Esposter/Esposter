@@ -4,10 +4,10 @@ import { PDF_PRINT_BATCH_SIZE, PDF_PRINT_CLASS, PDF_PRINT_STYLE } from "#src/ser
 import { renderPrintImage } from "#src/services/renderPrintImage";
 
 // Draws every page of a document for print into a container only print shows, a batch at a time.
-// Once isCancelled reports the print stale, it gives up without a container, so nothing is left to print or remove
+// Once checkIsCancelled reports the print stale, it gives up without a container, so nothing is left to print or remove
 export const renderPrintSheets = async (
   pdfDocument: PDFDocumentProxy,
-  isCancelled: () => boolean,
+  checkIsCancelled: () => boolean,
 ): Promise<HTMLDivElement | undefined> => {
   const style = window.document.createElement("style");
   style.textContent = PDF_PRINT_STYLE;
@@ -17,12 +17,12 @@ export const renderPrintSheets = async (
   // The next batch starts once this one has landed, so a batch limits how many pages render at the same time.
   // Every page's image stays in the print root until afterprint, so by the end of a print every page is held there
   const renderBatch = async (firstPageNumber: number): Promise<void> => {
-    if (isCancelled() || firstPageNumber > pdfDocument.numPages) return;
+    if (checkIsCancelled() || firstPageNumber > pdfDocument.numPages) return;
 
     const lastPageNumber = Math.min(firstPageNumber + PDF_PRINT_BATCH_SIZE - 1, pdfDocument.numPages);
     const pageNumbers = Array.from(
       { length: lastPageNumber - firstPageNumber + 1 },
-      (_, index) => firstPageNumber + index,
+      (_value, index) => firstPageNumber + index,
     );
     printRoot.append(
       ...(await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(pdfDocument, pageNumber)))),
@@ -31,5 +31,5 @@ export const renderPrintSheets = async (
   };
   await renderBatch(1);
 
-  return isCancelled() ? undefined : printRoot;
+  return checkIsCancelled() ? undefined : printRoot;
 };

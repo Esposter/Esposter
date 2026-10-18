@@ -1,8 +1,8 @@
-import { applyPatches } from "@esposter/shared";
 import { applyBlockEdit } from "#src/services/applyBlockEdit";
-import { insertBlockNode } from "#src/services/insertBlockNode";
 import { TEST_DOCUMENT, TEST_ITEM_ID, TEST_REGISTRY } from "#src/services/constants.test";
+import { insertBlockNode } from "#src/services/insertBlockNode";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
+import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(applyBlockEdit, () => {

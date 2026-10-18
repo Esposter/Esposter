@@ -24,9 +24,9 @@ describe(usePdfDocument, () => {
   const PASSWORD = " ";
   const createRenderer = (getDocument: PdfApi["getDocument"]): PdfRenderer => ({
     api: {
+      getDocument,
       GlobalWorkerOptions: { workerSrc: "" },
       PasswordResponses: { INCORRECT_PASSWORD, NEED_PASSWORD },
-      getDocument,
     } as unknown as PdfApi,
     cMapUrl: "",
     standardFontDataUrl: "",

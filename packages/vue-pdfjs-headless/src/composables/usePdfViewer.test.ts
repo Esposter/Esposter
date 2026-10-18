@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfViewerApi } from "#src/models/PdfViewerApi";
-import type { PDFDocumentProxy, PageViewport, PDFPageProxy, RenderTask } from "pdfjs-dist";
+import type { PageViewport, PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import type { MaybeRefOrGetter } from "vue";
 
 import { usePdfViewer } from "#src/composables/usePdfViewer";
@@ -10,150 +10,6 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
-const PAGE_WIDTH = 800;
-const PAGE_HEIGHT = 1000;
-const FIND_STATE_NOT_FOUND = 1;
-const LINK_TARGET_BLANK = 2;
-const CHAPTER_PAGE = 3;
-
-type Listener = (event: unknown) => void;
-type EventBusStub = ReturnType<typeof createEventBus>;
-type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
-
-// The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
-// The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
-const stubs: {
-  abortSignal?: AbortSignal;
-  eventBus?: EventBusStub;
-  findEvents: unknown[];
-  scaleWrites: unknown[];
-  viewer?: PdfViewerStub;
-} = { findEvents: [], scaleWrites: [] };
-// How many matches the stub document holds for any search
-let matches = 0;
-
-// The observer the composable makes for its container, kept so a test can report a resize as a browser would
-let reportResize: (() => void) | undefined;
-
-const ResizeObserverStub = function (callback: () => void) {
-  reportResize = callback;
-
-  return { disconnect: () => {}, observe: () => {} };
-};
-
-const createEventBus = () => {
-  const listeners = new Map<string, Listener[]>();
-
-  return {
-    dispatch: (name: string, event: unknown) => {
-      for (const listener of listeners.get(name) ?? []) listener(event);
-    },
-    on: (name: string, listener: Listener) => {
-      listeners.set(name, [...(listeners.get(name) ?? []), listener]);
-    },
-  };
-};
-const createFindController = ({ eventBus }: { eventBus: EventBusStub }) => {
-  eventBus.on("find", (event: unknown) => {
-    stubs.findEvents.push(event);
-    const matchesCount = { current: matches > 0 ? 1 : 0, total: matches };
-    eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: matches > 0 ? 0 : FIND_STATE_NOT_FOUND });
-    eventBus.dispatch("updatefindmatchescount", { matchesCount });
-  });
-
-  return { setDocument: vi.fn<() => void>() };
-};
-const createLinkService = () => ({
-  // The destination of a bookmark is the chapter's page, which the stub viewer shows
-  goToDestination: vi.fn<(destination: unknown) => void>(() => {
-    if (stubs.viewer) stubs.viewer.currentPageNumber = CHAPTER_PAGE;
-  }),
-  setDocument: vi.fn<() => void>(),
-  setViewer: vi.fn<() => void>(),
-});
-const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
-  let currentPageNumber = 0;
-  let currentScale = 0;
-  let currentScaleValue: string | null = "auto";
-  let pagesRotation = 0;
-  const viewer = {
-    get currentScaleValue() {
-      return currentScaleValue;
-    },
-    set currentScaleValue(scaleValue: string | null) {
-      stubs.scaleWrites.push(scaleValue);
-      currentScaleValue = scaleValue;
-    },
-    decreaseScale: () => {
-      viewer.currentScale = Math.max(viewer.currentScale / 1.1, 0.1);
-    },
-    get currentPageNumber() {
-      return currentPageNumber;
-    },
-    set currentPageNumber(pageNumber: number) {
-      currentPageNumber = pageNumber;
-      eventBus.dispatch("pagechanging", { pageNumber });
-    },
-    get currentScale() {
-      return currentScale;
-    },
-    set currentScale(scale: number) {
-      currentScale = scale;
-      eventBus.dispatch("scalechanging", { scale });
-    },
-    // The renderer stops zooming at its largest scale, so a step past it leaves the scale where it is
-    increaseScale: () => {
-      viewer.currentScale = Math.min(viewer.currentScale * 1.1, PDF_MAX_SCALE);
-    },
-    nextPage: () => {
-      viewer.currentPageNumber += 1;
-    },
-    get pagesRotation() {
-      return pagesRotation;
-    },
-    set pagesRotation(rotation: number) {
-      pagesRotation = rotation;
-      eventBus.dispatch("rotationchanging", { pagesRotation: rotation });
-    },
-    previousPage: () => {
-      viewer.currentPageNumber -= 1;
-    },
-    // The renderer resets its page and rotation without dispatching an event, which is what a new document finds
-    setDocument: vi.fn<(loaded: PDFDocumentProxy | null) => void>(() => {
-      currentPageNumber = 1;
-      currentScaleValue = null;
-      pagesRotation = 0;
-    }),
-  };
-
-  return viewer;
-};
-// The renderer's constructors are called with `new`, so each is a plain function that returns the stub it builds
-const EventBus = function () {
-  return createEventBus();
-};
-const PDFFindController = function (options: { eventBus: EventBusStub }) {
-  return createFindController(options);
-};
-const PDFLinkService = function () {
-  return createLinkService();
-};
-const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
-  stubs.abortSignal = options.abortSignal;
-  stubs.eventBus = options.eventBus;
-  stubs.viewer = createPdfViewerStub(options);
-
-  return stubs.viewer;
-};
-const createViewerApi = (): PdfViewerApi =>
-  ({
-    EventBus,
-    FindState: { NOT_FOUND: FIND_STATE_NOT_FOUND },
-    LinkTarget: { BLANK: LINK_TARGET_BLANK },
-    PDFFindController,
-    PDFLinkService,
-    PDFViewer,
-  }) as unknown as PdfViewerApi;
 const stubPrint = () => {
   const print = vi.fn<() => void>();
   vi.stubGlobal("print", print);
@@ -162,47 +18,192 @@ const stubPrint = () => {
 };
 const createRenderTask = (promise: Promise<unknown>) =>
   ({ cancel: vi.fn<RenderTask["cancel"]>(), promise }) as unknown as RenderTask;
-const createPage = (
-  render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
-): PDFPageProxy =>
-  ({
-    getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
-    render,
-  }) as unknown as PDFPageProxy;
-// A document with no outline resolves to null, which the viewer reads as no bookmarks
-const createDocument = (numPages: number, page = createPage(), outline: PdfOutline | null = null): PDFDocumentProxy =>
-  ({
-    getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
-    getOutline: vi.fn<() => Promise<PdfOutline | null>>(() => Promise.resolve(outline)),
-    getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
-    numPages,
-  }) as unknown as PDFDocumentProxy;
 // The renderer's viewport converts a point of the page, in PDF coordinates, at the scale it was made for
 const createViewport = (scale: number) =>
   ({ convertToViewportPoint: (x: number, y: number) => [x * scale, y * scale] }) as unknown as PageViewport;
 const setFullscreenElement = (element: Element | null) => {
   Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
 };
-const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
-  const container = window.document.createElement("div");
-  const scope = effectScope();
-  const state = scope.run(() =>
-    usePdfViewer({
-      container,
-      highlightTerms,
-      pdfDocument,
-      viewer: window.document.createElement("div"),
-      viewerApi: createViewerApi(),
-    }),
-  );
-  assert(state);
-  assert(stubs.viewer);
-  assert(stubs.eventBus);
-
-  return { container, scope, state, viewer: stubs.viewer };
-};
 
 describe(usePdfViewer, () => {
+  const PAGE_WIDTH = 800;
+  const PAGE_HEIGHT = 1000;
+  const FIND_STATE_NOT_FOUND = 1;
+  const LINK_TARGET_BLANK = 2;
+  const CHAPTER_PAGE = 3;
+
+  type EventBusStub = ReturnType<typeof createEventBus>;
+  type Listener = (event: unknown) => void;
+  type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
+
+  // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
+  // The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
+  const stubs: {
+    abortSignal?: AbortSignal;
+    eventBus?: EventBusStub;
+    findEvents: unknown[];
+    scaleWrites: unknown[];
+    viewer?: PdfViewerStub;
+  } = { findEvents: [], scaleWrites: [] };
+  // How many matches the stub document holds for any search
+  let matches = 0;
+
+  // The observer the composable makes for its container, kept so a test can report a resize as a browser would
+  let reportResize: (() => void) | undefined;
+
+  const ResizeObserverStub = function (callback: () => void) {
+    reportResize = callback;
+
+    return { disconnect: () => {}, observe: () => {} };
+  };
+
+  const createEventBus = () => {
+    const listeners = new Map<string, Listener[]>();
+
+    return {
+      dispatch: (name: string, event: unknown) => {
+        for (const listener of listeners.get(name) ?? []) listener(event);
+      },
+      on: (name: string, listener: Listener) => {
+        listeners.set(name, [...(listeners.get(name) ?? []), listener]);
+      },
+    };
+  };
+  const createFindController = ({ eventBus }: { eventBus: EventBusStub }) => {
+    eventBus.on("find", (event: unknown) => {
+      stubs.findEvents.push(event);
+      const matchesCount = { current: matches > 0 ? 1 : 0, total: matches };
+      eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: matches > 0 ? 0 : FIND_STATE_NOT_FOUND });
+      eventBus.dispatch("updatefindmatchescount", { matchesCount });
+    });
+
+    return { setDocument: vi.fn<() => void>() };
+  };
+  const createLinkService = () => ({
+    // The destination of a bookmark is the chapter's page, which the stub viewer shows
+    goToDestination: vi.fn<(destination: unknown) => void>(() => {
+      if (stubs.viewer) stubs.viewer.currentPageNumber = CHAPTER_PAGE;
+    }),
+    setDocument: vi.fn<() => void>(),
+    setViewer: vi.fn<() => void>(),
+  });
+  const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
+    let currentPageNumber = 0;
+    let currentScale = 0;
+    let currentScaleValue: null | string = "auto";
+    let pagesRotation = 0;
+    const viewer = {
+      get currentPageNumber() {
+        return currentPageNumber;
+      },
+      set currentPageNumber(pageNumber: number) {
+        currentPageNumber = pageNumber;
+        eventBus.dispatch("pagechanging", { pageNumber });
+      },
+      get currentScale() {
+        return currentScale;
+      },
+      set currentScale(scale: number) {
+        currentScale = scale;
+        eventBus.dispatch("scalechanging", { scale });
+      },
+      get currentScaleValue() {
+        return currentScaleValue;
+      },
+      set currentScaleValue(scaleValue: null | string) {
+        stubs.scaleWrites.push(scaleValue);
+        currentScaleValue = scaleValue;
+      },
+      decreaseScale: () => {
+        viewer.currentScale = Math.max(viewer.currentScale / 1.1, 0.1);
+      },
+      // The renderer stops zooming at its largest scale, so a step past it leaves the scale where it is
+      increaseScale: () => {
+        viewer.currentScale = Math.min(viewer.currentScale * 1.1, PDF_MAX_SCALE);
+      },
+      nextPage: () => {
+        viewer.currentPageNumber += 1;
+      },
+      get pagesRotation() {
+        return pagesRotation;
+      },
+      set pagesRotation(rotation: number) {
+        pagesRotation = rotation;
+        eventBus.dispatch("rotationchanging", { pagesRotation: rotation });
+      },
+      previousPage: () => {
+        viewer.currentPageNumber -= 1;
+      },
+      // The renderer resets its page and rotation without dispatching an event, which is what a new document finds
+      setDocument: vi.fn<(loaded: null | PDFDocumentProxy) => void>(() => {
+        currentPageNumber = 1;
+        currentScaleValue = null;
+        pagesRotation = 0;
+      }),
+    };
+
+    return viewer;
+  };
+  // The renderer's constructors are called with `new`, so each is a plain function that returns the stub it builds
+  const EventBus = function () {
+    return createEventBus();
+  };
+  const PDFFindController = function (options: { eventBus: EventBusStub }) {
+    return createFindController(options);
+  };
+  const PDFLinkService = function () {
+    return createLinkService();
+  };
+  const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
+    stubs.abortSignal = options.abortSignal;
+    stubs.eventBus = options.eventBus;
+    stubs.viewer = createPdfViewerStub(options);
+
+    return stubs.viewer;
+  };
+  const createViewerApi = (): PdfViewerApi =>
+    ({
+      EventBus,
+      FindState: { NOT_FOUND: FIND_STATE_NOT_FOUND },
+      LinkTarget: { BLANK: LINK_TARGET_BLANK },
+      PDFFindController,
+      PDFLinkService,
+      PDFViewer,
+    }) as unknown as PdfViewerApi;
+  const createPage = (
+    render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
+  ): PDFPageProxy =>
+    ({
+      getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+      render,
+    }) as unknown as PDFPageProxy;
+  // A document with no outline resolves to null, which the viewer reads as no bookmarks
+  const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
+    ({
+      getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
+      getOutline: vi.fn<() => Promise<null | PdfOutline>>(() => Promise.resolve(outline)),
+      getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
+      numPages,
+    }) as unknown as PDFDocumentProxy;
+  const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
+    const container = window.document.createElement("div");
+    const scope = effectScope();
+    const state = scope.run(() =>
+      usePdfViewer({
+        container,
+        highlightTerms,
+        pdfDocument,
+        viewer: window.document.createElement("div"),
+        viewerApi: createViewerApi(),
+      }),
+    );
+    assert(state);
+    assert(stubs.viewer);
+    assert(stubs.eventBus);
+
+    return { container, scope, state, viewer: stubs.viewer };
+  };
+
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     matches = 0;
@@ -320,7 +321,7 @@ describe(usePdfViewer, () => {
     state.download("report.pdf");
     await flushPromises();
     const [blob] = createObjectURL.mock.calls[0] ?? [];
-    assert(blob);
+    assert(blob instanceof Blob);
 
     expect(downloadName).toBe("report.pdf");
     expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([1, 2, 3]));

@@ -5,15 +5,15 @@ import { PDF_MAX_SCALE, PDF_MIN_SCALE, PDF_WHEEL_ZOOM_DIVISOR } from "#src/servi
 import { getZoomedScroll } from "#src/services/getZoomedScroll";
 import { onScopeDispose, toValue, watch } from "vue";
 
+interface PinchPoint {
+  x: number;
+  y: number;
+}
+
 interface UsePdfZoomGestureOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // Reads the viewer the gestures scale, which is built once the document's viewer is ready
   getViewer: () => PdfJsViewer | undefined;
-}
-
-interface PinchPoint {
-  x: number;
-  y: number;
 }
 
 // Pinch and Ctrl with the wheel scale the viewer about the pointer, keeping the content under it where it was.

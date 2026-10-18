@@ -1,6 +1,6 @@
-import { JSON_POINTER_REGEX } from "#src/services/jsonPatch/constants";
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { Operation } from "#src/models/shared/Operation";
+import { JSON_POINTER_REGEX } from "#src/services/jsonPatch/constants";
 
 // RFC 6901: the root is the empty pointer, every other one starts with a slash, and a segment unescapes "~1" before
 // "~0", so an escaped "~01" reads as "~1" rather than "/"

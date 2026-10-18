@@ -2,7 +2,7 @@
 import type { PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
-import { assert, afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 const createDocument = (): PDFDocumentProxy => {
   const page = {

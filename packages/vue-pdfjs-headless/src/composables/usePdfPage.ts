@@ -69,7 +69,7 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
   );
   watch(
     () => toValue(canvas),
-    (currentCanvas, _, onCleanup) => {
+    (currentCanvas, _previousCanvas, onCleanup) => {
       if (!currentCanvas) return;
 
       // A new element's first report is its own width, which may equal the last canvas's, so the width is not remembered across elements

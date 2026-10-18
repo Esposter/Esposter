@@ -6,38 +6,14 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
-const PAGE_WIDTH = 800;
-const PAGE_HEIGHT = 1000;
-
-type ResizeCallback = (entries: ResizeObserverEntry[]) => void;
-
-// The observer the composable makes for its canvas, kept so a test can report the canvas's width as a screen would
-let reportResize: ResizeCallback | undefined;
-
-class ResizeObserverStub {
-  constructor(callback: ResizeCallback) {
-    reportResize = callback;
-  }
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-}
-
-const reportWidth = (width: number) => {
-  reportResize?.([{ contentRect: { width } }] as ResizeObserverEntry[]);
-};
 const createRenderTask = (promise: Promise<unknown>) =>
   ({ cancel: vi.fn<RenderTask["cancel"]>(), promise }) as unknown as RenderTask;
-const createPage = (render: PDFPageProxy["render"]): PDFPageProxy =>
-  ({
-    getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
-    render,
-  }) as unknown as PDFPageProxy;
 const createDocument = (page: PDFPageProxy): PDFDocumentProxy =>
   ({
     getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
     numPages: 1,
   }) as unknown as PDFDocumentProxy;
+
 const mountPage = async (page: PDFPageProxy) => {
   const canvas = window.document.createElement("canvas");
   const scope = effectScope();
@@ -48,6 +24,32 @@ const mountPage = async (page: PDFPageProxy) => {
 };
 
 describe(usePdfPage, () => {
+  const PAGE_WIDTH = 800;
+  const PAGE_HEIGHT = 1000;
+
+  type ResizeCallback = (entries: ResizeObserverEntry[]) => void;
+
+  // The observer the composable makes for its canvas, kept so a test can report the canvas's width as a screen would
+  let reportResize: ResizeCallback | undefined;
+
+  class ResizeObserverStub {
+    constructor(callback: ResizeCallback) {
+      reportResize = callback;
+    }
+    disconnect() {}
+    observe() {}
+    unobserve() {}
+  }
+
+  const reportWidth = (width: number) => {
+    reportResize?.([{ contentRect: { width } }] as ResizeObserverEntry[]);
+  };
+  const createPage = (render: PDFPageProxy["render"]): PDFPageProxy =>
+    ({
+      getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+      render,
+    }) as unknown as PDFPageProxy;
+
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
   });

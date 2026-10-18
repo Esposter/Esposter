@@ -1,8 +1,8 @@
 import { AUDIO_SAMPLE_RATE, MODEL_URL } from "#src/constants";
 import { createNotes } from "#src/services/createNotes";
 import { readModel } from "#src/services/readModel";
-import { InferenceSession, Tensor } from "onnxruntime-node";
 import { fileURLToPath } from "node:url";
+import { InferenceSession, Tensor } from "onnxruntime-node";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const readShippedSession = (): Promise<InferenceSession> => InferenceSession.create(fileURLToPath(MODEL_URL));

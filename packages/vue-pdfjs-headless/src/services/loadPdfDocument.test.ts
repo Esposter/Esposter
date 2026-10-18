@@ -17,7 +17,7 @@ describe(loadPdfDocument, () => {
     const getDocument = vi.fn<PdfApi["getDocument"]>();
     const globalWorkerOptions = { workerSrc: "" };
     const renderer = {
-      api: { GlobalWorkerOptions: globalWorkerOptions, getDocument } as unknown as PdfApi,
+      api: { getDocument, GlobalWorkerOptions: globalWorkerOptions } as unknown as PdfApi,
       cMapUrl: C_MAP_URL,
       standardFontDataUrl: STANDARD_FONT_DATA_URL,
       wasmUrl: WASM_URL,

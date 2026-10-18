@@ -1,11 +1,11 @@
 import { PDF_MAX_CANVAS_AREA } from "#src/services/constants";
 
 interface Props {
+  // The width the canvas is drawn at on screen, in CSS pixels
+  cssWidth: number;
   pageHeight: number;
   pageWidth: number;
   pixelRatio: number;
-  // The width the canvas is drawn at on screen, in CSS pixels
-  cssWidth: number;
 }
 
 // The scale a page is drawn at for a canvas whose screen width shows it sharp. Past the largest canvas a device draws,

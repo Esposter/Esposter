@@ -3,7 +3,7 @@ import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfPageOverlay } from "#src/models/PdfPageOverlay";
 import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
-import type { PDFDocumentProxy, PageViewport } from "pdfjs-dist";
+import type { PageViewport, PDFDocumentProxy } from "pdfjs-dist";
 import type {
   EventBus as PdfJsEventBus,
   PDFFindController as PdfJsFindController,
@@ -82,7 +82,8 @@ export const usePdfViewer = ({
     // One signal per viewer, so the viewer's own listeners and the ones added here end together
     const viewerAbortController = new AbortController();
     const { signal } = viewerAbortController;
-    const instance = new PDFViewer({
+    // @TODO: no upstream issue — pdf.js's PDFViewerOptions typedef omits the abortSignal PDFViewer's constructor reads, so the options are typed with it added
+    const viewerOptions: ConstructorParameters<typeof PdfJsViewer>[0] & { abortSignal: AbortSignal } = {
       abortSignal: signal,
       container: containerValue,
       eventBus: bus,
@@ -90,7 +91,8 @@ export const usePdfViewer = ({
       linkService: links,
       maxCanvasPixels: PDF_MAX_CANVAS_AREA,
       viewer: viewerElement,
-    });
+    };
+    const instance = new PDFViewer(viewerOptions);
     links.setViewer(instance);
     abortController = viewerAbortController;
     containerElement = containerValue;
@@ -288,10 +290,10 @@ export const usePdfViewer = ({
     actualSize,
     currentPageNumber,
     download,
-    fitPage,
-    fitWidth,
     findNext,
     findPrevious,
+    fitPage,
+    fitWidth,
     followBookmark,
     goToPage,
     isFullscreen,

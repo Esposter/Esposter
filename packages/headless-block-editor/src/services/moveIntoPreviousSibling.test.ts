@@ -1,8 +1,8 @@
 import type { BlockDocument } from "#src/models/BlockDocument";
 
-import { applyPatches } from "@esposter/shared";
 import { TEST_HEADING_ID, TEST_LIST_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { moveIntoPreviousSibling } from "#src/services/moveIntoPreviousSibling";
+import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(moveIntoPreviousSibling, () => {
