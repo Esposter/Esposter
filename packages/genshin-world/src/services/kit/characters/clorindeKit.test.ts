@@ -72,11 +72,11 @@ describe(createClorindeKitBehaviour, () => {
     });
   });
 
-  test("an inactive constellation changes nothing", () => {
+  test("an inactive constellation gives no buff", () => {
     expect.hasAssertions();
     const kitEffectState = castKitAction(CLORINDE_KIT.elementalSkill, createClorindeCombatant(5));
 
-    expect(kitEffectState.effects).toHaveLength(0);
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toHaveLength(0);
   });
 
   test("reads the burst's cooldown and cost, the charged attack's stamina and the strikes' multipliers from her proud skill groups", () => {

@@ -1,7 +1,6 @@
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { takeOne } from "@esposter/shared";
 
@@ -13,11 +12,8 @@ export const reduceGcgReceivedDamage = (duel: GcgDuel, sideIndex: number, damage
   let value = damage.value;
   for (const zoneCard of listGcgFieldCards(side, side.activeIndex))
     value =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.modifyDamageReceived?.(
-        { duel, sideIndex },
-        value,
-        zoneCard,
-        damage.damageType,
-      ) ?? value;
+      duel.cardModules
+        .get(zoneCard.cardId)
+        ?.modifyDamageReceived?.({ duel, sideIndex }, value, zoneCard, damage.damageType) ?? value;
   return { ...damage, value };
 };

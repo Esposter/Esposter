@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
@@ -17,7 +17,7 @@ const SUCCESSION_ID = "succession";
 // Iwakura Succession at its rank: an Elemental Skill its wielder uses gains a seed, once in the cooldown, and the seeds
 // Last the rank's seconds, up to the rank's maximum. A burst consumes every seed and, after two seconds, gives the wielder
 // The rank's energy for each seed it consumed
-export const createIwakuraSuccessionPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createIwakuraSuccessionPassiveModule = (params: number[]): PassiveModule => {
   const seedSeconds = takeOne(params, 0);
   const maximumSeeds = takeOne(params, 1);
   const cooldownSeconds = takeOne(params, 2);

@@ -55,13 +55,11 @@
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 332 } },
-  "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 250 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 332 } },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.variant.animationFrames": { "cause": "Unclassified", "value": 46 },
   "skillHolds.0.variant.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
   "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 332 } },
-  "skillHolds.0.variant.hits.0.poiseDamage": { "cause": "Unclassified", "value": 250 },
   "skillMaximumHeldSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 332 } }
 }

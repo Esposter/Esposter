@@ -47,7 +47,8 @@ export const YAE_MIKO_CHARACTER_ID = 10_000_058;
 // Constellation 1 needs the Tenko Thunderbolt's activation as an event, which the kit does not emit
 // Constellation 2 needs Sesshou Sakura's starting level, max level and range, which the kit does not build
 // Constellation 4 needs the Electro DMG Bonus from Sesshou Sakura's lightning hits, which the kit does not build
-// Constellation 6's CRIT DMG needs the Radiance Stellar-Conduct hit, which the kit has no state for, so only its DEF ignored is built
+// Constellation 6's CRIT DMG needs the Stellar-Conduct hits her Radiance gives, read from the Polestar Field's
+// RADIANCE_STELLAR_CONDUCT_STATUS_ID, which the kit does not deal, so only its DEF ignored is built
 export const createYaeMikoKitBehaviour = ({
   kit,
   readHitFields,

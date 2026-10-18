@@ -1,6 +1,6 @@
 ## Purpose
 
-Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with Flaming Assault from Ascension 4, and his Ascension 1 passive and his constellations left unbuilt.
+Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with Flaming Assault from Ascension 4, with Constellations 2, 4 and 6 built, and his Ascension 1 passive and Constellation 1 left unbuilt.
 
 ## Requirements
 
@@ -72,12 +72,28 @@ From Ascension 4, each Fiery Collapse SHALL add 2.2% of Thoma's Max HP to its ba
 - **WHEN** a Fiery Collapse strikes
 - **THEN** its base DMG gains 2.2% of Thoma's Max HP
 
+### Requirement: Constellation 6's party DMG Bonus
+
+From Constellation 6, each Blazing Blessing SHALL give the team 15% DMG on normal, charged and plunging attacks for six seconds, restarting on each recast. Thoma's own attacks and each other member's attacks SHALL both gain it.
+
+#### Scenario: A party member's normal attack gains the bonus
+
+- **GIVEN** Thoma has Constellation 6 and Blazing Blessing has just been cast
+- **WHEN** a party member lands a normal, charged or plunging attack within six seconds
+- **THEN** its DMG gains 15%
+
+#### Scenario: Other attacks and lapsed bonuses get nothing
+
+- **GIVEN** Thoma has Constellation 5, or six seconds have passed since the last Blazing Blessing
+- **WHEN** a party member lands a normal attack or an elemental skill
+- **THEN** no DMG bonus applies
+
 ### Requirement: Unbuilt Thoma effects
 
-Thoma's Ascension 1 passive, his constellations and Fiery Collapse on a shielded character's damage SHALL NOT take effect.
+Thoma's Ascension 1 passive, Constellation 1 and Fiery Collapse on a shielded character's damage SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Thoma has his Ascension 1 passive or a constellation unlocked
+- **GIVEN** Thoma has his Ascension 1 passive or Constellation 1 unlocked
 - **WHEN** the player fights with Thoma
 - **THEN** that effect has no effect

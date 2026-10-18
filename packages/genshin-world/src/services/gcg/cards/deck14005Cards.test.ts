@@ -27,15 +27,16 @@ import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { CUILEIN_ANBAR_ID, KEQING_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const FULL_HP = 10;
 const COLLEI_ID = 1701;
 const LIBEN_ID = 322_008;
 const KNIGHTS_OF_FAVONIUS_LIBRARY_ID = 321_002;
-const KEQING_ID = 1403;
 const OTHER_CHARACTER_ID = 1401;
 const OPPOSING_CHARACTER_ID = 1203;
-const CUILEIN_ANBAR_ID = 117_011;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const TRUMP_CARD_KITTY_SKILL: GcgSkill = {
   costs: [],
@@ -101,6 +102,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
+import { TUBBY_ID } from "#src/services/gcg/cards/constants";
 
-const TUBBY_ID = 322_006;
 const TUBBY_REDUCTION = 2;
 
 // Tubby: when a Location Support Card is played, two dice of any face less are spent, once a round

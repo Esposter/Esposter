@@ -28,8 +28,8 @@ describe(absorbKitShield, () => {
   test("absorbs damage up to its health and gives back the rest, and is spent when its health runs out", () => {
     expect.hasAssertions();
     const effects: KitEffect[] = [{ characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 }];
-    expect(absorbKitShield(effects, combatant, 40)).toBe(0);
-    expect(absorbKitShield(effects, combatant, 80)).toBe(20);
+    expect(absorbKitShield(effects, combatant, 40, undefined)).toBe(0);
+    expect(absorbKitShield(effects, combatant, 80, undefined)).toBe(20);
     expect(effects).toStrictEqual([{ characterId: CHARACTER_ID, health: 0, kind: "shield", secondsRemaining: 0 }]);
   });
 
@@ -38,7 +38,7 @@ describe(absorbKitShield, () => {
     const effects: KitEffect[] = [
       { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 },
     ];
-    expect(absorbKitShield(effects, combatant, 40)).toBe(0);
+    expect(absorbKitShield(effects, combatant, 40, undefined)).toBe(0);
     expect(effects).toStrictEqual([
       { characterId: OTHER_CHARACTER_ID, health: 60, kind: "shield", secondsRemaining: 12 },
     ]);
@@ -50,7 +50,7 @@ describe(absorbKitShield, () => {
       { characterId: OTHER_CHARACTER_ID, health: 30, kind: "shield", secondsRemaining: 12 },
       { characterId: CHARACTER_ID, health: 20, kind: "shield", secondsRemaining: 12 },
     ];
-    expect(absorbKitShield(effects, combatant, 80)).toBe(50);
+    expect(absorbKitShield(effects, combatant, 80, undefined)).toBe(50);
     expect(effects).toStrictEqual([
       { characterId: OTHER_CHARACTER_ID, health: 0, kind: "shield", secondsRemaining: 0 },
       { characterId: CHARACTER_ID, health: 0, kind: "shield", secondsRemaining: 0 },
@@ -68,7 +68,7 @@ describe(absorbKitShield, () => {
     addKitEffect(kitEffectState, { characterId: CHARACTER_ID, health: 50, kind: "shield", secondsRemaining: 12 });
     const otherCombatant = { ...combatant, characterId: OTHER_CHARACTER_ID };
 
-    expect(absorbKitShield(kitEffectState.effects, otherCombatant, 40)).toBe(0);
+    expect(absorbKitShield(kitEffectState.effects, otherCombatant, 40, undefined)).toBe(0);
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 0 },
       { characterId: OTHER_CHARACTER_ID, health: 60, kind: "shield", secondsRemaining: 12 },

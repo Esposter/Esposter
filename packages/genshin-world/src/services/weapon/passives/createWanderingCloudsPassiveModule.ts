@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -13,7 +13,7 @@ const WANDERING_CLOUDS_COOLDOWN_ID = "wanderingClouds";
 // Of the wielder's own has the rank's chance to earn the favour of the clouds, which queues a physical small AoE at the rank's
 // Multiplier of ATK, once every rank's cooldown in seconds. The clouds' fifteen seconds of seeking out opponents are not modelled
 // Beyond that single hit, which is provisional
-export const createWanderingCloudsPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createWanderingCloudsPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const chance = takeOne(params, 1);
   const talentMultiplier = takeOne(params, 2);

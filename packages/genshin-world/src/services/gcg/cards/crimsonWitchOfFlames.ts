@@ -4,8 +4,7 @@ import { Element } from "#src/models/Element";
 import { createGcgElementCostReduction } from "#src/services/gcg/effects/createGcgElementCostReduction";
 import { setGcgDiceFaces } from "#src/services/gcg/effects/setGcgDiceFaces";
 import { takeOne } from "@esposter/shared";
-
-const CRIMSON_WITCH_OF_FLAMES_ID = 312_302;
+import { CRIMSON_WITCH_OF_FLAMES_ID } from "#src/services/gcg/cards/constants";
 
 // Crimson Witch of Flames: once per round a talent card played or a skill used spends one Pyro die less, and the two
 // Starting dice rolled are Pyro

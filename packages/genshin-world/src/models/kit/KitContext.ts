@@ -46,6 +46,10 @@ export interface KitContext {
   // The events raised outside a kit's own calls: between steps, as a taunt is struck, and as the enemies' statuses tick
   outbox: KitEvent[];
   party: Party;
+  // The enemy the character on the field's last action that targeted turned to, as gcsim's primary target is the one its
+  // Attacks fall on, which a kit places a hit on that no action of its own targets. It outlasts its action and a swap, and
+  // Is let go once it dies or leaves the world, none until an action targets one
+  primaryTarget?: Enemy;
   // Where the drops a struck animal gives lie, given the animal and the drops it gives
   placeWildlifeDrops: (wildlife: Wildlife, droppedItems: DroppedItem[]) => void;
   random: () => number;

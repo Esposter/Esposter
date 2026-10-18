@@ -1,6 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
@@ -100,7 +99,7 @@ const priceStrike = (
   shenhe: Combatant,
   striker: Combatant,
   element: Element,
-  attackTag: AttackTag | undefined = AttackTag.ElementalSkill,
+  { attackTag }: { attackTag?: AttackTag } = { attackTag: AttackTag.ElementalSkill },
 ) =>
   SHENHE_KIT.getPartyStrikeBonus?.(
     shenhe,
@@ -319,7 +318,13 @@ describe(createShenheKitBehaviour, () => {
     addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 2 });
     const context = createQuillContext(kitEffectState, shenhe, member);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const hit = (element: Element): KitEvent => ({ element, enemy, kind: KitEventKind.EnemyHit, striker: member });
+    const hit = (element: Element): KitEnemyHitEvent => ({
+      attackTag: AttackTag.ElementalSkill,
+      element,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: member,
+    });
 
     emitKitEvent(hit(Element.Hydro), context);
     expect(findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)?.stacks).toBe(2);
@@ -338,7 +343,7 @@ describe(createShenheKitBehaviour, () => {
     const context = createQuillContext(kitEffectState, shenhe, member);
 
     for (const attackTag of Object.values(AttackTag))
-      expect(priceStrike(context, shenhe, member, Element.Cryo, attackTag)?.additiveBaseDamageBonus).toBeCloseTo(
+      expect(priceStrike(context, shenhe, member, Element.Cryo, { attackTag })?.additiveBaseDamageBonus).toBeCloseTo(
         1000 * 0.45656,
         6,
       );
@@ -353,7 +358,7 @@ describe(createShenheKitBehaviour, () => {
     const context = createQuillContext(kitEffectState, shenhe, member);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
-    expect(priceStrike(context, shenhe, member, Element.Cryo, undefined)?.additiveBaseDamageBonus).toBeUndefined();
+    expect(priceStrike(context, shenhe, member, Element.Cryo, {})?.additiveBaseDamageBonus).toBeUndefined();
     emitKitEvent({ element: Element.Cryo, enemy, kind: KitEventKind.EnemyHit, striker: member }, context);
     expect(findKitStatus(kitEffectState.effects, member.characterId, ICY_QUILL_STATUS_ID)?.stacks).toBe(5);
   });

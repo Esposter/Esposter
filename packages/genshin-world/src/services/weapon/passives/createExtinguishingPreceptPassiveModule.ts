@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const CONSUMMATION_ID = "consummation";
 // Elemental Skill, it obtains Consummation for the rank's seconds, and its ATK rises by the rank's amount for each second that
 // Has passed since, up to the rank's stacks, doubled while the wielder is off the field. The stacks are read from the seconds
 // The status has left, so they need no clock of their own
-export const createExtinguishingPreceptPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createExtinguishingPreceptPassiveModule = (params: number[]): PassiveModule => {
   const elementalDamageBonus = takeOne(params, 0);
   const attackBonusPerSecond = takeOne(params, 2);
   const maximumStacks = takeOne(params, 3);

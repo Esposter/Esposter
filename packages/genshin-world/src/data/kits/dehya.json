@@ -1,5 +1,4 @@
 {
-  "burst.animationFrames": { "cause": "DiffersFromSource", "value": 105 },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.hits.0.area": {

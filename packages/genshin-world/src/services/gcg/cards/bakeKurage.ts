@@ -4,7 +4,6 @@ import { Element } from "#src/models/Element";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
 
-export const BAKE_KURAGE_ID = 112_051;
 const BAKE_KURAGE_DAMAGE = 1;
 const BAKE_KURAGE_HEAL = 1;
 const BAKE_KURAGE_MAX_USAGES = 4;

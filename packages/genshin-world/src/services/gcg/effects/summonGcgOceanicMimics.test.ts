@@ -4,10 +4,11 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { summonGcgOceanicMimics } from "#src/services/gcg/effects/summonGcgOceanicMimics";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-
-const OCEANIC_MIMIC_SQUIRREL_ID = 122_011;
-const OCEANIC_MIMIC_RAPTOR_ID = 122_012;
-const OCEANIC_MIMIC_FROG_ID = 122_013;
+import {
+  OCEANIC_MIMIC_FROG_ID,
+  OCEANIC_MIMIC_RAPTOR_ID,
+  OCEANIC_MIMIC_SQUIRREL_ID,
+} from "#src/services/gcg/cards/constants";
 
 const createSide = (): GcgSideState => ({
   activeIndex: 0,

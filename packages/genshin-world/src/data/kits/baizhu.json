@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "frames.firstSeamlessShieldRefresh": { "cause": "Unsourced", "value": 223 },
   "frames.seamlessShield": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 152 },
   "frames.seamlessShieldRefreshField": { "cause": "Unsourced", "value": 808 },

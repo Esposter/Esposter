@@ -4,6 +4,7 @@ import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { checkIsGcgSkillRunnable } from "#src/services/gcg/checkIsGcgSkillRunnable";
+import { findGcgTechnique } from "#src/services/gcg/effects/findGcgTechnique";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
@@ -24,7 +25,7 @@ export const useGcgSkill = (
   const user = side.characters.at(side.activeIndex);
   if (!user) return GcgActionResult.Unavailable;
   else if (user.isFrozen) return GcgActionResult.Frozen;
-  const skill = user.character.skills.find(({ id }) => id === skillId);
+  const skill = user.character.skills.find(({ id }) => id === skillId) ?? findGcgTechnique(user, skillId);
   if (!skill || skill.kind === GcgSkillKind.Passive || !checkIsGcgSkillRunnable(skill.effect))
     return GcgActionResult.Unavailable;
   if (

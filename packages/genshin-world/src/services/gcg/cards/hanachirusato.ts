@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 
-export const HANACHIRUSATO_ID = 322_013;
 const HANACHIRUSATO_PROGRESS_LIMIT = 3;
 const HANACHIRUSATO_REDUCTION = 2;
 

@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 92 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.burstHeal": { "cause": "Unclassified", "value": 97 },
   "frames.rehabDietLastTick": { "cause": "Unclassified", "value": 625 },
@@ -157,7 +156,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.surgingBlade.hitmarkFrames": { "cause": "DiffersFromSource", "value": 83 },
   "hits.surgingBlade.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 11232 } },
   "hits.surgingBlade.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

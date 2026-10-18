@@ -10,123 +10,123 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | Unit                 | Swept                  | Notes              |
 | -------------------- | ---------------------- | ------------------ |
 | `aino`               | —                      |                    |
-| `albedo`             | —                      |                    |
-| `alhaitham`          | —                      |                    |
+| `albedo`             | 2026-10-19 · Haiku 5.5 |                    |
+| `alhaitham`          | 2026-10-19 · Haiku 5.5 |                    |
 | `aloy`               | —                      |                    |
-| `alyosha`            | —                      |                    |
-| `amber`              | —                      |                    |
+| `alyosha`            | 2026-10-19 · Haiku 5.5 |                    |
+| `amber`              | 2026-10-19 · Haiku 5.5 |                    |
 | `arataki-itto`       | —                      |                    |
-| `arlecchino`         | —                      |                    |
-| `baizhu`             | —                      |                    |
-| `barbara`            | —                      |                    |
-| `beidou`             | —                      |                    |
-| `bennett`            | —                      |                    |
-| `candace`            | —                      |                    |
-| `charlotte`          | —                      |                    |
-| `chasca`             | —                      |                    |
-| `chevreuse`          | —                      |                    |
-| `chiori`             | —                      |                    |
-| `chongyun`           | —                      |                    |
-| `citlali`            | 2026-10-19 · Haiku 5.5 |                    |
+| `arlecchino`         | 2026-10-19 · Haiku 5.5 |                    |
+| `baizhu`             | 2026-10-19 · Haiku 5.5 |                    |
+| `barbara`            | 2026-10-19 · Haiku 5.5 |                    |
+| `beidou`             | 2026-10-19 · Haiku 5.5 |                    |
+| `bennett`            | 2026-10-19 · Haiku 5.5 |                    |
+| `candace`            | 2026-10-19 · Haiku 5.5 |                    |
+| `charlotte`          | 2026-10-19 · Haiku 5.5 |                    |
+| `chasca`             | 2026-10-19 · Haiku 5.5 |                    |
+| `chevreuse`          | 2026-10-19 · Haiku 5.5 |                    |
+| `chiori`             | 2026-10-19 · Haiku 5.5 |                    |
+| `chongyun`           | 2026-10-19 · Haiku 5.5 |                    |
+| `citlali`            | —                      |                    |
 | `clorinde`           | —                      |                    |
-| `collei`             | —                      |                    |
+| `collei`             | 2026-10-19 · Haiku 5.5 |                    |
 | `columbina`          | —                      |                    |
 | `cyno`               | 2026-10-19 · Haiku 5.5 |                    |
-| `dahlia`             | —                      |                    |
+| `dahlia`             | 2026-10-19 · Haiku 5.5 |                    |
 | `dehya`              | —                      |                    |
-| `diluc`              | —                      |                    |
+| `diluc`              | 2026-10-19 · Haiku 5.5 |                    |
 | `diona`              | —                      |                    |
-| `dori`               | 2026-10-19 · Haiku 5.5 |                    |
-| `durin`              | —                      |                    |
-| `emilie`             | —                      |                    |
-| `escoffier`          | —                      |                    |
+| `dori`               | —                      |                    |
+| `durin`              | 2026-10-19 · Haiku 5.5 |                    |
+| `emilie`             | 2026-10-19 · Haiku 5.5 |                    |
+| `escoffier`          | 2026-10-19 · Haiku 5.5 |                    |
 | `eula`               | 2026-10-19 · Haiku 5.5 |                    |
-| `faruzan`            | —                      |                    |
-| `fischl`             | —                      |                    |
-| `flins`              | —                      |                    |
+| `faruzan`            | 2026-10-19 · Haiku 5.5 |                    |
+| `fischl`             | 2026-10-19 · Haiku 5.5 |                    |
+| `flins`              | 2026-10-19 · Haiku 5.5 |                    |
 | `freminet`           | —                      |                    |
-| `furina`             | —                      |                    |
+| `furina`             | 2026-10-19 · Haiku 5.5 |                    |
 | `gaming`             | —                      |                    |
-| `ganyu`              | —                      |                    |
-| `gorou`              | —                      |                    |
-| `hu-tao`             | —                      |                    |
+| `ganyu`              | 2026-10-19 · Haiku 5.5 |                    |
+| `gorou`              | 2026-10-19 · Haiku 5.5 |                    |
+| `hu-tao`             | 2026-10-19 · Haiku 5.5 |                    |
 | `iansan`             | 2026-10-19 · Haiku 5.5 |                    |
-| `ifa`                | —                      |                    |
-| `illuga`             | —                      |                    |
-| `ineffa`             | —                      |                    |
-| `jahoda`             | 2026-10-19 · Haiku 5.5 |                    |
-| `jean`               | —                      |                    |
-| `kachina`            | —                      |                    |
+| `ifa`                | 2026-10-19 · Haiku 5.5 |                    |
+| `illuga`             | 2026-10-19 · Haiku 5.5 |                    |
+| `ineffa`             | 2026-10-19 · Haiku 5.5 |                    |
+| `jahoda`             | —                      |                    |
+| `jean`               | 2026-10-19 · Haiku 5.5 |                    |
+| `kachina`            | 2026-10-19 · Haiku 5.5 |                    |
 | `kaedehara-kazuha`   | —                      | design is `kazuha` |
-| `kaeya`              | —                      |                    |
-| `kamisato-ayaka`     | —                      |                    |
-| `kamisato-ayato`     | —                      |                    |
+| `kaeya`              | 2026-10-19 · Haiku 5.5 |                    |
+| `kamisato-ayaka`     | 2026-10-19 · Haiku 5.5 |                    |
+| `kamisato-ayato`     | 2026-10-19 · Haiku 5.5 |                    |
 | `kaveh`              | —                      |                    |
 | `keqing`             | 2026-10-19 · Haiku 5.5 |                    |
-| `kinich`             | —                      |                    |
-| `kirara`             | 2026-10-19 · Haiku 5.5 |                    |
-| `klee`               | —                      |                    |
-| `kujou-sara`         | —                      |                    |
+| `kinich`             | 2026-10-19 · Haiku 5.5 |                    |
+| `kirara`             | —                      |                    |
+| `klee`               | 2026-10-19 · Haiku 5.5 |                    |
+| `kujou-sara`         | 2026-10-19 · Haiku 5.5 |                    |
 | `kuki-shinobu`       | —                      | design is `kuki`   |
-| `lan-yan`            | —                      |                    |
+| `lan-yan`            | 2026-10-19 · Haiku 5.5 |                    |
 | `lauma`              | —                      |                    |
-| `layla`              | —                      |                    |
-| `linnea`             | —                      |                    |
-| `lisa`               | —                      |                    |
-| `lohen`              | —                      |                    |
-| `lynette`            | —                      |                    |
-| `lyney`              | —                      |                    |
+| `layla`              | 2026-10-19 · Haiku 5.5 |                    |
+| `linnea`             | 2026-10-19 · Haiku 5.5 |                    |
+| `lisa`               | 2026-10-19 · Haiku 5.5 |                    |
+| `lohen`              | 2026-10-19 · Haiku 5.5 |                    |
+| `lynette`            | 2026-10-19 · Haiku 5.5 |                    |
+| `lyney`              | 2026-10-19 · Haiku 5.5 |                    |
 | `mavuika`            | —                      |                    |
 | `mika`               | —                      |                    |
-| `mona`               | —                      |                    |
-| `mualani`            | —                      |                    |
+| `mona`               | 2026-10-19 · Haiku 5.5 |                    |
+| `mualani`            | 2026-10-19 · Haiku 5.5 |                    |
 | `nahida`             | —                      |                    |
-| `navia`              | —                      |                    |
-| `nefer`              | —                      |                    |
-| `neuvillette`        | —                      |                    |
-| `nicole`             | —                      |                    |
-| `nilou`              | —                      |                    |
-| `ningguang`          | —                      |                    |
-| `noelle`             | —                      |                    |
-| `odette`             | —                      |                    |
+| `navia`              | 2026-10-19 · Haiku 5.5 |                    |
+| `nefer`              | 2026-10-19 · Haiku 5.5 |                    |
+| `neuvillette`        | 2026-10-19 · Haiku 5.5 |                    |
+| `nicole`             | 2026-10-19 · Haiku 5.5 |                    |
+| `nilou`              | 2026-10-19 · Haiku 5.5 |                    |
+| `ningguang`          | 2026-10-19 · Haiku 5.5 |                    |
+| `noelle`             | 2026-10-19 · Haiku 5.5 |                    |
+| `odette`             | 2026-10-19 · Haiku 5.5 |                    |
 | `ororon`             | —                      |                    |
-| `prune`              | —                      |                    |
-| `qiqi`               | —                      |                    |
+| `prune`              | 2026-10-19 · Haiku 5.5 |                    |
+| `qiqi`               | 2026-10-19 · Haiku 5.5 |                    |
 | `raiden-shogun`      | 2026-10-19 · Haiku 5.5 |                    |
-| `razor`              | —                      |                    |
-| `rosaria`            | —                      |                    |
-| `sandrone`           | —                      |                    |
-| `sangonomiya-kokomi` | —                      |                    |
-| `sayu`               | 2026-10-19 · Haiku 5.5 |                    |
+| `razor`              | 2026-10-19 · Haiku 5.5 |                    |
+| `rosaria`            | 2026-10-19 · Haiku 5.5 |                    |
+| `sandrone`           | 2026-10-19 · Haiku 5.5 |                    |
+| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 |                    |
+| `sayu`               | —                      |                    |
 | `sethos`             | —                      |                    |
-| `shenhe`             | —                      |                    |
+| `shenhe`             | 2026-10-19 · Haiku 5.5 |                    |
 | `shikanoin-heizou`   | —                      | design is `heizou` |
 | `sigewinne`          | —                      |                    |
-| `skirk`              | —                      |                    |
-| `sucrose`            | —                      |                    |
-| `tartaglia`          | —                      |                    |
+| `skirk`              | 2026-10-19 · Haiku 5.5 |                    |
+| `sucrose`            | 2026-10-19 · Haiku 5.5 |                    |
+| `tartaglia`          | 2026-10-19 · Haiku 5.5 |                    |
 | `thoma`              | —                      |                    |
-| `tighnari`           | —                      |                    |
-| `traveler`           | —                      |                    |
+| `tighnari`           | 2026-10-19 · Haiku 5.5 |                    |
+| `traveler`           | 2026-10-19 · Haiku 5.5 |                    |
 | `varesa`             | —                      |                    |
-| `varka`              | —                      |                    |
-| `venti`              | —                      |                    |
-| `vesna`              | —                      |                    |
-| `vodyanitsa`         | —                      |                    |
+| `varka`              | 2026-10-19 · Haiku 5.5 |                    |
+| `venti`              | 2026-10-19 · Haiku 5.5 |                    |
+| `vesna`              | 2026-10-19 · Haiku 5.5 |                    |
+| `vodyanitsa`         | 2026-10-19 · Haiku 5.5 |                    |
 | `wanderer`           | —                      |                    |
 | `wriothesley`        | —                      |                    |
-| `xiangling`          | —                      |                    |
+| `xiangling`          | 2026-10-19 · Haiku 5.5 |                    |
 | `xianyun`            | —                      |                    |
-| `xiao`               | —                      |                    |
+| `xiao`               | 2026-10-19 · Haiku 5.5 |                    |
 | `xilonen`            | —                      |                    |
-| `xingqiu`            | —                      |                    |
-| `xinyan`             | 2026-10-19 · Haiku 5.5 |                    |
-| `yae-miko`           | —                      |                    |
-| `yanfei`             | —                      |                    |
+| `xingqiu`            | 2026-10-19 · Haiku 5.5 |                    |
+| `xinyan`             | —                      |                    |
+| `yae-miko`           | 2026-10-19 · Haiku 5.5 |                    |
+| `yanfei`             | 2026-10-19 · Haiku 5.5 |                    |
 | `yaoyao`             | —                      |                    |
 | `yelan`              | —                      |                    |
 | `yoimiya`            | —                      |                    |
 | `yumemizuki-mizuki`  | —                      |                    |
-| `yun-jin`            | —                      |                    |
-| `zhongli`            | —                      |                    |
-| `zibai`              | —                      |                    |
+| `yun-jin`            | 2026-10-19 · Haiku 5.5 |                    |
+| `zhongli`            | 2026-10-19 · Haiku 5.5 |                    |
+| `zibai`              | 2026-10-19 · Haiku 5.5 |                    |

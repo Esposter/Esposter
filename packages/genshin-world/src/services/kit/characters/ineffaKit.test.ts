@@ -7,9 +7,11 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { Enemy } from "#src/models/enemy/Enemy";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
@@ -21,7 +23,10 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -51,6 +56,78 @@ const readEnergyAfterReactions = (constellationCount: number, reactions: Reactio
   };
   const context = createKitTestContext(combatant, { party });
   for (let index = 0; index < times; index++) INEFFA_KIT.onKitEvent?.(event, context, combatant);
+  return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
+};
+
+// Steps Ineffa's kit for the frames given, emitting each enemy hit at its frame, and returns each frame on which a Lunar
+// Hit is queued, once for each hit queued on it
+const readLunarHitFrames = (
+  combatant: Combatant,
+  enemies: Enemy[],
+  frames: number,
+  enemyHits: Map<number, { attackTag: AttackTag; enemy: Enemy }>,
+): number[] => {
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map(enemies.map((enemy, index) => [index, enemy])),
+    enemyTables,
+    party: createParty([INEFFA_CHARACTER_ID]),
+  });
+  const queuedFrames: number[] = [];
+  for (let frame = 1; frame <= frames; frame++) {
+    stepKitEffects(1 / 60, context);
+    const enemyHit = enemyHits.get(frame);
+    if (enemyHit)
+      emitKitEvent(
+        {
+          attackTag: enemyHit.attackTag,
+          element: Element.Electro,
+          enemy: enemyHit.enemy,
+          kind: KitEventKind.EnemyHit,
+          striker: combatant,
+        },
+        context,
+      );
+    for (const { hit } of context.strikes) if (hit.lunarHit) queuedFrames.push(frame);
+  }
+  return queuedFrames;
+};
+
+// The shields Ineffa's burst holds after the frames given, as its cast starts
+const readBurstShieldsAfter = (frames: number): KitShield[] => {
+  const combatant = { ...createIneffaCombatant(), constellationCount: 2 };
+  const kitEffectState = castKitAction(INEFFA_KIT.elementalBurst, combatant);
+  const context = createKitTestContext(combatant, { enemyTables, kitEffectState });
+  for (let frame = 0; frame < frames; frame++) stepKitEffects(1 / 60, context);
+  return kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield");
+};
+
+// Casts Ineffa's skill with an enemy at her feet, steps the kit by the frames given and lands every strike as it comes,
+// Then reads the energy her party holds
+const readEnergyAfterSkill = (random: () => number, frames: number): number => {
+  const combatant: Combatant = {
+    ...createIneffaCombatant(),
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseDefense, value: 1000 },
+      { attribute: Attribute.EnergyRecharge, value: 1 },
+    ]),
+    element: Element.Electro,
+  };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.health = 1_000_000_000;
+  const party = createParty([INEFFA_CHARACTER_ID]);
+  const kitEffectState = castKitAction(INEFFA_KIT.elementalSkill, combatant);
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map([[1, enemy]]),
+    enemyTables,
+    kitEffectState,
+    party,
+    random,
+  });
+  for (let frame = 0; frame < frames; frame++) {
+    stepKitEffects(1 / 60, context);
+    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
   return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
 };
 
@@ -143,6 +220,80 @@ describe(createIneffaKitBehaviour, () => {
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
     expect(shield.secondsRemaining).toBe(20);
+  });
+
+  test("a Birgitta discharge that lands drops an Electro particle 100 frames later, when its roll is under two in three", () => {
+    expect.hasAssertions();
+
+    // Her first discharge lands at 110 frames, so its particle is not in yet at 209 and is by 212
+    expect([readEnergyAfterSkill(() => 0, 209), readEnergyAfterSkill(() => 0, 212)]).toStrictEqual([0, 3]);
+  });
+
+  test("a Birgitta discharge whose roll is two in three or more drops no particle", () => {
+    expect.hasAssertions();
+
+    expect(readEnergyAfterSkill(() => 0.66, 400)).toBe(0);
+  });
+
+  test("a constellation 2 burst places its shield 37 frames in, as an Electro shield", () => {
+    expect.hasAssertions();
+
+    expect([readBurstShieldsAfter(36), readBurstShieldsAfter(37).map(({ element }) => element)]).toStrictEqual([
+      [],
+      [Element.Electro],
+    ]);
+  });
+
+  test("the first enemy a constellation 2 burst hits takes a Lunar-Charged Punishment Edit 60 frames later", () => {
+    expect.hasAssertions();
+
+    const combatant = { ...createIneffaCombatant(), constellationCount: 2 };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(
+      readLunarHitFrames(combatant, [enemy], 80, new Map([[10, { attackTag: AttackTag.ElementalBurst, enemy }]])),
+    ).toStrictEqual([70]);
+  });
+
+  test("the Punishment Edit comes at the marked enemy's next hit when that is sooner than 60 frames", () => {
+    expect.hasAssertions();
+
+    const combatant = { ...createIneffaCombatant(), constellationCount: 2 };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(
+      readLunarHitFrames(
+        combatant,
+        [enemy],
+        80,
+        new Map([
+          [10, { attackTag: AttackTag.ElementalBurst, enemy }],
+          [25, { attackTag: AttackTag.ElementalSkill, enemy }],
+        ]),
+      ),
+    ).toStrictEqual([25]);
+  });
+
+  test("a constellation 2 burst marks only the first enemy it hits", () => {
+    expect.hasAssertions();
+
+    const combatant = { ...createIneffaCombatant(), constellationCount: 2 };
+    const [first, second] = [
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    ];
+
+    expect(
+      readLunarHitFrames(
+        combatant,
+        [first, second],
+        80,
+        new Map([
+          [10, { attackTag: AttackTag.ElementalBurst, enemy: first }],
+          [11, { attackTag: AttackTag.ElementalBurst, enemy: second }],
+        ]),
+      ),
+    ).toStrictEqual([70]);
   });
 
   test("her Moonsign Benediction turns Electro-Charged Lunar, with 0.7% Base DMG Bonus each 100 ATK, at most 14%", () => {

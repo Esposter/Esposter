@@ -1,8 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
-
-const ELLIN_ID = 322_010;
+import { ELLIN_ID } from "#src/services/gcg/cards/constants";
 
 // Ellin: once per round, a skill used after it was already used this round spends one die less
 export const ellin: GcgCardModule = {

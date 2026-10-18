@@ -5,8 +5,7 @@ import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
-
-const WHEN_THE_CRANE_RETURNED_ID = 332_007;
+import { WHEN_THE_CRANE_RETURNED_ID } from "#src/services/gcg/cards/constants";
 
 // When the Crane Returned: the next time its side uses a skill, the next standing character is switched in after it
 export const whenTheCraneReturned: GcgCardModule = {
