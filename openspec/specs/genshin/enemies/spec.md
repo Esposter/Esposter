@@ -135,7 +135,7 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 in the reader's time zone arrives
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives
 - **THEN** the member returns
 
 #### Scenario: A boss camp returns on the next load with its reward claimed

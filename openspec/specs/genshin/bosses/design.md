@@ -9,7 +9,7 @@ flowchart TD
   D["A normal boss defeated"] --> C{"Its Trounce Blossom claimed?"}
   C -->|"no"| S["Stays defeated until the player teleports away"]
   C -->|"yes, at a time"| R["Back five seconds after the claim"]
-  W["Each weekly-boss claim, at a time"] --> N["Counted from the week's reset: Monday 04:00 in the reader's zone"]
+  W["Each weekly-boss claim, at a time"] --> N["Counted from the week's reset: Monday 04:00 on the server's clock"]
   N --> P["Priced by computeBlossomClaimResin: 30 for the first three, 60 after"]
 ```
 
@@ -17,7 +17,7 @@ flowchart TD
 
 - **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence.
 - **A claimed boss is back five seconds later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that many seconds after it.
-- **The week resets on Monday at the daily reset's hour.** `computeWeeklyResetTime` finds the most recent Monday at 04:00 at or before the moment read, in that moment's own time zone, sharing `DAILY_RESET_TIME` with the enemies' reset so the hour is kept in one place. A moment before that week's reset belongs to the week before.
+- **The week resets on Monday at 04:00 on the server's clock.** `computeLastWeeklyReset`, in the [reset clock](../reset-clock/design.md), finds the most recent Monday at the server's 04:00 at or before the moment read, the one clock every reset is read on. A moment before that week's reset belongs to the week before.
 - **A claim at the reset counts toward the new week.** `countWeeklyClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted.
 - **One count across every weekly boss.** `countWeeklyClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for.
 
@@ -33,7 +33,7 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 | :--------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/bosses/constants.ts`              | The five-second respawn after a claim                                        |
 | `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts` | A claimed boss's time back, and none while it is unclaimed                   |
-| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts` | The Monday 04:00 reset at or before a moment, in the moment's zone           |
+| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`   | The Monday 04:00 server reset at or before a moment                          |
 | `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`      | The claims made since the week's reset, the count that prices the next claim |
 | `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts` | Still brings a boss back at once until the claim is wired to the defeat map  |
 

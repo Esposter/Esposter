@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/genshin-world/src/services/**",
+    "packages/genshin-world/src/composables/**",
+    "packages/genshin-world/src/components/World/Enemies/**",
+    "packages/genshin-world/src/models/bosses/**",
+  ]

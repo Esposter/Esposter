@@ -47,13 +47,13 @@ What the game's table does not hold is authored from the wiki in `EnemyKindTrait
 
 A region's data places its enemies in camps, each member with its kind, its level at World Level 0, its spawn and its patrol. The world spawns each member at the level its World Level raises it to, as the [Adventure Rank](../adventure-rank/design.md) page sets out, and a change of World Level spawns every camp anew. The world spawns a camp when its region's data arrives, and drops it when the region leaves reach. A member defeated earlier is spawned again only once its respawn time has passed, so an enemy never comes back in view:
 
-| Camp                   | A defeated member comes back                                 |
-| :--------------------- | :----------------------------------------------------------- |
-| Common enemies only    | 12 hours after its defeat                                    |
-| With an elite among it | at the next daily reset, 04:00 in the reader's own time zone |
-| With a boss among it   | at once, its reward taken as claimed, so on the next load    |
+| Camp                   | A defeated member comes back                              |
+| :--------------------- | :-------------------------------------------------------- |
+| Common enemies only    | 12 hours after its defeat                                 |
+| With an elite among it | at the next daily reset, 04:00 on the server's clock      |
+| With a boss among it   | at once, its reward taken as claimed, so on the next load |
 
-The daily reset is the reader's own 04:00, since the world has no server to keep a time zone.
+The daily reset is the server's 04:00, UTC+8, the one clock every reset of the world is read on, as the [reset clock](../reset-clock/design.md) sets out.
 
 A common or elite member's return is saved in the save as its instant on the server's clock, read through the offset the session holds, so a reload and another device read one moment. A boss camp's return is not saved, since it waits on the claim or the jump, so a reload brings the boss back.
 

@@ -4,15 +4,14 @@ The [gathering](../../specs/genshin/gathering/design.md) page holds the plants, 
 
 ## Decisions
 
-- **Mining outcrops come daily, and a mined one comes back at the next draw.** From Adventure Rank 30, a region's mining outcrops of Magical Crystal Chunks stand at a few places drawn each day beside the ley line outcrops' places, and come at 06:00 in UTC+8, two hours after the daily reset. The day's unmined outcrops are gone with the next day. The alternative, a draw on each visit, is rejected: a player could leave and return to reroll the day's places, so the set is fixed once for the day. Reputation's mining outcrop search marks them ([reputation](../genshin-reputation/design.md)).
-- **Daily points come back at the shared daily reset.** The prompt settles that each point's respawn runs on the shared reset clock, so a daily gathering point, a cooking ingredient or an Iron Chunk, comes back at the first 04:00 reset after its pick, read in one call site (`computeGatheringRespawn`) that a change of the reset clock repoints. The [gathering](../../specs/genshin/gathering/design.md) page had the wiki's 0:00 midnight there, and the wiki's Reset page still reads 0:00 for these spawns, so the recording the gathering page owes decides which the game keeps.
+- **Mining outcrops come daily, and a mined one comes back at the next draw.** From Adventure Rank 30, a region's mining outcrops of Magical Crystal Chunks stand at a few places drawn each day beside the ley line outcrops' places, and come at 04:00 in UTC+8, the daily reset the shops use. The day's unmined outcrops are gone with the next day. The alternative, a draw on each visit, is rejected: a player could leave and return to reroll the day's places, so the set is fixed once for the day. Reputation's mining outcrop search marks them ([reputation](../genshin-reputation/design.md)).
 - **Investigation spots.** A spot that sparkles gives a few artifacts, ingredients, ores or Mora once investigated, and its rewards come from the wiki's Investigation table, not from the game's local data. A player may investigate a hundred spots a day, after which no more spawn, and the Mora spots come back as their refresh says. The day is the game day, which starts at the 04:00 reset in UTC+8, so the count that the cap compares is kept from that reset. A rolling 24-hour window is rejected: the game counts its day from the reset, so a window would give a different cap from the one the player sees.
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  D["Each day at the reset: a few outcrops drawn beside the ley line places"] -->|"06:00"| O["Standing outcrops of Magical Crystal Chunks"]
+  D["Each day at the reset: a few outcrops drawn beside the ley line places"] -->|"04:00"| O["Standing outcrops of Magical Crystal Chunks"]
   O -->|"mined"| G["Gone until the next day's draw"]
   I["Each investigation counted in the game day"] -->|"a hundred"| N["No more spots spawn until the reset"]
 ```
