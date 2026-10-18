@@ -109,7 +109,7 @@ export const stepActiveKit = (
   stepDeployedKits(context, stepSeconds);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
-  pickUpCrystallizeShards(kitEffectState, position);
+  pickUpCrystallizeShards(kitEffectState, characterId, position, outbox);
   tickEnemyStatuses(enemyMap.values(), stepSeconds, outbox);
   sendKitOutbox(context);
   strikeElementalTicks(context);

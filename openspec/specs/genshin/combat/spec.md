@@ -239,6 +239,13 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **WHEN** an enemy's strike lands on it
 - **THEN** the shield's owner is told the damage the shield absorbed, the health it has left and the member the strike was on
 
+#### Scenario: A Crystallize shard picked up is told to the party
+
+- **GIVEN** a Crystallize shard lies within reach of the member on the field, and may be picked up
+- **WHEN** the member's step picks it up
+- **THEN** the team holds the shard's Crystallize shield
+- **AND** every deployed member's kit is told that member picked up a shard of that element
+
 ### Requirement: A normal or charged attack's hit
 
 A normal or charged attack's hit SHALL give its character one energy at a chance set by its weapon, which rises with each hit that gives none.
