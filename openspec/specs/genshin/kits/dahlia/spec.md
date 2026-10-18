@@ -81,3 +81,19 @@ Radiant Psalter SHALL cost 60 energy, cool for 15 seconds, and place a shield on
 - **GIVEN** Radiant Psalter was cast less than 15 seconds ago
 - **WHEN** the player casts it again
 - **THEN** it does not cast
+
+### Requirement: Fourth constellation lengthens Favonian Favor
+
+From constellation 4, Radiant Psalter's shield SHALL hold for three seconds longer than the Favonian Favor's table seconds.
+
+#### Scenario: The shield holds three seconds longer from the fourth constellation
+
+- **GIVEN** Dahlia is at constellation 4
+- **WHEN** the burst places Radiant Psalter's shield
+- **THEN** the shield holds 15 seconds
+
+#### Scenario: Below the fourth constellation the shield holds the table's seconds
+
+- **GIVEN** Dahlia is at constellation 3
+- **WHEN** the burst places Radiant Psalter's shield
+- **THEN** the shield holds 12 seconds
