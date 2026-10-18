@@ -9,6 +9,11 @@ import { CombatTalent, KitPlunge } from "genshin-world";
 const STRIKE_LABEL_REGEX = /^(?<strike>\d+)-Hit DMG$/u;
 const SKILL_COOLDOWN_LABELS: ReadonlySet<string> = new Set(["CD", "Press CD", "Skill CD"]);
 const HOLD_COOLDOWN_LABEL = "Hold CD";
+// A skill's timed duration, as the parameter a kit reads it as under the label its table gives it
+const SKILL_DURATION_PARAMETER_NAMES: ReadonlyMap<string, string> = new Map([
+  ["Lumi Duration", "lumiDuration"],
+  ["Masterstroke", "masterstrokeDuration"],
+]);
 const CHARGED_ATTACK_LABELS: ReadonlySet<string> = new Set(["Charged Attack", "Charged Attack DMG"]);
 // A claymore's spin, each of its hits the first hit of the charged attack and its final blow the second
 const CHARGED_ATTACK_CYCLIC_LABELS: ReadonlySet<string> = new Set([
@@ -25,7 +30,7 @@ const FULLY_CHARGED_AIMED_SHOT_LABELS: ReadonlySet<string> = new Set([
 // Every value a character's published tables give its kit, by its path in the record, each as its group and parameter
 // Index: the normal attack's labels, `3-Hit DMG` each hit of the third strike in turn, the charged attack's, a spin's
 // And its final blow's or a bow's fully charged shot's among them, its stamina's and the plunges', the skill's cooldown
-// And its hold's, and the burst's cooldown and energy cost
+// And its hold's, the skill's named durations, and the burst's cooldown and energy cost
 // The skill labels a character names parameters by beyond the ones every kit reads: each one's text, the parameter name it
 // Is written under, and the position in the label's indexes that name reads, as a bubble's healing reads its share of Max HP
 // And its flat amount in order
@@ -82,11 +87,15 @@ export const getTableKitCandidates = ({
       addLabel(`plunges.${KitPlunge.High}.hits.0.multiplier`, CombatTalent.NormalAttack, tableLabel, 1);
     }
   }
-  for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalSkill]) ?? [])
+  for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalSkill]) ?? []) {
+    const durationParameterName = SKILL_DURATION_PARAMETER_NAMES.get(tableLabel.label);
     if (SKILL_COOLDOWN_LABELS.has(tableLabel.label))
       addLabel("skillCooldownSeconds", CombatTalent.ElementalSkill, tableLabel);
     else if (tableLabel.label === HOLD_COOLDOWN_LABEL)
       addLabel("skillHolds.0.cooldownSeconds", CombatTalent.ElementalSkill, tableLabel);
+    else if (durationParameterName !== undefined)
+      addLabel(`parameters.${durationParameterName}`, CombatTalent.ElementalSkill, tableLabel);
+  }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? [])
     if (tableLabel.label === "CD") addLabel("burstCooldownSeconds", CombatTalent.ElementalBurst, tableLabel);
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
