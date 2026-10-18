@@ -70,6 +70,12 @@ export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
 export const NIGHTSOUL_BLESSING_STATUS_ID = "nightsoul-blessing";
 // The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
 export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
+// The status Haunted Night puts a Geo character in, for the seconds it lasts, which its Nightingale's Song stacks last with
+export const HAUNTED_NIGHT_STATUS_ID = "haunted-night";
+// The stacks of Nightingale's Song a character holds in Haunted Night, each one a hit of Geo DMG by its party consumes
+export const NIGHTINGALE_SONG_STATUS_ID = "nightingale-song";
+// The Nightingale's Song stacks a character has gained from Geo Constructs since its Haunted Night began, against the cap
+export const NIGHTINGALE_SONG_EXTRA_STATUS_ID = "nightingale-song-extra";
 
 // The Polestar Field a Stellar-Conduct leaves round the body, 15 metres in radius, as the wiki and gcsim give it
 export const POLESTAR_FIELD_RADIUS = 15;
