@@ -10,7 +10,7 @@ const serializeAttributes = (attributes: Record<string, boolean | string>): stri
 export const serializeMjml = (json: MjmlJson): string => {
   const attributes = serializeAttributes(json.attributes);
   if ("children" in json)
-    return `<${json.tagName}${attributes}>${json.children.map(serializeMjml).join("")}</${json.tagName}>`;
+    return `<${json.tagName}${attributes}>${json.children.map((child) => serializeMjml(child)).join("")}</${json.tagName}>`;
 
   const content = "content" in json ? json.content : "";
   return `<${json.tagName}${attributes}>${content}</${json.tagName}>`;
