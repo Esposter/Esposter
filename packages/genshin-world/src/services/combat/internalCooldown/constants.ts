@@ -29,6 +29,14 @@ export const CITLALI_FROSTFALL_STORM_INTERNAL_COOLDOWN_GROUP: InternalCooldownGr
   resetIntervalSeconds: 1.5,
   sequence: Object.freeze([1, 0]),
 });
+// Kinich's Loop Shot, as gcsim (MIT) pkg/core/attacks/icd_groups.dm.go has it: restarted by a hit 2 seconds after it last
+// Started (line 112), and its gauge applying on the first of every four hits (line 179). Its damage lands on every hit,
+// As its damage sequence holds ones (line 246)
+// https://github.com/genshinsim/gcsim/blob/main/pkg/core/attacks/icd_groups.dm.go
+export const KINICH_LOOP_SHOT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 2,
+  sequence: Object.freeze([1, 0, 0, 0]),
+});
 // A reaction's damage on a target from one source, as the game's damage sequence limits it: Swirl, Superconduct,
 // Shattered, Bloom, Hyperbloom and Burgeon deal two instances each half second, and Overloaded and Electro-Charged one
 export const TWO_REACTIONS_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
