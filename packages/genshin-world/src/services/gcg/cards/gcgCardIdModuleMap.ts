@@ -21,8 +21,10 @@ import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
 import { crossfire } from "#src/services/gcg/cards/crossfire";
+import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
+import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
 import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
@@ -118,6 +120,8 @@ import { superlativeSuperstrength } from "#src/services/gcg/cards/superlativeSup
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
 import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
+import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
+import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
@@ -173,6 +177,9 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [114021, theWolfWithin],
   [114_031, lightningStiletto],
   [114_032, electroInfusion],
+  [114_061, tenguJuuraiAmbush],
+  [114_062, tenguJuuraiStormcluster],
+  [114_063, crowfeatherCover],
   [114_081, sesshouSakura],
   [114_083, tenkoThunderbolts],
   [115_011, largeWindSpirit],
@@ -188,6 +195,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
+  [123_021, darkfireFurnace],
   [123_022, fieryRebirth],
   [123_024, aegisOfAbyssalFlame],
   [124_013, chainsOfWardingThunder],

@@ -28,6 +28,7 @@ import { illusoryTorrent } from "#src/services/gcg/cards/illusoryTorrent";
 import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
+import { koukouSendou } from "#src/services/gcg/cards/koukouSendou";
 import { kurageOath } from "#src/services/gcg/cards/kurageOath";
 import { lightningFang } from "#src/services/gcg/cards/lightningFang";
 import { lightningLockdown } from "#src/services/gcg/cards/lightningLockdown";
@@ -38,6 +39,7 @@ import { nereidsAscension } from "#src/services/gcg/cards/nereidsAscension";
 import { nightrider } from "#src/services/gcg/cards/nightrider";
 import { niwabiFireDance } from "#src/services/gcg/cards/niwabiFireDance";
 import { oceanidMimicSummoning } from "#src/services/gcg/cards/oceanidMimicSummoning";
+import { ominousStar } from "#src/services/gcg/cards/ominousStar";
 import { pyronado } from "#src/services/gcg/cards/pyronado";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rockPaperScissorsCombo } from "#src/services/gcg/cards/rockPaperScissorsCombo";
@@ -51,6 +53,7 @@ import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gc
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
 import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
+import { tenguStormcall } from "#src/services/gcg/cards/tenguStormcall";
 import { tenkoKenshin } from "#src/services/gcg/cards/tenkoKenshin";
 import { theMyriadWilds } from "#src/services/gcg/cards/theMyriadWilds";
 import { tideAndTorrent } from "#src/services/gcg/cards/tideAndTorrent";
@@ -89,6 +92,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_14032", stellarRestoration],
   ["Char_Skill_14032_Ex_1", stellarRestorationFromCard],
   ["Char_Skill_14033", starwardSword],
+  ["Char_Skill_14062", tenguStormcall],
+  ["Char_Skill_14063", koukouSendou],
   ["Char_Skill_14082", yakanEvocation],
   ["Char_Skill_14083", tenkoKenshin],
   ["Char_Skill_15012", astableAnemohypostasisCreation],
@@ -105,6 +110,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22012", oceanidMimicSummoning],
   ["Char_Skill_22013", theMyriadWilds],
   ["Char_Skill_22014", tideAndTorrent],
+  ["Char_Skill_23023", ominousStar],
   ["Char_Skill_23024", fieryRebirthSkill],
   ["Char_Skill_24012", rockPaperScissorsCombo],
   ["Char_Skill_24013", lightningLockdown],

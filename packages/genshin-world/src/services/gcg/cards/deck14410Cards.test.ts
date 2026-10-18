@@ -16,12 +16,16 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { ABSORBING_PRISM_ID, absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
+import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
-import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
+import { CROWFEATHER_COVER_ID, crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
+import { DARKFIRE_FURNACE_ID, darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
+import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
+import { TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
+import { TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -88,6 +92,10 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
 const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
 const ROCK_PAPER_SCISSORS_COMBO = createSkill(24_012, "Char_Skill_24012", GcgSkillKind.ElementalSkill);
 const LIGHTNING_LOCKDOWN = createSkill(24_013, "Char_Skill_24013", GcgSkillKind.ElementalBurst);
+const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
+const OMINOUS_STAR = createSkill(23_023, "Char_Skill_23023", GcgSkillKind.ElementalBurst);
 
 describe("fiery Rebirth", () => {
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
@@ -420,5 +428,141 @@ describe("absorbing Prism", () => {
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Unavailable);
     expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(5);
     expect(takeOne(duel.sides, 0).hand).toStrictEqual([ABSORBING_PRISM_ID]);
+  });
+});
+
+describe("tengu Stormcall", () => {
+  test("it deals 1 Electro DMG and summons Tengu Juurai: Ambush for its one use", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, TENGU_STORMCALL);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(9);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([
+      { cardId: TENGU_JUURAI_AMBUSH_ID, counter: 0, rounds: 0, usages: 1 },
+    ]);
+  });
+});
+
+describe("tengu Juurai: Ambush", () => {
+  test("End Phase deals 1 Electro DMG, applies Crowfeather Cover to the active character, and is spent after its one use", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush)];
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(9);
+    expect(takeOne(duel.sides, 0).characters[0]?.statuses).toStrictEqual([
+      { cardId: CROWFEATHER_COVER_ID, counter: 0, rounds: 0, usages: 2 },
+    ]);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
+  });
+});
+
+describe("tengu Juurai: Stormcluster", () => {
+  test("End Phase deals 2 Electro DMG and stays for a second End Phase", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster)];
+
+    runGcgEndPhase(duel);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([
+      { cardId: TENGU_JUURAI_STORMCLUSTER_ID, counter: 0, rounds: 0, usages: 1 },
+    ]);
+  });
+});
+
+describe("darkfire Furnace", () => {
+  test("End Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
+    expect.hasAssertions();
+
+    const standby = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), shield: 2 };
+    const duel = createDuel([
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), standby]),
+    ]);
+    takeOne(duel.sides, 0).summons = [createGcgZoneCard(DARKFIRE_FURNACE_ID, darkfireFurnace)];
+
+    runGcgEndPhase(duel);
+
+    const [active, standbyAfter] = takeOne(duel.sides, 1).characters;
+    expect(active?.hp).toBe(9);
+    expect(standbyAfter?.hp).toBe(9);
+    expect(standbyAfter?.shield).toBe(2);
+  });
+});
+
+describe("ominous Star", () => {
+  test("it deals 3 Pyro DMG and summons Darkfire Furnace for its two usages", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, OMINOUS_STAR);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(7);
+    expect(takeOne(duel.sides, 0).summons).toStrictEqual([
+      { cardId: DARKFIRE_FURNACE_ID, counter: 0, rounds: 0, usages: 2 },
+    ]);
+  });
+});
+
+describe("crowfeather Cover", () => {
+  test.each([
+    ["Elemental Skill", TENGU_STORMCALL, 8],
+    ["Elemental Burst", KOUKOU_SENDOU, 7],
+  ])("the attached character's %s deals 1 more DMG and spends one of its two usages", (_name, skill, hp) => {
+    expect.hasAssertions();
+
+    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
+    const duel = createDuel([
+      createSideState([sara]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, skill);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(hp);
+    expect(takeOne(duel.sides, 0).characters[0]?.statuses).toStrictEqual([
+      { cardId: CROWFEATHER_COVER_ID, counter: 0, rounds: 0, usages: 1 },
+    ]);
+  });
+
+  test("a normal attack is not boosted and spends no usage", () => {
+    expect.hasAssertions();
+
+    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
+    const duel = createDuel([
+      createSideState([sara]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, SARA_NORMAL_ATTACK);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+    expect(takeOne(duel.sides, 0).characters[0]?.statuses).toStrictEqual([
+      { cardId: CROWFEATHER_COVER_ID, counter: 0, rounds: 0, usages: 2 },
+    ]);
   });
 });
