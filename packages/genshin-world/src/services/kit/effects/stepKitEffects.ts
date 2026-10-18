@@ -3,6 +3,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { stepKitBubble } from "#src/services/kit/effects/stepKitBubble";
+import { stepKitNightsoul } from "#src/services/kit/effects/stepKitNightsoul";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { stepKitShield } from "#src/services/kit/effects/stepKitShield";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
@@ -49,4 +50,5 @@ export const stepKitEffects = (stepSeconds: number, context: KitContext): void =
     else expiredEffects.push(effect);
   }
   effects.length = keptCount;
+  stepKitNightsoul(stepSeconds, kitEffectState);
 };

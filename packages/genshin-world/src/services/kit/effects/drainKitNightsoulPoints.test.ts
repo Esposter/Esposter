@@ -14,7 +14,7 @@ describe(drainKitNightsoulPoints, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, 10, Number.POSITIVE_INFINITY);
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 10, secondsRemaining: Number.POSITIVE_INFINITY });
     expect(drainKitNightsoulPoints(kitEffectState, CHARACTER_ID, 4)).toBe(4);
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(6);
     expect(drainKitNightsoulPoints(kitEffectState, CHARACTER_ID, 15)).toBe(6);
@@ -25,7 +25,7 @@ describe(drainKitNightsoulPoints, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, 10, Number.POSITIVE_INFINITY);
+    enterKitNightsoulBlessing(kitEffectState, CHARACTER_ID, { points: 10, secondsRemaining: Number.POSITIVE_INFINITY });
     expect(drainKitNightsoulPoints(kitEffectState, CHARACTER_ID, 10)).toBe(10);
     expect(findKitStatus(kitEffectState.effects, CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBeDefined();
   });

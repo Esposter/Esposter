@@ -6,7 +6,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 
 // Drains up to the amount of Nightsoul points a character holds and returns what it drained, never below none, as gcsim
-// (MIT) nightsoul/nightsoul.go ConsumePoints does. Leaving the blessing when the points run out is the kit's own
+// (MIT) nightsoul/nightsoul.go ConsumePoints does. The step ends a blessing that drains to none, not this call
 export const drainKitNightsoulPoints = (
   kitEffectState: KitEffectState,
   characterId: number,
