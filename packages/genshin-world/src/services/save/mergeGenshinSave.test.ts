@@ -2,6 +2,7 @@ import type { CharacterSave } from "#src/models/character/CharacterSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
 import { INITIAL_WISH_PITY } from "#src/services/wish/constants";
@@ -369,6 +370,44 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, reputation: { exp: ACCOUNT_EXP, level: GUEST_LEVEL } };
 
     expect(mergeGenshinSave(account, guest).reputation).toStrictEqual({ exp: ACCOUNT_EXP, level: GUEST_LEVEL });
+  });
+
+  test("keeps the account's bounty hunt over the guest's, and the guest's where the account holds none", () => {
+    expect.hasAssertions();
+    const accountHunt = {
+      bountyId: 1,
+      isTargetDefeated: false,
+      regionId: 101,
+      spawn: [1, 2, 3],
+      targetEnemyKindId: 20_101,
+    };
+    const guestHunt = {
+      bountyId: 2,
+      isTargetDefeated: false,
+      regionId: 102,
+      spawn: [4, 5, 6],
+      targetEnemyKindId: 20_102,
+    };
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyHunt: accountHunt };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyHunt: guestHunt };
+
+    expect(mergeGenshinSave(account, guest).reputationBountyHunt).toStrictEqual(accountHunt);
+    expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).reputationBountyHunt).toStrictEqual(guestHunt);
+  });
+
+  test("unions the bounty claims of both copies, keeping the latest of the week's limit", () => {
+    expect.hasAssertions();
+    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+      Temporal.Instant.fromEpochMilliseconds(0)
+        .add({ hours: index + 1 })
+        .toString(),
+    );
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(0, 2) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(2) };
+
+    expect(mergeGenshinSave(account, guest).reputationBountyClaimedAts).toStrictEqual(
+      claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT),
+    );
   });
 
   test("the copy further on is kept when both saves hold a character", () => {
