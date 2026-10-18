@@ -87,9 +87,11 @@ describe(createZibaiKitBehaviour, () => {
     ZIBAI_KIT.elementalSkill.onStart?.(context);
     const stance = findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID);
     const normalAttackHits = stance?.combatant.kit.normalAttacks.flatMap((action) => action.hits) ?? [];
+    const chargedAttackHits = stance?.combatant.kit.chargedAttack.hits ?? [];
 
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
     expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
+    expect(new Set(chargedAttackHits.map(({ element }) => element))).toStrictEqual(new Set([Element.Geo]));
     expect(stance?.secondsRemaining).toBeGreaterThan(0);
   });
 
