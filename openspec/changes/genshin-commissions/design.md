@@ -46,6 +46,10 @@ packages/genshin-world/src/
 - **Placed by the spawned places:** the camps and objects a scene task swaps in.
 - **Read from the recordings:** the Adventure Treasure Pack that the wiki lists on Katheryne's bonus, which the dump's preview names at a count of zero, is settled by a clip of the bonus being claimed ([roadmap](../genshin-roadmap/tasks.md)).
 
+## Open questions
+
+- **A failed load keeps yesterday's day.** When the save's day cannot be read, `packages/genshin-world/src/composables/useWorldCommissions.ts` keeps the saved day as `commissionDay`, so yesterday's dealt commissions are offered as today's. Its header comment promises the opposite, that a failed load deals no day. Whether a failed load clears the saved day is the open decision; until it is taken, the comment and the code disagree.
+
 ## Key files
 
 | File                                                              | Role after the change                                    |

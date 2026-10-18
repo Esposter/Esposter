@@ -54,6 +54,10 @@ packages/genshin-world/src/services/leyLine/
 - **Placed by the official map:** each place is one of the map's Ley Line Blossom points, fitted as the [spawned places](../genshin-spawned-places/design.md) page sets out. The table names each place by the game's scene group, which carries no position in the repository, so the table checks the placed points rather than placing them.
 - **Read from the wiki:** each region's enemies at an outcrop, and what each World Level's claim gives.
 
+## Open questions
+
+- **A claim at a map point has no next place.** A claim moves an outcrop to the place its dump place lists as next, but an outcrop at a Mondstadt blossom point is not joined to a dump place, so it has no `nextIds` to read. Whether such a claim stays put, moves or fails is open, and the rotation rule stays as written until it is decided here.
+
 ## Key files
 
 | File                                                                   | Role after the change                              |

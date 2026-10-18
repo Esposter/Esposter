@@ -53,6 +53,10 @@ packages/
 - **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then.
 - **Not yet read:** the source that teaches most processings, which the table does not name, so they stay closed.
 
+## Open questions
+
+- **A Party dish's bonus reaches only the deployed team.** A Party-target dish heals every member of `characterIdMemberMap`, but its bonus goes only to the deployed team, as `buffKitTeam` reads `getDeployedCharacterIds`, so the doc comment in `packages/genshin-world/src/services/cooking/eatDish.ts` claims a reach the code does not give. Whether the bonus should reach every member the heal does is open, and the game's rule decides it. The files are `packages/genshin-world/src/services/cooking/eatDish.ts` and `packages/genshin-world/src/services/kit/effects/buffKitTeam.ts`.
+
 ## Key files
 
 | File                                                     | Role after the change    |
