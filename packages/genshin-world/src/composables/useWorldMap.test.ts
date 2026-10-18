@@ -177,9 +177,12 @@ describe(useWorldMap, () => {
       wallet,
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
+        completedMainQuestIds: shallowRef(new Set<string>()),
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        placedDoings: shallowRef([]),
+        recordedDoingIds: shallowRef(new Set<string>()),
         questStepTargets,
         regionDataBaseUrl: "region-data",
         reputation,
