@@ -83,7 +83,7 @@ export const startNextKitAction = (
   if (isSkillTriggered && isSkillOrBurstState && kit.elementalSkill.checkIsStateEndingPress?.(context)) {
     kitState.skillChainCount = 0;
     kitState.skillChainSeconds = 0;
-    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits);
+    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits, context);
   }
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
     if (isChaining) {

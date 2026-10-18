@@ -165,6 +165,6 @@ export const stepKit = (
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
   const movementAction = getEnteredMovementAction(kit, previousLocomotionState, locomotionState);
   if (movementAction && movementAction.canStart?.(context) !== false)
-    return startKitAction(kitState, movementAction, landedHits);
+    return startKitAction(kitState, movementAction, landedHits, context);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
 };
