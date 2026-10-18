@@ -1,14 +1,19 @@
+import type { MathExpressionNumberCompute } from "#src/models/MathExpressionNumberCompute";
 import type { MathExpressionSignature } from "#src/models/MathExpressionSignature";
 import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 
 import { MathExpressionParameterType } from "#src/models/MathExpressionParameterType";
 import { checkIsLarger } from "#src/services/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
+import { checkIsPrime } from "#src/services/checkIsPrime";
 import { checkIsSmaller } from "#src/services/checkIsSmaller";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
+import { computeBellNumber } from "#src/services/computeBellNumber";
 import { computeBernoulliNumber } from "#src/services/computeBernoulliNumber";
+import { computeCatalan } from "#src/services/computeCatalan";
 import { computeCombinations } from "#src/services/computeCombinations";
 import { computeComparison } from "#src/services/computeComparison";
+import { computeCompositions } from "#src/services/computeCompositions";
 import { computeCorrelation } from "#src/services/computeCorrelation";
 import { computeDeterminant } from "#src/services/computeDeterminant";
 import { computeDistance } from "#src/services/computeDistance";
@@ -16,26 +21,36 @@ import { computeDotProduct } from "#src/services/computeDotProduct";
 import { computeErf } from "#src/services/computeErf";
 import { computeErfInverse } from "#src/services/computeErfInverse";
 import { computeExtreme } from "#src/services/computeExtreme";
+import { computeFactorial } from "#src/services/computeFactorial";
 import { computeGamma } from "#src/services/computeGamma";
 import { computeHypotenuse } from "#src/services/computeHypotenuse";
+import { computeIntegerGreatestCommonDivisor } from "#src/services/computeIntegerGreatestCommonDivisor";
+import { computeInverseCoth } from "#src/services/computeInverseCoth";
 import { computeKullbackLeibler } from "#src/services/computeKullbackLeibler";
+import { computeLeastCommonMultiple } from "#src/services/computeLeastCommonMultiple";
 import { computeListComparison } from "#src/services/computeListComparison";
+import { computeLogarithm } from "#src/services/computeLogarithm";
 import { computeLogGamma } from "#src/services/computeLogGamma";
+import { computeMean } from "#src/services/computeMean";
+import { computeMedian } from "#src/services/computeMedian";
+import { computeMedianAbsoluteDeviation } from "#src/services/computeMedianAbsoluteDeviation";
 import { computeModularInverse } from "#src/services/computeModularInverse";
 import { computeModulo } from "#src/services/computeModulo";
+import { computeMultinomial } from "#src/services/computeMultinomial";
+import { computeNorm } from "#src/services/computeNorm";
 import { computeNthRoot } from "#src/services/computeNthRoot";
 import { computePartitionSelect } from "#src/services/computePartitionSelect";
+import { computePermutations } from "#src/services/computePermutations";
 import { computeProduct } from "#src/services/computeProduct";
 import { computeQuantile } from "#src/services/computeQuantile";
+import { computeStirlingSecondKind } from "#src/services/computeStirlingSecondKind";
 import { computeSum } from "#src/services/computeSum";
+import { computeVariance } from "#src/services/computeVariance";
 import { computeVectorNorm } from "#src/services/computeVectorNorm";
 import { computeZeta } from "#src/services/computeZeta";
-import { MAXIMUM_DIGITS, MAXIMUM_STIRLING_WORK, MILLER_RABIN_BASES } from "#src/services/constants";
+import { MAXIMUM_DIGITS } from "#src/services/constants";
 import { shiftDecimalPlaces } from "#src/services/shiftDecimalPlaces";
 import { toNumber } from "#src/services/toNumber";
-
-// A computation of numbers takes them as one array, never spread into arguments, so a list of any length is read
-type NumberCompute = (values: readonly number[]) => null | number;
 
 const countTruthy = (values: readonly number[]): number => values.filter((value) => checkIsTruthy(value)).length;
 // The numbers a call's values hold, where a list of numbers stands for its numbers
@@ -47,12 +62,15 @@ const signature = (
   compute: MathExpressionSignature["compute"],
 ): MathExpressionSignature => ({ compute, maxArity, minArity, parameters });
 const numeric =
-  (compute: NumberCompute): MathExpressionSignature["compute"] =>
+  (compute: MathExpressionNumberCompute): MathExpressionSignature["compute"] =>
   (values) =>
     compute(toNumbers(values));
-const numberSignature = (minArity: number, maxArity: number, compute: NumberCompute): MathExpressionSignature =>
-  signature([MathExpressionParameterType.Number], minArity, maxArity, numeric(compute));
-const listSignature = (compute: NumberCompute): MathExpressionSignature =>
+const numberSignature = (
+  minArity: number,
+  maxArity: number,
+  compute: MathExpressionNumberCompute,
+): MathExpressionSignature => signature([MathExpressionParameterType.Number], minArity, maxArity, numeric(compute));
+const listSignature = (compute: MathExpressionNumberCompute): MathExpressionSignature =>
   signature([MathExpressionParameterType.List], 1, 1, numeric(compute));
 // A function of two lists takes each argument as the list of its numbers, a number standing for a list of one
 const ofListPair =
@@ -74,17 +92,19 @@ const orderedListSignatures = (
 const singletonListSignature = (compute: (value: number) => null | number): MathExpressionSignature =>
   listSignature((values) => (values.length === 1 ? compute(values[0] ?? Number.NaN) : null));
 
-const fixed = (arity: number, compute: NumberCompute): MathExpressionSignature[] => [
+const fixed = (arity: number, compute: MathExpressionNumberCompute): MathExpressionSignature[] => [
   numberSignature(arity, arity, compute),
 ];
-const ranged = (minArity: number, maxArity: number, compute: NumberCompute): MathExpressionSignature[] => [
-  numberSignature(minArity, maxArity, compute),
-];
-const variadic = (minArity: number, compute: NumberCompute): MathExpressionSignature[] => [
+const ranged = (
+  minArity: number,
+  maxArity: number,
+  compute: MathExpressionNumberCompute,
+): MathExpressionSignature[] => [numberSignature(minArity, maxArity, compute)];
+const variadic = (minArity: number, compute: MathExpressionNumberCompute): MathExpressionSignature[] => [
   numberSignature(minArity, Number.POSITIVE_INFINITY, compute),
 ];
 // A spread function also takes one list, whose numbers are its arguments
-const spread = (minArity: number, compute: NumberCompute): MathExpressionSignature[] => [
+const spread = (minArity: number, compute: MathExpressionNumberCompute): MathExpressionSignature[] => [
   numberSignature(minArity, Number.POSITIVE_INFINITY, compute),
   listSignature(compute),
 ];
@@ -109,7 +129,7 @@ const withNumberThenList =
 // The operands after it are never read. Zero decides an and, and minus one decides an or.
 // An operand that is not an integer is an error
 const bitwiseFold =
-  (absorbing: number, compute: (left: number, right: number) => number): NumberCompute =>
+  (absorbing: number, compute: (left: number, right: number) => number): MathExpressionNumberCompute =>
   (values) => {
     let result = values[0] ?? Number.NaN;
     for (const value of values.slice(1)) {
@@ -135,160 +155,10 @@ const digitally = (rounder: (value: number) => number): MathExpressionSignature[
   });
 // A statistic of a list is undefined for an empty one, where mathjs throws
 const ofNonEmpty =
-  (compute: (values: readonly number[]) => number): NumberCompute =>
+  (compute: (values: readonly number[]) => number): MathExpressionNumberCompute =>
   (values) =>
     values.length === 0 ? null : compute(values);
 
-const mean = (values: readonly number[]): number => computeSum(values) / values.length;
-const variance = (values: readonly number[]): number => {
-  if (values.length === 1) return 0;
-  const average = mean(values);
-  return computeSum(values.map((value) => (value - average) ** 2)) / (values.length - 1);
-};
-const median = (values: readonly number[]): number => {
-  const sorted = values.toSorted((left, right) => left - right);
-  const middle = Math.floor(sorted.length / 2);
-  if (sorted.length % 2 === 1) return sorted[middle] ?? Number.NaN;
-  return ((sorted[middle - 1] ?? Number.NaN) + (sorted[middle] ?? Number.NaN)) / 2;
-};
-const medianAbsoluteDeviation = (values: readonly number[]): number => {
-  const center = median(values);
-  return median(values.map((value) => Math.abs(value - center)));
-};
-const computeGreatestCommonDivisor = (left: number, right: number): number =>
-  right === 0 ? Math.abs(left) : computeGreatestCommonDivisor(right, left % right);
-const computeFactorial = (value: number): null | number => {
-  if (value < 0) return null;
-  return computeGamma(value + 1);
-};
-// The Bell numbers grow with their index, so the first row whose start overflows makes every later one infinite too
-const computeBellNumber = (index: number): null | number => {
-  if (!Number.isInteger(index) || index < 0) return null;
-  let row = [1];
-  for (let step = 1; step <= index; step++) {
-    const next = [row.at(-1) ?? 0];
-    for (const above of row) next.push((next.at(-1) ?? 0) + above);
-    if (next[0] === Number.POSITIVE_INFINITY) return Number.POSITIVE_INFINITY;
-    row = next;
-  }
-  return row[0] ?? Number.NaN;
-};
-// The column of parts, for a few parts: S(m, r) = r S(m - 1, r) + S(m - 1, r - 1), updated in place from the highest part down
-const computeStirlingColumn = (count: number, parts: number): number => {
-  const column: number[] = Array.from({ length: parts + 1 }, (_element, index) => (index === 0 ? 1 : 0));
-  for (let step = 1; step <= count; step++) {
-    for (let part = parts; part >= 1; part--) column[part] = part * (column[part] ?? 0) + (column[part - 1] ?? 0);
-    column[0] = 0;
-  }
-  return column[parts] ?? 0;
-};
-// The diagonal below the parts, for a few counts short of the count: D(m, i) = S(m, m - i) = (m - i) D(m - 1, i - 1) + D(m - 1, i)
-const computeStirlingDiagonal = (count: number, index: number): number => {
-  const diagonal: number[] = Array.from({ length: index + 1 }, (_element, position) => (position === 0 ? 1 : 0));
-  for (let step = 1; step <= count; step++)
-    for (let position = Math.min(step, index); position >= 1; position--)
-      diagonal[position] = (step - position) * (diagonal[position - 1] ?? 0) + (diagonal[position] ?? 0);
-  return diagonal[index] ?? 0;
-};
-const computeStirlingSecondKind = (count: number, parts: number): null | number => {
-  if (!Number.isInteger(count) || !Number.isInteger(parts) || count < 0 || parts < 0 || parts > count) return null;
-  const band = Math.min(parts, count - parts);
-  if (count * band > MAXIMUM_STIRLING_WORK) return null;
-  return band === parts ? computeStirlingColumn(count, parts) : computeStirlingDiagonal(count, count - parts);
-};
-const computeCatalan = (index: number): null | number => {
-  if (!Number.isInteger(index) || index < 0) return null;
-  return Math.round(computeCombinations(2 * index, index) / (index + 1));
-};
-const computePermutations = (available: number, chosen: number): null | number => {
-  if (!Number.isInteger(available) || !Number.isInteger(chosen) || chosen < 0 || chosen > available) return null;
-  let result = 1;
-  for (let factor = available - chosen + 1; factor <= available; factor++) {
-    result *= factor;
-    if (result > Number.MAX_VALUE) return Number.POSITIVE_INFINITY;
-  }
-  return result;
-};
-const computeMultinomial = (parts: readonly number[]): null | number => {
-  if (!parts.every((part) => Number.isInteger(part) && part > 0)) return null;
-  let result = 1;
-  let running = 0;
-  for (const part of parts) {
-    running += part;
-    result *= computeCombinations(running, part);
-  }
-  return result;
-};
-const computeCompositions = (total: number, parts: number): null | number => {
-  if (!Number.isInteger(total) || !Number.isInteger(parts) || parts < 1 || parts > total) return null;
-  return computeCombinations(total - 1, parts - 1);
-};
-const computeIntegerGreatestCommonDivisor = (values: readonly number[]): null | number => {
-  if (!values.every((value) => Number.isInteger(value))) return null;
-  return values.reduce((total, value) => computeGreatestCommonDivisor(total, value), 0);
-};
-
-const computeModularPower = (base: bigint, exponent: bigint, modulus: bigint): bigint => {
-  let result = 1n;
-  let square = base % modulus;
-  let remaining = exponent;
-  while (remaining > 0n) {
-    if (remaining % 2n === 1n) result = (result * square) % modulus;
-    square = (square * square) % modulus;
-    remaining /= 2n;
-  }
-  return result;
-};
-// Whether a window of Miller-Rabin rounds passes for one base: the power is one or minus one, or squaring it reaches minus one.
-// The squaring runs only while the power of two below the number's own factor allows
-const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: bigint, twos: number): boolean => {
-  const minusOne = candidate - 1n;
-  let power = computeModularPower(base, oddPart, candidate);
-  if (power === 1n || power === minusOne) return true;
-  for (let round = 1; round < twos; round++) {
-    power = (power * power) % candidate;
-    if (power === minusOne) return true;
-  }
-  return false;
-};
-// Whether an integer is prime, by Miller-Rabin over fixed bases, which never trial-divides.
-// Past the safe integers every number is even, so composite, and the test runs only on the safe ones
-const checkIsPrime = (value: number): boolean => {
-  if (!Number.isInteger(value) || value < 2 || value > Number.MAX_SAFE_INTEGER) return false;
-
-  const candidate = BigInt(value);
-  for (const base of MILLER_RABIN_BASES) {
-    if (candidate === base) return true;
-    if (candidate % base === 0n) return false;
-  }
-  let oddPart = candidate - 1n;
-  let twos = 0;
-  while (oddPart % 2n === 0n) {
-    oddPart /= 2n;
-    twos++;
-  }
-  return MILLER_RABIN_BASES.every((base) => checkIsMillerRabinPassing(candidate, base, oddPart, twos));
-};
-// The inverse of the hyperbolic cotangent, by its logarithm of one plus a small term, which keeps the precision that
-// Atanh of the reciprocal loses when the argument is close to one
-const computeInverseCoth = (value: number): number => {
-  const magnitude = Math.abs(value);
-  if (magnitude < 1) return Number.NaN;
-  if (magnitude === 1) return value * Number.POSITIVE_INFINITY;
-  return Math.sign(value) * 0.5 * Math.log1p(2 / (magnitude - 1));
-};
-const computeLogarithm = (value: number, base: number | undefined): number =>
-  base === undefined ? Math.log(value) : Math.log(value) / Math.log(base);
-const computeLeastCommonMultiple = (left: number, right: number): null | number => {
-  if (!Number.isInteger(left) || !Number.isInteger(right)) return null;
-  const divisor = computeGreatestCommonDivisor(left, right);
-  return divisor === 0 ? 0 : Math.abs((left * right) / divisor);
-};
-const computeNorm = (values: readonly number[]): null | number => {
-  if (values.length === 0) return 0;
-  if (values.length === 1) return Math.abs(values[0] ?? Number.NaN);
-  return Math.sqrt(computeSum(values.map((value) => value * value)));
-};
 // A function of the table is keyed by its mathjs name, and is the signatures it takes.
 // Each signature gives its parameter kinds, its arities and its computation.
 // A computation yields null where mathjs would throw, which the evaluation turns into an error
@@ -417,13 +287,13 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   }),
   log2: unary(Math.log2),
   log10: unary(Math.log10),
-  mad: spread(1, ofNonEmpty(medianAbsoluteDeviation)),
+  mad: spread(1, ofNonEmpty(computeMedianAbsoluteDeviation)),
   max: spread(
     1,
     ofNonEmpty((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsLarger)),
   ),
-  mean: spread(1, ofNonEmpty(mean)),
-  median: spread(1, ofNonEmpty(median)),
+  mean: spread(1, ofNonEmpty(computeMean)),
+  median: spread(1, ofNonEmpty(computeMedian)),
   min: spread(
     1,
     ofNonEmpty((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsSmaller)),
@@ -506,7 +376,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   squeeze: identity(),
   std: spread(
     1,
-    ofNonEmpty((values) => Math.sqrt(variance(values))),
+    ofNonEmpty((values) => Math.sqrt(computeVariance(values))),
   ),
   stirlingS2: binary(computeStirlingSecondKind),
   subtract: binary((left, right) => left - right),
@@ -519,10 +389,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   unaryMinus: unary((value) => -value),
   unaryPlus: unary((value) => value),
   unequal: binary((left, right) => toNumber(!checkIsNearlyEqual(left, right))),
-  variance: spread(
-    1,
-    ofNonEmpty((values) => variance(values)),
-  ),
+  variance: spread(1, ofNonEmpty(computeVariance)),
   xor: variadic(2, (values) => toNumber(countTruthy(values) % 2 === 1)),
   zeta: unary(computeZeta),
 };

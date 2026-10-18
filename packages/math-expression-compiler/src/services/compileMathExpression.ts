@@ -11,7 +11,7 @@ import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
-import { NO_LOCALS, NO_VALUES } from "#src/services/constants";
+import { BITWISE_ABSORPTIONS, NO_LOCALS, NO_VALUES } from "#src/services/constants";
 import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
 import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
 import { getMathExpressionSignatures } from "#src/services/getMathExpressionSignatures";
@@ -73,12 +73,6 @@ const compileComparison = (
   };
   return { evaluate, isConstant: compiledOperands.every((operand) => operand.isConstant) };
 };
-// The left operands that decide a bitwise and or or: zero for and, and minus one for or
-const BITWISE_ABSORPTIONS: Readonly<Record<string, { absorbs: number; result: number }>> = {
-  bitAnd: { absorbs: 0, result: 0 },
-  bitOr: { absorbs: -1, result: -1 },
-};
-
 const compileBinary = (
   name: string,
   left: MathExpressionNode,
