@@ -54,7 +54,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `ifa`                | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `illuga`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ineffa`             | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `jahoda`             | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jean`               | —                      |                                                                          |
 | `kachina`            | —                      |                                                                          |
 | `kaedehara-kazuha`   | —                      |                                                                          |
