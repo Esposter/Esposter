@@ -199,8 +199,6 @@ export const useWorldPickups = ({
     bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
     materialSources.value = pickUp.materialSources;
   };
-  // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one that
-  // Breaks drops its pieces where it lies and is kept as picked at the instant it broke
   // An ore's break: its drops are placed where it stood and counted as obtained. The gathering ores and the mining
   // Outcrops break alike
   const breakOre = ({ id, kind, position }: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => {
@@ -213,6 +211,8 @@ export const useWorldPickups = ({
       { kind: AchievementEventKind.MaterialObtained, quantity: dropCount, targetId: String(kind) },
     ]);
   };
+  // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one that
+  // Breaks drops its pieces where it lies and is kept as picked at the instant it broke
   const strikeGatheringOres = (body: KitBody, hit: OreHit, random: () => number) => {
     const now = getWorldNow();
     for (const { id, kind, position } of gatheringPlaces.value) {
