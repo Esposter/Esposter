@@ -1,10 +1,19 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { AuraType } from "#src/models/combat/AuraType";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -13,6 +22,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KAEYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAEYA_CHARACTER_ID);
 const createKaeyaCombatant = (): Combatant => ({
   ascension: 0,
@@ -23,6 +33,36 @@ const createKaeyaCombatant = (): Combatant => ({
   kit: KAEYA_KIT,
   level: 90,
 });
+
+// The CRIT Rate bonus a strike of the given tag gets against an enemy carrying the given auras
+const getCriticalRateBonus = (attackTag: AttackTag, auras: AuraType[], constellationCount: number): number => {
+  const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  for (const aura of auras) enemy.elementalState.auras.set(aura, { decayRate: 0, gauge: 1, isImmutable: false });
+  return (
+    KAEYA_KIT.getStrikeCriticalRateBonus?.(
+      {
+        attackTag,
+        body: createKitTestContext(combatant).body,
+        combatant,
+        hit: takeOne(takeOne(KAEYA_KIT.normalAttacks).hits),
+      },
+      enemy,
+    ) ?? 0
+  );
+};
+
+// A drain of Kaeya's HP that leaves him at the given share of his Max HP, as the party reports it to his kit
+const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthShare: number) => {
+  getPartyMember(context.party, KAEYA_CHARACTER_ID).healthShare = remainingHealthShare;
+  KAEYA_KIT.onKitEvent?.(
+    { characterId: KAEYA_CHARACTER_ID, healthShare: -0.25, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+    context,
+    combatant,
+  );
+};
+
+const getShields = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "shield");
 
 describe("kaeya kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -74,5 +114,73 @@ describe("kaeya kit", () => {
       5,
     );
     expect(hit.healAttackShare?.({ ...combatant, ascension: 0 })).toBe(0);
+  });
+
+  test("constellation 1 raises the CRIT Rate of his Normal and Charged Attacks by 15% against Cryo-affected enemies", () => {
+    expect.hasAssertions();
+    expect([
+      getCriticalRateBonus(AttackTag.NormalAttack, [AuraType.Cryo], 1),
+      getCriticalRateBonus(AttackTag.ChargedAttack, [AuraType.Freeze], 1),
+      getCriticalRateBonus(AttackTag.NormalAttack, [AuraType.Hydro], 1),
+      getCriticalRateBonus(AttackTag.ElementalSkill, [AuraType.Cryo], 1),
+      getCriticalRateBonus(AttackTag.NormalAttack, [AuraType.Cryo], 0),
+    ]).toStrictEqual([0.15, 0.15, 0, 0, 0]);
+  });
+
+  test("constellation 4 shields him for 30% of his Max HP as Cryo, for 20 seconds, when a drain takes him under 20% HP", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 4 };
+    const context = createKitTestContext(combatant);
+
+    drainKaeya(combatant, context, 0.15);
+
+    expect(getShields(context.kitEffectState)).toStrictEqual([
+      {
+        characterId: KAEYA_CHARACTER_ID,
+        element: Element.Cryo,
+        health: 0.3 * combatant.attributes.maxHealth,
+        kind: "shield",
+        secondsRemaining: 20,
+      },
+    ]);
+  });
+
+  test("constellation 4 leaves a drain that takes him to 20% HP or above unshielded", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 4 };
+    const context = createKitTestContext(combatant);
+
+    drainKaeya(combatant, context, 0.25);
+
+    expect(getShields(context.kitEffectState)).toStrictEqual([]);
+  });
+
+  test("constellation 4 shields once every 60 seconds, so a drain within them is not shielded", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 4 };
+    const context = createKitTestContext(combatant);
+    const shieldCounts: number[] = [];
+
+    drainKaeya(combatant, context, 0.15);
+    shieldCounts.push(getShields(context.kitEffectState).length);
+    // The first shield has run out by 30 seconds, and the cooldown still holds the second drain back
+    stepKitSeconds(context, 30);
+    drainKaeya(combatant, context, 0.1);
+    shieldCounts.push(getShields(context.kitEffectState).length);
+    stepKitSeconds(context, 31);
+    drainKaeya(combatant, context, 0.1);
+    shieldCounts.push(getShields(context.kitEffectState).length);
+
+    expect(shieldCounts).toStrictEqual([1, 0, 1]);
+  });
+
+  test("constellation 3 leaves a drain under 20% HP unshielded", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createKaeyaCombatant(), constellationCount: 3 };
+    const context = createKitTestContext(combatant);
+
+    drainKaeya(combatant, context, 0.15);
+
+    expect(getShields(context.kitEffectState)).toStrictEqual([]);
   });
 });

@@ -45,9 +45,10 @@ export const AMBER_CHARACTER_ID = 10_000_021;
 // Amber's behaviour: Explosive Puppet's Baron Bunny, which draws the enemies' strikes and explodes, and Fiery Rain's
 // Arrows, a summon's hits landing from where Amber cast it, with Ascension 1's CRIT Rate and wider arrows. The aimed shot's
 // Unlit form, the bow's aim binding and Amber's Ascension 4 weak-point ATK bonus are not built, so the charged attack is
-// The full shot. Constellations 1, 2 and 6 are not built: 1's second arrow is an extra hit on the charged attack, which the
-// Kit does not hold; 2's manual detonation needs a charged attack that strikes the bunny's foot; and 6's Movement SPD has no
-// Attribute the kit reads, so its ATK half waits with it
+// The full shot. Constellations 1, 2 and 6 are not built: 1's second arrow is an extra hit on the charged attack, which waits
+// On the shared extra hit a passive owns, not yet held for a charged attack; 2's manual detonation waits on the charged attack
+// Landed on the bunny's foot, a shared event not yet reported; and 6's Movement SPD waits on the movement SPD attribute, which
+// The Attribute enum lacks, so its ATK half waits with it
 export const createAmberKitBehaviour = ({
   readHit,
   readHits,

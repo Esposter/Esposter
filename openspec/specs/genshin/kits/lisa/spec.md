@@ -1,6 +1,6 @@
 ## Purpose
 
-Lisa's kit as built: four strikes, a charged attack, Violet Arc's press and its hold, released by itself at 4 seconds, and Lightning Rose's thirty discharges, with the Lightning Rose activation dealing no damage.
+Lisa's kit as built: four strikes, a charged attack, Violet Arc's press and its hold, released by itself at 4 seconds, Lightning Rose's thirty discharges, and Constellation 6's Conductive when she takes the field, with the Lightning Rose activation dealing no damage and Constellations 1, 2 and 4 not built.
 
 ## Requirements
 
@@ -77,3 +77,36 @@ Lisa's plunge attacks SHALL land a collision and two plunges on the enemies with
 
 - **WHEN** the player starts a plunge attack
 - **THEN** the collision and the plunge hits land on the enemies within reach
+
+### Requirement: Constellation 6 Conductive on taking the field
+
+From Constellation 6, when Lisa takes the field, each opponent within 5 metres of her SHALL gain three stacks of Conductive, once every 5 seconds.
+
+#### Scenario: Constellation 6 stacks Conductive on opponents near Lisa
+
+- **GIVEN** Lisa has Constellation 6
+- **WHEN** she takes the field
+- **THEN** each opponent within 5 metres of her gains three stacks of Conductive
+- **AND** an opponent farther away gains none
+
+#### Scenario: A swap within 5 seconds of the last gives no stacks
+
+- **GIVEN** Constellation 6 stacked Conductive less than 5 seconds ago
+- **WHEN** Lisa takes the field again
+- **THEN** no stacks are added
+
+#### Scenario: Another character taking the field, or below Constellation 6, changes nothing
+
+- **GIVEN** Lisa has Constellation 5, or another character takes the field
+- **WHEN** the swap happens
+- **THEN** no stacks are added
+
+### Requirement: Unbuilt Lisa effects
+
+Lisa's Constellations 1, 2 and 4 SHALL NOT take effect.
+
+#### Scenario: Unbuilt effects do nothing
+
+- **GIVEN** Lisa has Constellation 1, 2 or 4
+- **WHEN** the player fights with Lisa
+- **THEN** that effect has no effect
