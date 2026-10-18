@@ -2,12 +2,14 @@
 import type { LoginSounds } from "#src/models/login/LoginSounds";
 import type { Music, MusicPlayer } from "genshin-engine";
 
+import { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import {
   LOGIN_DOOR_SOUND_DELAY_MS,
   LOGIN_EFFECTS_COMPRESSOR_OPTIONS,
   LOGIN_MASTER_LIMITER_OPTIONS,
 } from "#src/services/login/constants";
 import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
+import { getStoredChannelGain } from "#src/services/menu/getStoredChannelGain";
 import { getResultAsync } from "@esposter/shared";
 import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
@@ -29,16 +31,18 @@ const { isDoorOpened, music, musicRecordingBaseUrl, sounds } = defineProps<Props
 // As the game's mix passes it, both through one context. The browser's autoplay policy may
 // Start the context suspended, and then the music waits for the first pointer or key press anywhere on the window, and
 // Starts there from its beginning. The music starts once its recordings are decoded, or without them where they cannot
-// Be fetched, unless the screen has gone by then
+// Be fetched, unless the screen has gone by then. Each channel passes the gain its stored volume sets, as the Settings screen keeps it
 let close: (() => Promise<void>) | undefined;
 let playDoorSound: (() => void) | undefined;
 onMounted(() => {
   const context = new AudioContext();
   let isClosed = false;
   let player: MusicPlayer | undefined;
+  const musicBus = new GainNode(context, { gain: getStoredChannelGain(VolumeSetting.Music) });
+  musicBus.connect(context.destination);
   const start = (recordingBufferMap: ReadonlyMap<string, AudioBuffer>): void => {
     if (isClosed) return;
-    player = createMusicPlayer(context, music, recordingBufferMap);
+    player = createMusicPlayer(context, music, recordingBufferMap, musicBus);
     player.start();
   };
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the mount has nothing to await it
@@ -49,9 +53,11 @@ onMounted(() => {
   const doorSound = createSoundEffectBuffer(context, sounds.door);
   const effectsBus = new DynamicsCompressorNode(context, LOGIN_EFFECTS_COMPRESSOR_OPTIONS);
   effectsBus.connect(new DynamicsCompressorNode(context, LOGIN_MASTER_LIMITER_OPTIONS)).connect(context.destination);
+  const sfxBus = new GainNode(context, { gain: getStoredChannelGain(VolumeSetting.Sfx) });
+  sfxBus.connect(effectsBus);
   playDoorSound = () => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
-    source.connect(effectsBus);
+    source.connect(sfxBus);
     source.start(context.currentTime + LOGIN_DOOR_SOUND_DELAY_MS / 1000);
   };
   if (context.state === "suspended")
