@@ -37,11 +37,16 @@ const readRegionGroundFits = async (
 // Region data file and publishes nothing
 type DerivedAssetFit = (only: readonly string[], options: { isDryRun: boolean }) => Promise<GameDataBuild>;
 
+// A component whose only fits are its region's ground pieces
+const createGroundFit =
+  (region: DerivedAssetComponent): DerivedAssetFit =>
+  async (only, options) =>
+    runFits(await readRegionGroundFits(region), only, options);
+
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
 // Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
 export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAssetFit>> = {
-  [DerivedAssetComponent.Fontaine]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Fontaine), only, options),
+  [DerivedAssetComponent.Fontaine]: createGroundFit(DerivedAssetComponent.Fontaine),
   [DerivedAssetComponent.Hud]: fitHud,
   [DerivedAssetComponent.Inazuma]: async (only, options) =>
     runFits(
@@ -81,10 +86,8 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
       only,
       options,
     ),
-  [DerivedAssetComponent.NodKrai]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.NodKrai), only, options),
-  [DerivedAssetComponent.Snezhnaya]: async (only, options) =>
-    runFits(await readRegionGroundFits(DerivedAssetComponent.Snezhnaya), only, options),
+  [DerivedAssetComponent.NodKrai]: createGroundFit(DerivedAssetComponent.NodKrai),
+  [DerivedAssetComponent.Snezhnaya]: createGroundFit(DerivedAssetComponent.Snezhnaya),
   [DerivedAssetComponent.Sumeru]: async (only, options) =>
     runFits(
       {
