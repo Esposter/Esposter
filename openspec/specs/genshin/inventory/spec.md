@@ -35,7 +35,7 @@ An item SHALL stack up to its own stack limit and each weapon or artifact SHALL 
 
 - **GIVEN** the player picks up a weapon
 - **WHEN** it is added to the bag
-- **THEN** it becomes an entry of its own at level one
+- **THEN** it becomes an entry of its own at level one, in its first phase, with no EXP toward the next level and at refinement rank one
 
 #### Scenario: A save holding a stack past the maximum is refused
 
@@ -201,7 +201,7 @@ Each material SHALL be read from the game's material table and named in the read
 
 #### Scenario: A saved weapon is rebuilt on load
 
-- **GIVEN** the save holds a weapon by its item id alone
+- **GIVEN** the save holds a weapon's entry with its kind, its item id and its state
 - **WHEN** the save loads
 - **THEN** the weapon is rebuilt from the weapon table with its name and rarity
 
