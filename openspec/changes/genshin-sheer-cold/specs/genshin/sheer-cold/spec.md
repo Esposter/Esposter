@@ -66,15 +66,15 @@ A lit campfire near the character SHALL drain the gauge wherever the character s
 - **WHEN** the gauge is stepped
 - **THEN** the character is not heated
 
-### Requirement: The gauge holds where neither the climate nor heat reaches it
+### Requirement: The gauge drains where neither the climate nor heat reaches it
 
-The gauge SHALL hold its value outside the subzero climate with no heat near, and SHALL stay between none and its full scale.
+The gauge SHALL drain outside the subzero climate with no heat near, and SHALL stay between none and its full scale.
 
-#### Scenario: Hold the gauge outside the climate with no heat
+#### Scenario: Drain the gauge outside the climate with no heat
 
 - **GIVEN** the character stands outside the subzero climate with no heat near
 - **WHEN** time passes
-- **THEN** the gauge holds its value
+- **THEN** the gauge drains
 
 #### Scenario: Keep the gauge between none and its maximum
 
@@ -84,19 +84,19 @@ The gauge SHALL hold its value outside the subzero climate with no heat near, an
 
 ### Requirement: A full gauge deals damage each interval
 
-A full gauge SHALL deal its share of the character's max HP for each interval it stays full, and SHALL deal none while it is not full.
+A full gauge SHALL deal its share of the character's max HP and a flat amount for each second it stays full, and SHALL deal none while it is not full.
 
 #### Scenario: Deal its share of damage for each interval it stays full
 
 - **GIVEN** the gauge is full
 - **WHEN** two intervals pass
-- **THEN** the character loses its share of max HP twice
+- **THEN** the character loses its share of max HP and the flat amount, twice
 
 #### Scenario: Carry a part interval into the next step before dealing damage
 
 - **GIVEN** the gauge has been full for less than one interval
 - **WHEN** time passes to complete the interval
-- **THEN** the character loses its share of max HP once
+- **THEN** the character loses its share of max HP and the flat amount, once
 
 #### Scenario: Deal no damage while the gauge is not full
 
