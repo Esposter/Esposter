@@ -40,7 +40,10 @@ export const connectViewer = async (
     const text = String(event.data);
     if (!text.startsWith("{")) return;
 
-    const { data, msg, msgId } = parseJsonObject(text);
+    const frame = readViewerFrame(text);
+    if (!frame) return;
+
+    const { data, msg, msgId } = frame;
     if (msg === ViewerMessage.ModelEvent && isTap(data)) for (const listener of tapListeners) listener();
     if (typeof msgId !== "number") return;
 
@@ -100,6 +103,17 @@ export const connectViewer = async (
 
   socket.close();
   return undefined;
+};
+
+// A frame that does not parse is one the viewer did not mean for this client, so it is ignored rather than thrown into
+// The listener
+const readViewerFrame = (text: string): Record<string, unknown> | undefined => {
+  // eslint-disable-next-line no-restricted-syntax -- this package takes no workspace dep, so no getResult; a frame that is not JSON is undefined
+  try {
+    return parseJsonObject(text);
+  } catch {
+    return undefined;
+  }
 };
 
 const isTap = (data: unknown): boolean =>

@@ -43,6 +43,23 @@ describe(connectViewer, () => {
     expect(JSON.parse(sent[0] ?? "")).toStrictEqual({ msg: ViewerMessage.Register, msgId: 1 });
   });
 
+  test("A malformed frame is ignored and the listener does not throw", async () => {
+    expect.hasAssertions();
+
+    const { emit, sent, socket } = createSocket(false);
+    const connecting = connectViewer("ws://127.0.0.1:10086", () => socket);
+    await vi.waitFor(() => {
+      expect(sent).toHaveLength(1);
+    });
+
+    expect(() => {
+      emit("message", { data: '{"msg":' });
+    }).not.toThrow();
+    emit("message", { data: JSON.stringify({ msg: ViewerMessage.Register, msgId: 1 }) });
+
+    await expect(connecting).resolves.toBeDefined();
+  });
+
   test("answers with nothing when the viewer refuses the connection", async () => {
     expect.hasAssertions();
 
