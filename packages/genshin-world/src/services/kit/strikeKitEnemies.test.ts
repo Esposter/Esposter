@@ -16,6 +16,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -38,6 +39,34 @@ const strikeWithHit = (hit: KitHit, enemy: ReturnType<typeof createEnemy>, comba
   const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
   const strikes: KitStrike[] = [{ body: context.body, combatant, hit, target: enemy }];
   strikeKitEnemies(strikes, context);
+};
+
+// A character other than the Traveler, whose kit gives the party strike bonus a test sets
+const OTHER_CHARACTER_ID = 1;
+
+// A combatant of another character, whose kit gives the party strike bonus given
+const createMember = (getPartyStrikeBonus: Kit["getPartyStrikeBonus"]): Combatant => ({
+  ...createCombatant(undefined),
+  characterId: OTHER_CHARACTER_ID,
+  kit: { ...TRAVELER_KIT, getPartyStrikeBonus },
+});
+
+const SURVIVING_HEALTH = 1e9;
+
+// The health the Traveler's first hit takes off an enemy that survives it, struck by the striker with the members given
+// Among the built combatants of the team, the team given as the deployed one
+const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[]): number => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.health = SURVIVING_HEALTH;
+  const context = createKitTestContext(striker, {
+    characterIdCombatantMap: new Map([striker, ...members].map((combatant) => [combatant.characterId, combatant])),
+    enemyMap: new Map([[enemy.id, enemy]]),
+    enemyTables,
+    party: createParty(teamCharacterIds),
+    random: () => 1,
+  });
+  strikeKitEnemies([{ body: context.body, combatant: striker, hit: KIT_HIT, target: enemy }], context);
+  return SURVIVING_HEALTH - enemy.health;
 };
 
 describe(strikeKitEnemies, () => {
@@ -181,5 +210,42 @@ describe(strikeKitEnemies, () => {
         .filter((event) => event.kind === KitEventKind.EnemyDefeated)
         .map(({ enemy: defeated }) => defeated),
     ).toStrictEqual([enemy]);
+  });
+
+  test("a deployed member's party strike bonus adds to another member's strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ damageBonus: 1 }));
+
+    expect(
+      takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+  });
+
+  test("a member's party strike bonus does not add to its own strike, which its own hooks already price", () => {
+    expect.hasAssertions();
+    const striker = createCombatant(undefined);
+    const bonusedStriker = { ...striker, kit: { ...TRAVELER_KIT, getPartyStrikeBonus: () => ({ damageBonus: 1 }) } };
+
+    expect(takeStrikeHealth(bonusedStriker, [], [TRAVELER_CHARACTER_ID])).toBe(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
+  test("a party strike bonus of a member not deployed adds to no strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ damageBonus: 1 }));
+
+    expect(takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID])).toBe(
+      takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
+  test("the party strike bonus is handed the member whose kit gives it", () => {
+    expect.hasAssertions();
+    const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
+    const member = createMember(getPartyStrikeBonus);
+    takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(getPartyStrikeBonus.mock.calls.map(([handed]) => handed.characterId)).toStrictEqual([OTHER_CHARACTER_ID]);
   });
 });

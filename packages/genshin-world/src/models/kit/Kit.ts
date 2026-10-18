@@ -77,6 +77,16 @@ export interface Kit {
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation
   // Raises it against some enemies only or on the strike, given the enemy, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
+  // The flat base damage, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
+  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
+  // It. A member's own strikes are priced by its own hooks, not this one
+  getPartyStrikeBonus?: (
+    member: Combatant,
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number };
   highPlunge: KitAction;
   lowPlunge: KitAction;
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign

@@ -20,6 +20,7 @@ import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { getDeployedStrikeBonuses } from "#src/services/kit/getDeployedStrikeBonuses";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
@@ -28,6 +29,7 @@ import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
@@ -35,13 +37,14 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each
-// Priced by its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro
-// First setting off the Dendro Cores in its area. Its element reacts, and a direct Lunar hit is priced, as the deployed
-// Team's Moonsign gives. Each enemy struck drops its energy to the team, collected by the member on the field, and the
-// Strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores, the party's Lunar answers and reactions
-// Follow, the reactions it triggered and the damage the enemy took sent to the deployed team's kits. Once the strike
-// Has landed on every enemy it reaches, each reaction that landed with a reach reaches the enemies round its own, whose
-// Energy and reactions follow in turn. The strikes given keep only those that struck an enemy, written in place
+// Priced by its combatant as its buffs, the kit's own DMG Bonus and the deployed team's party strike bonuses raise it
+// Against that enemy, its Electro or Pyro First setting off the Dendro Cores in its area. Its element reacts, and a
+// Direct Lunar hit is priced as the deployed team's Moonsign gives. Each enemy struck drops its energy to the team,
+// Collected by the member on the field, and the strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores,
+// The party's Lunar answers and reactions follow, the reactions it triggered and the damage the enemy took sent to the
+// Deployed team's kits. Once the strike has landed on every enemy it reaches, each reaction that landed with a reach
+// Reaches the enemies round its own, whose energy and reactions follow in turn. The strikes given keep only those that
+// Struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
   const {
     characterIdCombatantMap,
@@ -65,6 +68,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       characterIdCombatantMap,
       context.body.position,
     );
+    const deployedCombatants = getDeployedCombatants(party, characterIdCombatantMap);
     let isStruck = false;
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
@@ -87,25 +91,35 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       );
       // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
       const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
-      const pricedStrike = { ...strike, hit: enemyHit };
+      // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
+      const pricedStrike = { ...strike, combatant: pricedCombatant, hit: enemyHit };
+      const deployedBonuses = getDeployedStrikeBonuses(
+        pricedStrike,
+        deployedCombatants,
+        enemy,
+        party,
+        kitEffectState.effects,
+      );
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
-        combatant.kit.getStrikeAdditiveBaseDamageBonus?.(
+        (combatant.kit.getStrikeAdditiveBaseDamageBonus?.(
           pricedStrike,
           enemy,
           party,
           kitEffectState.effects,
           characterIdCombatantMap,
-        ) ?? 0;
+        ) ?? 0) + deployedBonuses.additiveBaseDamageBonus;
       const pricedHit = {
         ...enemyHit,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
         criticalRateBonus:
           (enemyHit.criticalRateBonus ?? 0) +
-          (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.criticalRateBonus,
         damageBonus:
           (enemyHit.damageBonus ?? 0) +
-          (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.damageBonus,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
