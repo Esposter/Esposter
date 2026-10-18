@@ -11,4 +11,4 @@ x-touches:
     "packages/genshin-world/src/components/Statue/**",
     "packages/genshin-interface/src/components/BlessingScreen/**",
   ]
-x-waiting: "statue-blessing.mkv, for the Blessing screen's layout, which stays provisional until the recording shows the screen"
+x-waiting: "statue-blessing.mkv, for the Blessing and Worship Statue screens' layouts, which stay provisional until a recording shows them"
