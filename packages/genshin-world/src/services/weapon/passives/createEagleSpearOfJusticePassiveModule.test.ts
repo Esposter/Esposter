@@ -43,6 +43,11 @@ const createHit = (striker: Combatant): KitEvent => ({
 });
 const getStacks = (effects: Parameters<typeof findKitStatus>[0]) =>
   findKitStatus(effects, TRAVELER_CHARACTER_ID, EAGLE_SPEAR_ID)?.stacks;
+const getMaximumBuffs = (effects: Parameters<typeof findKitStatus>[0]) =>
+  effects.filter(
+    (effect) =>
+      effect.kind === "buff" && effect.source === EAGLE_SPEAR_ID && effect.attribute === Attribute.AllDamageBonus,
+  );
 
 describe(createEagleSpearOfJusticePassiveModule, () => {
   test("a hit adds a stack, and each stack raises the wielder's ATK by the rank's percentage", () => {
@@ -89,14 +94,19 @@ describe(createEagleSpearOfJusticePassiveModule, () => {
       stepKitSeconds(context, 0.31);
     }
 
-    expect(
-      eagleSpearOfJusticePassiveModule.getPassiveBonuses?.(wielder, 1, context.kitEffectState.effects),
-    ).toStrictEqual([]);
+    expect(getMaximumBuffs(context.kitEffectState.effects)).toStrictEqual([]);
 
     eagleSpearOfJusticePassiveModule.onKitEvent?.(createHit(wielder), context, wielder);
-    expect(
-      eagleSpearOfJusticePassiveModule.getPassiveBonuses?.(wielder, 1, context.kitEffectState.effects),
-    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AllDamageBonus }]);
+    expect(getMaximumBuffs(context.kitEffectState.effects)).toStrictEqual([
+      {
+        amount: 0.12,
+        attribute: Attribute.AllDamageBonus,
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 6,
+        source: EAGLE_SPEAR_ID,
+      },
+    ]);
 
     stepKitSeconds(context, 0.31);
     eagleSpearOfJusticePassiveModule.onKitEvent?.(createHit(wielder), context, wielder);
