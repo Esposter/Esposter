@@ -19,7 +19,7 @@ vi.mock(import("nuxt/kit"), async (importOriginal) => ({
 const createNuxt = (isDevelopment: boolean) => ({ options: { dev: isDevelopment, serverDir: "" } }) as unknown as Nuxt;
 
 describe("serveGenshinExtractions", () => {
-  test("registers no route for a build", async () => {
+  test("a visitor cannot retrieve a game asset from the app", async () => {
     expect.hasAssertions();
 
     await serveGenshinExtractions({}, createNuxt(false));

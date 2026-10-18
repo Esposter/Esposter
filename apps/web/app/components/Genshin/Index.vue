@@ -125,5 +125,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
         Ready is said here to a screen reader alone, and only then, since the splashes and login load none of it -->
       <p role="status" sr-only>{{ isReady ? gameText.text[GameTextKey.Ready] : "" }}</p>
     </div>
+    <!-- The app's own words, not the game's, in the corner where a press passes through to the world -->
+    <GenshinFanWorkLabel />
   </div>
 </template>
