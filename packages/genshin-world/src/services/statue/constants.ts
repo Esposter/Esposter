@@ -9,3 +9,10 @@ export const RESTORATIVE_POWER_REFILL_SECONDS = 15;
 export const BLESSING_HEAL_HEALTH_SHARE = 0.1;
 // The Adventure Rank EXP each Oculus gives when it is collected, as the wiki's Adventure EXP page states it
 export const OCULUS_ADVENTURE_EXP = 60;
+// The distance an Oculus is touched from to be found, and the distance one shows on the minimap from, both provisional
+// Until the owed recording of the minimap re-measures them
+export const OCULUS_TOUCH_RADIUS = 2;
+export const OCULUS_MINIMAP_DISTANCE = 40;
+// The Oculus stand-in's radius and colour, until its model lands
+export const OCULUS_STAND_IN_COLOR = 0xffd27f;
+export const OCULUS_STAND_IN_RADIUS = 0.6;

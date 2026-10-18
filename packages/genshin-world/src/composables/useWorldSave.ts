@@ -29,9 +29,11 @@ export const useWorldSave = ({
     | "archiveProgressMap"
     | "craftedCountMap"
     | "craftingProgress"
+    | "foundOculusIds"
     | "frostbearingTreeProgress"
     | "inventory"
     | "openedChestIds"
+    | "regionStatueProgressMap"
     | "wallet"
     | "wishHistory"
     | "wishPityMap"
@@ -48,8 +50,12 @@ export const useWorldSave = ({
   const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
+  const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
   const openedChestIds = shallowRef<ReadonlySet<string>>(savedState.openedChestIds);
+  const regionStatueProgressMap = shallowRef<ReadonlyMap<string, OfferingProgressSave>>(
+    savedState.regionStatueProgressMap,
+  );
   watch(
     [
       inventory,
@@ -60,8 +66,10 @@ export const useWorldSave = ({
       archiveProgressMap,
       craftedCountMap,
       craftingProgress,
+      foundOculusIds,
       frostbearingTreeProgress,
       openedChestIds,
+      regionStatueProgressMap,
     ],
     () => {
       emitGrant();
@@ -82,9 +90,11 @@ export const useWorldSave = ({
     archiveProgressMap,
     craftedCountMap,
     craftingProgress,
+    foundOculusIds,
     frostbearingTreeProgress,
     inventory,
     openedChestIds,
+    regionStatueProgressMap,
     setInventory,
     setWallet,
     wallet,
