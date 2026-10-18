@@ -14,6 +14,7 @@ import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -93,9 +94,6 @@ const readFlaskElement = (kitEffectState: KitEffectState, characterId: number): 
 // Ends the Meowballs still running, as gcsim's Skill and drain end their ticks
 const removeMeowballs = (kitEffectState: KitEffectState): void =>
   removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
-
-// The body a flask's absorb check or drain acts from, standing on a field's centre
-const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, height: 0, position: centre });
 
 // The deployed member with the lowest share of its health that still stands, as gcsim's lowest-HP pick finds it
 const findLowestHealthCharacterId = (party: Party): number | undefined => {
@@ -272,7 +270,7 @@ export const createJahodaKitBehaviour = ({
       onTick: (tickContext) => {
         const { enemyMap, kitEffectState: tickState } = tickContext;
         const absorbed = findAbsorbedElement(
-          [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(circle, absorbedArea(pursuit.centre), enemy)),
+          [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(circle, createKitBody(pursuit.centre), enemy)),
         );
         if (absorbed === undefined) return;
         const flaskElement = readFlaskElement(tickState, characterId);
@@ -289,7 +287,7 @@ export const createJahodaKitBehaviour = ({
           stacks: gauge,
         });
         if (gauge >= FLASK_GAUGE_MAXIMUM)
-          drainFlask(tickContext, absorbedArea(pursuit.centre), combatant, filledDrainHit);
+          drainFlask(tickContext, createKitBody(pursuit.centre), combatant, filledDrainHit);
       },
       radius: circle.radius,
       secondsRemaining: pursuitSeconds,

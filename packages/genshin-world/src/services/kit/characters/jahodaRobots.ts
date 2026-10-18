@@ -1,12 +1,11 @@
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { Element } from "#src/models/Element";
-import type { GroundPoint } from "genshin-engine";
 
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemies";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
@@ -30,8 +29,6 @@ interface JahodaRobotSettings {
   strikeIntervalSeconds: number;
   strikeTargetCount: number;
 }
-
-const absorbedBody = (position: GroundPoint): KitBody => ({ facing: 0, height: 0, position });
 
 // The nearest live enemies to the body, up to the count, each struck once with the element the robot absorbed
 const strikeNearest = (
@@ -65,7 +62,7 @@ export const startJahodaRobots = (
         if (isAbsorbed) return;
         const { body, enemyMap } = checkContext;
         const reachedEnemies = [...enemyMap.values()].filter((enemy) =>
-          checkIsInAttackArea(settings.absorbArea, absorbedBody(body.position), enemy),
+          checkIsInAttackArea(settings.absorbArea, createKitBody(body.position), enemy),
         );
         const element = findAbsorbedElement(reachedEnemies);
         if (element === undefined) return;
