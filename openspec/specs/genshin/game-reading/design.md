@@ -97,13 +97,13 @@ The client holds no scene group script; those are the server's, and leaked serve
 
 Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac, and run every AnimeStudio step with the game closed.
 
-| Step                                                          | Mac                         | Windows PC                                             |
-| :------------------------------------------------------------ | :-------------------------- | :----------------------------------------------------- |
-| AnimeStudio reads (`map`, `extract`, `shaders`, `clips`, ...) | Under the utility QoS clamp | Refused while the game runs                            |
-| A DXBC program's assembly                                     | `vkd3d-compiler`            | `d3dcompiler_47`                                       |
-| A DXIL program's assembly                                     | `vkd3d-compiler`            | Only with a `vkd3d-compiler` named by `VKD3D_COMPILER` |
-| HLSL                                                          | None: the assembly stands   | 3Dmigoto's `cmd_Decompiler` 1.3.16, pinned             |
-| The parity page, witness and passes                           | Yes                         | Yes                                                    |
+| Step                                                          | Mac                         | Windows PC                                 |
+| :------------------------------------------------------------ | :-------------------------- | :----------------------------------------- |
+| AnimeStudio reads (`map`, `extract`, `shaders`, `clips`, ...) | Under the utility QoS clamp | Refused while the game runs                |
+| A DXBC program's assembly                                     | `vkd3d-compiler`            | `d3dcompiler_47`                           |
+| A DXIL program's assembly                                     | `vkd3d-compiler`            | Not read: `D3DDisassemble` reads DXBC only |
+| HLSL                                                          | None: the assembly stands   | 3Dmigoto's `cmd_Decompiler` 1.3.16, pinned |
+| The parity page, witness and passes                           | Yes                         | Yes                                        |
 
 `vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH`; the Mac's is a vkd3d 2.1 build, named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly.
 
