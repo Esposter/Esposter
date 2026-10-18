@@ -50,4 +50,22 @@ describe("joinGcsimTalentArray", () => {
       ),
     ).toBeUndefined();
   });
+
+  test("joins to none where a row matches no parameter, though the other row alone joins", () => {
+    expect.hasAssertions();
+
+    expect(
+      joinGcsimTalentArray(
+        {
+          line: 1,
+          rows: [
+            [2, 2],
+            [9, 9],
+          ],
+        },
+        talentMultiplierMap,
+        [10, 20],
+      ),
+    ).toBeUndefined();
+  });
 });
