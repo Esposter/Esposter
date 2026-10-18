@@ -43,6 +43,7 @@ const DELIMITERS_OF_ONE: ReadonlySet<string> = new Set([
   "~",
 ]);
 const NAMED_DELIMITERS: ReadonlySet<string> = new Set(["and", "in", "mod", "not", "or", "to", "xor"]);
+const DECIMAL_MARK_OPERATOR_FOLLOWERS: ReadonlySet<string> = new Set(["*", "/", "^"]);
 const WORD_START_REGEX = /^[\p{L}_$]$/u;
 const WORD_CHARACTER_REGEX = /^[\p{L}\p{Nd}_$]$/u;
 const DIGIT_REGEX = /^[0-9]$/u;
@@ -98,6 +99,46 @@ const readRadixNumber = (state: MathExpressionParserState, prefix: string, baseD
   state.tokenType = MathExpressionTokenType.Number;
 };
 
+// A decimal mark that mathjs reads as a dot of its own, unless a division, product or power follows it
+const checkIsDecimalMark = (character: string, nextCharacter: string): boolean =>
+  character === "." && !DECIMAL_MARK_OPERATOR_FOLLOWERS.has(nextCharacter);
+
+// Reports a decimal mark where an exponent's digits must be, at the number's start, as mathjs does
+const failExponent = (state: MathExpressionParserState, text: string): void => {
+  state.token = text;
+  failMathExpression(state, `Digit expected, got "${getCharacter(state, 0)}"`);
+};
+
+// Takes the exponent after a number's digits, if it has one, and yields the number's text with it
+const takeExponent = (state: MathExpressionParserState, text: string): string => {
+  const exponentMarker = getCharacter(state, 0);
+  if (exponentMarker !== "e" && exponentMarker !== "E") return text;
+
+  const afterMarker = getCharacter(state, 1);
+  if (checkIsDecimalMark(afterMarker, getCharacter(state, 2))) {
+    state.index++;
+    failExponent(state, text);
+    return text;
+  }
+  if (!DIGIT_REGEX.test(afterMarker) && afterMarker !== "+" && afterMarker !== "-") return text;
+
+  state.index++;
+  let exponent = "e";
+  if (afterMarker === "+" || afterMarker === "-") {
+    exponent += afterMarker;
+    state.index++;
+  }
+  if (!DIGIT_REGEX.test(getCharacter(state, 0))) {
+    const partial = text + exponent;
+    failExponent(state, partial);
+    return partial;
+  }
+
+  const taken = text + exponent + takeMatching(state, DIGIT_REGEX);
+  if (checkIsDecimalMark(getCharacter(state, 0), getCharacter(state, 1))) failExponent(state, taken);
+  return taken;
+};
+
 const readNumber = (state: MathExpressionParserState): void => {
   const prefix = getCharacter(state, 1);
   const baseDigits = BASE_DIGITS_REGEX[prefix];
@@ -112,24 +153,7 @@ const readNumber = (state: MathExpressionParserState): void => {
     state.index++;
     text += takeMatching(state, DIGIT_REGEX);
   }
-  const exponentMarker = getCharacter(state, 0);
-  if (exponentMarker === "e" || exponentMarker === "E") {
-    const afterMarker = getCharacter(state, 1);
-    if (DIGIT_REGEX.test(afterMarker)) {
-      text += "e";
-      state.index++;
-      text += takeMatching(state, DIGIT_REGEX);
-    } else if (afterMarker === "+" || afterMarker === "-") {
-      text += `e${afterMarker}`;
-      state.index += 2;
-      if (!DIGIT_REGEX.test(getCharacter(state, 0))) {
-        failMathExpression(state, `Digit expected, got "${getCharacter(state, 0)}"`);
-        return;
-      }
-      text += takeMatching(state, DIGIT_REGEX);
-    }
-  }
-  state.token = text;
+  state.token = takeExponent(state, text);
   state.tokenType = MathExpressionTokenType.Number;
 };
 

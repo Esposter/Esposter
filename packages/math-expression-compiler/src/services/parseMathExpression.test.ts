@@ -17,6 +17,9 @@ describe(parseMathExpression, () => {
     ["A list-only function given a single value", "count(5)", /"count" takes a list argument/u],
     ["A sign with no operand", "1 +", /Unexpected end of expression/u],
     ["A word size too small for its literal", "1 + 0x1FFi8", /String "0x1FF" is out of range \(char 5\)/u],
+    ["A decimal point right after an exponent marker", "2e.5", /Digit expected, got "\." \(char 2\)/u],
+    ["A decimal point right after an exponent sign", "2e+.5", /Digit expected, got "\." \(char 1\)/u],
+    ["A decimal point after the digits of an exponent", "1e5.5", /Digit expected, got "\." \(char 1\)/u],
   ])("%s is an error", (_title, formula, message) => {
     expect.hasAssertions();
 

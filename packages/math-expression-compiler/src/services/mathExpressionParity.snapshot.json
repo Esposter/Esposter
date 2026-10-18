@@ -8427,5 +8427,12 @@
 {"formula":"1\u00a0+ 2","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3},
 {"formula":"0x1FFi8","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
 {"formula":"0b111i2","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
-{"formula":"0x1i0","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null}
+{"formula":"0x1i0","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"2e.5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"2e+.5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"1e5.5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"2e5./3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":66666.66666666667},
+{"formula":"2e.*3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":16.30969097075427},
+{"formula":"2e5.*3","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":600000},
+{"formula":"2e5","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":200000}
 ]}
