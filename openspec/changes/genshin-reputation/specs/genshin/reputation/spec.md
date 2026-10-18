@@ -33,10 +33,10 @@ From level 2 the keeper SHALL offer requests, run as world quests that pay Reput
 - **WHEN** the player delivers the items asked for
 - **THEN** the request pays its Reputation EXP and Mora
 
-#### Scenario: A camp request pays once its camp is cleared
+#### Scenario: A group delivery request pays on completion
 
-- **GIVEN** the player has accepted a request to clear a camp
-- **WHEN** the named camp is cleared
+- **GIVEN** the player has accepted a request for any one of a group's items
+- **WHEN** the player collects that many of the group's items
 - **THEN** the request pays its Reputation EXP and Mora
 
 ### Requirement: Bounties are claimed back with the keeper after their target is defeated
