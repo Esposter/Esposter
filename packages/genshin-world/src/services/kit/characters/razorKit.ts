@@ -165,11 +165,13 @@ export const createRazorKitBehaviour = ({
       };
     }),
     // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      // Wolf's Instinct, from Constellation 1: a particle or orb reaching the party raises his all-DMG bonus for 8 seconds
+    onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
+      // Wolf's Instinct, from Constellation 1: a particle or orb collected while he is on the field raises his all-DMG bonus
+      // For 8 seconds, as gcsim v2.47.2 (MIT) razor/cons.go gives it, which ignores a pickup with another on the field
       if (
         event.kind === KitEventKind.EnergyParticleCollected &&
-        combatant.constellationCount >= WOLFS_INSTINCT_CONSTELLATION
+        combatant.constellationCount >= WOLFS_INSTINCT_CONSTELLATION &&
+        activeCombatant.characterId === combatant.characterId
       )
         buffKitMember(kitEffectState, combatant.characterId, {
           amount: WOLFS_INSTINCT_DAMAGE_BONUS,

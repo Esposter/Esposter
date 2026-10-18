@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, his constellations other than 2 and 6, and his Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, his constellations other than 1, 2 and 6, and his Hexerei kit left unbuilt.
 
 ## Requirements
 
@@ -101,9 +101,31 @@ From Constellation 2, Razor's strikes SHALL have 10% more CRIT Rate against enem
 - **WHEN** one of his strikes hits an enemy below 30% HP
 - **THEN** its CRIT Rate is unchanged
 
+### Requirement: Constellation 1 raises all-DMG on pickups while he is on the field
+
+From Constellation 1, a particle or orb collected while Razor is on the field SHALL raise his all-DMG bonus by 10% for 8 seconds.
+
+#### Scenario: A pickup on the field raises the bonus
+
+- **GIVEN** Razor has Constellation 1 and is on the field
+- **WHEN** a particle or orb is collected
+- **THEN** his all-DMG bonus is raised by 10% for 8 seconds
+
+#### Scenario: A pickup with another character on the field raises nothing
+
+- **GIVEN** Razor has Constellation 1 and another character is on the field
+- **WHEN** a particle or orb is collected
+- **THEN** his all-DMG bonus is unchanged
+
+#### Scenario: A pickup before Constellation 1 raises nothing
+
+- **GIVEN** Razor has no Constellation 1
+- **WHEN** a particle or orb is collected
+- **THEN** his all-DMG bonus is unchanged
+
 ### Requirement: Razor's other passives and Hexerei kit not yet built
 
-Razor's other passives, his constellations other than 2 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
+Razor's other passives, his constellations other than 1, 2 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

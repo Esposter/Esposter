@@ -198,7 +198,7 @@ describe(createRazorKitBehaviour, () => {
     expect([readCriticalRateBonus(1, 0.2), readCriticalRateBonus(2, 0.3)]).toStrictEqual([0, 0]);
   });
 
-  test("constellation 1 raises Razor's all-DMG bonus by 10% for 8 seconds when particles or orbs reach the party", () => {
+  test("constellation 1 raises Razor's all-DMG bonus by 10% for 8 seconds when he is on the field and a particle or orb is collected", () => {
     expect.hasAssertions();
 
     const combatant = createRazorCombatant(0, 1);
@@ -220,6 +220,29 @@ describe(createRazorKitBehaviour, () => {
         effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
       ),
     ).toStrictEqual([[Attribute.AllDamageBonus, 0.1, 8]]);
+  });
+
+  test("a particle pickup raises no all-DMG bonus while another character is on the field", () => {
+    expect.hasAssertions();
+
+    const combatant = createRazorCombatant(0, 1);
+    const context = {
+      ...createKitTestContext(combatant),
+      activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID },
+    };
+    const { kitEffectState } = context;
+    RAZOR_KIT.onKitEvent?.(
+      {
+        characterId: BARBARA_CHARACTER_ID,
+        count: 1,
+        energyDropKind: EnergyDropKind.Particle,
+        kind: KitEventKind.EnergyParticleCollected,
+      },
+      context,
+      combatant,
+    );
+
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("a particle pickup raises no all-DMG bonus before Constellation 1", () => {
