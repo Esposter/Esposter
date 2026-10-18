@@ -700,4 +700,140 @@ describe(readGcsimQueuedAttacks, () => {
       [14, 37, 1],
     ]);
   });
+
+  test("adds the delay of each Tasks.Add closure a method is called from to the queue calls in that method, once per call", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package odette",
+          "",
+          "func (c *char) skill() {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.danceDoubleTicker(0)",
+          "\t}, 114)",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.danceDoubleTicker(1)",
+          "\t}, 40)",
+          "}",
+          "",
+          "func (c *char) danceDoubleTicker(attackType int) {",
+          "\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([
+      [13, 114],
+      [13, 40],
+    ]);
+  });
+
+  test("reads no delay from a method's call outside any task closure, which runs at its caller's own time", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package odette",
+          "",
+          "func (c *char) skill() {",
+          "\tc.danceDoubleTicker(0)",
+          "}",
+          "",
+          "func (c *char) danceDoubleTicker(attackType int) {",
+          "\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[8, 0]]);
+  });
+
+  test("adds the delay a method's call gives it in a Tasks.Add to the queue calls in the closure the method returns", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package prune",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.burstTick(), 137)",
+          "}",
+          "",
+          "func (c *char) burstTick() func() {",
+          "\treturn func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[9, 137]]);
+  });
+
+  test("reads no repeat of a method's call in its own body, its next tick's delay is the one the body's own call gives", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package prune",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.tick(), 137)",
+          "}",
+          "",
+          "func (c *char) tick() {",
+          "\tc.Core.QueueAttack(ai, ap, 0, 1)",
+          "\tc.Core.Tasks.Add(c.tick(), 117)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[8, 138]]);
+  });
+
+  test("reads a Tasks.Add delay the reader cannot evaluate as the call's own delay alone, as it reads no delay it cannot give", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package durin",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.burstTick(), ceil(windupDelay))",
+          "}",
+          "",
+          "func (c *char) burstTick() {",
+          "\tc.Core.QueueAttack(ai, ap, 0, 1)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([[8, 1]]);
+  });
 });
