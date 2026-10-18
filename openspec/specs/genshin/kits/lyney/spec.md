@@ -67,7 +67,7 @@ From Constellation 4, the Prop Arrow's Pyrotechnic Strike SHALL cut the Pyro RES
 
 ### Requirement: Unbuilt Lyney effects
 
-Lyney's tap-released and partial-hold shots, his Prop Surplus, his hat's explosions, his hat limit, his burst ticks, his Spiritbreath Thorn, his Ascension passives and Constellations 1 and 6 SHALL NOT take effect.
+Lyney's tap-released and partial-hold shots, his Prop Surplus, his hat's explosions, his hat limit, his burst ticks, his Spiritbreath Thorn, his Ascension 1 passive and Constellations 1 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
