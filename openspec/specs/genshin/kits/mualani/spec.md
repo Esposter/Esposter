@@ -1,6 +1,6 @@
 ## Purpose
 
-Mualani's kit as built: her three strikes, charged attack, collision and two plunges, and Boomsharka-laka's share of Max HP, and what is left of her Nightsoul Blessing, its surfing and her constellations.
+Mualani's kit as built: her three strikes, charged attack, collision and two plunges, and Boomsharka-laka's share of Max HP. Her skill's press enters her Nightsoul Blessing with its points, while Sharky's Bite, its surfing and her constellations are not built.
 
 ## Requirements
 
@@ -28,9 +28,9 @@ Boomsharka-laka SHALL deal damage equal to a share of Mualani's Max HP, landing 
 - **THEN** the hit lands at 178 frames within a 5-metre circle round the target
 - **AND** its damage equals a share of Mualani's Max HP
 
-### Requirement: Skill press without the Blessing
+### Requirement: Skill press with no hit
 
-Mualani's skill press SHALL deal no damage and SHALL go on a six-second cooldown until the Nightsoul Blessing is built.
+Mualani's skill press SHALL deal no damage and SHALL go on a six-second cooldown until Sharky's Bite is built.
 
 #### Scenario: Press spends the cooldown
 
@@ -49,10 +49,26 @@ Mualani's plunge attacks SHALL land on the enemies within a provisional reach, w
 
 ### Requirement: Nightsoul Blessing and constellations not yet built
 
-Mualani's Nightsoul Blessing, Sharky's Bite, surfing, Ascension passives and constellations SHALL NOT take effect.
+Mualani's Sharky's Bite, its surfing, Ascension passives and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
 - **GIVEN** Mualani has the Blessing, a passive or a constellation unlocked
 - **WHEN** the player fights with Mualani
 - **THEN** those effects have no effect
+
+### Requirement: Skill press enters the Nightsoul Blessing
+
+Mualani's skill press SHALL enter her Nightsoul Blessing with 60 Nightsoul points, which drain ten a second, when she is not in it, and SHALL leave the blessing when she is.
+
+#### Scenario: Press enters the blessing and its points drain
+
+- **WHEN** the player presses Mualani's skill outside the blessing
+- **THEN** Mualani is in the Nightsoul Blessing with 60 points
+- **AND** her points drop by ten a second
+
+#### Scenario: A press in the blessing leaves it
+
+- **GIVEN** Mualani is in the Nightsoul Blessing
+- **WHEN** the player presses Mualani's skill
+- **THEN** she is no longer in the blessing

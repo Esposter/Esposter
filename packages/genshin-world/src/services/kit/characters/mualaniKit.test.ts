@@ -1,10 +1,28 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { Combatant } from "#src/models/kit/Combatant";
+
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createMualaniKitBehaviour, MUALANI_CHARACTER_ID } from "#src/services/kit/characters/mualaniKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const MUALANI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MUALANI_CHARACTER_ID);
+
+const createMualaniCombatant = (constellationCount = 0): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: MUALANI_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: MUALANI_KIT,
+  level: 90,
+});
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 describe(createMualaniKitBehaviour, () => {
@@ -67,5 +85,17 @@ describe(createMualaniKitBehaviour, () => {
 
     expect(MUALANI_KIT.elementalSkill.hits).toStrictEqual([]);
     expect(MUALANI_KIT.skillCooldownSeconds).toBe(6);
+  });
+
+  test("the skill's press enters the Nightsoul Blessing with 60 points, which drain ten a second, and a press in it leaves it", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMualaniCombatant());
+    MUALANI_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 2);
+    expect(countKitResource(context.kitEffectState.effects, MUALANI_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(40);
+    MUALANI_KIT.elementalSkill.onStart?.(context);
+    expect(
+      findKitStatus(context.kitEffectState.effects, MUALANI_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
+    ).toBeUndefined();
   });
 });
