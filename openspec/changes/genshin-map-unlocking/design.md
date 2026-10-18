@@ -52,7 +52,7 @@ packages/genshin-world/src/
 | File                                                                       | Role after the change                                                            |
 | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/composables/useWorldMap.ts`                    | Unlocks on activation, emits the scene point, and pays a waypoint's first unlock |
-| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | A landmark's scene point, by its statue or its waypoint id                       |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | Reads a waypoint's point from its id, to find its reward row                     |
 | `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS` takes the statues and the waypoints                        |
 
 ## Sources
