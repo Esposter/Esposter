@@ -23,7 +23,8 @@ describe(deleteReadMails, () => {
     titleTextId: "4",
   };
   const EMPTY_ROW: Mail = { ...ROW, id: 3, items: [] };
-  const rows = new Map<number, Mail>([ROW, EMPTY_ROW].map((row): [number, Mail] => [row.id, row]));
+  const FLAGGED_ROW: Mail = { ...ROW, id: 4, isStar: true };
+  const rows = new Map<number, Mail>([ROW, EMPTY_ROW, FLAGGED_ROW].map((row): [number, Mail] => [row.id, row]));
 
   // A read mail with no attachment is deleted, since there is nothing left in it to claim
   test("a read mail with no attachment is deleted", () => {
@@ -69,6 +70,15 @@ describe(deleteReadMails, () => {
     expect.hasAssertions();
 
     expect(deleteReadMails([mail(9, true, true)], rows, new Set())).toStrictEqual([mail(9, true, true)]);
+  });
+
+  // A claimed mail the table flags is in the Gift Mail Box, which Delete Read leaves alone
+  test("a read claimed mail the table flags is kept", () => {
+    expect.hasAssertions();
+
+    expect(deleteReadMails([mail(FLAGGED_ROW.id, true, true)], rows, new Set())).toStrictEqual([
+      mail(FLAGGED_ROW.id, true, true),
+    ]);
   });
 
   // A birthday mail claimed is in the Gift Mail Box, which Delete Read leaves alone
