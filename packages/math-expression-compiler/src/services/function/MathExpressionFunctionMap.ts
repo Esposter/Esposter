@@ -203,7 +203,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   mean: createSpreadSignatures(1, createNonEmptyCompute(computeMean)),
   median: createSpreadSignatures(1, createNonEmptyCompute(computeMedian)),
   min: createExtremeSignatures(checkIsSmaller),
-  mod: createBinarySignatures((left, right) => computeModulo(left, right)),
+  mod: createBinarySignatures(computeModulo),
   multinomial: [createListSignature(computeMultinomial)],
   multiply: [
     ...createVariadicSignatures(

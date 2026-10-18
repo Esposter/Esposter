@@ -14,8 +14,7 @@ export const compileLogical = (
 ): MathExpressionCompiled => {
   const compiledLeft = context.compile(node.left);
   // A nullish takes its left side over numbers, so its right side, which nothing evaluates, is not compiled
-  if (node.operator === MathExpressionLogicalOperator.Nullish)
-    return { evaluate: (values, locals) => compiledLeft.evaluate(values, locals), isConstant: compiledLeft.isConstant };
+  if (node.operator === MathExpressionLogicalOperator.Nullish) return compiledLeft;
 
   const compiledRight = context.compile(node.right);
   const isConstant = compiledLeft.isConstant && compiledRight.isConstant;
