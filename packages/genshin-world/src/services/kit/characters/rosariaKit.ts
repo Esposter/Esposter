@@ -34,6 +34,9 @@ export const ROSARIA_CHARACTER_ID = 10_000_045;
 // Summon cast where the lance landed, for the table's seconds, longer from Constellation 2. Ascension 4's Crit Rate share
 // Is built on the cast. Her Ascension 1, her other Constellations and her teleport behind the target are not built: the
 // Ascension 1 needs whether the first hit lands from behind, which the teleport decides, and the body does not reach it
+// Constellation 1 needs CRIT hits as an event and an ATK SPD bonus, which the kit does not carry
+// Constellation 4 needs Ravaging Confession's CRIT hits as an event, which the kit does not emit
+// Constellation 6 needs a Physical RES cut, which EnemyStatus cannot key, as Element has no Physical
 // Ascension 4: the cast's Crit Rate for every other member of the deployed team, from her own Crit Rate as it stands
 const addAscension4CritRate = (combatant: Combatant, kitEffectState: KitEffectState, party: Party): void => {
   const amount = Math.min(
