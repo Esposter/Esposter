@@ -2,11 +2,11 @@
 import type { PDFDocumentLoadingTask } from "pdfjs-dist";
 
 import PdfViewer from "@/components/Pdf/Viewer.vue";
-import { PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
+import { PDF_MAX_CANVAS_AREA, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 // The renderer's viewer components stand in for their real ones, which need a canvas and a worker. Each stub records
 // The last instance made, so a test can read what the toolbar told it to do
@@ -72,6 +72,7 @@ describe("pdfViewer", () => {
   const url = "/files/document.pdf";
   const PAGES_COUNT = 5;
   const PAGE_NUMBER = 3;
+  const LARGE_PAGE_SIDE = 4096;
   const NEED_PASSWORD = 1;
   const INCORRECT_PASSWORD = 2;
   const MAX_SCALE = 10;
@@ -289,6 +290,27 @@ describe("pdfViewer", () => {
 
     expect(pdfDocument.getPage).toHaveBeenCalledTimes(PAGES_COUNT);
     expect(print).toHaveBeenCalledOnce();
+  });
+
+  // iOS Safari draws a canvas above its area blank, so a page past the cap is printed at the scale that keeps it under
+  test("A page larger than the canvas cap prints at the capped scale", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
+    vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,");
+    const getViewport = vi
+      .spyOn(pdfPage, "getViewport")
+      .mockImplementation(({ scale }) => ({ height: LARGE_PAGE_SIDE * scale, width: LARGE_PAGE_SIDE * scale }));
+    Object.assign(window, { print: vi.fn<() => void>() });
+    const component = await mountViewer();
+    await flushPromises();
+    await findButton(component, "Print")?.trigger("click");
+    await flushPromises();
+    const printed = getViewport.mock.results.at(-1)?.value;
+    assert.exists(printed);
+
+    expect(printed.width * printed.height).toBeCloseTo(PDF_MAX_CANVAS_AREA);
   });
 
   // Closing the viewer while its pages still render leaves no dialog to print from, so the sheet is never appended

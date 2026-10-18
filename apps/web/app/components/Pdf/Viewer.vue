@@ -21,6 +21,7 @@ import {
   PDF_ROTATION_STEP,
 } from "@/services/pdf/constants";
 import { destroyLoadingTask } from "@/services/pdf/destroyLoadingTask";
+import { getCanvasScale } from "@/services/pdf/getCanvasScale";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
@@ -57,7 +58,10 @@ let isUnmounted = false;
 
 const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: number) => {
   const page = await pdfDocument.getPage(pageNumber);
-  const viewport = page.getViewport({ scale: PDF_PRINT_SCALE });
+  const { height, width } = page.getViewport({ scale: 1 });
+  // A page past the largest canvas a device draws is printed at the scale that fits it, since a larger one comes out blank
+  const scale = getCanvasScale({ cssWidth: width, pageHeight: height, pageWidth: width, pixelRatio: PDF_PRINT_SCALE });
+  const viewport = page.getViewport({ scale });
   const canvas = document.createElement("canvas");
   canvas.width = viewport.width;
   canvas.height = viewport.height;
