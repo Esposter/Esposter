@@ -8,8 +8,9 @@ import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsRe
 import { findMovedFrozenPass } from "#src/services/genshinParity/passes/findMovedFrozenPass";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
-import { readParityPassRows, writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
+import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
+import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
 import { defineCommand } from "citty";
 
 export const passesCommand: SubCommandsDef[string] = defineCommand({
