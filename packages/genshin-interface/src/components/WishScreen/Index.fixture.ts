@@ -12,9 +12,12 @@ const BANNER_LABELS = {
 // Highest rarity first
 export const props = {
   backLabel: "Back",
-  bannerKind: BannerKind.WeaponEvent,
-  bannerKinds: [BannerKind.CharacterEvent, BannerKind.WeaponEvent, BannerKind.Standard],
-  bannerLabels: BANNER_LABELS,
+  bannerId: "weapon-event",
+  banners: [
+    { id: "character-event", kind: BannerKind.CharacterEvent, label: BANNER_LABELS[BannerKind.CharacterEvent] },
+    { id: "weapon-event", kind: BannerKind.WeaponEvent, label: BANNER_LABELS[BannerKind.WeaponEvent] },
+    { id: "standard", kind: BannerKind.Standard, label: BANNER_LABELS[BannerKind.Standard] },
+  ],
   currencies: [
     { id: "Primogem", name: "Primogem", quantity: 0 },
     { id: "IntertwinedFate", name: "Intertwined Fate", quantity: 1 },
@@ -41,7 +44,7 @@ export const variants = {
       rateUp: "Every 10 wishes is guaranteed to include at least one 4-star or higher item.",
       title: [{ color: "#35AACCFF", text: "Born of" }, { text: " Ocean Swell" }],
     },
-    bannerKind: BannerKind.CharacterEvent,
+    bannerId: "character-event",
     pool: [
       { id: 10_000_051, isFeatured: true, name: "Eula", rarity: 5 },
       { id: 10_000_052, isFeatured: false, name: "Diluc", rarity: 5 },

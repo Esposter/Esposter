@@ -10,5 +10,7 @@ export interface Banner {
   fourStars: WishItem[];
   id: string;
   kind: BannerKind;
+  // The banner's number among the banners of its kind on offer in its window, the second of a pair being 2
+  kindNumber: number;
   threeStars: WishItem[];
 }
