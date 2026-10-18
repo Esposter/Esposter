@@ -513,6 +513,7 @@ const {
   characters,
   chargeParty,
   clearKitEffects,
+  coldDamageParty,
   defeatEnemy,
   hudMember,
   kitContext,
@@ -1203,6 +1204,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
         @sheer-cold="(value) => (hudFrame.sheerCold = value)"
+        @cold-damage="(damage) => coldDamageParty(damage)"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>

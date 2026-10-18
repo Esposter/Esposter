@@ -10,7 +10,7 @@ Dragonspine's Sheer Cold is the subzero climate's gauge. Standing in the climate
 - **Outside the climate with no heat, the gauge drains at 5% a second.** The wiki's "Leaving the Area" section names it: leaving an area with the gauge drains it at 5% a second. This replaces an earlier hold that had no source, so a character who leaves the climate full drains back down.
 - **Pyro does not drain the gauge.** The dump's Pyro rule is `ClimateAbility_HotMonster`, which belongs to the hot Boss bar, a separate gauge. The wiki agrees: Pyro is an accumulation modifier of -20%, not a drain, and its aura is not read by this change (named open below). So heat is the only drain, and the world's one heat rule is the campfire's.
 - **Scarlet Quartz is not a source of warmth.** The wiki says so outright. Its pickup takes 5% of the gauge and halts accumulation for 25 seconds, and the world has no Scarlet Quartz to pick up, so that is named open rather than built.
-- **Damage is 1% of max HP plus 150 HP each second the gauge stays full, handed on in HP.** The step returns the HP its full seconds cost, from the character's max HP, and Windrise emits it as `coldDamage`. The damage waits on the session's health path (task 3.1).
+- **Damage is 1% of max HP plus 150 HP each second the gauge stays full, handed on in HP.** The step returns the HP its full seconds cost, from the character's max HP, and Windrise emits it as `coldDamage`. The session takes it the way a boar's charge is taken: the team's shields absorb it first, and the member loses the share of max HP left over (`hitPartyMember`, which the enemy strike and the charge share too).
 - **The bar has no words.** The game's own name for the gauge is not in the reader's texts, and a `GameTextKey` member for it waits on the text write. The guide's link text "View Sheer Cold Details" is in the dump.
 
 ## Mechanism
@@ -60,4 +60,3 @@ flowchart TD
 - The wiki's modifiers the world cannot read yet are named open, not built: a snowstorm (+200%, task 3.3), Pyro (-20%) and Cryo or Hydro (+20%) on the character's aura, cold platforms and Cryo hypostases (+200%), and wind currents (+50%). The wiki's pause during dialogue and the Paimon menu is not built either.
 - Campfires are not placed in the world (task 3.2). The wiki's other sources of warmth (braziers, Seelies, statues, waypoints, the Frostbearing Tree) are not placed either.
 - The world's `WeatherKind` holds only Snow, so the snowstorm the guide names cannot quicken the fill until its weather exists.
-- The gauge's damage is computed and emitted; no code applies it to HP until the session's health path takes it (task 3.1).

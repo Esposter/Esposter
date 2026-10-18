@@ -30,6 +30,7 @@ import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDa
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
+import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
@@ -270,10 +271,19 @@ export const useWorldCombat = ({
     chargePartyMember(party, combatant, kitContext.kitEffectState);
     respawnParty();
   };
+  // The sheer cold's damage lands on the character on the field the way a boar's charge does, through the team's shields,
+  // And a team it fells respawns
+  const coldDamageParty = (damage: number) => {
+    const combatant = activeCombatant.value;
+    if (!combatant) return;
+    hitPartyMember(party, combatant, kitContext.kitEffectState, damage);
+    respawnParty();
+  };
   return {
     characterIdSkillGlyphsMap,
     characters,
     chargeParty,
+    coldDamageParty,
     clearKitEffects,
     defeatEnemy,
     hudMember,
