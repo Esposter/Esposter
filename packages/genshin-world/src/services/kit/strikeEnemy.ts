@@ -108,7 +108,7 @@ export const strikeEnemy = (
         additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
         amplifyingMultiplier,
         attackerLevel: combatant.level,
-        criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
+        criticalDamage: attributeTotalMap[Attribute.CriticalDamage] + (kitHit.criticalDamageBonus ?? 0),
         // The element's or the physical DMG Bonus, the all-damage bonus, the normal or charged attack bonus of the attack's tag,
         // The plunging attack bonus on a plunge,
         // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads

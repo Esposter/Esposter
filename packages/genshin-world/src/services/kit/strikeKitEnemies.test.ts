@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -215,6 +216,44 @@ describe(strikeKitEnemies, () => {
         .filter((event) => event.kind === KitEventKind.DamageTaken)
         .map(({ isCritical }) => isCritical),
     ).toStrictEqual([true]);
+  });
+
+  test("a strike takes the CRIT DMG an effect gives its striker's element, and a strike of another element takes none", () => {
+    expect.hasAssertions();
+    const combatant = {
+      ...createCombatant(undefined),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: 1000 },
+        { attribute: Attribute.CriticalRate, value: 0.5 },
+      ]),
+    };
+    const cryoEffects: KitEffect[] = [
+      {
+        amount: 1,
+        characterId: TRAVELER_CHARACTER_ID,
+        element: Element.Cryo,
+        kind: "elementCriticalDamage",
+        secondsRemaining: 1,
+      },
+    ];
+    const SURVIVING_HEALTH = 1e9;
+    const damageOf = (element: Element, effects: KitEffect[]): number => {
+      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      enemy.health = SURVIVING_HEALTH;
+      const context = createKitTestContext(combatant, {
+        enemyMap: new Map([[enemy.id, enemy]]),
+        enemyTables,
+        kitEffectState: { effects },
+        random: () => 0,
+      });
+      strikeKitEnemies([{ body: context.body, combatant, hit: { ...KIT_HIT, element }, target: enemy }], context);
+      return SURVIVING_HEALTH - enemy.health;
+    };
+
+    expect([
+      damageOf(Element.Cryo, cryoEffects) > damageOf(Element.Cryo, []),
+      damageOf(Element.Pyro, cryoEffects),
+    ]).toStrictEqual([true, damageOf(Element.Pyro, [])]);
   });
 
   test("a strike's flat base damage hook adds to the hit, which can defeat an enemy it would not otherwise", () => {

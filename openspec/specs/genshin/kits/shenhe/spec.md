@@ -1,6 +1,6 @@
 ## Purpose
 
-Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge and Constellation 2's six extra field seconds built, and her Quill, other passives, Constellation 2's Cryo CRIT DMG bonus and Constellations 4 and 6 left unbuilt.
+Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge, Constellation 2's six extra field seconds and its Cryo CRIT DMG on the active character built, and her Quill, other passives and Constellations 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -90,12 +90,34 @@ From Constellation 2, Divine Maiden's Deliverance's field SHALL last six seconds
 - **WHEN** Divine Maiden's Deliverance is cast
 - **THEN** its field lasts its base
 
+### Requirement: Constellation 2 gives the active character Cryo CRIT DMG in the field
+
+From Constellation 2, the active character standing in Divine Maiden's Deliverance's field SHALL gain 15% CRIT DMG on her Cryo strikes, refreshed each tick the field runs while she stands in it.
+
+#### Scenario: The active character in the field gains Cryo CRIT DMG
+
+- **GIVEN** Shenhe has Constellation 2 and Divine Maiden's Deliverance's field is up
+- **WHEN** the active character stands in the field and the field ticks
+- **THEN** her Cryo strikes take 15% more CRIT DMG, and her other strikes take none
+
+#### Scenario: A character outside the field gains nothing
+
+- **GIVEN** Shenhe has Constellation 2 and Divine Maiden's Deliverance's field is up
+- **WHEN** the field ticks with the active character standing outside it
+- **THEN** no character's strikes take CRIT DMG from it
+
+#### Scenario: Constellation 1 gives no CRIT DMG
+
+- **GIVEN** Shenhe has Constellation 1
+- **WHEN** the active character stands in Divine Maiden's Deliverance's field
+- **THEN** her strikes take no CRIT DMG from it
+
 ### Requirement: Unbuilt Shenhe effects
 
-Shenhe's Quill, her other passives, her Constellation 2's Cryo CRIT DMG bonus and her Constellations 4 and 6 SHALL NOT take effect.
+Shenhe's Quill, her other passives and her Constellations 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Shenhe has the Quill, a passive, Constellation 2's CRIT DMG bonus or Constellation 4 or 6 unlocked
+- **GIVEN** Shenhe has the Quill, a passive, or Constellation 4 or 6 unlocked
 - **WHEN** the player fights with Shenhe
 - **THEN** that effect has no effect
