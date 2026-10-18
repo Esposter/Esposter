@@ -75,6 +75,8 @@ export const ECHOES_OF_AN_OFFERING_ARTIFACT_SET_ID = 15_024;
 export const MIRRORED_NYMPH_ARTIFACT_SET_ID = 15_029;
 // Long Night's Oath's id in the set table
 export const LONG_NIGHTS_OATH_ARTIFACT_SET_ID = 15_039;
+// Gilded Dreams's id in the set table
+export const GILDED_DREAMS_ARTIFACT_SET_ID = 15_026;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
