@@ -70,6 +70,8 @@ describe(createFlowingPurityPassiveModule, () => {
     flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.01), context, wielder);
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
-    expect(buffs.every(({ amount }) => amount === 0.12)).toBe(true);
+    expect(buffs.map(({ amount, attribute }) => ({ amount, attribute }))).toStrictEqual(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
+    );
   });
 });
