@@ -110,6 +110,23 @@ describe(strikeKitEnemies, () => {
     ).toBe(100);
   });
 
+  test("gives a hit's onStrike the enemy each strike lands on, a targeted hit's and an area hit's alike", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(vi.fn());
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const targetedOnStrike = vi.fn<NonNullable<KitHit["onStrike"]>>();
+    strikeWithHit({ ...KIT_HIT, onStrike: targetedOnStrike }, enemy, combatant);
+    const areaEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const areaOnStrike = vi.fn<NonNullable<KitHit["onStrike"]>>();
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[areaEnemy.id, areaEnemy]]), enemyTables });
+    const areaHit = { ...KIT_HIT, hitArea: { angle: 2 * Math.PI, height: 1000, radius: 1000 }, onStrike: areaOnStrike };
+    const body = { ...context.body, position: { x: 0, z: -10 } };
+    strikeKitEnemies([{ body, combatant, hit: areaHit }], context);
+
+    expect(targetedOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([enemy]);
+    expect(areaOnStrike.mock.calls.map((call) => call[2])).toStrictEqual([areaEnemy]);
+  });
+
   test("sends the team's kits no elemental hit for a hit with no element", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
