@@ -13,7 +13,7 @@ Xiangling's kit is its record and one behaviour module, `createXianglingKitBehav
 
 ## Not built
 
-- **Guoba's aura, its particles, Chef de Cuisine, Deepfry and Guoba Mad are not built.** Guoba puts a Pyro aura on itself for gcsim's 30 frames before each breath, which Sucrose's skill and Faruzan's Pressurized Collapse can Swirl and an Anemo absorption can take, but a summon holds no element here. Its particle on each breath is not built. Chef de Cuisine is cooking, not combat, and Deepfry and Guoba Mad raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds.
+- **Guoba's aura, its particles, Chef de Cuisine, Deepfry and Guoba Mad are not built.** Guoba puts a Pyro aura on itself for gcsim's 30 frames before each breath, which Sucrose's skill and Faruzan's Pressurized Collapse can Swirl and an Anemo absorption can take, but a summon holds no element here. Its particle on each breath is not built. Chef de Cuisine is cooking, not combat, and Deepfry and Guoba Mad raise talent levels, which the [talents](../../talents/design.md) page holds.
 
 ## Key files
 

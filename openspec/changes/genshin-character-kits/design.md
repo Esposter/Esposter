@@ -44,7 +44,7 @@ Every character on the [character kits](../../specs/genshin/kits/README.md) inde
 
 ## What this does not propose
 
-- **Talent levels and constellations.** The kit reads its talent levels and constellations; raising them is the [talents](../genshin-talents/design.md) and [constellations](../genshin-constellations/design.md) pages'.
+- **Talent levels and constellations.** The kit reads its talent levels and constellations; raising them is the [talents](../../specs/genshin/talents/design.md) and [constellations](../genshin-constellations/design.md) pages'.
 - **The effects drawn.** A slash's trail, a field's circle and a burst's animation are the character's motion and the world's effects, matched in the [recreation passes](../genshin-recreation-passes/design.md).
 
 ## Key files

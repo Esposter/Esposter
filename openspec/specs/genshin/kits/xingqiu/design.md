@@ -19,7 +19,7 @@ Xingqiu's kit is its record and one behaviour module, `createXingqiuKitBehaviour
 ## Not built
 
 - **The Rain Swords' DMG reduction, interruption resistance and shattering are not built.** An enemy's strike on the character on the field reaches the team's shields and its HP and reads no DMG reduction, so the skill group's 20% and its share of Xingqiu's Hydro DMG Bonus have nowhere to go, and nothing tells the kit a strike landed to shatter a sword. The interruption resistance has nothing to act on, and the skill's Wet on Xingqiu has no place to sit.
-- **Xingqiu's particles, his other constellations, his utility passive and the burst's knockback are not built.** The skill's 5 particles are not built. Weaver of Verses and Embrace of Rain raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds, and Flash of Genius is crafting, not combat. Raincutter's activation knockback, 400 poise with no damage, is not built, as gcsim does not implement it and no source gives its frame.
+- **Xingqiu's particles, his other constellations, his utility passive and the burst's knockback are not built.** The skill's 5 particles are not built. Weaver of Verses and Embrace of Rain raise talent levels, which the [talents](../../talents/design.md) page holds, and Flash of Genius is crafting, not combat. Raincutter's activation knockback, 400 poise with no damage, is not built, as gcsim does not implement it and no source gives its frame.
 
 ## Key files
 

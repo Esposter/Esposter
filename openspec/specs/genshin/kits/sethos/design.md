@@ -14,7 +14,7 @@ Sethos's kit is built from its record alone, on avatar 10000097, and `createSeth
 - **The plain Aimed Shot is not built.** A short, uncharged shot deals Physical damage at 16 frames, and the kit has no slot for it beside the fully-charged one. It waits on the same hold-level hook as Shadowpiercing Shot.
 - **Secret Rite's Dusk Bolts are not built.** For 8 seconds his burst makes his normal attacks Dusk Bolts, Electro with a flat Elemental Mastery bonus and a piercing reach, and forbids aiming. A stance holds normal attacks and a charged attack, and Dusk Bolts have no charged attack to stand in for, so the buff waits on a stance without one. The burst deals no damage itself, so it is built as its animation, cost and cooldown.
 - **Ancient Rite's energy refund on a reaction is not built.** A reaction that his own skill's damage triggers refunds 12 energy, and the kit's reaction event does not say which action struck, so it waits on a hook that names the striking action.
-- **His ascension passives and constellations are not built.** Ascension 1's shorter charge, which spends energy to skip part of the aim, waits on the same hold-level hook as Shadowpiercing Shot. The fourth ascension's flat bonus to Shadowpiercing Shot waits on it too. The constellations that raise talent levels are the [talents](../../../../changes/genshin-talents/design.md) page's.
+- **His ascension passives and constellations are not built.** Ascension 1's shorter charge, which spends energy to skip part of the aim, waits on the same hold-level hook as Shadowpiercing Shot. The fourth ascension's flat bonus to Shadowpiercing Shot waits on it too. The constellations that raise talent levels are the [talents](../../talents/design.md) page's.
 
 ## Key files
 
