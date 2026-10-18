@@ -46,6 +46,10 @@ const addPenetrativeReasoning = ({ kitEffectState, party }: KitContext, { combat
 // Tags, up to 4 a cast, that holds an aura Windmuster Iris takes has an Iris cast where it stands, in the first of the
 // Four elements it holds. Penetrative Reasoning from Ascension 4 is built, and his Ascension 1 and constellations are not,
 // As the Declension stacks they add are not read by his press
+// Constellation 1 needs a Declension stack for Heartstopper Strike and the Normal Attack SPD, neither built
+// Constellation 2 needs Windmuster Kick's Arresting Windtunnel, whose pull and duration the kit does not build
+// Constellation 4 needs the explosions each Windmuster Kick counts, which the kit does not count, not built
+// Constellation 6 needs Heartstopper Strike's Declension stacks and Conviction, which are not built
 export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): KitBehaviour => {
   const [irisCheckHit] = kit.elementalBurst.hits;
   // Each Iris takes its element from the aura its enemy holds
