@@ -2,6 +2,7 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
@@ -171,4 +172,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1839966563": createSkillAndBurstDamagePassiveModule,
   // Echo (Eye of Perception)
   "2057933859": createBoltOfPerceptionPassiveModule,
+  // Archer's Message (Messenger)
+  "3847632939": createArchersMessagePassiveModule,
 };
