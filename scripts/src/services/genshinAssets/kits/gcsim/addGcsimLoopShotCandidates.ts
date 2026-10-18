@@ -3,6 +3,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
@@ -20,10 +21,9 @@ const LOOP_SHOT_RADIUS_LINE = 131;
 // Kinich's blessing Loop Shots: each of its two actions is two hits, at the hitmarks of its place in the constant's
 // Strings, on the circle round the player, with the skill's multiplier and the Loop Shot's attack. Its strings are the
 // Skill's hit count of actions, as gcsim's skillHitNum gives them (attack.go line 35)
-export const addGcsimLoopShotCandidates = (
-  { add, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap }: GcsimCharacter,
-): void => {
+export const addGcsimLoopShotCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
+  const { add, toFile } = writer;
+  const { attacks, config, constantMap } = gcsim;
   const actionCount = findGcsimConstant(constantMap, "skillHitNum");
   const hitmarks = findGcsimConstant(constantMap, "skillAttackHitmarks");
   const attack = attacks.find(({ talentVariable }) => talentVariable === "loopShot");
@@ -46,27 +46,27 @@ export const addGcsimLoopShotCandidates = (
       file,
       LOOP_SHOT_ANIMATION_LINES[actionIndex] ?? hitmarks.line,
     );
-    add(`${actionPath}.hits.length`, actionHitmarks.length, file, hitmarks.line);
-    for (const [hitIndex, hitmark] of actionHitmarks.entries()) {
-      const hitmarkFrames = readGoNumber(hitmark);
-      if (hitmarkFrames === undefined) continue;
-      addHit(
-        `${actionPath}.hits.${hitIndex}`,
-        {
-          areaHitbox: {
-            center: GcsimHitboxCenter.Player,
-            file: "attack.go",
-            line: LOOP_SHOT_RADIUS_LINE,
-            name: "loopShot",
-            radius: LOOP_SHOT_RADIUS,
-            shape: GcsimHitboxShape.Circle,
-          },
-          attack,
-          hitmark: { file: hitmarks.file, line: hitmarks.line, value: hitmarkFrames },
-          talentLeaf: findGcsimTalentLeaf(config, "loopShot", [0]),
+    addGcsimHitmarkHits(writer, gcsim, {
+      hitmarks: {
+        file: hitmarks.file,
+        line: hitmarks.line,
+        name: hitmarks.name,
+        values: actionHitmarks.map((hitmark) => readGoNumber(hitmark)),
+      },
+      path: actionPath,
+      readHit: () => ({
+        areaHitbox: {
+          center: GcsimHitboxCenter.Player,
+          file: "attack.go",
+          line: LOOP_SHOT_RADIUS_LINE,
+          name: "loopShot",
+          radius: LOOP_SHOT_RADIUS,
+          shape: GcsimHitboxShape.Circle,
         },
-        STRIKE_TARGETING_AREA,
-      );
-    }
+        attack,
+        talentLeaf: findGcsimTalentLeaf(config, "loopShot", [0]),
+      }),
+      targetingArea: STRIKE_TARGETING_AREA,
+    });
   }
 };
