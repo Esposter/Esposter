@@ -1,4 +1,4 @@
-import { CookingQuality, DishTarget } from "genshin-world";
+import { Attribute, CookingQuality, DishTarget } from "genshin-world";
 
 // The game's cook recipe, cook bonus and compound tables in the dump, read by their names. The material table is the
 // Crafting's, read by the same name
@@ -16,8 +16,30 @@ export const HEAL_BUFF_DESCRIPTION_REGEX = /^(?<percent>\d+)%\+(?<flat>\d+)(?:�
 // The ability a dish's revive buff names, whose description writes the HP it restores to a fallen character
 export const REVIVE_BUFF_ABILITY_NAME = "revive_buff";
 export const REVIVE_BUFF_DESCRIPTION_REGEX = /^恢复(?<flat>\d+)HP$/u;
-// The percent a heal's share is out of
-export const HEAL_PERCENT_TOTAL = 100;
+// The percent a heal's share and a bonus's percentage are out of
+export const PERCENT_TOTAL = 100;
+// The abilities a dish's bonus buff names. Each of the attack and the defence writes a flat amount first, which is the
+// Stat it names; the critical one writes only percentages
+export const BONUS_ABILITY_NAMES = ["Atk_Team", "Def_Team", "Critical_Team"];
+export const BONUS_FLAT_ATTRIBUTE_MAP: Record<string, Attribute> = {
+  Atk_Team: Attribute.Attack,
+  Def_Team: Attribute.Defense,
+};
+// The stat a percentage clause names, the name written without the 提升 a clause may end it with
+export const BONUS_CLAUSE_ATTRIBUTE_MAP: Record<string, Attribute> = {
+  元素充能: Attribute.EnergyRecharge,
+  治疗效果: Attribute.HealingBonus,
+  暴击: Attribute.CriticalRate,
+  暴击率: Attribute.CriticalRate,
+  暴击伤害: Attribute.CriticalDamage,
+  护盾强效: Attribute.ShieldStrength,
+  物理增伤: Attribute.PhysicalDamageBonus,
+  生命值上限: Attribute.HealthPercent,
+};
+// The separators between a bonus description's clauses, the plus and the full-width comma, and the two clause forms
+export const BONUS_CLAUSE_SEPARATOR_REGEX = /[+，]/u;
+export const BONUS_FLAT_CLAUSE_REGEX = /^(?<flat>\d+)$/u;
+export const BONUS_PERCENT_CLAUSE_REGEX = /^(?<name>.+?)(?:提升)?(?<percent>\d+)%$/u;
 // The use a dish's item carries to add its buff, and the target each use names: the selected character, alive or down,
 // Or the party
 export const ADD_SERVER_BUFF_USE_OP = "ITEM_USE_ADD_SERVER_BUFF";

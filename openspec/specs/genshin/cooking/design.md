@@ -65,7 +65,7 @@ The quality weights the table gives each dish are all the Delicious weight in th
 - **The zones are provisional.** `readCookingZones` reads a recipe's zone parameters as the centre and the width of the regular zone along the bar, and the delicious zone takes a provisional share of that width. Which parameter lays out which zone, and the indicator's speed, are measured off a recording of the cooking screen, owed on the roadmap.
 - **The special dish's order is read, not confirmed.** The chances are matched to the qualities in the order the table lists the results, the order its food qualities confirm. No public source confirms it yet, so a recording owed on the roadmap does.
 - **Most processings are closed.** Most are not known from the start, and the table names no instruction that teaches them, all of them in one group. They stay closed until that source is read.
-- **Nothing is placed or on a screen.** The stove and the cooking screen are not built, as with the [crafting](../crafting/design.md) bench, and nothing is eaten: a dish's heal and bonus wait on the [inventory](../../../changes/genshin-inventory/design.md)'s using and the character kits.
+- **Nothing is placed or on a screen.** The stove and the cooking screen are not built, as with the [crafting](../crafting/design.md) bench. A dish eaten from the bag applies its heal, revive or bonus through the [inventory](../inventory/design.md)'s using and the character kits; a bonus is read for the attack, defence and critical dishes' stats, and a dish naming another stat gives none until that stat is modelled.
 
 ## Sources
 

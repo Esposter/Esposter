@@ -7,10 +7,12 @@ import {
   REVIVE_BUFF_ABILITY_NAME,
 } from "#src/services/genshinAssets/cooking/constants";
 import { toDishUse } from "#src/services/genshinAssets/cooking/toDishUse";
-import { DishTarget } from "genshin-world";
+import { Attribute, DishTarget } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(toDishUse, () => {
+  const BONUS_ATTACK_ABILITY_NAME = "Atk_Team";
+  const BONUS_CRITICAL_ABILITY_NAME = "Critical_Team";
   const BUFF_ID = 1;
   const DISH_ID = 10;
   const createRow = (overrides: Partial<MaterialRow> = {}): MaterialRow => ({
@@ -24,10 +26,11 @@ describe(toDishUse, () => {
     useTarget: "ITEM_USE_TARGET_CUR_TEAM",
     ...overrides,
   });
-  const createBuff = (desc: string, abilityName = HEAL_BUFF_ABILITY_NAME): BuffRow => ({
+  const createBuff = (desc: string, abilityName = HEAL_BUFF_ABILITY_NAME, time = 0): BuffRow => ({
     abilityName,
     desc,
     serverBuffId: BUFF_ID,
+    time,
   });
 
   test("should read a heal dish's share of Max HP, flat amount and the party it reaches", () => {
@@ -65,6 +68,40 @@ describe(toDishUse, () => {
       revive: { flat: 500 },
       target: DishTarget.Selected,
     });
+  });
+
+  test("should read a bonus dish's flat attack and critical rate, and how long the bonus lasts", () => {
+    expect.hasAssertions();
+
+    expect(toDishUse(createRow(), [createBuff("224+暴击率6%", BONUS_ATTACK_ABILITY_NAME, 300)])).toStrictEqual({
+      bonus: {
+        attributes: [
+          { amount: 224, attribute: Attribute.Attack },
+          { amount: 0.06, attribute: Attribute.CriticalRate },
+        ],
+        seconds: 300,
+        source: BONUS_ATTACK_ABILITY_NAME,
+      },
+      target: DishTarget.Party,
+    });
+  });
+
+  test("should read each clause of a bonus description, a percentage clause by its stat", () => {
+    expect.hasAssertions();
+
+    expect(
+      toDishUse(createRow(), [createBuff("物理增伤提升25%，暴击6%", BONUS_CRITICAL_ABILITY_NAME, 300)])?.bonus
+        ?.attributes,
+    ).toStrictEqual([
+      { amount: 0.25, attribute: Attribute.PhysicalDamageBonus },
+      { amount: 0.06, attribute: Attribute.CriticalRate },
+    ]);
+  });
+
+  test("should give no bonus to a dish whose bonus description it does not read", () => {
+    expect.hasAssertions();
+
+    expect(toDishUse(createRow(), [createBuff("wotem", BONUS_ATTACK_ABILITY_NAME, 300)])).toBeUndefined();
   });
 
   test("should give no use to a dish whose heal buff is a drawback", () => {
