@@ -31,7 +31,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 - **Two kinds jump.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven and the Teleport Waypoint. A tree or a building is never a jump target.
 - **A waypoint always has an arrival.** `WaypointLandmark` requires its `arrival` in its schema. Every landmark's base allows one, and `computeJumpPose` treats a jump to a landmark without one as an error, since there is nowhere to land.
 - **The landing is the arrival.** `computeJumpPose` puts the character at the arrival's place, at its height offset and facing its rotation.
-- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues or waypoints. A locked one is offered to F, and activating it unlocks it.
+- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues or waypoints. A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`), and activating it unlocks it.
 - **The jump list names by area.** It groups the jumps by region, and each is named by its area's name, so a waypoint and a statue in one area read alike.
 
 ## Data and measures
@@ -63,7 +63,6 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Notes
 
-- **A locked waypoint's F prompt is named as a statue.** The world's prompts name each locked jump landmark by the Statue of The Seven's text, as they did when only statues were jumps, so a waypoint reads the same until its own text is named. [Roadmap](../../../changes/genshin-roadmap/tasks.md) holds the fix.
 - **A waypoint's first unlock pays no reward yet.** `LandmarkIdStatuePointIdMap` names only Windrise's statue, so unlocking a waypoint pays no Primogems or Adventure EXP and counts no transport point unlock until its point is named there.
 - **Only the regions in `WAYPOINT_REGIONS` have waypoints.** Each further region is added to that list once its map fit is checked.
 
