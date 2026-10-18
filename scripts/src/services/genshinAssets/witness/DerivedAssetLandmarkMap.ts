@@ -84,9 +84,9 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
   // Mondstadt's six landmarks (ParityReferenceMap's mondstadt-city-location: the towers' and the gate tower's parapets)
-  // Name no mesh, so all six are dropped: the extraction holds the city's ruin blocks, flags and steps, none named a
-  // Tower, gate, wall or plinth, and its wall columns stand 412 metres or more off the city. Its layout dumps name a
-  // Stages_Build_BeaconTower01 that no OBJ exports, so a re-extraction is the way to name them
+  // Are unnamed: the extraction exports the city's candidate meshes (Area_MdBuild_Tower01_Lod0 and Area_MdBuild_Tower02_Lod0
+  // For the towers, Area_MdBuild_Gate02_Lod0 for the gate tower, Stages_Build_BeaconTower01 beside them), but which instance
+  // Is which landmark needs the camera the pose solves, so the map stays empty until that pose runs on the parity page
   [DerivedAssetComponent.Mondstadt]: {},
   // The People of the Springs' seven landmarks (ParityReferenceMap's people-of-the-springs-location: the spire and the
   // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
