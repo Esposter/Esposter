@@ -5,6 +5,8 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
+// The game's shop table in the dump, every shop's goods by the shop's number
+export const SHOP_GOODS_TABLE_NAME = "ShopGoodsExcelConfigData";
 // The Good Hunter's food shop, which Sara runs: the restaurant's food, cooking ingredients and recipes, shop 1005 in the table
 export const GOOD_HUNTER_SHOP_TYPE = 1005;
 // The Fishing Associations' shops, one in each region, by the shop's number in the goods table and the stem of the dataset
