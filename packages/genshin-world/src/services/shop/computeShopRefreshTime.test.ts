@@ -37,6 +37,24 @@ describe(computeShopRefreshTime, () => {
     );
   });
 
+  test("should count the week's refresh on the Monday at the game hour, the Monday before until it comes", () => {
+    expect.hasAssertions();
+
+    // The epoch is a Thursday, so the week's Monday before it is three days back, at the game hour
+    const PREVIOUS_WEEK_REFRESH = EPOCH.subtract({ hours: 4 + 24 * 3 });
+    const WEEK_REFRESH = EPOCH.add({ hours: 24 * 4 - 4 });
+
+    expect(computeShopRefreshTime(ShopRefresh.Weekly, EPOCH).epochMilliseconds).toBe(
+      PREVIOUS_WEEK_REFRESH.epochMilliseconds,
+    );
+    expect(computeShopRefreshTime(ShopRefresh.Weekly, WEEK_REFRESH.subtract({ hours: 1 })).epochMilliseconds).toBe(
+      PREVIOUS_WEEK_REFRESH.epochMilliseconds,
+    );
+    expect(computeShopRefreshTime(ShopRefresh.Weekly, WEEK_REFRESH).epochMilliseconds).toBe(
+      WEEK_REFRESH.epochMilliseconds,
+    );
+  });
+
   test("should count a good that never refreshes from the epoch", () => {
     expect.hasAssertions();
 

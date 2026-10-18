@@ -5,6 +5,7 @@ import {
   GAME_TIME_OFFSET,
   MORA_ITEM_ID,
   SHOP_REFRESH_BY_TABLE_TYPE,
+  SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
 import { getShopGoodPrice } from "#src/services/genshinAssets/shops/getShopGoodPrice";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -16,7 +17,7 @@ export const toShopGoodRow = (row: ExcelShopGoodsRow): ShopGoodRow => {
   const price = row.costScoin > 0 ? { count: row.costScoin, id: MORA_ITEM_ID } : getShopGoodPrice(row);
   if (!price)
     throw new InvalidOperationError(Operation.Read, "shop good", `good ${row.goodsId} has no single item price`);
-  const refresh = SHOP_REFRESH_BY_TABLE_TYPE[row.refreshType];
+  const refresh = SHOP_REFRESH_BY_TABLE_TYPE[row.refreshType ?? SHOP_REFRESH_NONE_TABLE_TYPE];
   if (!refresh)
     throw new InvalidOperationError(Operation.Read, "shop good", `good ${row.goodsId} has no known refresh`);
   return {

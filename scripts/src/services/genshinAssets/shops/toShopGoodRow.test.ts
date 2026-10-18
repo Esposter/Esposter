@@ -27,6 +27,7 @@ describe(toShopGoodRow, () => {
     refreshType: "SHOP_REFRESH_MONTHLY",
     rotateId: 0,
     shopType: 1001,
+    subTabId: 0,
   };
 
   test("should write the good's price and dates, the dates at the game's offset", () => {
@@ -44,6 +45,12 @@ describe(toShopGoodRow, () => {
       priceItemId: STARDUST_ITEM_ID,
       refresh: ShopRefresh.Monthly,
     });
+  });
+
+  test("should give a good the table leaves no refresh for none", () => {
+    expect.hasAssertions();
+
+    expect(toShopGoodRow({ ...row, refreshType: undefined }).refresh).toBe(ShopRefresh.None);
   });
 
   test("should price a good the table gives in Mora at its Mora cost", () => {

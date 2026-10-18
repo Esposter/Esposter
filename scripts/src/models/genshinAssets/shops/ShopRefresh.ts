@@ -3,4 +3,5 @@ export enum ShopRefresh {
   Daily = "Daily",
   Monthly = "Monthly",
   None = "None",
+  Weekly = "Weekly",
 }
