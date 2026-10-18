@@ -6,6 +6,7 @@ import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
+import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { WishPity } from "#src/models/wish/WishPity";
@@ -17,7 +18,7 @@ import type { BannerKind } from "genshin-interface/save";
 // Its id, the day's Commissions with the moment they were dealt, each kind of wish's Counters, the bench's learned recipes
 // And each recipe's Crafted count by its id, the Frostbearing Tree's offering Progress, each region's Statues of The Seven
 // Progress by the Region's id, the ids of the Oculi found, the ids of the Seelies settled and the puzzles solved, the World
-// Level adjustment and the name chosen for The Traveler. The save's Slices convert to and from these
+// Level adjustment, the name chosen for The Traveler and the party. The save's Slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -31,6 +32,7 @@ export interface GenshinSaveState {
   frostbearingTreeProgress: OfferingProgressSave;
   inventory: Inventory;
   openedChestIds: ReadonlySet<string>;
+  party: Party;
   quests: ReadonlyMap<string, QuestProgress>;
   regionStatueProgressMap: ReadonlyMap<string, OfferingProgressSave>;
   reputation: ReputationProgress;
