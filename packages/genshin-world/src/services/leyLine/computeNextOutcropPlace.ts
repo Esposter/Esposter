@@ -1,18 +1,24 @@
-import type { OutcropRegion } from "#src/models/leyLine/OutcropRegion";
+import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
+import type { GroundPoint } from "genshin-engine";
 
-// The first place a place moves to next, undefined where the place is not in the region or moves to none
-const findFirstNextId = ({ places }: OutcropRegion, placeId: number): number | undefined =>
-  places.find((place) => place.id === placeId)?.nextIds[0];
+const computeDistanceSquared = (from: GroundPoint, to: GroundPoint): number =>
+  (from.x - to.x) ** 2 + (from.z - to.z) ** 2;
 
-// The place a claimed outcrop moves to from its place: the next place it moves to, or the one after that when the other
-// Kind stands there. Undefined where neither can be taken, so the outcrop stays where it is until the daily reset
+// The place a claimed outcrop moves to: the nearest fitted place of its region but its own, and not the one the other
+// Kind stands at, the nearer of two equally near taken by its id. Undefined where no place is free, so the outcrop
+// Stays where it is until the daily reset. Provisional until the dump's place chain is joined to the fitted places
 export const computeNextOutcropPlace = (
-  region: OutcropRegion,
+  placements: OutcropPlacement[],
   placeId: number,
   otherKindPlaceId: number | undefined,
 ): number | undefined => {
-  const nextId = findFirstNextId(region, placeId);
-  if (nextId === undefined) return undefined;
-  else if (nextId === otherKindPlaceId) return findFirstNextId(region, nextId);
-  else return nextId;
+  const from = placements.find(({ id }) => id === placeId);
+  if (!from) return undefined;
+  return placements
+    .filter(({ id }) => id !== placeId && id !== otherKindPlaceId)
+    .toSorted(
+      (firstPlacement, secondPlacement) =>
+        computeDistanceSquared(from.position, firstPlacement.position) -
+          computeDistanceSquared(from.position, secondPlacement.position) || firstPlacement.id - secondPlacement.id,
+    )[0]?.id;
 };

@@ -9,23 +9,19 @@ import { describe, expect, test } from "vitest";
 describe(advanceOutcrop, () => {
   const FIRST_PLACE_ID = 11;
   const SECOND_PLACE_ID = 12;
-  const region = {
-    kinds: [],
-    places: [
-      { id: FIRST_PLACE_ID, nextIds: [SECOND_PLACE_ID], sectionId: 1 },
-      { id: SECOND_PLACE_ID, nextIds: [], sectionId: 1 },
-    ],
-    sectionIds: [1],
-  };
+  const placements = [
+    { id: FIRST_PLACE_ID, position: { x: 0, z: 0 } },
+    { id: SECOND_PLACE_ID, position: { x: 50, z: 0 } },
+  ];
   const waiting: Outcrop = { kind: OutcropKind.Revelation, placeId: FIRST_PLACE_ID, stage: OutcropStage.Waiting };
 
   test("touching a waiting outcrop starts its fight, and its last enemy's defeat clears it", () => {
     expect.hasAssertions();
 
-    const fighting = advanceOutcrop(region, waiting, undefined, OutcropEvent.Touched);
+    const fighting = advanceOutcrop(placements, waiting, undefined, OutcropEvent.Touched);
 
     expect(fighting).toStrictEqual({ ...waiting, stage: OutcropStage.Fighting });
-    expect(advanceOutcrop(region, fighting, undefined, OutcropEvent.LastEnemyDefeated)).toStrictEqual({
+    expect(advanceOutcrop(placements, fighting, undefined, OutcropEvent.LastEnemyDefeated)).toStrictEqual({
       ...waiting,
       stage: OutcropStage.Cleared,
     });
@@ -36,30 +32,25 @@ describe(advanceOutcrop, () => {
 
     const cleared: Outcrop = { ...waiting, stage: OutcropStage.Cleared };
 
-    expect(advanceOutcrop(region, cleared, undefined, OutcropEvent.Touched)).toStrictEqual(cleared);
-    expect(advanceOutcrop(region, cleared, undefined, OutcropEvent.LastEnemyDefeated)).toStrictEqual(cleared);
+    expect(advanceOutcrop(placements, cleared, undefined, OutcropEvent.Touched)).toStrictEqual(cleared);
+    expect(advanceOutcrop(placements, cleared, undefined, OutcropEvent.LastEnemyDefeated)).toStrictEqual(cleared);
   });
 
-  test("claiming moves the outcrop to its group's next place", () => {
+  test("claiming moves the outcrop to the nearest other place", () => {
     expect.hasAssertions();
 
     expect(
-      advanceOutcrop(region, { ...waiting, stage: OutcropStage.Cleared }, undefined, OutcropEvent.Claimed),
+      advanceOutcrop(placements, { ...waiting, stage: OutcropStage.Cleared }, undefined, OutcropEvent.Claimed),
     ).toStrictEqual({ ...waiting, placeId: SECOND_PLACE_ID });
   });
 
   test("a claimed outcrop with no place to move to stays claimed until the reset", () => {
     expect.hasAssertions();
 
-    const claimed: Outcrop = { ...waiting, placeId: SECOND_PLACE_ID, stage: OutcropStage.Claimed };
+    const claimed: Outcrop = { ...waiting, stage: OutcropStage.Claimed };
 
     expect(
-      advanceOutcrop(
-        region,
-        { ...waiting, placeId: SECOND_PLACE_ID, stage: OutcropStage.Cleared },
-        undefined,
-        OutcropEvent.Claimed,
-      ),
+      advanceOutcrop(placements, { ...waiting, stage: OutcropStage.Cleared }, SECOND_PLACE_ID, OutcropEvent.Claimed),
     ).toStrictEqual(claimed);
   });
 });
