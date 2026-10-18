@@ -47,9 +47,9 @@ export const genshinSaveSchema = z
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The camps the player has cleared, each once by its id, with the point it stands at
     clearedCamps: createUniqueArraySchema(clearedCampSchema, "id").max(MAX_CLEARED_CAMP_COUNT),
-    // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again
     // The one-time domains cleared, each once, so a repeat clear gives nothing
     clearedDomains: clearedDomainSaveSchema,
+    // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,
     // The cooking: the dishes learned, each dish's proficiency and each processing's queue, each by its id

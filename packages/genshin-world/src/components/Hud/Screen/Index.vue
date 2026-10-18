@@ -186,9 +186,9 @@ const emit = defineEmits<{ map: []; menu: [] }>();
         />
       </GameRect>
     </GameRect>
+    <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <!-- The stamina meter stands on the screen itself rather than in its rect of the tree, which sits at the screen's
          Middle, since the recordings show it beside the character wherever the character stands -->
-    <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <HudStamina :frame :game-text :max-stamina />
     <slot name="prompts" />
   </GameScreen>
