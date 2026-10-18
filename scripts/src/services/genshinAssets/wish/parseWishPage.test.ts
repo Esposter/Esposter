@@ -28,6 +28,56 @@ describe(parseWishPage, () => {
     });
   });
 
+  test("a page naming no offset is read at the Asia server's GMT+8", () => {
+    expect.hasAssertions();
+
+    expect(parseWishPage(createWishPage("GMT+8").replace("|time_start_offset = GMT+8\n", ""))).toStrictEqual({
+      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+      fiveStarNames: ["a", "b"],
+      fourStarNames: ["c", "d", "e"],
+      kind: WishEventKind.WeaponEvent,
+      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+    });
+  });
+
+  test("an offset written as UTC is read at the same offset", () => {
+    expect.hasAssertions();
+
+    expect(parseWishPage(createWishPage("UTC+8"))).toStrictEqual({
+      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+      fiveStarNames: ["a", "b"],
+      fourStarNames: ["c", "d", "e"],
+      kind: WishEventKind.WeaponEvent,
+      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+    });
+  });
+
+  test("a page spacing its Summary heading and bullets loosely is read as the same page", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseWishPage(createWishPage("GMT+8").replace("===Summary===", "===Summary ===").replaceAll(/^\* /gmu, "*")),
+    ).toStrictEqual({
+      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+      fiveStarNames: ["a", "b"],
+      fourStarNames: ["c", "d", "e"],
+      kind: WishEventKind.WeaponEvent,
+      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+    });
+  });
+
+  test("a name a stray separator leaves empty is not an item", () => {
+    expect.hasAssertions();
+
+    expect(parseWishPage(createWishPage("GMT+8").replace("{Wish Item|e}", "{Wish Item|e;}"))).toStrictEqual({
+      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+      fiveStarNames: ["a", "b"],
+      fourStarNames: ["c", "d", "e"],
+      kind: WishEventKind.WeaponEvent,
+      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+    });
+  });
+
   test("a window is read at the offset its page names", () => {
     expect.hasAssertions();
 
