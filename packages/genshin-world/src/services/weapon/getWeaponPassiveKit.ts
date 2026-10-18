@@ -18,6 +18,9 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
       ...(kit.getPassiveBonuses?.(combatant, healthShare) ?? []),
       ...(passive.getPassiveBonuses?.(combatant, healthShare) ?? []),
     ],
+    getStrikeDamageBonus: (strike, enemy, party) =>
+      (kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0) +
+      (passive.getStrikeDamageBonus?.(strike, enemy, party) ?? 0),
     onKitEvent: (event, context, combatant) => {
       kit.onKitEvent?.(event, context, combatant);
       passive.onKitEvent?.(event, context, combatant);

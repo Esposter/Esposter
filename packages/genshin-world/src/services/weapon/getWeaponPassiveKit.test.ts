@@ -6,13 +6,20 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { AuraType } from "#src/models/combat/AuraType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 // Full HP Critic Up's weapon, with its name's text id and each refinement rank's CRIT Rate as its table gives them
 const WEAPON_DATA: WeaponData = {
   ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 }],
@@ -65,5 +72,45 @@ describe(getWeaponPassiveKit, () => {
     expect.hasAssertions();
 
     expect(getCriticalRateLines(2)).toStrictEqual([{ amount: 0.175, attribute: Attribute.CriticalRate }]);
+  });
+
+  test("a bane passive raises its wielder's strike on an enemy under its elements", () => {
+    expect.hasAssertions();
+
+    // Bane of Water and Ice, whose name's text id and rank parameters its table gives
+    const baneWeaponData: WeaponData = {
+      ...WEAPON_DATA,
+      id: 11301,
+      passiveNameTextId: "523615731",
+      passiveRankParams: [[0.12], [0.15], [0.18], [0.21], [0.24]],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 11301, level: 1, refinement: 1 },
+      baneWeaponData,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.elementalState.auras.set(AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false });
+
+    expect(
+      weaponKit.getStrikeDamageBonus?.(
+        {
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant,
+          hit: takeOne(takeOne(KIT.normalAttacks).hits),
+        },
+        enemy,
+        createParty([TRAVELER_CHARACTER_ID]),
+      ),
+    ).toBe(0.12);
   });
 });
