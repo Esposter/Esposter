@@ -30,6 +30,15 @@ describe(getWishReturn, () => {
     });
   });
 
+  test("a repeat draw returns Starglitter", () => {
+    expect.hasAssertions();
+
+    expect(getWishReturn({ id: 0, kind: WishItemKind.Character, name: "", rarity: 5 }, 1)).toStrictEqual({
+      currency: Currency.MasterlessStarglitter,
+      quantity: FIVE_STAR_DUPLICATE_STARGLITTER,
+    });
+  });
+
   test("returns Stardust for a three-star weapon", () => {
     expect.hasAssertions();
 

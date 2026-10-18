@@ -10,7 +10,6 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
-import { createCharacter } from "#src/services/character/createCharacter";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
@@ -25,6 +24,7 @@ import {
   TEN_WISH_COUNT,
 } from "#src/services/wish/constants";
 import { createBanners } from "#src/services/wish/createBanners";
+import { getNewCharacters } from "#src/services/wish/getNewCharacters";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
@@ -169,9 +169,7 @@ const wish = (count: number) => {
       nextInventory = addInventoryItem(nextInventory, toWeaponDefinition(weaponData, item.name), 1).inventory;
     }
   // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy
-  const newCharacters = [...wishes.heldCountMap.keys()]
-    .filter((id) => !characterCopyCountMap.value.has(id))
-    .map((id) => createCharacter(id, statTables.characterDataMap));
+  const newCharacters = getNewCharacters(characterCopyCountMap.value, wishes.heldCountMap, statTables.characterDataMap);
   if (newCharacters.length > 0) characters.value = [...characters.value, ...newCharacters];
   characterCopyCountMap.value = wishes.heldCountMap;
   inventory.value = nextInventory;
