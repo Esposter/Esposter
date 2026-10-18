@@ -10,10 +10,11 @@ export const MENU_SCREEN_BEHAVIOUR: Readonly<ScreenBehaviour> = {
   isHudHidden: true,
   isPointerReleased: true,
 };
-// The screens an NPC or a world object opens (the crafting bench, the expedition board, the fishing point, the forge, the
-// Duel board): held like a menu, their header their own component's, so they have no Paimon menu entry, no menu slot
-// And no placeholder title
+// The screens an NPC or a world object opens (the cooking pot, the crafting bench, the expedition board, the fishing
+// Point, the forge, the duel board): held like a menu, their header their own component's, so they have no Paimon menu
+// Entry, no menu slot and no placeholder title
 export const NPC_SCREEN_KINDS = [
+  ScreenKind.Cooking,
   ScreenKind.Crafting,
   ScreenKind.Expedition,
   ScreenKind.Fishing,
