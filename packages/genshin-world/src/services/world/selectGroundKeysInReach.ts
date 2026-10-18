@@ -1,4 +1,4 @@
-import type { Catalogue } from "#src/models/world/Catalogue";
+import type { GroundPoint } from "genshin-engine";
 
 import { REGION_REACH } from "#src/services/constants";
 import { computeOutlineDistance } from "genshin-engine";
@@ -6,7 +6,7 @@ import { computeOutlineDistance } from "genshin-engine";
 // The laid ground keys that come within reach of (x, z): a region's own record with any of its areas, and a piece with
 // Its own area alone
 export const selectGroundKeysInReach = <K extends string>(
-  regions: Catalogue["regions"],
+  regions: readonly { areas: readonly { id: string; outline: readonly GroundPoint[] }[]; id: string }[],
   keys: readonly K[],
   x: number,
   z: number,
