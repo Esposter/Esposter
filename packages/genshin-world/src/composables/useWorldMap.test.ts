@@ -1,8 +1,8 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
-import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
@@ -75,8 +75,8 @@ describe(useWorldMap, () => {
   };
   // A Teleport Waypoint and a domain's entrance far from the origin, so the statue alone is in the pointer's reach there
   const waypoint: WaypointLandmark = {
-    arrival: { heightOffset: 0, position: { x: 500, z: 0 }, rotation: 0 },
     areaId: AREA_ID,
+    arrival: { heightOffset: 0, position: { x: 500, z: 0 }, rotation: 0 },
     heightOffset: 0,
     id: `${REGION_ID}-waypoint-${TRANS_POINT_ID}`,
     kind: LandmarkKind.TeleportWaypoint,
@@ -98,6 +98,7 @@ describe(useWorldMap, () => {
     goToPlaces: [],
     id: REGION_ID,
     landmarks: [statue, waypoint, domainEntrance],
+    outcropPlaces: [],
     residents: [],
     waterfalls: [],
   };

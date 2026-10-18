@@ -304,6 +304,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashHealthNotice",
     seconds: 9.5,
   },
+  // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
+  // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
+  // And above it are scored, and the rest of that frame's HUD is left out of the region
+  "hud-paimon-button": {
+    capture: "world-pickup.mkv",
+    isBackdrop: true,
+    mask: [
+      { height: 100, width: 66, x: 0, y: 0 },
+      { height: 32, width: 44, x: 66, y: 0 },
+    ],
+    props: { isTouch: false },
+    region: { height: 100, width: 110, x: 0, y: 0 },
+    screen: "HudScreen",
+    seconds: 20,
+  },
   // The English PC client's stamina meter at 1080 high, from a public tutorial's climb at 48 seconds (this clip's 30),
   // Three tenths of a pool of about 214 left in yellow under its drained track, which the pool's two cuts cross, on the
   // White rock clear of the character. The meter is drawn round the pivot, so the frame's pivot is the circle its arc
@@ -341,21 +356,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       },
     },
     region: { height: 148, width: 250, x: 1640, y: 905 },
-    screen: "HudScreen",
-    seconds: 20,
-  },
-  // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
-  // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
-  // And above it are scored, and the rest of that frame's HUD is left out of the region
-  "hud-paimon-button": {
-    capture: "world-pickup.mkv",
-    isBackdrop: true,
-    mask: [
-      { height: 100, width: 66, x: 0, y: 0 },
-      { height: 32, width: 44, x: 66, y: 0 },
-    ],
-    props: { isTouch: false },
-    region: { height: 100, width: 110, x: 0, y: 0 },
     screen: "HudScreen",
     seconds: 20,
   },

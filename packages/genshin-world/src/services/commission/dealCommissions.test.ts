@@ -14,13 +14,13 @@ const commissionOf = (id: number, centerPosition: string): Commission => ({
   finishProgress: 8,
   id,
   kind: CommissionKind.Scene,
+  nameTextId: "1",
   newGroupIds: [],
   oldGroupIds: [],
   poolId: 1001,
   preferredRegion: "mondstadt",
   questId: "",
   rewardTier: 2,
-  nameTextId: "1",
 });
 
 describe(dealCommissions, () => {

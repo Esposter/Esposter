@@ -195,10 +195,10 @@ const claim = (placeId: number) => {
       :pins
       :rewards-label="gameText[GameTextKey.ExpeditionRewards]"
       :title="gameText[GameTextKey.ExpeditionTitle]"
-      @claim="claim"
+      @claim="(placeId) => claim(placeId)"
       @close="emit('close')"
-      @recall="recall"
-      @send="send"
+      @recall="(placeId) => recall(placeId)"
+      @send="(placeId, characterId, hours) => send(placeId, characterId, hours)"
     />
   </GameScreen>
 </template>

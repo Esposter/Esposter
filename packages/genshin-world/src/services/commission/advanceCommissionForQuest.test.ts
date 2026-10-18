@@ -20,13 +20,13 @@ describe(advanceCommissionForQuest, () => {
     finishProgress: 1,
     id: 20_500,
     kind: CommissionKind.Quest,
+    nameTextId: "1",
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 2003,
     preferredRegion: "mondstadt",
     questId: QUEST_ID,
     rewardTier: 2,
-    nameTextId: "1",
   };
   const slice: CommissionSlice = { bonuses: [], rewardTiers: [], tasks: [questTask] };
   const day: CommissionDay = {

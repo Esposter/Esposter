@@ -19,18 +19,18 @@ describe(stepFishingReel, () => {
 
     expect(
       stepFishingReel(reel, {
-        rod: { attackMag: 1, baseAttack: 4 },
         gear: GEAR,
         isReeling: false,
+        rod: { attackMag: 1, baseAttack: 4 },
         seconds: SECONDS,
         zone: WHOLE_ZONE,
       }).hp,
     ).toBe(6);
     expect(
       stepFishingReel(reel, {
-        rod: { attackMag: 1, baseAttack: HP },
         gear: GEAR,
         isReeling: false,
+        rod: { attackMag: 1, baseAttack: HP },
         seconds: SECONDS,
         zone: WHOLE_ZONE,
       }).phase,
@@ -55,9 +55,9 @@ describe(stepFishingReel, () => {
     expect.hasAssertions();
 
     const stepped = stepFishingReel(reel, {
-      rod: { attackMag: 1, baseAttack: 4 },
       gear: GEAR,
       isReeling: false,
+      rod: { attackMag: 1, baseAttack: 4 },
       seconds: SECONDS,
       zone: OUTSIDE_ZONE,
     });
@@ -71,18 +71,18 @@ describe(stepFishingReel, () => {
 
     expect(
       stepFishingReel(reel, {
-        rod: { attackMag: 1, baseAttack: 0 },
         gear: GEAR,
         isReeling: true,
+        rod: { attackMag: 1, baseAttack: 0 },
         seconds: SECONDS,
         zone: WHOLE_ZONE,
       }).tension,
     ).toBe(TENSION + GEAR.inSpeed);
     expect(
       stepFishingReel(reel, {
-        rod: { attackMag: 1, baseAttack: 0 },
         gear: GEAR,
         isReeling: false,
+        rod: { attackMag: 1, baseAttack: 0 },
         seconds: SECONDS,
         zone: OUTSIDE_ZONE,
       }).tension,
@@ -95,7 +95,7 @@ describe(stepFishingReel, () => {
     expect(
       stepFishingReel(
         { ...reel, outOfZoneSeconds: REEL_LOST_OUT_OF_ZONE_SECONDS },
-        { rod: { attackMag: 1, baseAttack: 4 }, gear: GEAR, isReeling: false, seconds: SECONDS, zone: OUTSIDE_ZONE },
+        { gear: GEAR, isReeling: false, rod: { attackMag: 1, baseAttack: 4 }, seconds: SECONDS, zone: OUTSIDE_ZONE },
       ).phase,
     ).toBe(FishingPhase.Lost);
   });
@@ -107,9 +107,9 @@ describe(stepFishingReel, () => {
 
     expect(
       stepFishingReel(caught, {
-        rod: { attackMag: 1, baseAttack: 4 },
         gear: GEAR,
         isReeling: false,
+        rod: { attackMag: 1, baseAttack: 4 },
         seconds: SECONDS,
         zone: WHOLE_ZONE,
       }),

@@ -1,8 +1,8 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { DishTarget } from "#src/models/cooking/DishTarget";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { eatDish } from "#src/services/cooking/eatDish";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { createParty } from "#src/services/party/createParty";

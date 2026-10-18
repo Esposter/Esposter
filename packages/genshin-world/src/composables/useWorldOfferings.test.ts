@@ -4,10 +4,10 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 
-import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";

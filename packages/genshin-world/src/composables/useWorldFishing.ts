@@ -115,10 +115,10 @@ export const useWorldFishing = ({
     inventory.value.items.flatMap(({ definition }) => records.filter(({ id }) => id === definition.id));
   const heldBaits = computed(() => heldRecords(baits.value));
   const heldRod = computed(() => heldRecords(rods.value)[0]);
-  const pointId = shallowRef<string>();
+  const pointId = shallowRef("");
   const cast = shallowRef<FishingCast>();
   const fishingRegion = computed(() =>
-    pointId.value === undefined ? undefined : fishingPointRegionMap.value.get(pointId.value),
+    pointId.value === "" ? undefined : fishingPointRegionMap.value.get(pointId.value),
   );
   const startCast = (region: string): FishingCast | undefined => {
     const hour = getWorldNow().toZonedDateTimeISO(GAME_TIME_ZONE).hour;
@@ -176,7 +176,7 @@ export const useWorldFishing = ({
     pointId.value = id;
   };
   const closeFishing = () => {
-    pointId.value = undefined;
+    pointId.value = "";
     cast.value = undefined;
   };
 

@@ -1,6 +1,6 @@
 import type { FishingReel } from "#src/models/fishing/FishingReel";
-import type { FishRod } from "#src/models/fishing/FishRod";
 import type { FishingZone } from "#src/models/fishing/FishingZone";
+import type { FishRod } from "#src/models/fishing/FishRod";
 
 import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { REEL_BAR_MAX, REEL_LOST_OUT_OF_ZONE_SECONDS } from "#src/services/fishing/constants";

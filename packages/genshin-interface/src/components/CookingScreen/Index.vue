@@ -1,26 +1,31 @@
 <script setup lang="ts">
+import {
+  COOKING_ARC_CENTRE_X,
+  COOKING_ARC_CENTRE_Y,
+  COOKING_ARC_RADIUS_X,
+  COOKING_ARC_RADIUS_Y,
+} from "#src/services/constants";
+
 interface Props {
-  // The indicator's zones as fractions of its bar from the left end: the Delicious zone lies within the Regular one
-  zones: { delicious: [number, number]; regular: [number, number] };
-  // The Stop button's label in the reader's language
-  stopLabel: string;
   // The place of the pointer along the bar, as a fraction from its left end
   pointer: number;
+  // The Stop button's label in the reader's language
+  stopLabel: string;
   // The title the game shows at the top left
   title: string;
+  // The indicator's zones as fractions of its bar from the left end: the Delicious zone lies within the Regular one
+  zones: { delicious: [number, number]; regular: [number, number] };
 }
 
 const { pointer, stopLabel, title, zones } = defineProps<Props>();
 const emit = defineEmits<{ close: []; stop: [] }>();
 
-// The bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end
-const ARC_CENTRE_X = 960;
-const ARC_CENTRE_Y = 832;
-const ARC_RADIUS_X = 435;
-const ARC_RADIUS_Y = 120;
 const toArcPoint = (fraction: number) => {
   const angle = Math.PI * (1 - Math.min(1, Math.max(0, fraction)));
-  return { x: ARC_CENTRE_X + ARC_RADIUS_X * Math.cos(angle), y: ARC_CENTRE_Y - ARC_RADIUS_Y * Math.sin(angle) };
+  return {
+    x: COOKING_ARC_CENTRE_X + COOKING_ARC_RADIUS_X * Math.cos(angle),
+    y: COOKING_ARC_CENTRE_Y - COOKING_ARC_RADIUS_Y * Math.sin(angle),
+  };
 };
 const toBarPath = ([start, end]: [number, number]) => {
   const from = toArcPoint(start);

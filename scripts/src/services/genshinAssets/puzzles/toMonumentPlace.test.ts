@@ -1,4 +1,5 @@
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
+
 import {
   PROVISIONAL_MONUMENT_ELEMENT,
   PROVISIONAL_MONUMENT_IS_TIMED,

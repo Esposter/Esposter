@@ -35,13 +35,13 @@ describe(claimCommissionReward, () => {
     finishProgress: FINISH_PROGRESS,
     id,
     kind: CommissionKind.Scene,
+    nameTextId: "1",
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
     preferredRegion: "mondstadt",
     questId: "",
     rewardTier: REWARD_TIER,
-    nameTextId: "1",
   });
   const slice: CommissionSlice = {
     bonuses: bonusBands,

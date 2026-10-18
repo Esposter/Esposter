@@ -6,5 +6,5 @@ export const checkIsFishingOpen = ({
   isSereniteaPotQuestFinished,
 }: {
   isSereniteaPotOwned: boolean;
-  isSereniteaPotQuestFinished: boolean | undefined;
+  isSereniteaPotQuestFinished?: boolean;
 }): boolean => isSereniteaPotOwned && (isSereniteaPotQuestFinished ?? true);

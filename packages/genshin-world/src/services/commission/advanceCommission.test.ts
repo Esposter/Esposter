@@ -15,13 +15,13 @@ describe(advanceCommission, () => {
     finishProgress: FINISH_PROGRESS,
     id: 1,
     kind: CommissionKind.Scene,
+    nameTextId: "1",
     newGroupIds: [],
     oldGroupIds: [],
     poolId: 1001,
     preferredRegion: "mondstadt",
     questId: "",
     rewardTier: 2,
-    nameTextId: "1",
   };
 
   test("should count the doings up to the finish count and hold there", () => {

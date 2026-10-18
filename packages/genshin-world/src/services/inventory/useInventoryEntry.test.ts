@@ -2,9 +2,9 @@ import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
 import { DishTarget } from "#src/models/cooking/DishTarget";
+import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 

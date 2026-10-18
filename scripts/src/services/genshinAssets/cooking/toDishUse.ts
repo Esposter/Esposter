@@ -56,7 +56,8 @@ const toBonusClause = (
       : { amount: Number(flatMatch.groups.flat), attribute: flatAttribute };
   const percentMatch = BONUS_PERCENT_CLAUSE_REGEX.exec(clause);
   if (percentMatch?.groups === undefined) return undefined;
-  const attribute = BONUS_CLAUSE_ATTRIBUTE_MAP[percentMatch.groups.name];
+  const { name } = percentMatch.groups;
+  const attribute = name === undefined ? undefined : BONUS_CLAUSE_ATTRIBUTE_MAP[name];
   return attribute === undefined
     ? undefined
     : { amount: Number(percentMatch.groups.percent) / PERCENT_TOTAL, attribute };

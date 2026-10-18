@@ -28,11 +28,11 @@ export const BONUS_FLAT_ATTRIBUTE_MAP: Record<string, Attribute> = {
 // The stat a percentage clause names, the name written without the 提升 a clause may end it with
 export const BONUS_CLAUSE_ATTRIBUTE_MAP: Record<string, Attribute> = {
   元素充能: Attribute.EnergyRecharge,
-  治疗效果: Attribute.HealingBonus,
-  暴击: Attribute.CriticalRate,
-  暴击率: Attribute.CriticalRate,
-  暴击伤害: Attribute.CriticalDamage,
   护盾强效: Attribute.ShieldStrength,
+  暴击: Attribute.CriticalRate,
+  暴击伤害: Attribute.CriticalDamage,
+  暴击率: Attribute.CriticalRate,
+  治疗效果: Attribute.HealingBonus,
   物理增伤: Attribute.PhysicalDamageBonus,
   生命值上限: Attribute.HealthPercent,
 };

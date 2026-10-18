@@ -18,8 +18,8 @@ describe(findNearestTeleportWaypoint, () => {
       rotation: 0,
     };
     const farWaypoint: WaypointLandmark = {
-      arrival: { heightOffset: 0, position: { x: 9, z: 0 }, rotation: 0 },
       areaId: "",
+      arrival: { heightOffset: 0, position: { x: 9, z: 0 }, rotation: 0 },
       heightOffset: 0,
       id: "far",
       kind: LandmarkKind.TeleportWaypoint,

@@ -1,6 +1,6 @@
 import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeState";
-import { createTimeTrialChallenge } from "#src/services/puzzle/createTimeTrialChallenge";
 import { TIME_TRIAL_CHALLENGE_LIMIT_SECONDS, TIME_TRIAL_CHALLENGE_TARGET_COUNT } from "#src/services/puzzle/constants";
+import { createTimeTrialChallenge } from "#src/services/puzzle/createTimeTrialChallenge";
 import { describe, expect, test } from "vitest";
 
 describe(createTimeTrialChallenge, () => {

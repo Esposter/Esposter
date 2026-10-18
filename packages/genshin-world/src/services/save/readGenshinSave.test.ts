@@ -160,12 +160,12 @@ describe(readGenshinSave, () => {
   };
   const POPULATED_SAVE: GenshinSave = {
     ...EMPTY_GENSHIN_SAVE,
-    homePlacements: [PLACEMENT],
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
     characters: [HELD_CHARACTER_SAVE],
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
+    homePlacements: [PLACEMENT],
     inventory: {
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [

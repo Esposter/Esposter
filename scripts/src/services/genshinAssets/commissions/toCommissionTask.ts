@@ -37,12 +37,12 @@ export const toCommissionTask = (row: ExcelDailyTaskRow, preferredRegion: string
     finishProgress: kind === CommissionKind.Quest ? QUEST_TASK_FINISH_PROGRESS : row.finishProgress,
     id: row.id,
     kind,
+    nameTextId: String(row.titleTextMapHash),
     newGroupIds: row.newGroupVec,
     oldGroupIds: row.oldGroupVec,
     poolId: row.poolId,
     preferredRegion,
     questId: row.questId ? String(row.questId) : "",
     rewardTier: row.taskRewardId,
-    nameTextId: String(row.titleTextMapHash),
   };
 };

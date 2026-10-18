@@ -1,9 +1,8 @@
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
-import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
 
@@ -16,20 +15,24 @@ const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
 
 const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["puzzleChestPlaces"]) => {
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
-  const events: WorldEvents = { emit: vi.fn<WorldEvents["emit"]>(), on: vi.fn<WorldEvents["on"]>() };
   return {
     openedChestIds,
     ...useWorldChests({
-      events,
+      events: createWorldEvents(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       gameDataBaseUrl: "",
       gameText: {},
       getGroundHeight: () => 0,
+      inventory: ref({ ...EMPTY_INVENTORY }),
+      materialDataMap: new Map(),
+      nameText: {},
       openedChestIds,
       placeWorldDrops: vi.fn<() => void>(),
       puzzleChestPlaces,
+      setInventory: vi.fn<() => void>(),
       setWallet: vi.fn<() => void>(),
       wallet: ref({ ...EMPTY_WALLET }),
+      waterLevel: -1,
     }),
   };
 };

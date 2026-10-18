@@ -38,9 +38,11 @@ describe(computeCommissionDay, () => {
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
     expect(dealtDay.claimedCommissionIds).toStrictEqual([]);
     expect(dealtDay.dealtAt).toStrictEqual(now.toInstant());
-    expect(dealtDay.dealtCommissions.map(({ commissionId }) => commissionId).toSorted((a, b) => a - b)).toStrictEqual([
-      2, 3, 4, 5,
-    ]);
+    expect(
+      dealtDay.dealtCommissions
+        .map(({ commissionId }) => commissionId)
+        .toSorted((firstCommissionId, secondCommissionId) => firstCommissionId - secondCommissionId),
+    ).toStrictEqual([2, 3, 4, 5]);
   });
 
   test("a day dealt with no commissions is dealt again once the rank allows", () => {

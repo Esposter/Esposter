@@ -4,7 +4,6 @@
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 export const props = {
-  characterTitle: "Character Selection",
   characters: [
     { bonusLabel: "No Character Bonus", id: 1, label: "Amber", statusLabel: "" },
     { bonusLabel: "No Character Bonus", id: 2, label: "Lisa", statusLabel: "" },
@@ -14,6 +13,7 @@ export const props = {
     { bonusLabel: "No Character Bonus", id: 6, label: "Sucrose", statusLabel: "" },
     { bonusLabel: "No Character Bonus", id: 7, label: "Barbara", statusLabel: "" },
   ],
+  characterTitle: "Character Selection",
   closeLabel: "Close",
   detail: {
     actionKind: ExpeditionActionKind.Send,

@@ -21,6 +21,7 @@ const regionData: RegionData = {
   goToPlaces: [{ id: "place", position: { x: 30, z: 40 }, radius: 10 }],
   id: "region",
   landmarks: [],
+  outcropPlaces: [],
   residents: [],
   waterfalls: [],
 };

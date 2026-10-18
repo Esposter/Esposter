@@ -169,7 +169,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           :energy-cost="member.energyCost"
           :game-text
           :gadget-cooldown="frame.gadgetCooldown"
-          :gadget-cooldown-seconds="gadgetCooldownSeconds"
+          :gadget-cooldown-seconds
           :input
           :is-touch
           :skill-cooldown="member.skillCooldown"

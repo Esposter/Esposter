@@ -1,7 +1,6 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";

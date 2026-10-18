@@ -27,7 +27,7 @@ describe(findTreasureCompassTarget, () => {
     expect.hasAssertions();
 
     expect(findTreasureCompassTarget(chestPlaces, cityOutlines, new Set([opened.id]), player)).toBe(inside);
-    expect(findTreasureCompassTarget(chestPlaces, cityOutlines, new Set([opened.id, inside.id]), player)).toBe(farther);
+    expect(findTreasureCompassTarget(chestPlaces, cityOutlines, new Set([inside.id, opened.id]), player)).toBe(farther);
     expect(findTreasureCompassTarget(chestPlaces, cityOutlines, new Set(), player)).toBe(opened);
   });
 
@@ -35,7 +35,7 @@ describe(findTreasureCompassTarget, () => {
     expect.hasAssertions();
 
     expect(
-      findTreasureCompassTarget(chestPlaces, cityOutlines, new Set([inside.id, farther.id, opened.id]), player),
+      findTreasureCompassTarget(chestPlaces, cityOutlines, new Set([farther.id, inside.id, opened.id]), player),
     ).toBeUndefined();
   });
 });

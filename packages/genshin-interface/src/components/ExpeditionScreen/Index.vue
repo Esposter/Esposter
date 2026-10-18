@@ -9,10 +9,10 @@ import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 interface Props {
-  // The picker's heading in the reader's language, the game's "Character Selection"
-  characterTitle: string;
   // The characters the picker lists in the game's order, a character away from home shown with its status and not sent
   characters: ExpeditionCharacter[];
+  // The picker's heading in the reader's language, the game's "Character Selection"
+  characterTitle: string;
   // The way out of the screen in the reader's language, read to assistive technology in place of its cross
   closeLabel: string;
   // The picked place: its name, its description, the rewards it may pay, the durations it offers and the action its
@@ -34,7 +34,7 @@ const nation = defineModel<string>("nation", { required: true });
 const place = defineModel<number | undefined>("place");
 const hours = defineModel<number>("hours", { default: 0 });
 const picking = defineModel<boolean>("picking", { default: false });
-const { characterTitle, characters, closeLabel, detail, limitLabel, nations, pins, rewardsLabel, title } =
+const { characters, characterTitle, closeLabel, detail, limitLabel, nations, pins, rewardsLabel, title } =
   defineProps<Props>();
 const emit = defineEmits<{
   claim: [placeId: number];

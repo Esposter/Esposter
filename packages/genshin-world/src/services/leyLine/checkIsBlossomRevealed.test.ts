@@ -1,5 +1,5 @@
-import type { OutcropRegion } from "#src/models/leyLine/OutcropRegion";
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
+import type { OutcropRegion } from "#src/models/leyLine/OutcropRegion";
 
 import { OutcropEvent } from "#src/models/leyLine/OutcropEvent";
 import { OutcropKind } from "#src/models/leyLine/OutcropKind";

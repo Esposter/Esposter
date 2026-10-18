@@ -104,3 +104,9 @@ export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.22)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
+// The cooking bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end:
+// Its centre and its two radii
+export const COOKING_ARC_CENTRE_X = 960;
+export const COOKING_ARC_CENTRE_Y = 832;
+export const COOKING_ARC_RADIUS_X = 435;
+export const COOKING_ARC_RADIUS_Y = 120;

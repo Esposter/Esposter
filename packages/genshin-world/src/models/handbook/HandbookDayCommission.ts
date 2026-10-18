@@ -5,6 +5,6 @@ import type { GameTextKey } from "genshin-text";
 export interface HandbookDayCommission {
   nameTextId: string;
   progress: number;
-  regionTextKey: GameTextKey | undefined;
+  regionTextKey?: GameTextKey;
   total: number;
 }

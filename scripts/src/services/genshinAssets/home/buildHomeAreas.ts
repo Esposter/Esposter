@@ -9,7 +9,7 @@ import { GameDataset } from "genshin-world";
 // By both
 export const buildHomeAreas = (): Record<string, unknown> => ({
   [`${GameDataset.Home}/areas`]: readExcelTable<ExcelHomeWorldAreaComfortRow>(AREA_COMFORT_TABLE_NAME)
-    .map(({ MMLKIBLLOGP, areaID, areaType, highLoadLimit, lowLoadLimit, sceneID }) => ({
+    .map(({ areaID, areaType, highLoadLimit, lowLoadLimit, MMLKIBLLOGP, sceneID }) => ({
       areaId: areaID,
       exterior: areaType === "ExteriorArea",
       loadLimit: MMLKIBLLOGP,

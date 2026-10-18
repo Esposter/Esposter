@@ -51,8 +51,8 @@ import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
-import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
+import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
@@ -64,12 +64,12 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
+import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -175,11 +175,11 @@ const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTab
 const events = createWorldEvents();
 const {
   achievementProgressMap,
+  archiveKillsMap,
+  archiveProgressMap,
   craftedCountMap,
   craftingProgress,
   frostbearingTreeProgress,
-  archiveKillsMap,
-  archiveProgressMap,
   inventory,
   openedChestIds,
   setInventory,
@@ -373,8 +373,8 @@ const { chestInteractables, digChestById, openChestById } = useWorldChests({
   puzzleChestPlaces,
   setInventory,
   setWallet,
-  waterLevel: windriseData.water.level,
   wallet,
+  waterLevel: windriseData.water.level,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedGadget } = useWorldGadgets({
@@ -833,7 +833,7 @@ defineExpose({ jumpTo, readCameraPosition });
           ref="character"
           :body="characterBody"
           :get-ground-height
-          :grass-trail="grassTrail"
+          :grass-trail
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
@@ -867,7 +867,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
         :enemy-tables
-        :grass-trail="grassTrail"
+        :grass-trail
         :game-data-base-url
         :get-ground-height
         :held-minutes
@@ -1020,7 +1020,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :day-commissions="handbookDayCommissions"
           :game-text
           :investigation-rewards="[]"
-          :name-text="nameText"
+          :name-text
           :total-count="0"
           @close="screenKind = ScreenKind.World"
         />
@@ -1065,7 +1065,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <InventoryScreen
           :dish-use-map
           :game-text
-          :gadget-rows="gadgetRows"
+          :gadget-rows
           :initial-category="ItemCategory.Weapon"
           :inventory
           :material-data-map

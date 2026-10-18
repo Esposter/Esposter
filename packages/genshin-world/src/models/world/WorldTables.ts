@@ -42,8 +42,6 @@ export interface WorldTables {
   nameText: Readonly<Record<string, string>>;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
-  // The Time Trial Challenges of Mondstadt, each started from its marker in the world
-  timeTrialPlaces: PuzzlePlace[];
   // The kits of the team the world starts with, by character id, so its first frame has each member's combatant
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from
@@ -51,6 +49,8 @@ export interface WorldTables {
   // The game's talent upgrades by proud skill group, the level and phase and Mora and items each combat talent's next
   // Level takes
   talentUpgradeMap: TalentUpgradeMap;
+  // The Time Trial Challenges of Mondstadt, each started from its marker in the world
+  timeTrialPlaces: PuzzlePlace[];
   // The Mondstadt animals the official map marks
   wildlifePlaces: WildlifePlace[];
   // Windrise's records and the regions' grounds, which the world's one ground and everything drawn on it are built from

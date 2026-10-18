@@ -1,8 +1,8 @@
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { readExpeditionLimitAdds } from "#src/services/expedition/readExpeditionLimitAdds";
 import { readMondstadtExpeditionPlaces } from "#src/services/expedition/readMondstadtExpeditionPlaces";
-import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { createSeededRandom } from "genshin-engine";
@@ -45,11 +45,11 @@ export const props = {
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   nameText: englishNameText,
   now,
+  picking: false,
+  pinPositions: new Map(pinnedPlaces.map(({ id }, index) => [id, pinLayout[index] ?? { x: 0, y: 0 }] as const)),
   // Wolvendom is the fifth pinned place, the one the clip has picked
   place: pinnedPlaces.at(4)?.id,
-  pinPositions: new Map(pinnedPlaces.map(({ id }, index) => [id, pinLayout[index] ?? { x: 0, y: 0 }] as const)),
   places,
-  picking: false,
   random: createSeededRandom(WORLD_RANDOM_SEED),
   statueRegions: { mondstadt: { heldCount: 0, level: 1 } },
   wallet: { ...EMPTY_WALLET },

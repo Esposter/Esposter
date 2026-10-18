@@ -33,13 +33,13 @@ describe(toCommissionTask, () => {
       finishProgress: 8,
       id: ID,
       kind: "Scene",
+      nameTextId: "1001",
       newGroupIds: [133_003_474],
       oldGroupIds: [133_003_170],
       poolId: 1001,
       preferredRegion: PREFERRED_REGION,
       questId: "",
       rewardTier: 2,
-      nameTextId: "1001",
     });
   });
 
@@ -66,13 +66,13 @@ describe(toCommissionTask, () => {
       finishProgress: 1,
       id: ID,
       kind: "Quest",
+      nameTextId: "1002",
       newGroupIds: [],
       oldGroupIds: [],
       poolId: 1001,
       preferredRegion: PREFERRED_REGION,
       questId: "7",
       rewardTier: 2,
-      nameTextId: "1002",
     });
   });
 

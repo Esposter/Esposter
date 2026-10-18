@@ -18,11 +18,11 @@ import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import {
   IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER,
   PARTY_MEMBER_BURST_INPUT_ACTIONS,
 } from "#src/services/party/constants";
-import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";

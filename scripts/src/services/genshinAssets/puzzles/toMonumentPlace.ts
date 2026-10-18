@@ -1,5 +1,5 @@
-import type { MonumentKindTiming } from "#src/models/genshinAssets/puzzles/MonumentKindTiming";
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
+import type { MonumentKindTiming } from "#src/models/genshinAssets/puzzles/MonumentKindTiming";
 import type { MonumentPlace, PuzzleKind } from "genshin-world";
 
 import {

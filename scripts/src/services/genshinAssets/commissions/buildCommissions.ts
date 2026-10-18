@@ -1,6 +1,6 @@
+import type { ExcelCityTaskOpenRow } from "#src/models/genshinAssets/commissions/ExcelCityTaskOpenRow";
 import type { ExcelDailyTaskLevelRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskLevelRow";
 import type { ExcelDailyTaskRewardRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRewardRow";
-import type { ExcelCityTaskOpenRow } from "#src/models/genshinAssets/commissions/ExcelCityTaskOpenRow";
 import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";

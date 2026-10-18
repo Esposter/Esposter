@@ -41,8 +41,8 @@ export const useWorldChests = ({
   puzzleChestPlaces,
   setInventory,
   setWallet,
-  waterLevel,
   wallet,
+  waterLevel,
 }: {
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
@@ -57,8 +57,8 @@ export const useWorldChests = ({
   puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
-  waterLevel: number;
   wallet: Ref<Wallet>;
+  waterLevel: number;
 }) => {
   const chestPlaces = shallowRef<ChestPlace[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it

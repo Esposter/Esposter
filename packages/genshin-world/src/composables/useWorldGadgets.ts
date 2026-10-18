@@ -3,8 +3,8 @@ import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Ref } from "vue";
 
-import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
+import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";

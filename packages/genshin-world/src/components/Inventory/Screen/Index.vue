@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { DishUse } from "#src/models/cooking/DishUse";
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { DishUse } from "#src/models/cooking/DishUse";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
