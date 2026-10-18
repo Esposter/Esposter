@@ -1,9 +1,12 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
@@ -18,6 +21,37 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const BARBARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BARBARA_CHARACTER_ID);
+
+// The Melody Loop among the team's effects, found by the interval it ticks on
+const findMelodyLoop = (kitEffectState: KitEffectState): KitField | undefined =>
+  kitEffectState.effects.find(
+    (effect): effect is KitField => effect.kind === "field" && effect.tickIntervalSeconds === 5,
+  );
+
+// Barbara casting Let the Show Begin♪ as the combatant, the context and the effects it leaves
+const castEncoreSkill = (combatant: Combatant) => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  BARBARA_KIT.elementalSkill.onStart?.(context);
+  return { combatant, context, kitEffectState };
+};
+
+// Barbara's collection of particles from the field, which the Melody Loop's Encore hears
+const collectParticles = (
+  count: number,
+  context: ReturnType<typeof createKitTestContext>,
+  combatant: Combatant,
+): void =>
+  BARBARA_KIT.onKitEvent?.(
+    {
+      characterId: BARBARA_CHARACTER_ID,
+      count,
+      energyDropKind: EnergyDropKind.Particle,
+      kind: KitEventKind.EnergyParticleCollected,
+    },
+    context,
+    combatant,
+  );
 
 describe(createBarbaraKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
@@ -153,4 +187,37 @@ describe(createBarbaraKitBehaviour, () => {
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(buffs);
     },
   );
+
+  describe("the Ascension 4 passive, Encore", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
+      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+
+      collectParticles(1, context, combatant);
+
+      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 1);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 3 });
+      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+
+      collectParticles(1, context, combatant);
+
+      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds);
+    });
+
+    test("the Melody Loop is extended by at most five seconds", () => {
+      expect.hasAssertions();
+      const { combatant, context, kitEffectState } = castEncoreSkill({ ...createBarbaraCombatant(0), ascension: 4 });
+      const loopSeconds = findMelodyLoop(kitEffectState)?.secondsRemaining ?? 0;
+
+      collectParticles(6, context, combatant);
+      collectParticles(1, context, combatant);
+
+      expect(findMelodyLoop(kitEffectState)?.secondsRemaining).toBe(loopSeconds + 5);
+    });
+  });
 });
