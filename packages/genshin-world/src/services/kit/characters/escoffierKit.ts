@@ -1,12 +1,15 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { countDeployedElements } from "#src/services/party/countDeployedElements";
@@ -36,6 +39,8 @@ const ASCENSION_4_SECONDS = 12;
 const ASCENSION_4_STATUS_ID = "escoffier-ascension-4-res-shred";
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_CRITICAL_DAMAGE = 0.6;
+const CONSTELLATION_1_SECONDS = 15;
+const CONSTELLATION_1_STATUS_ID = "escoffier-constellation-1-cryo-crit-dmg";
 const CRYO_HYDRO_ELEMENTS: readonly Element[] = [Element.Cryo, Element.Hydro];
 
 // Whether the deployed team holds members of Cryo and Hydro alone, and at least one of them
@@ -43,6 +48,22 @@ const checkIsCryoHydroTeam = (deployedElements: readonly (Element | undefined)[]
   deployedElements !== undefined &&
   deployedElements.length > 0 &&
   countDeployedElements(deployedElements, CRYO_HYDRO_ELEMENTS) === deployedElements.length;
+
+// Constellation 1's window, which her skill and burst open for 15 seconds on an Ascension 4 Escoffier and a team of Cryo and
+// Hydro members, as gcsim (MIT, main) escoffier/cons.go's c1 does at the end of each, and the wiki states the same window
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/cons.go
+const startConstellation1 = (combatant: Combatant, kitEffectState: KitEffectState): void => {
+  if (
+    combatant.constellationCount < CONSTELLATION_1 ||
+    combatant.ascension < ASCENSION_4 ||
+    !checkIsCryoHydroTeam(combatant.deployedElements)
+  )
+    return;
+  addKitStatus(kitEffectState, combatant.characterId, {
+    id: CONSTELLATION_1_STATUS_ID,
+    secondsRemaining: CONSTELLATION_1_SECONDS,
+  });
+};
 
 // The RES shred a hit of hers applies to the enemy it strikes, as the team stands
 const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
@@ -62,7 +83,7 @@ export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
 // Parfait ticks and, outside the Aligned interval, its Surging Blade, and Scoring Cuts sets going its heal and, from
 // Ascension 1, Rehab Diet and the Cryo and Hydro RES shred of Ascension 4 are built. Her Constellations wait on the hooks the page names
-// Constellation 1 is built on her own Cryo strikes, its CRIT DMG reaching a teammate's Cryo attacks once the party-scope strike hooks land
+// Constellation 1 is built: her skill and burst open its 15-second window, and its CRIT DMG reaches each deployed member's Cryo strikes
 // Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill does not build yet
 // Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which the kit does not roll
 // Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not built
@@ -84,17 +105,24 @@ export const createEscoffierKitBehaviour = ({
   const rehabDietIntervalSeconds = readSeconds("rehabDietInterval");
   const rehabDietLastTickSeconds = readSeconds("rehabDietLastTick");
   return {
-    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while the deployed team holds only Cryo and Hydro members. It
-    // Reaches only her own strikes, until the party-scope strike hooks reach a teammate's
-    getStrikeCriticalDamageBonus: ({ combatant, hit }) =>
-      combatant.constellationCount >= CONSTELLATION_1 &&
+    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo attack
+    getStrikeCriticalDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
       getKitHitElement(hit, combatant) === Element.Cryo &&
-      checkIsCryoHydroTeam(combatant.deployedElements)
+      checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_1_STATUS_ID)
         ? CONSTELLATION_1_CRITICAL_DAMAGE
         : 0,
+    // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is open
+    getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
+      criticalDamageBonus:
+        getKitHitElement(hit, combatant) === Element.Cryo &&
+        checkIsKitStatusActive(effects, member.characterId, CONSTELLATION_1_STATUS_ID)
+          ? CONSTELLATION_1_CRITICAL_DAMAGE
+          : 0,
+    }),
     burst: {
       hits: [{ enemyStatus: getAscension4Status }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        startConstellation1(combatant, kitEffectState);
         // Scoring Cuts' heal is one tick of a field, which heals the active character from the caster's ATK, a flat
         // Amount and a share of it
         castKitField(kitEffectState, combatant.characterId, body.position, {
@@ -132,6 +160,7 @@ export const createEscoffierKitBehaviour = ({
     },
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        startConstellation1(combatant, kitEffectState);
         castKitSummon(kitEffectState, body, combatant, skillTickHits);
         if (
           !startKitCooldown(kitEffectState, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID, alignedIntervalSeconds)
