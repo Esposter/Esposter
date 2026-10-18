@@ -161,3 +161,25 @@ Columbina at Constellation 6 SHALL give each party member's strikes of the eleme
 - **GIVEN** Columbina is at Constellation 5 and casts her burst
 - **WHEN** a Lunar-Charged reaction forms within the window
 - **THEN** no party member gains the buff
+
+### Requirement: Ascension 4 gives a Moonridge Dew on a Lunar-Bloom in the burst's window
+
+From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL give the party one Moonridge Dew, at most one every three frames and three in each eighteen seconds.
+
+#### Scenario: A Lunar-Bloom in the window gives Moonridge Dew
+
+- **GIVEN** Columbina has Ascension 4 and her burst's window is open
+- **WHEN** a Lunar-Bloom reaction occurs
+- **THEN** the party gains one Moonridge Dew
+
+#### Scenario: A Lunar-Charged reaction gives no Moonridge Dew
+
+- **GIVEN** Columbina has Ascension 4 and her burst's window is open
+- **WHEN** a Lunar-Charged reaction occurs
+- **THEN** the party gains no Moonridge Dew
+
+#### Scenario: A fourth Lunar-Bloom in eighteen seconds gives none
+
+- **GIVEN** three Moonridge Dew were gained in the current eighteen seconds
+- **WHEN** a Lunar-Bloom occurs in the window
+- **THEN** the party gains none
