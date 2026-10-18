@@ -12,6 +12,7 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { JAHODA_ASCENSION_4_SOURCE } from "#src/services/kit/characters/jahodaAscension";
 import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -270,7 +271,7 @@ describe(createJahodaKitBehaviour, () => {
         characterId: JAHODA_CHARACTER_ID,
         kind: "buff",
         secondsRemaining: 6,
-        source: "jahoda-ascension-4",
+        source: JAHODA_ASCENSION_4_SOURCE,
       },
     ]);
   });
