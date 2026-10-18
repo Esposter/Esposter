@@ -7,6 +7,7 @@ import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLan
 import type { RegionData } from "#src/models/world/RegionData";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
+import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { DomainKind } from "#src/models/domains/DomainKind";
@@ -167,6 +168,8 @@ describe(useWorldMap, () => {
   ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
+    const placedDoings = shallowRef<PlacedDoing[]>([]);
+    const recordedDoingIds = shallowRef<ReadonlySet<string>>(new Set<string>());
     const wallet = ref(EMPTY_WALLET);
     return {
       events,
@@ -178,7 +181,9 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
+        placedDoings,
         questStepTargets,
+        recordedDoingIds,
         regionDataBaseUrl: "region-data",
         reputation,
         setReputation: (nextReputation) => {
