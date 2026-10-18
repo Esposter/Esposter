@@ -257,5 +257,13 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       );
     },
     resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0),
+    // The first token of a local's value at a position, where one assignment dominates it, as a call passing `ap` reads
+    // The constructor `ap := combat.NewCircleHitOnTarget(...)` gave it
+    resolveAssignment: (name: string, position: number): number | undefined => {
+      const scope = findScope(position);
+      if (scope === undefined || scope.parameters.includes(name)) return undefined;
+      const assignment = findAssignment(tokens, scope, name, position, constantMap);
+      return assignment.kind === "dominating" ? assignment.valueStart : undefined;
+    },
   };
 };
