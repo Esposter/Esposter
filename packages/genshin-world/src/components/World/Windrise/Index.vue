@@ -22,7 +22,14 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import { StandInShape } from "#src/models/world/StandInShape";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
-import type { GrassTrail, LandmarkCollider, Locomotion, LocomotionPhase, QualityTier } from "genshin-engine";
+import type {
+  GrassTrail,
+  GroundPoint,
+  LandmarkCollider,
+  Locomotion,
+  LocomotionPhase,
+  QualityTier,
+} from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
@@ -189,6 +196,8 @@ interface Props {
   sceneExportBaseUrl?: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
+  // The spots of the bounties' targets standing in the world, which the sight leads a trail to while it is on
+  bountyTrailEnds: GroundPoint[];
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
@@ -235,6 +244,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
   sceneExportBaseUrl,
+  bountyTrailEnds,
   seelies,
   trounceBlossoms,
   wildlifeList,
@@ -389,6 +399,8 @@ const questTargetPosition = computed(() =>
 const seelieCourts = computed(() =>
   seelies.filter(({ state }) => state === SeelieState.Resting).map(({ court }) => court),
 );
+// The ends the sight's trails lead to: the courts of the Seelies still resting, and the bounties' targets standing
+const sightTrailEnds = computed(() => [...seelieCourts.value, ...bountyTrailEnds]);
 // The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
 const failedCharacterPackKey = ref("");
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
@@ -652,10 +664,10 @@ onUnmounted(() => {
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
-    <!-- The sight's trails from the character to the courts of the Seelies still resting, in the sight's scene only -->
+    <!-- The sight's trails to the resting Seelies' courts and the bounties' targets, in the sight's scene only -->
     <WorldSightTrails
       :elemental-sight
-      :ends="seelieCourts"
+      :ends="sightTrailEnds"
       :get-ground-height
       :sight-scene
       :target="characterBody?.position"
