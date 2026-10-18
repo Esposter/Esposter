@@ -7,6 +7,14 @@ export const WILDLIFE_ESCAPE_RADIUS = 4;
 export const WILDLIFE_ESCAPE_SECONDS = 1;
 // Provisional: no table gives a flight's speed, so it is a placeholder until a recording of each kind's flight times it
 export const WILDLIFE_FLEE_SPEED = 6;
+// Provisional: a boar charges at a character within its charge reach, at its charge speed, and its charge lands once the
+// Boar is within the contact distance of the character. The environment table holds no boar's row, so each stands until a
+// Recording of a charge measures it
+export const WILDLIFE_CHARGE_REACH = 6;
+export const WILDLIFE_CHARGE_SPEED = 8;
+export const WILDLIFE_CHARGE_CONTACT = 1;
+// Provisional: the share of the character's Max HP a charge's hit takes, until a recording of a hit measures it
+export const WILDLIFE_CHARGE_DAMAGE = 0.1;
 // The capsule each animal is drawn as until its model lands, and how many one draw holds
 export const WILDLIFE_CAPSULE_RADIUS = 0.15;
 export const WILDLIFE_CAPSULE_HEIGHT = 0.4;

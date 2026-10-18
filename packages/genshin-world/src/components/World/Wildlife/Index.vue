@@ -31,9 +31,11 @@ interface Props {
 }
 
 const { getGroundHeight, isHeld, lightUniforms, rampTexture, target, wildlifeList } = defineProps<Props>();
+// A boar's charge landing on the character, which the world takes out of the character's health
+const emit = defineEmits<{ charge: [] }>();
 const { onBeforeRender } = useLoop();
 const fixedStepLoop = createFixedStepLoop(WILDLIFE_STEP_SECONDS, () => {
-  for (const wildlife of wildlifeList) stepWildlife(wildlife, target, WILDLIFE_STEP_SECONDS);
+  for (const wildlife of wildlifeList) if (stepWildlife(wildlife, target, WILDLIFE_STEP_SECONDS)) emit("charge");
 });
 // Every animal is one capsule of one instanced draw, stood on the ground and turned to its heading, as a stand-in until
 // Its model lands. The capsules move, so the mesh's bounds, measured once, would cull them where they once stood

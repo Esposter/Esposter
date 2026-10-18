@@ -10,5 +10,6 @@ export const strikeWildlife = (wildlife: Wildlife): DroppedItem | undefined => {
   if (wildlife.state === WildlifeState.Struck) return undefined;
   wildlife.state = WildlifeState.Struck;
   wildlife.stateSeconds = 0;
-  return { ...WildlifeKindDropMap[wildlife.kind] };
+  const drop = WildlifeKindDropMap[wildlife.kind];
+  return drop && { ...drop };
 };
