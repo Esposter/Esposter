@@ -43,8 +43,14 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     if (args.all) await fetchReferences();
     // One screen is shot at a time, on the one parity page
     for (const referenceId of referenceIds) {
+      if (args.all) console.log(`== ${referenceId}`);
+      // A pending screen names no reference to score, so the run says why it is unscored and goes on
+      const pending = ParityReferenceMap[referenceId]?.pending;
+      if (pending !== undefined) {
+        console.log(`pending: ${pending}`);
+        continue;
+      }
       if (args.all) {
-        console.log(`== ${referenceId}`);
         const layerComponent = getLayerComponent(referenceId, args.witness);
         const witnessLayoutPath =
           layerComponent === undefined

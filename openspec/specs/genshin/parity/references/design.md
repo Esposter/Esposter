@@ -2,7 +2,7 @@
 
 A reference is a wiki image or one frame of a recording, judged against and kept outside the repository. This page covers how references are found and captured.
 
-- **References stay outside the repository.** They are HoYoverse's images, so they are fetched and recorded into `~/Esposter/genshin-parity` and never committed. The repository holds only what each screen is judged against (`ParityReferenceMap`): a wiki file, or one frame of a recording, named by the recording and the second it is taken at.
+- **References stay outside the repository.** They are HoYoverse's images, so they are fetched and recorded into `~/Esposter/genshin-parity` and never committed. The repository holds only what each screen is judged against (`ParityReferenceMap`): a wiki file, or one frame of a recording, named by the recording and the second it is taken at, or a pending entry that names the screen and the reason it has no reference yet.
 
 - **Search before recording.** Most of what a screen needs is already published: the wiki holds the game's screens and its standalone marks, the community's data dumps hold its in-game text, and public videos show the rest, including the English client when the recording is in another language. A clip from one is fetched into the captures folder with `recreation clip --directory ~/Esposter/genshin-parity/captures`, and sampled like any recording. Nothing waits on a recording of the installed game: a still look is read off a wiki screenshot first, motion off a public clip on YouTube or Bilibili (`recreation search` lists them), a timing off the extracted animation clips, and what none of them shows ships as a best estimate marked provisional, with an estimate the agent is unsure of put on the roadmap's Manual verification list for the user to check in one batch (2026-10-11).
 
@@ -18,7 +18,7 @@ A reference is a wiki image or one frame of a recording, judged against and kept
 
 | File                                                              | Role                                                                         |
 | :---------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` | Each reference, the wiki file it comes from and its screen                   |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` | Each reference (a wiki file or a frame), its screen, or a pending screen     |
 | `scripts/src/services/genshinParity/reference/hashFile.ts`        | A file's SHA-256, streamed, its first digits as the reference cache names it |
 
 ## Sources

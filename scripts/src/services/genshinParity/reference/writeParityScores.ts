@@ -6,8 +6,17 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 
-// The committed report rewritten with the given scores (`mergeParityScores`), in the map's order
+// The committed report rewritten with the given scores (`mergeParityScores`), in the map's order, a pending screen's row
+// Listed as pending
 export const writeParityScores = async (scores: Readonly<Record<string, ParityScore>>): Promise<void> => {
   const lines = existsSync(PARITY_SCORES_PATH) ? (await readFile(PARITY_SCORES_PATH, "utf8")).split("\n") : [];
-  await writeFile(PARITY_SCORES_PATH, mergeParityScores(lines, scores, Object.keys(ParityReferenceMap)));
+  const pendingReferences = Object.fromEntries(
+    Object.entries(ParityReferenceMap).flatMap(([referenceId, { pending, screen }]) =>
+      pending === undefined ? [] : [[referenceId, { reason: pending, screen }] as const],
+    ),
+  );
+  await writeFile(
+    PARITY_SCORES_PATH,
+    mergeParityScores(lines, scores, Object.keys(ParityReferenceMap), pendingReferences),
+  );
 };
