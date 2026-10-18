@@ -80,6 +80,7 @@ import { sendOff } from "#src/services/gcg/cards/sendOff";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
 import { starsigns } from "#src/services/gcg/cards/starsigns";
+import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
@@ -133,6 +134,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [122013, oceanicMimicFrog],
   [125011, shadowswordLoneGale],
   [125012, shadowswordGallopingFrost],
+  [126_011, stonehide],
   [133_021, flowfireEdge],
   [134_061, elementalLifeformElectro],
   [213_011, flowingFlame],

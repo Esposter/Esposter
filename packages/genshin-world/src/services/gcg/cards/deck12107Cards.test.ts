@@ -17,6 +17,7 @@ import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
+import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
@@ -236,5 +237,35 @@ describe("breastplate", () => {
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([FULL_PLATE_ID]);
+  });
+});
+
+describe("stonehide", () => {
+  const STONEHIDE_ID = 126_011;
+  const createStonehideDuel = (): GcgDuel =>
+    createDuel([createSideState([createCharacterState(2601)]), createSideState([])]);
+
+  test("the character takes one less DMG, for three usages", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+    expect(stonehide.modifyDamageReceived?.(context, 3, zoneCard, Element.Pyro)).toBe(2);
+    expect(zoneCard.usages).toBe(2);
+  });
+
+  test("a Geo DMG it decreases spends a second usage", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+    expect(stonehide.modifyDamageReceived?.(context, 3, zoneCard, Element.Geo)).toBe(2);
+    expect(zoneCard.usages).toBe(1);
+  });
+
+  test("a hit of no DMG is not decreased and spends nothing", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+    expect(stonehide.modifyDamageReceived?.(context, 0, zoneCard, Element.Geo)).toBe(0);
+    expect(zoneCard.usages).toBe(3);
   });
 });
