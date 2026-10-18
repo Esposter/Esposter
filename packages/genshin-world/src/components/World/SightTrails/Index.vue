@@ -16,10 +16,10 @@ interface Props {
   ends: GroundPoint[];
   // The world's ground at a point in its own coordinates, which each trail is sampled on
   getGroundHeight: (x: number, z: number) => number;
-  // The character's position, which every trail starts from, none where no character is drawn
-  target?: Vector3;
   // The scene the sight's mask is drawn from, which the trails are added to beside the sight's stand-ins
   sightScene: Scene;
+  // The character's position, which every trail starts from, none where no character is drawn
+  target?: Vector3;
 }
 
 const { elementalSight, ends, getGroundHeight, sightScene, target } = defineProps<Props>();

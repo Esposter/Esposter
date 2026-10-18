@@ -561,7 +561,7 @@ onUnmounted(() => {
       :elemental-sight
       :ends="seelieCourts"
       :get-ground-height
-      :sight-scene="sightScene"
+      :sight-scene
       :target="characterBody?.position"
     />
     <!-- The character on the field, on the controller's body -->
