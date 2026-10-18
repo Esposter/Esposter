@@ -13,15 +13,15 @@ flowchart TD
   DEV{"nuxt dev?"} -->|"no: a build"| ABSENT["no route, no handler bundled, no address handed to the world"]
   DEV -->|yes| ROUTE["/data/genshin/exports/** registered"]
   ROUTE --> PATH{"the request's path"}
-  PATH -->|"index.json"| IDS["the folders holding a witness.json, in name order"]
-  PATH -->|"{component}/witness.json"| LAYOUT["the component's layout"]
+  PATH -->|"index.json"| IDS["the folders holding a witness.json or an avatar, in name order"]
+  PATH -->|"{component}/witness.json, avatar.json, avatar.bin"| LAYOUT["the component's root files"]
   PATH -->|"{component}/ a mesh's or a texture's path"| ASSET{"inside the component's assets?"}
   ASSET -->|yes| FILE["the file, typed by its extension"]
   ASSET -->|"no: a climb out, an absolute path"| MISSING["404"]
-  PATH -->|"a folder holding no layout"| MISSING
+  PATH -->|"a folder holding no layout or avatar"| MISSING
 ```
 
-Only a folder the index lists is read, and only its layout or a file inside its `assets` folder is served, so no request reaches outside the exports' directory, however its path is encoded. Nothing is cached: an export written again is read again on the next request.
+Only a folder the index lists is read, and only its root files (the layout, the avatar's manifest and binary) or a file inside its `assets` folder is served, so no request reaches outside the exports' directory, however its path is encoded. Nothing is cached: an export written again is read again on the next request.
 
 ## What the world draws
 

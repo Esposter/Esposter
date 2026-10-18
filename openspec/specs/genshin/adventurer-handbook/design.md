@@ -8,7 +8,7 @@ The game's Adventurer Handbook tracks a player's progress: the experience chapte
 
 ## Parity
 
-The book is scored whole-frame against `handbook-experience`, the wiki's screenshot of the English client's Experience tab at 3130 by 1730, with every box measured off it in its own pixels. It scores a mean of 5.18% and FLIP 0.2456 (from 8.28% and 0.3610 before the rows, tiles and colours were measured), over the bar. What is left is the game's art, which cannot ship: the item icons on the reward tiles, the commission rows' avatars, the tabs' emblems, the ring's ornament, the quill and the cover's corners and page edges. After the art comes the face, Signika for the game's HYWenHei, set at the game's cap height and letter-spaced to its widths, and the current chapter's ornate check, not drawn yet. A commission title of two lines puts its progress pill 11.5 below the game's, since the game's pill falls only 18 for a second line.
+The book is scored whole-frame against `handbook-experience`, the wiki's screenshot of the English client's Experience tab at 3130 by 1730, with every box measured off it in its own pixels. It scores over the bar, and the rows, tiles and colours were measured off it to get there. What is left is the game's art, which cannot ship: the item icons on the reward tiles, the commission rows' avatars, the tabs' emblems, the ring's ornament, the quill and the cover's corners and page edges. After the art comes the face, Signika for the game's HYWenHei, set at the game's cap height and letter-spaced to its widths, and the current chapter's ornate check, not drawn yet. A commission title of two lines puts its progress pill 11.5 below the game's, since the game's pill falls only 18 for a second line.
 
 ## Key files
 

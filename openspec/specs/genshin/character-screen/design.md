@@ -15,7 +15,7 @@ flowchart TD
   TAB -->|Artifacts| ARTIFACTS["CharacterMenuArtifacts: the five slots, worn or not"]
   TAB -->|Constellation| CONSTELLATIONS["CharacterMenuConstellation: six rings, activated ones lit"]
   TAB -->|Talents| TALENTS["CharacterMenuTalents: the three combat talents' levels"]
-  TAB -->|Profile| EMPTY["An empty panel, not built yet"]
+  TAB -->|Profile| PROFILE["CharacterProfile: the story list and the text panel"]
   CHOSEN --> LIST
 ```
 

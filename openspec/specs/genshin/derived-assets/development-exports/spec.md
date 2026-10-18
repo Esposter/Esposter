@@ -33,7 +33,7 @@ A production build SHALL register no export route, bundle no export handler and 
 
 ### Requirement: The export route answers only the components its index lists
 
-The export route SHALL answer only with the components its index lists and with files inside those components' asset folders, and SHALL answer not found for any other path.
+The export route SHALL answer only with the components its index lists and with their root files (the layout, the avatar's manifest and binary) or files inside their asset folders, and SHALL answer not found for any other path.
 
 #### Scenario: A path climbing out of a component's folder is not found
 
@@ -41,15 +41,15 @@ The export route SHALL answer only with the components its index lists and with 
 - **WHEN** the route answers it
 - **THEN** the answer is not found
 
-#### Scenario: The index lists each folder that holds a layout
+#### Scenario: The index lists each folder that holds a layout or an avatar
 
-- **GIVEN** the developer's exports folder with components that hold layouts
+- **GIVEN** the developer's exports folder with components that hold layouts or avatars
 - **WHEN** the index is requested
-- **THEN** each component holding a layout is listed
+- **THEN** each component holding a layout or an avatar is listed
 
-#### Scenario: A folder holding no layout is not found
+#### Scenario: A folder holding no layout or avatar is not found
 
-- **GIVEN** a folder in the exports holding no layout
+- **GIVEN** a folder in the exports holding neither a layout nor an avatar
 - **WHEN** it is requested
 - **THEN** the answer is not found
 

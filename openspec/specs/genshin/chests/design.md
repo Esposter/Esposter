@@ -18,7 +18,7 @@ flowchart TD
 
 ## The kinds
 
-`ChestKind` names seven. The five tiers are the map's own labels, Common to Remarkable, one per chest. Buried and Sealed are places the map marks with no tier: a Buried chest is dug up where it stands and a Sealed one is freed of its seal first. A dug or freed place's contents are not yet settled, since the map gives no tier for it and the buried and sealed points stand well apart from every tiered chest, so none can be read off a neighbour.
+`ChestKind` names the map's own tier labels, Common to Remarkable, one per chest. Buried and Sealed are places the map marks with no tier: a Buried chest is dug up where it stands and a Sealed one is freed of its seal first. A dug or freed place's contents are not yet settled, since the map gives no tier for it and the buried and sealed points stand well apart from every tiered chest, so none can be read off a neighbour.
 
 ## Opening
 

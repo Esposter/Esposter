@@ -100,7 +100,7 @@ A wish's duplicate of a character SHALL bring one Stella Fortuna of that charact
 
 #### Scenario: The sixth duplicate is the last to bring a Stella Fortuna
 
-- **GIVEN** a character with six duplicates already drawn
+- **GIVEN** a character with five duplicates already drawn, so six copies held
 - **WHEN** a wish draws the sixth duplicate
 - **THEN** one of its Stella Fortuna is handed over
 - **AND** the next duplicate brings none
@@ -117,7 +117,7 @@ A five-star drawn past its sixth copy SHALL bring a Masterless Stella Fortuna to
 
 #### Scenario: A five-star past six copies adds a Masterless Stella Fortuna to the wallet
 
-- **GIVEN** a five-star character with six copies held
+- **GIVEN** a five-star character with seven copies held
 - **WHEN** a wish draws another copy
 - **THEN** one Masterless Stella Fortuna is added to the wallet
 

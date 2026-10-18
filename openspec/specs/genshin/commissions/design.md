@@ -28,7 +28,7 @@ A commission is one daily task of Mondstadt's city, read from the game's daily t
 
 ## Claims and rewards
 
-The game's Adventure Rank is cut into twelve bands of five ranks, rank 1 to 5 the first and rank 56 to 60 the last, and a rank past the last band stays in it. A reward tier holds the items of each band, and a claim draws each item's count from its range with the world's random source. A draw of zero gives nothing.
+The game's Adventure Rank is cut into bands of `COMMISSION_RANK_BAND_SIZE` ranks, `COMMISSION_RANK_BAND_COUNT` bands in all (`services/commission/constants.ts`), and a rank past the last band stays in it. A reward tier holds the items of each band, and a claim draws each item's count from its range with the world's random source. A draw of zero gives nothing.
 
 - `claimCommissionReward` claims a dealt scene task. A task whose count has reached its finish count is claimed free; an unfinished one is claimed for one Encounter Point, which it spends. Either way its reward is the tier's band for the rank it was dealt at, and a commission claimed cannot be claimed again.
 - Claims stop at four a day. Each claim counts toward the four, whichever way it was made.
