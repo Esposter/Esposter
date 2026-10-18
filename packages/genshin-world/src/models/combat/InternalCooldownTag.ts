@@ -13,4 +13,5 @@ export enum InternalCooldownTag {
   TartagliaFoulLegacy = "TartagliaFoulLegacy",
   TartagliaRiptide = "TartagliaRiptide",
   VaresaCombatCycle = "VaresaCombatCycle",
+  VesnaElementalSkillStart = "VesnaElementalSkillStart",
 }
