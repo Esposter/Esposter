@@ -4,7 +4,7 @@ import PageBuilderCanvasFrame from "@/components/PageBuilder/Canvas/Frame.vue";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { render } from "@nuxt/test-utils/browser";
 import { assert, describe, expect, test, vi } from "vitest";
-import { defineComponent, h, shallowRef, Teleport } from "vue";
+import { h } from "vue";
 
 describe("PageBuilderCanvasFrame", () => {
   // constants.test declares a suite when imported, which only the default run holds, so the values are declared here
@@ -108,25 +108,11 @@ describe("PageBuilderCanvasFrame", () => {
     expect.hasAssertions();
 
     const onClick = vi.fn<() => void>();
-    const SandboxedFrame = defineComponent({
-      setup(_props, { slots }) {
-        const frameBody = shallowRef<HTMLElement>();
-        const onLoad = (event: Event) => {
-          frameBody.value = (event.target as HTMLIFrameElement).contentDocument?.body;
-        };
-
-        return () =>
-          h("div", [
-            h("iframe", {
-              onLoad,
-              sandbox: "allow-same-origin",
-              srcdoc: "<!doctype html><html><head></head><body></body></html>",
-            }),
-            frameBody.value ? h(Teleport, { to: frameBody.value }, slots.default?.()) : null,
-          ]);
-      },
+    const screen = await render(PageBuilderCanvasFrame, {
+      attrs: { style: { height: "400px", width: "1024px" } },
+      props: { css: "", device: PageBuilderDevice.Desktop, title: "Page" },
+      slots: { default: () => h("button", { onClick }, "Press") },
     });
-    const screen = await render(SandboxedFrame, { slots: { default: () => h("button", { onClick }, "Press") } });
     const frame = screen.container.querySelector("iframe");
     assert.exists(frame);
     await expect.poll(() => frame.contentDocument?.querySelector("button")).not.toBeNull();
