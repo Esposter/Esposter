@@ -14,6 +14,7 @@ import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { checkIsInKitHitbox } from "#src/services/kit/checkIsInKitHitbox";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getElementCriticalDamageBonus } from "#src/services/kit/effects/getElementCriticalDamageBonus";
@@ -44,6 +45,13 @@ import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 // Follow, the reactions it triggered and the damage the enemy took sent to the deployed team's kits. Once the strike
 // Has landed on every enemy it reaches, each reaction that landed with a reach reaches the enemies round its own, whose
 // Energy and reactions follow in turn. The strikes given keep only those that struck an enemy, written in place
+// Whether a strike's reach misses an enemy: its target's hitbox, its target alone, or else its hit's area about the body
+const checkIsOutOfStrikeReach = (strike: KitStrike, target: Enemy | undefined, enemy: Enemy): boolean => {
+  if (target === undefined) return !checkIsInAttackArea(strike.hit.hitArea, strike.body, enemy);
+  if (strike.hitbox === undefined) return target !== enemy;
+  return !checkIsInKitHitbox(strike.hitbox, target.position, enemy.position);
+};
+
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
   const {
     characterIdCombatantMap,
@@ -75,10 +83,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     const reaches: [Enemy, TransformativeReaction][] = [];
     strikeKitDendroCores(kitEffectState, party, { ...strike, target }, pricedCombatant);
     for (const enemy of enemyMap.values()) {
-      if (
-        [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-        (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, body, enemy))
-      )
+      if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(strike, target, enemy))
         continue;
       isStruck = true;
       addEnduringRockStatus(
