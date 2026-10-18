@@ -26,6 +26,8 @@ export interface WorldTables {
   adventureRankTables: AdventureRankTables;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
+  // Each character's constellations as the game's tables hold them, by skill set, which a kit plays its talents at the
+  // Levels of, and the character screen's Constellation tab lists
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
   // Reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];

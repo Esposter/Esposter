@@ -1,4 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { TALENT_START_LEVELS } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { PROOF_PARTY_CHARACTER_IDS } from "#src/services/kit/constants.test";
@@ -11,7 +12,10 @@ import { describe, test } from "vitest";
 // The kits and tables the minute only reads, built and read once from the mirror; the minute builds the world it steps
 // Afresh each run
 const [characterIdKitMap, statTables, enemyTables] = await Promise.all([
-  readCharacterKits(GAME_DATA_LOCAL_BASE_URL, PROOF_PARTY_CHARACTER_IDS),
+  readCharacterKits(
+    GAME_DATA_LOCAL_BASE_URL,
+    new Map(PROOF_PARTY_CHARACTER_IDS.map((characterId) => [characterId, TALENT_START_LEVELS] as const)),
+  ),
   readStatTables(GAME_DATA_LOCAL_BASE_URL),
   readEnemyTables(GAME_DATA_LOCAL_BASE_URL),
 ]);
