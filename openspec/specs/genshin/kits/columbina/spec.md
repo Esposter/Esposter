@@ -161,3 +161,47 @@ Columbina at Constellation 6 SHALL give each party member's strikes of the eleme
 - **GIVEN** Columbina is at Constellation 5 and casts her burst
 - **WHEN** a Lunar-Charged reaction forms within the window
 - **THEN** no party member gains the buff
+
+### Requirement: Ascension 4 gives a Moonridge Dew on a Lunar-Bloom in the burst's window
+
+From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL give the party one Moonridge Dew, at most one every three frames and three in each eighteen seconds.
+
+#### Scenario: A Lunar-Bloom in the window gives Moonridge Dew
+
+- **GIVEN** Columbina has Ascension 4 and her burst's window is open
+- **WHEN** a Lunar-Bloom reaction occurs
+- **THEN** the party gains one Moonridge Dew
+
+#### Scenario: A Lunar-Charged reaction gives no Moonridge Dew
+
+- **GIVEN** Columbina has Ascension 4 and her burst's window is open
+- **WHEN** a Lunar-Charged reaction occurs
+- **THEN** the party gains no Moonridge Dew
+
+#### Scenario: A fourth Lunar-Bloom in eighteen seconds gives none
+
+- **GIVEN** three Moonridge Dew were gained in the current eighteen seconds
+- **WHEN** a Lunar-Bloom occurs in the window
+- **THEN** the party gains none
+
+### Requirement: Moondew Cleanse replaces her charged attack while Dew is there to spend
+
+While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF.
+
+#### Scenario: A charged attack with Dew plays Moondew Cleanse and spends one Dew
+
+- **GIVEN** the party holds a Moonridge or Verdant Dew
+- **WHEN** the player presses a charged attack
+- **THEN** Moondew Cleanse plays, and one Dew is spent, the verdant first
+
+#### Scenario: A charged attack with no Dew is her normal charged attack
+
+- **GIVEN** the party holds no Dew
+- **WHEN** the player presses a charged attack
+- **THEN** her normal charged attack plays and no Dew is spent
+
+#### Scenario: Moondew Cleanse's Lunar-Bloom hits ignore all of each enemy's DEF
+
+- **GIVEN** Moondew Cleanse is playing
+- **WHEN** each of its three hits strikes an enemy
+- **THEN** each hit ignores all of that enemy's DEF, and her normal charged attack ignores none

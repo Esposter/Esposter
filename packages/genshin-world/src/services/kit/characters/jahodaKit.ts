@@ -90,6 +90,10 @@ const readFlaskElement = (kitEffectState: KitEffectState, characterId: number): 
     ),
   );
 
+// Ends the Meowballs still running, as gcsim's Skill and drain end their ticks
+const removeMeowballs = (kitEffectState: KitEffectState): void =>
+  removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
+
 // The body a flask's absorb check or drain acts from, standing on a field's centre
 const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, height: 0, position: centre });
 
@@ -152,12 +156,14 @@ export const createJahodaKitBehaviour = ({
   const meowballFirstSeconds = readSeconds("firstMeowballFirstHitmark");
   const meowballIntervalSeconds = readSeconds("meowballHitmarkInterval");
   const meowballTalentMultiplier = readParameter("meowballTalentMultiplier");
-  const meowballHitFields = readHitFields("meowball", ["element", "hitmarkSeconds", "talentMultiplier"]);
+  const meowballHitFields = readHitFields("meowball", ["element", "hitArea", "hitmarkSeconds", "talentMultiplier"]);
   // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary target does
   const meowballHitbox: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: meowballArea.radius } };
   // A Meowball's hit gives her energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy callback does
   const meowballHit: KitHit = {
     ...meowballHitFields,
+    // The circle the hitbox above gives, as the record holds no area for the hit
+    hitArea: meowballArea,
     hitmarkSeconds: 0,
     onStrike: ({ kitEffectState, party }, { combatant }) => {
       if (
@@ -202,7 +208,7 @@ export const createJahodaKitBehaviour = ({
   // Those an earlier drain started and still run, as gcsim's drain stops them
   const startMeowballs = (context: KitContext, combatant: Combatant, element: Element): void => {
     const { body, kitEffectState } = context;
-    removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
+    removeMeowballs(kitEffectState);
     castKitField(kitEffectState, combatant.characterId, body.position, {
       id: MEOWBALL_FIELD_ID,
       nextTickSeconds: meowballFirstSeconds,
@@ -257,6 +263,8 @@ export const createJahodaKitBehaviour = ({
     kitEffectState,
   }: KitContext): void => {
     const { characterId } = combatant;
+    // A press starts a new pursuit, which ends the Meowballs still running, as gcsim's Skill zeroes the flask and stops their ticks
+    removeMeowballs(kitEffectState);
     const pursuit = castKitField(kitEffectState, characterId, position, {
       id: PURSUIT_FIELD_ID,
       isFollowing: true,

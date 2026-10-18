@@ -23,7 +23,8 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
-import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
+import { countDew } from "#src/services/party/countDew";
+import { spendDew } from "#src/services/party/spendDew";
 
 // Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
 // RES below for 10 seconds
@@ -139,7 +140,7 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
 
 // Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
 // Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
-// RES. Hymn of Eternal Rest plays while the party holds Verdant Dew, spending up to three on a direct Lunar-Bloom hit
+// RES. Hymn of Eternal Rest plays while the party holds Dew, spending up to three on a direct Lunar-Bloom hit
 // Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
 // For her Elemental Mastery. Her burst gives the party Pale Hymn 96 frames in, a Dew Hymn of Eternal Rest spends during
 // The burst gives the Moon Song its Pale Hymn, each Bloom or Lunar-Bloom reaction spends one, and the Pale Hymn adds her
@@ -252,11 +253,11 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
       {
         ...pressBehaviour,
         variant: {
-          checkIsActive: ({ party }) => party.verdantDew.count > 0,
+          checkIsActive: ({ party }) => countDew(party) > 0,
           hits: [shredBehaviour],
           onStart: (context) => {
             plantSanctuary(context);
-            const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
+            const dewCount = spendDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
             giveMoonSong(context.kitEffectState, context.activeCombatant.characterId, dewCount);
             castKitSummon(
               context.kitEffectState,

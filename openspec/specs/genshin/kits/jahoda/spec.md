@@ -150,3 +150,31 @@ Jahoda's collision and two plunges SHALL land at once with the shared reach, and
 - **GIVEN** Jahoda has Constellation 5 and the deployed team is at Ascendant Gleam
 - **WHEN** Savvy Strategy's flask drains full
 - **THEN** no member gains a buff
+
+### Requirement: A full flask's drain at Ascendant Gleam starts ten Meowballs
+
+At Ascendant Gleam, a full flask's drain SHALL start ten Meowballs, the first 129 frames after the drain and each 116 frames after the one before, each striking the living enemy nearest her body with the absorbed element.
+
+#### Scenario: A full flask drains at Ascendant Gleam
+
+- **GIVEN** the deployed team is at Ascendant Gleam
+- **WHEN** Savvy Strategy's flask drains full with an element absorbed
+- **THEN** a Meowball strikes the nearest enemy 129 frames later, and each of the other nine 116 frames after the one before
+
+#### Scenario: A full flask drains below Ascendant Gleam
+
+- **GIVEN** the deployed team is at Nascent Gleam
+- **WHEN** Savvy Strategy's flask drains full
+- **THEN** no Meowball strikes
+
+#### Scenario: A Meowball gives Jahoda energy once per 3.5 seconds
+
+- **GIVEN** Meowballs strike enemies
+- **WHEN** a Meowball strikes within 3.5 seconds of the last one that gave energy
+- **THEN** Jahoda gains no energy from it
+
+#### Scenario: A press of Savvy Strategy ends the Meowballs still running
+
+- **GIVEN** Meowballs are running
+- **WHEN** the player presses Savvy Strategy
+- **THEN** no further Meowball strikes
