@@ -7,8 +7,8 @@ import { checkBlockNodes } from "#src/services/checkBlockNodes";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { z } from "zod";
 
-// The document's shape, then its registry: the content the root accepts, the root's props its schema passes, every slot
-// Holding only the types it allows, unique ids, and the node count staying within the limit the consumer passes
+// The document's shape, then its registry: the content the root accepts, every slot holding only the types it allows,
+// Unique ids and the node count staying within the limit the consumer passes, then the root's props its schema passes
 export const createBlockDocumentSchema = (registry: BlockRegistry, maxNodes: number): z.ZodType<BlockDocument> =>
   z
     .object({ content: z.array(blockNodeShapeSchema), root: z.object({ props: z.record(z.string(), z.unknown()) }) })
