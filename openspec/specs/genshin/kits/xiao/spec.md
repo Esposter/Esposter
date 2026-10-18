@@ -130,11 +130,27 @@ From Constellation 1, Lemniscatic Wind Cycling SHALL have one more charge than i
 - **WHEN** his skill's charges are read
 - **THEN** no charge is added
 
+### Requirement: Constellation 4 DEF Bonus below half HP
+
+From Constellation 4, Xiao SHALL gain a 100% DEF Bonus while his HP is under half.
+
+#### Scenario: Constellation 4 gives DEF Bonus under half HP
+
+- **GIVEN** Xiao has Constellation 4
+- **WHEN** his HP falls under half
+- **THEN** he gains a 100% DEF Bonus
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Xiao has Constellation 3
+- **WHEN** his HP falls under half
+- **THEN** no DEF Bonus is gained
+
 ### Requirement: Unbuilt effects
 
-Xiao's third skill charge, his jump, his Constellations 2 through 6 and his dash particles SHALL have no effect in the world yet.
+Xiao's third skill charge, his jump, his Constellations 2 and 6 and his dash particles SHALL have no effect in the world yet.
 
 #### Scenario: Constellations have no effect
 
-- **WHEN** Xiao holds Constellation 2 through 6
+- **WHEN** Xiao holds Constellation 2 or 6
 - **THEN** no effect of those constellations is applied in the fight
