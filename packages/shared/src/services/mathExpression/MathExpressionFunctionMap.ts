@@ -2,6 +2,7 @@ import type { MathExpressionFunction } from "#src/models/mathExpression/MathExpr
 
 import { MathExpressionListForm } from "#src/models/mathExpression/MathExpressionListForm";
 import { checkIsNearlyEqual } from "#src/services/mathExpression/checkIsNearlyEqual";
+import { checkIsTruthy } from "#src/services/mathExpression/checkIsTruthy";
 import { computeBernoulliNumber } from "#src/services/mathExpression/computeBernoulliNumber";
 import { computeCombinations } from "#src/services/mathExpression/computeCombinations";
 import { computeErf } from "#src/services/mathExpression/computeErf";
@@ -13,6 +14,7 @@ import { computeModulo } from "#src/services/mathExpression/computeModulo";
 import { computeNthRoot } from "#src/services/mathExpression/computeNthRoot";
 import { computeZeta } from "#src/services/mathExpression/computeZeta";
 import { shiftDecimalPlaces } from "#src/services/mathExpression/shiftDecimalPlaces";
+import { toNumber } from "#src/services/mathExpression/toNumber";
 
 // A function of the table is keyed by its mathjs name. Its arguments are the ones its arity says, and its list form says
 // How a square-bracketed list stands in for them. Its computation yields null where mathjs would throw, which the
@@ -20,8 +22,6 @@ import { shiftDecimalPlaces } from "#src/services/mathExpression/shiftDecimalPla
 const MAXIMUM_DIGITS = 15;
 const { Argument, None, Only, Spread } = MathExpressionListForm;
 
-const toNumber = (flag: boolean): number => (flag ? 1 : 0);
-const checkIsTruthy = (value: number): boolean => value !== 0 && !Number.isNaN(value);
 const countTruthy = (values: number[]): number => values.filter((value) => checkIsTruthy(value)).length;
 
 const fixed = (
@@ -77,6 +77,12 @@ const median = (values: number[]): number => {
 const medianAbsoluteDeviation = (values: number[]): number => {
   const center = median(values);
   return median(values.map((value) => Math.abs(value - center)));
+};
+// Three-way comparison: zero when nearly equal, one when larger, minus one when smaller, and NaN when unordered
+const computeComparison = (left: number, right: number): number => {
+  if (checkIsNearlyEqual(left, right)) return 0;
+  if (left > right) return 1;
+  return left < right ? -1 : Number.NaN;
 };
 const computeGreatestCommonDivisor = (left: number, right: number): number =>
   right === 0 ? Math.abs(left) : computeGreatestCommonDivisor(right, left % right);
@@ -255,16 +261,8 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionFunction> =
       ? computeCombinations(available + chosen - 1, chosen)
       : null,
   ),
-  compare: binary((left, right) => {
-    if (checkIsNearlyEqual(left, right)) return 0;
-    if (left > right) return 1;
-    return left < right ? -1 : Number.NaN;
-  }),
-  compareNatural: binary((left, right) => {
-    if (checkIsNearlyEqual(left, right)) return 0;
-    if (left > right) return 1;
-    return left < right ? -1 : Number.NaN;
-  }),
+  compare: binary(computeComparison),
+  compareNatural: binary(computeComparison),
   composition: binary(computeCompositions),
   conj: unary((value) => value),
   cos: unary(Math.cos),
