@@ -78,7 +78,6 @@ export const createTileStreamer = <TTile>({
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
     isSettled: checkIsSettled,
-    pendingKeys: () => [...pendingWantedFrameMap.keys()],
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);

@@ -221,10 +221,7 @@ describe(createTileStreamer, () => {
     tileStreamer.fail(fineKey);
     tileStreamer.update(wanted, emptySelection, emptySelection);
 
-    expect({ calls: requestTile.mock.calls, pending: tileStreamer.pendingKeys() }).toStrictEqual({
-      calls: [[fineKey], [fineKey]],
-      pending: [fineKey],
-    });
+    expect(requestTile.mock.calls).toStrictEqual([[fineKey], [fineKey]]);
   });
 
   test("gives up a tile failed MAX_TILE_ATTEMPTS times, which then counts as settled", () => {
