@@ -1,6 +1,7 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { GroundPoint } from "genshin-engine";
 
+import { placeCampRing } from "#src/services/enemy/placeCampRing";
 import { ABYSS_ARENA_SPREAD } from "#src/services/spiralAbyss/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -16,20 +17,14 @@ export const createAbyssHalfCamp = (
 ): EnemyCamp => ({
   areaId,
   id: campId,
-  members: describeIds.map((describeId, index) => {
-    const enemyKindId = enemyKindIds[describeId];
-    if (enemyKindId === undefined)
-      throw new InvalidOperationError(Operation.Read, String(describeId), "has no enemy kind");
-    const angle = (index / describeIds.length) * 2 * Math.PI;
-    return {
-      enemyKindId,
-      id: String(index),
-      level: monsterLevel,
-      patrol: [],
-      position: {
-        x: center.x + Math.cos(angle) * ABYSS_ARENA_SPREAD,
-        z: center.z + Math.sin(angle) * ABYSS_ARENA_SPREAD,
-      },
-    };
-  }),
+  members: placeCampRing(
+    center,
+    ABYSS_ARENA_SPREAD,
+    describeIds.map((describeId) => {
+      const enemyKindId = enemyKindIds[describeId];
+      if (enemyKindId === undefined)
+        throw new InvalidOperationError(Operation.Read, String(describeId), "has no enemy kind");
+      return { enemyKindId, level: monsterLevel };
+    }),
+  ),
 });

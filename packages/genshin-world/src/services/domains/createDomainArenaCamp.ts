@@ -3,6 +3,7 @@ import type { DomainChallengeEnemy } from "#src/services/domains/domainChallenge
 import type { GroundPoint } from "genshin-engine";
 
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
+import { placeCampRing } from "#src/services/enemy/placeCampRing";
 import { OUTCROP_CAMP_ENEMY_KIND_IDS } from "#src/services/leyLine/constants";
 import { takeOne } from "@esposter/shared";
 
@@ -24,22 +25,13 @@ export const createDomainArenaCamp = (
         enemyKindId ?? takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
     ),
   );
-  const count = enemyKindIds.length;
   return {
     areaId,
     id: campId,
-    members: enemyKindIds.map((enemyKindId, index) => {
-      const angle = (index / count) * 2 * Math.PI;
-      return {
-        enemyKindId,
-        id: String(index),
-        level: enemyLevel,
-        patrol: [],
-        position: {
-          x: center.x + Math.cos(angle) * DOMAIN_ARENA_SPREAD,
-          z: center.z + Math.sin(angle) * DOMAIN_ARENA_SPREAD,
-        },
-      };
-    }),
+    members: placeCampRing(
+      center,
+      DOMAIN_ARENA_SPREAD,
+      enemyKindIds.map((enemyKindId) => ({ enemyKindId, level: enemyLevel })),
+    ),
   };
 };
