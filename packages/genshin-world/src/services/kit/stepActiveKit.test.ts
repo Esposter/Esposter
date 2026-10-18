@@ -301,7 +301,9 @@ describe(stepActiveKit, () => {
       effects: [],
       fieldCharacterId: TRAVELER_CHARACTER_ID,
     });
-    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 1, undefined, { healthShare: 0.1, refuses: () => true });
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 1, {
+      fallRefusal: { healthShare: 0.1, refuses: () => true },
+    });
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([

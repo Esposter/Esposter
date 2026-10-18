@@ -74,7 +74,7 @@ describe(hitPartyMember, () => {
 
     const party = createParty([1]);
     hitPartyMember(party, combatant, { effects: [] }, characterIdCombatantMap, 250, Element.Pyro);
-    damagePartyMember(party, 1, 0.25, 2);
+    damagePartyMember(party, 1, 0.25, { sourceCharacterId: 2 });
 
     expect(party.healthChanges).toStrictEqual([
       { bondOfLifeShare: 0, characterId: 1, element: Element.Pyro, healthShare: -0.25, overflowHealthShare: 0 },

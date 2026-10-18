@@ -22,13 +22,10 @@ export const changeKitMemberHealth = (
   if (!member) return;
   const maxHealth = getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap);
   if (health < 0) {
-    damagePartyMember(
-      party,
-      characterId,
-      -health / maxHealth,
-      source.characterId,
-      createKitFallRefusal(member, kitEffectState, maxHealth),
-    );
+    damagePartyMember(party, characterId, -health / maxHealth, {
+      fallRefusal: createKitFallRefusal(member, kitEffectState, maxHealth),
+      sourceCharacterId: source.characterId,
+    });
     return;
   }
   const { effects } = kitEffectState;

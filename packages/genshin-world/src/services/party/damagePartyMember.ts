@@ -16,9 +16,11 @@ export const damagePartyMember = (
   party: Party,
   characterId: number,
   lostHealthShare: number,
-  sourceCharacterId?: number,
-  fallRefusal?: FallRefusal,
-  element?: Element,
+  {
+    element,
+    fallRefusal,
+    sourceCharacterId,
+  }: { element?: Element; fallRefusal?: FallRefusal; sourceCharacterId?: number } = {},
 ): void => {
   const partyMember = getPartyMember(party, characterId);
   if (partyMember.healthShare === 0 || lostHealthShare <= 0) return;
