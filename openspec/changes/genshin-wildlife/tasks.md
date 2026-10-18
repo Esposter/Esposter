@@ -18,4 +18,4 @@
 
 ## 5. Pets and each region's animals
 
-- [ ] 5.1 Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'.
+- [ ] 5.1 Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design.

@@ -5,6 +5,7 @@ The game's world is lived in by animals: birds that scatter, boars that charge, 
 ## Decisions
 
 - **Three kinds, by what they give.** Pets, the cats and dogs, cannot be interacted with. Birds and beasts drop their items when struck down. Material sources, crystalflies, butterflies, lizards, frogs, crabs and the like, are picked up as an item through the [interaction](../../specs/genshin/interaction/design.md) prompts and vanish in a puff of smoke. A fish in shallow water can be struck or picked up.
+- **Pets are deferred, not built by hand.** `WildlifeKind` holds no pet member, and the official map's Animals subtree (`references/interactive-map/label-tree.json`) has no label for a Mondstadt cat or dog, so a pet kind has no place in the data to be read from. Task 5.1 waits: when the map carries the labels, the kind joins `WildlifeKind` with its spawns in the region's data, and it is struck or picked up as no animal is. Until then no animal is marked a pet and none is refused.
 - **Each kind's numbers are the game's, where a table holds them.** `EnvAnimalGatherExcelConfigData` gives the material sources their escape radius and time, how long they live, the weathers they hide in (rain, thunderstorms and snow for some) and the items they give. `CaptureExcelConfigData` gives what each beast drops when caught, and the monster table its kind, which the enemies' run already reads.
 - **Birds and beasts are the archive's animals, and no table gives their flight.** The environment table holds the critters, fish and gadgets. The birds and beasts are monsters filed under the archive's aviary and animal groups, and no row of the table gives their escape radius or time. Until a recording times them, they stand on the closest values the table does hold, the gadget rows' radius of four metres and time of one second, marked provisional.
 - **They flee on the enemies' step.** A startled animal runs from the player once within its escape radius, as a stepped state beside the enemies' own, and most come into being only when the player is near. Boars charge and can hurt a player in their way; Sumeru's beasts fight back with health bars and draw the player into combat; Chenyu Vale's flee and vanish when struck.
@@ -48,7 +49,7 @@ packages/genshin-world/src/services/wildlife/
 2. **The strike reaching the animals.** The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so the strike loop in `services/kit/strikeKitEnemies.ts` tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component steps and draws the list it is given, as the Enemies component does, and skips a struck one.
 3. **Material sources, picked up.**
 4. **Boars, and the wildlife that fights back.**
-5. **Pets**, and each region's own animals when its region lands.
+5. **Pets**, deferred until the map carries their labels (see the Decisions), and each region's own animals when its region lands.
 
 ## Data and measures
 
