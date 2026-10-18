@@ -1,5 +1,6 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
+import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentLeaf";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
@@ -11,6 +12,7 @@ import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/add
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
 // The candidates a hit's writer gives at its key, by their field names
@@ -39,11 +41,17 @@ const readFieldMap = (
 // The hit each multiplier of a talent variable joins to, keyed by its proud skill group and index: the multiplier's own
 // Talent row, the variable's attack's element, gauge, tag, poise and strike type where the variable's one literal is every
 // Attack of it, and the hitbox and damage delay of each call that queues that attack. A named list's hit takes these by
-// Its multiplier, so a variable with two literals gives its fields none
+// Its multiplier, so a variable with two literals gives its fields none. A variable no talent row names keys by the one
+// Parameter its multiplier array joins to by value
 export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTables): NamedHitCandidateMap => {
-  const { attacks, config, queuedAttacks, talentParameterMap } = gcsim;
+  const { attacks, config, queuedAttacks, talentArrayMap, talentParameterMap } = gcsim;
   const namedHitCandidateMap: NamedHitCandidateMap = new Map();
-  for (const { leaves, name: variable } of config.talentVariables) {
+  const variables = new Set(
+    [...config.talentVariables.map(({ name }) => name), ...attacks.map(({ talentVariable }) => talentVariable)].filter(
+      (variable): variable is string => variable !== undefined,
+    ),
+  );
+  for (const variable of variables) {
     const variableAttacks = attacks.filter(({ talentVariable }) => talentVariable === variable);
     if (variableAttacks.length === 0) continue;
     const [attack] = variableAttacks;
@@ -59,14 +67,9 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
           : [];
       })
       .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
-    for (const leaf of leaves) {
-      const { reference } = leaf;
-      const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
-      const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
-      const key = `${tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]]}|${index}`;
-      if (index === undefined || namedHitCandidateMap.has(key)) continue;
+    const addNamedHit = (key: string, talentLeaf?: GcsimTalentLeaf) => {
       const namedHitCandidate: NamedHitCandidate = {
-        fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf: leaf }),
+        fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf }),
         queuedCalls: attackCalls.map(({ delay, delayLine, file, hitbox, line, site }) => ({
           delay,
           fieldMap: readFieldMap(key, gcsim, tables, {
@@ -79,7 +82,25 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
         })),
       };
       namedHitCandidateMap.set(key, namedHitCandidate);
+    };
+    let isLabelled = false;
+    for (const leaf of config.talentVariables.find(({ name }) => name === variable)?.leaves ?? []) {
+      const { reference } = leaf;
+      const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
+      const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
+      const key = `${tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]]}|${index}`;
+      if (index === undefined || namedHitCandidateMap.has(key)) continue;
+      addNamedHit(key, leaf);
+      isLabelled = true;
     }
+    const talentArray = talentArrayMap.get(variable);
+    const joined =
+      talentArray === undefined || isLabelled || joinedAttack === undefined
+        ? undefined
+        : joinGcsimTalentArray(talentArray, tables.talentMultiplierMap, Object.values(tables.talentGroupIdMap));
+    if (joined === undefined) continue;
+    const key = `${joined.proudSkillGroupId}|${joined.index}`;
+    if (!namedHitCandidateMap.has(key)) addNamedHit(key);
   }
   return namedHitCandidateMap;
 };

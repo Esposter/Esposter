@@ -7,6 +7,7 @@ import { readGcsimAnimationFrameNames } from "#src/services/genshinAssets/kits/g
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
+import { readGcsimTalentArrays } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays";
 import { readGcsimTalentParameters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters";
 import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { readGcsimTravels } from "#src/services/genshinAssets/kits/gcsim/readGcsimTravels";
@@ -40,6 +41,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     folder,
     holdCooldowns: readGcsimHoldCooldowns(goSources, constantMap),
     queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap),
+    talentArrayMap: readGcsimTalentArrays(talentSource),
     talentFile,
     talentParameterMap: readGcsimTalentParameters(talentSource),
     travelMap: readGcsimTravels(goSources),
