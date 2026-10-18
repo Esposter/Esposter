@@ -101,17 +101,31 @@ A Time Trial Challenge SHALL spawn its chest only when every target is done befo
 
 ### Requirement: A Shrine of Depths opens only with a key from its own region
 
-A Shrine of Depths SHALL open only with a key from its own region and SHALL hold a Luxurious chest.
+A Shrine of Depths SHALL open only with a key from its own region, which the opening spends, and SHALL hold a Luxurious chest. A shut shrine SHALL be offered to open only while the bag holds a key of its region.
 
 #### Scenario: A shrine opens with its region's key
 
 - **GIVEN** the player holds a Shrine of Depths key from the shrine's region
 - **WHEN** the player uses it on the shrine
 - **THEN** the shrine opens
+- **AND** the key is spent from the bag
+- **AND** the shrine stays open after a reload
 - **AND** its Luxurious chest is there to open
+
+#### Scenario: A shut shrine is offered while its region's key is held
+
+- **GIVEN** the shrine stands shut in the world
+- **WHEN** the player holds a key of the shrine's region
+- **THEN** the shrine is offered beneath its point to open
 
 #### Scenario: A key from another region is refused
 
 - **GIVEN** the player holds a Shrine of Depths key from another region
 - **WHEN** the player tries it on the shrine
 - **THEN** the shrine stays shut
+
+#### Scenario: A shut shrine is not offered without its region's key
+
+- **GIVEN** the player holds no key of the shrine's region, only another region's key
+- **WHEN** the player stands beside the shrine
+- **THEN** the shrine is not offered, and the other region's key stays in the bag

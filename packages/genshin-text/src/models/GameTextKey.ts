@@ -562,6 +562,8 @@ export enum GameTextKey {
   ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
   // The Refreshes in line a shop's good shows, its countdown filled in
   ShopRefresh = "UI_MALL_REFRESH_COUNTDOWN",
+  // The name of a Shrine of Depths, as the game names it, on the prompt of a shrine a key opens
+  ShrineOfDepths = "2995753270",
   SilkFlower = "1404683740",
   // The dialogue's button that runs on to the next reply or the end
   Skip = "UI_SKIP_BUTTON",

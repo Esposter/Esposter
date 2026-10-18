@@ -30,3 +30,6 @@ export const TIME_TRIAL_CHEST_KIND = ChestKind.Exquisite;
 // A Seelie is followed while the character stands within this many metres of it on the ground
 // Provisional: a stand-in until a recording of a Seelie led home measures it, on the Recordings owed list
 export const SEELIE_FOLLOW_DISTANCE = 10;
+// The region whose Shrines of Depths the world holds: the shrines the map marks in Mondstadt, and the keys that open them
+// Are the ones of the same region, the region's key being the one a shrine names by its region
+export const SHRINE_REGION_ID = "mondstadt";

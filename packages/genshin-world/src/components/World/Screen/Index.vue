@@ -20,6 +20,7 @@ import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbear
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
+import { readMondstadtShrineKeySources } from "#src/services/puzzle/readMondstadtShrineKeySources";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
@@ -61,6 +62,7 @@ getResultAsync(() =>
       measureLoadStep("crafting-recipes", readCraftingRecipes(props.gameDataBaseUrl)),
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("shrine-key-sources", readMondstadtShrineKeySources(props.gameDataBaseUrl)),
       measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
@@ -84,6 +86,7 @@ getResultAsync(() =>
     craftingRecipes,
     craftingBenchPlace,
     puzzlePlaces,
+    shrineKeySources,
     wishSchedule,
     shopIdShopGoodMap,
     paimonsBargainsRotation,
@@ -108,6 +111,8 @@ getResultAsync(() =>
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
       ),
       shopIdShopGoodMap,
+      shrineKeySources,
+      shrinePlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ShrineOfDepths),
       startingCharacterIdKitMap,
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,

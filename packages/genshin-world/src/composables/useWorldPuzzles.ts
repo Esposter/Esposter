@@ -3,6 +3,7 @@ import type { MonumentMarker } from "#src/models/puzzle/MonumentMarker";
 import type { PuzzleHit } from "#src/models/puzzle/PuzzleHit";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
+import type { ShrineMarker } from "#src/models/puzzle/ShrineMarker";
 import type { TimeTrialChallenge } from "#src/models/puzzle/TimeTrialChallenge";
 import type { TimeTrialMarker } from "#src/models/puzzle/TimeTrialMarker";
 import type { GroundPoint } from "genshin-engine";
@@ -14,6 +15,7 @@ import { checkIsSeelieFollowed } from "#src/services/puzzle/checkIsSeelieFollowe
 import { checkIsTimeTrialMarkerReached } from "#src/services/puzzle/checkIsTimeTrialMarkerReached";
 import { computeSeelieChestPlaces } from "#src/services/puzzle/computeSeelieChestPlaces";
 import { computeTimeTrialChestPlaces } from "#src/services/puzzle/computeTimeTrialChestPlaces";
+import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
 import { createMonumentPuzzle } from "#src/services/puzzle/createMonumentPuzzle";
 import { createTimeTrialChallenge } from "#src/services/puzzle/createTimeTrialChallenge";
 import { startTimeTrialChallenge } from "#src/services/puzzle/startTimeTrialChallenge";
@@ -35,12 +37,14 @@ export const useWorldPuzzles = ({
   savedSettledSeelieIds,
   savedSolvedPuzzleIds,
   seelies,
+  shrinePlaces,
   timeTrialPlaces,
 }: {
   monumentPlaces: readonly PuzzlePlace[];
   savedSettledSeelieIds: ReadonlySet<string>;
   savedSolvedPuzzleIds: ReadonlySet<string>;
   seelies: Seelie[];
+  shrinePlaces: readonly PuzzlePlace[];
   timeTrialPlaces: readonly PuzzlePlace[];
 }) => {
   const puzzleSeelies = reactive(
@@ -71,11 +75,21 @@ export const useWorldPuzzles = ({
   const timeTrialMarkers = reactive<TimeTrialMarker[]>(
     timeTrialPlaces.map(({ id, position }) => ({ challenge: createMarkerChallenge(id), id, position })),
   );
+  // Each shrine is shut until the save names it open or a key opens it, and an open one is kept as solved, the save's one
+  // Record of what is opened, so a reload keeps it open with no field of its own
+  const shrineMarkers = reactive<ShrineMarker[]>(
+    shrinePlaces.map(({ id, position }) => ({
+      id,
+      position,
+      shrine: { isOpen: savedSolvedPuzzleIds.has(id), region: SHRINE_REGION_ID },
+    })),
+  );
   const solvedPuzzleIds = computed<ReadonlySet<string>>(
     () =>
       new Set([
         ...savedSolvedPuzzleIds,
         ...monumentMarkers.filter(({ puzzle }) => puzzle.isSolved).map(({ id }) => id),
+        ...shrineMarkers.filter(({ shrine }) => shrine.isOpen).map(({ id }) => id),
         ...timeTrialMarkers
           .filter(({ challenge }) => challenge.state === TimeTrialChallengeState.Solved)
           .map(({ id }) => id),
@@ -113,6 +127,7 @@ export const useWorldPuzzles = ({
     puzzleChestPlaces,
     puzzleSeelies,
     settledSeelieIds,
+    shrineMarkers,
     solvedPuzzleIds,
     stepWorldPuzzles,
     strikeWorldPuzzles,
