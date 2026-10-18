@@ -55,11 +55,40 @@ Yaoyao's plunges SHALL land 0.4 seconds after they start, provisionally.
 - **WHEN** Yaoyao plunges
 - **THEN** the plunge lands 0.4 seconds after it starts
 
-### Requirement: Unbuilt Yuegui, radishes and passives
+### Requirement: Raphanus Sky Cluster's Yuegui and radishes
 
-Yaoyao's Yuegui, its White Jade Radishes, their healing, and her passives and constellations SHALL have no effect in the world yet.
+Yaoyao's skill SHALL spawn a Yuegui two metres ahead of her 63 frames after the cast. The Yuegui SHALL throw a White Jade Radish 29 frames after it spawns, and each radish SHALL land 13 frames after its throw.
 
-#### Scenario: Skill throws no radish
+#### Scenario: Yuegui spawns two metres ahead
 
 - **WHEN** Yaoyao casts her skill
-- **THEN** no radish flies and no healing reaches the active character
+- **THEN** the Yuegui stands two metres ahead of her body 63 frames after the cast, and not before
+
+#### Scenario: First radish lands
+
+- **WHEN** the Yuegui has stood 29 frames
+- **THEN** its radish lands 13 frames after the throw, and heals the active character by the skill radish's share of Yaoyao's Max HP plus its flat amount
+
+#### Scenario: Radish heals only inside its circle
+
+- **WHEN** the body has left the radish's two-metre circle by the time it lands
+- **THEN** no healing reaches the active character
+
+#### Scenario: Radish lands on an enemy while the active character is above 70% HP
+
+- **WHEN** the active character stands above 70% of her Max HP and an enemy stands within 8 metres of the Yuegui
+- **THEN** the radish lands on a random such enemy
+
+#### Scenario: Radish lands on Yaoyao at or below 70% HP
+
+- **WHEN** the active character stands at or below 70% of her Max HP
+- **THEN** the radish lands at Yaoyao's own position
+
+### Requirement: Unbuilt burst Yuegui, Mega Radish and passives
+
+Yaoyao's Yuegui from Moonjade Descent, the Mega Radish, and her passives and constellations SHALL have no effect in the world yet.
+
+#### Scenario: Burst throws no radish
+
+- **WHEN** Yaoyao casts Moonjade Descent
+- **THEN** no radish is thrown from a Yuegui that the burst spawns
