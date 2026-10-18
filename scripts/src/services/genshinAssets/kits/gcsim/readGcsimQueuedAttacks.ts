@@ -13,13 +13,11 @@ import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluat
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
-import {
-  findClosingParenthesis,
-  readGoEnclosingFunction,
-  readGoMethodCallSites,
-  readGoNamedFunctions,
-} from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
-import { findClosingBrace, readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
+import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
+import { readGoMethodCallSites } from "#src/services/genshinAssets/kits/gcsim/readGoMethodCallSites";
+import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
@@ -102,7 +100,7 @@ const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
       checkIsGoPunctuation(tokens[funcStart + 1], "(") &&
       checkIsGoPunctuation(tokens[funcStart + 2], ")") &&
       checkIsGoPunctuation(tokens[bodyStart], "{");
-    const bodyEnd = isClosure ? findClosingBrace(tokens, bodyStart) : undefined;
+    const bodyEnd = isClosure ? findClosing(tokens, bodyStart, "{", "}") : undefined;
     if (bodyEnd === undefined || !checkIsGoPunctuation(tokens[bodyEnd + 1], ",")) continue;
     closures.push({ bodyEnd, bodyStart, delayStart: bodyEnd + 2 });
   }
@@ -173,9 +171,9 @@ const readReturnedClosures = (tokens: readonly GoToken[]): ReturnedClosure[] =>
       !checkIsGoPunctuation(tokens[position + 2], "(")
     )
       return [];
-    const parametersEnd = findClosingParenthesis(tokens, position + 2);
+    const parametersEnd = findClosing(tokens, position + 2, "(", ")");
     if (parametersEnd === undefined || !checkIsGoPunctuation(tokens[parametersEnd + 1], "{")) return [];
-    const bodyEnd = findClosingBrace(tokens, parametersEnd + 1);
+    const bodyEnd = findClosing(tokens, parametersEnd + 1, "{", "}");
     return bodyEnd === undefined ? [] : [{ bodyEnd, bodyStart: parametersEnd + 1 }];
   });
 
@@ -285,7 +283,7 @@ const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: s
       : position + 1;
     if (queryStart === undefined) return [];
     const query = parseGoExpression(tokens, queryStart).expression;
-    const bodyEnd = findClosingBrace(tokens, bodyStart);
+    const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
     if (
       query.kind !== GoExpressionKind.Call ||
       query.callee.split(".").at(-1) !== ENEMIES_WITHIN_AREA_CALLEE ||
@@ -336,16 +334,10 @@ export const readGcsimQueuedAttacks = (
       const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
       const hitboxValueStart =
         hitboxStart === undefined ? undefined : readHitboxStart(tokens, hitboxStart, position, scope);
-      const ownHitbox =
-        hitboxValueStart === undefined
-          ? undefined
-          : readGoHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file);
       // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy in it
       const queryHitbox = enemyQueryLoops.findLast(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       )?.hitbox;
-      const hitbox =
-        ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined
@@ -376,6 +368,11 @@ export const readGcsimQueuedAttacks = (
         for (const loopIteration of readIterations(loops, position)) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
           const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
+          // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
+          const ownHitbox =
+            hitboxValueStart === undefined ? undefined : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file);
+          const hitbox =
+            ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
           const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
             expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
           );

@@ -1,5 +1,4 @@
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
-import type { KitParameter } from "genshin-world";
 
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { kitParameterSchema } from "genshin-world";
@@ -10,10 +9,12 @@ const readParameterLevels = (
   value: unknown,
   talentMultiplierMap: KitTables["talentMultiplierMap"],
 ): number[] | undefined => {
-  if (typeof value !== "object" || value === null || !kitParameterSchema.safeParse(value).success) return undefined;
-  const { index, proudSkillGroupId } = value as Extract<KitParameter, object>;
-  const rows = talentMultiplierMap[String(proudSkillGroupId)];
-  return rows === undefined || rows.length === 0 ? undefined : rows.map(({ paramList }) => paramList[index] ?? 0);
+  const parameter = kitParameterSchema.safeParse(value).data;
+  if (typeof parameter !== "object") return undefined;
+  const rows = talentMultiplierMap[String(parameter.proudSkillGroupId)];
+  return rows === undefined || rows.length === 0
+    ? undefined
+    : rows.map(({ paramList }) => paramList[parameter.index] ?? 0);
 };
 
 // Whether two values of a kit's record are the same value once a table's parameter is read at every level its talent

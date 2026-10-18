@@ -260,6 +260,33 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads no loop bound from a local a branch adds to, `dur += 240` in the branch, so its loop is not repeated", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package rosaria",
+          "",
+          "func (c *char) burst() {",
+          "\tdur := 510",
+          "\tif c.Base.Cons >= 2 {",
+          "\t\tdur += 240",
+          "\t}",
+          "\tfor i := 120; i < dur; i += 120 {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
     expect.hasAssertions();
 
@@ -365,6 +392,29 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads each iteration's hit from the loop variable in its radius, `2+i` giving 2, 3 and 4", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package fischl",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := 0; i < 3; i++ {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2+i), 0, 0)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox?.radius),
+    ).toStrictEqual([2, 3, 4]);
+  });
+
   test("adds a Tasks.Add closure's delay to the queue call in its body, once per iteration, with the call's own delay", () => {
     expect.hasAssertions();
 
@@ -395,6 +445,35 @@ describe(readGcsimQueuedAttacks, () => {
       [6, 7, 130],
       [6, 7, 154],
       [10, 11, 49],
+    ]);
+  });
+
+  test("reads no default from a closure's `ok` local, which a same-named local of the function does not share", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package noelle",
+          "",
+          "func (c *char) burst() {",
+          "\tgetExt := func() int {",
+          '\t\text, ok := p["extend"]',
+          "\t\tif !ok {",
+          "\t\t\text = 0",
+          "\t\t}",
+          "\t\treturn ext",
+          "\t}",
+          "\text := getExt()",
+          "\tc.Core.QueueAttack(ai, ap, 0, ext*60)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
     ]);
   });
 

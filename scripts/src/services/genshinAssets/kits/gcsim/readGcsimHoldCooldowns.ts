@@ -9,6 +9,7 @@ import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpress
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -33,16 +34,6 @@ const readGoNames = (expression: GoExpression): string[] => {
   }
 };
 
-// The index of the brace closing the one at the position
-const findClosingBrace = (tokens: readonly GoToken[], openIndex: number): number => {
-  let depth = 0;
-  for (let index = openIndex; index < tokens.length; index++) {
-    if (checkIsGoPunctuation(tokens[index], "{")) depth++;
-    else if (checkIsGoPunctuation(tokens[index], "}") && --depth === 0) return index;
-  }
-  return tokens.length;
-};
-
 // The value each case of the nearest switch before the call sets the local to, `cd = 7.5 * 60`, in the cases' order.
 // A case that does not set it leaves the switch with none
 const readSwitchCooldowns = (
@@ -52,11 +43,13 @@ const readSwitchCooldowns = (
   file: string,
   resolveName: (name: string) => GoValue | undefined,
 ): GcsimHoldCooldown[] => {
+  // The search stops at the call's own function, so a switch in an earlier function gives none
   let switchIndex = callIndex;
-  while (switchIndex >= 0 && tokens[switchIndex]?.text !== "switch") switchIndex--;
-  if (switchIndex < 0) return [];
+  while (switchIndex >= 0 && tokens[switchIndex]?.text !== "switch" && tokens[switchIndex]?.text !== "func")
+    switchIndex--;
+  if (switchIndex < 0 || tokens[switchIndex]?.text === "func") return [];
   const openIndex = tokens.findIndex((token, index) => index > switchIndex && checkIsGoPunctuation(token, "{"));
-  const closeIndex = findClosingBrace(tokens, openIndex);
+  const closeIndex = findClosing(tokens, openIndex, "{", "}") ?? tokens.length;
   const caseIndices = tokens.flatMap((token, index) =>
     index > openIndex && index < closeIndex && token.text === "case" ? [index] : [],
   );

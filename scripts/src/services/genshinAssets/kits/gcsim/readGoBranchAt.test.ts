@@ -31,9 +31,9 @@ describe(readGoBranchAt, () => {
       branchAt(tokens.findIndex((token) => token.line === line && token.text === "mult"));
 
     expect([5, 7, 12].map((line) => branchOnLine(line))).toStrictEqual([
-      { chain: 0, endLine: 13, index: 0 },
-      { chain: 0, endLine: 13, index: 1 },
-      { chain: 0, endLine: 13, index: 2 },
+      { armCount: 3, chain: 0, endLine: 13, index: 0, isExhaustive: true },
+      { armCount: 3, chain: 0, endLine: 13, index: 1, isExhaustive: true },
+      { armCount: 3, chain: 0, endLine: 13, index: 2, isExhaustive: true },
     ]);
   });
 
@@ -47,7 +47,7 @@ describe(readGoBranchAt, () => {
 
     expect([2, 9, 14].map((line) => branchOnLine(line))).toStrictEqual([
       undefined,
-      { chain: 1, endLine: 10, index: 0 },
+      { armCount: 1, chain: 1, endLine: 10, index: 0, isExhaustive: false },
       undefined,
     ]);
   });

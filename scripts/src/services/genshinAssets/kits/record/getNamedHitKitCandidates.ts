@@ -1,74 +1,13 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
 import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
-import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";
+import { readListHitCalls } from "#src/services/genshinAssets/kits/record/readListHitCalls";
+import { readSiteCallsMap } from "#src/services/genshinAssets/kits/record/readSiteCallsMap";
+import { splitHitPath } from "#src/services/genshinAssets/kits/record/splitHitPath";
 import { kitParameterSchema } from "genshin-world";
-
-const INDEXED_HIT_REGEX = /^(?<group>.+)\.(?<index>\d+)$/u;
-
-// A hit's list and its place in it: `hits.fatalBlossoms.1` is the second hit of `hits.fatalBlossoms`, and a hit with no
-// Place is the first of a list of its own
-const splitHitPath = (hitPath: string): { group: string; index: number } => {
-  const groups = INDEXED_HIT_REGEX.exec(hitPath)?.groups;
-  return groups?.group === undefined
-    ? { group: hitPath, index: 0 }
-    : { group: groups.group, index: Number(groups.index) };
-};
-
-// The calls each attack site makes of a list's joined keys, merged in the order they land, with the keys making them. A
-// Delay missing or two calls at one delay leaves no order to merge by, which readListHitCalls checks before taking them
-const readSiteCallsMap = (
-  namedHits: ReadonlyMap<string, NamedHitCandidate>,
-): Map<string, { calls: NamedHitCall[]; keys: Set<string> }> => {
-  const siteCallsMap = new Map<string, { calls: NamedHitCall[]; keys: Set<string> }>();
-  for (const [key, { queuedCalls }] of namedHits)
-    for (const call of queuedCalls) {
-      const siteCalls = siteCallsMap.get(call.site) ?? { calls: [], keys: new Set<string>() };
-      siteCalls.calls.push(call);
-      siteCalls.keys.add(key);
-      siteCallsMap.set(call.site, siteCalls);
-    }
-  return new Map(
-    Array.from(siteCallsMap, ([site, { calls, keys }]): [string, { calls: NamedHitCall[]; keys: Set<string> }] => [
-      site,
-      {
-        calls: calls.toSorted(
-          (left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER),
-        ),
-        keys,
-      },
-    ]),
-  );
-};
-
-// The calls a list's hit takes: first the one call of its key that fires at the hit's own hitmark, where the hit has one
-// And one call lands there, as a call of another delay the same attack makes is not the list's hit. Else by its place: its
-// Own key's calls where they are as many as the list is long, else the calls of the one attack site that makes as many
-// Calls as the list is long from keys including its own. A second such site, whether its calls land in an order or not,
-// Is a rival the hit cannot tell apart from, so neither is taken
-const readListHitCalls = (
-  key: string,
-  namedHit: NamedHitCandidate,
-  index: number,
-  listLength: number,
-  siteCallsMap: ReturnType<typeof readSiteCallsMap>,
-  hitmark: unknown,
-): Map<string, KitCandidate[]> | undefined => {
-  const hitmarkCalls = typeof hitmark === "number" ? namedHit.queuedCalls.filter(({ delay }) => delay === hitmark) : [];
-  if (hitmarkCalls.length === 1) return hitmarkCalls[0]?.fieldMap;
-  if (namedHit.queuedCalls.length === listLength) return namedHit.queuedCalls[index]?.fieldMap;
-  const takingSites = [...siteCallsMap.values()].filter(
-    ({ calls, keys }) => calls.length === listLength && keys.has(key),
-  );
-  const takingSite = takingSites.length === 1 ? takingSites[0] : undefined;
-  return takingSite !== undefined && checkIsLandingOrdered(takingSite.calls)
-    ? takingSite.calls[index]?.fieldMap
-    : undefined;
-};
 
 // The candidates a hit takes from the talent variable its multiplier joins to: each hit of a `hits` list, a skill hold's
 // Or a stance's, or a single hit's own in `hitFields`, whose multiplier names a proud skill group and index gcsim's talent

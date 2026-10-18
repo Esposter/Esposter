@@ -25,7 +25,10 @@ interface GoBinding {
 // And each other place a name is bound, such as a range or a second declaration, which gives no expression
 const readBindings = (lines: readonly string[], [start, end]: [number, number], name: string): GoBinding[] => {
   const bindings: GoBinding[] = [];
-  const assignmentRegex = new RegExp(`(?<![.\\w])${name}\\s*(?<operator>:=|=(?!=))\\s*(?<expression>[^\\n]*)`, "u");
+  const assignmentRegex = new RegExp(
+    `(?<![.\\w])${name}\\s*(?<operator>:=|(?:[-+*/%&|^]|<<|>>)?=(?!=))\\s*(?<expression>[^\\n]*)`,
+    "u",
+  );
   const declarationRegex = new RegExp(`\\bvar\\s+${name}\\b[^=\\n]*=\\s*(?<expression>[^\\n]*)`, "u");
   for (let line = start; line <= end; line++) {
     const text = lines[line] ?? "";

@@ -2,7 +2,6 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
 import { addGcsimFrameListCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates";
 import { addGcsimNamedConstantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates";
@@ -12,6 +11,7 @@ import { addGcsimSkillAndBurstCandidates } from "#src/services/genshinAssets/kit
 import { addGcsimSkillHoldCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates";
 import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
+import { createGcsimPlungeFallbackWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter";
 import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
 
 // Every value gcsim gives a character's kit at one ref, by its path in the record, read where gcsim's character folders
@@ -33,12 +33,7 @@ export const getGcsimKitCandidates = (
   const stance = findGcsimStanceNormalAttack(gcsim.folder);
   if (stance !== undefined) addGcsimNormalAttackCandidates(writer, gcsim, stance);
   addGcsimChargedAttackCandidates(writer, gcsim, tables.weaponType);
-  const plungeFallbackWriter = createGcsimKitCandidateWriter(
-    candidateMap,
-    plungeFallback,
-    tables,
-    KitProvisionalCause.NoActionFile,
-  );
+  const plungeFallbackWriter = createGcsimPlungeFallbackWriter(candidateMap, plungeFallback, tables);
   addGcsimPlungeCandidates(writer, gcsim, plungeFallback, plungeFallbackWriter);
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);

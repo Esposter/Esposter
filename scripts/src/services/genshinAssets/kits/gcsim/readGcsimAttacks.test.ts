@@ -190,8 +190,16 @@ func (c *char) Burst() {
       })),
     ).toStrictEqual([
       { branch: undefined, line: 12, talentVariable: undefined },
-      { branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
-      { branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+      {
+        branch: { armCount: 2, chain: 2, endLine: 30, index: 0, isExhaustive: true },
+        line: 25,
+        talentVariable: "plume",
+      },
+      {
+        branch: { armCount: 2, chain: 2, endLine: 30, index: 1, isExhaustive: true },
+        line: 28,
+        talentVariable: "wing",
+      },
     ]);
   });
 
@@ -201,15 +209,15 @@ func (c *char) Burst() {
     const name = "burst.go";
     const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
     const fieldLineMap = {
-      Abil: 48,
-      ActorIndex: 47,
-      AttackTag: 49,
-      Durability: 54,
-      Element: 53,
-      ICDGroup: 51,
-      ICDTag: 50,
-      Mult: 55,
-      StrikeType: 52,
+      Abil: 38,
+      ActorIndex: 37,
+      AttackTag: 39,
+      Durability: 44,
+      Element: 43,
+      ICDGroup: 41,
+      ICDTag: 40,
+      Mult: 45,
+      StrikeType: 42,
     };
     const literal = {
       abil: "Presto: Bluebird Finale (Slash)",
@@ -219,43 +227,43 @@ func (c *char) Burst() {
       fieldLineMap,
       file: name,
       internalCooldownTag: "attacks.ICDTagElementalBurst",
-      line: 46,
+      line: 36,
       poiseDamage: undefined,
       poiseDamageVariable: undefined,
-      siteLine: 46,
+      siteLine: 36,
       talentVariable: "burst",
       variableName: "ai",
     };
 
     expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
       literal,
-      { ...literal, line: 66, siteLine: 66, variableName: "aiCopy" },
+      { ...literal, line: 56, siteLine: 56, variableName: "aiCopy" },
       {
         ...literal,
-        branch: { chain: 0, endLine: 70, index: 0 },
-        fieldLineMap: { ...fieldLineMap, PoiseDMG: 69 },
+        branch: { armCount: 1, chain: 0, endLine: 60, index: 0, isExhaustive: false },
+        fieldLineMap: { ...fieldLineMap, PoiseDMG: 59 },
         iteration: { value: 0, variable: "i" },
-        line: 69,
+        line: 59,
         poiseDamage: 30,
-        siteLine: 66,
+        siteLine: 56,
         variableName: "aiCopy",
       },
       {
         ...literal,
         abil: "Presto: Bluebird Finale (Final)",
         fieldLineMap: {
-          Abil: 78,
-          ActorIndex: 77,
-          AttackTag: 79,
-          Durability: 84,
-          Element: 83,
-          ICDGroup: 81,
-          ICDTag: 80,
-          Mult: 85,
-          StrikeType: 82,
+          Abil: 68,
+          ActorIndex: 67,
+          AttackTag: 69,
+          Durability: 74,
+          Element: 73,
+          ICDGroup: 71,
+          ICDTag: 70,
+          Mult: 75,
+          StrikeType: 72,
         },
-        line: 76,
-        siteLine: 76,
+        line: 66,
+        siteLine: 66,
         talentVariable: "burstFinal",
         variableName: "aiFinal",
       },
@@ -278,6 +286,66 @@ func (c *char) Burst() {
     ).toStrictEqual([
       { element: undefined, elementLine: 30, iteration: { value: 0, variable: "i" }, line: 36 },
       { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
+    ]);
+  });
+
+  test("gives a Mult set after a constant loop's literal one attack per iteration variant, under the variable it names", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "func (c *char) burst() {",
+      "\tele := []attributes.Element{attributes.Pyro, attributes.Cryo}",
+      "\tfor i := range 2 {",
+      "\t\tai := info.AttackInfo{",
+      "\t\t\tElement: ele[i],",
+      "\t\t\tMult:    burstA[c.TalentLvlBurst()],",
+      "\t\t}",
+      "\t\tai.Mult = burstB[c.TalentLvlBurst()]",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, 1)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const sources = [{ path: "burst.go", source }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(
+        ({ element, iteration, line, talentVariable, variableName }) => ({
+          element,
+          iteration,
+          line,
+          talentVariable,
+          variableName,
+        }),
+      ),
+    ).toStrictEqual([
+      {
+        element: "attributes.Pyro",
+        iteration: { value: 0, variable: "i" },
+        line: 4,
+        talentVariable: "burstA",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Cryo",
+        iteration: { value: 1, variable: "i" },
+        line: 4,
+        talentVariable: "burstA",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Pyro",
+        iteration: { value: 0, variable: "i" },
+        line: 8,
+        talentVariable: "burstB",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Cryo",
+        iteration: { value: 1, variable: "i" },
+        line: 8,
+        talentVariable: "burstB",
+        variableName: "ai",
+      },
     ]);
   });
 });
