@@ -17,6 +17,7 @@ export interface KitBehaviour extends Partial<
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
     | "getPassiveBonuses"
+    | "getReactionDamageBonus"
     | "getSkillChargeBonus"
     | "getSkillCooldownMultiplier"
     | "getStrikeCriticalRateBonus"

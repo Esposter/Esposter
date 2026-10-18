@@ -4,6 +4,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKavehKitBehaviour, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
@@ -86,5 +87,23 @@ describe(createKavehKitBehaviour, () => {
     KAVEH_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
     expect(KAVEH_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
+  });
+
+  test("a Constellation 4 Kaveh's Bloom reaction DMG is raised by 60%, and nothing else's", () => {
+    expect.hasAssertions();
+    expect([
+      KAVEH_KIT.getReactionDamageBonus?.(
+        { ...createKavehCombatant(), constellationCount: 3 },
+        TransformativeReactionType.Bloom,
+      ),
+      KAVEH_KIT.getReactionDamageBonus?.(
+        { ...createKavehCombatant(), constellationCount: 4 },
+        TransformativeReactionType.Bloom,
+      ),
+      KAVEH_KIT.getReactionDamageBonus?.(
+        { ...createKavehCombatant(), constellationCount: 4 },
+        TransformativeReactionType.Overloaded,
+      ),
+    ]).toStrictEqual([0, 0.6, 0]);
   });
 });

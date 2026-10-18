@@ -4,7 +4,7 @@ Kaveh's kit is its record and one behaviour module, `createKavehKitBehaviour`, o
 
 Gcsim gives Kaveh no charged attack, as it has no charge file. His charged attack takes the table's shape like Dori's: a spin lands at once and a final hit at the longest duration the table allows, both circles of radius 2 round the body, costing the stamina per second the table gives. The collision deals no poise, since gcsim gives it none. A recording would settle both.
 
-Not built yet: the Dendro Cores his skill and burst rupture, which strike the enemies on each core in reach, as a rupture is a reaction on gadgets the kit does not yet hold; Painted Dome's Bloom DMG Bonus, which adds to each bloom reaction the team makes for its twelve seconds; and his Ascension passives and Constellations 1, 4 and 6. Constellation 2's Normal Attack SPD is built, as Painted Dome's stance is on him.
+Not built yet: the Dendro Cores his skill and burst rupture, which strike the enemies on each core in reach, as a rupture is a reaction on gadgets the kit does not yet hold; Painted Dome's Bloom DMG Bonus, which adds to each bloom reaction the team makes for its twelve seconds; and his Ascension passives and Constellations 1 and 6. Constellation 2's Normal Attack SPD is built, as Painted Dome's stance is on him, and Constellation 4's Bloom DMG is built through the kit's `getReactionDamageBonus`, which reads it on each core's burst.
 
 ## Key files
 
