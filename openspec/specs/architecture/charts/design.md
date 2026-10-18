@@ -189,13 +189,13 @@ Verdict counts: 5 in-scope defects, 49 fixed upstream and kept, 49 out of scope 
 | :---------------------------------------------------------- | :--------------------------------------------------------------------- |
 | `apps/web/app/components/Styled/ApexChart.vue`              | Mounts, updates, rebuilds and destroys the engine; the engine's tokens |
 | `apps/web/app/services/styled/getStyledApexOptions.ts`      | The theme mode, the marker shapes and the escaped legend               |
-| `apps/web/app/services/styled/ApexChartMarkerShapes.ts`     | The series' marker shapes, in the order the series take their colours  |
+| `apps/web/app/services/styled/ApexChartMarkerShapes.ts`     | Which shape marks each series, so one reads apart without its colour   |
 | `packages/shared/src/util/object/clonePlainDeep.ts`         | The copy the engine is handed                                          |
-| `apps/web/app/components/Styled/ApexChart.test.ts`          | The lifecycle regression tests, named by issue                         |
-| `apps/web/app/services/styled/getStyledApexOptions.test.ts` | The options regression tests, named by issue                           |
+| `apps/web/app/components/Styled/ApexChart.test.ts`          | The lifecycle tests, each titled with its upstream issue               |
+| `apps/web/app/services/styled/getStyledApexOptions.test.ts` | The options tests, each titled with its upstream issue                 |
 
 ## Sources
 
-- The upstream repository and its issue tracker, [apexcharts/vue3-apexcharts](https://github.com/apexcharts/vue3-apexcharts), read at the 1.11.3 source.
+- [apexcharts/vue3-apexcharts](https://github.com/apexcharts/vue3-apexcharts), whose source was read at 1.11.3 and whose tracker the Upstream table judges.
 - The engine's [methods](https://apexcharts.com/docs/methods/) and [events](https://apexcharts.com/docs/options/chart/events/) documentation, for what is reached on the instance and in the options.
 - The engine's update helpers in [apexcharts/apexcharts.js](https://github.com/apexcharts/apexcharts.js), for the config it writes into.

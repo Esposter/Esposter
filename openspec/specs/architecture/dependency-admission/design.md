@@ -92,7 +92,7 @@ The sixth is [drag reorder](../drag-reorder/design.md), the first package taken 
 
 The seventh is [tresjs-nuxt](../../tresjs-nuxt/README.md), the first Nuxt module absorbed as an adapter. `@tresjs/nuxt` joined the renderer to Nuxt, but its own dependencies took in a UI library and its font package for a devtools tab the app never used, and a dependency on a second engine it never called. The replacement keeps both engines and writes only the connection: it reads export names from source instead of importing the renderer at configuration time, and it drops the tab with everything that tab pulled in.
 
-The eighth is [charts](../charts/design.md), the first component wrapper absorbed, and the shape that takes. `vue3-apexcharts` mounted the chart engine and added a second copy of everything the engine already offers: a component event per engine callback, a method per engine method, a plugin and a global. The replacement is a component of the app rather than a package, since what it adds over the engine is the app's theme and lifecycle, and it reaches the engine only through the engine: the options pass through as given and the instance is handed out.
+The eighth is [charts](../charts/design.md), the first component wrapper absorbed, and the shape that takes. `vue3-apexcharts` mounted the chart engine and added a second copy of everything the engine already offers: a component event per engine callback, a method per engine method, a plugin and a global. Its replacement stays in the app, because it adds only the app's theme and lifecycle over the engine, and it reaches the engine only through the engine: the options pass through as given and the instance is handed out.
 
 ## The stop list
 
