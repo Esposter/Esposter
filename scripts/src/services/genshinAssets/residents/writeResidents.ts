@@ -70,8 +70,13 @@ export const writeResidents = async (): Promise<string> => {
   const talkConfigs = await readTalkConfigs();
   const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
-  const residentJoin = joinResidents(placements, nameTextIdMap, talkIdMap, (region, position) =>
-    findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
+  const invisibleNpcIds = new Set(npcs.flatMap(({ id, invisiable }) => (invisiable ? [id] : [])));
+  const residentJoin = joinResidents(
+    placements,
+    nameTextIdMap,
+    talkIdMap,
+    (region, position) => findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
+    invisibleNpcIds,
   );
   const reports = regionFiles.map(({ data, path, region }) => {
     const residents: Resident[] = residentSchema
@@ -87,6 +92,6 @@ export const writeResidents = async (): Promise<string> => {
   });
   return [
     ...reports,
-    `${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
+    `${residentJoin.invisible} marked invisible, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
   ].join("\n");
 };
