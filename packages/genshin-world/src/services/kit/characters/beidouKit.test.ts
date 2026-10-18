@@ -8,6 +8,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BEIDOU_CHARACTER_ID, createBeidouKitBehaviour } from "#src/services/kit/characters/beidouKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -128,7 +129,7 @@ describe(createBeidouKitBehaviour, () => {
       const context = createKitTestContext(combatant, { kitEffectState });
       const movedBody = { x: 3, z: 4 };
       BEIDOU_KIT.elementalBurst.onStart?.(context);
-      context.body = { facing: 0, height: 0, position: movedBody };
+      context.body = createKitBody(movedBody);
       const ticks = stepKitTestEffects(15, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.enemyStatus?.(combatant)])).toStrictEqual(

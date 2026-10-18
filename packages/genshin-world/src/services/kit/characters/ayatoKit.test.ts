@@ -17,6 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AYATO_CHARACTER_ID, createAyatoKitBehaviour } from "#src/services/kit/characters/ayatoKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -77,7 +78,7 @@ describe(createAyatoKitBehaviour, () => {
 
   const MAX_HEALTH = 10_000;
   const NAMISEN_SHARE = 0.005611;
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
 
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();

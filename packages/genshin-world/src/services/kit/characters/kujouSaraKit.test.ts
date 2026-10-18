@@ -21,6 +21,7 @@ import {
   KUJOU_SARA_CHARACTER_ID,
   KUJOU_SARA_C6_MARK_ID,
 } from "#src/services/kit/characters/kujouSaraKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -57,7 +58,7 @@ const castEffects = (
 };
 
 describe(createKujouSaraKitBehaviour, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -149,7 +150,7 @@ const readEnergies = (ascension: number, energyRecharge: number): number[] => {
   const hit = takeOne(takeOne(kitEffectState.effects.filter((effect) => checkIsSummon(effect))).hits);
   hit.onStrike?.(
     context,
-    { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit },
+    { body: createKitBody({ x: 0, z: 0 }), combatant, hit },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   );
   return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) => getPartyMember(party, characterId).energy);
@@ -179,14 +180,14 @@ const readMarkSeconds = (constellationCount: number): number | undefined => {
   const hit = takeOne(SARA_KIT.elementalBurst.hits);
   hit.onStrike?.(
     createKitTestContext(combatant, { kitEffectState }),
-    { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit },
+    { body: createKitBody({ x: 0, z: 0 }), combatant, hit },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   );
   return findKitStatus(kitEffectState.effects, KUJOU_SARA_CHARACTER_ID, KUJOU_SARA_C6_MARK_ID)?.secondsRemaining;
 };
 
 describe("constellation 6", () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };
   const markedOther = (): KitEffectState => {

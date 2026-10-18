@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createXianglingKitBehaviour, XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -104,7 +105,7 @@ describe(createXianglingKitBehaviour, () => {
     XIANGLING_KIT.elementalSkill.onStart?.(context);
     // Guoba disappears at 451 frames, 1.3 metres ahead, past the pepper's reach of the body
     stepKitEffects(7.6, context);
-    context.body = { facing: 0, height: 0, position: { x: 0, z: -1.3 } };
+    context.body = createKitBody({ x: 0, z: -1.3 });
     stepKitEffects(1, context);
 
     expect(kitEffectState.effects).toStrictEqual(effects);
@@ -121,7 +122,7 @@ describe(createXianglingKitBehaviour, () => {
       const context = createKitTestContext(createXianglingCombatant(0, constellationCount), { kitEffectState });
       const movedBody = { x: 3, z: 4 };
       XIANGLING_KIT.elementalBurst.onStart?.(context);
-      context.body = { facing: 0, height: 0, position: movedBody };
+      context.body = createKitBody(movedBody);
       const ticks = stepKitTestEffects(15, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.element])).toStrictEqual(

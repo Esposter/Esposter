@@ -10,6 +10,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
@@ -152,9 +153,7 @@ export const createXinyanKitBehaviour = ({
       nextTickSeconds: SHIELD_DOT_INTERVAL_SECONDS,
       onTick: ({ kitEffectState: tickState }) => {
         if (findShieldLevel(tickState.effects, characterId) !== SHIELD_LEVEL_THREE) return;
-        castKitSummon(tickState, { facing: 0, height: 0, position: centre }, combatant, [shieldDotHit], {
-          isFollowing: true,
-        });
+        castKitSummon(tickState, createKitBody(centre), combatant, [shieldDotHit], { isFollowing: true });
       },
       secondsRemaining: shieldSeconds + FIELD_LINGER_SECONDS,
       tickIntervalSeconds: SHIELD_DOT_INTERVAL_SECONDS,

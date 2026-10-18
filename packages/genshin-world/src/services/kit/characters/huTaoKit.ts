@@ -9,6 +9,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -215,13 +216,9 @@ export const createHuTaoKitBehaviour = ({
         return;
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
-      castKitSummon(
-        kitEffectState,
-        { facing: 0, height: 0, position: event.enemy.position },
-        combatant,
-        [bloodBlossomHit],
-        { target: event.enemy },
-      );
+      castKitSummon(kitEffectState, createKitBody(event.enemy.position), combatant, [bloodBlossomHit], {
+        target: event.enemy,
+      });
     },
     skill: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {

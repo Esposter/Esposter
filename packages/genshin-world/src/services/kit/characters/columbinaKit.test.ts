@@ -23,6 +23,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -45,7 +46,7 @@ const createColumbinaCombatant = (): Combatant => ({
 });
 
 const OTHER_CHARACTER_ID = 10_000_052;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const kitBody = createKitBody({ x: 0, z: 0 });
 const c6Enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 // Columbina and another member at the given constellation, with her burst's window just started
 const createBurstContext = (constellationCount: number) => {

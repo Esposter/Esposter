@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
@@ -179,7 +180,7 @@ export const createAlbedoKitBehaviour = ({
         )
       )
         return;
-      castKitSummon(kitEffectState, { facing: 0, height: 0, position }, solarIsotoma.combatant, [transientBlossom]);
+      castKitSummon(kitEffectState, createKitBody(position), solarIsotoma.combatant, [transientBlossom]);
       if (combatant.constellationCount >= ALBEDO_CONSTELLATION_2) addFatalReckoningStack(kitEffectState, combatant);
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_1) return;
       const member = getPartyMember(party, characterId);

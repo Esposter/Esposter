@@ -7,6 +7,7 @@ import { AttackTag as AttackTagValue } from "#src/models/combat/AttackTag";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -30,7 +31,7 @@ describe(gainKitAttackEnergy, () => {
   };
   const createStrike = (attackTag: AttackTag | undefined): KitStrike => ({
     attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    body: createKitBody({ x: 0, z: 0 }),
     combatant,
     hit: takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits),
   });

@@ -17,6 +17,7 @@ import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -350,7 +351,7 @@ export const createColumbinaKitBehaviour = ({
         if (getTotalGravity(gravity) >= GRAVITY_MAX) fireGravityRipple(context, combatant, gravity, true);
       },
       onTick: (tickContext) =>
-        castKitSummon(tickContext.kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [
+        castKitSummon(tickContext.kitEffectState, createKitBody(field.centre), combatant, [
           getSkillDotHit(tickContext),
         ]),
       secondsRemaining: skillDurationSeconds,

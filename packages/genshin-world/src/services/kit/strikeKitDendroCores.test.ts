@@ -12,6 +12,7 @@ import { DENDRO_CORE_LIFETIME_SECONDS, HYPERBLOOM_FLIGHT_SECONDS } from "#src/se
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { createParty } from "#src/services/party/createParty";
@@ -43,7 +44,7 @@ describe(strikeKitDendroCores, () => {
   });
 
   const createStrike = (element: Element | undefined, gauge: number | undefined): KitStrike => ({
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    body: createKitBody({ x: 0, z: 0 }),
     combatant,
     hit: {
       element,

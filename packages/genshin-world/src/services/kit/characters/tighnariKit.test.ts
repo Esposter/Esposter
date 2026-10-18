@@ -14,6 +14,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTighnariKitBehaviour, TIGHNARI_CHARACTER_ID } from "#src/services/kit/characters/tighnariKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -120,7 +121,7 @@ describe(createTighnariKitBehaviour, () => {
   });
 
   // Ascension 4's damage bonus
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([TIGHNARI_CHARACTER_ID]);
   const getDamageBonus = (combatant: Combatant, attackTag: AttackTag): number =>
@@ -157,7 +158,7 @@ describe(createTighnariKitBehaviour, () => {
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
   describe("constellation 1's CRIT Rate", () => {
-    const strikeBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const strikeBody = createKitBody({ x: 0, z: 0 });
     const strikeEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
       TIGHNARI_KIT.getStrikeCriticalRateBonus?.(

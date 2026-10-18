@@ -4,6 +4,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -27,7 +28,7 @@ describe(stepKitSummon, () => {
   test("lands a hit at its cast in its first step, and only then", () => {
     expect.hasAssertions();
     const summon: KitSummon = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      body: createKitBody({ x: 0, z: 0 }),
       combatant: COMBATANT,
       elapsedSeconds: 0,
       hits: [{ hitArea: HIT_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 }],
@@ -47,7 +48,7 @@ describe(stepKitSummon, () => {
   test("lands a following summon's hits from where the body on the field stands on each step", () => {
     expect.hasAssertions();
     const summon: KitSummon = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      body: createKitBody({ x: 0, z: 0 }),
       combatant: COMBATANT,
       elapsedSeconds: 0,
       hits: [
@@ -73,7 +74,7 @@ describe(stepKitSummon, () => {
   test("lands a hit whose hitmark is the cast on the first step only", () => {
     expect.hasAssertions();
     const summon: KitSummon = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      body: createKitBody({ x: 0, z: 0 }),
       combatant: COMBATANT,
       elapsedSeconds: 0,
       hits: [{ hitArea: HIT_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 }],

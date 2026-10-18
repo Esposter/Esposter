@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -15,7 +16,7 @@ import { describe } from "vitest";
 // One given
 export const createKitTestContext = (combatant: Combatant, context: Partial<KitContext> = {}): KitContext => ({
   activeCombatant: combatant,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+  body: createKitBody({ x: 0, z: 0 }),
   characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
   enemyMap: new Map(),
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },

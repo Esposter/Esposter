@@ -12,6 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { detonateStellarVortex } from "#src/services/kit/detonateStellarVortex";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -22,7 +23,7 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const LEVEL = 90;
-const BODY = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const BODY = createKitBody({ x: 0, z: 0 });
 const STURDY_HEALTH = 1e9;
 
 describe(detonateStellarVortex, () => {

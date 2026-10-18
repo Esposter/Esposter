@@ -13,6 +13,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLyneyKitBehaviour, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -107,7 +108,7 @@ describe(createLyneyKitBehaviour, () => {
     expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
   });
   describe("ascension 4's DMG bonus", () => {
-    const strikeBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const strikeBody = createKitBody({ x: 0, z: 0 });
     // The DMG bonus a strike of his gains on an enemy with the given auras, as his team stands
     const getDamageBonus = (
       ascension: number,

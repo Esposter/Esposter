@@ -5,6 +5,7 @@ import { ENEMY_AGGRO_RANGE } from "#src/services/enemy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTaunt } from "#src/services/kit/effects/createKitTaunt.test";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
@@ -14,7 +15,7 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createTaunt = (x: number, health: number): KitTaunt => ({
   ...createKitTaunt(health, 5),
-  body: { facing: 0, height: 0, position: { x, z: 0 } },
+  body: createKitBody({ x, z: 0 }),
 });
 
 describe(selectEnemyTaunt, () => {

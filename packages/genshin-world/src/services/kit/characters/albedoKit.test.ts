@@ -17,6 +17,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -318,7 +319,7 @@ describe(createAlbedoKitBehaviour, () => {
     // The member stands at the given x, the cast being made from the origin
     const createContext = (member: Combatant, x: number) =>
       createKitTestContext(member, {
-        body: { facing: 0, height: 0, position: { x, z: 0 } },
+        body: createKitBody({ x, z: 0 }),
         characterIdCombatantMap,
         kitEffectState,
         party,

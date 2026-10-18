@@ -11,6 +11,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALOY_CHARACTER_ID, createAloyKitBehaviour } from "#src/services/kit/characters/aloyKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -34,7 +35,7 @@ const createAloyCombatant = (): Combatant => ({
 const bombletHits = (): KitHit[] => ALOY_KIT.elementalSkill.hits.slice(1);
 
 describe(createAloyKitBehaviour, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
 
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();

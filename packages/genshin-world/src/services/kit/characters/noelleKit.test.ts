@@ -14,6 +14,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
@@ -220,11 +221,11 @@ describe("noelle kit", () => {
     const explodeAfterShield = (constellationCount: number) => {
       const context = createKitTestContext(
         { ...createNoelleCombatant(), constellationCount },
-        { body: { facing: 0, height: 0, position: { x: 10, z: 0 } }, party },
+        { body: createKitBody({ x: 10, z: 0 }), party },
       );
       NOELLE_KIT.elementalSkill.onStart?.(context);
       // Breastplate lasts 12 seconds, so 13 seconds run it out
-      return stepKitTestEffects(13, { ...context, body: { facing: 0, height: 0, position: { x: -4, z: 7 } } });
+      return stepKitTestEffects(13, { ...context, body: createKitBody({ x: -4, z: 7 }) });
     };
 
     expect(explodeAfterShield(3)).toStrictEqual([]);

@@ -4,6 +4,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -28,7 +29,7 @@ describe(coordinateKitSummons, () => {
     const kitEffectState: KitEffectState = {
       effects: [
         {
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          body: createKitBody({ x: 0, z: 0 }),
           combatant,
           elapsedSeconds: 0,
           hits: [],
@@ -39,10 +40,7 @@ describe(coordinateKitSummons, () => {
         },
       ],
     };
-    const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
-      kitEffectState,
-    });
+    const context = createKitTestContext(combatant, { body: createKitBody({ x: 3, z: 4 }), kitEffectState });
     coordinateKitSummons(TRAVELER_KIT.elementalSkill, context);
     coordinateKitSummons(TRAVELER_KIT.chargedAttack, context);
     coordinateKitSummons(takeOne(TRAVELER_KIT.normalAttacks, 1), context);

@@ -15,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -55,7 +56,7 @@ describe("createPolestarFieldHooks", () => {
 
   test("the body inside a field has its Cryo and Electro DMG Bonus raised by 20% with no recorded hit", () => {
     expect.hasAssertions();
-    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: ORIGIN } });
+    const context = createKitTestContext(combatant, { body: createKitBody(ORIGIN) });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
 
     stepKitSeconds(context, 1);
@@ -68,7 +69,7 @@ describe("createPolestarFieldHooks", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(3);
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: ORIGIN },
+      body: createKitBody(ORIGIN),
       enemyMap: new Map([[enemy.id, enemy]]),
     });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
@@ -84,7 +85,7 @@ describe("createPolestarFieldHooks", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(3);
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: ORIGIN },
+      body: createKitBody(ORIGIN),
       enemyMap: new Map([[enemy.id, enemy]]),
     });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
@@ -99,7 +100,7 @@ describe("createPolestarFieldHooks", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(30);
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: ORIGIN },
+      body: createKitBody(ORIGIN),
       enemyMap: new Map([[enemy.id, enemy]]),
     });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
@@ -117,7 +118,7 @@ describe("createPolestarFieldHooks", () => {
     expect.hasAssertions();
     const OTHER_CHARACTER_ID = 1;
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: { x, z: 0 } },
+      body: createKitBody({ x, z: 0 }),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);

@@ -17,6 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALHAITHAM_CHARACTER_ID, createAlhaithamKitBehaviour } from "#src/services/kit/characters/alhaithamKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -83,7 +84,7 @@ describe(createAlhaithamKitBehaviour, () => {
   });
 
   const ELEMENTAL_MASTERY = 1000;
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
 
   test("reads his strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();

@@ -23,6 +23,7 @@ import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createNilouKitBehaviour, NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
 import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
@@ -92,7 +93,7 @@ describe(createNilouKitBehaviour, () => {
   };
 
   const MAX_HEALTH = 10_000;
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
 
   test("reads the strikes', charged attack's, plunges' multipliers from her proud skill group", () => {
     expect.hasAssertions();

@@ -10,6 +10,7 @@ import { FIXED_STEP_SECONDS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { createCombatant } from "#src/services/kit/createCombatant";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
@@ -112,7 +113,7 @@ export const replayScriptedMinute = ({
     throw new InvalidOperationError(Operation.Read, replayScriptedMinute.name, `${getActiveCharacterId(party)}`);
   const context: KitContext = {
     activeCombatant: startingCombatant,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    body: createKitBody({ x: 0, z: 0 }),
     characterIdCombatantMap,
     enemyMap,
     enemyTables,

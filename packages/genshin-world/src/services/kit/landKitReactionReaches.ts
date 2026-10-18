@@ -8,6 +8,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
@@ -39,7 +40,7 @@ export const landKitReactionReaches = (
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const [origin, reaction] of reaches) {
     const oreHit = readReactionOreHit(reaction.reactionType);
-    if (oreHit) oreStrikes.push({ body: { facing: 0, height: 0, position: origin.position }, hit: oreHit });
+    if (oreHit) oreStrikes.push({ body: createKitBody(origin.position), hit: oreHit });
     for (const [enemy, { energyDrops, reachingReactions, reactions }] of landReactionReach(
       context,
       origin,
