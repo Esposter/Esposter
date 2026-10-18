@@ -16,6 +16,7 @@ import { createWorldParty } from "#src/services/party/createWorldParty";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
+import { takeOne } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
@@ -78,7 +79,12 @@ const createDependencies = () => ({
   setInventory: vi.fn<(inventory: Inventory) => void>(),
   setWallet: vi.fn<(wallet: Wallet) => void>(),
   wallet: shallowRef(EMPTY_WALLET),
-  weaponDataMap: new Map([[2001, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
+  weaponDataMap: new Map([
+    [
+      2001,
+      { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
+    ],
+  ]),
 });
 
 const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) =>
@@ -95,7 +101,7 @@ describe(useWorldTrials, () => {
     const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ setWallet });
     await flushReads();
     expect(trials.value).toHaveLength(1);
-    const trial: Trial = trials.value[0];
+    const trial: Trial = takeOne(trials.value);
 
     await expect(enterTrial(trial, RETURN_POSE)).resolves.toBe(true);
     expect(trialArena.value?.character.talentLevels[CombatTalent.NormalAttack]).toBe(1);
@@ -120,9 +126,9 @@ describe(useWorldTrials, () => {
     const { enterTrial, stepTrial, trials } = setUpTrials({ characterIdKitMap, characters, party });
     await flushReads();
 
-    await enterTrial(trials.value[0], RETURN_POSE);
+    await enterTrial(takeOne(trials.value), RETURN_POSE);
     expect(characters.value).toHaveLength(1);
-    expect(characters.value[0].id).toBe(CHARACTER_ID);
+    expect(takeOne(characters.value).id).toBe(CHARACTER_ID);
     expect(characterIdKitMap.value).toStrictEqual(new Map([[CHARACTER_ID, TRIAL_KIT]]));
     expect([...party.characterIdMemberMap.keys()]).toStrictEqual([CHARACTER_ID]);
 
@@ -140,7 +146,7 @@ describe(useWorldTrials, () => {
     const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ characters, setWallet });
     await flushReads();
 
-    await enterTrial(trials.value[0], RETURN_POSE);
+    await enterTrial(takeOne(trials.value), RETURN_POSE);
     stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
     expect(trialArena.value).toBeUndefined();
     expect(characters.value).toBe(ownedCharacters);
@@ -152,7 +158,7 @@ describe(useWorldTrials, () => {
     expect.hasAssertions();
     const first = setUpTrials();
     await flushReads();
-    const trial: Trial = first.trials.value[0];
+    const trial: Trial = takeOne(first.trials.value);
     await first.enterTrial(trial, RETURN_POSE);
     first.stepTrial(TIMED_OUT_STEP);
     const save = toCharacterTrialSave(first.trialClaimedStageIds.value);
@@ -172,7 +178,7 @@ describe(useWorldTrials, () => {
     expect.hasAssertions();
     const { enterTrial, stepTrial, trials } = setUpTrials();
     await flushReads();
-    await enterTrial(trials.value[0], RETURN_POSE);
+    await enterTrial(takeOne(trials.value), RETURN_POSE);
 
     expect(stepTrial({ deltaMilliseconds: 1, isPlaying: true, partyDown: false })).toBeUndefined();
     expect(stepTrial(TIMED_OUT_STEP)).toStrictEqual(RETURN_POSE);
@@ -182,7 +188,7 @@ describe(useWorldTrials, () => {
     expect.hasAssertions();
     const { enterTrial, stepTrial, trials } = setUpTrials();
     await flushReads();
-    await enterTrial(trials.value[0], RETURN_POSE);
+    await enterTrial(takeOne(trials.value), RETURN_POSE);
 
     expect(stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true })).toStrictEqual(RETURN_POSE);
   });
@@ -191,7 +197,7 @@ describe(useWorldTrials, () => {
     expect.hasAssertions();
     const { enterTrial, stepTrial, trialSecondsRemaining, trials } = setUpTrials();
     await flushReads();
-    await enterTrial(trials.value[0], RETURN_POSE);
+    await enterTrial(takeOne(trials.value), RETURN_POSE);
     expect(trialSecondsRemaining.value).toBe(300);
 
     stepTrial({ deltaMilliseconds: 1500, isPlaying: true, partyDown: false });

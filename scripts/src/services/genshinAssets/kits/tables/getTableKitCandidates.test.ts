@@ -12,6 +12,33 @@ const LINNEA_SKILL_GROUP_ID = 13_032;
 const LOHEN_BURST_GROUP_ID = 12_939;
 const LOHEN_SKILL_GROUP_ID = 12_932;
 
+const CLORINDE_NAME = "Clorinde";
+const CLORINDE_CHARACTER_ID = 10_000_098;
+const NORMAL_ATTACK_GROUP_ID = 9831;
+const ELEMENTAL_SKILL_GROUP_ID = 9832;
+const ELEMENTAL_BURST_GROUP_ID = 9839;
+
+// Clorinde's elemental skill rows as her table gives them, with the parameter indexes each reads
+const CLORINDE_SKILL_LABELS = [
+  { indexes: [2], label: "Swift Hunt Bond of Life Gain" },
+  { indexes: [5, 7], label: "Impale the Night Healing" },
+  { indexes: [8], label: "Bond of Life Conversion" },
+  { indexes: [11], label: "Night Vigil Duration" },
+];
+
+const createCharacterTables = (name: string, characterId: number): KitTables => ({
+  characterId,
+  labelMap: new Map([[ELEMENTAL_SKILL_GROUP_ID, CLORINDE_SKILL_LABELS]]),
+  name,
+  talentGroupIdMap: {
+    [CombatTalent.ElementalBurst]: ELEMENTAL_BURST_GROUP_ID,
+    [CombatTalent.ElementalSkill]: ELEMENTAL_SKILL_GROUP_ID,
+    [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
+  },
+  talentMultiplierMap: {},
+  weaponType: WeaponType.Sword,
+});
+
 const createTables = (
   labelMap: Map<number, KitTableLabel[]>,
   { burstGroupId, skillGroupId }: { burstGroupId: number; skillGroupId: number },
@@ -187,5 +214,289 @@ describe(getTableKitCandidates, () => {
       "parameters.etchedWillToWinDamagePerPoint": { index: 17, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
       "parameters.manifestJudgmentWillToWinDamagePerPoint": { index: 1, proudSkillGroupId: LOHEN_BURST_GROUP_ID },
     });
+  });
+
+  test("the Night Vigil duration is read from Clorinde's elemental skill row, at the row's own index", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID));
+
+    expect(candidateMap.get("parameters.nightVigilSeconds")).toStrictEqual([
+      {
+        provenance: {
+          index: 11,
+          label: "Night Vigil Duration",
+          proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID,
+          source: KitSource.Tables,
+        },
+        value: { index: 11, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+      },
+    ]);
+  });
+
+  test("the Impale the Night healing's two parameters are the low and full Bond of Life rows, each at its own index", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID));
+
+    expect({
+      full: candidateMap.get("parameters.impaleTheNightFullBondOfLifeHealing")?.[0]?.value,
+      low: candidateMap.get("parameters.impaleTheNightLowBondOfLifeHealing")?.[0]?.value,
+    }).toStrictEqual({
+      full: { index: 7, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+      low: { index: 5, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+    });
+  });
+
+  test("a character with no mapping of its own reads none of the same labels as parameters", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables("Amber", 10_000_021));
+
+    expect([...candidateMap.keys()].filter((path) => path.startsWith("parameters."))).toStrictEqual([]);
+  });
+
+  test("gives a folder-less character's skill and burst hits the parameters of their labels, hit after hit across labels", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [
+            12_239,
+            [
+              { indexes: [0, 1], label: "1-Hit DMG" },
+              { indexes: [2, 3], label: "2-Hit DMG" },
+            ],
+          ],
+          [
+            12_232,
+            [
+              { indexes: [0, 1], label: "Skill DMG" },
+              { indexes: [4, 5], label: "Phantasm Performance 1-Hit DMG (Nefer)" },
+              { indexes: [6, 7], label: "Phantasm Performance 2-Hit DMG (Nefer)" },
+              { indexes: [8], label: "Phantasm Performance 1-Hit DMG (Shades)" },
+              { indexes: [9], label: "Phantasm Performance 2-Hit DMG (Shades)" },
+              { indexes: [10], label: "Phantasm Performance 3-Hit DMG (Shades)" },
+            ],
+          ],
+        ]),
+        { burstGroupId: 12_239, skillGroupId: 12_232 },
+      ),
+      characterId: 10_000_122,
+    });
+    expect(readCandidateValues(candidates)).toStrictEqual({
+      "burst.hits.0.multiplier": { index: 0, proudSkillGroupId: 12_239 },
+      "burst.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_239 },
+      "burst.hits.2.multiplier": { index: 2, proudSkillGroupId: 12_239 },
+      "burst.hits.3.multiplier": { index: 3, proudSkillGroupId: 12_239 },
+      "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 12_232 },
+      "skill.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.0.multiplier": { index: 4, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.1.multiplier": { index: 5, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.2.multiplier": { index: 6, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.3.multiplier": { index: 7, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.4.multiplier": { index: 8, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.5.multiplier": { index: 9, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.6.multiplier": { index: 10, proudSkillGroupId: 12_232 },
+    });
+  });
+
+  test("reads Sigewinne's bubble and final bounce healing from her skill's labels, the share and the flat amount at their positions", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [
+            12_532,
+            [
+              { indexes: [0, 1], label: "Bolstering Bubblebalm Healing" },
+              { indexes: [2], label: "Final Bounce Healing" },
+            ],
+          ],
+        ]),
+        { burstGroupId: 12_539, skillGroupId: 12_532 },
+      ),
+      characterId: 10_000_095,
+    });
+    expect(readCandidateValues(candidates)).toStrictEqual({
+      "parameters.bolsteringBubblebalmHealingFlat": { index: 1, proudSkillGroupId: 12_532 },
+      "parameters.bolsteringBubblebalmHealingShare": { index: 0, proudSkillGroupId: 12_532 },
+      "parameters.finalBounceHealingShare": { index: 2, proudSkillGroupId: 12_532 },
+    });
+  });
+
+  test("gives Vesna's skill its label's multiplier, as the table gives it for her burst", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [14_339, [{ indexes: [0], label: "Spirit Blade DMG" }]],
+          [14_332, [{ indexes: [0], label: "Skill DMG" }]],
+        ]),
+        { burstGroupId: 14_339, skillGroupId: 14_332 },
+      ),
+      characterId: 10_000_143,
+    });
+    expect(readCandidateValues(candidates)).toStrictEqual({
+      "burst.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_339 },
+      "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_332 },
+    });
+  });
+
+  test("gives Nefer's Phantasm Performance its charged attack's hits, its stamina and the Shadow Dance's seconds from the labels of her talents", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [
+            12_232,
+            [
+              { indexes: [0, 1], label: "Skill DMG" },
+              { indexes: [4, 5], label: "Phantasm Performance 1-Hit DMG (Nefer)" },
+              { indexes: [6, 7], label: "Phantasm Performance 2-Hit DMG (Nefer)" },
+              { indexes: [8], label: "Phantasm Performance 1-Hit DMG (Shades)" },
+              { indexes: [9], label: "Phantasm Performance 2-Hit DMG (Shades)" },
+              { indexes: [10], label: "Phantasm Performance 3-Hit DMG (Shades)" },
+              { indexes: [3], label: "Shadow Dance Duration" },
+              { indexes: [2], label: "Phantasm Performance Charges" },
+            ],
+          ],
+          [12_231, [{ indexes: [10], label: "Shadow Dance Charged Attack Stamina Cost" }]],
+          [
+            12_239,
+            [
+              { indexes: [0, 1], label: "1-Hit DMG" },
+              { indexes: [2, 3], label: "2-Hit DMG" },
+            ],
+          ],
+        ]),
+        { burstGroupId: 12_239, skillGroupId: 12_232 },
+      ),
+      characterId: 10_000_122,
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 12_239,
+        [CombatTalent.ElementalSkill]: 12_232,
+        [CombatTalent.NormalAttack]: 12_231,
+      },
+    });
+    const values = readCandidateValues(candidates);
+    expect(
+      Object.keys(values)
+        .filter((path) => path.startsWith("stances.") || path.startsWith("parameters."))
+        .toSorted(),
+    ).toStrictEqual(
+      [
+        "stances.phantasmPerformance.chargedAttack.hits.0.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.1.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.2.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.3.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.4.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.5.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.6.multiplier",
+        "stances.phantasmPerformance.chargedAttackStamina",
+        "parameters.phantasmPerformanceCharges",
+        "parameters.shadowDanceSeconds",
+      ].toSorted(),
+    );
+    expect(values["stances.phantasmPerformance.chargedAttack.hits.6.multiplier"]).toStrictEqual({
+      index: 10,
+      proudSkillGroupId: 12_232,
+    });
+    expect(values["stances.phantasmPerformance.chargedAttackStamina"]).toStrictEqual({
+      index: 10,
+      proudSkillGroupId: 12_231,
+    });
+    expect(values["parameters.shadowDanceSeconds"]).toStrictEqual({ index: 3, proudSkillGroupId: 12_232 });
+    expect(values["parameters.phantasmPerformanceCharges"]).toStrictEqual({ index: 2, proudSkillGroupId: 12_232 });
+  });
+
+  test("gives Zibai's Lunar Phase Shift its skill's Spirit Steed's Stride, its four strikes one by one, its charged attack and its seconds", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [
+            12_632,
+            [
+              { indexes: [5], label: "Lunar Phase Shift 1-Hit DMG" },
+              { indexes: [6], label: "Lunar Phase Shift 2-Hit DMG" },
+              { indexes: [7, 8], label: "Lunar Phase Shift 3-Hit DMG" },
+              { indexes: [9], label: "Lunar Phase Shift 4-Hit DMG" },
+              { indexes: [10, 11], label: "Lunar Phase Shift Charged Attack DMG" },
+              { indexes: [0], label: "Spirit Steed's Stride 1-Hit DMG" },
+              { indexes: [1], label: "Spirit Steed's Stride 2-Hit DMG" },
+              { indexes: [3], label: "Lunar Phase Shift Duration" },
+              { indexes: [2], label: "Lunar Phase Shift 4-Hit Additional DMG" },
+            ],
+          ],
+          [
+            12_639,
+            [
+              { indexes: [0], label: "Skill 1-Hit DMG" },
+              { indexes: [1], label: "Skill 2-Hit DMG" },
+            ],
+          ],
+        ]),
+        { burstGroupId: 12_639, skillGroupId: 12_632 },
+      ),
+      characterId: 10_000_126,
+    });
+    const values = readCandidateValues(candidates);
+    expect(
+      Object.keys(values)
+        .filter((path) => path.startsWith("stances.") || path.startsWith("parameters."))
+        .toSorted(),
+    ).toStrictEqual(
+      [
+        "stances.lunarPhaseShift.chargedAttack.hits.0.multiplier",
+        "stances.lunarPhaseShift.chargedAttack.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.0.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.1.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.2.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.2.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.3.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier",
+        "stances.lunarPhaseShift.skill.hits.0.multiplier",
+        "stances.lunarPhaseShift.skill.hits.1.multiplier",
+        "parameters.lunarPhaseShiftSeconds",
+      ].toSorted(),
+    );
+    expect(values["stances.lunarPhaseShift.normalAttacks.2.hits.1.multiplier"]).toStrictEqual({
+      index: 8,
+      proudSkillGroupId: 12_632,
+    });
+    expect(values["stances.lunarPhaseShift.skill.hits.1.multiplier"]).toStrictEqual({
+      index: 1,
+      proudSkillGroupId: 12_632,
+    });
+    expect(values["stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier"]).toStrictEqual({
+      index: 2,
+      proudSkillGroupId: 12_632,
+    });
+  });
+
+  test("gives Illuga's skill hold its hits from the Hold DMG label, and its cooldown from the skill's CD", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates({
+      ...createTables(
+        new Map([
+          [
+            12_732,
+            [
+              { indexes: [0, 1], label: "Press DMG" },
+              { indexes: [2, 3], label: "Hold DMG" },
+              { indexes: [4], label: "CD" },
+            ],
+          ],
+          [12_739, [{ indexes: [0, 1], label: "Skill DMG" }]],
+        ]),
+        { burstGroupId: 12_739, skillGroupId: 12_732 },
+      ),
+      characterId: 10_000_127,
+    });
+    const values = readCandidateValues(candidates);
+    expect(values["skillHolds.0.action.hits.0.multiplier"]).toStrictEqual({ index: 2, proudSkillGroupId: 12_732 });
+    expect(values["skillHolds.0.action.hits.1.multiplier"]).toStrictEqual({ index: 3, proudSkillGroupId: 12_732 });
+    expect(values["skillHolds.0.cooldownSeconds"]).toStrictEqual({ index: 4, proudSkillGroupId: 12_732 });
   });
 });

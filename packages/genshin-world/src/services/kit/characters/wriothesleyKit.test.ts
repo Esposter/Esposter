@@ -52,6 +52,7 @@ const strikeNormalAttack = (context: KitContext, index: number): void => {
 
 // A drain of his own HP by Chilling Penalty, as the party records it with him as its source
 const createSelfDrain = (): KitHealthChangedEvent => ({
+  bondOfLifeShare: 0,
   characterId: WRIOTHESLEY_CHARACTER_ID,
   healthShare: -0.045,
   kind: KitEventKind.HealthChanged,
@@ -191,6 +192,7 @@ describe(createWriothesleyKitBehaviour, () => {
     WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
     WRIOTHESLEY_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: WRIOTHESLEY_CHARACTER_ID,
         healthShare: 0,
         kind: KitEventKind.HealthChanged,

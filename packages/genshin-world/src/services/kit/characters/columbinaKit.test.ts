@@ -9,6 +9,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -17,6 +20,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const COLUMBINA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, COLUMBINA_CHARACTER_ID);
 const createColumbinaCombatant = (): Combatant => ({
   ascension: 0,
@@ -136,5 +140,46 @@ describe(createColumbinaKitBehaviour, () => {
     expect(COLUMBINA_KIT.moonsignBenediction?.getBaseDamageBonus?.(combatant)).toBeCloseTo(
       getBenedictionBaseDamageBonus(combatant.attributes.maxHealth),
     );
+  });
+
+  describe("ascension 1's Lunacy", () => {
+    const strikeBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const strikeEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    // The CRIT Rate her charged attack gains after the given Gravity Interference ticks, at the given ascension
+    const getCriticalRateBonus = (ascension: number, ticks: number): number => {
+      const ascendedCombatant: Combatant = { ...combatant, ascension };
+      const kitEffectState: KitEffectState = { effects: [] };
+      COLUMBINA_KIT.elementalSkill.onStart?.(createKitTestContext(ascendedCombatant, { kitEffectState }));
+      const [field] = kitEffectState.effects as KitField[];
+      for (let tick = 0; tick < ticks; tick++)
+        field?.onTick(createKitTestContext(ascendedCombatant, { kitEffectState }), 0);
+      return (
+        COLUMBINA_KIT.getStrikeCriticalRateBonus?.(
+          { body: strikeBody, combatant: ascendedCombatant, hit: takeOne(COLUMBINA_KIT.chargedAttack.hits) },
+          strikeEnemy,
+          createParty([COLUMBINA_CHARACTER_ID]),
+          kitEffectState.effects,
+        ) ?? 0
+      );
+    };
+
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getCriticalRateBonus(1, 1)).toBeCloseTo(0.05);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getCriticalRateBonus(0, 3)).toBe(0);
+    });
+
+    test("each Gravity Interference tick stacks Lunacy up to three", () => {
+      expect.hasAssertions();
+
+      expect(getCriticalRateBonus(1, 2)).toBeCloseTo(0.1);
+      expect(getCriticalRateBonus(1, 5)).toBeCloseTo(0.15);
+    });
   });
 });

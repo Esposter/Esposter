@@ -3,44 +3,28 @@
   "burst.hits.length": { "cause": "Unsourced", "value": 4 },
   "burst.hits.0.area": {
     "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.0.area" }
+    "donor": { "characterId": 10000073, "path": "chargedAttack.hits.0.area" }
   },
   "burst.hits.0.element": { "cause": "Unsourced", "value": "Grass" },
-  "burst.hits.0.hitmarkFrames": {
-    "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.0.hitmarkFrames" }
-  },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12239 } },
+  "burst.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 23 },
   "burst.hits.1.area": {
     "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.1.area" }
+    "donor": { "characterId": 10000073, "path": "chargedAttack.hits.0.area" }
   },
   "burst.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
-  "burst.hits.1.hitmarkFrames": {
-    "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.1.hitmarkFrames" }
-  },
-  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12239 } },
+  "burst.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 45 },
   "burst.hits.2.area": {
     "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.2.area" }
+    "donor": { "characterId": 10000073, "path": "chargedAttack.hits.0.area" }
   },
   "burst.hits.2.element": { "cause": "Unsourced", "value": "Grass" },
-  "burst.hits.2.hitmarkFrames": {
-    "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.2.hitmarkFrames" }
-  },
-  "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 12239 } },
+  "burst.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 68 },
   "burst.hits.3.area": {
     "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.3.area" }
+    "donor": { "characterId": 10000073, "path": "chargedAttack.hits.0.area" }
   },
   "burst.hits.3.element": { "cause": "Unsourced", "value": "Grass" },
-  "burst.hits.3.hitmarkFrames": {
-    "cause": "BorrowedFromDonor",
-    "donor": { "characterId": 10000042, "path": "burst.hits.3.hitmarkFrames" }
-  },
-  "burst.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12239 } },
+  "burst.hits.3.hitmarkFrames": { "cause": "Unsourced", "value": 90 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 190 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -114,9 +98,55 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000073, "path": "skill.hits.0.hitmarkFrames" }
   },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12232 } },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.8 } },
   "skill.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
   "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 13 },
-  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12232 } }
+  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 1 },
+  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarBloom" },
+  "stances.phantasmPerformance.chargedAttack.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.animationFrames" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.0.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 7 },
+  "stances.phantasmPerformance.chargedAttack.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
+  "stances.phantasmPerformance.chargedAttack.hits.2.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.2.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 21 },
+  "stances.phantasmPerformance.chargedAttack.hits.3.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.3.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.3.hitmarkFrames": { "cause": "Unsourced", "value": 27 },
+  "stances.phantasmPerformance.chargedAttack.hits.4.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.4.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.4.hitmarkFrames": { "cause": "Unsourced", "value": 34 },
+  "stances.phantasmPerformance.chargedAttack.hits.5.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.5.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.5.hitmarkFrames": { "cause": "Unsourced", "value": 41 },
+  "stances.phantasmPerformance.chargedAttack.hits.6.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
+  },
+  "stances.phantasmPerformance.chargedAttack.hits.6.element": { "cause": "Unsourced", "value": "Grass" },
+  "stances.phantasmPerformance.chargedAttack.hits.6.hitmarkFrames": { "cause": "Unsourced", "value": 48 }
 }

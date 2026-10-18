@@ -9,12 +9,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createGanyuKitBehaviour, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const GANYU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GANYU_CHARACTER_ID);
 const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -71,7 +75,11 @@ describe(createGanyuKitBehaviour, () => {
     const hit = takeOne(GANYU_KIT.chargedAttack.hits);
     const combatant = createGanyuCombatant(1);
     const context = createKitTestContext(combatant, { kitEffectState });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(kitEffectState.effects).toStrictEqual([
       {
@@ -91,7 +99,11 @@ describe(createGanyuKitBehaviour, () => {
     const hit = takeOne(GANYU_KIT.chargedAttack.hits);
     const combatant = createGanyuCombatant(0);
     const context = createKitTestContext(combatant, { kitEffectState });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(kitEffectState.effects).toStrictEqual([]);
   });

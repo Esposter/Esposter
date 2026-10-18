@@ -17,7 +17,7 @@ describe(checkIsSealFreed, () => {
     talentMultiplier: 1,
   };
 
-  test("a chest sealed in vines is freed by pyro", () => {
+  test("a chest sealed in vines is freed by Pyro", () => {
     expect.hasAssertions();
 
     expect(checkIsSealFreed(ChestSeal.Vines, combatant, { ...hit, element: Element.Pyro })).toBe(true);

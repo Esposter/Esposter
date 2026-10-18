@@ -25,6 +25,26 @@
   },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.impaleTheNightFullBondOfLife.0.multiplier": {
+    "source": "Gcsim",
+    "value": { "index": 6, "proudSkillGroupId": 9832 }
+  },
+  "hits.impaleTheNightFullBondOfLife.1.multiplier": {
+    "source": "Gcsim",
+    "value": { "index": 6, "proudSkillGroupId": 9832 }
+  },
+  "hits.impaleTheNightFullBondOfLife.2.multiplier": {
+    "source": "Gcsim",
+    "value": { "index": 6, "proudSkillGroupId": 9832 }
+  },
+  "hits.impaleTheNightLowBondOfLife.multiplier": {
+    "source": "Gcsim",
+    "value": { "index": 4, "proudSkillGroupId": 9832 }
+  },
+  "hits.impaleTheNightNoBondOfLife.multiplier": {
+    "source": "Gcsim",
+    "value": { "index": 3, "proudSkillGroupId": 9832 }
+  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -33,6 +53,11 @@
   "normalAttacks.3.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.2.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.bondOfLifeConversionHealing": { "source": "Tables" },
+  "parameters.impaleTheNightFullBondOfLifeHealing": { "source": "Tables" },
+  "parameters.impaleTheNightLowBondOfLifeHealing": { "source": "Tables" },
+  "parameters.nightVigilSeconds": { "source": "Tables" },
+  "parameters.swiftHuntBondOfLifeGain": { "source": "Tables" },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

@@ -20,12 +20,14 @@ export interface KitBehaviour extends Partial<
     | "getReactionDamageBonus"
     | "getSkillChargeBonus"
     | "getSkillCooldownMultiplier"
+    | "getStrikeCriticalDamageBonus"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
     | "keepsNormalAttackCombo"
     | "onKitEvent"
     | "onSprint"
     | "onStep"
+    | "refusesFall"
   >
 > {
   burst?: KitActionBehaviour;

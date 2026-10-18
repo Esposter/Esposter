@@ -9,6 +9,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, ChargeAttack and chargeJudgementTick. The charge's legal evaluation
 // Starts three frames in and runs 209 frames less 57, 111 or 209 for the one, two or three Sourcewater Droplets it picks up.
@@ -50,7 +51,7 @@ const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number 
     scheduleKitTask(kitEffectState, characterId, DROPLET_HEAL_FRAMES / KIT_FRAMES_PER_SECOND, (tick) => {
       changeKitMemberHealth(tick, activeCombatant, characterId, DROPLET_HEAL_HEALTH_SHARE * maxHealth);
     });
-  const legalEvaluationFrames = INITIAL_LEGAL_EVALUATION_FRAMES - LEGAL_EVALUATION_REDUCTION_FRAMES[pickedUp];
+  const legalEvaluationFrames = INITIAL_LEGAL_EVALUATION_FRAMES - takeOne(LEGAL_EVALUATION_REDUCTION_FRAMES, pickedUp);
   for (const wave of waves)
     scheduleKitTask(
       kitEffectState,

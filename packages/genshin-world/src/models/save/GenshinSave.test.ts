@@ -25,6 +25,7 @@ import {
 } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   EMPTY_GENSHIN_SAVE,
   MAX_ABYSS_CHAMBER_COUNT,
@@ -96,9 +97,6 @@ describe("genshinSaveSchema", () => {
       adventureExp: maxNumber,
       cardGameExp: maxNumber,
       cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT }, (_value, index) => maxNumber - index),
-      characterTrials: {
-        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
-      },
       adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
@@ -113,9 +111,6 @@ describe("genshinSaveSchema", () => {
             Array.from({ length: MAX_ARCHIVE_ENTRY_COUNT }, (_value, index) => maxNumber - index),
           ]),
         ),
-      },
-      characterTrials: {
-        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
       },
       characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
@@ -146,9 +141,6 @@ describe("genshinSaveSchema", () => {
           refinement: MAX_WEAPON_REFINEMENT,
         },
       })),
-      characterTrials: {
-        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => index + 1),
-      },
       clearedCamps: Array.from({ length: MAX_CLEARED_CAMP_COUNT }, (_value, index) => ({
         id: String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
         position: { x: maxNumber, z: maxNumber },
@@ -272,6 +264,8 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
+      reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
       spiralAbyss: Object.fromEntries(
         Array.from({ length: MAX_ABYSS_CYCLE_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

@@ -41,8 +41,8 @@ describe(readMailRows, () => {
       .mockResolvedValueOnce(Response.json({ [String(ROW.id)]: ROW_HASH }))
       .mockResolvedValueOnce(Response.json(ROW));
     const held: MailSave[] = [
-      { deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false },
-      { deliveredAt: new Date(0).toISOString(), id: GONE_ID, isClaimed: false },
+      { deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false, isPinned: false, isRead: false },
+      { deliveredAt: new Date(0).toISOString(), id: GONE_ID, isClaimed: false, isPinned: false, isRead: false },
     ];
     const rows = await readMailRows(gameDataBaseUrl, [ROW.id, GONE_ID]);
     const PAST_ROW_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (ROW.expireDays + 1));

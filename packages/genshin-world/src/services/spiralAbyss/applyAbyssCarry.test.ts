@@ -6,6 +6,8 @@ import { takeAbyssCarry } from "#src/services/spiralAbyss/takeAbyssCarry";
 import { describe, expect, test } from "vitest";
 
 const createMember = (energy: number, healthShare: number): PartyMember => ({
+  bondOfLifeClearedShare: 0,
+  bondOfLifeShare: 0,
   burstCooldownSeconds: 0,
   elementalState: createElementalState(),
   energy,

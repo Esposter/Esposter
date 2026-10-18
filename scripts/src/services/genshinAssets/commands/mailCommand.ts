@@ -1,12 +1,10 @@
-import type { SubCommandsDef } from "citty";
-
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildMailPublication } from "#src/services/genshinAssets/mail/buildMailPublication";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
-export const mailCommand: SubCommandsDef[string] = defineCommand({
+export const mailCommand = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:

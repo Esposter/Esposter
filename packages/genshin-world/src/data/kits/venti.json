@@ -206,6 +206,12 @@
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "skill.animationFrames": { "cause": "Unclassified", "value": 22 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
+  "skill.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.element": { "cause": "Unsourced", "value": "Wind" },
+  "skill.hits.0.gauge": { "cause": "Unsourced", "value": 2 },
+  "skill.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 51 },
+  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 2232 } },
+  "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 },
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 116 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.area": {

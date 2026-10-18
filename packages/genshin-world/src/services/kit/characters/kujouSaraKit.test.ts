@@ -11,6 +11,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKujouSaraKitBehaviour, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -19,6 +22,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const SARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KUJOU_SARA_CHARACTER_ID);
 const createSaraCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -99,7 +103,11 @@ describe(createKujouSaraKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const combatant = createSaraCombatant();
     const hit = takeOne(SARA_KIT.elementalBurst.hits);
-    hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
+    hit.onStrike?.(
+      createKitTestContext(combatant, { kitEffectState }),
+      { body: kitBody, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
     const atkBonus = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
 
     expect(atkBonus?.amount).toBeCloseTo(0.4296 * 1000);
@@ -131,7 +139,11 @@ const readEnergies = (ascension: number, energyRecharge: number): number[] => {
   SARA_KIT.elementalSkill.onStart?.(context);
   SARA_KIT.chargedAttack.onStart?.(context);
   const hit = takeOne(takeOne(kitEffectState.effects.filter((effect) => checkIsSummon(effect))).hits);
-  hit.onStrike?.(context, { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit });
+  hit.onStrike?.(
+    context,
+    { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  );
   return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) => getPartyMember(party, characterId).energy);
 };
 

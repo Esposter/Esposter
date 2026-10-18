@@ -91,7 +91,6 @@ const createDomains = () => {
     kitEffectState: { effects: [] },
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpTo,
-    kitEffectState: { effects: [] },
     materialDataMap: new Map(),
     nameText: {},
     party: createParty([TRAVELER_CHARACTER_ID]),

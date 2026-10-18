@@ -39,6 +39,8 @@ export interface KitHit {
   element?: Element;
   // The status it gives each enemy it strikes, given its striker, before its damage is taken
   enemyStatus?: (combatant: Combatant) => EnemyStatus | undefined;
+  // The status it gives each enemy it strikes once its damage lands, given its striker, if the hit deals that enemy damage
+  enemyStatusAfterDamage?: (combatant: Combatant) => EnemyStatus | undefined;
   gauge?: number;
   // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the striker
   healAttackShare?: (combatant: Combatant) => number;
@@ -53,9 +55,8 @@ export interface KitHit {
   // As a talent's hit
   lunarHit?: KitLunarHit;
   // Run for each enemy the hit strikes, given the strike with the body it lands from and its striker, and the enemy it
-  // Strikes, if the hit gives its striker something back as it lands. Only a strike that reads the enemy takes the third
-  // Argument, so a callback given the strike alone is still a valid one
-  onStrike?: (context: KitContext, strike: KitStrike, enemy?: Enemy) => void;
+  // Strikes, for a hit that gives its striker something back as it lands
+  onStrike?: (context: KitContext, strike: KitStrike, enemy: Enemy) => void;
   poiseDamage: number;
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;

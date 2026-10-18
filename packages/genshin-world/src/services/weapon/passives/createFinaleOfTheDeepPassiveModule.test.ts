@@ -11,6 +11,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -84,7 +85,7 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
     expect(buffs.map(({ attribute, secondsRemaining }) => ({ attribute, secondsRemaining }))).toStrictEqual([
       { attribute: Attribute.Attack, secondsRemaining: 15 },
     ]);
-    expect(buffs[0].amount).toBeCloseTo(60);
+    expect(takeOne(buffs).amount).toBeCloseTo(60);
   });
 
   test("the flat ATK a clear raises is at most the rank's maximum", () => {
@@ -96,7 +97,7 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
     partyMember.bondOfLifeClearedShare = 1;
     finaleOfTheDeepPassiveModule.onKitEvent?.(clearHealth(0.01), context, wielder);
 
-    expect(getBuffs(context.kitEffectState.effects, "finaleOfTheDeepCleared")[0].amount).toBe(150);
+    expect(takeOne(getBuffs(context.kitEffectState.effects, "finaleOfTheDeepCleared")).amount).toBe(150);
   });
 
   test("a heal that takes no Bond of Life clears nothing", () => {
