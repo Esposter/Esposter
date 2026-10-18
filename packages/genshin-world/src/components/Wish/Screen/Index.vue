@@ -3,6 +3,7 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
 import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { WishResult } from "#src/models/wish/WishResult";
@@ -16,6 +17,7 @@ import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
+import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
 import { buyWishFate } from "#src/services/wish/buyWishFate";
@@ -58,6 +60,8 @@ const characterCopyCountMap = defineModel<ReadonlyMap<number, number>>("characte
 const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", { required: true });
+// The draws the wish history keeps, which the draws of each set are appended to
+const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const { gameText, nameText, serverClockOffsetMs, stellaFortunaNameTextIdMap, statTables, wishSchedule } =
   defineProps<Props>();
@@ -216,6 +220,13 @@ const wish = (count: number) => {
   characterCopyCountMap.value = wishes.heldCountMap;
   inventory.value = nextInventory;
   pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
+  const { kind } = banner.value;
+  const drawnAt = Temporal.Now.instant();
+  wishHistory.value = appendWishHistory(
+    wishHistory.value,
+    wishes.results.map(({ item }) => ({ bannerKind: kind, itemId: item.id, time: drawnAt.toString() })),
+    drawnAt,
+  );
   wallet.value = wishes.wallet;
   results.value = sortWishResults(wishes.results).map((wishResult) => {
     const {

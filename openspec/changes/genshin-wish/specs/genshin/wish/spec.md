@@ -36,7 +36,7 @@ Two character event banners SHALL run side by side in their windows, and SHALL s
 
 ### Requirement: The wish history lists every draw
 
-The wish history SHALL list each draw's kind, item and time, and SHALL keep draws beyond a year.
+The wish history SHALL list each draw's kind, item and time, and SHALL keep the draws of the last year, dropping the older ones.
 
 #### Scenario: A draw appears in the history with its kind, item and time
 
@@ -44,11 +44,11 @@ The wish history SHALL list each draw's kind, item and time, and SHALL keep draw
 - **WHEN** the player opens the history
 - **THEN** the draw is listed with its kind, its item and its time
 
-#### Scenario: History keeps draws beyond a year
+#### Scenario: History keeps draws within the year and drops the older
 
-- **GIVEN** a draw made more than a year ago
+- **GIVEN** a draw made within the last year and a draw made more than a year ago
 - **WHEN** the player opens the history
-- **THEN** the draw is still listed
+- **THEN** the draw within the year is listed and the older draw is not
 
 ### Requirement: A new character joins the roster and a repeat draw returns Starglitter
 

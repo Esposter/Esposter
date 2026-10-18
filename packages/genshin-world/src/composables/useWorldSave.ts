@@ -33,11 +33,13 @@ export const useWorldSave = ({
     | "inventory"
     | "openedChestIds"
     | "wallet"
+    | "wishHistory"
     | "wishPityMap"
   >;
 }) => {
   const inventory = ref<Inventory>(savedState.inventory);
   const wallet = ref<Wallet>(savedState.wallet);
+  const wishHistory = ref(savedState.wishHistory);
   const wishPityMap = ref(savedState.wishPityMap);
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(
     savedState.achievementProgressMap,
@@ -86,6 +88,7 @@ export const useWorldSave = ({
     setInventory,
     setWallet,
     wallet,
+    wishHistory,
     wishPityMap,
   };
 };

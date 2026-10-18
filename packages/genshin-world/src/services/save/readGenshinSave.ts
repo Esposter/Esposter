@@ -34,6 +34,7 @@ export const readGenshinSave = (
     travelerName,
     unlockedLandmarks,
     wallet,
+    wishHistory,
     wishPity,
     worldLevelAdjustment,
   }: GenshinSave,
@@ -70,6 +71,7 @@ export const readGenshinSave = (
     travelerName,
     unlockedLandmarkIds: new Set(unlockedLandmarks),
     wallet: toWallet(wallet),
+    wishHistory,
     wishPityMap: wishPity,
     worldLevelAdjustment: toWorldLevelAdjustment(worldLevelAdjustment),
   };

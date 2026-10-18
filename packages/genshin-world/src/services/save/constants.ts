@@ -58,6 +58,9 @@ export const MAX_ARCHIVE_KILL_COUNT = 4096;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
+// The draws the wish history keeps, the newest of those within its window and never more than this, so a year of draws is
+// Bounded
+export const MAX_WISH_HISTORY_COUNT = 10_000;
 // The bench's recipes are the combine table's rows, each named by its id once in the learned list and once in the counts
 export const MAX_CRAFTING_RECIPE_COUNT = 512;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
@@ -84,6 +87,7 @@ const getLongestMember = (members: readonly string[]): string =>
   members.reduce((longest, member) => (member.length > longest.length ? member : longest));
 const LONGEST_ATTRIBUTE = getLongestMember(Object.values(Attribute));
 const LONGEST_ARTIFACT_SLOT = getLongestMember(Object.values(ArtifactSlot));
+const LONGEST_BANNER_KIND = getLongestMember(Object.values(BannerKind));
 // A character at its longest: every number at its largest, every enum at its longest member, an attribute's value at the
 // Longest a finite number is written, and every list at its cap
 const LONGEST_CHARACTER_SAVE = {
@@ -155,6 +159,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
       },
     ]),
   ),
+  wishHistory: [],
   worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each
@@ -188,6 +193,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
   Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  MAX_WISH_HISTORY_COUNT *
+    getListEntryLength({ bannerKind: LONGEST_BANNER_KIND, itemId: MAX_SAVE_NUMBER, time: MAX_SAVE_INSTANT }) +
   MAX_INVENTORY_ITEM_COUNT *
     getListEntryLength({
       id: MAX_SAVE_NUMBER,
@@ -236,6 +243,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
     primogemResinRefillCount: 0,
     primogemResinRefillDay: "1970-01-01",
   },
+  wishHistory: [],
   wishPity: InitialBannerKindWishPityMap,
   worldLevelAdjustment: { isLowered: false },
 };
