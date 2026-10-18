@@ -690,7 +690,7 @@ export enum GameTextKey {
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
-  // the restoring's tips and label
+  // The restoring's tips and label
   WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
