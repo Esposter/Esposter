@@ -1355,6 +1355,7 @@ defineExpose({ jumpTo, readCameraPosition });
           v-model:characters="characters"
           v-model:wallet="wallet"
           :active-character-id="getActiveCharacterId(party)"
+          :adventure-rank="rank"
           :character-talent-kits
           :character-id-constellations-map
           :companionship-exp-map="savedState.companionshipExpMap"

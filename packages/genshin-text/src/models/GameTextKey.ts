@@ -98,6 +98,7 @@ export enum GameTextKey {
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
   CharacterArtifacts = "UI_STC_CHARACTERPAGE_RELIC",
+  CharacterAscend = "UI_STC_CHARACTER_PAGE_STAR_UP",
   CharacterAttributes = "UI_STC_CHARACTER_PAGE_AVATAR",
   CharacterConstellation = "UI_STC_CHARACTERPAGE_TALENT",
   CharacterDetails = "UI_CHARACTER_DETAIL",

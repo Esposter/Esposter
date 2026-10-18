@@ -69,6 +69,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
 // No set is read here, so Activate is refused with no set to press, as it is for a character the table does not hold
 export const props = {
   activeCharacterId: XILONEN_ID,
+  adventureRank: 15,
   characterIdConstellationsMap: new Map<number, Constellation[]>(),
   characters: roster,
   characterTalentKits,

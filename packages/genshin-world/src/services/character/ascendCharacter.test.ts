@@ -86,4 +86,43 @@ describe(ascendCharacter, () => {
       }),
     ).toBeUndefined();
   });
+
+  test("ascend is refused while the Mora for the phase is short", () => {
+    expect.hasAssertions();
+    expect(
+      ascendCharacter(CHARACTER, {
+        adventureRank: 15,
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+        phases: PHASES,
+        wallet: { ...EMPTY_WALLET, [Currency.Mora]: 19_999 },
+      }),
+    ).toBeUndefined();
+  });
+
+  test("ascend is refused while the phase's materials are short", () => {
+    expect.hasAssertions();
+    expect(
+      ascendCharacter(CHARACTER, {
+        adventureRank: 15,
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+        phases: PHASES,
+        wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
+      }),
+    ).toBeUndefined();
+  });
+
+  test("ascend is refused below the phase's level cap", () => {
+    expect.hasAssertions();
+    expect(
+      ascendCharacter(
+        { ...CHARACTER, level: 19 },
+        {
+          adventureRank: 15,
+          inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+          phases: PHASES,
+          wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
+        },
+      ),
+    ).toBeUndefined();
+  });
 });
