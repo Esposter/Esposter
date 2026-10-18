@@ -39,15 +39,15 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     sourceCharacterId,
   });
 
-  test("the wielder's ATK is raised by the rank's percentage on the field and by the second percentage more off it", () => {
+  test("on the field the passive adds no ATK bonus, and off it only the second percentage more", () => {
     expect.hasAssertions();
 
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []),
-    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AttackPercent }]);
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []) ?? [],
+    ).toStrictEqual([]);
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: false }], []),
-    ).toStrictEqual([{ amount: 0.24, attribute: Attribute.AttackPercent }]);
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: false }], []) ?? [],
+    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AttackPercent }]);
   });
 
   test("a heal the wielder initiates gives it and the character it healed Sweet Echoes for three seconds", () => {
