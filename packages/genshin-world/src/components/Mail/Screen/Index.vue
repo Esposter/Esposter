@@ -188,7 +188,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
       <MenuListScreenDetail v-if="selectedEntry" :aria-label="textMap[selectedEntry.row.titleTextId]">
         <p class="title">{{ textMap[selectedEntry.row.titleTextId] }}</p>
         <p class="sender">
-          {{ fillGameTextValues(gameText[GameTextKey.MailSender], textMap[selectedEntry.row.senderTextId]) }}
+          {{ fillGameTextValues(gameText[GameTextKey.MailSender], textMap[selectedEntry.row.senderTextId] ?? "") }}
         </p>
         <p class="date">
           {{ dateLine[0]

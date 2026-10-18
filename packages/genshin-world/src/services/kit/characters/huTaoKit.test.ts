@@ -295,6 +295,7 @@ describe("constellation 4 and 6", () => {
     for (let drain = 0; drain < drains; drain++)
       HU_TAO_KIT.onKitEvent?.(
         {
+          bondOfLifeShare: 0,
           characterId: HU_TAO_CHARACTER_ID,
           healthShare: -0.1,
           kind: KitEventKind.HealthChanged,

@@ -30,7 +30,7 @@ describe(splitGlyph, () => {
       Array.from({ length: pixelCount }, (_value, pixel) => (isInterior(pixel) ? ink : paper)).flat(),
     );
 
-    expect(splitGlyph(data, 3, size, size, ink)).toStrictEqual(
+    expect(splitGlyph(data, 3, size, size, ink, paper)).toStrictEqual(
       Uint8Array.from({ length: pixelCount }, (_value, pixel) => Number(isInterior(pixel))),
     );
   });
