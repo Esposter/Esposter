@@ -117,13 +117,25 @@ const emitEnemyHits = (
 
 // The flat base damage Nicole's kit gives a strike as a deployed member of the team, zero when it gives none
 const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
-  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
-    ?.additiveBaseDamageBonus ?? 0;
+  NICOLE_KIT.getPartyStrikeBonus?.(
+    nicole,
+    strike,
+    enemy,
+    context.party,
+    context.kitEffectState.effects,
+    context.characterIdCombatantMap,
+  )?.additiveBaseDamageBonus ?? 0;
 
 // The share of its enemy's defence Nicole's kit has a strike of a deployed member ignore, zero when it ignores none
 const getPartyDefenceIgnored = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
-  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
-    ?.defenseIgnored ?? 0;
+  NICOLE_KIT.getPartyStrikeBonus?.(
+    nicole,
+    strike,
+    enemy,
+    context.party,
+    context.kitEffectState.effects,
+    context.characterIdCombatantMap,
+  )?.defenseIgnored ?? 0;
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
