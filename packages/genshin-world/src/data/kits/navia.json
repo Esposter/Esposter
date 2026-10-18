@@ -4,10 +4,7 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.257650672131263 }
   },
-  "burst.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
-  "burst.hits.0.gauge": { "cause": "Unsourced", "value": 2 },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9139 } },
-  "burst.hits.0.poiseDamage": { "cause": "Unsourced", "value": 100 },
   "chargedAttack.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
