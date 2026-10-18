@@ -1387,7 +1387,6 @@ const domainArenaInteractables = computed<Interactable[]>(() => {
 });
 const interactables = computed<Interactable[]>(() => {
   if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
-  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
   const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
   const abyssEntrance: Interactable = {
@@ -1396,6 +1395,8 @@ const interactables = computed<Interactable[]>(() => {
     name: gameText[GameTextKey.AbyssMoonSpire],
     position: { x: abyssX, y: getGroundHeight(abyssX, abyssZ), z: abyssZ },
   };
+  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a
+  // Statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
     id,
     kind: InteractionKind.Activate,
