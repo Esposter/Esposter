@@ -93,6 +93,8 @@ export enum GameTextKey {
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   CompatibilityMode = "1992637634",
   CondessenceCrystal = "3736537308",
+  // Party Setup's button to add, rename and disband teams
+  ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // The quit prompt's first button, which goes back to the world
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
@@ -113,6 +115,8 @@ export enum GameTextKey {
   DamagedMask = "461826100",
   DandelionSeed = "2071890124",
   Dendrobium = "354894236",
+  // Party Setup's button that deploys the team shown
+  Deploy = "UI_BUTTON_ENABLE_TEAM",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
@@ -322,6 +326,11 @@ export enum GameTextKey {
   Padisarah = "200162340",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
+  // The four teams every player starts with, each named Party 1 to 4 until it is renamed
+  PartyDefaultName1 = "UI_TEAM_DEFAULT_NAME1",
+  PartyDefaultName2 = "UI_TEAM_DEFAULT_NAME2",
+  PartyDefaultName3 = "UI_TEAM_DEFAULT_NAME3",
+  PartyDefaultName4 = "UI_TEAM_DEFAULT_NAME4",
   PartySetup = "UI_TEAM_TITLE",
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
@@ -355,6 +364,8 @@ export enum GameTextKey {
   // Provisional: the quest screen's title over its first tab, which lists every quest in progress. The text map holds
   // Several lines reading "In Progress" and none of them is named for the quest screen, so this is the plainest one
   QuestsInProgress = "UI_TEXT_DOING",
+  // Party Setup's button that fills the team's empty slots with the next characters
+  QuickSetup = "UI_BUTTON_FAST_TEAM",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",
