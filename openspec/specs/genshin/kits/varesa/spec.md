@@ -1,6 +1,6 @@
 ## Purpose
 
-Varesa's kit as built outside her Nightsoul Blessing: her three strikes, charged attack, Rush, Flying Kick and low, high and collision plunges. Her Fiery Passion forms, Nightsoul points, apex state and Follow-Up Strike wait on the Nightsoul hook.
+Varesa's kit as built outside her Nightsoul Blessing: her three strikes, charged attack, Rush, Flying Kick and low, high and collision plunges. Her Nightsoul points and the Blessing they enter are built, and her Fiery Passion Rush, apex state and Follow-Up Strike are not.
 
 ## Requirements
 

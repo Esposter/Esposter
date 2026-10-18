@@ -4,7 +4,7 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 
 ## Not yet built
 
-- **Hypersense, and so Ascension 1, Constellation 1 and Constellation 6, wait on the Nightsoul hook.** gcsim's Nightsoul state gives Ororon points from the party's Nightsoul bursts and from his own hits, and spends them on Hypersense, which strikes the enemies near a Nightsoul-tagged hit. The framework has no Nightsoul state, so none of it is built, and Constellation 1's extra bounce and its 50% DMG Bonus go with it, since that bonus reads only Hypersense.
+- **Hypersense, and so Ascension 1, Constellation 1 and Constellation 6, are not built.** gcsim's Nightsoul state gives Ororon points from the party's Nightsoul bursts and from his own hits, and spends them on Hypersense, which strikes the enemies near a Nightsoul-tagged hit. The framework's Nightsoul points are built, but Ororon's kit reads and spends none of them yet, so none of it is built, and Constellation 1's extra bounce and its 50% DMG Bonus go with it, since that bonus reads only Hypersense.
 - **The Spirit Orb's bounce waits on a chained hit.** gcsim sends the orb on to up to three more enemies, four with Constellation 1, each one nearest the last. A hit's reach is an area round the body, so the orb's first hit reaches every enemy in its targeted area, which can overcount in a crowd, and the bounce's cap is not built.
 - **Constellation 4's 8 energy on the burst's hit waits on a timed energy gain.** gcsim restores it 36 frames into the burst whether or not the ritual strikes anything, and a kit's effects land only on a strike or a step's start.
 - **The unheld Aimed Shot is not a kit action.** The bow kits built so far model only the fully charged shot, and this kit follows them.

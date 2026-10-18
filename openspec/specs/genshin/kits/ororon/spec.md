@@ -1,6 +1,6 @@
 ## Purpose
 
-Ororon's kit as built: his three strikes, fully charged Aimed Shot, Spirit Orb's first hit, Dark Voices' Echo with its soundwave field, the plunges, Ascension 4's energy and Constellations 2 and 4. Hypersense, the Spirit Orb's bounce and the rest wait on the Nightsoul hook and a chained hit.
+Ororon's kit as built: his three strikes, fully charged Aimed Shot, Spirit Orb's first hit, Dark Voices' Echo with its soundwave field, the plunges, Ascension 4's energy and Constellations 2 and 4. Hypersense is not built, and the Spirit Orb's bounce and the rest wait on Hypersense and a chained hit.
 
 ## Requirements
 
