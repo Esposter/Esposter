@@ -4,6 +4,7 @@ import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 
 import WorldSession from "#src/components/World/Session/Index.vue";
+import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -17,6 +18,8 @@ import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
+import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
+import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readCatalogue } from "#src/services/world/readCatalogue";
@@ -49,6 +52,7 @@ getResultAsync(() =>
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
       measureLoadStep("crafting-recipes", readCraftingRecipes(props.gameDataBaseUrl)),
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
+      measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -67,6 +71,7 @@ getResultAsync(() =>
     frostbearingTreePlaces,
     craftingRecipes,
     craftingBenchPlace,
+    puzzlePlaces,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -79,8 +84,10 @@ getResultAsync(() =>
       hudInterfaceRects,
       materialDataMap,
       nameText,
-      // No Seelie is read yet, so the world starts with none placed
-      seelies: [],
+      seelies: pairSeelieCourts(
+        puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
+        puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
+      ),
       startingCharacterIdKitMap,
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,

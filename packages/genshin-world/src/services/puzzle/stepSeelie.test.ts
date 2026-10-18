@@ -10,6 +10,7 @@ describe(stepSeelie, () => {
   const COURT = { x: 10, z: 0 };
   const createSeelie = (state: SeelieState): Seelie => ({
     court: COURT,
+    id: "seelie",
     progress: 0,
     start: START,
     state,
