@@ -7,12 +7,10 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -67,9 +65,8 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
     castKitSummon(kitEffectState, body, combatant, [hit], { secondsRemaining: heavenFallSeconds });
   };
   // Bane of All Evil: an Anemo infusion converting Xiao's attacks, each carrying the table's DMG Bonus, until the burst
-  // Ends. A field checks each step that he is on the field and ends the burst's effects once he is not, ahead of the
-  // Fields that drain his current HP each second and give Tamer of Demons' bonus from Ascension 1, which each run only
-  // While the infusion stands
+  // Ends or he leaves the field, which the infusion ends as a swap does. Fields drain his current HP each second and give
+  // Tamer of Demons' bonus from Ascension 1, which each run only while the infusion stands
   const castBaneOfAllEvil = ({ activeCombatant: combatant, body: { position }, kitEffectState }: KitContext): void => {
     const { characterId } = combatant;
     const centre = { x: position.x, z: position.z };
@@ -78,26 +75,12 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
       damageBonus: baneOfAllEvilDamageBonus,
       element: Element.Anemo,
       isConverted: true,
+      isEndedOnSwap: true,
       kind: "infusion",
       secondsRemaining: baneOfAllEvilSeconds,
     };
-    const baneOfAllEvilEffects: KitEffect[] = [infusion];
     addKitEffect(kitEffectState, infusion);
-    const exit = castKitField(kitEffectState, characterId, centre, {
-      nextTickSeconds: 0,
-      onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
-        if (activeCombatant.characterId === characterId) return;
-        removeKitEffects(
-          tickKitEffectState,
-          (effect) =>
-            baneOfAllEvilEffects.includes(effect) ||
-            (effect.kind === "buff" && effect.characterId === characterId && effect.source === TAMER_OF_DEMONS_SOURCE),
-        );
-      },
-      secondsRemaining: infusion.secondsRemaining,
-      tickIntervalSeconds: FIXED_STEP_SECONDS,
-    });
-    const drain = castKitField(kitEffectState, characterId, centre, {
+    castKitField(kitEffectState, characterId, centre, {
       nextTickSeconds: drainFirstTickSeconds,
       onTick: ({ kitEffectState: tickKitEffectState, party }) => {
         if (!tickKitEffectState.effects.includes(infusion)) return;
@@ -107,25 +90,23 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
       secondsRemaining: lastDrainSeconds + 0.1,
       tickIntervalSeconds: drainIntervalSeconds,
     });
-    baneOfAllEvilEffects.push(exit, drain);
     if (combatant.ascension >= TAMER_OF_DEMONS_ASCENSION)
-      baneOfAllEvilEffects.push(
-        castKitField(kitEffectState, characterId, centre, {
-          nextTickSeconds: 0,
-          onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
-            if (!tickKitEffectState.effects.includes(infusion)) return;
-            buffKitMember(tickKitEffectState, characterId, {
-              amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),
-              attribute: Attribute.AnemoDamageBonus,
-              secondsRemaining: infusion.secondsRemaining,
-              source: TAMER_OF_DEMONS_SOURCE,
-            });
-          },
-          // The field lives a tenth of a second past its last tick, so the step that runs it still has it
-          secondsRemaining: TAMER_OF_DEMONS_INTERVAL_SECONDS * (TAMER_OF_DEMONS_MAX_STACKS - 1) + 0.1,
-          tickIntervalSeconds: TAMER_OF_DEMONS_INTERVAL_SECONDS,
-        }),
-      );
+      castKitField(kitEffectState, characterId, centre, {
+        nextTickSeconds: 0,
+        onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
+          if (!tickKitEffectState.effects.includes(infusion)) return;
+          buffKitMember(tickKitEffectState, characterId, {
+            amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),
+            attribute: Attribute.AnemoDamageBonus,
+            isEndedOnSwap: true,
+            secondsRemaining: infusion.secondsRemaining,
+            source: TAMER_OF_DEMONS_SOURCE,
+          });
+        },
+        // The field lives a tenth of a second past its last tick, so the step that runs it still has it
+        secondsRemaining: TAMER_OF_DEMONS_INTERVAL_SECONDS * (TAMER_OF_DEMONS_MAX_STACKS - 1) + 0.1,
+        tickIntervalSeconds: TAMER_OF_DEMONS_INTERVAL_SECONDS,
+      });
   };
   return { burst: { onStart: castBaneOfAllEvil }, skill: { onStart: castDash } };
 };

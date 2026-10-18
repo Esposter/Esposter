@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { GroundPoint } from "genshin-engine";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -54,14 +55,12 @@ const checkIsShockEffect = (effect: KitEffect, characterId: number): boolean =>
   effect.characterId === characterId &&
   effect.tickIntervalSeconds === Number.POSITIVE_INFINITY;
 
-// A Star Jade: a field with no edge, standing until a charged attack fires it, which ticks on every step and ends itself
-// Once its character has left the field, as gcsim clears the jades on a swap
+// A Star Jade: a field with no edge, standing until a charged attack fires it. Leaving the field loses it through the
+// Swap's kit event, as gcsim clears the jades on a swap
 const castStarJade = (kitEffectState: KitEffectState, characterId: number, centre: GroundPoint): void => {
-  const starJade = castKitField(kitEffectState, characterId, centre, {
+  castKitField(kitEffectState, characterId, centre, {
     nextTickSeconds: 0,
-    onTick: ({ activeCombatant }) => {
-      if (activeCombatant.characterId !== characterId) starJade.secondsRemaining = 0;
-    },
+    onTick: () => undefined,
     secondsRemaining: Number.POSITIVE_INFINITY,
     tickIntervalSeconds: FIXED_STEP_SECONDS,
   });
@@ -177,6 +176,11 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
         ? 0
         : 1,
     normalAttacks,
+    // Leaving the field loses the Star Jades, as gcsim clears them on a swap
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
+      removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
+    },
     // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit round it.
     // Only one stands, so a recast shatters the one before
     skill: {

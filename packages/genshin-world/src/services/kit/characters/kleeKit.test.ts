@@ -127,6 +127,19 @@ describe(createKleeKitBehaviour, () => {
     },
   );
 
+  test("klee's Sparks 'n' Splash ends when Klee is swapped off the field", () => {
+    expect.hasAssertions();
+    const combatant = createKleeCombatant(0);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    KLEE_KIT.elementalBurst.onStart?.(context);
+    const standing = kitEffectState.effects.length;
+    endKitSwapEffects(kitEffectState.effects, KLEE_CHARACTER_ID);
+    stepKitTestEffects(0.1, context);
+
+    expect([standing > 0, kitEffectState.effects]).toStrictEqual([true, []]);
+  });
+
   test("klee's Explosive Spark is applied at a 50% chance on a hit", () => {
     expect.hasAssertions();
     const combatant = { ...createKleeCombatant(0), ascension: 1 };
