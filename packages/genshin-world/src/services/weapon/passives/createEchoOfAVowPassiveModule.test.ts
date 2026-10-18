@@ -28,8 +28,8 @@ const wielder: Combatant = {
   kit: TRAVELER_KIT,
   level: 1,
 };
-// Echo of a Vow at its first rank: sixty Elemental Mastery for twelve seconds after a reaction, and a Stellar Glimmer reaction
-// DMG clause that is not built here, since the damage path reads no attribute for it
+// Echo of a Vow at its first rank: sixty Elemental Mastery for twelve seconds after a reaction, and sixteen per cent Stellar Glimmer
+// Reaction DMG for twelve seconds after a Stellar Glimmer reaction
 const echoOfAVowPassiveModule = createEchoOfAVowPassiveModule([60, 0.16, 12, 12]);
 const createReaction = (reactionType: ReactionType, element: Element) => ({
   enemy,
@@ -58,7 +58,7 @@ describe(createEchoOfAVowPassiveModule, () => {
     ]);
   });
 
-  test("a Stellar Glimmer reaction is an Elemental Reaction too, and raises the Elemental Mastery alike", () => {
+  test("a Stellar Glimmer reaction is an Elemental Reaction too, so it raises the Elemental Mastery and its Stellar Glimmer reaction DMG", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -68,8 +68,23 @@ describe(createEchoOfAVowPassiveModule, () => {
       wielder,
     );
 
-    expect(
-      getBuffs(context.kitEffectState.effects).map(({ amount, attribute }) => ({ amount, attribute })),
-    ).toStrictEqual([{ amount: 60, attribute: Attribute.ElementalMastery }]);
+    expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
+      {
+        amount: 60,
+        attribute: Attribute.ElementalMastery,
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+        source: "echoOfAVow",
+      },
+      {
+        amount: 0.16,
+        attribute: Attribute.StellarGlimmerReactionDamageBonus,
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 12,
+        source: "echoOfAVow",
+      },
+    ]);
   });
 });
