@@ -48,24 +48,27 @@ flowchart TD
 - **The middle mouse button is also Reset Camera.** The controls bind the middle button to both, and the follow camera resets on that press, so a press of the sight also resets the camera. Whether the game does both is the recording's question.
 - **A name tag is not hidden by a wall.** The tag is drawn over the canvas from the enemy's projected head, and only the near and far planes cut it, so an enemy within the range behind a wall shows its name while its highlight stays muted. Hiding it needs either the scene's depth read back from the GPU, a frame late, or a ray from the camera through the landmarks and the ground for each enemy. Whether the game hides the tag at all is unmeasured, so the test waits on the sight's recording in the roadmap.
 - **The Hilichurl's name has no text in the dump.** Its monster row names a text id that has no English text in the dump, so its tag stays blank until the game's text is found.
-- **Trails are not drawn.** A bounty's target waits on [Reputation](../../../changes/genshin-reputation/design.md), a Seelie's court on [Puzzles](../../../changes/genshin-puzzles/design.md), and a quest's clue on a quest being carried in the world, which none is yet.
+- **A Seelie's trail is drawn; a bounty's and a quest's are not yet.** While the sight is on, a ground trail runs from the character toward each resting Seelie's court, sampled every `SIGHT_TRAIL_STEP` metres on the world's height and cut at the reach. It is drawn white in the sight's lit scene, so the mute leaves it bright, and its width and fade are provisional until the recording measures them. A bounty's target waits on [Reputation](../../../changes/genshin-reputation/design.md), and a quest's clue on the go-to places the [quests](../../../changes/genshin-quests/design.md) page places in region data.
 
 ## Key files
 
-| File                                                                        | Role                                                               |
-| :-------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-engine/src/post/createSightNode.ts`                       | The mute, the highlight and the ring, over the scene's depth       |
-| `packages/genshin-engine/src/post/createSightUniforms.ts`                   | The origin, radius and strength the pass reads each frame          |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`                    | The sight's pass, drawn after the fog and before the bloom         |
-| `packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`  | The press, the spread and the walk that ends the sight             |
-| `packages/genshin-world/src/services/elementalSight/computeSightElement.ts` | The element a target shows, from its aura or its innate element    |
-| `packages/genshin-world/src/models/combat/ElementalState.ts`                | The aura a lit thing or enemy shows                                |
-| `packages/genshin-world/src/models/enemy/EnemyKindTraits.ts`                | An enemy's innate element, from its kind's traits                  |
-| `packages/genshin-world/src/services/elementalSight/createSightProxy.ts`    | A stand-in sharing an instanced mesh's matrices                    |
-| `packages/genshin-world/src/services/elementalSight/checkIsInSightReach.ts` | Whether a ground point lies within the range                       |
-| `packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`       | The enemies' names over their heads, projected each frame          |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`            | The sight's scene and uniforms, written each frame from the screen |
-| `packages/genshin-world/src/components/World/Session/Index.vue`             | The binding that steps the sight, and the screens that end it      |
+| File                                                                        | Role                                                                            |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `packages/genshin-engine/src/post/createSightNode.ts`                       | The mute, the highlight and the ring, over the scene's depth                    |
+| `packages/genshin-engine/src/post/createSightUniforms.ts`                   | The origin, radius and strength the pass reads each frame                       |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                    | The sight's pass, drawn after the fog and before the bloom                      |
+| `packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`  | The press, the spread and the walk that ends the sight                          |
+| `packages/genshin-world/src/services/elementalSight/computeSightTrail.ts`   | The points a trail runs through from the character to its end, cut at the reach |
+| `packages/genshin-world/src/services/elementalSight/writeSightTrails.ts`    | Each trail written as a white ribbon into the sight's scene                     |
+| `packages/genshin-world/src/components/World/SightTrails/Index.vue`         | The ribbon mesh the trails are drawn on, in the sight's lit scene only          |
+| `packages/genshin-world/src/services/elementalSight/computeSightElement.ts` | The element a target shows, from its aura or its innate element                 |
+| `packages/genshin-world/src/models/combat/ElementalState.ts`                | The aura a lit thing or enemy shows                                             |
+| `packages/genshin-world/src/models/enemy/EnemyKindTraits.ts`                | An enemy's innate element, from its kind's traits                               |
+| `packages/genshin-world/src/services/elementalSight/createSightProxy.ts`    | A stand-in sharing an instanced mesh's matrices                                 |
+| `packages/genshin-world/src/services/elementalSight/checkIsInSightReach.ts` | Whether a ground point lies within the range                                    |
+| `packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`       | The enemies' names over their heads, projected each frame                       |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`            | The sight's scene and uniforms, written each frame from the screen              |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | The binding that steps the sight, and the screens that end it                   |
 
 ## Sources
 
