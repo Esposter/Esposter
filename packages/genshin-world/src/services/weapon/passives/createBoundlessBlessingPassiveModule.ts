@@ -19,10 +19,9 @@ const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: num
   removeKitEffects(
     kitEffectState,
     (effect) =>
-      effect.characterId === characterId &&
-      ((effect.kind === "field" && effect.id === BOUNDLESS_BLESSING_CLOCK_ID) ||
-        (effect.kind === "status" && effect.id === BOUNDLESS_BLESSING_ID) ||
-        (effect.kind === "buff" && effect.source === BOUNDLESS_BLESSING_ID)),
+      (effect.kind === "field" && effect.characterId === characterId && effect.id === BOUNDLESS_BLESSING_CLOCK_ID) ||
+      (effect.kind === "status" && effect.characterId === characterId && effect.id === BOUNDLESS_BLESSING_ID) ||
+      (effect.kind === "buff" && effect.characterId === characterId && effect.source === BOUNDLESS_BLESSING_ID),
   );
 
 // Boundless Blessing at its rank: its Movement SPD is a passive bonus on the wielder. While the wielder is on the field, every
