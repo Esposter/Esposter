@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import type { GroundPoint } from "genshin-engine";
 import type { RegionGround } from "genshin-world";
@@ -33,7 +34,7 @@ import { join } from "node:path";
 // Turn and the plateau's reach among them. A capital with no waypoint is an error, and one set by hand writes its
 // Landmark alone. Both files stay written, as the sources people edit, and each ground rewritten is also its record
 // `ground/<region>`, with the paths written as the notes
-export const fitRegionCapitals = async ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
+export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<GameDataBuild> => {
   const { objects } = await readGameDataLock();
   const [transportPoints, [originX, originY, originZ], [{ base }]] = await Promise.all([
     readSceneTransportPoints(),

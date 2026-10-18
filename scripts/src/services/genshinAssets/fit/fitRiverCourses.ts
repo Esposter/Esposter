@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { computeRiverCourses } from "#src/services/genshinAssets/fit/computeRiverCourses";
@@ -17,7 +18,7 @@ const WATER_MESH_INFIX = "_Water_";
 // Path and the counts of courses and points as the build's note. A dry run writes nothing and says so
 export const fitRiverCourses = async (
   component: DerivedAssetComponent,
-  { isDryRun }: { isDryRun: boolean },
+  { isDryRun }: DryRunOptions,
 ): Promise<GameDataBuild> => {
   const courses = (await readWitnessWorldMeshes(component, (mesh) => mesh.includes(WATER_MESH_INFIX))).map((vertices) =>
     computeRiverCourses(vertices),

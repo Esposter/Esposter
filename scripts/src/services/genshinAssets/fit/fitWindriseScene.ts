@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitAreaOutlines } from "#src/services/genshinAssets/fit/fitAreaOutlines";
@@ -31,7 +32,7 @@ import { GameDataset, WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windri
 // The oak's foot, the last three exact, and its ground's layers as a field of their shares over its tiles' cells. Its
 // Landmarks' places and turns are written into Mondstadt's region data, every region's capital is placed with them and
 // Every area of the catalogue outlined, round the same origin, since the oak's foot is the whole world's
-export const fitWindriseScene = (only: readonly string[], options: { isDryRun: boolean }): Promise<GameDataBuild> =>
+export const fitWindriseScene = (only: readonly string[], options: DryRunOptions): Promise<GameDataBuild> =>
   runFits(
     {
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed

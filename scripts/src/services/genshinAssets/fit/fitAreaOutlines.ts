@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import type { WorldAreaPolygonFile } from "#src/models/genshinAssets/world/WorldAreaPolygonFile";
 import type { GroundPoint } from "genshin-engine";
@@ -30,7 +31,7 @@ import { readFile } from "node:fs/promises";
 // Ground the game's table files them under, a city's among them. An area the file holds no polygon for keeps the
 // Outline the catalogue gives it, and a subarea the table files no row for takes no outline and no terrain.
 // The catalogue is written back, as the source people edit, and is also its record, with what was outlined as the notes
-export const fitAreaOutlines = async ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
+export const fitAreaOutlines = async ({ isDryRun }: DryRunOptions): Promise<GameDataBuild> => {
   const [polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),

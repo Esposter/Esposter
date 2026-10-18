@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -35,7 +36,7 @@ const readRegionGroundFits = async (
 
 // A fit's records, given the names of the fits to run (none, for all) and whether it is a dry run, which writes no
 // Region data file and publishes nothing
-type DerivedAssetFit = (only: readonly string[], options: { isDryRun: boolean }) => Promise<GameDataBuild>;
+type DerivedAssetFit = (only: readonly string[], options: DryRunOptions) => Promise<GameDataBuild>;
 
 // A component whose only fits are its region's ground pieces
 const createGroundFit =

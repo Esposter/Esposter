@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 import type { SoundEffect } from "genshin-engine";
@@ -44,10 +45,7 @@ const CLOUD_LAYER_MATERIAL_SETTING_MAP = {
 // The login scene's parts fitted as our own kits' parameters, each a record under `login/`, with its interface's rects
 // And clips and the rows its script scrolls them in: each copied spawn's count and the length of its step, by its
 // Prefab, its music, whose fit's report is its note, and its sounds. Its title logos are a record each, by their logo
-export const fitLoginScene = async (
-  only: readonly string[],
-  options: { isDryRun: boolean },
-): Promise<GameDataBuild> => {
+export const fitLoginScene = async (only: readonly string[], options: DryRunOptions): Promise<GameDataBuild> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   const meshDirectory = join(directory.assets, AssetType.Mesh);

@@ -1,3 +1,4 @@
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
 import type { EnemyKindId } from "genshin-world";
 
@@ -19,7 +20,7 @@ import { readFile } from "node:fs/promises";
 // Place of the camps an earlier run wrote. Each camp takes the catalogue area its enemies stand in, and an enemy in no
 // Area is left out and counted, as are the marks on layers under the ground, which have no floor to stand on. A dry run
 // Counts them and writes nothing
-export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
+export const fitRegionCamps = async ({ isDryRun }: DryRunOptions): Promise<string> => {
   const labelIdKindMap = new Map(
     flattenLabelTree(await readInteractiveMapLabels())
       .filter(({ name }) => Object.hasOwn(FamilyLabelEnemyKindIdMap, name))

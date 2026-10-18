@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { describe, expect, test } from "vitest";
@@ -70,7 +71,7 @@ describe(runFits, () => {
     expect.hasAssertions();
 
     const dryRuns: boolean[] = [];
-    const createFit = ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
+    const createFit = ({ isDryRun }: DryRunOptions): Promise<GameDataBuild> => {
       dryRuns.push(isDryRun);
       return Promise.resolve({ notes: [], objects: {} });
     };

@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -11,9 +12,9 @@ const checkIsSelectedBy = (name: string, selected: string): boolean =>
 // Those named, so one fit's change is published without every other record refitted, one after the other. A name no fit
 // Has is an error. Each fit is handed the run's options, so a dry run reaches every fit that writes a world data file
 export const runFits = async (
-  fits: Record<string, (options: { isDryRun: boolean }) => Promise<GameDataBuild>>,
+  fits: Record<string, (options: DryRunOptions) => Promise<GameDataBuild>>,
   only: readonly string[],
-  options: { isDryRun: boolean },
+  options: DryRunOptions,
 ): Promise<GameDataBuild> => {
   const names = Object.keys(fits);
   const unknown = only.find((selected) => !names.some((name) => checkIsSelectedBy(name, selected)));

@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { computeWaterfallSheet } from "#src/services/genshinAssets/fit/computeWaterfallSheet";
@@ -18,7 +19,7 @@ const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 // Returning the file's path as the build's note, with the count of sheets. A dry run writes nothing and says so
 export const fitWaterfallSheets = async (
   component: DerivedAssetComponent,
-  { isDryRun }: { isDryRun: boolean },
+  { isDryRun }: DryRunOptions,
 ): Promise<GameDataBuild> => {
   const sheets = (await readWitnessWorldMeshes(component, (mesh) => mesh.startsWith(WATERFALL_MESH_PREFIX))).map(
     (vertices) => computeWaterfallSheet(vertices),
