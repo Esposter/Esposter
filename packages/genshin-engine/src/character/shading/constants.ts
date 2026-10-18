@@ -1,3 +1,5 @@
+import type { OutlineWidthKnots } from "#src/models/nodes/OutlineWidthKnots";
+
 // The game's shader constants as the shading page reads them. Each is written once here, and the pure equations and the
 // TSL nodes both take them from this module, so no number is kept in two places
 export const REGION_FLOORS = { five: 0.6, four: 0.2, three: 0.4, two: 0.8 } as const;
@@ -14,6 +16,8 @@ export const MINIMUM_OUTLINE_KNOT_SPAN = 0.001;
 export const OUTLINE_PROJECTION_SCALE = 2.414;
 // The game's outline width is its "_OutlineWidth" times this, as its vertex program reads the width
 export const OUTLINE_WIDTH_SCALE = 0.41425;
+// The width knots a material with none takes, so its width is as drawn: a scale of one at each depth
+export const UNIT_OUTLINE_WIDTH_KNOTS: OutlineWidthKnots = { depths: [1, 2, 3], scales: [1, 1, 1] };
 // The share of the main texture an outline is drawn toward, by its region's intensity
 export const OUTLINE_MAIN_TEXTURE_SHARE = 0.2;
 export const DESATURATION_WEIGHTS: readonly [number, number, number] = [0.0397, 0.458, 0.0061];

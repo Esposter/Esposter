@@ -49,6 +49,34 @@ describe("createAvatarShadingInputs", () => {
     expect(missingRampWidth).toBeUndefined();
   });
 
+  test("reads the outline's width knots the material names, and keeps the unit knots for any it does not name", () => {
+    expect.assertions(3);
+    const { outlineWidthKnots } = createAvatarShadingInputs(
+      {
+        colors: { _OutlineWidthAdjustScales: [0.5, 1, 2, 0], _OutlineWidthAdjustZs: [1, 4, 9, 0] },
+        floats: {},
+        keywords: [],
+        textures: {},
+      },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+    const { outlineWidthKnots: missingKnots } = createAvatarShadingInputs(
+      { colors: {}, floats: {}, keywords: [], textures: {} },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+    const { outlineWidthKnots: depthsOnly } = createAvatarShadingInputs(
+      { colors: { _OutlineWidthAdjustZs: [1, 4, 9, 0] }, floats: {}, keywords: [], textures: {} },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+
+    expect(outlineWidthKnots).toStrictEqual({ depths: [1, 4, 9], scales: [0.5, 1, 2] });
+    expect(missingKnots).toBeUndefined();
+    expect(depthsOnly).toStrictEqual({ depths: [1, 4, 9], scales: [1, 1, 1] });
+  });
+
   test("turns on each later region the material turns on", () => {
     expect.assertions(1);
     const { regionToggles } = createAvatarShadingInputs(

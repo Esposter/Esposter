@@ -1,7 +1,7 @@
 import type { CharacterShadingInputs } from "#src/models/character/CharacterShadingInputs";
 import type { Texture, Vector3Tuple } from "three";
 
-import { DEFAULT_LIGHT_AREA, DEFAULT_RAMP_WIDTH } from "#src/character/shading/constants";
+import { DEFAULT_LIGHT_AREA, DEFAULT_RAMP_WIDTH, UNIT_OUTLINE_WIDTH_KNOTS } from "#src/character/shading/constants";
 import { createFaceDraw } from "#src/character/shading/updateFaceDraw";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import { RampLayout } from "#src/models/character/RampLayout";
@@ -37,8 +37,7 @@ export const createCharacterShadingInputs = (overrides: CharacterShadingOverride
     lightArea: DEFAULT_LIGHT_AREA,
     metalDarkColor: BLACK,
     metalLightColor: WHITE,
-    outlineDepths: [1, 2, 3],
-    outlineScales: [1, 1, 1],
+    outlineWidthKnots: UNIT_OUTLINE_WIDTH_KNOTS,
     rampLayout: RampLayout.Horizontal,
     rampWidth: DEFAULT_RAMP_WIDTH,
     regionTints: { five: color, four: color, three: color, two: color },
