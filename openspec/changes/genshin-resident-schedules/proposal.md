@@ -12,7 +12,7 @@ Residents keep the game's hours, moving between their day and night spots as the
 - A resident moves at the turn of the hour only while out of the player's view, so nobody is seen to jump.
 - A resident is absent at night only where the game's record marks them absent by day alone; none is marked yet.
 - Each resident's spot is read from the world's clock every frame, so a change of time moves them.
-- Nod-Krai's residents and their night spots come from the wiki's NPC pages.
+- Nod-Krai's residents wait on the NPC placements missing from the scene-group export, and the wiki's NPC pages give their hours only.
 - A vendor sells only while standing at their spot in their hours.
 
 ## Capabilities
