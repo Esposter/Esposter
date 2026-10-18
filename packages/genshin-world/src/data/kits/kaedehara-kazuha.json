@@ -2,9 +2,9 @@
   "areas.absorbCheck": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 } },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
+  "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.absorbCheckFirst": { "cause": "Unclassified", "value": 81 },
   "frames.absorbCheckLast": { "cause": "Unclassified", "value": 369 },
   "frames.absorbCheckInterval": { "cause": "Unclassified", "value": 18 },
@@ -69,19 +69,20 @@
     "value": { "index": 1, "proudSkillGroupId": 4739 }
   },
   "hits.autumnWhirlwindTicks.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.2.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 47.7 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 47.37 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 29.7 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 29.7 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 63.54 },
+  "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 26.55 },
+  "normalAttacks.4.hits.1.poiseDamage": { "source": "Wiki", "value": 26.55 },
+  "normalAttacks.4.hits.2.poiseDamage": { "source": "Wiki", "value": 26.55 },
   "parameters.autumnWhirlwindAbsorptionMultiplier": {
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 4739 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4732 } },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4739 } }
 }
