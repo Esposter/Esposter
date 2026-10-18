@@ -14,4 +14,5 @@ export interface ShopGoodRow {
   priceCount: number;
   priceItemId: number;
   refresh: ShopRefresh;
+  reputationDiscountLevel?: number;
 }

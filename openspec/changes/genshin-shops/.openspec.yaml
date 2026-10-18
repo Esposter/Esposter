@@ -3,4 +3,11 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
-x-touches: ["scripts/src/services/genshinAssets/items/**", "packages/genshin-world/src/services/shop/**"]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/items/**",
+    "scripts/src/services/genshinAssets/shops/**",
+    "scripts/src/models/genshinAssets/shops/**",
+    "packages/genshin-world/src/services/shop/**",
+    "packages/genshin-world/src/models/shop/**",
+  ]
