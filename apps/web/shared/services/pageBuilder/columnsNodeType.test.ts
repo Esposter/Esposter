@@ -21,16 +21,17 @@ describe("columnsNodeType", () => {
       root: TEST_ROOT,
     };
     const columnsSlot = "/content/0/props/children";
+    const newId = crypto.randomUUID();
 
     expect(
       insertBlockNode(document, webpageRegistry, columnsSlot, 1, {
-        props: { href: TEST_URL, id: "c", label: TEST_LABEL },
+        props: { href: TEST_URL, id: newId, label: TEST_LABEL },
         type: WebpageNodeType.Button,
       }),
     ).toStrictEqual([]);
     expect(
       insertBlockNode(document, webpageRegistry, columnsSlot, 1, {
-        props: { children: [], id: "c" },
+        props: { children: [], id: newId },
         type: WebpageNodeType.Column,
       }),
     ).toHaveLength(1);
