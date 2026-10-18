@@ -12,6 +12,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -259,45 +260,95 @@ describe(createAlbedoKitBehaviour, () => {
     });
   });
 
-  // Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced
-  const createConstellation4Fixture = (constellationCount = 4) => {
+  // Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced. The
+  // Solar Isotoma is cast from the origin and stands from its spawn, 0.42 seconds in, and gcsim checks its field every
+  // 0.3 seconds from that hitmark
+  const createConstellation4Fixture = (constellationCount = 4, characterIds = [ALBEDO_CHARACTER_ID]) => {
     const combatant = createAlbedoCombatant(0, constellationCount);
-    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
-    const party = createParty([ALBEDO_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty(characterIds);
     const characterIdCombatantMap = new Map([[ALBEDO_CHARACTER_ID, combatant]]);
-    // The active member stands at the given x, the field's centre being the origin
+    // The active member stands at the given x, the cast being made from the origin
     const stand = (x: number) =>
       createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x, z: 0 } }, kitEffectState, party });
-    const step = (x: number) => ALBEDO_KIT.onStep?.(stand(x), combatant, 1 / 60);
+    const cast = () => ALBEDO_KIT.elementalSkill.onStart?.(stand(0));
+    // Steps the seconds with the active member standing at the given x, each step running the effects and the kit's clock
+    const hold = (x: number, seconds: number) => {
+      for (let index = 0; index < Math.round(seconds * 60); index++) {
+        stepKitSeconds(stand(x), 1 / 60);
+        ALBEDO_KIT.onStep?.(stand(x), combatant, 1 / 60);
+      }
+    };
     const getPlungingBonus = () =>
       getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes
         .attributeTotalMap[Attribute.PlungingAttackDamageBonus];
-    const wait = (seconds: number) => stepKitSeconds(stand(100), seconds);
-    return { getPlungingBonus, step, wait };
+    // The characters the plunging attack bonus is a buff on, and the seconds each buff has left
+    const getPlungingBuffs = () =>
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "buff" && effect.attribute === Attribute.PlungingAttackDamageBonus ? [effect] : [],
+      );
+    return { cast, getPlungingBonus, getPlungingBuffs, hold };
   };
 
   test("constellation 4 raises the active member's plunging attacks 30% while it stands in the standing Solar Isotoma's field", () => {
     expect.hasAssertions();
-    const { getPlungingBonus, step } = createConstellation4Fixture();
-    step(0);
+    const { cast, getPlungingBonus, hold } = createConstellation4Fixture();
+    cast();
+    hold(0, 0.8);
     expect(getPlungingBonus()).toBeCloseTo(0.3);
+  });
+
+  test("constellation 4 checks the field every 0.3 seconds from the Solar Isotoma's spawn, so the bonus waits for the first check", () => {
+    expect.hasAssertions();
+    const { cast, getPlungingBonus, hold } = createConstellation4Fixture();
+    cast();
+    hold(0, 0.65);
+    expect(getPlungingBonus()).toBe(0);
+    hold(0, 0.15);
+    expect(getPlungingBonus()).toBeCloseTo(0.3);
+  });
+
+  test("constellation 4 refreshes its bonus at each 0.3 second check, not at each step", () => {
+    expect.hasAssertions();
+    const { cast, getPlungingBuffs, hold } = createConstellation4Fixture();
+    cast();
+    hold(0, 1);
+    // A check refreshes the buff to its full second, and each step between checks only runs it down
+    const refreshes = Array.from({ length: 60 }, () => {
+      hold(0, 1 / 60);
+      return getPlungingBuffs()[0]?.secondsRemaining;
+    }).filter((secondsRemaining) => secondsRemaining === 1).length;
+    expect(refreshes).toBeGreaterThanOrEqual(3);
+    expect(refreshes).toBeLessThanOrEqual(4);
   });
 
   test("constellation 4's bonus runs out a second after the active member leaves the field", () => {
     expect.hasAssertions();
-    const { getPlungingBonus, step, wait } = createConstellation4Fixture();
-    step(0);
-    step(100);
-    wait(0.5);
+    const { cast, getPlungingBonus, hold } = createConstellation4Fixture();
+    cast();
+    hold(0, 1);
+    hold(100, 0.5);
     expect(getPlungingBonus()).toBeCloseTo(0.3);
-    wait(0.5);
+    hold(100, 0.6);
     expect(getPlungingBonus()).toBe(0);
+  });
+
+  test("constellation 4 raises the active member's plunging attacks alone, not a teammate's", () => {
+    expect.hasAssertions();
+    const { cast, getPlungingBuffs, hold } = createConstellation4Fixture(4, [
+      ALBEDO_CHARACTER_ID,
+      TRAVELER_CHARACTER_ID,
+    ]);
+    cast();
+    hold(0, 1);
+    expect(getPlungingBuffs().map((buff) => buff.characterId)).toStrictEqual([ALBEDO_CHARACTER_ID]);
   });
 
   test("constellation 4 raises nothing before its constellation", () => {
     expect.hasAssertions();
-    const { getPlungingBonus, step } = createConstellation4Fixture(3);
-    step(0);
+    const { cast, getPlungingBonus, hold } = createConstellation4Fixture(3);
+    cast();
+    hold(0, 1);
     expect(getPlungingBonus()).toBe(0);
   });
 });
