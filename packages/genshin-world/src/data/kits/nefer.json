@@ -148,5 +148,8 @@
     "donor": { "characterId": 10000054, "path": "stances.ceremonialGarment.chargedAttack.hits.0.area" }
   },
   "stances.phantasmPerformance.chargedAttack.hits.6.element": { "cause": "Unsourced", "value": "Grass" },
-  "stances.phantasmPerformance.chargedAttack.hits.6.hitmarkFrames": { "cause": "Unsourced", "value": 48 }
+  "stances.phantasmPerformance.chargedAttack.hits.6.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
+  "stances.phantasmPerformance.chargedAttack.hits.4.lunarReactionType": { "cause": "Unsourced", "value": "LunarBloom" },
+  "stances.phantasmPerformance.chargedAttack.hits.5.lunarReactionType": { "cause": "Unsourced", "value": "LunarBloom" },
+  "stances.phantasmPerformance.chargedAttack.hits.6.lunarReactionType": { "cause": "Unsourced", "value": "LunarBloom" }
 }

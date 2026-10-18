@@ -18,7 +18,6 @@ While Elemental Sight is on, a white ground trail leads the character toward eac
 
 ## Waiting on
 
-- `openspec/changes/genshin-reputation/`: a bounty's target, for the bounty trails.
 - `openspec/changes/genshin-quests/`: the go-to places a quest names, for the clue trails.
 
 ## Impact

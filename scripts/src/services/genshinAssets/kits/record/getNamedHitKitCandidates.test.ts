@@ -4,14 +4,20 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { describe, expect, test } from "vitest";
 
-// A call that lands at the delay, from the declaration at the site, giving its hitmark as the candidate
-const call = (site: string, delay: number): NamedHitCall => ({
-  delay,
-  fieldMap: new Map([
-    ["hitmarkFrames", [{ provenance: { file: "burst.go", line: delay, source: KitSource.Gcsim }, value: delay }]],
-  ]),
-  site,
-});
+// A call that lands at the delay, from the declaration at the site, giving its hitmark as the candidate. Its site is
+// Its file and the line of its declaration, `burst.go:4`, and the call is read at the line of its own
+const call = (site: string, delay: number, line = 5): NamedHitCall => {
+  const [file = ""] = site.split(":");
+  return {
+    delay,
+    fieldMap: new Map([
+      ["hitmarkFrames", [{ provenance: { file: "burst.go", line: delay, source: KitSource.Gcsim }, value: delay }]],
+    ]),
+    file,
+    line,
+    site,
+  };
+};
 
 const hitmarks = (candidateMap: Map<string, { value: unknown }[]>, path: string) =>
   candidateMap.get(path)?.map(({ value }) => value);
@@ -38,6 +44,41 @@ describe(getNamedHitKitCandidates, () => {
     expect(hitmarks(candidateMap, "hits.burst.2.hitmarkFrames")).toStrictEqual([30]);
   });
 
+  test("gives a named list its length from the calls its one key makes, where a loop of one call makes as many as its hits", () => {
+    expect.hasAssertions();
+
+    // A loop of one call makes the key's three calls, as a lunge's three strikes in a loop of three do
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "9832|6",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [call("skill.go:100", 11, 113), call("skill.go:100", 11, 113), call("skill.go:100", 11, 113)],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([
+      ["hits.impaleTheNightFullBol.0.multiplier", { index: 6, proudSkillGroupId: 9832 }],
+      ["hits.impaleTheNightFullBol.1.multiplier", { index: 6, proudSkillGroupId: 9832 }],
+      ["hits.impaleTheNightFullBol.2.multiplier", { index: 6, proudSkillGroupId: 9832 }],
+    ]);
+
+    expect(
+      getNamedHitKitCandidates(valueMap, namedHitCandidateMap).get("hits.impaleTheNightFullBol.length"),
+    ).toStrictEqual([{ provenance: { file: "skill.go", line: 113, source: KitSource.Gcsim }, value: 3 }]);
+  });
+
+  test("gives no length to a hit with no index, `hits.sword`, which is a hit of its own rather than a list", () => {
+    expect.hasAssertions();
+
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      ["9832|0", { fieldMap: new Map(), queuedCalls: [call("skill.go:100", 11, 113)] }],
+    ]);
+    const valueMap = new Map<string, unknown>([["hits.sword.multiplier", { index: 0, proudSkillGroupId: 9832 }]]);
+
+    expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).has("hits.sword.length")).toBe(false);
+  });
+
   test("takes no calls from keys of two sites, though each site's keys' calls number as many as the list", () => {
     expect.hasAssertions();
 
@@ -59,7 +100,10 @@ describe(getNamedHitKitCandidates, () => {
     const namedHitCandidateMap: NamedHitCandidateMap = new Map([
       [
         "3|0",
-        { fieldMap: new Map(), queuedCalls: [call("skill.go:33", 36), { fieldMap: new Map(), site: "asc.go:18" }] },
+        {
+          fieldMap: new Map(),
+          queuedCalls: [call("skill.go:33", 36), { fieldMap: new Map(), file: "asc.go", line: 18, site: "asc.go:18" }],
+        },
       ],
     ]);
     const valueMap = new Map<string, unknown>([["hits.blade.0.multiplier", { index: 0, proudSkillGroupId: 3 }]]);

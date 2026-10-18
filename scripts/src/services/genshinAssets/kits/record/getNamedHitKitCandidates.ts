@@ -5,6 +5,8 @@ import type {
   NamedHitCandidateMap,
 } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";
 import { kitParameterSchema } from "genshin-world";
@@ -99,6 +101,22 @@ export const getNamedHitKitCandidates = (
       for (const [field, candidates] of readListHitCalls(key, namedHit, index, listLength, siteCallsMap) ?? [])
         candidateMap.set(`${hitPath}.${field}`, candidates);
     }
+    // A named list of indexed hits whose hits all join one key takes its length from the calls that key makes, where they
+    // Are as many as its hits, as a loop of one call makes them. A hit with no index is a hit of its own, not a list
+    const [firstHit] = hits;
+    const lengthCall = firstHit?.namedHit.queuedCalls[0];
+    if (
+      group.startsWith("hits.") &&
+      firstHit !== undefined &&
+      lengthCall !== undefined &&
+      hits.length === listLength &&
+      hits.every(({ hitPath, key }) => hitPath !== group && key === firstHit.key) &&
+      firstHit.namedHit.queuedCalls.length === listLength
+    )
+      addKitCandidate(candidateMap, `${group}.length`, {
+        provenance: { file: lengthCall.file, line: lengthCall.line, source: KitSource.Gcsim },
+        value: listLength,
+      });
   }
   return candidateMap;
 };
