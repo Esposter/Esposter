@@ -416,7 +416,6 @@ const playRerollChoice = () => {
 
 .synchro,
 .confirm button {
-  position: absolute;
   padding: calc(var(--unit) * 8) calc(var(--unit) * 24);
   border: none;
   border-radius: calc(var(--unit) * 24);
@@ -429,14 +428,18 @@ const playRerollChoice = () => {
 }
 
 .synchro {
+  position: absolute;
   top: calc(var(--unit) * 780);
   left: calc(var(--unit) * 1420);
 }
 
+/* The buttons take their places in the row, so a choice's Reroll, Confirm and Cancel never stack on one another */
 .confirm {
   position: absolute;
   top: calc(var(--unit) * 860);
   left: calc(var(--unit) * 1420);
+  display: flex;
+  gap: calc(var(--unit) * 16);
 }
 
 .concede {
