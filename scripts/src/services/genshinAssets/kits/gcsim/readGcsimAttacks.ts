@@ -47,6 +47,21 @@ const readFunctionName = (tokens: readonly GoToken[], position: number): string 
 // Strike type and element by their gcsim names, its durability and poise evaluated through the package's constants, and
 // The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. A field the code
 // Sets after the literal is not read, but a `Mult` it sets after the literal is an attack of its own under that variable
+// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by a constant
+const readGoStringConstants = (tokens: readonly GoToken[]): Map<string, string> => {
+  const stringMap = new Map<string, string>();
+  for (const [position, token] of tokens.entries()) {
+    const value = tokens[position + 2];
+    if (
+      token.kind === GoTokenKind.Identifier &&
+      checkIsGoPunctuation(tokens[position + 1], "=") &&
+      value?.kind === GoTokenKind.String
+    )
+      stringMap.set(token.text, value.text.slice(1, -1));
+  }
+  return stringMap;
+};
+
 // Whether the tokens at the position are a struct copy of an attack variable, `aiC2 = ai` or `aiC2 := ai`, its source
 // Name ending its statement, which a `.` or a call or index on it would not
 const readCopySource = (tokens: readonly GoToken[], position: number): string | undefined => {
@@ -75,6 +90,7 @@ export const readGcsimAttacks = (
   return sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
     const aliasMap = readGoAliases(tokens);
+    const stringMap = readGoStringConstants(tokens);
     const attacks: GcsimAttack[] = [];
     const readVariableAttack = (variableName: string, line: number) =>
       attacks.filter((attack) => attack.variableName === variableName && attack.line < line).at(-1);
@@ -100,7 +116,14 @@ export const readGcsimAttacks = (
         const multiplierField = fieldMap.get("Mult");
         const poiseDamage = evaluateNumber("PoiseDMG");
         const poiseField = fieldMap.get("PoiseDMG");
+        const abilExpression = fieldMap.get("Abil")?.expression;
         attacks.push({
+          abil:
+            abilExpression?.kind === GoExpressionKind.String
+              ? abilExpression.value
+              : getName(abilExpression) === undefined
+                ? undefined
+                : stringMap.get(getName(abilExpression) ?? ""),
           attackTag: getName(fieldMap.get("AttackTag")?.expression),
           durability: evaluateNumber("Durability"),
           element: getName(fieldMap.get("Element")?.expression),

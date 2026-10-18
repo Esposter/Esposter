@@ -14,6 +14,7 @@ describe(readGcsimAttacks, () => {
 
     expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
       {
+        abil: undefined,
         attackTag: "attacks.AttackTagNormal",
         durability: 25,
         element: "attributes.Physical",

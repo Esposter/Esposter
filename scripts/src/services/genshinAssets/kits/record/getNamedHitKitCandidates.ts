@@ -6,6 +6,7 @@ import type {
 } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
+import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";
 import { kitParameterSchema } from "genshin-world";
 
 const INDEXED_HIT_REGEX = /^(?<group>.+)\.(?<index>\d+)$/u;
@@ -45,13 +46,6 @@ const readSiteCallsMap = (
     ]),
   );
 };
-
-// Whether each call of a site lands strictly after the one before it, so that the site's order is known
-const checkIsLandingOrdered = (calls: readonly NamedHitCall[]): boolean =>
-  calls.every(
-    ({ delay }, index) =>
-      delay !== undefined && (index === 0 || (calls[index - 1]?.delay ?? Number.POSITIVE_INFINITY) < delay),
-  );
 
 // The calls a list's hit takes by its place: its own key's calls where they are as many as the list is long, else the
 // Calls of the one attack site that makes as many calls as the list is long from keys including its own
