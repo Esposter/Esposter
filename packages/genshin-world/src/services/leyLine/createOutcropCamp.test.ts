@@ -1,7 +1,8 @@
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
-import { OUTCROP_CAMP_ENEMY_KIND_IDS, OUTCROP_CAMP_SIZE, OUTCROP_FIGHT_RADIUS } from "#src/services/leyLine/constants";
+import { OUTCROP_CAMP_SIZE, OUTCROP_FIGHT_RADIUS } from "#src/services/leyLine/constants";
 import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
 import { describe, expect, test } from "vitest";
 
@@ -16,7 +17,7 @@ describe(createOutcropCamp, () => {
     expect(camp.id).toBe(computeOutcropCampId(PLACEMENT.id));
     expect(camp.areaId).toBe(AREA_ID);
     expect(camp.members.map(({ enemyKindId }) => enemyKindId)).toStrictEqual(
-      Array.from({ length: OUTCROP_CAMP_SIZE }, () => OUTCROP_CAMP_ENEMY_KIND_IDS[0]),
+      Array.from({ length: OUTCROP_CAMP_SIZE }, () => EnemyKindId.AnemoSlime),
     );
   });
 
