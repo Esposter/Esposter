@@ -76,31 +76,53 @@ The Mail screen SHALL offer Delete Read, which removes every read mail whose att
 - **WHEN** the player presses Delete Read
 - **THEN** the mail is kept
 
-### Requirement: A starred mail is kept in the Gift Mail Box
+### Requirement: A pinned mail is listed first and kept from Delete Read, but still expires
 
-The Mail screen SHALL let the player star a held mail into the Gift Mail Box, which lists the starred mails and the birthday mails already claimed, apart from the Mailbox. A mail in the Gift Mail Box SHALL NOT expire and SHALL NOT be removed by Delete Read.
+The Mail screen SHALL let the player pin a held mail to the top of the list, and a pinned mail SHALL NOT be removed by Delete Read. A pinned mail SHALL still expire, since the wiki's Mail page says pinned mail "cannot be deleted quickly" and "can still expire" (https://genshin-impact.fandom.com/wiki/Mail).
 
-#### Scenario: Starring a mail moves it to the Gift Mail Box
+#### Scenario: Pinning a mail lists it first
 
-- **GIVEN** the player holds a mail in the Mailbox
-- **WHEN** the player stars it
+- **GIVEN** the player holds a mail that is not pinned
+- **WHEN** the player pins it
+- **THEN** the mail is listed above the unpinned mail, and its button offers to delete the pin
+
+#### Scenario: Deleting a pin returns the mail to its place by delivery
+
+- **GIVEN** the player has pinned a mail
+- **WHEN** the player deletes its pin
+- **THEN** the mail is listed by its delivery again
+
+#### Scenario: Delete Read keeps a pinned mail
+
+- **GIVEN** the player has pinned a read mail whose attachment is claimed
+- **WHEN** the player presses Delete Read
+- **THEN** the mail is kept
+
+#### Scenario: A pinned mail still expires
+
+- **GIVEN** the player has pinned a mail that is past its expiry
+- **WHEN** the mailbox loads
+- **THEN** the mail is deleted
+
+### Requirement: The Gift Mail Box keeps the birthday mail once its rewards are claimed
+
+The Mail screen SHALL move a birthday mail whose rewards are claimed into the Gift Mail Box, which lists it under its own tab apart from the Mailbox. A mail in the Gift Mail Box SHALL NOT expire and SHALL NOT be removed by Delete Read. The wiki's Mail page says birthday wishes "will be automatically transferred into the Gift Mail Box after the player has collected the rewards" and that mail in the box "will not be quick-deleted, and will not expire over time" (https://genshin-impact.fandom.com/wiki/Mail).
+
+#### Scenario: A claimed birthday mail moves to the Gift Mail Box
+
+- **GIVEN** the player holds a birthday mail
+- **WHEN** the player claims its rewards
 - **THEN** the mail is listed under the Gift Mail Box tab and no longer under the Mailbox tab
 
-#### Scenario: Unstarring a mail returns it to the Mailbox
+#### Scenario: A claimed birthday mail is kept past its expiry
 
-- **GIVEN** the player has starred a mail
-- **WHEN** the player removes its star
-- **THEN** the mail is listed under the Mailbox tab again
-
-#### Scenario: A starred mail is kept past its expiry
-
-- **GIVEN** the player has starred a mail that is past its expiry
+- **GIVEN** the player has a claimed birthday mail that is past its expiry
 - **WHEN** the mailbox loads
 - **THEN** the mail is kept
 
-#### Scenario: Delete Read keeps a starred mail
+#### Scenario: Delete Read keeps a claimed birthday mail
 
-- **GIVEN** the player has starred a read mail whose attachment is claimed
+- **GIVEN** the player has a read birthday mail whose rewards are claimed
 - **WHEN** the player presses Delete Read
 - **THEN** the mail is kept
 

@@ -248,7 +248,13 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
 // The longest mail a save holds, its flags at their longer value of false
-const LONGEST_MAIL_SAVE = { deliveredAt: MAX_SAVE_INSTANT, id: MAX_SAVE_NUMBER, isClaimed: false, isRead: false };
+const LONGEST_MAIL_SAVE = {
+  deliveredAt: MAX_SAVE_INSTANT,
+  id: MAX_SAVE_NUMBER,
+  isClaimed: false,
+  isPinned: false,
+  isRead: false,
+};
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each
 // Collection at its cap times its longest entry. Each id is counted at its bound's length, since the game's ids are
 // Plain characters, so an id that escapes to a longer serialization is refused by the same ceiling

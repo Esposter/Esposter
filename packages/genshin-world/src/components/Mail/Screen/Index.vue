@@ -51,11 +51,11 @@ const emit = defineEmits<{
   close: [];
   deleteRead: [];
   read: [mailId: number];
-  star: [mailId: number];
+  pin: [mailId: number];
 }>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
-  sortMails(mails, mailRows).flatMap((mail) => {
+  sortMails(mails).flatMap((mail) => {
     const row = mailRows.get(mail.id);
     return row ? [{ mail, row }] : [];
   }),
@@ -97,8 +97,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 <template>
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
-       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. A star
-       puts a mail in the Gift Mail Box, the tab beside the Mailbox. Its date is the date it was received. Not yet built:
+       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. A pin
+       keeps a mail at the top of the list, and the Gift Mail Box, the tab beside the Mailbox, lists the birthday mail kept there. Its date is the date it was received. Not yet built:
        the look the English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
     <template #tabs>
@@ -180,8 +180,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         >
           {{ gameText[GameTextKey.MailClaim] }}
         </GameButton>
-        <GameButton class="star" :kind="GameButtonKind.Pill" @click="emit('star', selectedEntry.mail.id)">
-          {{ gameText[selectedEntry.mail.isStarred ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
+        <GameButton class="pin" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail.id)">
+          {{ gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
       </MenuListScreenDetail>
     </template>
@@ -223,7 +223,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 
 .claim-all,
 .claim,
-.star {
+.pin {
   margin-top: calc(var(--unit) * 20);
 }
 </style>

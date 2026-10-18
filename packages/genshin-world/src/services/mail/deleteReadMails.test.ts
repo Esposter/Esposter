@@ -8,6 +8,7 @@ const mail = (id: number, isClaimed: boolean, isRead: boolean): MailSave => ({
   deliveredAt: new Date(0).toISOString(),
   id,
   isClaimed,
+  isPinned: false,
   isRead,
 });
 
@@ -21,9 +22,8 @@ describe(deleteReadMails, () => {
     senderTextId: "3",
     titleTextId: "4",
   };
-  const PINNED_ROW: Mail = { ...ROW, id: 2, isStar: true };
   const EMPTY_ROW: Mail = { ...ROW, id: 3, items: [] };
-  const rows = new Map<number, Mail>([ROW, PINNED_ROW, EMPTY_ROW].map((row): [number, Mail] => [row.id, row]));
+  const rows = new Map<number, Mail>([ROW, EMPTY_ROW].map((row): [number, Mail] => [row.id, row]));
 
   // A read mail with no attachment is deleted, since there is nothing left in it to claim
   test("a read mail with no attachment is deleted", () => {
@@ -59,9 +59,9 @@ describe(deleteReadMails, () => {
   test("a read pinned mail is kept", () => {
     expect.hasAssertions();
 
-    expect(deleteReadMails([mail(PINNED_ROW.id, true, true)], rows, new Set())).toStrictEqual([
-      mail(PINNED_ROW.id, true, true),
-    ]);
+    const pinned: MailSave = { ...mail(EMPTY_ROW.id, false, true), isPinned: true };
+
+    expect(deleteReadMails([pinned], rows, new Set())).toStrictEqual([pinned]);
   });
 
   // A mail with no row is kept, since what it holds cannot be read to tell it is spent
@@ -69,15 +69,6 @@ describe(deleteReadMails, () => {
     expect.hasAssertions();
 
     expect(deleteReadMails([mail(9, true, true)], rows, new Set())).toStrictEqual([mail(9, true, true)]);
-  });
-
-  // A mail the player starred is in the Gift Mail Box, which Delete Read leaves alone
-  test("a read starred mail is kept", () => {
-    expect.hasAssertions();
-
-    const starred: MailSave = { ...mail(EMPTY_ROW.id, false, true), isStarred: true };
-
-    expect(deleteReadMails([starred], rows, new Set())).toStrictEqual([starred]);
   });
 
   // A birthday mail claimed is in the Gift Mail Box, which Delete Read leaves alone

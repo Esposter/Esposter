@@ -499,7 +499,7 @@ const {
   mailData,
   mails,
   markMailRead,
-  toggleMailStar,
+  toggleMailPin,
 } = useWorldMail({
   gameDataBaseUrl,
   getWorldNow,
@@ -1897,7 +1897,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @close="screenKind = ScreenKind.World"
           @delete-read="deleteReadMails()"
           @read="(mailId) => markMailRead(mailId)"
-          @star="(mailId) => toggleMailStar(mailId)"
+          @pin="(mailId) => toggleMailPin(mailId)"
         />
       </template>
       <template #[ScreenKind.Quests]>
