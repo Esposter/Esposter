@@ -49,6 +49,7 @@ import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/pas
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
+import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
@@ -240,4 +241,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "483941803": createBoundlessBlessingPassiveModule,
   // Eagle Spear of Justice (Primordial Jade Winged-Spear)
   "3835416843": createEagleSpearOfJusticePassiveModule,
+  // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
+  "641137867": createSmokeAndMirrorMysteryPassiveModule,
 };
