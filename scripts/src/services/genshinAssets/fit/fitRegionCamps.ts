@@ -6,10 +6,15 @@ import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/Inte
 import { placeFittedMapPoints } from "#src/services/genshinAssets/points/placeFittedMapPoints";
 import { readInteractiveMapLabels } from "#src/services/genshinAssets/points/readInteractiveMapLabels";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
+import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { catalogueSchema, findAreaAt } from "genshin-world";
+import { readFile } from "node:fs/promises";
 
 // Each fitted region's enemy camps, clustered from the official map's enemy marks of the families the camp map names, in
-// Place of the camps an earlier run wrote. A dry run counts them and writes nothing
+// Place of the camps an earlier run wrote. Each camp takes the catalogue area its enemies stand in, and an enemy in no
+// Area is left out and counted. A dry run counts them and writes nothing
 export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
   const labelIdKindMap = new Map(
     flattenLabelTree(await readInteractiveMapLabels())
@@ -17,15 +22,19 @@ export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promi
       .map(({ id, name }) => [id, FamilyLabelEnemyKindIdMap[name]]),
   );
   const placement = await placeFittedMapPoints(labelIdKindMap, "enemy");
+  const catalogue = catalogueSchema.parse(parseMachineJson(await readFile(CATALOGUE_PATH, "utf8")));
+  const areaIdAt = (x: number, z: number) => findAreaAt(catalogue, x, z)?.id;
   const { regionFiles } = await readFittedRegions();
   const reports = await Promise.all(
     regionFiles
       .filter(({ region }) => region in InteractiveMapRegionMap)
       .map(async ({ data, file, region }) => {
-        const enemyCamps = buildEnemyCamps(region, placement.places[region] ?? []);
+        const places = placement.places[region] ?? [];
+        const enemyCamps = buildEnemyCamps(region, places, areaIdAt);
+        const enemyCount = enemyCamps.reduce((count, { members }) => count + members.length, 0);
         if (JSON.stringify(enemyCamps) !== JSON.stringify(data.enemyCamps ?? []) && !isDryRun)
           await writeWorldData(file, replaceEnemyCamps(data, enemyCamps));
-        return `${region}: ${enemyCamps.length} camps, ${enemyCamps.reduce((count, { members }) => count + members.length, 0)} enemies`;
+        return `${region}: ${enemyCamps.length} camps, ${enemyCount} enemies, ${places.length - enemyCount} in no area left out`;
       }),
   );
   return isDryRun ? [...reports, "nothing written"].join("\n") : reports.join("\n");
