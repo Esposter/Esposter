@@ -5,6 +5,7 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute, Attributes } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
@@ -149,10 +150,14 @@ describe("genshinSaveSchema", () => {
       })),
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
+          ascension: maxNumber,
+          experience: maxNumber,
           id: maxNumber - index,
           itemId: maxNumber - index,
+          kind: InventoryItemKind.Weapon,
           level: maxNumber,
-          quantity: MAX_ITEM_QUANTITY,
+          quantity: 1,
+          refinement: MAX_WEAPON_REFINEMENT,
         })),
         nextId: maxNumber,
       },

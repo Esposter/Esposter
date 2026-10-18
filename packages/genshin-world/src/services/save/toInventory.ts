@@ -30,7 +30,7 @@ export const toInventory = (
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): Inventory => ({
   ...inventory,
-  items: items.map(({ itemId, ...entry }) => ({
+  items: items.map(({ itemId, kind: _kind, ...entry }) => ({
     ...entry,
     definition: toEntryDefinition(itemId, names, weaponDataMap, materialDataMap),
   })),

@@ -3,7 +3,13 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
-import { ARTIFACT_START_LEVEL, WEAPON_START_LEVEL } from "#src/services/inventory/constants";
+import {
+  ARTIFACT_START_LEVEL,
+  WEAPON_START_ASCENSION,
+  WEAPON_START_EXPERIENCE,
+  WEAPON_START_LEVEL,
+  WEAPON_START_REFINEMENT,
+} from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
@@ -32,7 +38,7 @@ describe(addInventoryItem, () => {
     });
   });
 
-  test("takes each weapon and artifact in as an entry of its own at its starting level", () => {
+  test("takes each weapon and artifact in as an entry of its own at its starting state", () => {
     expect.hasAssertions();
 
     const weapon = createDefinition(ItemCategory.Weapon, 0);
@@ -42,8 +48,24 @@ describe(addInventoryItem, () => {
     expect(addInventoryItem(inventory, artifact, 1)).toStrictEqual({
       inventory: {
         items: [
-          { definition: weapon, id: 0, level: WEAPON_START_LEVEL, quantity: 1 },
-          { definition: weapon, id: 1, level: WEAPON_START_LEVEL, quantity: 1 },
+          {
+            ascension: WEAPON_START_ASCENSION,
+            definition: weapon,
+            experience: WEAPON_START_EXPERIENCE,
+            id: 0,
+            level: WEAPON_START_LEVEL,
+            quantity: 1,
+            refinement: WEAPON_START_REFINEMENT,
+          },
+          {
+            ascension: WEAPON_START_ASCENSION,
+            definition: weapon,
+            experience: WEAPON_START_EXPERIENCE,
+            id: 1,
+            level: WEAPON_START_LEVEL,
+            quantity: 1,
+            refinement: WEAPON_START_REFINEMENT,
+          },
           { definition: artifact, id: 2, level: ARTIFACT_START_LEVEL, quantity: 1 },
         ],
         nextId: 3,

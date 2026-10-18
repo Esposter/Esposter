@@ -3,13 +3,20 @@ import type { InventoryAddition } from "#src/models/inventory/InventoryAddition"
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
-import { ARTIFACT_START_LEVEL, EQUIPMENT_CATEGORIES, WEAPON_START_LEVEL } from "#src/services/inventory/constants";
+import {
+  ARTIFACT_START_LEVEL,
+  EQUIPMENT_CATEGORIES,
+  WEAPON_START_ASCENSION,
+  WEAPON_START_EXPERIENCE,
+  WEAPON_START_LEVEL,
+  WEAPON_START_REFINEMENT,
+} from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { ItemCategory } from "genshin-interface";
 
 // The bag after taking in so many of an item, as the game takes a pick up. Each weapon or artifact is an entry of its
-// Own at its starting level; anything else fills its stack up to the item's own limit, or opens a new one while the bag
+// Own at its starting state; anything else fills its stack up to the item's own limit, or opens a new one while the bag
 // Holds fewer kinds than its limit. A tab counted on its own takes no more pieces than its room, and whatever does not
 // Fit is left over
 export const addInventoryItem = (
@@ -22,12 +29,19 @@ export const addInventoryItem = (
     categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
   if (EQUIPMENT_CATEGORIES.includes(definition.category)) {
     const addedCount = Math.max(Math.min(quantity, tabRoom), 0);
-    const level = definition.category === ItemCategory.Weapon ? WEAPON_START_LEVEL : ARTIFACT_START_LEVEL;
+    const isWeapon = definition.category === ItemCategory.Weapon;
     const addedItems = Array.from({ length: addedCount }, (_value, index) => ({
       definition,
       id: nextId + index,
-      level,
       quantity: 1,
+      ...(isWeapon
+        ? {
+            ascension: WEAPON_START_ASCENSION,
+            experience: WEAPON_START_EXPERIENCE,
+            level: WEAPON_START_LEVEL,
+            refinement: WEAPON_START_REFINEMENT,
+          }
+        : { level: ARTIFACT_START_LEVEL }),
     }));
     return {
       inventory: { items: [...items, ...addedItems], nextId: nextId + addedCount },
