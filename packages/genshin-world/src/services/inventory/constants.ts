@@ -28,14 +28,22 @@ export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0 };
 // A new player's currencies, every one at zero but Original Resin, at its regeneration cap
 export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.AcquaintFate]: 0,
+  [Currency.AnemoSigil]: 0,
+  [Currency.CryoSigil]: 0,
+  [Currency.DendroSigil]: 0,
+  [Currency.ElectroSigil]: 0,
   [Currency.GenesisCrystal]: 0,
+  [Currency.GeoSigil]: 0,
+  [Currency.HydroSigil]: 0,
   [Currency.IntertwinedFate]: 0,
+  [Currency.LunaSigil]: 0,
   [Currency.MasterlessStardust]: 0,
   [Currency.MasterlessStarglitter]: 0,
   [Currency.MasterlessStellaFortuna]: 0,
   [Currency.Mora]: 0,
   [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
   [Currency.Primogem]: 0,
+  [Currency.PyroSigil]: 0,
   [Currency.RealmCurrency]: 0,
 };
 export const EMPTY_WALLET: Readonly<Wallet> = {
@@ -50,14 +58,22 @@ export const MORA_ITEM_ID = 202;
 // One is a wallet grant, never a bag item
 export const CurrencyItemIdMap: Record<Currency, number> = {
   [Currency.AcquaintFate]: 224,
+  [Currency.AnemoSigil]: 305,
+  [Currency.CryoSigil]: 306,
+  [Currency.DendroSigil]: 303,
+  [Currency.ElectroSigil]: 304,
   [Currency.GenesisCrystal]: 203,
+  [Currency.GeoSigil]: 307,
+  [Currency.HydroSigil]: 302,
   [Currency.IntertwinedFate]: 223,
+  [Currency.LunaSigil]: 308,
   [Currency.MasterlessStardust]: 222,
   [Currency.MasterlessStarglitter]: 221,
   [Currency.MasterlessStellaFortuna]: 104_300,
   [Currency.Mora]: MORA_ITEM_ID,
   [Currency.OriginalResin]: ORIGINAL_RESIN_ITEM_ID,
   [Currency.Primogem]: 201,
+  [Currency.PyroSigil]: 301,
   [Currency.RealmCurrency]: 204,
 };
 // Every item id the wallet takes in: each currency's, and Adventure EXP, which the Adventure Rank takes
