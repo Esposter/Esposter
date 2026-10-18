@@ -10,5 +10,13 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 46 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
-  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } },
+  "hits.spiritbreathThorn.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.5 }
+  },
+  "hits.spiritbreathThorn.element": { "cause": "Unsourced", "value": "Ice" },
+  "hits.spiritbreathThorn.hitmarkFrames": { "cause": "Unsourced", "value": 62 },
+  "hits.spiritbreathThorn.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8532 } },
+  "hits.spiritbreathThorn.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
 }

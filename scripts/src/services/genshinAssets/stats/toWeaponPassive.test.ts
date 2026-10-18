@@ -58,7 +58,7 @@ describe(toWeaponPassive, () => {
             paramList: [0.2, 0, 0, 0],
           },
           {
-            addProps: [{ GGKIEIJLCJJ: 0.1, propType: "FIGHT_PROP_ADD_HURT" }, {}, {}],
+            addProps: [{ GGKIEIJLCJJ: 0.1, propType: "FIGHT_PROP_NAMES_NO_ATTRIBUTE" }, {}, {}],
             descTextMapHash: 2,
             id: AFFIX_ID,
             level: 1,
@@ -69,7 +69,7 @@ describe(toWeaponPassive, () => {
         notes,
       ).passiveRankAttributeLines,
     ).toStrictEqual([[{ attribute: Attribute.AttackPercent, value: 0.2 }], []]);
-    expect(notes).toStrictEqual(["FIGHT_PROP_ADD_HURT names no attribute; its line is left out"]);
+    expect(notes).toStrictEqual(["FIGHT_PROP_NAMES_NO_ATTRIBUTE names no attribute; its line is left out"]);
   });
 
   test("gives an empty passive where there are no rows", () => {

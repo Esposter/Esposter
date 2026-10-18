@@ -199,7 +199,7 @@ export const createNoelleKitBehaviour = ({
       if (event.kind === KitEventKind.EnemyDefeated) {
         if (
           combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION &&
-          event.striker.characterId === combatant.characterId
+          event.striker?.characterId === combatant.characterId
         )
           extendSweepingTime(kitEffectState, combatant.characterId);
         return;

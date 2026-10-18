@@ -1,11 +1,16 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { AuraType } from "#src/models/combat/AuraType";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -17,11 +22,12 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const [KIT_HIT] = TRAVELER_KIT.normalAttacks[0].hits;
+const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 
 const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatant => ({
   ascension: 0,
@@ -35,10 +41,30 @@ const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatan
 });
 
 // Strikes one enemy with a hit, aimed at it through the target, and returns the kinds of the events the team's kits saw
-const strikeWithHit = (hit: KitHit, enemy: ReturnType<typeof createEnemy>, combatant: Combatant) => {
+const strikeWithHit = (
+  hit: KitHit,
+  enemy: ReturnType<typeof createEnemy>,
+  combatant: Combatant,
+  attackTag?: AttackTag,
+) => {
   const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
-  const strikes: KitStrike[] = [{ body: context.body, combatant, hit, target: enemy }];
+  const strikes: KitStrike[] = [{ attackTag, body: context.body, combatant, hit, target: enemy }];
   strikeKitEnemies(strikes, context);
+};
+
+// Strikes a hit into the enemies given, and returns the enemies the team's kits saw it damage, in the order it struck them
+const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
+  const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+  const combatant = createCombatant(onKitEvent);
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])),
+    enemyTables,
+  });
+  strikeKitEnemies([{ body: context.body, combatant, hit }], context);
+  return onKitEvent.mock.calls
+    .map(([event]) => event)
+    .filter((event) => event.kind === KitEventKind.DamageTaken)
+    .map(({ enemy }) => enemy);
 };
 
 describe(strikeKitEnemies, () => {
@@ -55,6 +81,49 @@ describe(strikeKitEnemies, () => {
       kind: KitEventKind.ElementalHit,
       striker: combatant,
     });
+  });
+
+  test("sends the team's kits a reaction that carries the attack tag of the strike that triggered it", () => {
+    expect.hasAssertions();
+
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.elementalState.auras.set(AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false });
+    strikeWithHit({ ...KIT_HIT, element: Element.Pyro, gauge: 1 }, enemy, combatant, AttackTag.ElementalBurst);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      attackTag: AttackTag.ElementalBurst,
+      enemy,
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
+      striker: combatant,
+    });
+  });
+
+  test("prices the striker with its buffs on before the kit's strike hooks read it", () => {
+    expect.hasAssertions();
+    const getStrikeDamageBonus = vi.fn<NonNullable<Kit["getStrikeDamageBonus"]>>(() => 0);
+    const combatant = createCombatant(vi.fn<NonNullable<Kit["onKitEvent"]>>());
+    const hookCombatant: Combatant = { ...combatant, kit: { ...combatant.kit, getStrikeDamageBonus } };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const elementalMastery: KitBuff = {
+      amount: 100,
+      attribute: Attribute.ElementalMastery,
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 5,
+    };
+    const context = createKitTestContext(hookCombatant, {
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      kitEffectState: { effects: [elementalMastery] },
+    });
+    strikeKitEnemies([{ body: context.body, combatant: hookCombatant, hit: KIT_HIT, target: enemy }], context);
+
+    expect(
+      getStrikeDamageBonus.mock.calls[0]?.[0].combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
+    ).toBe(100);
   });
 
   test("gives a hit's onStrike the enemy each strike lands on, a targeted hit's and an area hit's alike", () => {
@@ -237,5 +306,39 @@ describe(strikeKitEnemies, () => {
         .filter((event) => event.kind === KitEventKind.EnemyDefeated)
         .map(({ enemy: defeated }) => defeated),
     ).toStrictEqual([enemy]);
+  });
+
+  const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };
+
+  test("a single-target hit strikes only the enemy at its index among those its area reaches", () => {
+    expect.hasAssertions();
+    const firstEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "first-enemy" }, "");
+    const secondEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "second-enemy" }, "");
+
+    expect(
+      strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 1 }, [firstEnemy, secondEnemy]),
+    ).toStrictEqual([secondEnemy]);
+  });
+
+  test("a single-target hit wraps its index over the enemies its area reaches, as gcsim's shells take them in turn", () => {
+    expect.hasAssertions();
+    const firstEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "first-enemy" }, "");
+    const secondEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "second-enemy" }, "");
+
+    expect(
+      strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 3 }, [firstEnemy, secondEnemy]),
+    ).toStrictEqual([secondEnemy]);
+  });
+
+  test("a single-target hit strikes no enemy when its area reaches none", () => {
+    expect.hasAssertions();
+    const farEnemy = createEnemy(
+      enemyTables,
+      [],
+      { ...ENEMY_CAMP_MEMBER, id: "far-enemy", position: { x: 100, z: 0 } },
+      "",
+    );
+
+    expect(strikeEnemies({ ...KIT_HIT, hitArea: FULL_CIRCLE_AREA, targetIndex: 0 }, [farEnemy])).toStrictEqual([]);
   });
 });

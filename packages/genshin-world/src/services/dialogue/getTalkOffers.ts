@@ -17,9 +17,9 @@ export const getTalkOffers = (
   quests.flatMap(({ id, kind, offerTalkIds, steps, talks, titleTextId }) => {
     const progress = questProgressMap.get(id);
     const openTalkIds = progress
-      ? (steps[progress.stepIndex]?.objectives ?? []).flatMap(({ count, kind: objectiveKind, targetId }, index) =>
+      ? (steps[progress.stepIndex]?.objectives ?? []).flatMap(({ count, kind: objectiveKind, targetIds }, index) =>
           objectiveKind === QuestObjectiveKind.TalkTo && (progress.objectiveCounts[index] ?? 0) < count
-            ? [targetId]
+            ? targetIds
             : [],
         )
       : offerTalkIds;

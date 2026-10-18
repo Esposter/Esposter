@@ -8,3 +8,6 @@ export const CONFIG_WIDGET_PATH: string = join(
   "Widget",
   "ConfigWidget.json",
 );
+// The Serenitea Pot's item, which is also its gadget's id. The widget config names no widget under it, so its row is built
+// From its material row instead
+export const SERENITEA_POT_ITEM_ID = 220026;

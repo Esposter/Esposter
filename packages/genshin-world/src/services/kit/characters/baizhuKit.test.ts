@@ -48,6 +48,7 @@ const getDendroStrikeDamageBonus = (ascension: number, activeHealthShare: number
     { body: createKitTestContext(combatant).body, combatant, hit },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     party,
+    [],
   );
 };
 

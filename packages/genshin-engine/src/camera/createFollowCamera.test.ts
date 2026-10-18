@@ -3,7 +3,9 @@ import type { InputState } from "#src/models/input/InputState";
 import {
   FOLLOW_CAMERA_CLEARANCE,
   FOLLOW_CAMERA_DEFAULT_SETTINGS,
+  FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP,
   FOLLOW_CAMERA_EASE_OUT_SPEED,
+  FOLLOW_CAMERA_MAX_DISTANCE,
   FOLLOW_CAMERA_MAX_PITCH,
   FOLLOW_CAMERA_MIN_DISTANCE,
 } from "#src/camera/constants";
@@ -21,6 +23,10 @@ describe(createFollowCamera, () => {
   const CLIFF_Z = 2;
   const LOOK_YAW = 3;
   const ZOOM_OUT_STEPS = 2;
+  // Notches enough to pass both the nearest and the furthest distance from the default
+  const STEPS_PAST_LIMIT = 20;
+  // Frames enough for the eye to ease across the whole range, which it does a metre a frame at the ease's rate
+  const FRAMES_TO_SETTLE = 20;
   const DEFAULT_DISTANCE = 4.5;
   // A pivot low enough that a look up from below puts the arm's reach under the ground
   const LOW_PIVOT_HEIGHT = 0.5;
@@ -160,6 +166,32 @@ describe(createFollowCamera, () => {
     followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
 
     expect(camera.position.z).toBeCloseTo(DEFAULT_DISTANCE);
+  });
+
+  test("the wheel stops at the nearest and furthest distances", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const pivot = new Vector3(0, PIVOT_HEIGHT, 0);
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: FOLLOW_CAMERA_DEFAULT_SETTINGS,
+    });
+    // Turns the wheel by the notches given, lets the eye ease to its new distance, and returns it from the pivot
+    const distanceAfterTurning = (zoomSteps: number): number => {
+      followCamera.look({ ...STILL_INPUT, zoomSteps }, 0);
+      for (let frame = 0; frame < FRAMES_TO_SETTLE; frame++) followCamera.follow(pivot, new Vector3(), FRAME_SECONDS);
+      return camera.position.distanceTo(pivot);
+    };
+
+    expect(distanceAfterTurning(-STEPS_PAST_LIMIT)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE);
+    expect(distanceAfterTurning(-1)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE);
+    expect(distanceAfterTurning(1)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE + FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP);
+    expect(distanceAfterTurning(STEPS_PAST_LIMIT)).toBeCloseTo(FOLLOW_CAMERA_MAX_DISTANCE);
+    expect(distanceAfterTurning(1)).toBeCloseTo(FOLLOW_CAMERA_MAX_DISTANCE);
+    expect(distanceAfterTurning(-1)).toBeCloseTo(FOLLOW_CAMERA_MAX_DISTANCE - FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP);
   });
 
   test("zoom, combat or a teleport returns the camera to its default distance", () => {

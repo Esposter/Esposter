@@ -17,6 +17,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants
 import { createParty } from "#src/services/party/createParty";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
@@ -110,7 +111,7 @@ describe(useWorldSpiralAbyss, () => {
 
     abyss.openAbyssEntrance();
     abyss.enterAbyssChamber(FLOOR_ID, CHAMBER_ID);
-    const [camp] = abyss.abyssCamps.value;
+    const camp = takeOne(abyss.abyssCamps.value);
     events.emit("defeatEnemy", createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, camp.id));
 
     expect(abyss.abyssProgressMap.value.get(String(PERIOD_ID))).toStrictEqual({

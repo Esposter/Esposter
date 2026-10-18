@@ -33,6 +33,7 @@ const getBurningStrikeBonus = (ascension: number): number | undefined => {
     { body: KIT_BODY, combatant, hit: takeOne(takeOne(EMILIE_KIT.normalAttacks).hits) },
     createBurningEnemy(),
     createParty([EMILIE_CHARACTER_ID]),
+    [],
   );
 };
 // Emilie at the ascension and constellations given, with her total attributes summed from the attribute values given

@@ -71,6 +71,28 @@ A profile card field SHALL appear once the system behind it is built, and SHALL 
 - **WHEN** the Paimon menu opens
 - **THEN** the profile card does not show that field
 
+### Requirement: The Traveler's birthday is set once from the profile card
+
+The profile card SHALL offer the Traveler's birthday to be set once, and SHALL show it with no setter once it is set.
+
+#### Scenario: A birthday not yet set offers the button that sets it
+
+- **GIVEN** the Traveler's birthday is not set
+- **WHEN** the profile card is shown
+- **THEN** the Birthday row stands over a Set Birthday button
+
+#### Scenario: Confirming the dialog sets the birthday once
+
+- **GIVEN** the Set Birthday dialog is open with a month and a day picked
+- **WHEN** the player confirms the date
+- **THEN** the date is set as the Traveler's birthday, and the row shows it with no button to set it again
+
+#### Scenario: A birthday already set shows its date and no button to set it
+
+- **GIVEN** the Traveler's birthday is set
+- **WHEN** the profile card is shown
+- **THEN** the Birthday row shows its month and day and no Set Birthday button
+
 ### Requirement: The side bar opens the Time, Settings and quit screens
 
 The Paimon menu's side bar SHALL open the Time screen, the Settings screen and the quit prompt when the reader chooses each.

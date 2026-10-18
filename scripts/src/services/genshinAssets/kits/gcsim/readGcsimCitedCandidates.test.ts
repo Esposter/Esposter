@@ -56,7 +56,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates =
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.waterBallInterval") ?? [];
     expect(candidates[0]?.value).toBe(90);
-    expect(classifyKitValue(100, candidates, [], false)).toStrictEqual({
+    expect(classifyKitValue(100, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 100,
     });
@@ -85,7 +85,7 @@ describe("readGcsimCitedCandidates", () => {
     };
     const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.blossomHitmark");
     expect(candidates?.[0]?.value).toBe(15);
-    expect(classifyKitValue(15, candidates ?? [], [], false)).toBeUndefined();
+    expect(classifyKitValue(15, candidates ?? [], [], false, {})).toBeUndefined();
   });
 
   test("a cited array the loop does not give reads as DiffersFromSource, with the loop's own array as the difference", () => {
@@ -96,7 +96,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates =
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.blossomHitmarks") ?? [];
     expect(candidates[0]?.value).toStrictEqual([10, 15, 20]);
-    expect(classifyKitValue([10, 15, 21], candidates, [], false)).toStrictEqual({
+    expect(classifyKitValue([10, 15, 21], candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: [10, 15, 21],
     });
@@ -135,7 +135,7 @@ describe("readGcsimCitedCandidates", () => {
     };
     const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("burst.hits.0.area") ?? [];
     expect(candidates[0]?.value).toStrictEqual({ angle, height: 2, radius: 8 });
-    expect(classifyKitValue({ angle, height: 2, radius: 9 }, candidates, [], false)).toStrictEqual({
+    expect(classifyKitValue({ angle, height: 2, radius: 9 }, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: { angle, height: 2, radius: 9 },
     });
@@ -165,7 +165,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates =
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.burst.hitmarkFrames") ?? [];
     expect(candidates[0]?.value).toBe(145);
-    expect(classifyKitValue(150, candidates, [], false)).toStrictEqual({
+    expect(classifyKitValue(150, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 150,
     });
@@ -199,7 +199,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
       "hits.blossom.2.poiseDamage",
     );
-    expect(classifyKitValue(21, candidates ?? [], [], false)).toStrictEqual({
+    expect(classifyKitValue(21, candidates ?? [], [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 21,
     });

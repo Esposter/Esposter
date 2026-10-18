@@ -14,20 +14,18 @@ export const healPartyMember = (
 ): void => {
   const partyMember = getPartyMember(party, characterId);
   if (partyMember.healthShare === 0 || healedHealthShare <= 0) return;
-  const bondOfLifeShare = Math.min(partyMember.bondOfLifeShare ?? 0, healedHealthShare);
-  if (bondOfLifeShare > 0) {
-    partyMember.bondOfLifeShare = (partyMember.bondOfLifeShare ?? 0) - bondOfLifeShare;
-    partyMember.bondOfLifeClearedShare = (partyMember.bondOfLifeClearedShare ?? 0) + bondOfLifeShare;
-  }
+  const bondOfLifeShare = Math.min(partyMember.bondOfLifeShare, healedHealthShare);
+  partyMember.bondOfLifeShare -= bondOfLifeShare;
+  partyMember.bondOfLifeClearedShare += bondOfLifeShare;
   const restoredHealthShare = healedHealthShare - bondOfLifeShare;
   const previousHealthShare = partyMember.healthShare;
   partyMember.healthShare = Math.min(1, previousHealthShare + restoredHealthShare);
   const healthShare = partyMember.healthShare - previousHealthShare;
   party.healthChanges.push({
+    bondOfLifeShare,
     characterId,
     healthShare,
     overflowHealthShare: restoredHealthShare - healthShare,
-    ...(bondOfLifeShare > 0 ? { bondOfLifeShare } : {}),
     ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
   });
 };

@@ -185,20 +185,20 @@ describe("bennett kit", () => {
   test("an active constellation's switch changes its character's kit", () => {
     expect.hasAssertions();
     // Impasse Conqueror at constellation 2 gives 30% Energy Recharge while Bennett's HP is under 70% of its Max HP
-    expect(BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 2 }, 0.5)).toStrictEqual([
-      { amount: 0.3, attribute: Attribute.EnergyRecharge },
-    ]);
+    expect(
+      BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 2 }, 0.5, [], []),
+    ).toStrictEqual([{ amount: 0.3, attribute: Attribute.EnergyRecharge }]);
   });
 
   test("an inactive constellation changes nothing", () => {
     expect.hasAssertions();
     // Below constellation 2 there is no Energy Recharge at any HP, and at constellation 2 none from 70% of Max HP up
-    expect(BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 1 }, 0.5)).toStrictEqual(
-      [],
-    );
-    expect(BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 2 }, 0.7)).toStrictEqual(
-      [],
-    );
+    expect(
+      BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 1 }, 0.5, [], []),
+    ).toStrictEqual([]);
+    expect(
+      BENNETT_KIT.getPassiveBonuses?.({ ...createBennettCombatant(), constellationCount: 2 }, 0.7, [], []),
+    ).toStrictEqual([]);
   });
 
   test("at constellation 6 a sword wielder on the field gains a 15% Pyro DMG Bonus and Pyro on its weapon", () => {

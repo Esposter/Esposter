@@ -40,7 +40,7 @@ describe(createBaneOfTheSoftPassiveModule, () => {
 
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), enemyKindId: EnemyKindId.AnemoSlime };
 
-    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party)).toBeCloseTo(0.4);
+    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party, [])).toBeCloseTo(0.4);
   });
 
   test("a strike on another kind of enemy is not raised", () => {
@@ -48,6 +48,6 @@ describe(createBaneOfTheSoftPassiveModule, () => {
 
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), enemyKindId: EnemyKindId.HilichurlFighter };
 
-    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party)).toBe(0);
+    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party, [])).toBe(0);
   });
 });

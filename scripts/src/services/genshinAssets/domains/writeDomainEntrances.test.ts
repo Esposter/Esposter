@@ -12,6 +12,7 @@ import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWo
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { DomainKind, LandmarkKind } from "genshin-world";
+import { GameTextKey } from "genshin-text";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap"));
@@ -24,6 +25,7 @@ vi.mock(import("#src/services/genshinText/readExcelTable"));
 describe(writeDomainEntrances, () => {
   // Ridge Watch's entry and its scene point as the dump holds them, the point in the game's Bishui Plain, area 5
   const entry: ExcelDungeonEntryRow = {
+    cooldownTipsDungeonId: [],
     descriptionCycleRewardList: [],
     dungeonEntryId: 282,
     id: 13,
@@ -35,6 +37,7 @@ describe(writeDomainEntrances, () => {
     areaId: 5,
     tranPos: { x: 1473.9225, y: 243.6, z: -321.23572 },
     tranRot: { y: 270 },
+    titleTextID: GameTextKey.DomainTitle,
   };
   const position = { x: 1473.92, z: 321.24 };
   const entrance: DomainEntranceLandmark = {
@@ -47,6 +50,7 @@ describe(writeDomainEntrances, () => {
     kind: LandmarkKind.DomainEntrance,
     position,
     rotation: 1.5708,
+    titleTextKey: GameTextKey.DomainTitle,
   };
   const mondstadt: RegionDataFile = { landmarks: [{ areaId: "starfell-valley", position: { x: 0, z: 0 } }] };
   const liyue: RegionDataFile = { landmarks: [] };
@@ -59,6 +63,8 @@ describe(writeDomainEntrances, () => {
     vi.clearAllMocks();
     vi.mocked(readFittedRegions).mockResolvedValue({
       origin: [0, 0, 0],
+      points: [],
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
       regionFiles: [mondstadtFile, liyueFile],
       regionMapPoints,
     });
@@ -82,6 +88,8 @@ describe(writeDomainEntrances, () => {
 
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
+      points: [],
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
       regionFiles: [mondstadtFile],
       regionMapPoints,
     });

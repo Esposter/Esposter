@@ -9,7 +9,7 @@ import { z } from "zod";
 export type KitValueSource =
   | { cause: KitProvisionalCause; source: KitSource.Overlay }
   | { cause?: KitProvisionalCause; file: string; line: number; source: KitSource.Gcsim }
-  | { cause?: KitProvisionalCause; rule: KitRule; source: KitSource.Rule }
+  | { cause?: KitProvisionalCause; donor?: number; rule: KitRule; source: KitSource.Rule }
   | { index: number; label: string; proudSkillGroupId: number; source: KitSource.Tables }
   | { page: string; revisionId: number; row: number; source: KitSource.Wiki };
 
@@ -20,7 +20,12 @@ export const kitValueSourceSchema: z.ZodType<KitValueSource> = z.discriminatedUn
     line: z.int().positive(),
     source: z.literal(KitSource.Gcsim),
   }),
-  z.object({ cause: z.enum(KitProvisionalCause).optional(), rule: z.enum(KitRule), source: z.literal(KitSource.Rule) }),
+  z.object({
+    cause: z.enum(KitProvisionalCause).optional(),
+    donor: z.int().positive().optional(),
+    rule: z.enum(KitRule),
+    source: z.literal(KitSource.Rule),
+  }),
   z.object({ cause: z.enum(KitProvisionalCause), source: z.literal(KitSource.Overlay) }),
   z.object({
     index: z.int().nonnegative(),

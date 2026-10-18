@@ -71,7 +71,7 @@ flowchart TD
 
 - The Enemies component times its defeats, jumps and claims on `getWorldNow`, the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
 - `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` has no caller outside its tests until the domain screen is built.
-- Deleted: `computeDailyResetTime`, `computeWeeklyResetTime`, `computeMiningOutcropRespawn`, which its one rule moved into `checkIsMiningOutcropStanding`, the weekly constants module, and the zone and hour constants in the Original Resin, shop and enemy modules.
+- The week's reset times are `computeLastWeeklyReset` and `computeNextWeeklyReset`, and the day's and month's are their pairs in the table above. The mining outcrop's respawn rule is in `checkIsMiningOutcropStanding`, and the game's zone, day start hour and reset days are the constants in `services/time/constants.ts`.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.
 
 ## Sources

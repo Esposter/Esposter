@@ -8,25 +8,26 @@ gcsim sources: her attack, charge, skill and burst files, with the table data in
 
 ## Decisions
 
-- **The skill's DoT reaches 4 metres, or 6 metres while the team is at Ascendant Gleam.** gcsim reaches 6 metres from Moonsign level 2 (`columbina/skill.go`), which the party's Moonsign level reads. She does not count toward that level herself until her Benediction is declared, so a team of her and one other Moonsign character reads Nascent Gleam where gcsim reads Ascendant.
+- **The skill's DoT reaches 4 metres, or 6 metres while the team is at Ascendant Gleam.** gcsim reaches 6 metres from Moonsign level 2 (`columbina/skill.go`), which the party's Moonsign level reads. She counts toward that level through her Benediction, as gcsim counts her, so a team of her and one other Moonsign character reads Ascendant Gleam where gcsim does.
 - **Her strikes and plunges deal no poise.** gcsim gives none, and no source gives Columbina's yet, so each one's poise is zero.
 - **The first strike's two-frame windup is not built.** gcsim adds it to a first strike that follows a strike or a charged attack. The kit keeps no record of the state the previous action left, so each strike lands on its gcsim hitmark without it.
 - **The charged attack's stamina is the catalyst's 50.** gcsim's default for a catalyst's charged attack is 50, and her table reads the same. gcsim makes it free while Dew is held, which waits on the Dew hook.
 - **The plunges borrow gcsim's Bennett plunge reach.** gcsim has no plunge file for Columbina, so the reach is the kit constants' borrowed one, and the 0.4 seconds are the wiki's standard, not measured.
+- **Her Moonsign Benediction turns her team's reactions Lunar, and adds Base DMG from her max HP.** Electro-Charged, Bloom and Hydro-Crystallize become Lunar-Charged, Lunar-Bloom and Lunar-Crystallize, the three types the record holds, through the engine's conversion. Her Base DMG bonus is 0.2% for every 1,000 of her max HP, up to 7%, as gcsim's `columbina/asc.go` gives it, and the benediction's text (TextMap 79900803) agrees. The curve is `columbinaBenediction.ts`, and the party sums it into the Lunar reaction damage the engine prices.
 
 ## Not built
 
 - **The Moondew Cleanse waits on the Lunar-Bloom hook.** Her charged attack's Lunar-Bloom follow-up is a reaction the kit cannot price yet, so the charged attack is its Hydro hit alone.
 - **The burst's field waits on the Lunar reaction hook.** The field's buff gives each character inside it a Lunar reaction bonus, and no kit reads a Lunar reaction yet. The burst is its hit alone.
 - **The skill's gravity waits on the Lunar reaction hook.** Her press clears the gravity that the Lunar reactions build, and each gravity tick deals the reaction's hit. Neither is built, so the press and the DoT are all the skill.
-- **Her Moonsign Benediction waits on the kit record's republish.** It would turn her team's Bloom, Charged and Crystallize reactions Lunar and add Base DMG Bonus from her max HP (gcsim `columbina/asc.go`: 0.2% per 1000, at most 7%). A behaviour's Benediction is applied over the record's, which holds none yet, so declaring it now would fail her kit's build.
-- **Her passives and constellations wait on the Lunar reactions, her Benediction and Dew.** Each reads one of them, so none is built.
+- **Her passives and constellations wait on the Lunar reactions and Dew.** Each reads one of them, so none is built.
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                             |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts` | `createColumbinaKitBehaviour`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, and burst hit |
+| File                                                                         | Role                                                                                                                                         |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts`         | `createColumbinaKitBehaviour`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, burst hit and Benediction |
+| `packages/genshin-world/src/services/kit/characters/columbinaBenediction.ts` | The Benediction's Base DMG bonus: 0.2% for every 1,000 max HP, up to 7%                                                                      |
 
 ## Sources
 

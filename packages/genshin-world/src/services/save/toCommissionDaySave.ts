@@ -6,4 +6,10 @@ export const toCommissionDaySave = ({
   claimedCommissionIds,
   dealtAt,
   dealtCommissions,
-}: CommissionDay): CommissionDaySave => ({ claimedCommissionIds, dealtAt: dealtAt.toString(), dealtCommissions });
+  isBonusClaimed,
+}: CommissionDay): CommissionDaySave => ({
+  claimedCommissionIds,
+  dealtAt: dealtAt.toString(),
+  dealtCommissions,
+  isBonusClaimed,
+});

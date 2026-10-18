@@ -186,6 +186,7 @@ describe("noelle kit", () => {
       {
         characterId: NOELLE_CHARACTER_ID,
         healthShare: -0.5,
+        bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
         sourceCharacterId: NOELLE_CHARACTER_ID,
@@ -227,6 +228,7 @@ describe("noelle kit", () => {
       {
         characterId: NOELLE_CHARACTER_ID,
         healthShare: -0.5,
+        bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
         sourceCharacterId: NOELLE_CHARACTER_ID,
@@ -260,6 +262,7 @@ describe("noelle kit", () => {
       {
         characterId: BACKGROUND_CHARACTER_ID,
         healthShare: -0.5,
+        bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
         sourceCharacterId: BACKGROUND_CHARACTER_ID,
@@ -282,6 +285,7 @@ describe("noelle kit", () => {
       },
       enemy,
       createParty([NOELLE_CHARACTER_ID]),
+      [],
     );
   };
 

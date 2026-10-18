@@ -6,9 +6,10 @@ import { dishTargetSchema } from "#src/models/cooking/DishTarget";
 import { z } from "zod";
 
 // A dish's use when it is eaten, as its item names it: the heal its buff gives, as a flat amount and a share of its
-// Target's Max HP, the HP its revive buff restores to a fallen character, the bonus its buff gives, and who the use
-// Reaches. A dish has a heal, a revive, a bonus, or any of them
+// Target's Max HP, the HP its revive buff restores to a fallen character, the bonus its buff gives, the fill its
+// Anti-cold buff holds down, and who the use reaches. A dish has a heal, a revive, a bonus, an anti-cold, or any of them
 export interface DishUse {
+  antiCold?: { ratio: number; seconds: number };
   bonus?: DishBonus;
   heal?: { flat: number; healthShare: number };
   revive?: { flat: number };
@@ -16,6 +17,7 @@ export interface DishUse {
 }
 
 export const dishUseSchema = z.object({
+  antiCold: z.object({ ratio: z.number().min(-1).max(0), seconds: z.number().positive() }).optional(),
   bonus: dishBonusSchema.optional(),
   heal: z.object({ flat: z.int().nonnegative(), healthShare: z.number().min(0).max(1) }).optional(),
   revive: z.object({ flat: z.int().positive() }).optional(),

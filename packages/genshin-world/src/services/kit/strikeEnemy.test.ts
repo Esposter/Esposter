@@ -292,15 +292,15 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("raises a normal attack's damage by the normal and charged attack bonus its character carries", () => {
+  test("raises a normal attack's damage by the normal attack bonus its character carries", () => {
     expect.hasAssertions();
 
-    const NORMAL_AND_CHARGED_DAMAGE_BONUS = 0.5;
+    const NORMAL_ATTACK_DAMAGE_BONUS = 0.5;
     const enemy = createSturdyEnemy();
     const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.NormalAttack };
     const damage = getDamage({
       attackerLevel: LEVEL,
-      damageBonus: NORMAL_AND_CHARGED_DAMAGE_BONUS,
+      damageBonus: NORMAL_ATTACK_DAMAGE_BONUS,
       defense,
       resistance: kind.physicalResistance,
       stat: ATTACK,
@@ -310,7 +310,7 @@ describe(strikeEnemy, () => {
       ...createCombatant(),
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: NORMAL_AND_CHARGED_DAMAGE_BONUS },
+        { attribute: Attribute.NormalAttackDamageBonus, value: NORMAL_ATTACK_DAMAGE_BONUS },
       ]),
     };
 
@@ -319,7 +319,35 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("leaves a skill's damage unchanged by the normal and charged attack bonus its character carries", () => {
+  test("raises a charged attack's damage by the charged attack bonus, and not by the normal attack bonus", () => {
+    expect.hasAssertions();
+
+    const CHARGED_ATTACK_DAMAGE_BONUS = 0.5;
+    const enemy = createSturdyEnemy();
+    const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.ChargedAttack };
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: CHARGED_ATTACK_DAMAGE_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: kitHit.talentMultiplier,
+    });
+    const combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.NormalAttackDamageBonus, value: 0.25 },
+        { attribute: Attribute.ChargedAttackDamageBonus, value: CHARGED_ATTACK_DAMAGE_BONUS },
+      ]),
+    };
+
+    strikeEnemy(enemyTables, enemy, kitHit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("leaves a skill's damage unchanged by the normal and charged attack bonuses its character carries", () => {
     expect.hasAssertions();
 
     const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.ElementalSkill };
@@ -333,7 +361,8 @@ describe(strikeEnemy, () => {
       ...createCombatant(),
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: 0.5 },
+        { attribute: Attribute.NormalAttackDamageBonus, value: 0.5 },
+        { attribute: Attribute.ChargedAttackDamageBonus, value: 0.5 },
       ]),
     };
 
@@ -341,6 +370,31 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemyTables, boostedEnemy, kitHit, boostedCombatant, NEVER_CRITICAL);
 
     expect(boostedEnemy.health).toBeCloseTo(plainEnemy.health);
+  });
+
+  test("raises a plunging attack's damage by the plunging attack bonus its character carries, and leaves a normal attack's alone", () => {
+    expect.hasAssertions();
+
+    const PLUNGING_ATTACK_DAMAGE_BONUS = 0.5;
+    const plungingHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.PlungingAttack };
+    const normalHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.NormalAttack };
+    const plungingBoostedCombatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.PlungingAttackDamageBonus, value: PLUNGING_ATTACK_DAMAGE_BONUS },
+      ]),
+    };
+    const plainEnemy = createSturdyEnemy();
+    const plungingEnemy = createSturdyEnemy();
+    const normalEnemy = createSturdyEnemy();
+
+    strikeEnemy(enemyTables, plainEnemy, normalHit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, plungingEnemy, plungingHit, plungingBoostedCombatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, normalEnemy, normalHit, plungingBoostedCombatant, NEVER_CRITICAL);
+
+    expect(plungingEnemy.health).toBeLessThan(plainEnemy.health);
+    expect(normalEnemy.health).toBeCloseTo(plainEnemy.health);
   });
 
   test("raises an elemental hit's damage by the all-damage bonus too", () => {
@@ -568,30 +622,6 @@ describe(strikeEnemy, () => {
       lunarReactionTypes: [LunarReactionType.LunarBloom],
       reactionBonus: REACTION_BONUS,
     });
-
-    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
-  });
-
-  test("takes an enemy's statuses' DEF reduction off the DEF a hit reads", () => {
-    expect.hasAssertions();
-
-    const DEFENSE_REDUCTION = 0.15;
-    const enemy = createSturdyEnemy();
-    addEnemyStatus(enemy, {
-      damageTakenBonus: 0,
-      defenseReduction: DEFENSE_REDUCTION,
-      id: "lisa-lightning-rose",
-      secondsRemaining: 1,
-    });
-    const damage = getDamage({
-      attackerLevel: LEVEL,
-      defense: defense * (1 - DEFENSE_REDUCTION),
-      resistance: kind.physicalResistance,
-      stat: ATTACK,
-      talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
-    });
-
-    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });

@@ -4,6 +4,8 @@ import type { Attribute, DishBonus, DishUse } from "genshin-world";
 
 import {
   ADD_SERVER_BUFF_USE_OP,
+  ANTI_COLD_ABILITY_NAME,
+  ANTI_COLD_DESCRIPTION_REGEX,
   BONUS_ABILITY_NAMES,
   BONUS_CLAUSE_ATTRIBUTE_MAP,
   BONUS_CLAUSE_SEPARATOR_REGEX,
@@ -76,8 +78,16 @@ const toBonus = (buff: BuffRow): DishBonus | undefined => {
   return { attributes, seconds: buff.time, source: buff.abilityName };
 };
 
+// The ratio an anti-cold buff's description writes, which holds the fill down by it for the seconds the buff lasts. A
+// Description that writes none is a drawback the dish gives instead, so it has none
+const toAntiCold = (buff: BuffRow): DishUse["antiCold"] => {
+  const match = ANTI_COLD_DESCRIPTION_REGEX.exec(buff.desc);
+  if (match?.groups === undefined) return undefined;
+  return { ratio: Number(match.groups.ratio), seconds: buff.time };
+};
+
 // A dish's use from its item row and the buff table: the heal its heal buff gives, the HP its revive buff restores and the
-// Bonus its bonus buff gives, and the target its use names. A dish whose buffs give none of these has no use. A dish with
+// Bonus its bonus buff gives, the ratio its anti-cold buff holds the fill down by, and the target its use names. A dish whose buffs give none of these has no use. A dish with
 // More than one buff of a kind, or a target this does not read, throws
 export const toDishUse = (materialRow: MaterialRow, buffRows: BuffRow[]): DishUse | undefined => {
   const [healBuff, ...otherHealBuffs] = getBuffs(materialRow, buffRows, HEAL_BUFF_ABILITY_NAME);
@@ -85,14 +95,23 @@ export const toDishUse = (materialRow: MaterialRow, buffRows: BuffRow[]): DishUs
   const [bonusBuff, ...otherBonusBuffs] = BONUS_ABILITY_NAMES.flatMap((abilityName) =>
     getBuffs(materialRow, buffRows, abilityName),
   );
+  const [antiColdBuff, ...otherAntiColdBuffs] = getBuffs(materialRow, buffRows, ANTI_COLD_ABILITY_NAME);
   const heal = healBuff === undefined ? undefined : toHeal(healBuff.desc);
   const revive = reviveBuff === undefined ? undefined : toRevive(materialRow, reviveBuff.desc);
   const bonus = bonusBuff === undefined ? undefined : toBonus(bonusBuff);
-  if (heal === undefined && revive === undefined && bonus === undefined) return undefined;
+  const antiCold = antiColdBuff === undefined ? undefined : toAntiCold(antiColdBuff);
+  if (heal === undefined && revive === undefined && bonus === undefined && antiCold === undefined) return undefined;
   const target = DISH_TARGET_MAP[materialRow.useTarget ?? ""];
-  if (otherHealBuffs.length > 0 || otherReviveBuffs.length > 0 || otherBonusBuffs.length > 0 || target === undefined)
+  if (
+    otherHealBuffs.length > 0 ||
+    otherReviveBuffs.length > 0 ||
+    otherBonusBuffs.length > 0 ||
+    otherAntiColdBuffs.length > 0 ||
+    target === undefined
+  )
     throw new InvalidOperationError(Operation.Read, String(materialRow.id), "names a use this build does not read");
   return {
+    ...(antiCold === undefined ? {} : { antiCold }),
     ...(bonus === undefined ? {} : { bonus }),
     ...(heal === undefined ? {} : { heal }),
     ...(revive === undefined ? {} : { revive }),

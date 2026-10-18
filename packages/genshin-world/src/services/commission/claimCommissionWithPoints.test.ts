@@ -94,6 +94,7 @@ describe(claimCommissionWithPoints, () => {
   const dayWith = (count: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: NOW,
+    isBonusClaimed: false,
     dealtCommissions: [{ commissionId: 1, count, dealtRank: DEALT_RANK }],
   });
   const pointsOf = (halfPoints: number) => ({ earnedOn: NOW, halfPoints });
@@ -109,7 +110,6 @@ describe(claimCommissionWithPoints, () => {
     names,
     now: NOW,
     party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
-    rank: DEALT_RANK,
     random: minimumRoll,
     wallet: { ...EMPTY_WALLET, [Currency.Mora]: STARTING_MORA },
   };

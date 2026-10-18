@@ -1,16 +1,24 @@
-// Why a value of a kit's record is not yet read from a source. `BoxAsCircle`, `NamedHitList`, `NoActionFile`,
-// `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder applies by rule,
-// So a kit's overlay names only the ones that are its own
+// Why a value of a kit's record is not yet read from a source. `BorrowedFromDonor`, `BoxAsCircle`, `NamedHitList`,
+// `NoActionFile`, `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder
+// Applies by rule. A kit's overlay names the others that are its own, and names `BorrowedFromDonor` with the donor each
+// Borrowed path takes its value from
 export enum KitProvisionalCause {
+  // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its overlay names per path,
+  // Until a source gives its own
+  BorrowedFromDonor = "BorrowedFromDonor",
   // A box is priced as the circle to its farthest corner, until an area holds a box
   BoxAsCircle = "BoxAsCircle",
   // A source gives another value, and the kit keeps its own until a commit settles it
   DiffersFromSource = "DiffersFromSource",
-  // A talent whose hits its module spawns as a named list keeps its own hits list empty
+  // A talent whose hits its module spawns as a named list keeps its own hits list empty, unless one of its own hits joins
+  // The group at an index no named list's hit does
   NamedHitList = "NamedHitList",
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share
   NoActionFile = "NoActionFile",
+  // The unit gcsim does not model: no source gives a value for a character gcsim has no folder for. Only a kit whose
+  // Character has no gcsim folder may name it, and the builder refuses it elsewhere
+  NoGcsimUnit = "NoGcsimUnit",
   // A hit neither gcsim nor the wiki gives poise for deals none
   NoPoiseSource = "NoPoiseSource",
   // The value agrees with gcsim's current branch but not the tag the builder reads, so it was read past the licence

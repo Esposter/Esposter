@@ -1,3 +1,4 @@
+import type { KitAntiCold } from "#src/models/kit/KitAntiCold";
 import type { KitBubble } from "#src/models/kit/KitBubble";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitCrystallizeShard } from "#src/models/kit/KitCrystallizeShard";
@@ -13,6 +14,7 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
 // A live effect on the deployed team, kept in the field's list and ticked each step, until its seconds run out
 export type KitEffect =
+  | KitAntiCold
   | KitBubble
   | KitBuff
   | KitCrystallizeShard

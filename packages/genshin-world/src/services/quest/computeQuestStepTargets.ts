@@ -7,7 +7,7 @@ import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 
 // The targets of a step's Interact objectives, which name a transport point by its scene point
 const getInteractTargetIds = ({ objectives }: QuestStep) =>
-  objectives.filter(({ kind }) => kind === QuestObjectiveKind.Interact).map(({ targetId }) => targetId);
+  objectives.filter(({ kind }) => kind === QuestObjectiveKind.Interact).flatMap(({ targetIds }) => targetIds);
 
 // The steps a quest has reached: all of a finished quest's, those up to and including the current one of a quest in
 // Progress, and none of a quest not started

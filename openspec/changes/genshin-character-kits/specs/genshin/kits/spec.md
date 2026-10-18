@@ -76,6 +76,68 @@ Hu Tao's Spirit Soother SHALL heal Hu Tao once for each enemy its hit strikes, u
 - **WHEN** Spirit Soother is cast again and its hit strikes an enemy
 - **THEN** Hu Tao is healed
 
+### Requirement: Hu Tao's Constellation 4 and 6 CRIT Rate
+
+Hu Tao's Constellation 4 SHALL give each other deployed member 12% CRIT Rate for 15 seconds when an enemy her Blood Blossom marked is defeated, and her Constellation 6 SHALL give her 100% CRIT Rate for 10 seconds when a drain leaves her at a quarter of her HP or under, once in 60 seconds.
+
+#### Scenario: at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate
+
+- **GIVEN** Hu Tao is at Constellation 4 and her Blood Blossom is on an enemy
+- **WHEN** that enemy is defeated
+- **THEN** each other deployed member gains 12% CRIT Rate for 15 seconds
+
+#### Scenario: defeating an enemy that Blood Blossom did not mark, or whose mark has run out, gives no CRIT Rate
+
+- **GIVEN** Hu Tao is at Constellation 4
+- **WHEN** an enemy with no Blood Blossom on it, or with one whose seconds have run out, is defeated
+- **THEN** no member gains CRIT Rate
+
+#### Scenario: below constellation 4, defeating an enemy Blood Blossom marked gives no CRIT Rate
+
+- **GIVEN** Hu Tao is below Constellation 4
+- **WHEN** an enemy her Blood Blossom marked is defeated
+- **THEN** no member gains CRIT Rate
+
+#### Scenario: at constellation 6, a drop to 25% HP or less sets Hu Tao's CRIT Rate to 100%
+
+- **GIVEN** Hu Tao is at Constellation 6
+- **WHEN** a drain leaves her at 25% of her HP or under
+- **THEN** Hu Tao gains 100% CRIT Rate for 10 seconds
+
+#### Scenario: above 25% HP, a drop gives Hu Tao no CRIT Rate
+
+- **GIVEN** Hu Tao is at Constellation 6
+- **WHEN** a drain leaves her above 25% of her HP
+- **THEN** Hu Tao gains no CRIT Rate
+
+#### Scenario: a second drop to 25% HP within 60 seconds gives Hu Tao no more CRIT Rate
+
+- **GIVEN** Hu Tao's Constellation 6 CRIT Rate has just been given
+- **WHEN** a drain leaves her at 25% of her HP or under again within 60 seconds
+- **THEN** Hu Tao gains no further CRIT Rate
+
+#### Scenario: below constellation 6, a drop to 25% HP or less gives Hu Tao no CRIT Rate
+
+- **GIVEN** Hu Tao is below Constellation 6
+- **WHEN** a drain leaves her at 25% of her HP or under
+- **THEN** Hu Tao gains no CRIT Rate
+
+### Requirement: Raincutter's Waves on Landings
+
+Raincutter SHALL cast a wave of swords where the character on the field stands as a normal attack of that character lands, at most one wave a second, and not as the attack starts.
+
+#### Scenario: Raincutter's wave is cast as a normal attack lands, not as it starts
+
+- **GIVEN** Raincutter stands with Xingqiu on the team
+- **WHEN** a normal attack of the character on the field starts, and then lands
+- **THEN** no wave is cast at the start, and one wave of two swords is cast at the landing
+
+#### Scenario: Raincutter's waves follow the field's normal attacks once a second
+
+- **GIVEN** Raincutter stands
+- **WHEN** normal attacks of the character on the field land, with one landing within the second of the last wave
+- **THEN** each landing outside the second casts a wave, and the landing within it casts none
+
 ### Requirement: Swap Ends Field Effect
 
 A field effect of Klee, Xiao, Ningguang or Razor SHALL end when its character is swapped off the field.

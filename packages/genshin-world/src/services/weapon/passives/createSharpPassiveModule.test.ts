@@ -43,6 +43,7 @@ describe(createSharpPassiveModule, () => {
         createStrike(AttackTag.NormalAttack),
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
+        [],
       ),
     ).toBeCloseTo(0.24);
   });
@@ -55,6 +56,7 @@ describe(createSharpPassiveModule, () => {
         createStrike(AttackTag.ChargedAttack),
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
+        [],
       ),
     ).toBe(0);
   });

@@ -128,6 +128,7 @@ describe(createFurinaKitBehaviour, () => {
     const drain: KitHealthChangedEvent = {
       characterId: TEAMMATE_CHARACTER_ID,
       healthShare: -0.1,
+      bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
     };
@@ -170,6 +171,7 @@ describe(createFurinaKitBehaviour, () => {
     const overheal: KitHealthChangedEvent = {
       characterId: FURINA_CHARACTER_ID,
       healthShare: 0,
+      bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0.1,
       sourceCharacterId: TEAMMATE_CHARACTER_ID,
@@ -200,6 +202,7 @@ describe(createFurinaKitBehaviour, () => {
       {
         characterId: FURINA_CHARACTER_ID,
         healthShare: 0,
+        bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0.1,
         sourceCharacterId: TEAMMATE_CHARACTER_ID,

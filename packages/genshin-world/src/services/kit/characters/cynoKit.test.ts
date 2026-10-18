@@ -1,11 +1,15 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -69,6 +73,14 @@ describe(createCynoKitBehaviour, () => {
   });
 
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // The DMG Bonus the kit's own hook adds to a skill hit of the context's character, as the context reads it
+  const getSkillDamageBonus = (kit: Kit | undefined, hit: KitHit, context: KitContext): number =>
+    kit?.getStrikeDamageBonus?.(
+      { attackTag: AttackTag.ElementalSkill, body: context.body, combatant: context.activeCombatant, hit },
+      enemy,
+      context.party,
+      context.kitEffectState.effects,
+    ) ?? 0;
   const MAX_HEALTH = 10_000;
   const ELEMENTAL_MASTERY = 200;
 
@@ -153,6 +165,32 @@ describe(createCynoKitBehaviour, () => {
       endseer: kitEffectState.effects.some((effect) => effect.kind === "status" && effect.id === "cyno-endseer"),
       nextTickFrames: Math.round((field?.nextTickSeconds ?? 0) * 60),
     }).toStrictEqual({ endseer: true, nextTickFrames: 328 });
+  });
+
+  test("judication's 35% raises the Mortuary Rite hit a press under Endseer lands, and no other hit", () => {
+    expect.hasAssertions();
+    const combatant = createCynoCombatant({ ascension: 1 });
+    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    findField(kitEffectState)?.onTick(context, 0);
+    const stanceKit = findStance(kitEffectState)?.combatant.kit;
+    stanceKit?.elementalSkill.onStart?.(context);
+
+    expect({
+      mortuaryRite: getSkillDamageBonus(stanceKit, takeOne(stanceKit?.elementalSkill.hits ?? []), context),
+      secretRite: getSkillDamageBonus(stanceKit, takeOne(CYNO_KIT.elementalSkill.hits), context),
+    }).toStrictEqual({ mortuaryRite: 0.35, secretRite: 0 });
+  });
+
+  test("a Mortuary Rite press outside Endseer raises no hit", () => {
+    expect.hasAssertions();
+    const combatant = createCynoCombatant({ ascension: 1 });
+    const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const stanceKit = findStance(kitEffectState)?.combatant.kit;
+    stanceKit?.elementalSkill.onStart?.(context);
+
+    expect(getSkillDamageBonus(stanceKit, takeOne(stanceKit?.elementalSkill.hits ?? []), context)).toBe(0);
   });
 
   test("the Ascension 1 passive, Featherfall Judgment, takes effect at its ascension phase", () => {

@@ -40,6 +40,18 @@ describe(getNamedListKitCandidates, () => {
     );
   });
 
+  test("keeps the burst's hits list when its own hit joins the named group at another index", () => {
+    expect.hasAssertions();
+
+    const valueMap = new Map<string, unknown>([
+      ["burst.hits.length", 1],
+      ["burst.hits.0.multiplier", { index: 3, proudSkillGroupId: 2139 }],
+      ["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId: 2139 }],
+    ]);
+
+    expect(getNamedListKitCandidates(valueMap, talentGroupIdMap)).toStrictEqual(new Map());
+  });
+
   test("gives no candidate for a hit that is not a named list's, or joins to the normal attack's group", () => {
     expect.hasAssertions();
 
