@@ -160,7 +160,8 @@ gcsim's regularity at v2.47.2, counted over every character folder. The tag is f
 flowchart LR
   GC["gcsim at v2.47.2: hitboxes, hitmarks, frames, tags, gauge and talent indices"] --> B["genshin:assets kits"]
   WK["the wiki's Advanced Properties at each page's revision: poise, gauge, ICD tag"] --> B
-  TB["the published tables: proud skill groups and their labels"] --> B
+  TB["the published tables: proud skill groups and their multipliers"] --> B
+  PS["the dump's proud skill rows: each group's labels, read at the build"] --> B
   OV["the character's overlay in src/data/kits: what no source holds, each with its cause"] --> B
   PB["the published kits index"] -->|"the record each built one must reproduce unless --only names its kit"| B
   B -->|"values"| K["kits index, one record per avatar"]
