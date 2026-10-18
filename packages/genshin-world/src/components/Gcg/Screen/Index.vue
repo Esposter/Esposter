@@ -438,6 +438,13 @@ const playRerollChoice = () => {
   position: absolute;
   top: calc(var(--unit) * 860);
   left: calc(var(--unit) * 1420);
+  display: flex;
+  gap: calc(var(--unit) * 16);
+}
+
+/* A prompt's buttons sit in a row: each would otherwise be absolutely placed on the same spot, the last drawn covering the rest */
+.confirm button {
+  position: static;
 }
 
 .concede {
