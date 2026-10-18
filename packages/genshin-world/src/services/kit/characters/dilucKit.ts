@@ -266,6 +266,12 @@ export const createDilucKitBehaviour = ({
       isConstellation6Buffed(strike.combatant.characterId, effects)
         ? CONSTELLATION_6_BONUS
         : 0),
+    // Constellation 6: a Searing Onslaught press does not interrupt the normal attack string, as gcsim's diluc Attack
+    // Restores the counter its last normal attack saved when a normal attack starts from the skill's state
+    // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/attack.go
+    keepsNormalAttackCombo: ({ activeCombatant }, action) =>
+      activeCombatant.constellationCount >= CONSTELLATION_6 &&
+      (action === kit.elementalSkill || kit.elementalSkillChain?.followUps.includes(action) === true),
     normalAttacks: kit.normalAttacks.map((action) => ({ onStart: createNormalAttackStart(action.seconds) })),
     skill: { onStart: createSearingOnslaughtPress(false) },
     skillChain: kit.elementalSkillChain?.followUps.map(() => ({ onStart: createSearingOnslaughtPress(true) })),

@@ -168,7 +168,7 @@ From constellation 4, a Searing Onslaught press that follows the one before it b
 
 ### Requirement: Sixth constellation adds 30% DMG and ATK SPD to the next two normal attacks
 
-From constellation 6, after a Searing Onslaught press the next two normal attacks within six seconds SHALL deal 30% more DMG and attack 30% faster. Each press re-arms them. The combo clause, that Searing Onslaught does not interrupt the normal attack combo, is not built.
+From constellation 6, after a Searing Onslaught press the next two normal attacks within six seconds SHALL deal 30% more DMG and attack 30% faster. Each press re-arms them. Searing Onslaught does not interrupt the normal attack combo: the next normal attack after a press continues the string where it stopped.
 
 #### Scenario: The next two normal attacks are buffed
 

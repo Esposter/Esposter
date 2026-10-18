@@ -64,7 +64,7 @@ export const stepKit = (
 
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
-      endKitAction(kitState, kit);
+      endKitAction(kitState, kit, false);
       kitState.isAttackQueued = false;
       kitState.plungeStartHeight = height;
     }
@@ -123,7 +123,7 @@ export const stepKit = (
       queueKitHits(action, kitState, context);
       isStrikeEnded = kit.normalAttacks.includes(action);
     } else kitState.isAttackQueued = false;
-    endKitAction(kitState, kit);
+    endKitAction(kitState, kit, kit.keepsNormalAttackCombo?.(context, action) === true);
   }
 
   kitState.comboSeconds += stepSeconds;
