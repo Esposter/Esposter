@@ -58,6 +58,7 @@ export const props = {
     { count: 50000, rarity: 3 },
     { count: 150, rarity: 5 },
   ],
+  domains: [],
   isRewardClaimed: true,
   nameText: {},
   totalCount: 11,

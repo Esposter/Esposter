@@ -16,6 +16,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
@@ -101,7 +102,9 @@ import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
+import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -860,6 +863,7 @@ const {
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 const {
   chooseDomainTreeClaim,
+  claimWeeklyBossFirstClearReward,
   closeDomainTreeClaim,
   domainArena,
   domainCamps,
@@ -876,6 +880,7 @@ const {
 } = useWorldDomains({
   adventureExp,
   adventureRankTables,
+  clearedDomainIds,
   completedMainQuestIds,
   events,
   gameDataBaseUrl,
@@ -967,6 +972,28 @@ const pressInteractable = (id: string) => {
 const enterDomainLevel = (dungeonId: number) => {
   screenKind.value = ScreenKind.World;
   enterDomain(dungeonId);
+};
+// The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
+const handbookDomains = computed(() =>
+  toHandbookDomains(
+    [
+      ...unlockedDomainEntrances.value,
+      ...lockedJumpLandmarks.value.filter(
+        (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
+      ),
+    ],
+    {
+      adventureRank: rank.value,
+      clearedDomainIds: clearedDomainIds.value,
+      completedMainQuestIds: completedMainQuestIds.value,
+      unlockedLandmarkIds: new Set(unlockedLandmarks.value.map(({ id }) => id)),
+    },
+  ),
+);
+// A locked weekly boss is challenged from the handbook by jumping to its entrance, where its domain's screen opens
+const challengeWeeklyBoss = (landmark: DomainEntranceLandmark) => {
+  jumpTo(computeJumpPose(landmark));
+  screenKind.value = ScreenKind.World;
 };
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
@@ -1473,10 +1500,13 @@ defineExpose({ jumpTo, readCameraPosition });
           :commissions="[]"
           :completed-count="0"
           :day-commissions="handbookDayCommissions"
+          :domains="handbookDomains"
           :game-text
           :investigation-rewards="[]"
           :name-text
           :total-count="0"
+          @challenge="challengeWeeklyBoss"
+          @claim-first-clear="claimWeeklyBossFirstClearReward"
           @close="screenKind = ScreenKind.World"
         />
       </template>
