@@ -9,5 +9,4 @@ x-touches:
     "scripts/src/services/genshinAssets/leyLine/**",
     "packages/genshin-world/src/models/leyLine/**",
     "packages/genshin-world/src/services/leyLine/**",
-    "packages/genshin-world/src/data/leyLine/**",
   ]

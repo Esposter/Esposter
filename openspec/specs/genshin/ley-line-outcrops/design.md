@@ -6,7 +6,7 @@ The rules a region's two ley line blossoms follow, read from the game's tables b
 
 ```mermaid
 flowchart TD
-  D["Dump: the blossom refresh, group and section order tables"] -->|"genshin:assets outcrops"| R["data/leyLine/regions: one slice per city, with kinds"]
+  D["Dump: the blossom refresh, group and section order tables"] -->|"genshin:assets outcrops"| R["leyLine/regions: one record per city, by its city id"]
   R --> O{"computeOutcropKindOpen: the rank and nations' areas"}
   R --> S["computeDailyOutcrops: each kind's place drawn from the fitted places, the day's random picking"]
   R --> N["computeNextOutcropPlace: the nearest other fitted place, not the one the other kind stands at"]
@@ -25,7 +25,7 @@ flowchart TD
 ## Data
 
 - **The tables.** The blossom refresh, group and section order tables come from the community's dump, `BlossomRefreshExcelConfigData`, `BlossomGroupsExcelConfigData` and `BlossomSectionOrderExcelConfigData`, read from the dump's `ExcelBinOutput` folder under `GENSHIN_TEXT_DIRECTORY`. The dump at its revision lacked all three; they were taken from the same repository's files and not committed.
-- **The regions.** `packages/genshin-world/src/data/leyLine/regions/<city>.json`, one slice per city with a kind, holding its two kinds' rules, its sections in order and every place its groups name. A slice is loaded on its own when a region's outcrops are wanted.
+- **The regions.** Each city's region is one hosted record under `leyLine/regions/<cityId>`, published by `genshin:assets outcrops` and read by `readOutcropRegion`, holding its two kinds' rules, its sections in order and every place its groups name. A region's kinds are read once its key is in the lock, and until then the world draws no outcrop.
 
 ## Not built yet
 
@@ -39,7 +39,7 @@ flowchart TD
 
 | File                                                                         | Role                                                                                |
 | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/leyLine/writeLeyLineTables.ts`           | writes each city's region slice from the dump's three tables                        |
+| `scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`          | builds each city's region record under its key, from the dump's four tables         |
 | `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                      |
 | `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                          |
 | `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                       |

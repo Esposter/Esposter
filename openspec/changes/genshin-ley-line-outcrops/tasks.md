@@ -8,7 +8,7 @@
 
 ## 3. The challenge and the blossom
 
-- [ ] 3.1 Add the touch, the fight, the reveal and the claim in Mondstadt first, each place one of the official map's Ley Line Blossom points. Verify: tests named after the scenarios "Touching an outcrop spawns its enemies", "Defeating the last enemy reveals the blossom" and "A claim without enough resin is refused", written first and seen failing.
+- [x] 3.1 Add the touch, the fight, the reveal and the claim in Mondstadt first, each place one of the official map's Ley Line Blossom points. Verify: tests named after the scenarios "Touching an outcrop spawns its enemies", "Defeating the last enemy reveals the blossom" and "A claim without enough resin is refused", written first and seen failing.
 
 ## 4. Decisions
 
