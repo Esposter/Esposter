@@ -150,6 +150,12 @@ A side handed its choice of action SHALL run its field's before-action hooks bef
 - **WHEN** the End Phase spends the Bake-Kurage's last usage
 - **THEN** Hanachirusato gains one Cleansing Ritual Progress
 
+#### Scenario: A Summon a card's play destroys counts for Progress
+
+- **GIVEN** a side holds Hanachirusato with no Progress and a Bake-Kurage on its field
+- **WHEN** the side plays Guardian's Oath, which destroys every Summon
+- **THEN** Hanachirusato gains one Cleansing Ritual Progress
+
 ### Requirement: The Oceanic Mimics are summoned by the kind fewest on the field
 
 The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the earliest kind winning a tie.
