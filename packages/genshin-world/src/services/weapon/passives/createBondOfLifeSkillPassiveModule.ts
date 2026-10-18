@@ -10,7 +10,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { takeOne } from "@esposter/shared";
 
-export interface BondOfLifeSkillPassiveOptions {
+interface BondOfLifeSkillPassiveOptions {
   clearedAttributes: readonly Attribute[];
   // The amount each cleared attribute rises by, from the HP the Bond of Life cleared, the rank's rate of it and the rank's maximum
   priceClearedAmount: (clearedHealth: number, rate: number, max: number) => number;
