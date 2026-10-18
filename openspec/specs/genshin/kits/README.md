@@ -390,6 +390,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Albedo](albedo/design.md)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms                                                      |
 | [Alhaitham](alhaitham/design.md)           | Universality's tap and hold, Particular Field and Projection Attacks                                          |
 | [Aloy](aloy/design.md)                     | Freeze Bomb and Rushing Ice                                                                                   |
+| [Alyosha](alyosha/design.md)               | Four strikes, the charged attack, Thunderbolt Strike's tap; her burst not built                               |
 | [Amber](amber/design.md)                   | Explosive Puppet's Baron Bunny and Fiery Rain                                                                 |
 | [Arlecchino](arlecchino/design.md)         | Invitation to a Beheading and All Is Ash's Spike and Cleave                                                   |
 | [Baizhu](baizhu/design.md)                 | Universal Diagnosis and Holistic Revivification's seamless shield                                             |
