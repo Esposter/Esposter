@@ -17,6 +17,7 @@ export interface KitBehaviour extends Partial<
     | "getChargedAttackStaminaMultiplier"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
+    | "getPartyDendroCoreDamageBonus"
     | "getPartyReactionBonus"
     | "getPartyStrikeBonus"
     | "getPassiveBonuses"

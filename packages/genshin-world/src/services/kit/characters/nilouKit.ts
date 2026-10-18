@@ -8,11 +8,13 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
@@ -67,6 +69,14 @@ const GOLDEN_CHALICE_BOUNTY_SECONDS = 30;
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS = 10;
 
+// Measured: gcsim (MIT) nilou/asc.go, Ascension 4 raises a Bountiful Core's DMG by 9% for each 1,000 Max HP above
+// 30,000, Capped at 400%
+// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+const ASCENSION_4 = 4;
+const ASCENSION_4_HEALTH_THRESHOLD = 30_000;
+const ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH = 0.09 / 1000;
+const ASCENSION_4_DAMAGE_BONUS_MAX = 4;
+
 // A team with a Dendro member among it and no member that is neither Dendro nor Hydro, the team gcsim's asc.go sets the
 // Bounty on
 const checkIsDendroHydroTeam = (members: DeployedCombatant[]): boolean =>
@@ -75,11 +85,11 @@ const checkIsDendroHydroTeam = (members: DeployedCombatant[]): boolean =>
 
 // Nilou's behaviour: Dance of Haftkarsvar enters Pirouette, whose normal attacks are the sword dance and whose skill is
 // The first Whirling Steps, and the sword dance's third step sets off Lunar Prayer, which plays the sword dance again with
-// The dance as its skill. Constellations 1 and 6 and Ascension 1 are built, Ascension 1's Golden Chalice's Bounty being
-// Set as the third step lands. Ascension 4, Constellations 2 and 4 and the Pirouette's later steps are not, nor is
-// Dance Of Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck, and no hook gives that enemy to a
-// Later hit. Constellations 3 and 5 raise talent levels, which no kit reads yet. Constellation 2's Hydro RES cut is not
-// Built, and Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
+// The dance as its skill. Constellations 1 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's Bounty is set
+// As the third step lands. Constellations 2 and 4 and the Pirouette's later steps are not built, nor is Dance of
+// Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck, and no hook hands that enemy on.
+// Constellations 3 and 5 raise talent levels, which no kit reads yet. Constellation 2's Hydro RES cut is not built, and
+// Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
 export const createNilouKitBehaviour = ({
   kit,
   readAction,
@@ -146,6 +156,16 @@ export const createNilouKitBehaviour = ({
   });
 
   return {
+    // Ascension 4 raises every deployed member's Bountiful Core DMG by Nilou's Max HP above 30,000, and no Bloom's
+    getPartyDendroCoreDamageBonus: (member, coreKind, { characterIdCombatantMap, kitEffectState, party }) => {
+      if (coreKind !== DendroCoreKind.Bountiful || member.ascension < ASCENSION_4) return 0;
+      const maxHealthAboveThreshold =
+        getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap) - ASCENSION_4_HEALTH_THRESHOLD;
+      return Math.min(
+        ASCENSION_4_DAMAGE_BONUS_MAX,
+        Math.max(0, maxHealthAboveThreshold * ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH),
+      );
+    },
     getPassiveBonuses,
     // Constellation 1 raises Luminous Illusion's DMG, the one hit of the sword dance it is set on
     getStrikeDamageBonus: (strike: KitStrike) =>

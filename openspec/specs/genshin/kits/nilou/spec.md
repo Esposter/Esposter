@@ -130,9 +130,37 @@ From Ascension 1, Pirouette's third sword dance SHALL give each deployed member 
 - **WHEN** an Electro or Pyro hit reaches it
 - **THEN** the core is not sent off and bursts as it was
 
+### Requirement: Ascension 4 raises Bountiful Core DMG
+
+From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG for each 1,000 of Nilou's Max HP above 30,000, up to 400%, and a Bloom's damage SHALL NOT take the bonus.
+
+#### Scenario: A Bountiful Core bursts under Ascension 4
+
+- **GIVEN** Nilou is at Ascension 4 with 40,000 Max HP
+- **WHEN** a Bountiful Core made by any deployed member bursts
+- **THEN** its reaction damage takes a 90% bonus
+
+#### Scenario: The bonus caps at 400%
+
+- **GIVEN** Nilou is at Ascension 4 with 100,000 Max HP
+- **WHEN** a Bountiful Core bursts
+- **THEN** its reaction damage takes a 400% bonus
+
+#### Scenario: Max HP at or below 30,000 gives no bonus
+
+- **GIVEN** Nilou is at Ascension 4 with 30,000 Max HP
+- **WHEN** a Bountiful Core bursts
+- **THEN** its reaction damage takes no Ascension 4 bonus
+
+#### Scenario: A Bloom or a lower Ascension gives no bonus
+
+- **GIVEN** Nilou is at Ascension 3 with 40,000 Max HP, or a Bloom's core bursts at Ascension 4
+- **WHEN** the core bursts
+- **THEN** its reaction damage takes no Ascension 4 bonus
+
 ### Requirement: Unbuilt Nilou effects
 
-Nilou's Ascension 4, Constellations 2 and 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
+Nilou's Constellations 2 and 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

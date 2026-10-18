@@ -41,6 +41,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getChargedAttackStaminaMultiplier,
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
+    getPartyDendroCoreDamageBonus,
     getPartyReactionBonus,
     getPartyStrikeBonus,
     getPassiveBonuses,
@@ -70,6 +71,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
+  if (getPartyDendroCoreDamageBonus) kit.getPartyDendroCoreDamageBonus = getPartyDendroCoreDamageBonus;
   if (getPartyReactionBonus) kit.getPartyReactionBonus = getPartyReactionBonus;
   if (getPartyStrikeBonus) kit.getPartyStrikeBonus = getPartyStrikeBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
