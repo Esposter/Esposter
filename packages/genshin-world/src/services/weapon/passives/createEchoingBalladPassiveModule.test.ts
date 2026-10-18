@@ -2,7 +2,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -40,12 +39,10 @@ const createDamageTaken = (attackTag?: AttackTag): KitEvent => ({
 });
 
 describe(createEchoingBalladPassiveModule, () => {
-  test("the rank's CRIT DMG is a passive bonus on the wielder", () => {
+  test("the rank's CRIT DMG is the table's line, so the passive adds no bonus", () => {
     expect.hasAssertions();
 
-    expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.CriticalDamage },
-    ]);
+    expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([]);
   });
 
   test("a hit of the wielder's own attack that rolls under the chance queues a physical AoE at the rank's multiplier", () => {
