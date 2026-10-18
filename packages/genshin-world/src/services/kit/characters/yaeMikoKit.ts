@@ -4,9 +4,9 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -99,8 +99,7 @@ export const createYaeMikoKitBehaviour = ({
         : 0,
     getStrikeDamageBonus: ({ attackTag, combatant }) =>
       combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
-        ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-          ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY
+        ? elementalMasteryMultiplier(combatant, ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY)
         : 0,
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {

@@ -5,6 +5,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 
 // Measured: gcsim v2.47.2 (MIT) tighnari/asc.go, A4: his charged attacks and Fashioner's Tanglevine Shaft gain 0.06% DMG
 // For each point of Elemental Mastery, to 60%
@@ -80,7 +81,7 @@ export const createTighnariKitBehaviour = (): KitBehaviour => ({
     combatant.ascension >= ASCENSION_4 &&
     (attackTag === AttackTag.ChargedAttack || attackTag === AttackTag.ElementalBurst)
       ? Math.min(
-          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ASCENSION_4_DAMAGE_PER_ELEMENTAL_MASTERY,
+          elementalMasteryMultiplier(combatant, ASCENSION_4_DAMAGE_PER_ELEMENTAL_MASTERY),
           ASCENSION_4_DAMAGE_MAX,
         )
       : 0,
