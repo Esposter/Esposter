@@ -54,6 +54,7 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
       },
     ],
     dice: [],
+    deckCardIds: [],
     drawPile: [],
     hand: [],
     hasDeclaredEnd: false,

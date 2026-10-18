@@ -27,6 +27,7 @@ export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSide
         statuses,
       };
     }),
+    deckCardIds: deck.cardIds,
     dice: [],
     drawPile: drawPile.slice(GCG_STARTING_HAND_COUNT),
     hand: drawPile.slice(0, GCG_STARTING_HAND_COUNT),

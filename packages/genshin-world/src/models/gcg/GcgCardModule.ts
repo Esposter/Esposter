@@ -16,6 +16,7 @@ export interface GcgCardModule {
   // The Piercing DMG a card deals to each opposing character on standby at the end phase, before its onEndPhase damage
   endPhaseStandbyPiercing?: number;
   immuneElement?: Element;
+  initialCounter?: number;
   initialRounds?: number;
   initialUsages?: number;
   isSwitchFast?: (context: GcgEffectContext) => boolean;

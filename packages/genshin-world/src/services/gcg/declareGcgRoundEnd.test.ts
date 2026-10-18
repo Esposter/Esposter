@@ -45,6 +45,7 @@ describe(declareGcgRoundEnd, () => {
     cards: [],
     characters: [createCharacterState()],
     dice: [Element.Pyro],
+    deckCardIds: [],
     drawPile: [...DRAW_PILE_CARD_IDS],
     hand: [101],
     hasDeclaredEnd: false,
