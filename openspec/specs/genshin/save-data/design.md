@@ -20,7 +20,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - the Seelies settled and the puzzles solved, by id ([puzzles](../puzzles/README.md));
 - each defeated enemy's respawn instant in a camp with no boss, by its spawn key, as an ISO instant on the server's clock ([enemies](../enemies/design.md));
 - the party: the teams set up in Party Setup, each with its name and its members by character id, and the team deployed ([party](../party/design.md));
-- Adventure EXP, Mondstadt's Reputation (its level and EXP), the bounty taken and the week's bounty claims (both optional, absent while none is held) and each character's Companionship EXP, by character id;
+- Adventure EXP, Mondstadt's Reputation (its level and EXP), the bounty taken (optional, absent while none is taken), the week's bounty claims (`[]` while none is held, and a save written before they were added is backfilled to `[]`) and each character's Companionship EXP, by character id;
 - the ranks whose Katheryne reward is claimed, from rank 2, as a list (`adventureRankRewardsClaimed`) ([adventure rank](../adventure-rank/design.md));
 - the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](../adventure-rank/design.md)).
 - the name the player chose for the Traveler, empty while none is chosen, which the [HUD](../hud/design.md)'s party shows in place of the game's own.

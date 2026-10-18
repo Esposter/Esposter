@@ -410,6 +410,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
+  reputationBountyClaimedAts: [],
   namecardItemId: 0,
   shopPurchases: [],
   spiralAbyss: {},

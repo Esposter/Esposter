@@ -25,6 +25,7 @@ import {
 } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   EMPTY_GENSHIN_SAVE,
   MAX_ABYSS_CHAMBER_COUNT,
@@ -263,6 +264,7 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
       spiralAbyss: Object.fromEntries(
         Array.from({ length: MAX_ABYSS_CYCLE_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
