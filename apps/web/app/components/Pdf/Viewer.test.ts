@@ -131,6 +131,22 @@ describe("pdfViewer", () => {
     expect(destroy).toHaveBeenCalledOnce();
   });
 
+  // Closing the viewer destroys a load still in flight, and the rejection that destruction causes is no failure to show
+  test("Closing the viewer while its document loads reports no error", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const { promise, reject } = Promise.withResolvers<unknown>();
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(promise));
+    const component = await mountViewer();
+    await flushPromises();
+    component.unmount();
+    reject(new Error(" "));
+    await flushPromises();
+
+    expect(console.error).not.toHaveBeenCalled();
+  });
+
   test("A protected PDF asks for its password", async () => {
     expect.hasAssertions();
 

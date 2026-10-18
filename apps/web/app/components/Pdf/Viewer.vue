@@ -125,6 +125,9 @@ const mountViewer = async () => {
     pagesCount.value = document.numPages;
     instance.currentScaleValue = "auto";
   }).match(noop, (error) => {
+    // Closing the viewer destroys a load still in flight, and its rejection is no failure of the document
+    if (isUnmounted) return;
+
     isFailed.value = true;
     console.error(error);
   });
