@@ -1,6 +1,6 @@
 ## Purpose
 
-Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, and his Constellations 2, 4 and 6 left unbuilt.
+Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, his Constellations 1 and 2 built, and his Constellations 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -51,3 +51,31 @@ Rite of Progeniture's Fatal Blossoms SHALL appear only while the burst's field s
 - **GIVEN** Tectonic Tide has ended
 - **WHEN** the burst's remaining frames pass
 - **THEN** no further Fatal Blossom appears
+
+### Requirement: Constellation 2's Fatal Reckoning adds flat damage to the Fatal Blossoms
+
+From Constellation 2, each Transient Blossom SHALL add a stack of Fatal Reckoning, up to four, lasting thirty seconds. Tectonic Tide SHALL consume every stack, and each stack consumed SHALL add 30% of Albedo's DEF to each Fatal Blossom as flat damage.
+
+#### Scenario: Transient Blossoms build up stacks to four
+
+- **GIVEN** Albedo has Constellation 2
+- **WHEN** five Transient Blossoms are set off within thirty seconds
+- **THEN** Fatal Reckoning holds four stacks
+
+#### Scenario: Tectonic Tide adds the stacks to its Fatal Blossoms
+
+- **GIVEN** Albedo has four stacks of Fatal Reckoning
+- **WHEN** she casts Rite of Progeniture: Tectonic Tide
+- **THEN** each Fatal Blossom deals 120% of her DEF as flat damage more
+
+#### Scenario: Tectonic Tide consumes the stacks
+
+- **GIVEN** Tectonic Tide has consumed Fatal Reckoning's stacks
+- **WHEN** she casts it again without a new Transient Blossom
+- **THEN** its Fatal Blossoms deal no Fatal Reckoning damage
+
+#### Scenario: Below Constellation 2 nothing accumulates
+
+- **GIVEN** Albedo has Constellation 1
+- **WHEN** Transient Blossoms are set off and Tectonic Tide is cast
+- **THEN** its Fatal Blossoms deal no Fatal Reckoning damage
