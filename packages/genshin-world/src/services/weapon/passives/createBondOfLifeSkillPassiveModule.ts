@@ -54,8 +54,8 @@ export const createBondOfLifeSkillPassiveModule = (
       }
       if (event.kind !== KitEventKind.HealthChanged || event.characterId !== combatant.characterId) return;
       // A heal that took no Bond of Life, or left one standing, clears nothing
-      if (event.bondOfLifeShare === undefined) return;
-      const { bondOfLifeClearedShare = 0, bondOfLifeShare: standingShare } = getPartyMember(
+      if (event.bondOfLifeShare === 0) return;
+      const { bondOfLifeClearedShare, bondOfLifeShare: standingShare } = getPartyMember(
         context.party,
         combatant.characterId,
       );

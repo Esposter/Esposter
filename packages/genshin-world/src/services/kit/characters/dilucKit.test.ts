@@ -35,6 +35,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createHealthLossEvent = (characterId: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   characterId,
   healthShare: -0.1,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
