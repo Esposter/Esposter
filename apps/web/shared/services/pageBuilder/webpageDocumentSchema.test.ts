@@ -1,13 +1,8 @@
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_WEBPAGE_NODES } from "#shared/services/pageBuilder/constants";
-import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { describe, expect, test } from "vitest";
-
-const createButton = (id: string) => ({
-  props: { href: TEST_URL, id, label: TEST_LABEL },
-  type: WebpageNodeType.Button,
-});
 
 describe("webpageDocumentSchema", () => {
   test("a document with a duplicate node id is refused", () => {

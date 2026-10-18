@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { BlockDocument } from "headless-block-editor";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -11,11 +11,6 @@ import { useCommandStore } from "@/store/ui/command";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { moveBlockNode } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
-
-const createButton = (id: string) => ({
-  props: { href: TEST_URL, id, label: TEST_LABEL },
-  type: WebpageNodeType.Button,
-});
 
 describe(usePageBuilderHistoryCommands, () => {
   test("the command bar names the edit it would undo", async () => {
