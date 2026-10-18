@@ -6,6 +6,7 @@ import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
+import { computeBountyTrailEnds } from "#src/services/elementalSight/computeBountyTrailEnds";
 import { claimWeeklyReputationBounty } from "#src/services/reputation/claimWeeklyReputationBounty";
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
@@ -50,6 +51,8 @@ export const useWorldReputationBounty = ({
   const bountyCamps = computed<EnemyCamp[]>(() =>
     bountyCamp.value && bountyHunt.value && !bountyHunt.value.isTargetDefeated ? [bountyCamp.value] : [],
   );
+  // The ends the sight leads a trail to, the spot of each target standing in the world
+  const bountyTrailEnds = computed(() => computeBountyTrailEnds(bountyCamps.value));
   // Takes one of the nation's bounties at random into a hunt, unless one is in progress
   const takeBounty = () => {
     const city = reputationCity.value;
@@ -77,5 +80,5 @@ export const useWorldReputationBounty = ({
     bountyHunt.value = undefined;
     bountyCamp.value = undefined;
   };
-  return { bountyCamps, bountyClaimedAts, bountyHunt, claimBounty, takeBounty };
+  return { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty };
 };
