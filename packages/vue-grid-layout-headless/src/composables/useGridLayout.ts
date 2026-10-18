@@ -20,7 +20,7 @@ import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
 import { resolveMove } from "#src/placement/resolveMove";
-import { findGridAt, registerGrid, unregisterGrid } from "#src/services/mountedGrids";
+import { findGridAt, findGridRoot, registerGrid, unregisterGrid } from "#src/services/mountedGrids";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
 
@@ -84,7 +84,9 @@ export const useGridLayout = <T extends GridItem>(
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
     if (gesture.value && gesture.value.pointerId !== event.pointerId) return;
-    if (!(event.currentTarget instanceof Element)) return;
+    if (!(event.currentTarget instanceof Element) || !(event.target instanceof Element)) return;
+    // A press on a nested grid's item belongs to that grid, so the grid around it takes no gesture from it
+    if (findGridRoot(event.target) !== root.value) return;
 
     gesture.value = {
       edge,

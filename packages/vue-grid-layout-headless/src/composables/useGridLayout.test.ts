@@ -430,6 +430,96 @@ describe(useGridLayout, () => {
     ]);
   });
 
+  test("#22 #40 Dragging inside a nested grid", async () => {
+    expect.hasAssertions();
+
+    const outerCommit = vi.fn<(commit: GridCommit) => void>();
+    const innerCommit = vi.fn<(commit: GridCommit) => void>();
+    const outerItems: GridItem[] = [{ h: 4, id: "outer", w: 12, x: 0, y: 0 }];
+    const innerItems: GridItem[] = [{ h: 2, id: "inner", w: 2, x: 0, y: 0 }];
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          const outerRoot = useTemplateRef<HTMLElement>("outerRoot");
+          const innerRoot = useTemplateRef<HTMLElement>("innerRoot");
+          const outer = useGridLayout(outerRoot, () => ({
+            collision: CollisionMode.Push,
+            columnNumber,
+            compactType: CompactType.Vertical,
+            dragStartDistance,
+            isEditable: true,
+            items: outerItems,
+            onCommit: outerCommit,
+            rowHeight,
+            spacing,
+          }));
+          const inner = useGridLayout(innerRoot, () => ({
+            collision: CollisionMode.Push,
+            columnNumber,
+            compactType: CompactType.Vertical,
+            dragStartDistance,
+            isEditable: true,
+            items: innerItems,
+            onCommit: innerCommit,
+            rowHeight,
+            spacing,
+          }));
+
+          // The inner grid sits inside the outer grid's tile, so a press on its tile bubbles up through the outer tile too
+          return () =>
+            h(
+              "div",
+              { class: "grid", ref: "outerRoot" },
+              outer.tiles.value.map(({ geometry, item }) =>
+                h(
+                  "div",
+                  {
+                    class: "outer-tile",
+                    onPointerdown: (event: PointerEvent) => outer.startGesture(event, item),
+                    style: {
+                      height: `${geometry.height}px`,
+                      left: `${geometry.left}px`,
+                      top: `${geometry.top}px`,
+                      width: `${geometry.width}px`,
+                    },
+                  },
+                  [
+                    h(
+                      "div",
+                      { class: "inner", ref: "innerRoot" },
+                      inner.tiles.value.map(({ geometry: innerGeometry, item: innerItem }) =>
+                        h("div", {
+                          class: "inner-tile",
+                          onPointerdown: (event: PointerEvent) => inner.startGesture(event, innerItem),
+                          style: {
+                            height: `${innerGeometry.height}px`,
+                            left: `${innerGeometry.left}px`,
+                            top: `${innerGeometry.top}px`,
+                            width: `${innerGeometry.width}px`,
+                          },
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+        },
+      }),
+    );
+    await flushPromises();
+    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.get(".inner").element);
+    const tile = wrapper.get(".inner-tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
+
+    expect(outerCommit).not.toHaveBeenCalled();
+    expect(innerCommit.mock.calls).toStrictEqual([
+      [{ changes: [{ h: 2, id: "inner", w: 2, x: 2, y: 0 }], removed: [] }],
+    ]);
+  });
+
   test("a drop outside every grid", async () => {
     expect.hasAssertions();
 

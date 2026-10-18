@@ -11,7 +11,7 @@
 - [x] 2.4 Items sized to their content, in whole rows. Verify: a test titled "#11 #42 #55 An item grows to hold its content".
 - [x] 2.5 Swap on drop as a collision mode beside push and prevent. Verify: tests titled "#66 Swapping two items on drop", "A swap that lands on several items" and "A move refused under prevent".
 - [x] 2.6 Dropping an item in from outside the grid, a palette or another grid. Verify: tests titled "#6 Dropping a palette entry into the grid", "#21 Moving an item into another grid" and "A drop outside every grid".
-- [ ] 2.7 A grid nested in a tile moves its own items. Verify: a test titled "#22 #40 Dragging inside a nested grid".
+- [x] 2.7 A grid nested in a tile moves its own items. Verify: a test titled "#22 #40 Dragging inside a nested grid".
 
 ## 3. The record
 
