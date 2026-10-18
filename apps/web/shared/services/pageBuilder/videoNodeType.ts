@@ -4,7 +4,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
 
-// An uploaded video with no default source, so a video is never a file the app does not serve
+// An uploaded video with no default source, so a new video never points at a file its author did not choose
 const videoFormSchema = z.strictObject({ src: webpageUrlSchema, title: z.string().min(1) });
 const videoPropsSchema = z.strictObject({ ...videoFormSchema.shape, id: z.string() });
 
