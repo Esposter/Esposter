@@ -6,6 +6,8 @@ Read when choosing what a bench measures — the unit against its wrapper, the s
 
 - **Pick a meaningful scaling axis** where one exists (100 / 1000 / 10000 rows) so a regression in per-unit cost is visible rather than drowned by fixed overhead.
 
+- **Every direction the input grows in is an axis of its own.** A parser grows in length and in nesting depth, and a tree grows in breadth and in depth. Work that repeats per level stays flat on the length axis and doubles on the depth one, so a bench that walks only the first reports a clean run over an exponential case. `math-expression-compiler`'s parse bench walks both. It gained its depth groups after a lookahead that re-parsed each nested group passed every length group.
+
 - **Vary input _shape_, not just size.** Bench measures speed, not correctness — drive worst, best and typical shapes that stress the algorithm differently. Correctness edge cases stay in `*.test.ts`.
 
 - **When both shape and scale vary, group by scale — one test per scale — so `vs base` stays meaningful.** `vs base` is computed per group against the task named `native` where the group has one, and against the fastest task otherwise — so one flat group mixing 100/1k/10k rows makes the 10k task read `0.005×`, conflating scale with shape and burying the real signal. Each row count gets its own `test` under the function's `describe` (`test.each` where the scales are a list), so each group compares only shape at a fixed size.
