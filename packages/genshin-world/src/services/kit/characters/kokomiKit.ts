@@ -12,6 +12,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
 // Of radius 6 whose centre lies 3 metres ahead, every tick, for 12.5 seconds
@@ -74,6 +75,10 @@ export const KOKOMI_CHARACTER_ID = 10_000_054;
 // Lasts, each of whose attacks adds a share of her Max HP to its damage, and whose normal and charged attacks heal the
 // Party. Her passives are built: Flawless Strategy, Tamakushi Casket and Song of Pearls, which adds to the garment's
 // Attacks from Ascension 4
+// Constellation 1 needs the effect the garment's final combo attack unleashes, which the kit does not build
+// Constellation 2 needs her healing bonus to characters at low HP, which her heals do not read
+// Constellation 4's energy needs the energy each landed attack in the garment gives, on a short cooldown, not built
+// Constellation 6 needs the Hydro DMG Bonus her heals grant for a short time, which the kit does not build
 export const createKokomiKitBehaviour = ({
   kit,
   readHits,
@@ -129,6 +134,11 @@ export const createKokomiKitBehaviour = ({
       },
     },
     getPassiveBonuses,
+    // Constellation 4, The Moon Overlooks the Waters: her Normal Attack SPD is raised while she dons the garment
+    getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
+      activeCombatant.constellationCount >= 4 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
+        ? 0.1
+        : 0,
     skill: createBakeKurage(bakeKurageRipples),
   };
 };
