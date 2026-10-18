@@ -214,8 +214,8 @@ export const createEulaKitBehaviour = ({
               gauge: 1,
               hitArea: icewhirlArea,
               hitmarkSeconds,
-              onStrike: ({ kitEffectState: strikeEffectState }, { combatant: striker }) =>
-                gainLightfallStack(strikeEffectState, striker),
+              onStrike: ({ kitEffectState: strikeEffectState, random }, { combatant: striker }) =>
+                gainLightfallStack(strikeEffectState, striker, random),
               poiseDamage: 0,
               talentMultiplier: icewhirlMultiplier,
             }));
