@@ -16,7 +16,7 @@
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Fire" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7932 } }
 }
