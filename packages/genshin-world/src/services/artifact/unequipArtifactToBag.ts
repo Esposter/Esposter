@@ -8,7 +8,7 @@ import { unequipCharacterArtifact } from "#src/services/artifact/unequipCharacte
 import { addInventoryArtifact } from "#src/services/inventory/addInventoryArtifact";
 
 // The result of taking the worn artifact off into the bag: a bag with no room for it leaves the piece worn and says so
-export type UnequipArtifactToBagResult =
+type UnequipArtifactToBagResult =
   | { character: Character; inventory: Inventory; isBagFull: false }
   | { isBagFull: true };
 
