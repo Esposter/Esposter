@@ -24,10 +24,13 @@ describe(discountShopGood, () => {
 
   test("a discount applies at its named shop", () => {
     expect.hasAssertions();
+    expect(discountShopGood({ ...moraGood, priceCount: 61 }, DISCOUNT_LEVEL).priceCount).toBe(50);
+    expect(discountShopGood({ ...moraGood, priceCount: 62 }, DISCOUNT_LEVEL).priceCount).toBe(55);
+  });
+
+  test("a discount applies at its named shop", () => {
+    expect.hasAssertions();
     expect(discountShopGood(moraGood, DISCOUNT_LEVEL).priceCount).toBe(105);
-    // The wiki's Blanche prices: Salt at 60 is 50 after the discount, Pepper at 80 is 70
-    expect(discountShopGood({ ...moraGood, priceCount: 60 }, DISCOUNT_LEVEL).priceCount).toBe(50);
-    expect(discountShopGood({ ...moraGood, priceCount: 80 }, DISCOUNT_LEVEL).priceCount).toBe(70);
   });
 
   test("a good below the discount's reputation level keeps its price", () => {

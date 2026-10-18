@@ -14,6 +14,7 @@ export const SHOP_GOODS_KEYS: readonly (readonly [number, Extract<GameDataKey, `
   [PAIMON_BARGAINS_SHOP_ID, "shops/paimonsBargains"],
   [MONDSTADT_SOUVENIR_SHOP_ID, "shops/souvenirMondstadt"],
   [1004, "shops/mondstadtGeneralGoods"],
+  [1005, "shops/goodHunter"],
   [1011, "shops/mondstadtFlora"],
   [1012, "shops/mondstadtCharles"],
   [1013, "shops/mondstadtShiliu"],
