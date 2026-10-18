@@ -66,6 +66,7 @@ import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passive
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
+import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
@@ -440,4 +441,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2004975019": createFangsFlyingToAndFroPassiveModule,
   // Labyrinth Lord's Instruction (King's Squire)
   "2741602795": createLabyrinthLordsInstructionPassiveModule,
+  // Mournful Tribute (Bloodsoaked Ruins)
+  "867694867": createMournfulTributePassiveModule,
 };
