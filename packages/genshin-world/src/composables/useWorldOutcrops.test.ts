@@ -44,7 +44,7 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
     adventureExp,
     adventureRankTables,
     areaId: ref("mondstadt"),
-    completedMainQuestIds: new Set(),
+    completedMainQuestIds: ref(new Set<string>()),
     enemyMap: new Map(),
     events,
     gameText: {},
