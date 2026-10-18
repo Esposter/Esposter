@@ -98,10 +98,10 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         });
       },
     },
-    // Her burst projects a copy of the active character's elemental hit onto the enemy it struck, as gcsim's OnEnemyHit hook
+    // Her burst projects a copy of the active character's hit onto the enemy it struck, as gcsim's OnEnemyHit hook
     // Does, at most four times and once each 3 seconds
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.ElementalHit || event.striker.characterId !== context.activeCombatant.characterId)
+      if (event.kind !== KitEventKind.EnemyHit || event.striker.characterId !== context.activeCombatant.characterId)
         return;
       const burst = findKitStatus(context.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
       if (!burst || burst.secondsRemaining <= 0 || (burst.stacks ?? 0) >= PROJECTION_LIMIT) return;
@@ -123,6 +123,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
               combatant: striker,
               hit: {
                 additiveBaseDamageBonus: () => flatDamage,
+                element: striker.element,
                 hitArea: PROJECTION_HIT_AREA,
                 hitmarkSeconds: 0,
                 poiseDamage: 0,

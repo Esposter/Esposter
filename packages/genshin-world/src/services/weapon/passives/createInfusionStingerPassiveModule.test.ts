@@ -30,22 +30,30 @@ const wielder: Combatant = {
 };
 // Infusion Stinger at its first rank: its All DMG Bonus per stack, its maximum stacks and its seconds
 const infusionStingerPassiveModule = createInfusionStingerPassiveModule([0.06, 2, 6]);
-const createElementalHit = () => ({
-  element: Element.Pyro,
+const createEnemyHit = (element: Element | undefined) => ({
+  element,
   enemy,
-  kind: KitEventKind.ElementalHit as const,
+  kind: KitEventKind.EnemyHit as const,
   striker: wielder,
 });
 const getBuff = (kitEffectState: KitEffectState, attribute: Attribute): KitBuff | undefined =>
   kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === attribute);
 
 describe(createInfusionStingerPassiveModule, () => {
+  test("a physical hit the wielder deals raises no all DMG stack", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(wielder);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(undefined), context, wielder);
+
+    expect(getBuff(context.kitEffectState, Attribute.AllDamageBonus)).toBeUndefined();
+  });
+
   test("an elemental hit the wielder deals raises all DMG by the rank's amount at one stack", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wielder, { kitEffectState });
-    infusionStingerPassiveModule.onKitEvent?.(createElementalHit(), context, wielder);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
 
     expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.06);
   });
@@ -55,11 +63,11 @@ describe(createInfusionStingerPassiveModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wielder, { kitEffectState });
-    infusionStingerPassiveModule.onKitEvent?.(createElementalHit(), context, wielder);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
     stepKitSeconds(context, 1.05);
-    infusionStingerPassiveModule.onKitEvent?.(createElementalHit(), context, wielder);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
     stepKitSeconds(context, 1.05);
-    infusionStingerPassiveModule.onKitEvent?.(createElementalHit(), context, wielder);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
 
     expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.12);
   });

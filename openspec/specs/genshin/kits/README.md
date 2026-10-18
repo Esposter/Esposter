@@ -87,7 +87,7 @@ flowchart TD
   STEP --> STRIKES["strikeKitEnemies: each strike on each enemy it reaches"]
   STRIKES -->|"the hit triggered reactions"| REACTION["ReactionTriggered"]
   STRIKES -->|"the enemy took its damage, CRIT or not, defeated or not"| DAMAGE["DamageTaken"]
-  STRIKES -->|"the hit was dealt as an element"| ELEMENTAL["ElementalHit"]
+  STRIKES -->|"the hit landed on an enemy, dealt as an element where it deals one"| ENEMYHIT["EnemyHit"]
   STRIKES -->|"the hit landed on a weak point"| WEAKPOINT["WeakPointHit"]
   STRIKES -->|"the hit took the enemy's last health"| DEFEATED["EnemyDefeated"]
   STEP -->|"an elemental tick, a Lunar hit or a reach took the enemy's last health"| DEFEATED
@@ -125,7 +125,7 @@ flowchart TD
 - **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays. Resolve's stacks from another member's burst answer it.
 - **SkillUsed** carries the member that used its Elemental Skill, sent as the skill starts, as a burst is.
 - **ChargedAttackLanded** carries a charged attack of the character on the field as its first hitmark falls, whether or not it struck anything, as a normal attack does.
-- **ElementalHit** carries an enemy, the element a hit was dealt as (its own, or the striker's where it carries a gauge) and the striker, sent for each enemy the element lands on.
+- **EnemyHit** carries an enemy, the element a hit was dealt as where it deals one (its own, or the striker's where it carries a gauge) and the striker, sent for each enemy a hit lands on.
 - **WeakPointHit** carries an enemy and the striker of a hit whose `KitHit.weakPoint` is set. The strike sets the flag on an aimed hit (`KitStrike.isAimed`) to an enemy whose family has weak points the wiki states, the Ruin machines (the Automatons family, cited part by part in `services/enemy/enemyFamilyWeakPoints.ts`). Every aimed hit on them counts, as the aim's point and the exposure conditions (airborne, paralysed, specific attacks) are not modelled.
 - **EnemyDefeated** carries the enemy and the striker, the combatant that owns the damage that took its last health, if one does. A strike sends it after its `DamageTaken`; an elemental tick, a reaction's reach and a Lunar hit send it too, and only from a standing enemy, so a dead one is never defeated twice.
 - **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.

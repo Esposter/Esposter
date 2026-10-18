@@ -63,10 +63,10 @@ const createProjectionScene = (onKitEvent: Kit["onKitEvent"]) => {
   return { context, enemy, nicole, traveler };
 };
 
-const createElementalHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
+const createEnemyHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
   element: Element.Pyro,
   enemy,
-  kind: KitEventKind.ElementalHit,
+  kind: KitEventKind.EnemyHit,
   striker,
 });
 
@@ -146,13 +146,30 @@ describe(createNicoleKitBehaviour, () => {
     expect(NICOLE_KIT.burstCooldownSeconds).toBe(15);
   });
 
+  test("her burst's projection of a physical hit is dealt as her own element", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent({ element: undefined, enemy, kind: KitEventKind.EnemyHit, striker: nicole }, context);
+
+    stepKitSeconds(context, 30 / 60);
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      element: Element.Pyro,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: nicole,
+    });
+  });
+
   test("her burst's projection lands 30 frames after the hit that starts it", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const { context, enemy, nicole } = createProjectionScene(onKitEvent);
     NICOLE_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 109 / 60);
-    emitKitEvent(createElementalHit(enemy, nicole), context);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
 
     stepKitSeconds(context, 29 / 60);
     expect(countDamageTaken(onKitEvent)).toBe(0);
@@ -166,7 +183,7 @@ describe(createNicoleKitBehaviour, () => {
     const { context, enemy, nicole } = createProjectionScene(onKitEvent);
     NICOLE_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 108 / 60);
-    emitKitEvent(createElementalHit(enemy, nicole), context);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
 
     stepKitSeconds(context, 1);
     expect(countDamageTaken(onKitEvent)).toBe(0);
@@ -178,9 +195,9 @@ describe(createNicoleKitBehaviour, () => {
     const { context, enemy, nicole } = createProjectionScene(onKitEvent);
     NICOLE_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 109 / 60);
-    emitKitEvent(createElementalHit(enemy, nicole), context);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
     stepKitSeconds(context, 1);
-    emitKitEvent(createElementalHit(enemy, nicole), context);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
 
     stepKitSeconds(context, 91 / 60);
     expect(countDamageTaken(onKitEvent)).toBe(1);
@@ -194,11 +211,23 @@ describe(createNicoleKitBehaviour, () => {
     NICOLE_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 109 / 60);
     for (let hit = 0; hit < HIT_COUNT; hit++) {
-      emitKitEvent(createElementalHit(enemy, nicole), context);
+      emitKitEvent(createEnemyHit(enemy, nicole), context);
       stepKitSeconds(context, 186 / 60);
     }
 
     expect(countDamageTaken(onKitEvent)).toBe(4);
+  });
+
+  test("her burst projects a physical hit of the active character too", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent({ element: undefined, enemy, kind: KitEventKind.EnemyHit, striker: nicole }, context);
+
+    stepKitSeconds(context, 30 / 60);
+    expect(countDamageTaken(onKitEvent)).toBe(1);
   });
 
   test("her burst makes no projection for a hit by a character other than her active one", () => {
@@ -207,7 +236,7 @@ describe(createNicoleKitBehaviour, () => {
     const { context, enemy, traveler } = createProjectionScene(onKitEvent);
     NICOLE_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, 109 / 60);
-    emitKitEvent(createElementalHit(enemy, traveler), context);
+    emitKitEvent(createEnemyHit(enemy, traveler), context);
 
     stepKitSeconds(context, 1);
     expect(countDamageTaken(onKitEvent)).toBe(0);
