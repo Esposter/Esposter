@@ -5,8 +5,8 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expedition
 import type { RewardItem } from "genshin-world";
 
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
-import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
+import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {

@@ -433,3 +433,14 @@ export const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
   { id: 402_626_033, offsetSeconds: 0 },
   { id: 73_142_117, offsetSeconds: 0.075 },
 ];
+// The game's city ids a pool or a daily task is filed under, each mapped to the region the map's areas and the world's
+// Catalogue name. Nod-Krai's city is in no region, so its points draw from no stock and its tasks are left out
+export const CityIdRegionMap: Record<number, string> = {
+  1: "mondstadt",
+  2: "liyue",
+  3: "inazuma",
+  4: "sumeru",
+  5: "fontaine",
+  6: "natlan",
+  7: "snezhnaya",
+};

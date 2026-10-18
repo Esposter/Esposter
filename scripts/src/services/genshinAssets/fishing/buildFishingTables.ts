@@ -10,9 +10,9 @@ import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelF
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { Fish, FishingPool, FishReward, FishRod } from "genshin-world";
 
-import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
 import { toFishingPool, toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
