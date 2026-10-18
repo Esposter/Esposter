@@ -16,8 +16,7 @@ describe(getPlayedTalentLevels, () => {
     },
   ];
 
-  // oxlint-disable-next-line vitest/prefer-lowercase-title -- the spec names this test by its capitalised sentence, the Verify criterion
-  test("A constellation raises a talent above level ten", () => {
+  test("a constellation raises a talent above level ten", () => {
     expect.hasAssertions();
 
     expect(
