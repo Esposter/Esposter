@@ -4,7 +4,7 @@ The Survey Editor blade embeds SurveyJS Creator (`survey-creator-vue`), which [S
 
 ## Why not
 
-SurveyJS asks for a licence even for internal or non-commercial use, but its [licensing FAQ](https://surveyjs.io/faq/licensing) waives it for an open-source tool that is free to use and not intended for commercialisation. Esposter is Apache-2.0, free to use and not intended for commercialisation, so the Creator stays as it is and nothing is bought or rebuilt. Replacing it would mean writing a survey designer again — question types, logic, theming and preview — to solve a problem this project does not have. This is settled: no roadmap item or product-review gap reopens it while that stays true.
+SurveyJS asks for a licence even for internal or non-commercial use, but its [licensing FAQ](https://surveyjs.io/faq/licensing) waives it for an open-source tool that is free to use and not intended for commercialisation. Esposter is Apache-2.0, free to use, and not commercialised today, so the Creator stays as it is and nothing is bought or rebuilt. Replacing it would mean writing a survey designer again — question types, logic, theming and preview — to solve a problem this project does not have. This is settled while that stays true; the paid storage tiers on the roadmap would end it, and the revisit below covers that.
 
 ## Revisit when
 
