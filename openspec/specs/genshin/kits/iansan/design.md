@@ -11,10 +11,12 @@ Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`,
 - **Her burst's hit is a circle of 5 metres round the body at 38 frames, with 180 blunt poise, in an animation of 45 frames.** It is Electro at one unit of gauge, as gcsim's 25 durability gives it.
 - **Her plunges are provisional.** gcsim has no plunge file for Iansan, so they take the standard borrowed plunge ([how a kit is read](../README.md#how-a-kit-is-read)). A recording of them would settle it; the [roadmap](../../../../changes/genshin-roadmap/tasks.md) holds the question.
 
+- **Constellation 1 counts the points her blessing drains.** From Constellation 1, each 6 points consumed restore her 15 energy and start an 18-second cooldown, as gcsim (MIT) `iansan/cons.go`'s `c1` does on each point reduction (`skill.go`'s `reduceNightsoulPoints`). The step raises each drain as a `NightsoulPointsConsumed` event, which the kit answers, and the count of 6 is read through `checkIsAmountReached`, since sixty steps of six a second sum a residue short of six.
+
 ## Not built
 
 - **The skill's press enters the Nightsoul Blessing; the rest waits on the hook.** The press enters the blessing with 54 points for 16 seconds, which drain six a second as gcsim's do. gcsim enters it three frames after the press, and the kit enters it at the press. Her burst's points and party ATK bonus, and the Electro Swift Stormflight that swaps her charged attack, are not built.
-- **Ascension 1, Ascension 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul state hook.** Each reads the points the state holds, the state itself or the party ATK bonus.
+- **Ascension 1, Ascension 4 and Constellations 2, 4 and 6 wait on the Nightsoul state hook.** Each reads the points the state holds, the state itself or the party ATK bonus.
 
 ## Key files
 

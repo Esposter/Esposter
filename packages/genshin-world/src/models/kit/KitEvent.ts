@@ -10,6 +10,7 @@ import type { KitEnemyDefeatedEvent } from "#src/models/kit/KitEnemyDefeatedEven
 import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitMoraPickedUpEvent } from "#src/models/kit/KitMoraPickedUpEvent";
+import type { KitNightsoulPointsConsumedEvent } from "#src/models/kit/KitNightsoulPointsConsumedEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
 import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
@@ -33,6 +34,7 @@ export type KitEvent =
   | KitEnergyParticleCollectedEvent
   | KitHealthChangedEvent
   | KitMoraPickedUpEvent
+  | KitNightsoulPointsConsumedEvent
   | KitNormalAttackLandedEvent
   | KitReactionTriggeredEvent
   | KitShieldAbsorbedEvent

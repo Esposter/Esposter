@@ -54,7 +54,13 @@ describe(changeKitMemberHealth, () => {
     );
 
     expect(party.healthChanges).toStrictEqual([
-      { characterId: MEMBER_ID, healthShare: 0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },
+      {
+        bondOfLifeShare: 0,
+        characterId: MEMBER_ID,
+        healthShare: 0.25,
+        overflowHealthShare: 0,
+        sourceCharacterId: SOURCE_ID,
+      },
     ]);
   });
 
@@ -69,7 +75,13 @@ describe(changeKitMemberHealth, () => {
     );
 
     expect(party.healthChanges).toStrictEqual([
-      { characterId: MEMBER_ID, healthShare: -0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },
+      {
+        bondOfLifeShare: 0,
+        characterId: MEMBER_ID,
+        healthShare: -0.25,
+        overflowHealthShare: 0,
+        sourceCharacterId: SOURCE_ID,
+      },
     ]);
   });
 });

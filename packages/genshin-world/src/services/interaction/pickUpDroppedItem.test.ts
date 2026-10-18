@@ -72,7 +72,7 @@ describe(pickUpDroppedItem, () => {
     expect(
       pickUpDroppedItem({ count: 1, itemId: maskId }, EMPTY_INVENTORY, EMPTY_WALLET, englishNameText, materialDataMap),
     ).toStrictEqual({
-      inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1 },
+      inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },
       overflow: 0,
       wallet: EMPTY_WALLET,
     });
@@ -135,6 +135,7 @@ describe(pickUpDroppedItem, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       overflow: 0,
       wallet: EMPTY_WALLET,
@@ -199,6 +200,7 @@ describe(pickUpDroppedItem, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       overflow: 0,
       wallet: EMPTY_WALLET,

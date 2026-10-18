@@ -31,6 +31,8 @@ export interface KitHit {
   convertedPoiseDamage?: number;
   // The CRIT Rate the hit adds to its striker's as its roll is made, as a passive prices it on the strike, if it carries one
   criticalRateBonus?: number;
+  // The CRIT DMG the hit adds to its striker's as its critical damage is priced, if it carries one of its own
+  criticalDamageBonus?: number;
   // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
   damageBonus?: number;
   element?: Element;

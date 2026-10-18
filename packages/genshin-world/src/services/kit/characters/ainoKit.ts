@@ -9,6 +9,8 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
@@ -26,17 +28,28 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_SECONDS = 10;
 const CONSTELLATION_4_ENERGY = 10;
 const CONSTELLATION_4_STATUS_ID = "aino-constellation-4";
+// Constellation 2, The Principle of Transference in Gear Differentials: the water ball's Attack and Elemental Mastery shares
+// Are the dump's paramList 0.25 and 1.0, and its cooldown 5 seconds, as gcsim (MIT) aino/cons.go gives them with a 1.5 metre circle
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_ATTACK_SHARE = 0.25;
+const CONSTELLATION_2_MASTERY_SHARE = 1;
+const CONSTELLATION_2_COOLDOWN_ID = "aino-constellation-2-cooldown";
+const CONSTELLATION_2_COOLDOWN_SECONDS = 5;
+const CONSTELLATION_2_RADIUS = 1.5;
+// The field Precision Hydronic Cooler casts, which Constellation 2 reads for as long as it stands
+const BURST_FIELD_ID = "aino-precision-hydronic-cooler";
 
 export const AINO_CHARACTER_ID = 10_000_121;
 
 // Aino's behaviour: Cool Your Jets Ducky casts a field following the body, which drops a Water Ball every interval from
 // Its first tick to its last, and Ascension 4 adds half her Elemental Mastery to each ball's damage. Ascension 1 at
 // Ascendant Gleam drops the balls faster and wider, read as the burst is cast. Constellation 4 gives her 10 energy on each
-// Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Not built yet: the internal cooldown gcsim gives
-// Those Moonsign hits, which the kit has no tag for, and Constellation 6's Lunar DMG bonus, which waits on the Lunar hook;
-// Constellation 2's ball on each enemy another member hits while the burst lasts, which waits on a hook that reads another
-// Member's hits; Constellation 1's Elemental Mastery on the active member, which the kit does not re-add on each swap.
-// Musecatcher's hold is not built, as gcsim does not implement it either
+// Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 2 queues a water ball on each enemy
+// Her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball strikes
+// The enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Not built yet: the
+// Internal cooldown gcsim gives those Moonsign hits, which the kit has no tag for, and Constellation 6's Lunar DMG bonus,
+// Which waits on the Lunar hook; Constellation 1's Elemental Mastery on the active member, which the kit does not re-add on
+// Each swap. Musecatcher's hold is not built, as gcsim does not implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const waterBall = readHit("waterBall", {
@@ -53,6 +66,15 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
   const ascendantWaterBall: KitHit = {
     ...waterBall,
     hitArea: { ...waterBall.hitArea, radius: burstRadius + ASCENSION_1_WATER_BALL_RADIUS },
+  };
+  // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the burst's
+  const constellation2WaterBall: KitHit = {
+    ...waterBall,
+    additiveBaseDamageBonus: (combatant) =>
+      (waterBall.additiveBaseDamageBonus?.(combatant) ?? 0) +
+      combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * CONSTELLATION_2_MASTERY_SHARE,
+    hitArea: { ...waterBall.hitArea, radius: CONSTELLATION_2_RADIUS },
+    talentMultiplier: CONSTELLATION_2_ATTACK_SHARE,
   };
   const skillHits = kit.elementalSkill.hits;
   return {
@@ -74,15 +96,32 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
             castKitSummon(tickKitEffectState, { facing, height, position: burstField.centre }, combatant, [
               isAscendantBurst ? ascendantWaterBall : waterBall,
             ]),
+          id: BURST_FIELD_ID,
           radius: burstRadius,
           secondsRemaining: burstFirstTickSeconds + burstSeconds,
           tickIntervalSeconds: isAscendantBurst ? ASCENSION_1_WATER_BALL_INTERVAL_SECONDS : burstTickIntervalSeconds,
         });
       },
     },
-    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+    onKitEvent: (event, context, combatant) => {
+      const { activeCombatant, kitEffectState, party } = context;
+      if (event.kind !== KitEventKind.DamageTaken) return;
       if (
-        event.kind !== KitEventKind.DamageTaken ||
+        combatant.constellationCount >= CONSTELLATION_2 &&
+        activeCombatant.characterId !== combatant.characterId &&
+        event.striker.characterId === activeCombatant.characterId &&
+        kitEffectState.effects.some(
+          (effect) => effect.kind === "field" && effect.id === BURST_FIELD_ID && effect.secondsRemaining > 0,
+        ) &&
+        startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          CONSTELLATION_2_COOLDOWN_ID,
+          CONSTELLATION_2_COOLDOWN_SECONDS,
+        )
+      )
+        queueKitPassiveHit(context, combatant, constellation2WaterBall, event.enemy);
+      if (
         combatant.constellationCount < CONSTELLATION_4 ||
         event.striker.characterId !== combatant.characterId ||
         !skillHits.includes(event.hit) ||
