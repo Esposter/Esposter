@@ -1,7 +1,7 @@
 ## 1. Grocery ingredients into the bag
 
-- [ ] 1.1 Publish the grocery's eight ingredients into the item definitions with their names. Verify: `pnpm -C scripts genshin:assets items` republishes the materials record, and `pnpm -C scripts genshin:text names` adds the ingredients' names to the name chunks, with each of the grocery's eight ingredients listed in the output.
-- [ ] 1.2 Add a grocery ingredient to the bag on purchase and refuse a purchase the bag cannot hold whole. Verify: buyShopGood.test.ts, named after the scenarios 'Buying a grocery ingredient into an empty bag adds it to the bag' and 'A purchase the bag cannot hold whole is refused', written first and seen failing.
+- [x] 1.1 Publish the grocery's eight ingredients into the item definitions with their names. Verify: `pnpm -C scripts genshin:assets items` republishes the materials record, and `pnpm -C scripts genshin:text names` adds the ingredients' names to the name chunks, with each of the grocery's eight ingredients listed in the output.
+- [x] 1.2 Add a grocery ingredient to the bag on purchase and refuse a purchase the bag cannot hold whole. Verify: buyShopGood.test.ts, named after the scenarios 'Buying a grocery ingredient into an empty bag adds it to the bag' and 'A purchase the bag cannot hold whole is refused', written first and seen failing.
 
 ## 2. Restocks and sale dates
 
