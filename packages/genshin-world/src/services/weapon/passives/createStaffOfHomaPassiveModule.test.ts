@@ -23,11 +23,10 @@ describe(createStaffOfHomaPassiveModule, () => {
     level: 1,
   };
 
-  test("the wielder's HP is raised by the rank's percentage and its ATK by the rank's share of Max HP at full HP", () => {
+  test("the rank's HP is the table's line, so at full HP the passive keeps only the ATK share of Max HP", () => {
     expect.hasAssertions();
 
-    expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
+    expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([
       { amount: 0.008 * 10000, attribute: Attribute.Attack },
     ]);
   });
@@ -36,7 +35,6 @@ describe(createStaffOfHomaPassiveModule, () => {
     expect.hasAssertions();
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.4, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
       { amount: (0.008 + 0.01) * 10000, attribute: Attribute.Attack },
     ]);
   });
@@ -45,7 +43,6 @@ describe(createStaffOfHomaPassiveModule, () => {
     expect.hasAssertions();
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.5, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
       { amount: 0.008 * 10000, attribute: Attribute.Attack },
     ]);
   });
