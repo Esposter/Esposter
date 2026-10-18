@@ -24,7 +24,8 @@ export const TIME_TRIAL_CHALLENGE_TARGET_COUNT = 1;
 // Provisional: a stand-in for the marker's interaction until a recording of a challenge started measures its reach
 export const TIME_TRIAL_MARKER_REACH_DISTANCE = 10;
 // The chest a solved Time Trial Challenge spawns, at its marker: the Chest page lists Time Trial chests under Common,
-// Exquisite and Precious, and Exquisite is the kind the Seelie chest takes, so it stands in here too, for the design to confirm
+// Exquisite and Precious, and Exquisite is the kind the Seelie chest takes, so it stands in here too. The main session
+// Confirmed it, provisional until a recording shows the chest
 export const TIME_TRIAL_CHEST_KIND = ChestKind.Exquisite;
 // A Seelie is followed while the character stands within this many metres of it on the ground
 // Provisional: a stand-in until a recording of a Seelie led home measures it, on the Recordings owed list

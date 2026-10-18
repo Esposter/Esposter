@@ -15,8 +15,8 @@ import { computed, shallowRef } from "vue";
 
 // Mondstadt's chests, fetched by their key as the world opens, and each unopened one offered to open on the ground
 // Beneath its point. Opening a chest rolls its Primogems and Mora into the wallet, pays its Adventure EXP to the
-// Adventure Rank and pours its drops out where it stands, and the chest is kept as opened. A load that fails is logged
-// And left off, so no chest is offered rather than a wrong one
+// Adventure Rank and pours its drops out where it stands, and the chest is kept as opened. The chests the puzzles spawn
+// Are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather than a wrong one
 export const useWorldChests = ({
   events,
   gainWorldAdventureExp,
@@ -25,6 +25,7 @@ export const useWorldChests = ({
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
+  puzzleChestPlaces,
   setWallet,
   wallet,
 }: {
@@ -35,6 +36,7 @@ export const useWorldChests = ({
   getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
+  puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
@@ -48,12 +50,13 @@ export const useWorldChests = ({
       console.error(error);
     },
   );
+  const worldChestPlaces = computed(() => [...chestPlaces.value, ...puzzleChestPlaces.value]);
   const chestInteractables = computed<Interactable[]>(() =>
-    computeChestInteractables(chestPlaces.value, openedChestIds.value, gameText, getGroundHeight),
+    computeChestInteractables(worldChestPlaces.value, openedChestIds.value, gameText, getGroundHeight),
   );
   // The chest a row names is opened once: its wallet and its drops are applied, and it is kept as opened
   const openChestById = (chestId: string, random: () => number) => {
-    const chestPlace = chestPlaces.value.find(({ id }) => id === chestId);
+    const chestPlace = worldChestPlaces.value.find(({ id }) => id === chestId);
     if (!chestPlace) return;
     const previousOpenedChestIds = openedChestIds.value;
     const opening = openChest(chestPlace, previousOpenedChestIds, wallet.value, random);
