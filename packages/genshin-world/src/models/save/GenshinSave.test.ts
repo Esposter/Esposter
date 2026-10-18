@@ -27,6 +27,7 @@ import {
   MAX_STATUE_REGION_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
+  MAX_WISH_HISTORY_COUNT,
 } from "#src/services/save/constants";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
@@ -171,6 +172,11 @@ describe("genshinSaveSchema", () => {
         primogemResinRefillCount: maxNumber,
         primogemResinRefillDay: epoch.toZonedDateTimeISO("UTC").toPlainDate().toString(),
       },
+      wishHistory: Array.from({ length: MAX_WISH_HISTORY_COUNT }, () => ({
+        bannerKind: BannerKind.CharacterEvent,
+        itemId: maxNumber,
+        time: maxInstant,
+      })),
       wishPity: Object.fromEntries(
         Object.values(BannerKind).map((bannerKind) => [
           bannerKind,

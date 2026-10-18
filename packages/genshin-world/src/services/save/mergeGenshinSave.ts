@@ -9,6 +9,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { BannerKind } from "genshin-interface/save";
+import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished
@@ -168,6 +169,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? Math.max(account.wallet.primogemResinRefillCount, guest.wallet.primogemResinRefillCount)
         : account.wallet.primogemResinRefillCount,
     },
+    wishHistory: appendWishHistory(account.wishHistory, guest.wishHistory, Temporal.Now.instant()),
     wishPity,
     worldLevelAdjustment: checkIsLaterWorldLevelAdjustment(guest.worldLevelAdjustment, account.worldLevelAdjustment)
       ? guest.worldLevelAdjustment

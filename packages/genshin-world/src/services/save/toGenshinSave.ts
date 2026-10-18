@@ -32,6 +32,7 @@ export const toGenshinSave = ({
   travelerName,
   unlockedLandmarkIds,
   wallet,
+  wishHistory,
   wishPityMap,
   worldLevelAdjustment,
 }: GenshinSaveState): GenshinSave => ({
@@ -55,6 +56,7 @@ export const toGenshinSave = ({
   travelerName,
   unlockedLandmarks: [...unlockedLandmarkIds],
   wallet: toWalletSave(wallet),
+  wishHistory,
   wishPity: wishPityMap,
   worldLevelAdjustment: toWorldLevelAdjustmentSave(worldLevelAdjustment),
 });

@@ -15,8 +15,14 @@ import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave"
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
+import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
-import { MAX_CHARACTER_COUNT, MAX_GENSHIN_SAVE_LENGTH, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
+import {
+  MAX_CHARACTER_COUNT,
+  MAX_GENSHIN_SAVE_LENGTH,
+  MAX_TRAVELER_NAME_LENGTH,
+  MAX_WISH_HISTORY_COUNT,
+} from "#src/services/save/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -47,6 +53,8 @@ export const genshinSaveSchema = z
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,
+    // The draws of the wish history, the newest last, each within the window the wish screen keeps
+    wishHistory: z.array(wishDrawSaveSchema).max(MAX_WISH_HISTORY_COUNT),
     wishPity: wishPityMapSaveSchema,
     worldLevelAdjustment: worldLevelAdjustmentSaveSchema,
   })

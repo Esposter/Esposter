@@ -167,6 +167,7 @@ const {
   setInventory,
   setWallet,
   wallet,
+  wishHistory,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
 // A destroy's bag and wallet are applied together, since what it returns may be currency
@@ -471,6 +472,7 @@ useWorldSaveSync({
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
+    wishHistory: wishHistory.value,
     wishPityMap: wishPityMap.value,
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
@@ -953,6 +955,7 @@ defineExpose({ jumpTo, readCameraPosition });
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
           v-model:pity-map="wishPityMap"
+          v-model:wish-history="wishHistory"
           v-model:wallet="wallet"
           :game-text
           :inventory
