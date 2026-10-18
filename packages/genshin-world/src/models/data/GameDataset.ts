@@ -13,6 +13,7 @@ export enum GameDataset {
   Cooking = "cooking",
   Crafting = "crafting",
   CraftingBenchPlaces = "craftingBenchPlaces",
+  Domains = "domains",
   Enemies = "enemies",
   Expeditions = "expeditions",
   Exploration = "exploration",
