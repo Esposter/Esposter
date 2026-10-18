@@ -11,8 +11,9 @@ import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseSce
 import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
-// A region's ground in pieces, one fit per area its catalogue outlines, each named by its area so `--only` runs one. The
-// Region is fitted once, whichever area is asked for, and an area's piece publishes only when the whole region qualifies
+// A region's ground in pieces, one fit per area its catalogue outlines, each named `ground/<area>` so `--only ground`
+// Runs them all and `--only ground/<area>` runs one. The Region is fitted once, whichever area is asked for, and an
+// Area's piece publishes only when the whole region qualifies
 const readRegionGroundFits = async (
   region: DerivedAssetComponent,
 ): Promise<Record<string, () => Promise<GameDataBuild>>> => {
@@ -20,7 +21,7 @@ const readRegionGroundFits = async (
   const fitRegion = (): Promise<RegionGroundFit> => (fitted ??= fitRegionGroundPieces(region));
   return Object.fromEntries(
     (await readGroundPieceAreas(region)).map(({ id }) => [
-      id,
+      `ground/${id}`,
       async () => {
         const fit = await fitRegion();
         const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };
