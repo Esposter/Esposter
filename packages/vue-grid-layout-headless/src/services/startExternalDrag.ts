@@ -5,6 +5,8 @@ import { findGridAt } from "#src/services/findGridAt";
 // An item from outside every grid, such as a palette entry, is dragged by its element: the release lands it on the grid under
 // The pointer, and a release over no grid drops it
 export const startExternalDrag = (event: PointerEvent, item: Pick<GridItem, "h" | "id" | "w">): void => {
+  // Only the primary button starts a drag, since a touch or pen contact reports button 0 too
+  if (event.button !== 0) return;
   if (!(event.currentTarget instanceof HTMLElement)) return;
 
   const element = event.currentTarget;

@@ -89,6 +89,8 @@ export const useGridLayout = <T extends GridItem>(
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
   const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {
+    // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
+    if (event.button !== 0) return;
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
     if (gesture.value && gesture.value.pointerId !== event.pointerId) return;

@@ -595,6 +595,19 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  test("a press from a secondary button starts no drag", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    const tile = wrapper.get(".tile");
+    await tile.trigger("pointerdown", { button: 2, clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 2, clientX: cellPitch, clientY: 0, pointerId });
+    await tile.trigger("pointerup", { clientX: cellPitch, clientY: 0, pointerId });
+
+    expect(wrapper.find(".placeholder").exists()).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
   test("a press whose pointer was released outside the grid starts no drag", async () => {
     expect.hasAssertions();
 
