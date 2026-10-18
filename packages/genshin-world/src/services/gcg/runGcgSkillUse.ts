@@ -34,7 +34,6 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
   const dealt = runGcgSkillEffect(context, skill, damage);
-  side.usedSkillIds.push(skill.id);
   runGcgOnSkillUsed(context, fieldCards, skill, dealt);
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)

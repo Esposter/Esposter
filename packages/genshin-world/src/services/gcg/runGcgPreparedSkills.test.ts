@@ -97,4 +97,16 @@ describe(runGcgPreparedSkills, () => {
       defenderHp: 6,
     });
   });
+
+  test("should record a prepared skill as used this round, as a skill its character uses is", () => {
+    expect.hasAssertions();
+
+    const attacker = createSideState(createCharacterState());
+    attacker.preparedSkills = [{ characterIndex: 0, skill: PREPARED_SKILL }];
+    const duel = createDuel(attacker, createSideState(createCharacterState()));
+
+    runGcgPreparedSkills(duel, 0);
+
+    expect(attacker.usedSkillIds).toStrictEqual([PREPARED_SKILL.id]);
+  });
 });

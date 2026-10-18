@@ -5,9 +5,11 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { takeOne } from "@esposter/shared";
 
 // A skill's effect as it lands: its damage dealt with the field's bonuses, its standby piercing, then its after-effect, which
-// Reads the hits. Returns the hits the skill landed, its damage and its standby piercing alike
+// Reads the hits, and the skill recorded as used this round. Returns the hits the skill landed, its damage and its standby
+// Piercing alike. A prepared skill is recorded as used too, provisionally, since the wiki does not say whether it counts
 export const runGcgSkillEffect = (
   context: GcgEffectContext,
   skill: GcgSkill,
@@ -20,5 +22,6 @@ export const runGcgSkillEffect = (
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
   if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
   skillModule?.afterDamage?.(context);
+  takeOne(context.duel.sides, context.sideIndex).usedSkillIds.push(skill.id);
   return dealt;
 };

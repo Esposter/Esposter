@@ -244,6 +244,12 @@ A side's prepared skills SHALL run when the turn passes to that side, before its
 - **WHEN** Electro Hypostasis keeps taking actions
 - **THEN** Paper deals nothing and stays prepared, and it deals its 3 Electro DMG when the turn next passes to that side
 
+#### Scenario: A prepared skill is recorded as used this round
+
+- **GIVEN** Electro Hypostasis prepared Paper, and the turn passes to its side
+- **WHEN** Paper runs
+- **THEN** Paper is recorded as used this round, as a skill its character uses is
+
 #### Scenario: A prepared Elemental Skill spends the holder's Crowfeather Cover usage
 
 - **GIVEN** Electro Hypostasis has a Crowfeather Cover and its prepared Paper is due
