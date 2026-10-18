@@ -51,7 +51,7 @@ describe("weaponScreen", () => {
     expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(`${heldWeapon.refinement}`);
   });
 
-  // The Enhance tab's name, the first action the weapon screen offers, in the reader's game language
+  // The tabs the weapon screen offers in the reader's game language: Enhance, Refine, and Ascend at the level cap
   test("the action labels read in the reader's game language", async () => {
     expect.hasAssertions();
 
@@ -59,6 +59,11 @@ describe("weaponScreen", () => {
     render(WeaponScreenContainer, { props: { ...props, gameText } });
 
     await expect.element(page.getByText(gameText[GameTextKey.WeaponEnhance], { exact: true }).first()).toBeVisible();
+    await expect.element(page.getByText(gameText[GameTextKey.WeaponRefine], { exact: true }).first()).toBeVisible();
+
+    render(WeaponScreenContainer, { props: { ...props, ...variants.atCap, gameText } });
+
+    await expect.element(page.getByText(gameText[GameTextKey.WeaponAscend], { exact: true }).first()).toBeVisible();
   });
 
   // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is written back
