@@ -25,6 +25,9 @@ export interface GcgCardModule {
   modifyDamageReceived?: (context: GcgEffectContext, value: number, zoneCard: GcgZoneCard) => number;
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
+  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and the
+  // Skill's user is named by the hits it dealt, not by the context
+  onAnySkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;

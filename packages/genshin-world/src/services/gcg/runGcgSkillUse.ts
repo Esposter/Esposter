@@ -14,9 +14,10 @@ import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
 // Runs a skill's effect for its active character, without paying for it: a shared damage effect, or the character's own
-// Script. Then the skill is recorded as used this round, the field's on-use hooks run, and the active character's passives
-// Hear the use. Returns false, with nothing run, when the skill's effect is one no module covers. The cards that hear the
-// Skill are those on the field when it is used, so a card the skill creates hears the next skill
+// Script. Then the skill is recorded as used this round, the field's on-use hooks run, the cards on either side's field hear
+// The use through their any-side hooks, and the active character's passives hear it. Returns false, with nothing run, when
+// The skill's effect is one no module covers. The cards that hear the skill are those on each field when it is used, so a
+// Card the skill creates hears the next skill
 export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): boolean => {
   const context: GcgEffectContext = { ...baseContext, skill };
   const skillModule = GcgEffectNameSkillModuleMap.get(skill.effect);
@@ -24,6 +25,10 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   if (damage === undefined && !skillModule?.afterDamage) return false;
   const side = takeOne(context.duel.sides, context.sideIndex);
   const fieldCards = listGcgFieldCards(side, side.activeIndex);
+  const fieldOfEachSide = context.duel.sides.map((sideState) => ({
+    sideState,
+    zoneCards: listGcgFieldCards(sideState, undefined),
+  }));
   const user = side.characters.at(side.activeIndex);
   const dealt: GcgDealtDamage[] = damage ? dealGcgSkillDamage(context, damage) : [];
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
@@ -40,9 +45,17 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
     );
     if (skillDamage) applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule);
   }
+  for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
+    for (const zoneCard of zoneCards)
+      GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
+        { ...context, characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard), sideIndex },
+        skill,
+        zoneCard,
+        dealt,
+      );
   for (const passive of user?.character.skills ?? [])
     if (passive.kind === GcgSkillKind.Passive)
       GcgEffectNameSkillModuleMap.get(passive.effect)?.afterSkillUsed?.(context);
-  pruneGcgZoneCards(side);
+  for (const sideState of context.duel.sides) pruneGcgZoneCards(sideState);
   return true;
 };
