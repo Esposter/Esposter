@@ -119,7 +119,7 @@ describe(buildItems, () => {
     expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
   });
 
-  test("throws on an item the material table gives no type, rather than publishing it untyped", async () => {
+  test("leaves out an item the material table gives no type, as the dump leaves out MATERIAL_NONE", async () => {
     expect.hasAssertions();
     const materialTable = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
     vi.mocked(readExcelTable).mockReturnValue([
@@ -127,8 +127,11 @@ describe(buildItems, () => {
       { ...materialRows[1], materialType: undefined },
     ]);
 
-    await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: 107010, has no material type in the material table]`,
-    );
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).not.toContain(TREE_ITEM_ID);
+    expect(ids.map(({ id }) => id)).toContain(TREE_REWARD_ITEM_ID);
   });
 });

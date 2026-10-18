@@ -2,6 +2,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
+import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -22,8 +23,9 @@ import { z } from "zod";
 // Each read from the game's Material table with its name's text id, which `genshin:text names` writes into the name-text
 // Chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is
 // Taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table.
-// The recipes and the levels are the records their steps published, read from the dev account. An item the table lacks,
-// Or gives no type, is an error. Returns the record the materials publish under
+// The recipes and the levels are the records their steps published, read from the dev account. An item the table lacks
+// Is an error. An item the table gives no type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader
+// Leaves such an item out. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -55,20 +57,22 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
     .toSorted((firstId, secondId) => firstId - secondId);
-  const items = itemIds.map((itemId) => {
+  const items = itemIds.flatMap((itemId) => {
     const materialRow = materialRows.find(({ id }) => id === itemId);
     if (!materialRow)
       throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the material table");
-    if (materialRow.materialType === undefined)
-      throw new InvalidOperationError(Operation.Read, String(itemId), "has no material type in the material table");
-    return {
-      id: materialRow.id,
-      materialType: materialRow.materialType,
-      nameTextId: String(materialRow.nameTextMapHash),
-      rank: materialRow.rank,
-      rarity: materialRow.rankLevel,
-      stackLimit: materialRow.stackLimit,
-    };
+    const { materialType = MATERIAL_TYPE_NONE } = materialRow;
+    if (materialType === MATERIAL_TYPE_NONE) return [];
+    return [
+      {
+        id: materialRow.id,
+        materialType,
+        nameTextId: String(materialRow.nameTextMapHash),
+        rank: materialRow.rank,
+        rarity: materialRow.rankLevel,
+        stackLimit: materialRow.stackLimit,
+      },
+    ];
   });
   return { [`${GameDataset.Items}/materials`]: items };
 };
