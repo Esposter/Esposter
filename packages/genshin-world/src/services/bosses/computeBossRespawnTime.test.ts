@@ -8,12 +8,12 @@ describe(computeBossRespawnTime, () => {
   test("a claimed boss comes back its respawn duration after the claim", () => {
     expect.hasAssertions();
 
-    expect(computeBossRespawnTime(epoch)?.toString()).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
+    expect(computeBossRespawnTime([epoch])?.toString()).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
   });
 
   test("an unclaimed boss has no respawn time, staying defeated until the player teleports away", () => {
     expect.hasAssertions();
 
-    expect(computeBossRespawnTime(undefined)).toBeUndefined();
+    expect(computeBossRespawnTime([])).toBeUndefined();
   });
 });
