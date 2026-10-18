@@ -112,8 +112,7 @@ describe(createTighnariKitBehaviour, () => {
 
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
     TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
       {
