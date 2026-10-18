@@ -2,6 +2,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { astableAnemohypostasisCreation } from "#src/services/gcg/cards/astableAnemohypostasisCreation";
 import { blusteringBlade } from "#src/services/gcg/cards/blusteringBlade";
+import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { chonghuasLayeredFrost } from "#src/services/gcg/cards/chonghuasLayeredFrost";
 import { clawAndThunder } from "#src/services/gcg/cards/clawAndThunder";
 import { dandelionBreeze } from "#src/services/gcg/cards/dandelionBreeze";
@@ -68,6 +69,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
   ["Char_Skill_15023", dandelionBreeze],
+  ["Char_Skill_16022", breastplate],
   ["Char_Skill_17012", floralBrush],
   ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],

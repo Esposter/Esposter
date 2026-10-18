@@ -24,6 +24,7 @@ import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalRes
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
+import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
@@ -125,6 +126,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
   [116_011, jadeScreen],
+  [116_021, fullPlate],
   [117_011, cuileinAnbar],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
