@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 92 },
+  "burst.hits.0.hitmarkFrames": { "file": "burst.go", "line": 38, "source": "Gcsim", "value": 0 },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.burstHeal": { "cause": "Unclassified", "value": 97 },
@@ -158,7 +158,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.surgingBlade.hitmarkFrames": { "cause": "DiffersFromSource", "value": 83 },
+  "hits.surgingBlade.hitmarkFrames": { "file": "skill.go", "line": 90, "source": "Gcsim", "value": 0 },
   "hits.surgingBlade.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 11232 } },
   "hits.surgingBlade.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 47.95 },
