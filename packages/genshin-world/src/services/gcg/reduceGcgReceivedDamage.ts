@@ -13,6 +13,11 @@ export const reduceGcgReceivedDamage = (duel: GcgDuel, sideIndex: number, damage
   let value = damage.value;
   for (const zoneCard of listGcgFieldCards(side, side.activeIndex))
     value =
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.modifyDamageReceived?.({ duel, sideIndex }, value, zoneCard) ?? value;
+      GcgCardIdModuleMap.get(zoneCard.cardId)?.modifyDamageReceived?.(
+        { duel, sideIndex },
+        value,
+        zoneCard,
+        damage.damageType,
+      ) ?? value;
   return { ...damage, value };
 };

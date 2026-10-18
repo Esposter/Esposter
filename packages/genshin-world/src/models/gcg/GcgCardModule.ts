@@ -24,7 +24,13 @@ export interface GcgCardModule {
   isCombatAction?: boolean;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
   modifyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
-  modifyDamageReceived?: (context: GcgEffectContext, value: number, zoneCard: GcgZoneCard) => number;
+  // The damage the active character takes, as a number, and the element or kind of it, which a card reads when it reduces one kind alone
+  modifyDamageReceived?: (
+    context: GcgEffectContext,
+    value: number,
+    zoneCard: GcgZoneCard,
+    damageType: GcgDamage["damageType"],
+  ) => number;
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and the
