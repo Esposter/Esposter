@@ -131,7 +131,9 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     const talkIds = new Set([
       ...offerTalkIds.map(Number),
       ...steps.flatMap(({ objectives }) =>
-        objectives.filter(({ kind }) => kind === QuestObjectiveKind.TalkTo).map(({ targetId }) => Number(targetId)),
+        objectives
+          .filter(({ kind }) => kind === QuestObjectiveKind.TalkTo)
+          .flatMap(({ targetIds }) => targetIds.map(Number)),
       ),
     ]);
     return questSchema.parse({

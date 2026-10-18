@@ -84,7 +84,11 @@ export const props = {
     parentQuestIds: [],
     rewards: [],
     steps: [
-      { id: "albedo", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "albedoStep" },
+      {
+        id: "albedo",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }],
+        textId: "albedoStep",
+      },
     ],
     talks: [],
     titleTextId: "albedo",
