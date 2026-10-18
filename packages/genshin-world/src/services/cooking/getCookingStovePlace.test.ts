@@ -1,6 +1,7 @@
 import type { SceneGroups } from "#src/models/sceneGroup/SceneGroups";
 
 import { SceneGroupSource } from "#src/models/sceneGroup/SceneGroupSource";
+import { MONDSTADT_COOKING_STOVE_BUILDING_NAME } from "#src/services/cooking/constants";
 import { getCookingStovePlace } from "#src/services/cooking/getCookingStovePlace";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +10,7 @@ describe(getCookingStovePlace, () => {
   const sceneGroups: SceneGroups = {
     buildings: {
       "1": { name: "Alchemy", place: { position: { x: 1, z: 2 }, source: SceneGroupSource.ScenePoints } },
-      "2": { name: "Restaurant", place },
+      "2": { name: MONDSTADT_COOKING_STOVE_BUILDING_NAME, place },
     },
     groups: {},
   };
@@ -17,7 +18,7 @@ describe(getCookingStovePlace, () => {
   test("the stove stands at its recorded place", () => {
     expect.hasAssertions();
 
-    expect(getCookingStovePlace(sceneGroups, "Restaurant")).toStrictEqual(place);
+    expect(getCookingStovePlace(sceneGroups, MONDSTADT_COOKING_STOVE_BUILDING_NAME)).toStrictEqual(place);
   });
 
   test("a city with no stove record has none", () => {
