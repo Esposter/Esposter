@@ -8,6 +8,7 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, { burst: readonly 
     [10_000_126, { burst: ["Skill 1-Hit DMG", "Skill 2-Hit DMG"], skill: [] }],
     // Illuga
     [10_000_127, { burst: ["Skill DMG"], skill: ["Press DMG"] }],
-    // Vesna
-    [10_000_143, { burst: ["Spirit Blade DMG"], skill: ["Skill DMG"] }],
+    // Vesna's skill reads no label here, since the wiki row joined to it gives an internal cooldown tag no
+    // InternalCooldownTag holds, `Vesna Elemental Skill Start`, so its multiplier stays in her overlay
+    [10_000_143, { burst: ["Spirit Blade DMG"], skill: [] }],
   ]);
