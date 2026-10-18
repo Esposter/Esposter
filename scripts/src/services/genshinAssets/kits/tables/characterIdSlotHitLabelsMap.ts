@@ -109,7 +109,10 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         "skillHolds.0.action": { combatTalent: SKILL, labels: ["Hold DMG"] },
         skill: { combatTalent: SKILL, labels: ["Press DMG"] },
       },
-      values: { "skillHolds.0.cooldownSeconds": { combatTalent: SKILL, label: "CD" } },
+      values: {
+        "parameters.nightingaleSongGeoDamageBonus": { combatTalent: BURST, label: "Geo DMG Bonus" },
+        "skillHolds.0.cooldownSeconds": { combatTalent: SKILL, label: "CD" },
+      },
     },
   ],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
