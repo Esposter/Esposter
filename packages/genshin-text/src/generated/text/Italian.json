@@ -73,6 +73,7 @@
   "1737243758": "ATTENZIONE: LEGGI PRIMA DI GIOCARE",
   "1747175596": "Pezzo di ferro bianco",
   "1761418508": "Fiore del lutto",
+  "1809596508": "Comincia la preparazione",
   "1823058028": "Fiore Gelolume",
   "1859043748": "Conchiglia di Béryl",
   "1860729186": "Premi per aprire",
@@ -379,6 +380,7 @@
   "UI_MAPMARK_MarkGoddess_TITLE": "Statua dei Sette",
   "UI_MAPMARK_MarkTransPoint_TITLE": "Portale di teletrasporto",
   "UI_MAP_AREA1_TITLE_7": "Mondstadt",
+  "UI_PC_Quick_Switch": "Cambia",
   "UI_PIC_MAIN_PCPS_C": "Scatta foto",
   "UI_PLAYER_PROFILE_CHARACTER_NEW": "Archivio personaggi",
   "UI_PLAYER_PROFILE_MAIL": "Posta",
@@ -530,5 +532,6 @@
   "UI_WORLDLEVEL_TITLE": "Livello del mondo",
   "UI_WORLDLEVEL_UP_BUTTON": "Ripristina livello del mondo",
   "VIDEO_RETREAT": "Indietro",
+  "WIDGET_QUICK_SWITCH_GUIDE2_2": "Seleziona un gadget con cui effettuare il cambio rapido",
   "tips_enter_game": "Ti diamo il benvenuto, %s!"
 }

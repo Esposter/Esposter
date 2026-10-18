@@ -43,8 +43,8 @@ export enum GameTextKey {
   AttributeBaseAttack = "FIGHT_PROP_BASE_ATTACK",
   AttributeBaseDefense = "FIGHT_PROP_BASE_DEFENSE",
   AttributeBaseHealth = "FIGHT_PROP_BASE_HP",
-  AttributeCriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   AttributeCooldownReduction = "FIGHT_PROP_SKILL_CD_MINUS_RATIO",
+  AttributeCriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   AttributeCriticalRate = "FIGHT_PROP_CRITICAL",
   AttributeCryoDamageBonus = "FIGHT_PROP_ICE_ADD_HURT",
   AttributeCryoResistance = "FIGHT_PROP_ICE_SUB_HURT",
@@ -93,10 +93,13 @@ export enum GameTextKey {
   CandlecapMushroom = "767225220",
   Carrot = "3407195260",
   Cecilia = "3828726124",
+  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
+  ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
   CharacterArtifacts = "UI_STC_CHARACTERPAGE_RELIC",
+  CharacterAscend = "UI_STC_CHARACTER_PAGE_STAR_UP",
   CharacterAttributes = "UI_STC_CHARACTER_PAGE_AVATAR",
   CharacterConstellation = "UI_STC_CHARACTERPAGE_TALENT",
   CharacterDetails = "UI_CHARACTER_DETAIL",
@@ -128,8 +131,8 @@ export enum GameTextKey {
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // A dialog's action that goes ahead, the generic word the game's own dialogs share beside Cancel
   Confirm = "UI_BEYOND_CONFIRM",
-  // The quit prompt's Continue Game label, which the two-choice prompt no longer draws
-  ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
+  // The button that makes a whole batch of a dish once its proficiency is full
+  CookingAutoCook = "UI_COOKING_QTE_AUTO_MAKE_BUTTON",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
@@ -222,6 +225,8 @@ export enum GameTextKey {
   ForgeTitle = "UI_FORGE_PAGE_TITLE",
   ForgeTotalTime = "UI_FORGE_PAGE_NEED_TIME",
   Fowl = "1695194124",
+  // The claim prompt's row that restores Original Resin with a Fragile Resin, by the game's own words for it
+  FragileResinRestore = "UI_GUIDE_FRAGILE_RESIN",
   Friends = "UI_FRIEND_TITLE",
   Friendship = "3501231455",
   // The Frostbearing Tree's name on its prompt, as the game's own main-interface title says it
@@ -361,8 +366,8 @@ export enum GameTextKey {
   // The Luxurious Chest, the kind the wiki places in the most hidden spots, as the game names it
   LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
-
   Mail = "UI_PLAYER_PROFILE_MAIL",
+
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
   MasterlessStardust = "3899400612",
@@ -409,18 +414,20 @@ export enum GameTextKey {
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
   Pinecone = "4200020428",
+  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
+  PlayerDefaultName = "Player_Default_Name",
   // The game over screen's title, once every member of the deployed team has fallen
   PlayerDieNone = "PlayerDieNone",
   // The prompt asking the player for the next member after a fall, in the game's words for a character to select
   PleaseSelectCharacter = "UI_ACTIVITY_WEEK_ACTIVE_UNSELECTED_TIPS",
-  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
-  PlayerDefaultName = "Player_Default_Name",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
   PreciousChest = "3576739246",
   PressToOpen = "1860729186",
   Primogem = "2696654964",
+  // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
+  ProcessingStart = "1809596508",
   PyroSigil = "4277114300",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",
@@ -447,6 +454,9 @@ export enum GameTextKey {
   QuestsInProgress = "UI_TEXT_DOING",
   // Party Setup's button that fills the team's empty slots with the next characters
   QuickSetup = "UI_BUTTON_FAST_TEAM",
+  // The quick swap menu's prompt over its slots while Z is held, and the word on its key that switches to the slot chosen
+  QuickSwapSelect = "WIDGET_QUICK_SWITCH_GUIDE2_2",
+  QuickSwapSwitch = "UI_PC_Quick_Switch",
   // The quit prompt's question, which the game asks before the player leaves
   QuitConfirmQuestion = "UI_LOGOUT_CONFIRM_DESC",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
@@ -622,6 +632,8 @@ export enum GameTextKey {
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Trishiraite = "239145148",
+  // The blossom a defeated normal boss leaves for its Original Resin claim, by its English name
+  TrounceBlossom = "UI_WORLD_WEEKLYBOSS_TIPS_TITLE",
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
@@ -660,11 +672,20 @@ export enum GameTextKey {
   WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
+  // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
+  // the restoring's tips and label
+  WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
+  WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
   // Their colour tags, and its button lowering the World Level by one or restoring it once lowered
   WorldLevelInfo = "UI_WORLDLEVEL_INFO",
   WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
+  WorldLevelLowered = "UI_WORLDLEVEL_ADJUST_DOWN_AIM_INFO",
+  WorldLevelLowerQuestion = "UI_WORLDLEVEL_ADJUST_HINT_GETEASY_",
+  WorldLevelLowerTips = "UI_WORLDLEVEL_ADJUST_DOWN_TIPS",
   WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
+  WorldLevelReverted = "UI_WORLDLEVEL_ADJUST_UP_AIM_INFO",
+  WorldLevelRevertTips = "UI_WORLDLEVEL_ADJUST_UP_TIPS",
   ZaytunPeach = "492153948",
   // The map's zoom slider, named by the game's own word for Zoom
   Zoom = "UI_BUTTON_ZOOM",

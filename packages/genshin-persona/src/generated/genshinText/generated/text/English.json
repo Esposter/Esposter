@@ -73,6 +73,7 @@
   "1737243758": "WARNING: READ BEFORE PLAYING",
   "1747175596": "White Iron Chunk",
   "1761418508": "Mourning Flower",
+  "1809596508": "Start Processing",
   "1823058028": "Frostlamp Flower",
   "1859043748": "Beryl Conch",
   "1860729186": "Press to open",
@@ -379,6 +380,7 @@
   "UI_MAPMARK_MarkGoddess_TITLE": "Statue of The Seven",
   "UI_MAPMARK_MarkTransPoint_TITLE": "Teleport Waypoint",
   "UI_MAP_AREA1_TITLE_7": "Mondstadt",
+  "UI_PC_Quick_Switch": "Switch",
   "UI_PIC_MAIN_PCPS_C": "Take Photo",
   "UI_PLAYER_PROFILE_CHARACTER_NEW": "Character Archive",
   "UI_PLAYER_PROFILE_MAIL": "Mail",
@@ -530,5 +532,6 @@
   "UI_WORLDLEVEL_TITLE": "World Level",
   "UI_WORLDLEVEL_UP_BUTTON": "Revert World Level",
   "VIDEO_RETREAT": "Back",
+  "WIDGET_QUICK_SWITCH_GUIDE2_2": "Select a Gadget to quickswap",
   "tips_enter_game": "Welcome, %s!"
 }

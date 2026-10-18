@@ -73,6 +73,7 @@
   "1737243758": "警告：遊戲前詳閱",
   "1747175596": "白鐵塊",
   "1761418508": "悼靈花",
+  "1809596508": "開始加工",
   "1823058028": "霜盞花",
   "1859043748": "蒼晶螺",
   "1860729186": "點擊開啟",
@@ -379,6 +380,7 @@
   "UI_MAPMARK_MarkGoddess_TITLE": "七天神像",
   "UI_MAPMARK_MarkTransPoint_TITLE": "傳送錨點",
   "UI_MAP_AREA1_TITLE_7": "蒙德城",
+  "UI_PC_Quick_Switch": "切換",
   "UI_PIC_MAIN_PCPS_C": "拍照",
   "UI_PLAYER_PROFILE_CHARACTER_NEW": "角色圖鑑",
   "UI_PLAYER_PROFILE_MAIL": "信件",
@@ -530,5 +532,6 @@
   "UI_WORLDLEVEL_TITLE": "世界等級",
   "UI_WORLDLEVEL_UP_BUTTON": "還原世界等級",
   "VIDEO_RETREAT": "後退",
+  "WIDGET_QUICK_SWITCH_GUIDE2_2": "選擇一個小道具進行快捷更換",
   "tips_enter_game": "%s，歡迎進入遊戲"
 }
