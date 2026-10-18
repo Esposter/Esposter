@@ -17,6 +17,7 @@ describe(getWeaponPassive, () => {
     id: 1,
     nameTextId: "1",
     passiveNameTextId: "10",
+    passiveRankAttributeLines: [[], [], []],
     passiveRankDescriptionTextIds: ["11", "12", "13"],
     passiveRankParams: [[0.1], [0.2], [0.3]],
     rarity: 4,
