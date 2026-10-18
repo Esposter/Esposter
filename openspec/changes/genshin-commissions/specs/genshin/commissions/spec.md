@@ -160,3 +160,23 @@ Encounter Points an earn would hold past the storage SHALL be kept as Long-Term 
 - **GIVEN** one Long-Term Encounter Point held, no Encounter Points held and thirty Original Resin
 - **WHEN** the conversion is made
 - **THEN** one Encounter Point is held and the thirty Original Resin are spent
+
+### Requirement: Collected Items And Oculi Earn Half Points
+
+A collected Crimson Agate, Lumenspar or Spirit Carp SHALL earn a half Encounter Point, and an Oculus SHALL earn one on its first collection. A Mnemonic Cluster and a Plumes of Purifying Light SHALL earn none.
+
+#### Scenario: a collected Crimson Agate earns a half Encounter Point
+
+- **WHEN** a Crimson Agate is collected
+- **THEN** a half Encounter Point is held
+
+#### Scenario: a collected Mnemonic Cluster earns none
+
+- **WHEN** a Mnemonic Cluster is collected
+- **THEN** no Encounter Point is earned
+
+#### Scenario: an Oculus found the first time earns a half Encounter Point
+
+- **GIVEN** an Oculus not yet found
+- **WHEN** it is found
+- **THEN** a half Encounter Point is held, and touching it again earns none

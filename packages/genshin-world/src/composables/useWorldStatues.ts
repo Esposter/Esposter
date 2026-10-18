@@ -5,6 +5,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
@@ -20,6 +21,7 @@ import { getResultAsync } from "@esposter/shared";
 // And a resonance starts its region, each paying the levels it reaches and their rewards as a bag offer does. What the bag
 // Has no room for drops where the touch or the resonance was made
 export const useWorldStatues = ({
+  events,
   foundOculusIds,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -32,6 +34,7 @@ export const useWorldStatues = ({
   setWallet,
   wallet,
 }: {
+  events: WorldEvents;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -74,8 +77,10 @@ export const useWorldStatues = ({
       (levels) => {
         collectingOculusIds.delete(source.id);
         const progress = getRegionProgress(regionId);
+        const isNewlyFound = !foundOculusIds.value.has(source.id);
         const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
         foundOculusIds.value = found.foundOculusIds;
+        if (isNewlyFound && found.foundOculusIds.has(source.id)) events.emit("oculusFound");
         gainWorldAdventureExp(found.adventureExp + payLevels(found.gainedLevels, source));
         setRegionProgress(regionId, toStatueRegionProgressSave(found.progress));
       },

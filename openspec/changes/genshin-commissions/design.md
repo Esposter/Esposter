@@ -18,6 +18,7 @@ The as-built [commissions](../../specs/genshin/commissions/design.md) page holds
 - **The points are held for the daily reset they were earned on, up to the storage.** The save holds `encounterPoints` as the reset they were earned on (`earnedOn`) and the half points held. `readEncounterPoints` reads a balance earned before the latest daily reset (`computeLastDailyReset`) as none, and `computeEncounterPointStorage` caps the held half points at four points less one for each daily commission finished that day, as the wiki's storage rule has it. Points held stay when the storage has since shrunk below them. Points past the storage are kept as Long-Term Encounter Points (the next decision), and `claimCommissionWithPoints` spends a claim's point from the daily points (the decision after); no screen claims a commission yet (task 6.9).
 - **A claim spends a whole point from the half points held.** `claimCommissionWithPoints` reads the points held at `now`, passes their whole points (`floor(halfPoints / 2)`) to `claimCommissionReward`, and takes two half points back for each whole point the claim spent. A claim that `routeCommissionClaim` refuses spends none, so the point stays held.
 - **The points past the storage are kept as Long-Term Encounter Points, reset with the major version.** `computeEncounterPointOverflow` takes what the storage turns away from an earn, and `earnLongTermEncounterPoints` adds it to the long-term points held in `LONG_TERM_MAJOR_VERSION`, so points earned in an earlier major version read as none (`readLongTermEncounterPoints`). The constant is set by hand, because the client carries no game version (the scripts read the install's version at build time), so it moves with each major version. `convertLongTermEncounterPoint` turns one long-term point (two half points) into a daily point for `LONG_TERM_RESIN_COST` (30) Original Resin, and only where the daily points are a whole point short of the storage.
+- **Collected items and the first Oculus earn half points.** A collect event for Crimson Agate, Lumenspar or Spirit Carp (dump ids 107010, 107016 and 107026) earns the half point `getCollectedEncounterHalfPoints` gives, as the wiki gives 0.5 each, and an Oculus earns one on its first collection, through the `oculusFound` event `useWorldStatues` emits. Mnemonic Cluster is named and earns none, as the wiki gives no amount for it, and the Plumes of Purifying Light earn none, as the dump's tables name no id for them. Provisional: a chest's items also raise a collect event, so an item found in a chest earns the half point too, until the wiki's rule for chests (task 6.4) says otherwise.
 - **The later reset's points win a merge.** A save merged from a guest and an account keeps the balance earned on the later daily reset, and on the same reset the larger count.
 
 ## Scope and order
@@ -56,17 +57,18 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                                              | Role after the change                                                                                         |
-| :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`                            | A scene task's camp, swapped in for its area's own                                                            |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`                       | Advances a quest task's quest as any quest's is advanced                                                      |
-| `packages/genshin-world/src/services/handbook/constants.ts`                       | The Commissions tab, filled with the day's four                                                               |
-| `packages/genshin-world/src/services/commission/earnEncounterPoints.ts`           | Holds a quest's points in the storage they are capped at                                                      |
-| `packages/genshin-world/src/services/commission/claimCommissionWithPoints.ts`     | Spends a claim's point from the half points held, and spends none where routing refuses the claim             |
-| `packages/genshin-world/src/services/commission/computeEncounterPointOverflow.ts` | Takes what the storage turns away from an earn, to be kept as Long-Term Encounter Points                      |
-| `packages/genshin-world/src/services/commission/convertLongTermEncounterPoint.ts` | Turns a long-term point into a daily point for the Original Resin it costs, while the daily points fall short |
-| `packages/genshin-world/src/composables/useWorldCommissions.ts`                   | Earns a finished quest's points on `finishQuest`                                                              |
-| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`                 | Draws the day's commissions and the preferred region                                                          |
+| File                                                                                | Role after the change                                                                                         |
+| :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`                              | A scene task's camp, swapped in for its area's own                                                            |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`                         | Advances a quest task's quest as any quest's is advanced                                                      |
+| `packages/genshin-world/src/services/handbook/constants.ts`                         | The Commissions tab, filled with the day's four                                                               |
+| `packages/genshin-world/src/services/commission/earnEncounterPoints.ts`             | Holds a quest's points in the storage they are capped at                                                      |
+| `packages/genshin-world/src/services/commission/claimCommissionWithPoints.ts`       | Spends a claim's point from the half points held, and spends none where routing refuses the claim             |
+| `packages/genshin-world/src/services/commission/computeEncounterPointOverflow.ts`   | Takes what the storage turns away from an earn, to be kept as Long-Term Encounter Points                      |
+| `packages/genshin-world/src/services/commission/getCollectedEncounterHalfPoints.ts` | Gives the half point a collected item the wiki lists earns                                                    |
+| `packages/genshin-world/src/services/commission/convertLongTermEncounterPoint.ts`   | Turns a long-term point into a daily point for the Original Resin it costs, while the daily points fall short |
+| `packages/genshin-world/src/composables/useWorldCommissions.ts`                     | Earns a finished quest's points on `finishQuest`                                                              |
+| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`                   | Draws the day's commissions and the preferred region                                                          |
 
 ## Sources
 

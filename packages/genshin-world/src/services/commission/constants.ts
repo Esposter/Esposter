@@ -17,3 +17,10 @@ export const QUEST_ENCOUNTER_POINTS = 4;
 export const LONG_TERM_MAJOR_VERSION = 6;
 // The Original Resin spent to convert one Long-Term Encounter Point into an Encounter Point while the daily points fall short
 export const LONG_TERM_RESIN_COST = 30;
+// The half points a collected item gives, a half point for each of the items the wiki lists, which the dump names by these
+// Ids: Crimson Agate, Lumenspar and Spirit Carp. The Plumes of Purifying Light have no id in the dump, and the wiki gives no
+// Amount for the Mnemonic Cluster, so neither earns yet
+export const COLLECTED_ENCOUNTER_HALF_POINTS = 1;
+export const COLLECTED_ENCOUNTER_ITEM_IDS: ReadonlySet<string> = new Set(["107010", "107016", "107026"]);
+// The half points an Oculus gives on its first collection, the wiki's half point for each Oculus collected
+export const OCULUS_ENCOUNTER_HALF_POINTS = 1;

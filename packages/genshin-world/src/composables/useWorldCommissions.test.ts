@@ -1,11 +1,13 @@
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { QuestKind } from "#src/models/quest/QuestKind";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
@@ -42,6 +44,23 @@ const createSlice = (): CommissionSlice => ({
     rewardTier: 2,
   })),
 });
+
+// The commissions composable as a load of the save reads it an hour past the daily reset, with no Encounter Points held
+const useAfterReset = (events: WorldEvents) => {
+  const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
+  return useWorldCommissions({
+    events,
+    finishedMainQuestIds: computed(() => new Set<number>()),
+    gameDataBaseUrl: "",
+    getWorldNow: () => todayReset.add({ hours: 1 }),
+    questProgressMap: shallowRef(new Map<string, QuestProgress>()),
+    questsInProgress: computed<Quest[]>(() => []),
+    rank: computed(() => RANK),
+    savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+    savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+    savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
+  });
+};
 
 describe(useWorldCommissions, () => {
   test("a day dealt before the daily reset is dealt again", async () => {
@@ -125,5 +144,23 @@ describe(useWorldCommissions, () => {
       {} as QuestProgress,
     );
     expect(longTermEncounterPoints.value).toStrictEqual({ halfPoints: 4, majorVersion: LONG_TERM_MAJOR_VERSION });
+  });
+
+  test("a collected item the wiki lists earns a half point, and an item it does not list earns none", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const { encounterPoints } = useAfterReset(events);
+    events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: "107010" });
+    expect(encounterPoints.value.halfPoints).toBe(1);
+    events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: "107033" });
+    expect(encounterPoints.value.halfPoints).toBe(1);
+  });
+
+  test("an Oculus found the first time earns a half point", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const { encounterPoints } = useAfterReset(events);
+    events.emit("oculusFound");
+    expect(encounterPoints.value.halfPoints).toBe(1);
   });
 });
