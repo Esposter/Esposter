@@ -185,6 +185,7 @@ const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
   finishedMainQuestIds,
+  questChapters,
   questProgressMap,
   questsInProgress,
   questsOffered,
@@ -909,6 +910,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Quests]>
         <QuestScreen
           :game-text
+          :quest-chapters="questChapters"
           :quest-distance-map
           :quest-progress-map
           :quests="questsInProgress"

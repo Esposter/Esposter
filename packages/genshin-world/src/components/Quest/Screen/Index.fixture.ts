@@ -27,6 +27,7 @@ export const props = {
     {
       id: "hesperides-of-love-and-hate",
       journalTextId: "snezhnaya-adventure-journal",
+      numberTextId: "",
       questIds: ["procrustes-iron-bed", "house-of-the-soulless", "the-suns-gilded-apple"],
       regionTextId: "snezhnaya",
       rewards: [],
@@ -35,6 +36,7 @@ export const props = {
     {
       id: "in-the-dwelling-of-life",
       journalTextId: "snezhnaya-adventure-journal",
+      numberTextId: "",
       questIds: ["down-in-the-dumps", "an-ark-that-used-to-be-a-soul"],
       regionTextId: "snezhnaya",
       // Adventure EXP, Primogems, Mora, Hero's Wit and Mystic Enhancement Ore

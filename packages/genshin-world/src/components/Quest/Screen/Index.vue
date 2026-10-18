@@ -167,6 +167,7 @@ useEventListener("keydown", (event) => {
             <p class="chapter" role="heading" aria-level="3">
               <MenuGlyph :glyph="QuestGlyphMap[QuestGlyph.Series]" />
               <span class="chapter-title">{{ textMap[chapter.titleTextId] }}</span>
+              <span v-if="chapter.numberTextId" class="chapter-number">{{ textMap[chapter.numberTextId] }}</span>
               <span class="chapter-region">{{ textMap[chapter.regionTextId] }}</span>
             </p>
             <div class="chapter-quests">
@@ -353,6 +354,7 @@ useEventListener("keydown", (event) => {
 
 /* Their left 46 in from the list's, inside the blue bar */
 .chapter-title,
+.chapter-number,
 .chapter-region {
   position: absolute;
   left: calc(var(--unit) * 41);
@@ -373,6 +375,17 @@ useEventListener("keydown", (event) => {
   color: #8a8886;
   font-size: calc(var(--unit) * 23);
   line-height: calc(var(--unit) * 23);
+}
+
+/* Its number on the row's right beneath its title, where the still shows no number: a best estimate, not measured */
+.chapter-number {
+  position: absolute;
+  top: calc(var(--unit) * 44.3);
+  right: calc(var(--unit) * 41);
+  color: #8a8886;
+  font-size: calc(var(--unit) * 23);
+  line-height: calc(var(--unit) * 23);
+  white-space: nowrap;
 }
 
 /* A series' quests on a paler panel inset under its row, their titles a size larger than the commissions' */

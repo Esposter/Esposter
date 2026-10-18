@@ -63,6 +63,7 @@ describe(startQuests, () => {
   const chapter: QuestChapter = {
     id: "chapter",
     journalTextId: "journalTextId",
+    numberTextId: "numberTextId",
     questIds: ["1", "2"],
     regionTextId: "regionTextId",
     rewards: [],
@@ -83,7 +84,7 @@ describe(startQuests, () => {
     );
   });
 
-  test("A later quest is not offered early", () => {
+  test("a later quest is not offered early", () => {
     expect.hasAssertions();
 
     expect(startQuests(seriesQuests, new Map(), secondTalkEvent, [chapter])).toStrictEqual(new Map());
