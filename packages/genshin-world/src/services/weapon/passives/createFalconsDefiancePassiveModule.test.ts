@@ -80,6 +80,7 @@ describe(createFalconsDefiancePassiveModule, () => {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: (0.5 * wielder.attributes.attack * (1 + ATTACK_BUFF)) / wielder.attributes.maxHealth,
+        isFallRefused: false,
         overflowHealthShare: 0,
         sourceCharacterId: TRAVELER_CHARACTER_ID,
       },
