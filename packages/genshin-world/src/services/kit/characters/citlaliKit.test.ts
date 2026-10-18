@@ -1,11 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { CITLALI_CHARACTER_ID, createCitlaliKitBehaviour } from "#src/services/kit/characters/citlaliKit";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -88,5 +91,27 @@ describe(createCitlaliKitBehaviour, () => {
     const context = createKitTestContext(createCitlaliCombatant());
     CITLALI_KIT.elementalBurst.onStart?.(context);
     expect(countKitResource(context.kitEffectState.effects, CITLALI_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(24);
+  });
+
+  test("the burst's 24 points raise a Nightsoul generation event, which the team's fields hear", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCitlaliCombatant());
+    const heard: KitEvent[] = [];
+    castKitField(
+      context.kitEffectState,
+      CITLALI_CHARACTER_ID,
+      { x: 0, z: 0 },
+      {
+        nextTickSeconds: 100,
+        onEvent: (event) => heard.push(event),
+        onTick: () => {},
+        secondsRemaining: 10,
+        tickIntervalSeconds: 1,
+      },
+    );
+    CITLALI_KIT.elementalBurst.onStart?.(context);
+    expect(heard).toStrictEqual([
+      { characterId: CITLALI_CHARACTER_ID, kind: KitEventKind.NightsoulPointsGained, points: 24 },
+    ]);
   });
 });

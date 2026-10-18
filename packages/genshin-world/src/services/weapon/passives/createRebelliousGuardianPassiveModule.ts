@@ -6,6 +6,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 const REBELLIOUS_GUARDIAN_COOLDOWN_ID = "rebelliousGuardianCooldown";
@@ -32,8 +33,14 @@ export const createRebelliousGuardianPassiveModule = (params: number[]): WeaponP
         id: REBELLIOUS_GUARDIAN_COOLDOWN_ID,
         secondsRemaining: cooldownSeconds,
       });
+      const maxHealth = getKitMaxHealth(
+        combatant,
+        context.kitEffectState.effects,
+        context.party,
+        context.characterIdCombatantMap,
+      );
       castKitShield(context.kitEffectState, combatant.characterId, {
-        health: shareOfMaxHealth * combatant.attributes.maxHealth,
+        health: shareOfMaxHealth * maxHealth,
         secondsRemaining: REBELLIOUS_GUARDIAN_SECONDS,
       });
       buffKitMember(context.kitEffectState, combatant.characterId, {

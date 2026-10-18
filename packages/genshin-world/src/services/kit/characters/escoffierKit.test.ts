@@ -169,6 +169,7 @@ describe("escoffier kit constellation 1", () => {
         createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       )?.criticalDamageBonus ?? 0
     );
   };

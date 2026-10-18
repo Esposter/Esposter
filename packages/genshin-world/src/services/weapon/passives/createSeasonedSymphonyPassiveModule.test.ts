@@ -33,9 +33,11 @@ describe(createSeasonedSymphonyPassiveModule, () => {
   };
   const healedCharacterId = 1;
   const createHealthChanged = (sourceCharacterId: number) => ({
+    bondOfLifeShare: 0,
     characterId: healedCharacterId,
     healthShare: 0.2,
     kind: KitEventKind.HealthChanged as const,
+    overflowHealthShare: 0,
     sourceCharacterId,
   });
 

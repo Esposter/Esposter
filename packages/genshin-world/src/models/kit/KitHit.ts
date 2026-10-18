@@ -36,6 +36,8 @@ export interface KitHit {
   criticalDamageBonus?: number;
   // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
   damageBonus?: number;
+  // The share of its enemy's defence the hit ignores as it is dealt, if a constellation or a deployed member's kit gives it one
+  defenseIgnored?: number;
   element?: Element;
   // The status it gives each enemy it strikes, given its striker, before its damage is taken
   enemyStatus?: (combatant: Combatant) => EnemyStatus | undefined;

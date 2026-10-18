@@ -13,18 +13,23 @@ import type { KitPlunge } from "#src/models/kit/record/KitPlunge";
 export interface KitBehaviour extends Partial<
   Pick<
     Kit,
+    | "checkCanStartAttack"
     | "getChargedAttackStaminaMultiplier"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
+    | "getPartyDendroCoreDamageBonus"
     | "getPartyReactionBonus"
     | "getPartyStrikeBonus"
     | "getPassiveBonuses"
     | "getSkillChargeBonus"
     | "getSkillCooldownMultiplier"
+    | "getStrikeAdditiveBaseDamageBonus"
     | "isSkillCooldownWaived"
     | "getStrikeCriticalDamageBonus"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
+    | "getStrikeDefenceIgnored"
+    | "jumpsSkillHoldToTop"
     | "keepsNormalAttackCombo"
     | "onKitEvent"
     | "onSprint"

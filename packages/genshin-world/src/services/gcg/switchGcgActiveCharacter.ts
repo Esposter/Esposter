@@ -31,5 +31,5 @@ export const switchGcgActiveCharacter = (duel: GcgDuel, sideIndex: number, chara
     );
     if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
   }
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
 };

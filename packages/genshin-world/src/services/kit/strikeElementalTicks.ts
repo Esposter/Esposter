@@ -39,6 +39,7 @@ const strikeOwnedTicks = (
     reactions,
     combatant,
     undefined,
+    context,
   );
   let burningDamage = 0;
   for (const { element, reactionType, spreadGauge } of reactions) {

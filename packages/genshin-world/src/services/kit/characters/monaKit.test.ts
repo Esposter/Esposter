@@ -250,7 +250,8 @@ describe("mona kit", () => {
     const enemy = createSturdyEnemy();
     strikeKitBubble(kitEffectState, enemy, combatant, takeOne(MONA_KIT.elementalBurst.hits));
     const poiseHit = MONA_KIT.plungeCollision;
-    strikeEnemy(enemyTables, enemy, poiseHit, combatant, NEVER_CRITICAL);
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, poiseHit, combatant, context);
     strikeKitBubble(kitEffectState, enemy, combatant, poiseHit);
 
     // The Omen's 4 seconds and 42% DMG taken, from the burst at index 3 and 9 of the burst group

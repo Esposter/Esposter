@@ -68,6 +68,7 @@ const gcsim: GcsimCharacter = {
   folder: "iansan",
   holdCooldowns: [],
   queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+  talentArrayMap: new Map(),
   talentFile: "iansan.go",
   talentParameterMap: new Map([
     ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
@@ -86,6 +87,7 @@ const tables: KitTables = {
     [CombatTalent.NormalAttack]: 11031,
   },
   talentMultiplierMap: {},
+  weaponType: WeaponType.Catalyst,
 };
 
 describe(addGcsimChargedAttackCandidates, () => {
@@ -106,5 +108,28 @@ describe(addGcsimChargedAttackCandidates, () => {
     expect(valueOf("chargedAttackVariant.hits.0.gauge")).toBe(1);
     expect(valueOf("chargedAttackVariant.hits.0.poiseDamage")).toBe(120);
     expect(valueOf("chargedAttackVariant.hits.0.multiplier")).toStrictEqual({ index: 4, proudSkillGroupId: 11031 });
+  });
+
+  test("a charged attack with no hitmark constant takes no queue call the variant claims, even where its own call has no delay", () => {
+    expect.hasAssertions();
+    const fallbackGcsim: GcsimCharacter = {
+      ...gcsim,
+      constantMap: new Map([...gcsim.constantMap].filter(([name]) => name !== "chargeHitmarks")),
+      queuedAttacks: [
+        { attackName: "ai", delayLine: 69, file: "charge.go", line: 60 },
+        { attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 },
+      ],
+    };
+    const candidateMap = new Map<string, KitCandidate[]>();
+
+    addGcsimChargedAttackCandidates(
+      createGcsimKitCandidateWriter(candidateMap, fallbackGcsim, tables),
+      fallbackGcsim,
+      WeaponType.Catalyst,
+    );
+
+    const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
+    expect(valueOf("chargedAttack.hits.length")).toBeUndefined();
+    expect(valueOf("chargedAttackVariant.hits.0.hitmarkFrames")).toBe(25);
   });
 });

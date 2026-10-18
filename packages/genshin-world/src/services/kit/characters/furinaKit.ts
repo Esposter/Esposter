@@ -26,6 +26,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -95,12 +96,12 @@ const CONSTELLATION_4_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_4_COOLDOWN_STATUS_ID = "furina-c4-cooldown";
 
 // Ascension 4's share of her Max HP, a rate per step of it up to a cap: the Salon's DMG Bonus and the Singer's interval cut
-const getAscension4MaxHealthShare = ({ ascension, attributes }: Combatant, rate: number, cap: number): number =>
-  ascension < ASCENSION_4 ? 0 : Math.min((attributes.maxHealth / ASCENSION_4_MAX_HEALTH_STEP) * rate, cap);
-const getSalonDamageBonus = (combatant: Combatant): number =>
-  getAscension4MaxHealthShare(combatant, ASCENSION_4_DAMAGE_BONUS_PER_STEP, ASCENSION_4_DAMAGE_BONUS_MAX);
-const getSingerIntervalCut = (combatant: Combatant): number =>
-  getAscension4MaxHealthShare(combatant, ASCENSION_4_INTERVAL_CUT_PER_STEP, ASCENSION_4_INTERVAL_CUT_MAX);
+const getAscension4MaxHealthShare = ({ ascension }: Combatant, maxHealth: number, rate: number, cap: number): number =>
+  ascension < ASCENSION_4 ? 0 : Math.min((maxHealth / ASCENSION_4_MAX_HEALTH_STEP) * rate, cap);
+const getSalonDamageBonus = (combatant: Combatant, maxHealth: number): number =>
+  getAscension4MaxHealthShare(combatant, maxHealth, ASCENSION_4_DAMAGE_BONUS_PER_STEP, ASCENSION_4_DAMAGE_BONUS_MAX);
+const getSingerIntervalCut = (combatant: Combatant, maxHealth: number): number =>
+  getAscension4MaxHealthShare(combatant, maxHealth, ASCENSION_4_INTERVAL_CUT_PER_STEP, ASCENSION_4_INTERVAL_CUT_MAX);
 
 // Ends the Salon a character holds, its members' fields or the Singer's and the attacks still on their way, as gcsim
 // Drops a summon's tasks once a later summon has taken over from it
@@ -145,7 +146,13 @@ const castEndlessWaltz = (kitEffectState: KitEffectState, combatant: Combatant, 
         for (const memberId of getDeployedCharacterIds(tick.party)) {
           const member = tick.characterIdCombatantMap.get(memberId);
           if (member)
-            changeKitMemberHealth(tick, combatant, memberId, ENDLESS_WALTZ_HEALTH_SHARE * member.attributes.maxHealth);
+            changeKitMemberHealth(
+              tick,
+              combatant,
+              memberId,
+              ENDLESS_WALTZ_HEALTH_SHARE *
+                getKitMaxHealth(member, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
+            );
         }
       },
       secondsRemaining: Number.POSITIVE_INFINITY,
@@ -296,14 +303,26 @@ export const createFurinaKitBehaviour = ({
       const member = tick.characterIdCombatantMap.get(memberId);
       if (!member || getPartyMember(tick.party, memberId).healthShare <= SALON_DRAINED_HEALTH_SHARE_MIN) continue;
       drainedCount++;
-      changeKitMemberHealth(tick, combatant, memberId, -drainedMaxHealthShare * member.attributes.maxHealth);
+      const memberMaxHealth = getKitMaxHealth(
+        member,
+        tick.kitEffectState.effects,
+        tick.party,
+        tick.characterIdCombatantMap,
+      );
+      changeKitMemberHealth(tick, combatant, memberId, -drainedMaxHealthShare * memberMaxHealth);
     }
+    const combatantMaxHealth = getKitMaxHealth(
+      combatant,
+      tick.kitEffectState.effects,
+      tick.party,
+      tick.characterIdCombatantMap,
+    );
     const hit: KitHit = {
       ...attack,
       additiveBaseDamageBonus: createMaxHealthScaledBonus(
         multiplier * (1 + SALON_DAMAGE_BONUS_PER_DRAINED_MEMBER * drainedCount),
       ),
-      damageBonus: getSalonDamageBonus(combatant),
+      damageBonus: getSalonDamageBonus(combatant, combatantMaxHealth),
       onStrike: (context, strike) => gainConstellation4Energy(context, strike.combatant),
     };
     castKitSummon(tick.kitEffectState, { facing: 0, height: 0, position: target.position }, combatant, [hit], {
@@ -332,43 +351,55 @@ export const createFurinaKitBehaviour = ({
     });
 
   const castSinger = (
-    kitEffectState: KitEffectState,
-    combatant: Combatant,
-    centre: GroundPoint,
-    delaySeconds: number,
-    secondsRemaining: number,
-  ): void =>
-    castFollowingField(kitEffectState, combatant, centre, {
-      delaySeconds,
-      id: SINGER_FIELD_ID,
-      initialTickSeconds: singerInitialTickSeconds,
-      // Ascension 4's cut is taken off the interval in whole frames, as gcsim rounds it
-      intervalSeconds: toKitSeconds(Math.round(singerIntervalFrames * (1 - getSingerIntervalCut(combatant)))),
-      onTick: (tick, field) => {
-        if (field.secondsRemaining <= 0) return;
-        changeKitMemberHealth(
-          tick,
-          combatant,
-          tick.activeCombatant.characterId,
-          singerFlatHealth + singerMaxHealthShare * combatant.attributes.maxHealth,
-        );
-        gainConstellation4Energy(tick, combatant);
-      },
-      secondsRemaining,
-    });
-
-  // Brings out the summons of the Arkhe she holds after the delay, for the seconds Salon Solitaire has left, in place of
-  // The ones out
-  const summonSalon = (
-    kitEffectState: KitEffectState,
+    context: KitContext,
     combatant: Combatant,
     centre: GroundPoint,
     delaySeconds: number,
     secondsRemaining: number,
   ): void => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
+    const combatantMaxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+    castFollowingField(kitEffectState, combatant, centre, {
+      delaySeconds,
+      id: SINGER_FIELD_ID,
+      initialTickSeconds: singerInitialTickSeconds,
+      // Ascension 4's cut is taken off the interval in whole frames, as gcsim rounds it
+      intervalSeconds: toKitSeconds(
+        Math.round(singerIntervalFrames * (1 - getSingerIntervalCut(combatant, combatantMaxHealth))),
+      ),
+      onTick: (tick, field) => {
+        if (field.secondsRemaining <= 0) return;
+        const maxHealth = getKitMaxHealth(
+          combatant,
+          tick.kitEffectState.effects,
+          tick.party,
+          tick.characterIdCombatantMap,
+        );
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          singerFlatHealth + singerMaxHealthShare * maxHealth,
+        );
+        gainConstellation4Energy(tick, combatant);
+      },
+      secondsRemaining,
+    });
+  };
+
+  // Brings out the summons of the Arkhe she holds after the delay, for the seconds Salon Solitaire has left, in place of
+  // The ones out
+  const summonSalon = (
+    context: KitContext,
+    combatant: Combatant,
+    centre: GroundPoint,
+    delaySeconds: number,
+    secondsRemaining: number,
+  ): void => {
+    const { kitEffectState } = context;
     endSalon(kitEffectState, combatant.characterId);
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, PNEUMA_STATUS_ID))
-      castSinger(kitEffectState, combatant, centre, delaySeconds, secondsRemaining);
+      castSinger(context, combatant, centre, delaySeconds, secondsRemaining);
     else
       for (const salonMember of salonMembers)
         castSalonMember(kitEffectState, combatant, salonMember, centre, delaySeconds, secondsRemaining);
@@ -376,14 +407,15 @@ export const createFurinaKitBehaviour = ({
 
   // The charged attack's turn of her Arkhe, Ousia to Pneuma or back, which hands Salon Solitaire to the other Arkhe's
   // Summons while it lasts
-  const switchArkhe = (kitEffectState: KitEffectState, combatant: Combatant, centre: GroundPoint): void => {
+  const switchArkhe = (context: KitContext, combatant: Combatant, centre: GroundPoint): void => {
+    const { kitEffectState } = context;
     const { characterId } = combatant;
     const pneuma = findKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
     if (pneuma) removeKitEffects(kitEffectState, (effect) => effect === pneuma);
     else
       addKitStatus(kitEffectState, characterId, { id: PNEUMA_STATUS_ID, secondsRemaining: Number.POSITIVE_INFINITY });
     const salon = findKitStatus(kitEffectState.effects, characterId, SALON_STATUS_ID);
-    if (salon && salon.secondsRemaining > 0) summonSalon(kitEffectState, combatant, centre, 0, salon.secondsRemaining);
+    if (salon && salon.secondsRemaining > 0) summonSalon(context, combatant, centre, 0, salon.secondsRemaining);
   };
 
   const getFanfareMax = ({ constellationCount }: Combatant): number =>
@@ -476,7 +508,7 @@ export const createFurinaKitBehaviour = ({
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         scheduleKitTask(kitEffectState, combatant.characterId, arkheSwitchSeconds, (tick) =>
-          switchArkhe(tick.kitEffectState, combatant, body.position),
+          switchArkhe(tick, combatant, body.position),
         ),
     },
     normalAttacks: [strike, strike, strike, strike],
@@ -489,7 +521,8 @@ export const createFurinaKitBehaviour = ({
     // Salon Solitaire takes the Arkhe she holds as it starts: in Ousia its bubble and the Salon members, who come out as
     // The bubble strikes, and in Pneuma the Singer of Many Waters, after its delay. It lasts the Salon's seconds from then
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         const { characterId } = combatant;
         const isPneuma = checkHasKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
         const delaySeconds = isPneuma ? pneumaSummonDelaySeconds : ousiaBubble.hitmarkSeconds;
@@ -497,7 +530,7 @@ export const createFurinaKitBehaviour = ({
         addKitStatus(kitEffectState, characterId, { id: SALON_STATUS_ID, secondsRemaining });
         if (!isPneuma)
           castKitSummon(kitEffectState, body, combatant, [ousiaBubble], { attackTag: AttackTag.ElementalSkill });
-        summonSalon(kitEffectState, combatant, body.position, delaySeconds, secondsRemaining);
+        summonSalon(context, combatant, body.position, delaySeconds, secondsRemaining);
       },
     },
   };

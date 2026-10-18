@@ -9,7 +9,7 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 ## Decisions
 
 - **The burst's hits are Anemo.** gcsim makes the first hit the element of his conversion, which is Anemo while no Four Winds conversion stands, and the second Anemo. The record holds each as Anemo, the default it gives.
-- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres, and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. The burst's area and its Wind element have no literal gcsim gives at the burst's own line, so both are `Unsourced` and the published values stand.
+- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres, and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. Both hits' areas are cited to `burst.go:51`, the queue call's circle, which its hit's loop iteration reads. The second hit's Wind is cited to `burst.go:30`, the entry its loop reads from `ele` by index. The first hit's Wind is `Unsourced`: gcsim sets `ele[0]` to Anemo only under `if ele[0] == defaultConversionElement` (`burst.go:32`), a runtime comparison the reader does not evaluate, so the default stands.
 
 ## Not built
 
@@ -18,10 +18,10 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 ## Key files
 
-| File                                                             | Role                                                                                     |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/varkaKit.ts` | `createVarkaKitBehaviour`, Varka's module, built on his record and with no behaviour yet |
-| `packages/genshin-world/src/data/kits/varka.json`                | Varka's overlay: the areas and elements gcsim leaves unnamed                             |
+| File                                                             | Role                                                                                                             |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/varkaKit.ts` | `createVarkaKitBehaviour`, Varka's module, built on his record and with no behaviour yet                         |
+| `packages/genshin-world/src/data/kits/varka.json`                | Varka's overlay: the burst's areas, the second hit's element cited to gcsim, and the first hit's default element |
 
 ## Sources
 

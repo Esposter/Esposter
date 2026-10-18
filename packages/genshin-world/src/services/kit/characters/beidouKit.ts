@@ -14,6 +14,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 // Stormbreaker's Thunderbeast's Targe discharges at most once a second, as the wiki's Stormbreaker and gcsim v2.47.2
@@ -169,10 +170,12 @@ export const createBeidouKitBehaviour = ({
     // Tidecaller's Electro shield is set at the press, of the group's share of Beidou's Max HP plus its flat HP, and
     // Stands until the hit, as gcsim's does
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) =>
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Electro,
-          health: shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth,
+          health:
+            shieldMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) +
+            shieldFlatHealth,
           secondsRemaining: tidecallerHitmarkSeconds,
         }),
     },

@@ -14,6 +14,7 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -105,7 +106,7 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
     // Constellation 2: each enemy defeated during Glacial Waltz extends it
     // Constellation 4: a drain that takes him under 20% HP shields him, once every 60 seconds
     onKitEvent: (event, context, combatant) => {
-      const { kitEffectState, party } = context;
+      const { characterIdCombatantMap, kitEffectState, party } = context;
       // Ascension 4: a freeze Frostgnaw makes drops a Cryo particle while its use still has one of its two to spend
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (
@@ -140,9 +141,10 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
         )
       )
         return;
+      const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Cryo,
-        health: CONSTELLATION_4_SHIELD_HEALTH_SHARE * combatant.attributes.maxHealth,
+        health: CONSTELLATION_4_SHIELD_HEALTH_SHARE * maxHealth,
         secondsRemaining: CONSTELLATION_4_SHIELD_SECONDS,
       });
     },

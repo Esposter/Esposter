@@ -69,7 +69,7 @@ const hearSkill = (side: GcgSideState, zoneCard: GcgZoneCard, dealt: GcgDealtDam
     rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
     sides: [side, createSide([])],
   };
-  const context: GcgEffectContext = { duel, sideIndex: 0 };
+  const context: GcgEffectContext & { userSideIndex: number } = { duel, sideIndex: 0, userSideIndex: 0 };
   changTheNinth.onAnySkillUsed?.(context, SKILL, zoneCard, dealt);
 };
 

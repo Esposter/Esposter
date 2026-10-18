@@ -200,5 +200,7 @@
   "stances.lunarPhaseShift.skill.hits.1.hitmarkFrames": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000032, "path": "skillHolds.0.action.hits.1.hitmarkFrames" }
-  }
+  },
+  "stances.lunarPhaseShift.skill.hits.1.lunarReactionType": { "cause": "Unsourced", "value": "LunarCrystallize" },
+  "burst.hits.1.lunarReactionType": { "cause": "Unsourced", "value": "LunarCrystallize" }
 }

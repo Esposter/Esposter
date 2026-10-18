@@ -24,7 +24,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.impaleTheNightFullBondOfLife.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 9832 }

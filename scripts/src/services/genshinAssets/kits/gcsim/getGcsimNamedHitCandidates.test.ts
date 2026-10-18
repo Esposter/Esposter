@@ -51,6 +51,7 @@ describe(getGcsimNamedHitCandidates, () => {
     filePaths: [],
     folder: "amber",
     queuedAttacks: [],
+    talentArrayMap: new Map(),
     talentFile: "amber.go",
     talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
     holdCooldowns: [],
@@ -86,6 +87,36 @@ describe(getGcsimNamedHitCandidates, () => {
       { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
+  });
+
+  test("joins a named hit's multiplier to its variable's array by value, where no talent row names it", () => {
+    expect.hasAssertions();
+
+    const arrayGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: gcsim.attacks.map((attack) => ({ ...attack, talentVariable: "kick" })),
+      config: { ...gcsim.config, talentVariables: [] },
+      talentArrayMap: new Map([["kick", { line: 7, rows: [[1.5, 2]] }]]),
+      talentParameterMap: new Map(),
+    };
+    const arrayTables: KitTables = {
+      ...tables,
+      talentMultiplierMap: {
+        [BURST_PROUD_SKILL_GROUP_ID]: [
+          { level: 1, paramList: [0.5, 1.5] },
+          { level: 2, paramList: [0.6, 2] },
+        ],
+      },
+    };
+    const joined = getNamedHitKitCandidates(
+      new Map([["hits.kick.0.multiplier", { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }]]),
+      getGcsimNamedHitCandidates(arrayGcsim, arrayTables),
+    );
+
+    expect(joined.get("hits.kick.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
+      { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+    ]);
+    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toMatchObject({ line: 7 });
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
@@ -175,5 +206,73 @@ describe(getGcsimNamedHitCandidates, () => {
       "skillHolds.0.action.hits.0.element",
       "stances.windfavored.normalAttacks.0.hits.0.element",
     ]);
+  });
+
+  test("gives a call after an if else's branches to the attack of each branch, so each branch's list takes it", () => {
+    expect.hasAssertions();
+
+    const SKILL_PROUD_SKILL_GROUP_ID = 15032;
+    const attackCommon = {
+      attackTag: "attacks.AttackTagElementalArt",
+      element: "attributes.Cryo",
+      fieldLineMap: {},
+      file: "skill.go",
+      internalCooldownTag: "attacks.ICDTagNone",
+      siteLine: 12,
+      variableName: "ai",
+    };
+    const branchGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: [
+        { ...attackCommon, line: 12 },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+      ],
+      config: {
+        abilityHitboxesMap: new Map(),
+        names: [],
+        talentVariables: [
+          {
+            leaves: [
+              { path: [0], reference: { label: "Plume Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 1,
+            name: "plume",
+          },
+          {
+            leaves: [
+              { path: [0], reference: { label: "Wing Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 2,
+            name: "wing",
+          },
+        ],
+      },
+      queuedAttacks: [{ attackName: "ai", delay: 0, delayLine: 34, file: "skill.go", line: 34 }],
+      talentParameterMap: new Map([
+        ["skill|Plume Dance Move DMG", { indexes: [4], line: 3 }],
+        ["skill|Wing Dance Move DMG", { indexes: [7], line: 4 }],
+      ]),
+    };
+    const skillTables: KitTables = {
+      ...tables,
+      talentGroupIdMap: { ...tables.talentGroupIdMap, [CombatTalent.ElementalSkill]: SKILL_PROUD_SKILL_GROUP_ID },
+    };
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(branchGcsim, skillTables);
+    const joined = getNamedHitKitCandidates(
+      new Map<string, unknown>([
+        ["hits.plume.0.multiplier", { index: 4, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+        ["hits.wing.0.multiplier", { index: 7, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+      ]),
+      namedHitCandidateMap,
+    );
+
+    expect(
+      [4, 7].map((index) => namedHitCandidateMap.get(`${SKILL_PROUD_SKILL_GROUP_ID}|${index}`)?.queuedCalls.length),
+    ).toStrictEqual([1, 1]);
+    expect(
+      ["hits.plume.0.element", "hits.wing.0.element"].map((path) => joined.get(path)?.map(({ value }) => value)),
+    ).toStrictEqual([[Element.Cryo], [Element.Cryo]]);
   });
 });

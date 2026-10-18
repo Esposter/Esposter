@@ -22,6 +22,13 @@ const DEPTH_CLARION_DICE_ID = "yelan-depth-clarion";
 // Resource up to one, as gcsim's skill callback sets the breakthrough state, which her fully charged arrow spends
 const BREAKTHROUGH_BARB_CHANCE = 0.34;
 const BREAKTHROUGH_BARB_ID = "yelan-breakthrough-barb";
+// Ascension 1: her Max HP rises 6% for each Elemental Type the team holds, herself included, and 30% with four, as
+// Gcsim (MIT) yelan/asc.go gives it. Its comment reads 6%, 12%, 18% and 30% for one to four types, so four is not 24%
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/asc.go
+const ASCENSION_1 = 1;
+const ASCENSION_1_HEALTH_PERCENT_PER_ELEMENT = 0.06;
+const ASCENSION_1_FULL_ELEMENT_COUNT = 4;
+const ASCENSION_1_FULL_HEALTH_PERCENT = 0.3;
 // Ascension 4: from the burst's hit, the active character deals 1% more DMG, rising 3.5% each whole second up to 50%,
 // For 15 seconds, as gcsim v2.47.2 (MIT) yelan/asc.go gives it, starting its status at the hitmark as burst.go does.
 // A recast of the burst restarts the status, which dispels the earlier one as the description gives it
@@ -39,8 +46,8 @@ const CONSTELLATION_1 = 1;
 
 // Yelan's behaviour: Depth-Clarion Dice sets its field as it is cast, which waves an Exquisite Throw each second from a
 // Second after its hit for its seconds, and each Lingering Lifeline hit throws one more while the field stands.
-// Her Breakthrough Barb's own hit, her Ascension 1 passive and Constellations 2, 4 and 6 are not built. Her Ascension 4
-// Passive is built from the burst's hit
+// Her Breakthrough Barb's own hit and Constellations 2, 4 and 6 are not built. Her Ascension 1 passive is built from
+// The team's Elemental Types, and her Ascension 4 Passive from the burst's hit
 // Constellation 1's charge is built
 // Constellation 2 needs Exquisite Throw's coordinated attack and its extra arrow, which the kit does not build
 // Constellation 4 needs the marked opponents on Lifeline's explosion, which the kit does not build
@@ -91,6 +98,18 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         secondsRemaining: status.secondsRemaining,
         source: ASCENSION_4_STATUS_ID,
       });
+    },
+    // Ascension 1's Max HP bonus, read from the team's Elemental Types, herself included, as the pricing adds it
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+      if (combatant.ascension < ASCENSION_1) return [];
+      const elementTypeCount = new Set(
+        deployedCombatants.flatMap(({ element }) => (element === undefined ? [] : [element])),
+      ).size;
+      const amount =
+        elementTypeCount >= ASCENSION_1_FULL_ELEMENT_COUNT
+          ? ASCENSION_1_FULL_HEALTH_PERCENT
+          : elementTypeCount * ASCENSION_1_HEALTH_PERCENT_PER_ELEMENT;
+      return [{ amount, attribute: Attribute.HealthPercent }];
     },
     // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
     // Ticks do not depend on where the body stands

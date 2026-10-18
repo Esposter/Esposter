@@ -7,6 +7,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 
 // Ascension 1, Every Arrow Finds Its Target, adds 10% CRIT Rate to Fiery Rain, and widens its arrows by 30% as gcsim
@@ -118,10 +119,11 @@ export const createAmberKitBehaviour = ({
     getSkillCooldownMultiplier: ({ activeCombatant }) =>
       activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) =>
         castKitTaunt(kitEffectState, body, combatant, {
           explosion: bunnyExplosion,
-          health: bunnyMaxHealthShare * combatant.attributes.maxHealth,
+          health:
+            bunnyMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           secondsRemaining: bunnySeconds,
         }),
     },
