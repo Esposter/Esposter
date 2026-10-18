@@ -3,6 +3,7 @@ import type { WishItem } from "#src/models/wish/WishItem";
 
 import { props } from "#src/components/Wish/Screen/Index.fixture";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
+import { GameTextKey } from "genshin-text";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { createBanners } from "#src/services/wish/createBanners";
 import { getOpenEventBanners } from "#src/services/wish/getOpenEventBanners";
@@ -37,7 +38,7 @@ describe("wishScreen", () => {
     const onTrial = vi.fn<(trial: Trial) => void>();
     render(WishScreen, { attrs: { onTrial }, props: { ...props, trials: [trial], wishHistory: [] } });
 
-    await page.getByRole("button", { exact: true, name: character.name }).click();
+    await page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).click();
 
     expect(onTrial).toHaveBeenCalledExactlyOnceWith(trial);
   });
@@ -50,6 +51,8 @@ describe("wishScreen", () => {
 
     // The card names the featured character once the banner is shown, so the button's absence is checked on a drawn screen
     await expect.element(page.getByText(character.name, { exact: true })).toBeVisible();
-    expect(page.getByRole("button", { exact: true, name: character.name }).query()).toBeNull();
+    expect(
+      page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).query(),
+    ).toBeNull();
   });
 });
