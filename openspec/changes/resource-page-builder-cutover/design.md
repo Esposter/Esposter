@@ -32,7 +32,7 @@ Two things stay, deliberately. A Program bound to a deleted email keeps its `ema
 
 **What leaves with GrapesJS**, in the same change:
 
-- the catalog entries and `apps/web/package.json` dependencies for `grapesjs` and every `grapesjs-` plugin, `js-beautify` and `@types/js-beautify`, with MJML's Node package added for the server;
+- the catalog entries and `apps/web/package.json` dependencies for `grapesjs` and every `grapesjs-` plugin, `js-beautify` and `@types/js-beautify`;
 - `useGrapesJsEditor`, `useSurveyInviteBlocks`, `setBlocks`, `readUploadFiles`, `GrapesJsBlock`, the plugin modules and their tests, `WebpageEditorPlugins`, `WebpageEditorStyleManager`, `FlexAlignmentItems`, `getEmailHtml`, `getEmailPreview`, `readEmailPreviewText`, `writeEmailPreviewText`, `createMergeFieldBlocks`, the survey invite block builders, the type shim for the two untyped plugins, `AGrapesJsEditor` and the two stock templates;
 - the `grapesjs` exception in `osv-scanner.toml`, whose advisory names a range the locked release was already outside;
 - the TUI and cdnjs entries in the security config, and the stock hosts in `apps/web/shared/services/grapesjs/constants.ts` and the image whitelist, keeping Mailjet's for MJML's social icons beside the email types; the `.gjs-mdl-container` override; the comments naming GrapesJS in `ResourceEditorComponentMap`;
@@ -102,7 +102,7 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`        | Webpage becomes portable, for its HTML file export                                  |
 | `apps/web/configuration/security.ts`                                | no GrapesJS origins                                                                 |
 | `apps/web/server/db/migrations`                                     | the custom migration binning every Email and Webpage row                            |
-| `apps/web/package.json`                                             | GrapesJS and its plugins out, MJML's Node package in                                |
+| `apps/web/package.json`                                             | GrapesJS and its plugins out                                                        |
 | `pnpm-workspace.yaml`                                               | the catalog entries                                                                 |
 | `osv-scanner.toml`                                                  | without the `grapesjs` exception                                                    |
 
