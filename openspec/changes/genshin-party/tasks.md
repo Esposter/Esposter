@@ -19,3 +19,7 @@
 - [x] 4.1 Shorten afflictions under the matching Resonance, once resonances reach element application. Verify: a test named after the scenario 'Fervent Flames shortens a Cryo affliction on a member'.
 - [x] 4.2 Drop High Voltage's particle on a five-second cooldown, once reactions give energy and the team keeps a cooldown. Verify: tests named after the scenarios 'A listed reaction drops a particle once the cooldown has passed' and 'A reaction within the cooldown drops no particle'.
 - [x] 4.3 Give a Moondrift the shield's defence, once Moonsign is built. Verify: a test named after the scenario 'A Moondrift formed nearby gives a shield's defence'.
+
+## 5. Enemy attack elements
+
+- [ ] 5.1 Author each enemy kind's attack element from its wiki Attacks section, once a placed kind has an elemental attack, so a landed strike applies it to the struck member. No kind in EnemyKindTraitsMap sets `attackElement` yet (the branch in `strikePartyMember` runs only under a test's override), and Hilichurl Fighter's attacks are all Physical. Verify: a test named after the scenario 'An enemy kind with an elemental attack applies it to the struck member' passes against the authored kind, not an override.
