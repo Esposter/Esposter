@@ -1,7 +1,7 @@
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
-import { LAZY_BINARY_NAMES } from "#src/services/names/constants";
+import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 import { getMathExpressionChildren } from "#src/services/shared/getMathExpressionChildren";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -15,7 +15,7 @@ export const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set
       return;
     case MathExpressionNodeType.Binary: {
       walkNode(node.left, bound, free);
-      const rightBound = LAZY_BINARY_NAMES.has(node.name) ? new Set(bound) : bound;
+      const rightBound = Object.hasOwn(MathExpressionBitwiseAbsorptionMap, node.name) ? new Set(bound) : bound;
       walkNode(node.right, rightBound, free);
       return;
     }
