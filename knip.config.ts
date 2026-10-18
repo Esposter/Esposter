@@ -43,6 +43,9 @@ const knipConfiguration: KnipConfig = {
         // Nothing in the app imports it
         "rollup-plugin-visualizer",
         "temporal-polyfill",
+        // @TODO: no upstream issue — Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options
+        // Become, so the app declares it and nothing in the app imports it (nuxt/nuxt)
+        "unstorage",
         "vue-tsc",
       ],
     },
