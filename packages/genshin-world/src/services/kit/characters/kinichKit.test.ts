@@ -1,15 +1,31 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKinichKitBehaviour, KINICH_CHARACTER_ID } from "#src/services/kit/characters/kinichKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const KINICH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KINICH_CHARACTER_ID);
+
+const createKinichCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: KINICH_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: KINICH_KIT,
+  level: 90,
+});
 
 describe(createKinichKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from his proud skill groups, to four decimal places", () => {
@@ -64,5 +80,18 @@ describe(createKinichKitBehaviour, () => {
     expect(ajaw.attackTag).toBe(AttackTag.ElementalBurst);
     expect(ajaw.hits.map(({ hitmarkSeconds }) => hitmarkSeconds * 60)).toStrictEqual([253, 398, 548, 698, 843, 993]);
     expect(Number(ajaw.hits[0]?.talentMultiplier.toFixed(4))).toBe(1.2074);
+  });
+
+  test("the skill's press enters the Nightsoul Blessing with no points, which gain two a second, and the blessing lasts ten and a sixth seconds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createKinichCombatant());
+    KINICH_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 5);
+    expect(countKitResource(context.kitEffectState.effects, KINICH_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(10);
+    stepKitSeconds(context, 6);
+    expect(
+      findKitStatus(context.kitEffectState.effects, KINICH_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
+    ).toBeUndefined();
+    expect(countKitResource(context.kitEffectState.effects, KINICH_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 });
