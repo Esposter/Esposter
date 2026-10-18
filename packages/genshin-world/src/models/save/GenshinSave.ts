@@ -6,6 +6,7 @@ import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
+import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
@@ -38,6 +39,8 @@ export const genshinSaveSchema = z
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,
     crafting: craftingSaveSchema,
+    // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
+    homePlacements: homePlacementSaveSchema,
     inventory: inventorySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,

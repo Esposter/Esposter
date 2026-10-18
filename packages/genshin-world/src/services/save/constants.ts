@@ -10,6 +10,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
@@ -113,6 +114,15 @@ const LONGEST_CHARACTER_SAVE = {
     refinement: MAX_WEAPON_REFINEMENT,
   },
 };
+// A furnishing placed at its longest: its ids at the largest number, and each position and turn at the longest a
+// Finite number is written
+const LONGEST_HOME_PLACEMENT = {
+  areaId: MAX_SAVE_NUMBER,
+  furnishingItemId: MAX_SAVE_NUMBER,
+  position: { x: -Number.MAX_VALUE, y: -Number.MAX_VALUE, z: -Number.MAX_VALUE },
+  rotation: -Number.MAX_VALUE,
+  sceneId: MAX_SAVE_NUMBER,
+};
 // The save at its longest outside its collections: every number at its largest, every instant at its longest and every
 // Collection empty, so the ceiling below adds only the entries of each collection
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
@@ -122,6 +132,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  homePlacements: [],
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
   openedChests: [],
@@ -168,6 +179,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   COMMISSIONS_PER_DAY *
     getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
+  MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
       objectiveCounts: Array.from({ length: MAX_OBJECTIVE_COUNT }, () => MAX_SAVE_NUMBER),
@@ -218,6 +230,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  homePlacements: [],
   inventory: EMPTY_INVENTORY_SAVE,
   offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
   openedChests: [],

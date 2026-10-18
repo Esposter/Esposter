@@ -97,19 +97,19 @@ const checkIsLaterWorldLevelAdjustment = (
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
 
-// A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements
-// Are Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the
-// Larger. A quest keeps the further of the two steps, since a step is never undone, and on the same step each
-// Objective's count takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a
-// Counter only grows. Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its
-// Pity is one copy's and never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the
-// Wallet, the party and the opened chests are the account's copy, except that a Primogem refill count from the same game day
-// Takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy changed
-// Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
-// Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
-// Has chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is
-// Kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing Tree's is.
-// The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened
+// A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
+// Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A
+// Quest keeps the further of the two steps, since a step is never undone, and on the same step each objective's count
+// Takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows.
+// Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's
+// And never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet, the party, the
+// Opened chests and the realm's placements are the account's copy, except that a Primogem refill count from the same
+// Game day takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy
+// Changed later, since the one change of it the player made last is the one they still stand by. The day's commissions
+// Are the copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the
+// Account has chosen none. The characters both copies hold are the copy further on, and a character only the guest
+// Holds is kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing
+// Tree's is. The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -146,6 +146,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       craftedCounts,
       learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],
     },
+    homePlacements: account.homePlacements,
     inventory: account.inventory,
     offerings: {
       frostbearingTree: checkIsFurtherOffering(guest.offerings.frostbearingTree, account.offerings.frostbearingTree)

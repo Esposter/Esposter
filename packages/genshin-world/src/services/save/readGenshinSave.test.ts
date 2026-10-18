@@ -41,6 +41,8 @@ describe(readGenshinSave, () => {
   // A Seelie settled in its court and a puzzle solved, each by its id
   const SETTLED_SEELIE_ID = "seelie-1";
   const SOLVED_PUZZLE_ID = "puzzle-1";
+  // A furnishing placed in the realm: its item, the area of its scene it stands in and where, and the turn it faces
+  const PLACEMENT = { areaId: 1, furnishingItemId: 3, position: { x: 1, y: 0, z: 2 }, rotation: 0.5, sceneId: 2001 };
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const EQUIPPED_GADGET_ID = 1001;
   const FORGED_WEAPON_ID = 13_401;
@@ -154,6 +156,7 @@ describe(readGenshinSave, () => {
   };
   const POPULATED_SAVE: GenshinSave = {
     ...EMPTY_GENSHIN_SAVE,
+    homePlacements: [PLACEMENT],
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
     characters: [HELD_CHARACTER_SAVE],
@@ -181,6 +184,15 @@ describe(readGenshinSave, () => {
     },
   };
 
+  // A save as the player comes back to the realm: written, then read again
+  const visit = (save: GenshinSave) =>
+    readGenshinSave(
+      toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map())),
+      NAMES,
+      WEAPON_DATA_MAP,
+      new Map(),
+    );
+
   test("reads a save back to the same save once written", () => {
     expect.hasAssertions();
     expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
@@ -190,13 +202,6 @@ describe(readGenshinSave, () => {
 
   test("the deployed team and member on field return after a visit", () => {
     expect.hasAssertions();
-    const visit = (save: GenshinSave) =>
-      readGenshinSave(
-        toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map())),
-        NAMES,
-        WEAPON_DATA_MAP,
-        new Map(),
-      );
     const { party } = visit({ ...EMPTY_GENSHIN_SAVE, party: PARTY_SAVE });
 
     expect({ activeIndex: party.activeIndex, deployedTeamIndex: party.deployedTeamIndex }).toStrictEqual({
@@ -223,6 +228,13 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       POPULATED_SAVE,
     );
+  });
+
+  test("placements are kept across a return to the realm", () => {
+    expect.hasAssertions();
+    const { homePlacements } = visit({ ...EMPTY_GENSHIN_SAVE, homePlacements: [PLACEMENT] });
+
+    expect(homePlacements).toStrictEqual([PLACEMENT]);
   });
 
   // The day's four as the player was dealt them after the daily reset, the first of them already claimed
