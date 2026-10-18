@@ -5,6 +5,7 @@ import {
   ANIME_GAME_DATA_BRANCH,
   ANIME_GAME_DATA_TREES_URL,
   ANIME_GAME_DATA_URL,
+  AVATAR_TALENT_DIRECTORY,
   BIN_OUTPUT_DIRECTORY,
   DUMP_FETCH_BATCH_SIZE,
   DUMP_FILE_DOWNLOAD_TIMEOUT_MS,
@@ -53,8 +54,8 @@ const listHeldBinaryFiles = async (): Promise<DumpFile[]> => {
 };
 
 // The dump's own files a fetch may refresh: the readable texts of every language's folder, every table of ExcelBinOutput
-// Whole or in its numbered parts, every language's text maps, the scene's NPC births and area outlines, and each binary
-// The dump already holds, each at its path under the dump's folder. Everything is held at the install's build, so a
+// Whole or in its numbered parts, every language's text maps, the scene's NPC births and area outlines, every talent
+// Config, and each other binary the dump already holds, each at its path under the dump's folder. Everything is held at the install's build, so a
 // Reader never takes a row, a text or a step from an older patch
 const listDumpFiles = async (): Promise<DumpFile[]> => {
   const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => path.endsWith(".json"));
@@ -72,14 +73,20 @@ const listDumpFiles = async (): Promise<DumpFile[]> => {
       (await listRemoteDirectory(directory)).filter(({ path }) => path === `${directory}/${fileName}`),
     ),
   );
+  const talentFiles = (await listRemoteDirectory(AVATAR_TALENT_DIRECTORY)).filter(({ path }) => path.endsWith(".json"));
   const heldBinaryFiles = await listHeldBinaryFiles();
-  const sceneFilePaths = new Set(sceneFiles.flat().map(({ path }) => path));
+  // A held binary is also a scene file or a talent config, each listed once
   return [
-    ...tableFiles,
-    ...textMapFiles,
-    ...readableFiles.flat(),
-    ...sceneFiles.flat(),
-    ...heldBinaryFiles.filter(({ path }) => !sceneFilePaths.has(path)),
+    ...new Map(
+      [
+        ...tableFiles,
+        ...textMapFiles,
+        ...readableFiles.flat(),
+        ...sceneFiles.flat(),
+        ...talentFiles,
+        ...heldBinaryFiles,
+      ].map((file) => [file.path, file]),
+    ).values(),
   ];
 };
 

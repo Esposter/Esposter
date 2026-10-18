@@ -150,6 +150,9 @@ export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/Dimbreath
 export const SCENE_NPC_BORN_DIRECTORY = "BinOutput/Scene/SceneNpcBorn";
 export const SCENE_NPC_BORN_FILE_NAME = "scene3_npcborn.json";
 export const SCENE_WORLD_AREA_DIRECTORY = "BinOutput/Scene/WorldArea";
+// The dump's talent configs, one file for each group of characters, which a reader takes whole, so a fetch lists the folder
+// Whole and a new character's file comes with the patch that adds it
+export const AVATAR_TALENT_DIRECTORY = "BinOutput/Talent/AvatarTalents";
 export const SCENE_WORLD_AREA_FILE_NAME = "scene3_worldArea.json";
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
 export const DUMP_FETCH_BATCH_SIZE = 8;
