@@ -2,6 +2,7 @@
 import type { TextSegment } from "#src/models/TextSegment";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
 
+import RarityStars from "#src/components/RarityStars/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
 import { computed } from "vue";
 
@@ -32,7 +33,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
       <button class="close" type="button" :aria-label="closeLabel" @click="emit('close')">✕</button>
       <ul class="pool">
         <li v-for="[rarity, cells] of poolRarityCellsMap" :key="rarity" class="pool-rarity">
-          <span class="stars">{{ "★".repeat(rarity) }}</span>
+          <RarityStars :rarity />
           <ul class="pool-items">
             <li v-for="{ id, isFeatured, name } of cells" :key="id" class="pool-item" :data-featured="isFeatured">
               {{ name }}
@@ -110,10 +111,5 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
 
 .pool-item[data-featured="true"] {
   color: #ffd780;
-}
-
-.stars {
-  color: #ffcc32;
-  white-space: nowrap;
 }
 </style>

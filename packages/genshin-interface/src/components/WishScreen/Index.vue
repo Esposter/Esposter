@@ -10,6 +10,7 @@ import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
 import GameButton from "#src/components/GameButton/Index.vue";
+import RarityStars from "#src/components/RarityStars/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import WishDetails from "#src/components/WishDetails/Index.vue";
 import WishHistory from "#src/components/WishHistory/Index.vue";
@@ -121,7 +122,7 @@ const bannerLabelText = computed(() => {
       <p class="rate-up">{{ bannerCard.rateUp }}</p>
       <div v-if="featuredCell" class="featured">
         <p class="featured-name">{{ featuredCell.name }}</p>
-        <p class="stars">{{ "★".repeat(featuredCell.rarity) }}</p>
+        <p><RarityStars :rarity="featuredCell.rarity" /></p>
         <p class="featured-title">{{ bannerCard.featuredTitle }}</p>
       </div>
     </section>
@@ -185,7 +186,7 @@ const bannerLabelText = computed(() => {
           :data-rarity="rarity"
         >
           <span class="result-name">{{ name }}</span>
-          <span class="stars">{{ "★".repeat(rarity) }}</span>
+          <RarityStars :rarity />
           <span v-if="stellaFortuna" class="result-stella-fortuna">{{ stellaFortuna }}</span>
           <span class="result-return">{{ wishReturn }}</span>
         </li>
@@ -317,11 +318,6 @@ const bannerLabelText = computed(() => {
   padding: 0 calc(var(--unit) * 12);
   background: rgb(20 30 50 / 0.7);
   font-size: calc(var(--unit) * 22);
-}
-
-.stars {
-  color: #ffcc32;
-  white-space: nowrap;
 }
 
 .links {

@@ -79,9 +79,11 @@ flowchart TD
 | `scripts/src/services/genshinAssets/wish/toWishScheduleEvent.ts`     | One banner page's read joined to the game's ids, failing on a name that joins none                                    |
 | `packages/genshin-interface/src/components/WishHistory/Index.vue`    | The History popup: the year's draws, newest first                                                                     |
 | `packages/genshin-interface/src/components/WishDetails/Index.vue`    | The Details popup: the open banner's pool by rarity and the Epitomized Path                                           |
+| `packages/genshin-interface/src/components/RarityStars/Index.vue`    | A rarity's stars in the game's gold, one for each rarity, drawn by the wish's screens and popups                      |
 
 ## Notes
 
+- **The rarity stars are one shared piece.** `RarityStars` is a shared piece of the interface package, alongside its other pieces rather than the wish's, since the game draws its stars the same way on every screen that shows a rarity. `WishDetails` and `WishScreen` draw a rarity's stars through it. `WishHistory` still draws its own copy under the same class, a third place the piece does not reach yet.
 - **The banners' pools are the wiki's, by the game's ids.** `services/wish/constants.ts` lists the standard wish's and the beginners' characters and weapons as the wiki's Wanderlust Invocation and Beginners' Wish item pools give them, and `createBanners` builds the two permanent banners from the stat tables, each item's rarity read from them and its name from the world's names in the reader's language. The beginners' wish takes the standard wish's three-star weapons alone. A member the wiki's pool lists that the dump's tables do not hold yet, Alyosha, is left out until a later dump carries it. Each event banner the wish schedule has open at the game's time is built on the standard wish's pool, derived once, with its promoted five-stars and featured four-stars read from the schedule by id ([wish proposal](../../../changes/archive/2026-10-18-genshin-wish/design.md)).
 - **The beginners' wish keeps counters of its own.** The game's details do not say whether it shares the standard wish's, and the guides that say anything say it does not.
 
