@@ -14,6 +14,8 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Soukai Kanka lasts six seconds from the cast, and a second cast restarts it, as gcsim (MIT) ayato/skill.go gives it
@@ -38,6 +40,13 @@ const CONSTELLATION_6 = 6;
 // A stack or a mark a kit holds until the swap ends it, as gcsim's Namisen stacks last while he stays on the field
 const HELD_UNTIL_SWAP_SECONDS = Number.POSITIVE_INFINITY;
 const NAMISEN_STATUS_ID = "ayato-namisen";
+// Kamisato Art: Michiyuku Hagetsu, from Ascension 4, gives Ayato 2 Energy each second he is off the field while his Energy is
+// Under 40, as gcsim v2.47.2 (MIT) ayato/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayato/asc.go
+const ASCENSION_4 = 4;
+const MICHIYUKU_HAGETSU_ENERGY = 2;
+const MICHIYUKU_HAGETSU_ENERGY_CEILING = 40;
+const MICHIYUKU_HAGETSU_ID = "ayato-michiyuku-hagetsu";
 const CONSTELLATION_6_STATUS_ID = "ayato-constellation-6";
 
 // The Namisen stacks a character carries, and the most it can
@@ -48,11 +57,29 @@ const getNamisenStacksMax = (combatant: Combatant): number =>
 
 export const AYATO_CHARACTER_ID = 10_000_066;
 
+// Michiyuku Hagetsu's field follows the whole world, as the energy is given to Ayato wherever he stands off the field
+const castMichiyukuHagetsu = (kitEffectState: KitEffectState, combatant: Combatant): void => {
+  castKitField(
+    kitEffectState,
+    combatant.characterId,
+    { x: 0, z: 0 },
+    {
+      id: MICHIYUKU_HAGETSU_ID,
+      nextTickSeconds: 1,
+      onTick: ({ party }) => {
+        if (getPartyMember(party, combatant.characterId).energy < MICHIYUKU_HAGETSU_ENERGY_CEILING)
+          gainPartyMemberEnergy(party, combatant, MICHIYUKU_HAGETSU_ENERGY);
+      },
+      secondsRemaining: Number.POSITIVE_INFINITY,
+      tickIntervalSeconds: 1,
+    },
+  );
+};
+
 // Ayato's behaviour: Kamisato Art: Kyouka enters Soukai Kanka, whose three Shunsuiken strikes take the Namisen stacks,
-// And Kamisato Art: Suiyuu casts its garden, which follows the body and rains its blades on its ticks. Ascension 1 and
-// Constellations 1, 2 and 6 are built. Ascension 4's energy off the field, Constellation 4's team attack Speed and the Max
-// HP that Constellation 2 gives at three stacks are not, as the kit has no off-field energy or attack speed to price
-// Them, and a passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step
+// And Kamisato Art: Suiyuu casts its garden, which follows the body and rains its blades on its ticks. Ascension 1, Ascension 4's
+// Energy off the field and Constellations 1, 2 and 6 are built. Constellation 4's team attack Speed and the Max HP that
+// Constellation 2 gives at three stacks are not, as the kit has no attack speed to price them, and a passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step
 // Reads a normal attack's DMG Bonus from the team's effects
 export const createAyatoKitBehaviour = ({
   kit,
@@ -139,11 +166,17 @@ export const createAyatoKitBehaviour = ({
       enemy.health / enemy.maxHealth <= CONSTELLATION_1_HEALTH_SHARE
         ? CONSTELLATION_1_DAMAGE_BONUS
         : 0,
-    // Leaving the field clears the Namisen stacks as it ends Soukai Kanka, as gcsim's swap does
+    // Leaving the field clears the Namisen stacks as it ends Soukai Kanka, as gcsim's swap does, and from Ascension 4 starts
+    // Michiyuku Hagetsu's energy, which coming back on the field ends
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
+      if (event.kind !== KitEventKind.CharacterSwapped) return;
+      if (event.characterId === combatant.characterId)
+        for (const effect of kitEffectState.effects)
+          if (effect.kind === "field" && effect.id === MICHIYUKU_HAGETSU_ID) effect.secondsRemaining = 0;
+      if (event.previousCharacterId !== combatant.characterId) return;
       const namisen = findKitStatus(kitEffectState.effects, combatant.characterId, NAMISEN_STATUS_ID);
       if (namisen) namisen.secondsRemaining = 0;
+      if (combatant.ascension >= ASCENSION_4) castMichiyukuHagetsu(kitEffectState, combatant);
     },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {

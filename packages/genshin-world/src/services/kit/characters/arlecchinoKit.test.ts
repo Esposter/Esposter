@@ -1,10 +1,25 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ARLECCHINO_CHARACTER_ID, createArlecchinoKitBehaviour } from "#src/services/kit/characters/arlecchinoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ARLECCHINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ARLECCHINO_CHARACTER_ID);
+const createArlecchinoCombatant = (ascension: number): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: ARLECCHINO_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: ARLECCHINO_KIT,
+  level: 90,
+});
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 describe(createArlecchinoKitBehaviour, () => {
@@ -83,5 +98,18 @@ describe(createArlecchinoKitBehaviour, () => {
     expect(burstHit?.talentMultiplier).toBeCloseTo(3.704, 3);
     expect(ARLECCHINO_KIT.burstEnergyCost).toBe(60);
     expect(ARLECCHINO_KIT.burstCooldownSeconds).toBe(15);
+  });
+
+  // Her utility passive, The Balemoon Alone May Know, has no ascension phase: it holds from the start, below every phase
+  describe("the utility passive, The Balemoon Alone May Know", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createArlecchinoCombatant(0);
+      const { party } = createKitTestContext(combatant);
+
+      expect(getBuffedCombatant(combatant, [], party).attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBe(
+        0.4,
+      );
+    });
   });
 });

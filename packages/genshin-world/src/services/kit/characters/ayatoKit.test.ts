@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -14,7 +15,9 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { AYATO_CHARACTER_ID, createAyatoKitBehaviour } from "#src/services/kit/characters/ayatoKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -25,6 +28,14 @@ const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit =>
   takeOne(findStance(kitEffectState)?.combatant.kit.normalAttacks[index]?.hits ?? []);
+
+// Ayato leaves the field, as Kuki comes on it
+const leaveField = (context: KitContext, combatant: Combatant): void =>
+  AYATO_KIT.onKitEvent?.(
+    { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: AYATO_CHARACTER_ID },
+    context,
+    combatant,
+  );
 
 describe(createAyatoKitBehaviour, () => {
   const stacksAfterStrikes = (constellationCount: number): number => {
@@ -198,5 +209,27 @@ describe(createAyatoKitBehaviour, () => {
     );
 
     expect(kitEffectState.effects.find((effect) => effect.kind === "status")?.secondsRemaining).toBe(0);
+  });
+
+  describe("the Ascension 4 passive, Kamisato Art: Michiyuku Hagetsu", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createAyatoCombatant(4);
+      const context = createKitTestContext(combatant);
+      leaveField(context, combatant);
+      stepKitEffects(3, context);
+
+      expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(6);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createAyatoCombatant(3);
+      const context = createKitTestContext(combatant);
+      leaveField(context, combatant);
+      stepKitEffects(3, context);
+
+      expect(getPartyMember(context.party, AYATO_CHARACTER_ID).energy).toBe(0);
+    });
   });
 });

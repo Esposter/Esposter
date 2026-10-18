@@ -18,7 +18,7 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 - **The Masque of the Red Death's debt damage waits on the HP-debt hook.** It adds to her strikes and charged attack as a share of her debt and her total ATK, and its ascension and constellation bonuses go with it.
 - **The Blood-Debt Directive, the sigils her Cleave sets off, waits on the HP-debt hook.** Its debt limit, its Pyro sigils and its ticks all wait on it.
 - **Balemoon Rising's heal waits on the HP-debt hook,** as it is paid from her debt, and its cooldown reset of Spike and Cleave, 107 frames in, waits on a cooldown reset hook.
-- **Her ascension and constellation passives are not built,** including Constellation 6's added damage to Balemoon Rising.
+- **Her utility passive is built, from no ascension,** The Balemoon Alone May Know's 40% Pyro DMG Bonus. Her Ascension 1 passive waits on the HP-debt hook, which its Blood-Debt Directives read, and her Ascension 4 passive's RES is not built, as gcsim v2.47.2 models no Resistances. Constellation 6's added damage to Balemoon Rising is not built.
 
 ## Key files
 
