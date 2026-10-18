@@ -912,6 +912,7 @@ useWorldSaveSync({
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
+    characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
     clearedCamps: clearedCamps.value,
     clearedDomainIds: clearedDomainIds.value,
     commissionDay: commissionDay.value,

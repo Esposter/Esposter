@@ -4,6 +4,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
 import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
+import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toEncounterPointsSave } from "#src/services/save/toEncounterPointsSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
@@ -23,6 +24,7 @@ export const toGenshinSave = ({
   archiveProgressMap,
   characterCopyCountMap,
   characters,
+  characterTrialClaimedStageIds,
   clearedCamps,
   clearedDomainIds,
   commissionDay,
@@ -60,6 +62,7 @@ export const toGenshinSave = ({
   adventureRankRewardsClaimed,
   archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
+  characterTrials: toCharacterTrialSave(characterTrialClaimedStageIds),
   clearedCamps: [...clearedCamps],
   clearedDomains: [...clearedDomainIds],
   commissionDay: toCommissionDaySave(commissionDay),

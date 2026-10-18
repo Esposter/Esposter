@@ -32,6 +32,9 @@ describe(mergeGenshinSave, () => {
   const SEELIE_ID = "seelie-1";
   const OTHER_SEELIE_ID = "seelie-2";
   const PUZZLE_ID = "puzzle-1";
+  const TRIAL_STAGE_ID = 51_001;
+  const OTHER_TRIAL_STAGE_ID = 51_002;
+  const GUEST_TRIAL_STAGE_ID = 51_003;
   // Two goods a shop sells, one of them bought in both copies, the other by one only
   const SHOP_GOODS_ID = 7;
   const OTHER_SHOP_GOODS_ID = 8;
@@ -169,6 +172,22 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, clearedDomains: ["2"] };
 
     expect(mergeGenshinSave(account, guest).clearedDomains).toStrictEqual(["1", "2"]);
+  });
+
+  test("unions the character trial stages claimed by both copies, each once", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      characterTrials: { claimedStageIds: [TRIAL_STAGE_ID, OTHER_TRIAL_STAGE_ID] },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      characterTrials: { claimedStageIds: [OTHER_TRIAL_STAGE_ID, GUEST_TRIAL_STAGE_ID] },
+    };
+
+    expect(mergeGenshinSave(account, guest).characterTrials).toStrictEqual({
+      claimedStageIds: [TRIAL_STAGE_ID, OTHER_TRIAL_STAGE_ID, GUEST_TRIAL_STAGE_ID],
+    });
   });
 
   test("keeps the account's opened chests over the guest's", () => {

@@ -244,6 +244,11 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
     characters: mergeCharacters(account.characters, guest.characters),
+    characterTrials: {
+      claimedStageIds: [
+        ...new Set([...account.characterTrials.claimedStageIds, ...guest.characterTrials.claimedStageIds]),
+      ],
+    },
     clearedCamps: mergeClearedCamps(account.clearedCamps, guest.clearedCamps),
     clearedDomains: [...new Set([...account.clearedDomains, ...guest.clearedDomains])],
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
