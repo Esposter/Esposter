@@ -279,7 +279,7 @@ describe(readQuestSteps, () => {
     const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_FINISH_PLOT", G: [7, 0] }] }] };
 
     expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
-      notes: [],
+      notes: [`${QUEST_ID}'s step 100 finishes on a plot the world cannot play, so it is met at once`],
       offerTalkIds: [],
       steps: [
         {

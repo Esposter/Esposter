@@ -224,6 +224,7 @@ The reader SHALL keep a shown step whose finish is a plot finished, being presen
 - **GIVEN** a shown step finishing on a plot whose id names no talk the world plays
 - **WHEN** the reader reads the step
 - **THEN** its objective is a plot, met at once, as a named stand-in
+- **AND** the reader notes the step
 
 #### Scenario: Scene named
 

@@ -96,6 +96,8 @@ export const readQuestSteps = (
             ? QuestObjectiveKind.TalkTo
             : questContentObjective.kind;
         if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
+        if (kind === QuestObjectiveKind.Plot)
+          notes.push(`${questId}'s step ${id} finishes on a plot the world cannot play, so it is met at once`);
         if (kind === QuestObjectiveKind.Wait) {
           const questWait = readQuestWait(condition);
           return questWait ? [{ count: 1, kind, targetIds: [formatQuestWaitTargetId(questWait)] }] : [];
