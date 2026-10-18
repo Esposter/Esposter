@@ -11,19 +11,20 @@ import { ItemCategory } from "genshin-interface";
 // And its stats, so each artifact keeps its own. The artifacts tab's room decides whether it fits, and one that does not
 // Is left over
 export const addInventoryArtifact = (
-  { items, nextId, quickSwapItemIds }: Inventory,
+  inventory: Inventory,
   definition: ItemDefinition,
   artifact: Artifact,
 ): InventoryAddition => {
+  const { items, nextId } = inventory;
   const categoryRoom = ItemCategoryRoomMap[ItemCategory.Artifact];
   const tabRoom =
     categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, ItemCategory.Artifact);
-  if (tabRoom < 1) return { inventory: { items, nextId, quickSwapItemIds }, overflow: 1 };
+  if (tabRoom < 1) return { inventory, overflow: 1 };
   return {
     inventory: {
+      ...inventory,
       items: [...items, { artifact, definition, id: nextId, quantity: 1 }],
       nextId: nextId + 1,
-      quickSwapItemIds,
     },
     overflow: 0,
   };

@@ -20,6 +20,9 @@ export interface Party {
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;
   lunarCrystallize: PartyLunarCrystallize;
+  // The Moonridge Dew the party holds, up to three, which Columbina's Lunar-Blooms gain and a Lunar-Bloom skill spends after
+  // Its Verdant Dew
+  moonridgeDew: number;
   // The seconds left before the team's Nightsoul burst may go off again, none once it runs out, as the team holds one burst's
   // Interval for the whole team rather than for a character
   nightsoulBurstCooldownSeconds: number;

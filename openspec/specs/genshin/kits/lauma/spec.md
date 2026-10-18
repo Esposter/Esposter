@@ -45,18 +45,18 @@ Hymn of Hunting SHALL plant a Frostgrove Sanctuary where Lauma stands, which tic
 
 ### Requirement: Hymn of Eternal Rest hold
 
-While the party holds Verdant Dew, holding Hymn of Hunting SHALL start Hymn of Eternal Rest, which spends up to three Dew on a Lunar-Bloom hit and plants the same sanctuary.
+While the party holds Dew, holding Hymn of Hunting SHALL start Hymn of Eternal Rest, which spends up to three Dew on a Lunar-Bloom hit and plants the same sanctuary.
 
-#### Scenario: Hold with Verdant Dew
+#### Scenario: Hold with Dew
 
-- **GIVEN** the party holds Verdant Dew
+- **GIVEN** the party holds Dew
 - **WHEN** the player holds Hymn of Hunting
 - **THEN** Hymn of Eternal Rest starts
 - **AND** up to three Dew are spent on a Lunar-Bloom hit
 
-#### Scenario: Hold without Verdant Dew plays the press
+#### Scenario: Hold without Dew plays the press
 
-- **GIVEN** the party holds no Verdant Dew
+- **GIVEN** the party holds no Dew
 - **WHEN** the player holds Hymn of Hunting
 - **THEN** the press plays instead
 

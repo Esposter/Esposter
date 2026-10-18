@@ -42,6 +42,13 @@ export const PRECIPITATION_SETTINGS_MAP: Readonly<Record<PrecipitationKind, Prec
   [PrecipitationKind.Sand]: { fallSpeed: 1.5, length: 2.5, opacity: 0.3, sway: 0.2, width: 0.05, windDrift: 1 },
   [PrecipitationKind.Snow]: { fallSpeed: 1.6, length: 0.12, opacity: 0.9, sway: 0.8, width: 0.12, windDrift: 0.3 },
 };
+// The snow's sky, fog and snowfall, which the snowstorm starts at until a recording of a snowstorm is fitted
+const SNOW_WEATHER_SETTINGS: WeatherSettings = {
+  cloudCoverage: 0.8,
+  fogDensity: 0.001,
+  precipitation: { density: 0.5, kind: PrecipitationKind.Snow },
+  wetness: 0,
+};
 // Each weather's sky, fog, wetness, particles and lightning, as starting values to be fitted to the game's own weather
 // Settings. Clear keeps the region's own sky and haze; the others raise them over it. Provisional: the sandstorm's sand
 // Haze is measured off a recording of the Desert of Hadramaveth's storm. The thunderstorm's strikes a minute are its
@@ -64,20 +71,10 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
     precipitation: { density: 0.8, kind: PrecipitationKind.Sand },
     wetness: 0,
   },
-  [WeatherKind.Snow]: {
-    cloudCoverage: 0.8,
-    fogDensity: 0.001,
-    precipitation: { density: 0.5, kind: PrecipitationKind.Snow },
-    wetness: 0,
-  },
+  [WeatherKind.Snow]: SNOW_WEATHER_SETTINGS,
   // Provisional: the snowstorm's sky and snow are unmeasured, so it starts at the snow's settings. No area lists it yet,
   // So nothing draws these until a recording of a snowstorm is fitted
-  [WeatherKind.Snowstorm]: {
-    cloudCoverage: 0.8,
-    fogDensity: 0.001,
-    precipitation: { density: 0.5, kind: PrecipitationKind.Snow },
-    wetness: 0,
-  },
+  [WeatherKind.Snowstorm]: { ...SNOW_WEATHER_SETTINGS },
   [WeatherKind.Thunderstorm]: {
     cloudCoverage: 1,
     fogDensity: 0.002,

@@ -40,11 +40,7 @@ export const craftStrongbox = (
   );
   if (!isCountRight || !isOfferable) return undefined;
   const { artifactDropTables, materialDataMap, names, random, reliquaryPieceEntryMap, weaponDataMap } = tables;
-  const remaining: Inventory = {
-    items: inventory.items.filter((item) => !pickedIds.includes(item.id)),
-    nextId: inventory.nextId,
-    quickSwapItemIds: inventory.quickSwapItemIds,
-  };
+  const remaining: Inventory = { ...inventory, items: inventory.items.filter((item) => !pickedIds.includes(item.id)) };
   return pickUpDroppedItem(
     rollStrongboxArtifact(strongbox, random, artifactDropTables),
     remaining,

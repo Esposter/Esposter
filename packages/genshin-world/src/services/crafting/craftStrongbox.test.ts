@@ -120,6 +120,22 @@ describe(craftStrongbox, () => {
     });
   });
 
+  test("the equipped gadget stays equipped through the craft", () => {
+    expect.hasAssertions();
+
+    const inventory: Inventory = {
+      equippedGadgetItemId: 1,
+      items: [createBagItem(0), createBagItem(1), createBagItem(2)],
+      nextId: 3,
+      quickSwapItemIds: [],
+    };
+
+    expect(
+      craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())?.inventory
+        .equippedGadgetItemId,
+    ).toBe(1);
+  });
+
   test("a locked artifact is not offered", () => {
     expect.hasAssertions();
 

@@ -159,7 +159,7 @@ An unfinished commission's claim SHALL spend one Encounter Point from the whole 
 
 Encounter Points an earn would hold past the storage SHALL be kept as Long-Term Encounter Points, which the daily reset does not clear and the major version does. Thirty Original Resin SHALL convert one Long-Term Encounter Point into an Encounter Point while the daily points fall short of the storage by a whole point.
 
-#### Scenario: a quest past the storage keeps the overflow as Long-Term Encounter Points
+#### Scenario: a finished Archon quest past the storage keeps the overflow as Long-Term Encounter Points
 
 - **GIVEN** two Encounter Points held and no commission finished
 - **WHEN** an Archon quest completes
@@ -179,7 +179,7 @@ Encounter Points an earn would hold past the storage SHALL be kept as Long-Term 
 
 ### Requirement: Collected Items And Oculi Earn Half Points
 
-A Crimson Agate, Lumenspar or Spirit Carp picked up at a gathering point SHALL earn a half Encounter Point, and an Oculus SHALL earn one on its first collection. A Mnemonic Cluster and a Plumes of Purifying Light SHALL earn none, and an item a chest or a dropped item gives SHALL earn none.
+A Crimson Agate, Lumenspar or Spirit Carp picked up at a gathering point SHALL earn a half Encounter Point, and an Oculus SHALL earn a half Encounter Point on its first collection. A Mnemonic Cluster and a Plumes of Purifying Light SHALL earn none, and an item a chest or a dropped item gives SHALL earn none.
 
 #### Scenario: a collected Crimson Agate earns a half Encounter Point
 

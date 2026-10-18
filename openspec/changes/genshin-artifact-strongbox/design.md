@@ -32,7 +32,7 @@ flowchart LR
 - **The offering is the bench's last tab.** From the gate, the bench lists the Mystic Offering after its recipe tabs. Picking it takes the bench's screen with the panel, and the panel's Back returns to the bench's first recipe tab. Provisional: the game's place for the tab, and the panel taking the screen over the bench, are not measured, so both wait on a clip.
 - **The piece roll is shared.** `rollPieceArtifact` is the step the chest drop already runs after it picks a piece. The chest calls it unchanged.
 - **The drop pickup takes the artifact in.** The offering removes the three, then `pickUpDroppedItem` takes the rolled artifact in, so room and overflow behave as they do for a drop.
-- **The reader waits on the publish.** `readGameData` takes only keys in `gameDataLock.json`, so the reader's key type-checks only after the main session publishes `crafting/strongboxes`. Pushed before that, the typecheck fails.
+- **The reader reads only locked keys.** `readGameData` takes only keys in `gameDataLock.json`, which holds `crafting/strongboxes`, so the reader's key type-checks.
 
 ## Key files
 
@@ -59,4 +59,10 @@ flowchart LR
 
 ## Rollout
 
-The main session runs `pnpm -C scripts genshin:assets crafting` to publish `crafting/strongboxes`, which adds the key to `gameDataLock.json`. The reader and the panel's wiring land after that publish. The builder's dry run is `pnpm -C scripts genshin:assets crafting --dry-run`.
+`pnpm -C scripts genshin:assets crafting` publishes `crafting/strongboxes` to `gameDataLock.json`, and its dry run is `pnpm -C scripts genshin:assets crafting --dry-run`.
+
+## Sources
+
+- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, which grounds `MYSTIC_OFFERING_ADVENTURE_RANK`, and three five-star artifacts give one Artifact Strongbox.
+- [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki: a strongbox holds a random artifact of the selected set, and at most 39 artifacts are offered at once, the batch cap the game's table also holds.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the decompose, display item and offer tables the strongbox record is joined from.

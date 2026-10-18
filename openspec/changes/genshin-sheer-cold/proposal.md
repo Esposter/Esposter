@@ -19,9 +19,7 @@ The subzero climate fills a gauge, heat drains it, and a full gauge deals damage
 
 ## Waiting on
 
-- The damage reaches no HP yet: the session has no health path for the world to call, so the damage is emitted for it.
 - Campfires are not placed in the world, so the drain has no source until they are.
-- Snowstorms are not a weather the world has, so their quickening of the fill is not built.
 - The gauge's rates, full scale and the bar's look are provisional until a recording of each is read.
 
 ## Impact

@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
@@ -34,12 +35,14 @@ const readRadiantElements = ({ characterIdCombatantMap, party, random }: KitCont
   return shuffleWithRandom([...elements, ...elements], random);
 };
 
-// Chasca's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points as gcsim does, and a press
-// In it leaves the Blessing, and a sprint in it drains points. Galesplitting's six shells are cast at its start as one
-// Summon, each shell a single-target hit at its hitmark that takes its enemy in turn, Radiant while the team has a Pyro,
-// Hydro, Electro or Cryo bullet for it and Anemo after (burst.go:76-93). The press that leaves the Blessing plays none of
-// Its skill's hits and sets no cooldown, as gcsim's does, through the skill's state-ending check. Not built: the Ascension
-// Talent's Burning Shadowhunt Shell, and the Constellations that need the shells' energy and follow-up hits
+// Chasca's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points as gcsim does, and a
+// Press in it leaves the Blessing, and a sprint in it drains points. Galesplitting's six shells are cast at its start
+// As one summon, each shell a single-target hit at its hitmark that takes its enemy in turn, Radiant while the team has
+// A Pyro, Hydro, Electro or Cryo bullet for it and Anemo after (burst.go:76-93). The press that leaves the Blessing
+// Plays none of its skill's hits, as gcsim's does, through the skill's state-ending check. The cooldown the entering
+// Press sets is held while the Blessing lasts, so it runs from the Blessing's end, as gcsim's exit sets it, whether she
+// Leaves by a press or her points drain to none (skill.go exitNightsoul). Not built: the Ascension Talent's Burning
+// Shadowhunt Shell, and the Constellations that need the shells' energy and follow-up hits
 // Constellation 1 needs Bullet Trick's Spiritbinding Conversion, which the Ascension talent does not build
 // Constellation 2 needs Bullet Trick's Spirit of the Radiant Shadow stacks, which the Ascension talent does not build
 // Constellation 4 needs each Radiant shell's energy and follow-up hit (cons.go:67), which the kit does not build
@@ -66,6 +69,10 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
       const { characterId } = activeCombatant;
       if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
         drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
+    },
+    onStep: ({ kitEffectState, party }, { characterId }, stepSeconds) => {
+      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+        changeKitSkillCooldown(party, characterId, stepSeconds);
     },
     skill: {
       checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>

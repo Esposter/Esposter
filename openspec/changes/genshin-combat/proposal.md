@@ -18,7 +18,7 @@ The Stellar Glimmer reactions take effect once the party holds an enabler from a
 
 ## Waiting on
 
-- The Stellar Jubilee passives that enable the reactions: the Cryo Traveler's and Odette's, the only two gcsim v2.47.2 turns them on from. Odette has no module, and the Traveler's kit has no Cryo passive yet.
+- The Stellar Jubilee passives that enable the reactions: the Cryo Traveler's and Odette's, the only two gcsim v2.47.2 turns them on from. Odette's module carries hers and enables both reactions for its party. The Traveler's kit has no Cryo passive yet.
 
 ## Impact
 

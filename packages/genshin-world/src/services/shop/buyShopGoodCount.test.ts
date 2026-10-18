@@ -30,7 +30,7 @@ describe(buyShopGoodCount, () => {
     refresh: ShopRefresh.None,
   };
 
-  test("buying a good from the screen spends its price and gives the good", () => {
+  test("buying a good from the screen spends its costs and gives the good", () => {
     expect.hasAssertions();
     const { purchases, wallet } = buyShopGoodCount(
       { ...EMPTY_WALLET, [Currency.Mora]: 100 },

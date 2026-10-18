@@ -10,4 +10,4 @@ A Character Trial lets a player try a character they do not own. The trial is a 
 - A trial's party is its character at the trial's level, with the talent level and artifacts its template gives.
 - A trial's enemies stand in the domain arena, and the first clear of a trial gives its reward once.
 
-The trial's weapon, its enemies and its constellations are not in the trial rows, so they are named as blocked in the tasks rather than guessed.
+The trial's weapon, its enemies and its constellations are not in the trial rows. The weapon is the wiki's build and the constellation is C0 (tasks 4.1 and 4.2), and the enemies are named as blocked in the tasks (3.2) rather than guessed.

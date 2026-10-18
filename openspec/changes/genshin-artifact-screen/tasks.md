@@ -15,10 +15,10 @@ Each built task names the test it was written first in, and each test is a scena
 
 ## 3. Equip and unequip
 
-- [x] 3.1 `equipCharacterArtifact` puts a piece in its slot and returns the piece it replaces. Tests: "equipping into an
-      empty slot displaces nothing", "equipping into a worn slot returns the piece it replaces".
-- [x] 3.2 `unequipCharacterArtifact` takes off a slot's piece and refuses an empty slot. Tests: "unequipping returns the
-      worn artifact and leaves its slot empty", "unequipping an empty slot is refused".
+- [x] 3.1 `equipCharacterArtifact` puts a piece in its slot and returns the piece it replaces, and
+      `unequipCharacterArtifact` takes off a slot's piece and refuses an empty slot. Tests: "equipping into an empty slot
+      displaces nothing", "equipping into a worn slot returns the piece it replaces", "unequipping returns the worn artifact
+      and leaves its slot empty", "unequipping an empty slot is refused".
 
 ## 4. Enhancing a worn artifact
 
@@ -48,7 +48,7 @@ Each built task names the test it was written first in, and each test is a scena
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       Waits on a browser run.
 
-## 6. Not built
+## 6. The bag, the main stat and the lock
 
 - [x] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. The character-screen
       change has landed on `eye`: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.

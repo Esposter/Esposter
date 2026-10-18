@@ -19,7 +19,7 @@ An Elemental Node SHALL pulse once every fifteen seconds, and a step that passes
 
 ### Requirement: A pulse lays its element on an enemy in reach
 
-A node's pulse SHALL lay its element on each enemy in its reach, the full gauge on an enemy without the buff, and on an enemy with it a further 1.2 gauge up to 3.6, and the gauge SHALL NOT decay with time.
+A node's pulse SHALL lay its element on each enemy in its reach, the full gauge on an enemy without the buff, and on an enemy with it a further 1.2 gauge up to 3.6, and the gauge SHALL NOT decay with time on an enemy that holds no other aura. A gauge laid over an aura the enemy already holds SHALL keep that aura's decay rate.
 
 #### Scenario: An unbuffed enemy gains the node's full gauge, which does not decay
 

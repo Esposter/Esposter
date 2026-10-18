@@ -928,6 +928,7 @@ describe(getGcsimKitCandidates, () => {
           file: "attack.go",
           internalCooldownTag: "attacks.ICDTagKinichLoopShot",
           line: 115,
+          siteLine: 115,
           talentVariable: "loopShot",
           variableName: "ai",
         },
@@ -949,6 +950,7 @@ describe(getGcsimKitCandidates, () => {
       talentVariables: [
         {
           leaves: [{ path: [0], reference: { label: "Loop Shot DMG", selector: 0, type: GcsimTalentType.Skill } }],
+          line: 161,
           name: "loopShot",
         },
       ],

@@ -49,7 +49,7 @@ Chasca's collision attack and low plunge SHALL land their hits in a circle round
 
 ### Requirement: Spirit Reins' Resonance
 
-Spirit Reins' Resonance SHALL land an Anemo circle of radius 5.5 metres round Chasca at 3 frames, SHALL let her next action start 6 frames after it is pressed, and SHALL go on cooldown for 6.5 seconds.
+Spirit Reins' Resonance SHALL land an Anemo circle of radius 5.5 metres round Chasca at 3 frames, SHALL let her next action start 6 frames after it is pressed, and SHALL go on cooldown for 6.5 seconds, which runs from when she leaves the Blessing.
 
 #### Scenario: Pressing Resonance strikes round Chasca
 
@@ -59,9 +59,15 @@ Spirit Reins' Resonance SHALL land an Anemo circle of radius 5.5 metres round Ch
 
 #### Scenario: Resonance cannot be pressed during its cooldown
 
-- **GIVEN** Resonance was pressed less than 6.5 seconds ago
-- **WHEN** the player presses it again
+- **GIVEN** Chasca left the Blessing less than 6.5 seconds ago
+- **WHEN** the player presses Resonance
 - **THEN** Resonance does not activate
+
+#### Scenario: The cooldown runs from the Blessing's end
+
+- **GIVEN** Chasca entered the Blessing and left it by a press, or when its points drained to none
+- **WHEN** 6.5 seconds have passed since she left
+- **THEN** the player can press Resonance to enter the Blessing again
 
 ### Requirement: Spirit Reins' Nightsoul Blessing
 
@@ -84,7 +90,7 @@ Spirit Reins' press SHALL enter the Nightsoul Blessing with 80 points, which dra
 - **GIVEN** Chasca is in the Blessing
 - **WHEN** the player presses Spirit Reins' Resonance
 - **THEN** the Blessing ends
-- **AND** the press still lands Resonance's strike, which gcsim's exit press does not, until the kit can play a different action on that press
+- **AND** the press lands no strike, as gcsim's exit press lands none
 
 #### Scenario: A sprint in the Blessing drains 13.3 points
 

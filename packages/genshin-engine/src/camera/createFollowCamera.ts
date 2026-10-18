@@ -23,8 +23,9 @@ const clampPitch = (value: number): number =>
 // A camera orbiting a pivot above a body, as the game's follows its character. The look turns it once a frame, clamped
 // Short of straight up and down, and zooms it by the wheel within its range. The eye stands on the arm out from the
 // Pivot, short of the first landmark a sphere cast along the arm touches and of the first point stepped along it under
-// The ground or the water's surface: it is pulled in at once and eases back out once the way clears. With the slope pitch
-// On, the pitch settles each frame on the slope the ground rises or falls at along the eye's side
+// The ground or the water's surface: it is pulled in at once and eases back out once the way clears. With the slope
+// Pitch on, a baseline settles each frame on the slope the ground rises or falls at along the eye's side, and the look
+// Turns the pitch from it
 export const createFollowCamera = ({
   camera,
   ground,
@@ -34,13 +35,22 @@ export const createFollowCamera = ({
   const euler = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
   const armDirection = new Vector3();
   let yaw = euler.y;
-  // The camera the world hands over may look straight up, as its default pose does, so the follow camera starts level as
-  // A reset does, its look clamped from there rather than from that pose
+  // The camera the world hands over may look straight up, as its default pose does, so the follow camera starts level
+  // As a reset does, its look clamped from there rather than from that pose. The pitch is the slope pitch's settled
+  // Baseline with the player's look held on it as an offset, so the slope pitch never takes back what the look turned
   let pitch = 0;
+  let slopeBaseline = 0;
+  let lookOffset = 0;
   let distance = settings.defaultDistance;
   let armLength = distance;
   camera.fov = FOLLOW_CAMERA_FOV;
   camera.updateProjectionMatrix();
+  // The pitch the baseline and the look make together, the look's offset held short of the limits so it never winds up
+  // Past them
+  const settlePitch = (): void => {
+    lookOffset = clampPitch(slopeBaseline + lookOffset) - slopeBaseline;
+    pitch = slopeBaseline + lookOffset;
+  };
   const turn = (): void => {
     euler.set(pitch, yaw, 0, "YXZ");
     camera.quaternion.setFromEuler(euler);
@@ -51,6 +61,8 @@ export const createFollowCamera = ({
   const reset = (facing: number): void => {
     yaw = facing;
     pitch = 0;
+    slopeBaseline = 0;
+    lookOffset = 0;
     returnToDefaultDistance();
     turn();
   };
@@ -65,8 +77,8 @@ export const createFollowCamera = ({
     }
     return reach;
   };
-  // The pitch that runs the arm parallel to the ground along the eye's side: the rise from under the pivot to the ground
-  // The arm reaches across its horizontal run, so the eye keeps its height above the slope
+  // The pitch that runs the arm parallel to the ground along the eye's side: the rise from under the pivot to the
+  // Ground the arm reaches across its horizontal run, so the eye keeps its height above the slope
   const computeSlopePitch = (pivot: Vector3): number => {
     const runX = Math.sin(yaw) * distance;
     const runZ = Math.cos(yaw) * distance;
@@ -77,13 +89,15 @@ export const createFollowCamera = ({
     follow: (pivot, origin, frameSeconds) => {
       if (settings.slopePitch) {
         const settle = 1 - Math.exp(-FOLLOW_CAMERA_SLOPE_PITCH_SPEED * frameSeconds);
-        pitch = clampPitch(pitch + (computeSlopePitch(pivot) - pitch) * settle);
+        slopeBaseline += (computeSlopePitch(pivot) - slopeBaseline) * settle;
+        settlePitch();
         turn();
       }
       armDirection.set(Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
       const landmarkReach = landmarkCollider.castSphere(pivot, armDirection, distance, FOLLOW_CAMERA_CLEARANCE);
       // A landmark never pulls the eye in under the minimum distance, so it cannot collapse the arm onto the body. The
-      // Ground or the water's surface under the arm wins over that minimum, so the eye stays above it, even at the pivot
+      // Ground or the water's surface under the arm wins over that minimum, so the eye stays above it, even at the
+      // Pivot
       const reach = computeGroundReach(pivot, Math.max(FOLLOW_CAMERA_MIN_DISTANCE, landmarkReach));
       armLength = reach < armLength ? reach : Math.min(reach, armLength + FOLLOW_CAMERA_EASE_OUT_SPEED * frameSeconds);
       camera.position.copy(pivot).addScaledVector(armDirection, armLength).sub(origin);
@@ -94,7 +108,8 @@ export const createFollowCamera = ({
         return;
       }
       yaw += input.lookYaw * (settings.horizontalSensitivity / FOLLOW_CAMERA_NEUTRAL_SENSITIVITY);
-      pitch = clampPitch(pitch + input.lookPitch * (settings.verticalSensitivity / FOLLOW_CAMERA_NEUTRAL_SENSITIVITY));
+      lookOffset += input.lookPitch * (settings.verticalSensitivity / FOLLOW_CAMERA_NEUTRAL_SENSITIVITY);
+      settlePitch();
       distance = Math.max(
         FOLLOW_CAMERA_MIN_DISTANCE,
         Math.min(FOLLOW_CAMERA_MAX_DISTANCE, distance + input.zoomSteps * FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP),

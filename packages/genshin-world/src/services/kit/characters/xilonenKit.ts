@@ -33,9 +33,10 @@ const exitNightsoulBlessing = (kitEffectState: KitEffectState, characterId: numb
 // Seconds as gcsim does, with Blade Roller in place of her normal attacks for the same nine seconds, a press in it leaves
 // The Blessing, and a sprint in it drains points. Leaving the field ends the Blessing, as gcsim's swap exit does. Points
 // Drained to none end the Blessing without an event of its own, so the stance is ended on the points-consumed event the
-// Drain raises. Not built: the strike of the press that leaves the Blessing, which gcsim's exit press does not deal, as
-// Chasca's does not. Ocelotlicue Point's damage is read only with fewer than two Samplers in the party, which a kit step
-// Cannot count yet, and its heal, which it gives with two or more, is a timed heal that is not built either
+// Drain raises. Not built: the strike of the press that leaves the Blessing, which gcsim's exit press does not deal and
+// Chasca's kit leaves out through the skill's state-ending check. Ocelotlicue Point's damage is read only with fewer
+// Than two Samplers in the party, which a kit step cannot count yet, and its heal, which it gives with two or more, is
+// A timed heal that is not built either
 // Constellation 1 needs the Blessing's point and Phlogiston cuts, which the kit does not build
 // Constellation 2 needs the Geo Source Sample off the field and its party effect, which the kit does not build
 // Constellation 4 needs Yohual's Scratch to grant the Blooming Blessing effect, which the kit does not build

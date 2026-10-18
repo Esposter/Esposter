@@ -2,7 +2,7 @@
 
 ## 1. The restriction on the step
 
-- [x] 1.1 Carry an optional restriction on the quest step, absent when the step has none. Verify: tests named after the scenarios 'A restricted step carries its restriction' and 'A step with no restriction carries none' written first and seen failing. The reader reads the dump's ban group off the sub quest by its value; the dataset publish is the main session's.
+- [x] 1.1 Carry an optional restriction on the quest step, absent when the step has none. Verify: the tests 'a step whose sub quest names a ban group carries its ban type' and 'a ban group the reader does not know is noted and left off the step' in `scripts/src/services/genshinText/readQuestSteps.test.ts`, written first and seen failing. The reader reads the dump's ban group off the sub quest by its value; the dataset publish is the main session's.
 
 ## 2. The Paimon menu's lock
 

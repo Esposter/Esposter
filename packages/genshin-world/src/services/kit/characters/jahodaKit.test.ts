@@ -352,4 +352,20 @@ describe(createJahodaKitBehaviour, () => {
     // The first run strikes three times before the second drain, which stops it, and the second run strikes ten times
     expect(strikes.filter(({ hitbox }) => hitbox !== undefined)).toHaveLength(13);
   });
+
+  test("a press of Savvy Strategy while Meowballs run ends them, as gcsim's cast zeroes the flask and stops their ticks", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, true);
+    fillFlaskUntilDrained(pursuit, context);
+    // The enemy stands out of the new pursuit's absorb circle, so the press refills nothing, and the Meowballs still find it
+    for (const enemy of context.enemyMap.values()) enemy.position = { x: 100, z: 0 };
+    const meowballFrames: number[] = [];
+    for (let frame = 1; frame <= 400; frame++)
+      if (stepKitTestEffects(1 / 60, context).some(({ hitbox }) => hitbox !== undefined)) meowballFrames.push(frame);
+    JAHODA_KIT.elementalSkill.onStart?.(context);
+    for (let frame = 401; frame <= 1300; frame++)
+      if (stepKitTestEffects(1 / 60, context).some(({ hitbox }) => hitbox !== undefined)) meowballFrames.push(frame);
+    // The three Meowballs that fall before the press, and none after it
+    expect(meowballFrames).toStrictEqual([129, 245, 361]);
+  });
 });

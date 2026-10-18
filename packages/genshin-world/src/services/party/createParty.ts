@@ -24,6 +24,7 @@ export const createParty = (characterIds: number[]): Party => {
     healthChanges: [],
     lunarChargedCloud: { secondsRemaining: 0, tickSeconds: 0 },
     lunarCrystallize: { contributorIds: new Set(), count: 0, harmonyCooldownSeconds: 0, moondrifts: [] },
+    moonridgeDew: 0,
     nightsoulBurstCooldownSeconds: 0,
     particleCooldownSecondsMap: new Map(),
     switchedSeconds: -PARTY_SWITCH_COOLDOWN_SECONDS,

@@ -28,7 +28,7 @@ describe(addInventoryItem, () => {
   const material = createDefinition(ItemCategory.Material, 0, 2);
 
   // The bag's quick swap slots are the bag's own, so taking an item in keeps them as they are
-  test("keeps the bag's quick swap slots when an item is taken in", () => {
+  test("taking an item into the bag keeps the quick swap slots", () => {
     expect.hasAssertions();
     const inventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [QUICK_SWAP_ITEM_ID] };
 

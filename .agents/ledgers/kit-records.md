@@ -15,7 +15,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `aloy`               | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `alyosha`            | —                      |                                                                          |
 | `amber`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `arataki-itto`       | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `arataki-itto`       | 2026-10-19 · Haiku 5.5 | design is `itto`                                                         |
 | `arlecchino`         | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `baizhu`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `barbara`            | 2026-10-19 · Haiku 5.5 |                                                                          |
@@ -57,7 +57,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jean`               | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `kachina`            | —                      |                                                                          |
-| `kaedehara-kazuha`   | —                      |                                                                          |
+| `kaedehara-kazuha`   | —                      | design is `kazuha`                                                       |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | —                      |                                                                          |
 | `kamisato-ayato`     | —                      |                                                                          |
@@ -67,7 +67,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `kirara`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `klee`               | —                      |                                                                          |
 | `kujou-sara`         | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `kuki-shinobu`       | —                      |                                                                          |
+| `kuki-shinobu`       | —                      | design is `kuki`                                                         |
 | `lan-yan`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `lauma`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `layla`              | —                      |                                                                          |
@@ -96,11 +96,11 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `razor`              | 2026-10-18 · Haiku 5.5 |                                                                          |
 | `rosaria`            | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sandrone`           | —                      |                                                                          |
-| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 | design is `kokomi`                                                       |
 | `sayu`               | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sethos`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `shenhe`             | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `shikanoin-heizou`   | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `shikanoin-heizou`   | 2026-10-19 · Haiku 5.5 | design is `heizou`                                                       |
 | `sigewinne`          | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `skirk`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sucrose`            | —                      |                                                                          |
@@ -126,7 +126,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `yaoyao`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `yelan`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `yoimiya`            | —                      |                                                                          |
-| `yumemizuki-mizuki`  | 2026-10-14 · Haiku 5.5 |                                                                          |
+| `yumemizuki-mizuki`  | 2026-10-14 · Haiku 5.5 | design is `mizuki`                                                       |
 | `yun-jin`            | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `zhongli`            | —                      |                                                                          |
 | `zibai`              | 2026-10-19 · Haiku 5.5 |                                                                          |

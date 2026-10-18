@@ -239,7 +239,7 @@ describe(mergeGenshinSave, () => {
   });
 
   // The bag is the account's, so the quick swap slots it holds are the account's too
-  test("keeps the account's quick swap slots over the guest's", () => {
+  test("a merge keeps the account's quick swap slots", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
