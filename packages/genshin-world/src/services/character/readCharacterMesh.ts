@@ -3,11 +3,11 @@ import type { CharacterMaterialOptions, ToonNodeMaterial } from "genshin-engine"
 import type { BufferGeometry, SkinnedMesh } from "three";
 
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
+import { getCharacterColourTextureIndices } from "#src/services/character/getCharacterColourTextureIndices";
 import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import {
-  checkIsPmxSphereDrawn,
   checkTransparentTexels,
   createCharacterMaterial,
   createPmxMesh,
@@ -39,9 +39,7 @@ export const readCharacterMesh = (
       pmxModel.materials.flatMap((material) => getCharacterMaterialTextureIndices(material)),
     );
     const colourTextureIndices = new Set(
-      pmxModel.materials.flatMap(({ sphereMode, sphereTextureIndex, textureIndex }) =>
-        checkIsPmxSphereDrawn(sphereMode) ? [textureIndex, sphereTextureIndex] : [textureIndex],
-      ),
+      pmxModel.materials.flatMap((material) => getCharacterColourTextureIndices(material)),
     );
     const toonTextureIndices = new Set(
       pmxModel.materials.filter(({ isToonShared }) => !isToonShared).map(({ toonIndex }) => toonIndex),
