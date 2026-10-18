@@ -53,7 +53,7 @@ export const playGcgCard = (
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
   if (module.isCombatAction) passGcgTurn(duel, sideIndex);
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return GcgActionResult.Done;
 };
 
