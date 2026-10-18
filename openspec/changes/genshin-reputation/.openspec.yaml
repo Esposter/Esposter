@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 the three camp requests need their camps' targets; 2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the exploration thresholds (the exploration progress proposal), and the Reputation quests pay only once their parent quests are carried (none of Mondstadt's 25 is yet); 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.1 the three camp requests need their camps' targets; 2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the exploration thresholds (the exploration progress proposal), and the Reputation quests pay only once their parent quests are carried (none of Mondstadt's 25 is yet); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -26,4 +26,9 @@ x-touches:
     "packages/genshin-world/src/components/World/Session/Index.vue",
     "packages/genshin-world/src/composables/useWorldQuests.ts",
     "packages/genshin-text/src/models/GameTextKey.ts",
+    "scripts/src/models/genshinAssets/shops/ShopReputationDiscount.ts",
+    "scripts/src/services/genshinAssets/shops/toShopGoodSlice.ts",
+    "scripts/src/services/genshinAssets/shops/toShopGoodSlice.test.ts",
+    "scripts/src/services/genshinAssets/shops/buildShopGoodSlice.ts",
+    "scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts",
   ]
