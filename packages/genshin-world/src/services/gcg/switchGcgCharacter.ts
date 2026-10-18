@@ -3,7 +3,6 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
@@ -11,7 +10,7 @@ import { GCG_SWITCH_DICE_COUNT } from "#src/services/gcg/constants";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
-import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
 // A combat action: the side pays one die of any face, fewer where the field reduces the switch, to make a standing
@@ -49,12 +48,7 @@ export const switchGcgCharacter = (
     listGcgFieldCards(side, undefined).some(
       (zoneCard) => GcgCardIdModuleMap.get(zoneCard.cardId)?.isSwitchFast?.({ duel, sideIndex }) === true,
     );
-  side.activeIndex = characterIndex;
-  for (const zoneCard of listGcgFieldCards(side, undefined)) {
-    const damage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwitch?.({ duel, sideIndex }, zoneCard);
-    if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
-  }
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  switchGcgActiveCharacter(duel, sideIndex, characterIndex);
   if (!isFast) passGcgTurn(duel, sideIndex);
   return GcgActionResult.Done;
 };

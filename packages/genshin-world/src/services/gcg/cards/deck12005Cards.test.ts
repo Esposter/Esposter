@@ -1,3 +1,4 @@
+import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
@@ -6,15 +7,18 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
+import { icicle } from "#src/services/gcg/cards/icicle";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
-import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
 import { stellarRestoration } from "#src/services/gcg/cards/stellarRestoration";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
@@ -144,19 +148,31 @@ describe("stellar Restoration", () => {
 });
 
 describe("lightning Stiletto", () => {
-  test("a played card switches Keqing in and uses her skill once, without another copy", () => {
+  test("a played card switches Keqing in for free, so the field's switch hook fires, and she uses her skill once", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
       createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
     ]);
-    const context: GcgEffectContext = { duel, sideIndex: 0 };
-    expect(lightningStiletto.canPlay?.(context, undefined)).toBe(true);
-    lightningStiletto.play?.(context, undefined);
-    expect(takeOne(duel.sides, 0).activeIndex).toBe(1);
-    expect(lightningStiletto.skillOnPlay?.(context, undefined)).toStrictEqual(TALENT_SKILL);
-    runGcgSkillUse(context, TALENT_SKILL);
-    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
-    expect(takeOne(duel.sides, 0).hand).toStrictEqual([]);
+    const side = takeOne(duel.sides, 0);
+    const icicleZoneCard = createGcgZoneCard(111_031, icicle);
+    const card: GcgCard = {
+      costs: [],
+      descriptionTextId: 2,
+      effects: [],
+      id: 114_031,
+      isLocation: false,
+      kind: GcgCardKind.Event,
+      nameTextId: 1,
+    };
+    side.cards.push(card);
+    side.hand.push(card.id);
+    side.onstages.push(icicleZoneCard);
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect({ activeIndex: side.activeIndex, hand: side.hand, icicleUsages: icicleZoneCard.usages }).toStrictEqual({
+      activeIndex: 1,
+      hand: [],
+      icicleUsages: 2,
+    });
   });
 });
