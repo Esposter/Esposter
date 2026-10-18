@@ -11,13 +11,14 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
-// A fast action: the card at a hand index is played. A support takes its place in the support zone, equipment is equipped
+// A card at a hand index is played, as a fast action, or as a combat action that passes the turn when its module says so. A support takes its place in the support zone, equipment is equipped
 // To the target character, and an event is played and gone. The card's own module then takes its effect, with the choice
 // The duel screen gave it, if any. Refused, and the
 // Duel left as it was, when the card has no module, its target or zone is not one it may take, or its cost is not covered
@@ -47,6 +48,7 @@ export const playGcgCard = (
   if (switchIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, switchIndex);
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
+  if (module.isCombatAction) passGcgTurn(duel, sideIndex);
   for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
   return GcgActionResult.Done;
 };

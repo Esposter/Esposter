@@ -20,6 +20,8 @@ export interface GcgCardModule {
   initialCounter?: number;
   initialRounds?: number;
   initialUsages?: number;
+  // Whether playing the card is a combat action, which passes the turn once it resolves, rather than a fast action, which does not
+  isCombatAction?: boolean;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
   modifyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   modifyDamageReceived?: (context: GcgEffectContext, value: number, zoneCard: GcgZoneCard) => number;

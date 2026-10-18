@@ -11,6 +11,7 @@ const STELLAR_RESTORATION_ID = 14_032;
 // Duel plays every card as a fast action, so the card passes no turn; the game's text marks it a combat action, which the
 // Duel does not model
 export const lightningStiletto: GcgCardModule = {
+  isCombatAction: true,
   canPlay: ({ duel, sideIndex }) =>
     takeOne(duel.sides, sideIndex).characters.some(({ character, hp }) => character.id === KEQING_ID && hp > 0),
   switchOnPlay: ({ duel, sideIndex }) => {
