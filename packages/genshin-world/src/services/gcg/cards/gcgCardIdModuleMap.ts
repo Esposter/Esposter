@@ -75,6 +75,7 @@ import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
 import { thunderSummonersCrown } from "#src/services/gcg/cards/thunderSummonersCrown";
+import { timaeus } from "#src/services/gcg/cards/timaeus";
 import { timmie } from "#src/services/gcg/cards/timmie";
 import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutomaton";
 import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword";
@@ -146,6 +147,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [321_006, favoniusCathedral],
   [322_001, paimon],
   [322002, katheryne],
+  [322_003, timaeus],
   [322_006, tubby],
   [322_007, timmie],
   [322_010, ellin],

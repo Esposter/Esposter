@@ -23,6 +23,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **A card's hook hears the character it is attached to.** `GcgEffectContext.characterIndex` names the character a card is attached to, as an equipment or a status. The end-phase runner and the skill-use runner set it, so a hook can act on its own character: an equipment's heal on its wearer, a status's heal on the character it was given to. A card on the field that no character holds carries none.
 - **The side holds its deck's card ids.** `GcgSideState.deckCardIds` keeps the ids the deck was built with, copies included, so a rule that counts the deck (Timaeus's six Artifact Cards) reads the deck itself, not the distinct definitions in `cards`. Its builder takes them from the deck.
 - **A card enters with the counter its module gives.** `initialCounter` is read by `createGcgZoneCard` the way `initialUsages` and `initialRounds` are. Timaeus starts with two Transmutation Materials.
+- **Timaeus spends the Artifact's total cost.** Once per Round its free equip reduces the Artifact's remaining cost to none, and spends materials equal to the Artifact's total cost, read from the card. This is a provisional reading of "spend Transmutation Materials equal to the total cost".
 
 ## Scope and order
 
