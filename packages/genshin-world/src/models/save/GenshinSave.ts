@@ -70,7 +70,7 @@ export const genshinSaveSchema = z
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
-    shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT).default([]),
+    shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT),
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen

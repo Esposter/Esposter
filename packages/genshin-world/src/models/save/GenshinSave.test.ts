@@ -11,7 +11,6 @@ import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
@@ -34,6 +33,7 @@ import {
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
   MAX_SETTLED_SEELIE_COUNT,
+  MAX_SHOP_PURCHASE_COUNT,
   MAX_SOLVED_PUZZLE_COUNT,
   MAX_STATUE_REGION_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
@@ -222,6 +222,11 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      shopPurchases: Array.from({ length: MAX_SHOP_PURCHASE_COUNT }, (_value, index) => ({
+        count: maxNumber,
+        goodsId: maxNumber - index,
+        lastPurchasedAt: maxInstant,
+      })),
       statues: {
         foundOculusIds: Array.from({ length: MAX_FOUND_OCULUS_COUNT }, (_value, index) =>
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
