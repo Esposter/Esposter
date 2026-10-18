@@ -2,6 +2,7 @@ import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCampMember } from "#src/models/enemy/EnemyCampMember";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { Except } from "type-fest";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeSpawnLevel } from "#src/services/adventureRank/computeSpawnLevel";
@@ -11,12 +12,15 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyKindTraits } from "#src/services/enemy/getEnemyKindTraits";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 
+// A member whose kind is a monster id: a camp member's kind, or one a Spiral Abyss chamber fights
+type EnemyKindMember = Except<EnemyCampMember, "enemyKindId"> & { enemyKindId: number };
+
 // A camp member as it spawns under a World Level: idle at its spawn, its health and poise full, no element on it and no
 // Hit yet, at the level its World Level raises it to
 export const createEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   worldLevelRows: readonly WorldLevelRow[],
-  { enemyKindId, id, level, patrol, position }: EnemyCampMember,
+  { enemyKindId, id, level, patrol, position }: EnemyKindMember,
   campId: string,
   worldLevel = 0,
 ): Enemy => {
