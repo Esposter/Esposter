@@ -42,6 +42,7 @@ const CONSTELLATION_4_HEALTH_SHARE = 0.5;
 // DMG Bonus, ended as he leaves the field, which drains his HP each second and from Ascension 1 gives Tamer of Demons'
 // Anemo DMG Bonus while it stands
 // Constellation 6 needs a Plunging Attack hit on two opponents as an event, which the kit does not emit
+// Constellation 2 needs an Energy Recharge buff while he is off the field, which a swap must start and end
 export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const baneOfAllEvilDamageBonus = readParameter("baneOfAllEvilDamageBonus");
   const drainShare = readParameter("drainShare");
