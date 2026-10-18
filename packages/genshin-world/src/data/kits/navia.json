@@ -6,7 +6,6 @@
   },
   "burst.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
   "burst.hits.0.gauge": { "cause": "Unsourced", "value": 2 },
-  "burst.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9139 } },
   "burst.hits.0.poiseDamage": { "cause": "Unsourced", "value": 100 },
   "chargedAttack.hits.0.area": {
@@ -14,13 +13,11 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "chargedAttack.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "chargedAttack.hits.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "chargedAttack.hits.1.isBlunt": { "cause": "Unsourced", "value": true },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9131 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "hits.surgingBlades.length": { "cause": "Unsourced", "value": 2 },
@@ -46,7 +43,6 @@
   "hits.cannonFireSupportShots.0.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.0.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.0.hitmarkFrames": { "cause": "Unsourced", "value": 163 },
-  "hits.cannonFireSupportShots.0.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9139 } },
   "hits.cannonFireSupportShots.0.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.1.area": {
@@ -56,7 +52,6 @@
   "hits.cannonFireSupportShots.1.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.1.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.1.hitmarkFrames": { "cause": "Unsourced", "value": 205 },
-  "hits.cannonFireSupportShots.1.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.1.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.1.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.2.area": {
@@ -66,7 +61,6 @@
   "hits.cannonFireSupportShots.2.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.2.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.2.hitmarkFrames": { "cause": "Unsourced", "value": 253 },
-  "hits.cannonFireSupportShots.2.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.2.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.2.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.3.area": {
@@ -76,7 +70,6 @@
   "hits.cannonFireSupportShots.3.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.3.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.3.hitmarkFrames": { "cause": "Unsourced", "value": 295 },
-  "hits.cannonFireSupportShots.3.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.3.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.3.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.4.area": {
@@ -86,7 +79,6 @@
   "hits.cannonFireSupportShots.4.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.4.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.4.hitmarkFrames": { "cause": "Unsourced", "value": 337 },
-  "hits.cannonFireSupportShots.4.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.4.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.4.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.5.area": {
@@ -96,7 +88,6 @@
   "hits.cannonFireSupportShots.5.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.5.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.5.hitmarkFrames": { "cause": "Unsourced", "value": 385 },
-  "hits.cannonFireSupportShots.5.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.5.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.5.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.6.area": {
@@ -106,7 +97,6 @@
   "hits.cannonFireSupportShots.6.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.6.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.6.hitmarkFrames": { "cause": "Unsourced", "value": 427 },
-  "hits.cannonFireSupportShots.6.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.6.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.6.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.7.area": {
@@ -116,7 +106,6 @@
   "hits.cannonFireSupportShots.7.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.7.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.7.hitmarkFrames": { "cause": "Unsourced", "value": 469 },
-  "hits.cannonFireSupportShots.7.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.7.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.7.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.8.area": {
@@ -126,7 +115,6 @@
   "hits.cannonFireSupportShots.8.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.8.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.8.hitmarkFrames": { "cause": "Unsourced", "value": 517 },
-  "hits.cannonFireSupportShots.8.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.8.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.8.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.9.area": {
@@ -136,7 +124,6 @@
   "hits.cannonFireSupportShots.9.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.9.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.9.hitmarkFrames": { "cause": "Unsourced", "value": 559 },
-  "hits.cannonFireSupportShots.9.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.9.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.9.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.10.area": {
@@ -146,7 +133,6 @@
   "hits.cannonFireSupportShots.10.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.10.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.10.hitmarkFrames": { "cause": "Unsourced", "value": 601 },
-  "hits.cannonFireSupportShots.10.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.10.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.10.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.11.area": {
@@ -156,7 +142,6 @@
   "hits.cannonFireSupportShots.11.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.11.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.11.hitmarkFrames": { "cause": "Unsourced", "value": 649 },
-  "hits.cannonFireSupportShots.11.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.11.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.11.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.12.area": {
@@ -166,7 +151,6 @@
   "hits.cannonFireSupportShots.12.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.12.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.12.hitmarkFrames": { "cause": "Unsourced", "value": 691 },
-  "hits.cannonFireSupportShots.12.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.12.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.12.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.13.area": {
@@ -176,7 +160,6 @@
   "hits.cannonFireSupportShots.13.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.13.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.13.hitmarkFrames": { "cause": "Unsourced", "value": 733 },
-  "hits.cannonFireSupportShots.13.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.13.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.13.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.14.area": {
@@ -186,7 +169,6 @@
   "hits.cannonFireSupportShots.14.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.14.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.14.hitmarkFrames": { "cause": "Unsourced", "value": 781 },
-  "hits.cannonFireSupportShots.14.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.14.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.14.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.15.area": {
@@ -196,7 +178,6 @@
   "hits.cannonFireSupportShots.15.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.15.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.15.hitmarkFrames": { "cause": "Unsourced", "value": 823 },
-  "hits.cannonFireSupportShots.15.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.15.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.15.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.cannonFireSupportShots.16.area": {
@@ -206,7 +187,6 @@
   "hits.cannonFireSupportShots.16.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.cannonFireSupportShots.16.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.cannonFireSupportShots.16.hitmarkFrames": { "cause": "Unsourced", "value": 865 },
-  "hits.cannonFireSupportShots.16.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.cannonFireSupportShots.16.multiplier": { "cause": "Unsourced", "value": 0.4315 },
   "hits.cannonFireSupportShots.16.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9131 } },
@@ -244,7 +224,6 @@
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 49 },
-  "skillHolds.0.action.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "skillHolds.0.action.hits.0.multiplier": { "cause": "Unsourced", "value": 4.7376 },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 9132 } },

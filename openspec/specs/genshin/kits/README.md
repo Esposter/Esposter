@@ -239,7 +239,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 - **The Hexerei team bonus is not built.** Every Hexerei kit and its constellations waits on it. gcsim turns them on by default, and the kits here follow the standard kit.
 - **A kit moves no enemy.** Pulls, knockbacks and holds that move or fix an enemy in place are not built.
 - **A hit is priced from its striker alone.** A kit reads no other member's buff into a hit, so a Quill or a banner that adds to another member's hits is not built.
-- **Hitlag, ICD groups and strike types other than blunt are not recorded.** gcsim holds them, and they stay out of the record until a rule reads them.
+- **Hitlag, ICD groups and strike types are not recorded.** gcsim holds them, and they stay out of the record until a rule reads them.
 - **A character holds no aura.** Only an enemy holds elemental state in this package, so an aura on a party member is not built.
 
 ## Key files

@@ -31,8 +31,8 @@ const toTitleWords = (title: string): string =>
 // Every value the wiki's talent pages give a character's kit, by its path in the record, from each page's Advanced
 // Properties: a normal attack's rows by their titles, `Normal Attack 3-Hit B` the third strike's second hit, the
 // Charged attack's and the plunges' by theirs, and each of the skill's and burst's hits by the row titled as the table
-// Labels the hit's multiplier, `Swing DMG` for `1-Hit Swing DMG`. Each row gives its hit's poise, its ICD tag, whether
-// It is blunt and, where the hit is elemental, its gauge
+// Labels the hit's multiplier, `Swing DMG` for `1-Hit Swing DMG`. Each row gives its hit's poise, its ICD tag and, where
+// The hit is elemental, its gauge
 export const getWikiKitCandidates = (
   pages: readonly WikiTalentPage[],
   { weaponType }: Pick<KitTables, "weaponType">,
@@ -41,7 +41,7 @@ export const getWikiKitCandidates = (
   const candidateMap = new Map<string, KitCandidate[]>();
   const addRow = (
     path: string,
-    { gauge, internalCooldownTag, isBlunt, poise, row }: WikiAdvancedProperty,
+    { gauge, internalCooldownTag, poise, row }: WikiAdvancedProperty,
     { revisionId, title }: WikiTalentPage,
     isElemental: boolean,
   ) => {
@@ -58,7 +58,6 @@ export const getWikiKitCandidates = (
           ? undefined
           : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag),
       );
-    add("isBlunt", isBlunt);
     if (isElemental && gauge !== undefined) add("gauge", gauge);
   };
   // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the

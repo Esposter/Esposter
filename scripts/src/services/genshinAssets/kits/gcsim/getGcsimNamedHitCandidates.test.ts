@@ -23,7 +23,6 @@ describe(getGcsimNamedHitCandidates, () => {
         file: "burst.go",
         internalCooldownTag: "attacks.ICDTagNone",
         line: 10,
-        strikeType: "attacks.StrikeTypeBlunt",
         talentVariable: "burst",
       },
     ],
@@ -70,7 +69,6 @@ describe(getGcsimNamedHitCandidates, () => {
       "hits.fieryRainArrows.0.multiplier",
       "hits.fieryRainArrows.0.element",
       "hits.fieryRainArrows.0.internalCooldownTag",
-      "hits.fieryRainArrows.0.isBlunt",
     ]);
     expect(joined.get("hits.fieryRainArrows.0.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
     expect(joined.get("hits.fieryRainArrows.0.multiplier")?.map(({ value }) => value)).toStrictEqual([

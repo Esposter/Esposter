@@ -13,7 +13,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 // One hit of a kit's action: its gauge of its element if it has one, the element it deals when that is not its
 // Character's own, the cylinder it reaches, when its hitmark falls from the action's start, its internal cooldown tag,
-// Whether it is blunt, its poise damage and the talent's multiplier
+// Its poise damage and the talent's multiplier
 export interface KitHit {
   // The kind of attack the action the hit sits in deals, set as its kit or its stance is built, which an infusion and an
   // Ore follow whatever kind the hit is dealt as. None for a hit no action holds
@@ -42,7 +42,6 @@ export interface KitHit {
   hitArea: AttackArea;
   hitmarkSeconds: number;
   internalCooldownTag?: InternalCooldownTag;
-  isBlunt?: true;
   // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
   // As a talent's hit
   lunarHit?: KitLunarHit;

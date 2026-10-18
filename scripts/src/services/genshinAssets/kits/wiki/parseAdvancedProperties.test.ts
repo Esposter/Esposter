@@ -32,8 +32,8 @@ describe(parseAdvancedProperties, () => {
       createRow(9, "Normal Attack 5-Hit", 71.2),
       { gauge: 1, internalCooldownTag: "Charged Attack", poise: 120, row: 10, title: "Charged Attack" },
       { gauge: 0, internalCooldownTag: "none", poise: 25, row: 11, title: "Plunging Attack Collision" },
-      { gauge: 1, internalCooldownTag: "none", isBlunt: true, poise: 100, row: 12, title: "Low Plunge" },
-      { gauge: 1, internalCooldownTag: "none", isBlunt: true, poise: 150, row: 13, title: "High Plunge" },
+      { gauge: 1, internalCooldownTag: "none", poise: 100, row: 12, title: "Low Plunge" },
+      { gauge: 1, internalCooldownTag: "none", poise: 150, row: 13, title: "High Plunge" },
     ]);
   });
 

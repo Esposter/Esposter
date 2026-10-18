@@ -48,7 +48,6 @@
   "hits.fatalBlossoms.0-6.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.fatalBlossoms.0-6.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.fatalBlossoms.0-6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.0-6.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
   "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
   "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },

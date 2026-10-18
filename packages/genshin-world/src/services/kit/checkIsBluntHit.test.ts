@@ -150,10 +150,4 @@ describe(checkIsBluntHit, () => {
       false,
     );
   });
-
-  test("a kit's own blunt flag does not make a hit blunt", () => {
-    expect.hasAssertions();
-
-    expect(checkIsBluntHit(combatant, { ...hit, actionAttackTag: AttackTag.NormalAttack, isBlunt: true })).toBe(false);
-  });
 });

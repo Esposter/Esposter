@@ -24,7 +24,5 @@
   "parameters.shieldAttackShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11632 } },
   "parameters.shieldFlatHealth": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 11632 } },
   "parameters.shieldSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 11632 } },
-  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11632 } },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11632 } }
 }

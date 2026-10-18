@@ -21,7 +21,6 @@
   "hits.theOverflowWave.multiplier": { "cause": "Unsourced", "value": 0.15 },
   "hits.theOverflowWave.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.theOverflowWave.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "normalAttacks.1.hits.0.isBlunt": { "source": "Wiki" },
   "parameters.shieldFlatHealth": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 7232 } },
   "parameters.shieldMaxHealthShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 7232 } },
   "parameters.prayerOfTheCrimsonCrownSeconds": {
@@ -44,7 +43,6 @@
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Water" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 91 },
-  "skillHolds.0.action.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "skillHolds.0.action.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 7232 } },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unsourced", "value": 300 },
   "skillHolds.0.action.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" }

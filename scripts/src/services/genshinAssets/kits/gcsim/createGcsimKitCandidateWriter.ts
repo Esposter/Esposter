@@ -9,7 +9,6 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import {
-  GCSIM_BLUNT_STRIKE_TYPE,
   GCSIM_CHARACTERS_PATH,
   GCSIM_DURABILITY_PER_GAUGE,
   GCSIM_NO_INTERNAL_COOLDOWN_TAG,
@@ -105,12 +104,6 @@ export const createGcsimKitCandidateWriter = (
           : (GcsimInternalCooldownTagMap[attack.internalCooldownTag] ?? attack.internalCooldownTag),
         fieldFile,
         fieldLine("ICDTag"),
-      );
-      add(
-        `${path}.isBlunt`,
-        attack.strikeType === GCSIM_BLUNT_STRIKE_TYPE ? true : undefined,
-        fieldFile,
-        fieldLine("StrikeType"),
       );
       if (attack.poiseDamage !== undefined)
         add(`${path}.poiseDamage`, attack.poiseDamage, fieldFile, fieldLine("PoiseDMG"));

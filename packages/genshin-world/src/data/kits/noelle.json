@@ -39,7 +39,6 @@
   "hits.toBeCleaned.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.toBeCleaned.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.toBeCleaned.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "hits.toBeCleaned.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.toBeCleaned.multiplier": { "cause": "Unclassified", "value": 4 },
   "hits.toBeCleaned.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 132.25 },

@@ -35,7 +35,6 @@ export const GCSIM_SKILL_ATTACK_TAGS: readonly string[] = [
 ];
 export const GCSIM_BURST_ATTACK_TAGS: readonly string[] = ["attacks.AttackTagElementalBurst"];
 export const GCSIM_PHYSICAL_ELEMENT = "attributes.Physical";
-export const GCSIM_BLUNT_STRIKE_TYPE = "attacks.StrikeTypeBlunt";
 // The gauge a hit applies is its durability over 25, gcsim's units to the game's
 export const GCSIM_DURABILITY_PER_GAUGE = 25;
 // The seconds a hold must be held with no table or wiki figure for it, Bennett's first Charge Level's

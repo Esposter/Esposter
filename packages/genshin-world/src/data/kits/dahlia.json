@@ -26,7 +26,5 @@
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11532 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11532 } },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
 }
