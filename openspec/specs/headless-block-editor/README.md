@@ -1,6 +1,6 @@
 # headless-block-editor
 
-`packages/headless-block-editor` (npm `headless-block-editor`) is the editing model of a block editor: a tree of typed nodes, the commands that change it as JSON Patch operations, and the history that undoes them. It knows no editor's node types and has no Vue or DOM dependency, so the page builder's webpage and email editors are its consumers rather than its owners. Its one feature so far is the [editor core](editor-core/design.md).
+`packages/headless-block-editor` (npm `headless-block-editor`) is the editing model of a block editor: a tree of typed nodes and the commands that change it as JSON Patch operations. Its undo history is [`@esposter/shared`'s](../shared/bounded-history/design.md), not its own. It knows no editor's node types and has no Vue or DOM dependency, so the page builder's webpage and email editors are its consumers rather than its owners. Its one feature so far is the [editor core](editor-core/design.md).
 
 The package takes a registry from its consumer: each block type's props schema and the child types each slot accepts. Each command returns the JSON Patch operations that make an edit, and each query returns what it reads; nothing mutates a document, so the same code runs in an editor's store and in a server process applying an agent's edit.
 
