@@ -18,10 +18,10 @@ MJML's components as block types on the headless block editor — each component
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i mjml-blocks mjml
+pnpm i mjml-blocks mjml headless-block-editor zod
 ```
 
-The compile is the consumer's, so `mjml` is installed beside the package. This example registers MJML's components, renders a one-section email to MJML's JSON form and compiles it under strict validation:
+The compile is the consumer's, so `mjml` is installed beside the package, and so are the two packages the example imports. This example registers MJML's components, renders a one-section email to MJML's JSON form and compiles it under strict validation:
 
 ```ts
 import { createBlockDocumentSchema } from "headless-block-editor";
