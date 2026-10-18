@@ -210,6 +210,7 @@ const {
   worldLevelRows,
 } = defineProps<Props>();
 const emit = defineEmits<{
+  charge: [];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
@@ -550,6 +551,7 @@ onUnmounted(() => {
       :ramp-texture
       :target="characterBody?.position"
       :wildlife-list
+      @charge="emit('charge')"
     />
     <!-- The Frostbearing Trees are stood in as well, which a witness render draws none of -->
     <WorldFrostbearingTree

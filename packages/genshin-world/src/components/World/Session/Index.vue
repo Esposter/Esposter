@@ -337,6 +337,7 @@ const { offerFrostbearingTree } = useWorldOfferings({
 const {
   characterIdSkillGlyphsMap,
   characters,
+  chargeParty,
   clearKitEffects,
   defeatEnemy,
   hudMember,
@@ -741,6 +742,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :windrise-data
         :world-level
         :world-level-rows="adventureRankTables.worldLevelRows"
+        @charge="chargeParty()"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
