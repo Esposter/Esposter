@@ -70,6 +70,8 @@ export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
 export const NIGHTSOUL_BLESSING_STATUS_ID = "nightsoul-blessing";
 // The status a kit completes a held skill's charge with, which its release reads as the highest hold level
 export const KIT_SKILL_CHARGE_ID = "kit-skill-charge";
+// The status a kit gives a character's next charged attack a skip of its charge with, which that attack spends
+export const KIT_CHARGE_SKIP_ID = "kit-charge-skip";
 // The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
 export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
 // The status Haunted Night puts a Geo character in, for the seconds it lasts, which its Nightingale's Song stacks last with

@@ -19,6 +19,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { changeKitTeamHealth } from "#src/services/kit/effects/changeKitTeamHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -147,7 +148,8 @@ const startA4Heal = (context: KitContext, combatant: Combatant): void => {
           tick,
           combatant,
           tick.activeCombatant.characterId,
-          A4_HEAL_MAX_HEALTH_SHARE * combatant.attributes.maxHealth,
+          A4_HEAL_MAX_HEALTH_SHARE *
+            getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
         ),
       secondsRemaining: A4_SECONDS,
       tickIntervalSeconds: A4_INTERVAL_SECONDS,
@@ -181,7 +183,13 @@ const landHealingRadish = (
   hit: KitHit,
   { flat, healsTeam, maxHealthShare }: RadishHeal,
 ): void => {
-  const healing = maxHealthShare * combatant.attributes.maxHealth + flat;
+  const maxHealth = getKitMaxHealth(
+    combatant,
+    context.kitEffectState.effects,
+    context.party,
+    context.characterIdCombatantMap,
+  );
+  const healing = maxHealthShare * maxHealth + flat;
   landRadish(context, combatant, target, hit, (tick) => {
     if (healsTeam) changeKitTeamHealth(tick, combatant, healing);
     else changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing);
@@ -204,7 +212,13 @@ const throwRadish = (
 
 // Constellation 6's Mega Radish lands at the target of the throw beside it, healing the active character with no riders
 const throwMegaRadish = (context: KitContext, combatant: Combatant, target: GroundPoint, hit: KitHit): void => {
-  const healing = C6_HEAL_MAX_HEALTH_SHARE * combatant.attributes.maxHealth;
+  const maxHealth = getKitMaxHealth(
+    combatant,
+    context.kitEffectState.effects,
+    context.party,
+    context.characterIdCombatantMap,
+  );
+  const healing = C6_HEAL_MAX_HEALTH_SHARE * maxHealth;
   landRadish(context, combatant, target, hit, (tick) =>
     changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing),
   );
@@ -241,10 +255,16 @@ const giveConstellation2Energy = ({ kitEffectState, party }: KitContext, { comba
 };
 
 // Constellation 4: the Elemental Mastery Yaoyao gains on each skill and burst cast
-const applyConstellation4 = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
+const applyConstellation4 = ({
+  activeCombatant: combatant,
+  characterIdCombatantMap,
+  kitEffectState,
+  party,
+}: KitContext): void => {
   if (combatant.constellationCount < CONSTELLATION_4) return;
+  const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
   buffKitMember(kitEffectState, combatant.characterId, {
-    amount: Math.min(C4_ELEMENTAL_MASTERY_SHARE * combatant.attributes.maxHealth, C4_ELEMENTAL_MASTERY_CAP),
+    amount: Math.min(C4_ELEMENTAL_MASTERY_SHARE * maxHealth, C4_ELEMENTAL_MASTERY_CAP),
     attribute: Attribute.ElementalMastery,
     secondsRemaining: C4_SECONDS,
   });

@@ -2,6 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 // Cull the Weak at its rank: defeating an opponent restores its wielder the rank's share of Max HP
@@ -10,7 +11,13 @@ export const createCullTheWeakPassiveModule = (params: number[]): PassiveModule 
   return {
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.EnemyDefeated || event.striker?.characterId !== combatant.characterId) return;
-      changeKitMemberHealth(context, combatant, combatant.characterId, combatant.attributes.maxHealth * healthShare);
+      const maxHealth = getKitMaxHealth(
+        combatant,
+        context.kitEffectState.effects,
+        context.party,
+        context.characterIdCombatantMap,
+      );
+      changeKitMemberHealth(context, combatant, combatant.characterId, maxHealth * healthShare);
     },
   };
 };

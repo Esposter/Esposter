@@ -9,6 +9,7 @@ import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { GOOD_HUNTER_SHOP_TYPE, SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { takeOne } from "@esposter/shared";
 import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -21,9 +22,7 @@ vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionP
 vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => ({
   readCookingRecipes: vi.fn<() => CookingRecipe[]>(() => []),
 }));
-vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({
-  readExcelTable: vi.fn<(tableName: string) => unknown[]>(() => []),
-}));
+vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>(() => []) }));
 
 // The game's time as the dump writes it, read off the epoch
 const toGameTime = (date: Date) => date.toISOString().slice(0, 19).replace("T", " ");
@@ -155,7 +154,7 @@ describe(buildItems, () => {
 
   beforeEach(() => {
     const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
-      materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
+      materials.map(({ itemId }) => ({ ...takeOne(materialRows, 0), id: itemId, nameTextMapHash: itemId })),
     );
     materialTable = [...materialRows, ...dropItemRows];
     itemTables = { [MATERIAL_TABLE_NAME]: materialTable };

@@ -2,6 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -24,7 +25,14 @@ export const createGildingPassiveModule = (params: number[]): PassiveModule => {
           gainPartyMemberEnergy(context.party, wielder, energy);
           for (const characterId of getDeployedCharacterIds(context.party)) {
             const member = context.characterIdCombatantMap.get(characterId);
-            if (member) changeKitMemberHealth(context, wielder, characterId, member.attributes.maxHealth * healthShare);
+            if (!member) continue;
+            const maxHealth = getKitMaxHealth(
+              member,
+              context.kitEffectState.effects,
+              context.party,
+              context.characterIdCombatantMap,
+            );
+            changeKitMemberHealth(context, wielder, characterId, maxHealth * healthShare);
           }
         });
     },

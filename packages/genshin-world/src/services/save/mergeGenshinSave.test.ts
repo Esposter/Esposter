@@ -1,4 +1,5 @@
 import type { CharacterSave } from "#src/models/character/CharacterSave";
+import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -412,14 +413,14 @@ describe(mergeGenshinSave, () => {
 
   test("keeps the account's bounty hunt over the guest's, and the guest's where the account holds none", () => {
     expect.hasAssertions();
-    const accountHunt = {
+    const accountHunt: ReputationBountyHunt = {
       bountyId: 1,
       isTargetDefeated: false,
       regionId: 101,
       spawn: [1, 2, 3],
       targetEnemyKindId: 20_101,
     };
-    const guestHunt = {
+    const guestHunt: ReputationBountyHunt = {
       bountyId: 2,
       isTargetDefeated: false,
       regionId: 102,

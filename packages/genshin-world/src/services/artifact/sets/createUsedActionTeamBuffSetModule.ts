@@ -20,7 +20,7 @@ export const createUsedActionTeamBuffSetModule = ({
   source: string;
 }): PassiveModule => ({
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
-    if (event.characterId !== combatant.characterId) return;
+    if (!("characterId" in event) || event.characterId !== combatant.characterId) return;
     const action =
       event.kind === KitEventKind.SkillUsed ? "skill" : event.kind === KitEventKind.BurstUsed ? "burst" : undefined;
     if (action === undefined || !actions.includes(action)) return;

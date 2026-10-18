@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -40,11 +41,9 @@ describe(createHeartOfDepthSetModule, () => {
       wearer,
     );
     expect(
-      kitEffectState.effects.map(({ amount, attribute, secondsRemaining }) => ({
-        amount,
-        attribute,
-        secondsRemaining,
-      })),
+      kitEffectState.effects
+        .filter((effect): effect is KitBuff => effect.kind === "buff")
+        .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
     ).toStrictEqual([
       { amount: 0.3, attribute: Attribute.NormalAttackDamageBonus, secondsRemaining: 15 },
       { amount: 0.3, attribute: Attribute.ChargedAttackDamageBonus, secondsRemaining: 15 },

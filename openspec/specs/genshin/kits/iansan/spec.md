@@ -1,6 +1,6 @@
 ## Purpose
 
-Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, and what is left waiting on the Stormflight swap and the party ATK buff.
+Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's, and what is left waiting on the Stormflight swap and the party ATK buff.
 
 ## Requirements
 
@@ -111,3 +111,35 @@ From Constellation 1, each 6 Nightsoul points her blessing consumes SHALL restor
 - **GIVEN** Iansan has no constellation
 - **WHEN** her blessing consumes six points
 - **THEN** she gains no energy
+
+### Requirement: Burst's points and restore
+
+Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, entering a 16-second blessing if she holds none, and SHALL restore a point a second for the 12 seconds the burst lasts, for as long as the blessing it lands in holds.
+
+#### Scenario: Burst enters a blessing
+
+- **GIVEN** Iansan holds no blessing
+- **WHEN** she casts her burst and 0.67 seconds pass
+- **THEN** her blessing holds 15 points
+
+#### Scenario: The restore stops when the blessing ends
+
+- **GIVEN** the blessing her burst landed in has run out of points
+- **WHEN** another second passes
+- **THEN** the burst's restore gives her no points
+
+### Requirement: Ascension 1's points
+
+From Ascension 1, while Precise Movement lasts, Iansan's burst restore SHALL give a point each second, and SHALL give 4 once after she gains or consumes points on the field, with at most one such arming every 2.8 seconds.
+
+#### Scenario: Gained points arm the four
+
+- **GIVEN** Iansan is at Ascension 1 with Precise Movement and her burst's points are gained
+- **WHEN** the next second's restore falls
+- **THEN** it gives her 4 points
+
+#### Scenario: Below Ascension 1 the restore gives nothing
+
+- **GIVEN** Iansan is at Ascension 0
+- **WHEN** the burst's restore falls
+- **THEN** it gives her no points

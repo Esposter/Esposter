@@ -11,7 +11,7 @@ export enum KitProvisionalCause {
   // A source gives another value, and the kit keeps its own until a commit settles it
   DiffersFromSource = "DiffersFromSource",
   // A talent whose hits its module spawns as a named list keeps its own hits list empty, unless one of its own hits joins
-  // The group at an index no named list's hit does
+  // The group at an index no named list's hit does. A stance's actions keep theirs the same way in the skill's group
   NamedHitList = "NamedHitList",
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share

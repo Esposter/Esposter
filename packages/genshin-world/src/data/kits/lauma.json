@@ -110,6 +110,14 @@
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 11932 }
   },
+  "parameters.paleHymnBloomDamageIncrease": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 11939 }
+  },
+  "parameters.paleHymnLunarBloomDamageIncrease": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 11939 }
+  },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },

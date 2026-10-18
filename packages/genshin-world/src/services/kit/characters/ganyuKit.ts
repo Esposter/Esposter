@@ -9,6 +9,8 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
+import { grantKitChargeSkip } from "#src/services/kit/effects/grantKitChargeSkip";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Provisional: no source gives the lotus health, so it stands until its seconds run out, unless a taunt's health is taken
@@ -37,6 +39,12 @@ const HARMONY_SOURCE = "ganyu-harmony";
 // Frames from Constellation 1, which the wiki's text gives as 6 seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/cons.go
 const FROSTFLAKE_CONSTELLATION = 1;
+// Measured: gcsim v2.47.2 (MIT) ganyu/aimed.go, the fully charged shot skips 83 frames of its charge while the status
+// Constellation 6 gives stands, which ganyu/skill.go adds at the Ice Lotus's cast for 1800 frames
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/aimed.go
+const CONSTELLATION_6 = 6;
+const FULLY_CHARGED_SHOT_CHARGE_FRAMES = 83;
+const CHARGE_SKIP_SECONDS = 30;
 const FROSTFLAKE_CRYO_RESISTANCE_REDUCTION = 0.15;
 const FROSTFLAKE_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
@@ -54,7 +62,6 @@ export const GANYU_CHARACTER_ID = 10_000_037;
 // Exploding as its seconds from the flower's hit run out. Celestial Shower casts its field, whose ticks each strike from
 // Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG Bonus from Ascension 4
 // Constellation 4 needs the increased DMG taken within Celestial Shower, which no enemy stack carries yet
-// Constellation 6 needs the next fully charged Frostflake Arrow within 30 seconds to skip charging, not built
 export const createGanyuKitBehaviour = ({
   kit,
   readHit,
@@ -92,6 +99,7 @@ export const createGanyuKitBehaviour = ({
     // The fully charged shot's Frostflake Arrow lands with its animation's end, and its Bloom after the arrow's travel,
     // Past the animation, as the shot's own hit queued past its end
     chargedAttack: {
+      chargeSeconds: toKitSeconds(FULLY_CHARGED_SHOT_CHARGE_FRAMES),
       hits: [
         {
           enemyStatus: getFrostflakeStatus,
@@ -110,12 +118,15 @@ export const createGanyuKitBehaviour = ({
     },
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= 2 ? 1 : 0),
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        if (combatant.constellationCount >= CONSTELLATION_6)
+          grantKitChargeSkip(kitEffectState, combatant.characterId, CHARGE_SKIP_SECONDS);
         castKitTaunt(kitEffectState, body, combatant, {
           explosion: iceLotusExplosion,
           health: ICE_LOTUS_HEALTH,
           secondsRemaining: iceLotusFlowerHitmarkSeconds + iceLotusSeconds,
-        }),
+        });
+      },
     },
   };
 };

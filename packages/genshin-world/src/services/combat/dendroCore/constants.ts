@@ -7,3 +7,8 @@ export const MAX_DENDRO_CORE_COUNT = 5;
 // Gcsim's shot does
 export const HYPERBLOOM_FLIGHT_SECONDS = 1;
 export const HYPERBLOOM_HOMING_RADIUS = 15;
+// Measured: gcsim (MIT) nilou/bountifulcore.go, a Bountiful Core bursts 0.4 seconds after it is made, over a circle of
+// 6.5 metres
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/nilou/bountifulcore.go
+export const BOUNTIFUL_CORE_SECONDS = 0.4;
+export const BOUNTIFUL_CORE_REACH_RADIUS = 6.5;

@@ -60,7 +60,8 @@ const strikeFrostflake = (hit: KitHit, combatant: Combatant): Enemy => {
     health: STURDY_HEALTH,
     maxHealth: STURDY_HEALTH,
   };
-  strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
+  const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+  strikeEnemy(enemy, hit, combatant, context);
   return enemy;
 };
 

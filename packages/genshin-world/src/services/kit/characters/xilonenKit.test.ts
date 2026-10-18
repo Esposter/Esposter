@@ -2,12 +2,14 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXilonenKitBehaviour, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -15,6 +17,7 @@ import { describe, expect, test } from "vitest";
 
 const XILONEN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XILONEN_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
+const JEAN_CHARACTER_ID = 10_000_003;
 
 const createXilonenCombatant = (): Combatant => ({
   ascension: 0,
@@ -123,5 +126,75 @@ describe(createXilonenKitBehaviour, () => {
     const context = createKitTestContext(createXilonenCombatant());
     XILONEN_KIT.onSprint?.(context, createKitState());
     expect(countKitResource(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
+  });
+
+  test("the skill's press enters the Blessing with Blade Roller in place of her normal attacks, at gcsim's frames", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXilonenCombatant());
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+
+    expect(
+      findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)?.combatant.kit.normalAttacks.map(
+        (action) => ({
+          frames: toFrames(action.seconds),
+          hitmarks: action.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds)),
+        }),
+      ),
+    ).toStrictEqual([
+      { frames: 44, hitmarks: [17] },
+      { frames: 48, hitmarks: [17] },
+      { frames: 50, hitmarks: [22] },
+      { frames: 69, hitmarks: [32] },
+    ]);
+  });
+
+  test("the Blade Roller stance lasts the nine seconds of the Blessing", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXilonenCombatant());
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8.5);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
+    stepKitSeconds(context, 0.6);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
+  });
+
+  test("a press inside the Nightsoul Blessing takes its Blade Roller stance with it", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXilonenCombatant());
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
+  });
+
+  test("the points draining to none end the Blessing, and its stance with it as the drain's event reaches her kit", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXilonenCombatant());
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+    for (let sprint = 0; sprint < 5; sprint++) XILONEN_KIT.onSprint?.(context, createKitState());
+    stepKitSeconds(context, 3);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
+    stepKitSeconds(context, 2);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
+  });
+
+  test("her leaving the field ends the Nightsoul Blessing and its stance, as gcsim's swap exit does", () => {
+    expect.hasAssertions();
+    const combatant = createXilonenCombatant();
+    const context = createKitTestContext(combatant);
+    XILONEN_KIT.elementalSkill.onStart?.(context);
+
+    XILONEN_KIT.onKitEvent?.(
+      {
+        characterId: JEAN_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: XILONEN_CHARACTER_ID,
+      },
+      context,
+      combatant,
+    );
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });
 });

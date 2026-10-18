@@ -3,6 +3,7 @@ import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 
 export interface GcsimQueuedHit {
   attack: GcsimAttack;
+  callLine: number;
   delay: number;
   file: string;
   hitbox?: GcsimHitbox;

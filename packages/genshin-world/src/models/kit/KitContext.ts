@@ -31,6 +31,9 @@ export interface KitContext {
   kitEffectState: KitEffectState;
   // The active character's locomotion state as the step's input gives it, which a kit reads to tell a dash or a jump from standing
   locomotionState: LocomotionState;
+  // Whether the active character's skill is held as the step's input gives it, which a counter window reads
+  // On a hit it takes
+  isSkillHeld: boolean;
   // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written each step
   stamina: Stamina;
   // The number of the deployed team's members that are Hexerei characters, which a Hexerei kit's projections and bonus read,

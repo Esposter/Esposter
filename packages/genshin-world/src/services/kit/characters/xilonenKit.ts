@@ -1,9 +1,14 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 export const XILONEN_CHARACTER_ID = 10_000_103;
 
@@ -14,33 +19,61 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 5;
 const NIGHTSOUL_SECONDS = 9;
 const NIGHTSOUL_SPRINT_DRAIN = 5;
 
+// Removes the Blade Roller stance the Blessing entered, which ends with the Blessing however the Blessing ends
+const removeBladeRollerStance = (kitEffectState: KitEffectState, characterId: number): void =>
+  removeKitEffects(kitEffectState, (effect) => effect.kind === "stance" && effect.characterId === characterId);
+
+// Leaves the Blessing and the Blade Roller stance with it, as gcsim's exit does
+const exitNightsoulBlessing = (kitEffectState: KitEffectState, characterId: number): void => {
+  exitKitNightsoulBlessing(kitEffectState, characterId);
+  removeBladeRollerStance(kitEffectState, characterId);
+};
+
 // Xilonen's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points and ends after nine
-// Seconds as gcsim does, a press in it leaves the Blessing, and a sprint in it drains points. Not built: the strike of the
-// Press that leaves the Blessing, which gcsim's exit press does not deal, as Chasca's does not, and the Blade Roller strikes
-// And charged attack the Blessing plays in place of her normal attacks, which need a variant the kit lacks. Ocelotlicue
-// Point's damage is read only with fewer than two Samplers in the party, which a kit step cannot count yet, and its heal,
-// Which it gives with two or more, is a timed heal that is not built either
+// Seconds as gcsim does, with Blade Roller in place of her normal attacks for the same nine seconds, a press in it leaves
+// The Blessing, and a sprint in it drains points. Leaving the field ends the Blessing, as gcsim's swap exit does. Points
+// Drained to none end the Blessing without an event of its own, so the stance is ended on the points-consumed event the
+// Drain raises. Not built: the strike of the press that leaves the Blessing, which gcsim's exit press does not deal, as
+// Chasca's does not. Ocelotlicue Point's damage is read only with fewer than two Samplers in the party, which a kit step
+// Cannot count yet, and its heal, which it gives with two or more, is a timed heal that is not built either
 // Constellation 1 needs the Blessing's point and Phlogiston cuts, which the kit does not build
 // Constellation 2 needs the Geo Source Sample off the field and its party effect, which the kit does not build
 // Constellation 4 needs Yohual's Scratch to grant the Blooming Blessing effect, which the kit does not build
 // Constellation 6 needs the Nightsoul's Blessing extension by sprinting or attacking, which the kit does not build
-export const createXilonenKitBehaviour = (): KitBehaviour => ({
-  onSprint: ({ activeCombatant, kitEffectState }) => {
-    const { characterId } = activeCombatant;
-    if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
-      drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
-  },
-  skill: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
+export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitBehaviour => {
+  const bladeRoller = readStance("blessing");
+  return {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      const { characterId } = combatant;
+      if (event.kind === KitEventKind.CharacterSwapped) {
+        if (event.previousCharacterId === characterId && hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+          exitNightsoulBlessing(kitEffectState, characterId);
+      } else if (
+        event.kind === KitEventKind.NightsoulPointsConsumed &&
+        event.characterId === characterId &&
+        !hasKitNightsoulBlessing(kitEffectState.effects, characterId)
+      )
+        removeBladeRollerStance(kitEffectState, characterId);
+    },
+    onSprint: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
       if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
-        exitKitNightsoulBlessing(kitEffectState, characterId);
-      else
-        enterKitNightsoulBlessing(kitEffectState, characterId, {
-          nightsoulRate: { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
-          points: NIGHTSOUL_POINTS,
-          secondsRemaining: NIGHTSOUL_SECONDS,
-        });
+        drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
     },
-  },
-});
+    skill: {
+      onStart: ({ activeCombatant, kitEffectState }) => {
+        const { characterId } = activeCombatant;
+        if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+          exitNightsoulBlessing(kitEffectState, characterId);
+        else {
+          enterKitNightsoulBlessing(kitEffectState, characterId, {
+            nightsoulRate: { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
+            points: NIGHTSOUL_POINTS,
+            secondsRemaining: NIGHTSOUL_SECONDS,
+          });
+          enterKitStance(kitEffectState, activeCombatant, bladeRoller, NIGHTSOUL_SECONDS, { isEndedOnSwap: true });
+        }
+      },
+    },
+  };
+};

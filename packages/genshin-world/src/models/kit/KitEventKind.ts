@@ -21,6 +21,7 @@ export enum KitEventKind {
   HealthChanged = "HealthChanged",
   MoraPickedUp = "MoraPickedUp",
   NightsoulPointsConsumed = "NightsoulPointsConsumed",
+  NightsoulPointsGained = "NightsoulPointsGained",
   NormalAttackLanded = "NormalAttackLanded",
   NormalAttackStarted = "NormalAttackStarted",
   ReactionTriggered = "ReactionTriggered",

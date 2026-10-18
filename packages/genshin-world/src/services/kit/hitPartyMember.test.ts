@@ -3,11 +3,13 @@ import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
@@ -24,6 +26,7 @@ describe(hitPartyMember, () => {
     kit: TRAVELER_KIT,
     level: 1,
   };
+  const characterIdCombatantMap = new Map([[1, combatant]]);
 
   test("should lose the share of max HP the shields do not absorb", () => {
     expect.hasAssertions();
@@ -31,7 +34,7 @@ describe(hitPartyMember, () => {
     const party = createParty([1]);
     const shield: KitShield = { characterId: 2, health: 50, kind: "shield", secondsRemaining: 10 };
 
-    hitPartyMember(party, combatant, { effects: [shield] }, 100);
+    hitPartyMember(party, combatant, { effects: [shield] }, characterIdCombatantMap, 100);
 
     expect(shield.health).toBe(0);
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - 50 / MAX_HEALTH);
@@ -42,8 +45,21 @@ describe(hitPartyMember, () => {
 
     const party = createParty([1]);
 
-    hitPartyMember(party, combatant, { effects: [] }, 100);
+    hitPartyMember(party, combatant, { effects: [] }, characterIdCombatantMap, 100);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - 100 / MAX_HEALTH);
+  });
+
+  test("a health change from a hit carries the hit's element, and a drain carries none", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    hitPartyMember(party, combatant, { effects: [] }, characterIdCombatantMap, 250, Element.Pyro);
+    damagePartyMember(party, 1, 0.25, 2);
+
+    expect(party.healthChanges).toStrictEqual([
+      { bondOfLifeShare: 0, characterId: 1, element: Element.Pyro, healthShare: -0.25, overflowHealthShare: 0 },
+      { bondOfLifeShare: 0, characterId: 1, healthShare: -0.25, overflowHealthShare: 0, sourceCharacterId: 2 },
+    ]);
   });
 });

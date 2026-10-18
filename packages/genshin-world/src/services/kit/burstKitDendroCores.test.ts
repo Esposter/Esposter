@@ -5,8 +5,10 @@ import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
 import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
@@ -15,6 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
+import { NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -24,8 +27,10 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const NILOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NILOU_CHARACTER_ID);
 const createCore = (reactionType: TransformativeReactionType, characterId = TRAVELER_CHARACTER_ID): KitDendroCore => ({
   characterId,
+  coreKind: DendroCoreKind.Bloom,
   kind: "dendroCore",
   position: { x: 0, z: 0 },
   reactionType,
@@ -57,11 +62,16 @@ describe(burstKitDendroCores, () => {
     maxHealth: STURDY_HEALTH,
   });
 
-  const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitContext =>
+  const createContext = (
+    enemies: Enemy[],
+    party = createParty([TRAVELER_CHARACTER_ID]),
+    members: Combatant[] = [],
+  ): KitContext =>
     createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([
         [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
         [TRAVELER_CHARACTER_ID, combatant],
+        ...members.map((member): [number, Combatant] => [member.characterId, member]),
       ]),
       enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
       enemyTables,
@@ -80,6 +90,55 @@ describe(burstKitDendroCores, () => {
       getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance),
     );
     expect(far.health).toBe(STURDY_HEALTH);
+  });
+
+  test("bursts a Bountiful Core on every enemy within 6.5 metres of its edge, and none past them", () => {
+    expect.hasAssertions();
+
+    const near = createSturdyEnemy(6.8);
+    const far = createSturdyEnemy(7);
+
+    burstKitDendroCores(
+      [{ ...createCore(TransformativeReactionType.Bloom), coreKind: DendroCoreKind.Bountiful }],
+      createContext([near, far]),
+    );
+
+    expect(getDamage(near)).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance),
+    );
+    expect(far.health).toBe(STURDY_HEALTH);
+  });
+
+  test("raises a Bountiful Core's damage by Nilou's Ascension 4 bonus, and leaves a Bloom's as it is", () => {
+    expect.hasAssertions();
+
+    const nilou: Combatant = {
+      ascension: 4,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 40_000 }]),
+      characterId: NILOU_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: NILOU_KIT,
+      level: LEVEL,
+    };
+    const party = createParty([TRAVELER_CHARACTER_ID, NILOU_CHARACTER_ID]);
+    // Nilou's bonus, 9% for each 1,000 of Max HP above 30,000, as gcsim's asc.go gives it
+    const ascension4Bonus = ((40_000 - 30_000) / 1000) * 0.09;
+    const bountifulEnemy = createSturdyEnemy(1);
+    const bloomEnemy = createSturdyEnemy(1);
+
+    burstKitDendroCores(
+      [{ ...createCore(TransformativeReactionType.Bloom), coreKind: DendroCoreKind.Bountiful }],
+      createContext([bountifulEnemy], party, [nilou]),
+    );
+    burstKitDendroCores([createCore(TransformativeReactionType.Bloom)], createContext([bloomEnemy], party, [nilou]));
+
+    expect(getDamage(bountifulEnemy)).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance, ascension4Bonus),
+    );
+    expect(getDamage(bloomEnemy)).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, dendroResistance),
+    );
   });
 
   test.each<[string, number, (party: Party) => void]>([

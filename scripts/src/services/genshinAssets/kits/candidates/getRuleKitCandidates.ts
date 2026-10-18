@@ -38,19 +38,25 @@ export const getRuleKitCandidates = (
       ? []
       : Array.from({ length: readLength(actionsPath) }, (_value, index) => `${actionsPath}.${index}`);
   });
-  const stanceSkillPaths = [
-    ...new Set(nodePaths.flatMap((path) => STANCE_PATH_REGEX.exec(path)?.groups?.stance ?? [])),
-  ].map((stance) => `${stance}.skill`);
+  const stances = [...new Set(nodePaths.flatMap((path) => STANCE_PATH_REGEX.exec(path)?.groups?.stance ?? []))];
+  const stanceChargedAttackPaths = stances.map((stance) => `${stance}.chargedAttack`);
+  const stanceSkillPaths = stances.map((stance) => `${stance}.skill`);
   const actionTargetingEntries: [string, KitTargeting][] = [
     ...Array.from({ length: readLength("normalAttacks") }, (_value, index): [string, KitTargeting] => [
       `normalAttacks.${index}`,
       KitTargeting.Strike,
     ]),
     ...stanceNormalAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
+    ...stanceChargedAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
     ...stanceSkillPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Skill]),
     ["chargedAttack", KitTargeting.Strike],
+    ["chargedAttackVariant", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],
+    ...Array.from({ length: readLength("plungeVariants") }, (_value, index): [string, KitTargeting] => [
+      `plungeVariants.${index}`,
+      KitTargeting.Strike,
+    ]),
     ["skill", KitTargeting.Skill],
     ["burst", KitTargeting.Skill],
     ...Array.from({ length: readLength("skillHolds") }, (_value, index): [string, KitTargeting][] => [

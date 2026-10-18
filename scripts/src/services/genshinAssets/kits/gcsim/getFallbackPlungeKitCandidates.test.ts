@@ -31,6 +31,7 @@ describe(getFallbackPlungeKitCandidates, () => {
       holdCooldowns: [],
       folder: "bennett",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "bennett.go",
       talentParameterMap: new Map(),
       travelMap: new Map(),

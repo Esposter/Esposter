@@ -124,11 +124,11 @@ export const genshinSaveSchema = z
     statues: statueProgressSaveSchema,
     // The tips the world has shown, each once by its id
     tips: tipSaveSchema,
-    // The name the player chose for the Traveler, empty while none is chosen
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
     // The namecard the profile shows, by its item id
     namecardItemId: z.number().int().nonnegative(),
+    // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,

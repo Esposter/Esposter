@@ -147,7 +147,7 @@ describe("a skill's any-side hooks", () => {
     expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
     expect(onAnySkillUsed.mock.calls).toStrictEqual([
       [
-        { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL },
+        { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL, userSideIndex: 0 },
         DAMAGE_SKILL,
         supportZoneCard,
         [{ damageType: Element.Pyro }],

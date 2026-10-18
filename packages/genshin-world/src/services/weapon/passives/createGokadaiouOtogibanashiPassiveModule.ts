@@ -1,7 +1,6 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { takeOne } from "@esposter/shared";
 
 // Redhorn Stonethresher at its rank: each Normal or Charged Attack hit its wielder deals adds the rank's share of DEF as base
@@ -10,11 +9,9 @@ import { takeOne } from "@esposter/shared";
 export const createGokadaiouOtogibanashiPassiveModule = (params: number[]): PassiveModule => {
   const damageShare = takeOne(params, 1);
   return {
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {
+    getStrikeAdditiveBaseDamageBonus: (strike) => {
       if (!checkIsNormalOrChargedAttack(strike.attackTag)) return 0;
-      return (
-        damageShare * getBuffedCombatant(strike.combatant, effects, party, characterIdCombatantMap).attributes.defense
-      );
+      return damageShare * strike.combatant.attributes.defense;
     },
   };
 };

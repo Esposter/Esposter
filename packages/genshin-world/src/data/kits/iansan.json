@@ -1,9 +1,9 @@
 {
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
-  },
   "chargedAttackStamina": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 11031 } },
+  "chargedAttackVariant.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
+  },
   "normalAttacks.2.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.7313000567495327 }

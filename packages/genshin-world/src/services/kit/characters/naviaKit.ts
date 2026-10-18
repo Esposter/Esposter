@@ -15,6 +15,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) navia/skill.go, Surging Blade's circle centred ahead of the body
@@ -51,7 +52,7 @@ const CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL = 0.12;
 const CONSTELLATION_2_MAXIMUM_SHRAPNEL = 3;
 const CONSTELLATION_2_CANNON_OFFSET_METRES = 1.2;
 const CONSTELLATION_2_CANNON_RADIUS_METRES = 3;
-const CONSTELLATION_2_CANNON_HITMARK_SECONDS = 30 / 60;
+const CONSTELLATION_2_CANNON_HITMARK_FRAMES = 30;
 
 // Undisclosed Distribution Channels, as the dump's Navia_PermanentSkill_1 row and gcsim v2.47.2 (MIT) navia/asc.go give it:
 // From Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG and 40%
@@ -110,7 +111,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
   const constellation2CannonHit: KitHit = {
     ...takeOne(cannonHits, 0),
     hitArea: { ...takeOne(cannonHits, 0).hitArea, radius: CONSTELLATION_2_CANNON_RADIUS_METRES },
-    hitmarkSeconds: CONSTELLATION_2_CANNON_HITMARK_SECONDS,
+    hitmarkSeconds: toKitSeconds(CONSTELLATION_2_CANNON_HITMARK_FRAMES),
   };
   // Constellation 2 on a press or hold's blade: its CRIT Rate for the shrapnel the shot consumed, and one cannon shot at the
   // First enemy the blade strikes, which the shot's own flag allows once

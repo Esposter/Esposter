@@ -2,9 +2,9 @@ import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -24,6 +24,7 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
 // A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its radius
@@ -38,22 +39,27 @@ import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 // Triggers reacts as the party's Moonsign turns it Lunar. It returns what each enemy reached took, the reactions it
 // Triggered there reaching further in turn
 export const landReactionReach = (
-  { enemyKindMap }: EnemyTables,
+  context: KitContext,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reactionType, spreadGauge }: TransformativeReaction,
+  { element, reachRadius, reactionBonus: teamReactionBonus = 0, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
 ): Map<Enemy, EnemyStrikeResult> => {
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
-  const radius = TransformativeReactionReachRadiusMap[reactionType];
+  const radius = reachRadius ?? TransformativeReactionReachRadiusMap[reactionType];
   if (radius === undefined) return enemyStrikeResultMap;
   const reachPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
-  const reactionBonus = combatant.kit.getReactionDamageBonus?.(combatant, reactionType) ?? 0;
+  // The reaction's party bonuses, its creator's own kit's among them, as the team's hooks read it
+  const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus } = getDeployedReactionBonuses(
+    { combatant, reactionType },
+    context,
+  );
+  const reactionBonus = damageBonus + teamReactionBonus;
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
     distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
@@ -76,9 +82,9 @@ export const landReactionReach = (
     if (element !== undefined && gauge !== undefined)
       reactions.push(...applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes, stellarReactionTypes));
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
-    const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
+    const kind = getEnemyKind(context.enemyTables.enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage } =
-      priceEnemyReactions(kind, enemy, reactions, combatant, element);
+      priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
     const resistance = getEnemyResistance(kind, enemy, element);
     const reactionDamage =
       reactionType === TransformativeReactionType.Swirl && element === Element.Hydro
@@ -91,7 +97,7 @@ export const landReactionReach = (
             elementalState.seconds,
           ) *
           (getTransformativeDamage(reactionType, level, elementalMastery, resistance, reactionBonus) +
-            additiveBaseDamageBonus * getResistanceMultiplier(resistance)) *
+            (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {
       energyDrops: damageEnemy(enemy, {

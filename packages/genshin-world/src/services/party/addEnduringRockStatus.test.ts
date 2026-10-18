@@ -13,6 +13,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
@@ -60,7 +61,8 @@ describe(addEnduringRockStatus, () => {
       talentMultiplier: kitHit.talentMultiplier,
     });
 
-    strikeEnemy(enemyTables, enemy, kitHit, geoCombatant, NEVER_CRITICAL);
+    const context = createKitTestContext(geoCombatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, kitHit, geoCombatant, context);
 
     expect(enemy.statuses).toStrictEqual([
       { damageTakenBonus: 0, id: "enduringRock", resistanceReduction: { [Element.Geo]: 0.2 }, secondsRemaining: 15 },

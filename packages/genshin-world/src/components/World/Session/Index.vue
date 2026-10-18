@@ -139,6 +139,7 @@ import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -875,12 +876,19 @@ useIntervalFn(() => {
 const cookingRecipe = shallowRef<CookingRecipe>();
 // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
 const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
+// A deployed member's Max HP as the buffs on it stand now, none while the member has no combatant built
+const getMemberMaxHealth = (characterId: number): number | undefined => {
+  const combatant = kitContext.characterIdCombatantMap.get(characterId);
+  return combatant
+    ? getKitMaxHealth(combatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap)
+    : undefined;
+};
 const useBagEntry = (entryId: number) => {
   const use = useInventoryEntry(inventory.value, entryId, {
     cookingProgress: cookingProgress.value,
     dishUseMap: dishUseMap.value,
     eaterId: getActiveCharacterId(party),
-    getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
+    getMaxHealth: (characterId) => getMemberMaxHealth(characterId) ?? 0,
     instructionRecipeMap: instructionRecipeMap.value,
     kitEffectState: kitContext.kitEffectState,
     now: getWorldNow(),
@@ -1535,7 +1543,7 @@ const cameraEuler = new Euler();
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
   const phase = character.value?.phase;
-  const maxHealth = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.maxHealth;
+  const maxHealth = getMemberMaxHealth(getActiveCharacterId(party));
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
@@ -2349,7 +2357,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-if="screenKind === ScreenKind.Blessing"
       v-model:power="restorativePower"
       :game-text
-      :get-max-health="(characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0"
+      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
       :get-name="(characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ''] || ''"
       :get-now="getWorldNow"
       :party

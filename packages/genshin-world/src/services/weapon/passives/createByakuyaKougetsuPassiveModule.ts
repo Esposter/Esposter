@@ -5,7 +5,6 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -22,14 +21,9 @@ export const createByakuyaKougetsuPassiveModule = (params: number[]): PassiveMod
   const energy = takeOne(params, 3);
   const cooldownSeconds = takeOne(params, 4);
   return {
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {
+    getStrikeAdditiveBaseDamageBonus: (strike) => {
       if (strike.attackTag !== AttackTag.NormalAttack) return 0;
-      return (
-        maxHealthShare *
-        getBuffedCombatant(strike.combatant, effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
-          Attribute.Health
-        ]
-      );
+      return maxHealthShare * strike.combatant.attributes.attributeTotalMap[Attribute.Health];
     },
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { characterId } = combatant;

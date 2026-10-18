@@ -67,6 +67,7 @@ export const stepActiveKit = (
   }: ActiveKitControls,
 ): void => {
   context.locomotionState = input.locomotionState;
+  context.isSkillHeld = input.isSkillHeld;
   context.stamina = characterController.stamina;
   context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {
@@ -162,8 +163,11 @@ export const stepActiveKit = (
     for (const normalAttack of kit.normalAttacks)
       if (checkKitActionLanded(normalAttack, landedHits, strikes))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-  if (checkKitActionLanded(kit.chargedAttack, landedHits, strikes))
-    emitKitEvent({ action: kit.chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
+  for (const chargedAttack of kit.chargedAttackVariant
+    ? [kit.chargedAttack, kit.chargedAttackVariant.action]
+    : [kit.chargedAttack])
+    if (checkKitActionLanded(chargedAttack, landedHits, strikes))
+      emitKitEvent({ action: chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with

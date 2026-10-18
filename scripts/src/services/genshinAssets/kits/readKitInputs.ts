@@ -96,7 +96,7 @@ export const readKitInputs = async ({
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
     const sourceCandidateMap = mergeKitCandidates(
       gcsimCandidateMap,
-      getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables)),
+      getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
       tableCandidateMap,
     );
     const stance = gcsimFolder === undefined ? undefined : findGcsimStanceNormalAttack(gcsimFolder);
