@@ -8,6 +8,12 @@ import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNa
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+// One row per kit overlay, named by its file
+const readKitOverlayRows = () =>
+  readdirSync(KIT_OVERLAY_DIRECTORY)
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => `\`${name.slice(0, -".json".length)}\``);
+
 // The ledgers whose units are the tree's own entries rather than a pass's choice of directories, each with the
 // Listing that derives its rows — one unit cell per entry, in the cell's own backticked form. Read off the
 // Filesystem, the same tree the ledger's rows describe.
@@ -30,8 +36,6 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
       .map(({ name }) => `\`${name}\``);
   },
   // One row per kit, named by its overlay
-  "kit-records": () =>
-    readdirSync(KIT_OVERLAY_DIRECTORY)
-      .filter((name) => name.endsWith(".json"))
-      .map((name) => `\`${name.slice(0, -".json".length)}\``),
+  "kit-differs-from-source": readKitOverlayRows,
+  "kit-records": readKitOverlayRows,
 };
