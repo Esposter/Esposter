@@ -392,6 +392,29 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads each iteration's hit from the loop variable in its radius, `2+i` giving 2, 3 and 4", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package fischl",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := 0; i < 3; i++ {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2+i), 0, 0)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox?.radius),
+    ).toStrictEqual([2, 3, 4]);
+  });
+
   test("adds a Tasks.Add closure's delay to the queue call in its body, once per iteration, with the call's own delay", () => {
     expect.hasAssertions();
 

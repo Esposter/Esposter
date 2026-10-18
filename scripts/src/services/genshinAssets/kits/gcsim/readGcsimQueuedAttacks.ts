@@ -336,16 +336,10 @@ export const readGcsimQueuedAttacks = (
       const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
       const hitboxValueStart =
         hitboxStart === undefined ? undefined : readHitboxStart(tokens, hitboxStart, position, scope);
-      const ownHitbox =
-        hitboxValueStart === undefined
-          ? undefined
-          : readGoHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file);
       // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy in it
       const queryHitbox = enemyQueryLoops.findLast(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       )?.hitbox;
-      const hitbox =
-        ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined
@@ -376,6 +370,11 @@ export const readGcsimQueuedAttacks = (
         for (const loopIteration of readIterations(loops, position)) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
           const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
+          // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
+          const ownHitbox =
+            hitboxValueStart === undefined ? undefined : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file);
+          const hitbox =
+            ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
           const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
             expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
           );
