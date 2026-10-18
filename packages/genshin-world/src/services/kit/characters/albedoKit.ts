@@ -81,10 +81,11 @@ const addFatalReckoningStack = (kitEffectState: KitEffectState, combatant: Comba
   });
 };
 
-// A copy of a Fatal Blossom that Tectonic Tide adds the flat damage of its Fatal Reckoning stacks to
+// A copy of a Fatal Blossom that Tectonic Tide adds the flat damage of its Fatal Reckoning stacks to, on top of any bonus
+// The hit already has
 const withFatalReckoningBonus = (hit: KitHit, bonus: number): KitHit => ({
   ...hit,
-  additiveBaseDamageBonus: () => bonus,
+  additiveBaseDamageBonus: (combatant) => (hit.additiveBaseDamageBonus?.(combatant) ?? 0) + bonus,
 });
 
 // Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom, priced
