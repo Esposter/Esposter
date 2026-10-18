@@ -77,12 +77,13 @@ The editor shell is library parts: `UiTabs` over the Content, Style and Theme pa
 
 ## Phases
 
-Phases one to three build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fourth is the swap.
+Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap.
 
-1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then the webpage and email node types over it; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests, the render and patch benches, and the MJML defaults test.
+1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then the webpage and email node types over it; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and every email type's MJML; the server's compile service on MJML's Node package. Unit tests and the MJML defaults test.
 2. **The webpage editor.** The canvas frame, overlays and toolbar; the pointer drag and every keyboard path; the layers tree; the palette; the content, style and theme panels; text editing; device widths; Export. Component tests and a browser suite for what only a layout engine can show.
 3. **The email editor.** The email canvas components, Preview, merge fields, the preview text, survey invites, and the personalized export from compiled HTML.
-4. **The cutover.** One change, below.
+4. **The proof.** The render, patch and compile benches, and the browser proofs of both canvases against their published output.
+5. **The cutover.** One change, below, which also measures the editors' script ceiling on its own build.
 
 The small-plugin absorption stops now: every module it produces is deleted at the cutover, and the roadmap's plugin-belt item becomes this proposal.
 

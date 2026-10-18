@@ -13,7 +13,7 @@ Webpages and emails are edited in a new page builder that holds a typed tree, dr
 - Every edit is undoable, and every pointer action has a keyboard path.
 - An editor loads no third-party origin of its own.
 - **BREAKING:** The cutover deletes every existing webpage and email, whatever its state, and removes the old editor's dependencies, origins and modules. A program bound to a deleted email keeps its reference and reads it as missing.
-- The work ships in four phases: the model and its output, the webpage editor, the email editor, then the cutover that swaps them in.
+- The work ships in five phases: the model and its output, the webpage editor, the email editor, the proof against the published output, then the cutover that swaps them in.
 - **Capabilities:** `resource/page-builder` (new).
 
 ## Capabilities

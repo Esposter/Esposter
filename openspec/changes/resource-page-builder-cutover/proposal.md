@@ -24,7 +24,7 @@ The new editors ship, every existing webpage and email is deleted, and the old e
 
 ## Waiting on
 
-The page builder's phases one to three, which this change swaps in:
+The page builder's phases one to four, which this change swaps in:
 
 - `openspec/changes/resource-page-builder-document-model/`, the typed tree, its node types and its rendering.
 - `openspec/changes/resource-page-builder-undo-as-patches/`, the recorded edits.
