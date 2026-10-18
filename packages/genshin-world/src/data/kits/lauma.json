@@ -95,9 +95,9 @@
   "hits.frostgroveSanctuaryTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unclassified", "value": 1 },
   "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unclassified", "value": "LunarBloom" },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 7.4 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 7.32 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 10 },
   "parameters.frostgroveSanctuaryResistanceDecrease": {
     "cause": "Unclassified",
     "value": { "index": 7, "proudSkillGroupId": 11932 }
@@ -110,7 +110,7 @@
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 11932 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 42 },
