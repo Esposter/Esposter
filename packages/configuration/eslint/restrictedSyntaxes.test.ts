@@ -25,6 +25,12 @@ describe("restrictedSyntaxes", () => {
         violations: 0,
       },
       {
+        filePath: "arrayMethodNameElsewhere.ts",
+        name: "arrayMethodNameElsewhere",
+        source: "recorder.reduce(buffer, partialBuffer, count);",
+        violations: 0,
+      },
+      {
         filePath: "arrayReduceReference.ts",
         name: "arrayReduceReference",
         source: "const total = [1].reduce(add, 0);",

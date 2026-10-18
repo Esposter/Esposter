@@ -168,9 +168,7 @@ export const computeLabelSimilarity = async ({
       productOverCoverage(buffers.first, buffers.second, buffers.quotient);
       blur(buffers.quotient, buffers.productMean);
       recorder.similarity(buffers, buffers.term, count, isCoarsest);
-      // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
       recorder.reduce(buffers.term, partialBuffer, count, slotOf(label, scale, 0));
-      // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
       recorder.reduce(buffers.coverage, partialBuffer, count, slotOf(label, scale, 1));
       recorder.combine(
         buffers.termSums.current,
