@@ -6,7 +6,7 @@ import type { MailboxState } from "#src/models/mail/MailboxState";
 
 import { addRewardItem } from "#src/services/inventory/addRewardItem";
 
-// The held mail's items into the bag and the wallet, and the mail marked claimed. Undefined when the mail is
+// The held mail's items into the bag and the wallet, and the mail marked claimed and read. Undefined when the mail is
 // Already claimed or not held, or when the bag cannot take all its items whole, so a claim gives its items once or not at all
 export const claimMail = (
   state: MailboxState,
@@ -24,7 +24,7 @@ export const claimMail = (
   }
   return {
     inventory: granted.inventory,
-    mails: state.mails.map((mail) => (mail.id === mailRow.id ? { ...mail, isClaimed: true } : mail)),
+    mails: state.mails.map((mail) => (mail.id === mailRow.id ? { ...mail, isClaimed: true, isRead: true } : mail)),
     wallet: granted.wallet,
   };
 };

@@ -17,7 +17,12 @@ describe(removeExpiredMails, () => {
     titleTextId: "3",
   };
   const rows = new Map<number, Mail>([[ROW.id, ROW]]);
-  const mail = (isClaimed: boolean): MailSave => ({ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed });
+  const mail = (isClaimed: boolean): MailSave => ({
+    deliveredAt: new Date(0).toISOString(),
+    id: ROW.id,
+    isClaimed,
+    isRead: false,
+  });
   const PAST_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS + 1));
   const WITHIN_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS - 1));
 

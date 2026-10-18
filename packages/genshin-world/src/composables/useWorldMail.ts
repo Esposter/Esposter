@@ -114,5 +114,9 @@ export const useWorldMail = ({
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);
   };
-  return { claim, claimAll, isBagFull, mailData, mails };
+  const markMailRead = (mailId: number) => {
+    mails.value = mails.value.map((mail) => (mail.id === mailId && !mail.isRead ? { ...mail, isRead: true } : mail));
+  };
+
+  return { claim, claimAll, isBagFull, mailData, mails, markMailRead };
 };

@@ -497,6 +497,7 @@ const {
   isBagFull: isMailBagFull,
   mailData,
   mails,
+  markMailRead,
 } = useWorldMail({
   gameDataBaseUrl,
   getWorldNow,
@@ -1892,6 +1893,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @claim="(mailId) => claimMail(mailId)"
           @claim-all="claimAllMails()"
           @close="screenKind = ScreenKind.World"
+          @read="(mailId) => markMailRead(mailId)"
         />
       </template>
       <template #[ScreenKind.Quests]>

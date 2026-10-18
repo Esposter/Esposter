@@ -43,7 +43,7 @@ interface MailEntry {
 
 const { birthdayMailIds, gameText, isBagFull, mailRows, mails, materialDataMap, names, now, textMap } =
   defineProps<Props>();
-const emit = defineEmits<{ claim: [mailId: number]; claimAll: []; close: [] }>();
+const emit = defineEmits<{ claim: [mailId: number]; claimAll: []; close: []; read: [mailId: number] }>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
   sortMails(mails, mailRows).flatMap((mail) => {
@@ -58,6 +58,10 @@ const selectedEntry = computed(
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
 );
+const selectMail = (mailId: number) => {
+  selectedMailId.value = mailId;
+  emit("read", mailId);
+};
 // A currency's name is the game's, and an item's its material row's, read in the reader's language
 const getItemName = (itemId: number): string => {
   const currency = getWalletCurrency(itemId);
@@ -92,7 +96,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           v-for="entry of sortedEntries"
           :key="entry.mail.id"
           :aria-selected="entry.mail.id === selectedEntry?.mail.id"
-          @click="selectedMailId = entry.mail.id"
+          :data-read="entry.mail.isRead || undefined"
+          @click="selectMail(entry.mail.id)"
         >
           <span class="title">{{ textMap[entry.row.titleTextId] }}</span>
           <span class="sender">{{ textMap[entry.row.senderTextId] }}</span>

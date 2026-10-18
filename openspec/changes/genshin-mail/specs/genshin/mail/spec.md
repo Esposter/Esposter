@@ -34,7 +34,7 @@ A mail's attached items SHALL reach the bag and wallet once, when the player cla
 
 ### Requirement: The mails a player holds survive a reload
 
-The mails a player holds, with their claim state, SHALL be saved with the save and restored on load.
+The mails a player holds, with their claim and read state, SHALL be saved with the save and restored on load.
 
 #### Scenario: A mail's claim is kept across a reload
 
