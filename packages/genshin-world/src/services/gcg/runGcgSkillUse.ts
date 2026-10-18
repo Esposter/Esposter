@@ -9,6 +9,7 @@ import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNa
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
+import { runGcgOnSkillUsed } from "#src/services/gcg/effects/runGcgOnSkillUsed";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -40,22 +41,7 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
   skillModule?.afterDamage?.(context);
   side.usedSkillIds.push(skill.id);
-  for (const zoneCard of fieldCards) {
-    const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
-    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(
-      { ...context, characterIndex },
-      skill,
-      zoneCard,
-      dealt,
-    );
-    // A card's damage on a skill is not the skill's own hit, so the Plunging Attack bonus does not bear on it
-    if (skillDamage)
-      applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule, {
-        ...context,
-        characterIndex,
-        isPlunge: false,
-      });
-  }
+  runGcgOnSkillUsed(context, fieldCards, skill, dealt);
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
