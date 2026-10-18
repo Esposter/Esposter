@@ -21,6 +21,7 @@ import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
+import { LocomotionState } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
@@ -90,6 +91,10 @@ const findYuegui = (context: KitContext): KitField | undefined =>
 
 const findRadish = (context: KitContext): KitSummon | undefined =>
   context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+// Every radish on the field, in the order they were thrown
+const findRadishes = (context: KitContext): KitSummon[] =>
+  context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
 
 // The Yuegui Moonjade Descent spawns behind her, each one of its spawns adding one to those on the field
 const findJumpingYuegui = (context: KitContext): KitField[] =>
@@ -288,6 +293,60 @@ describe(createYaoyaoKitBehaviour, () => {
     // The burst's 360th frame leaves each Yuegui's seconds a float residual above zero, so the expiry check removes it a step later
     stepFrames(context, 2);
     expect(findJumpingYuegui(context)).toHaveLength(0);
+  });
+
+  test("ascension 1 throws a radish at an enemy within 8 metres 0.6 seconds into the burst and every 0.6 seconds after, while she dashes or jumps", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.5,
+      { enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]), locomotionState: LocomotionState.Dash },
+      { ascension: 1 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    stepFrames(context, 35);
+    expect(findRadishes(context)).toHaveLength(0);
+    stepFrames(context, 1);
+    expect(findRadishes(context)).toHaveLength(1);
+    expect(findRadishes(context)[0]?.body.position.z).toBeCloseTo(-4);
+    stepFrames(context, 35);
+    expect(findRadishes(context)).toHaveLength(0);
+    stepFrames(context, 1);
+    expect(findRadishes(context)).toHaveLength(1);
+  });
+
+  test.each([
+    [LocomotionState.Idle, 4],
+    [LocomotionState.Dash, 9],
+  ])("ascension 1 throws no radish while she is %s with an enemy %i metres away", (locomotionState, distanceMetres) => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.5,
+      { enemyMap: new Map([["enemy", createEnemyAt(0, -distanceMetres)]]), locomotionState },
+      { ascension: 1 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+
+    stepFrames(context, 36);
+    expect(findRadishes(context)).toHaveLength(0);
+  });
+
+  test("ascension 1 throws no radish once a swap ends the burst", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(
+      0.5,
+      { enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]), locomotionState: LocomotionState.Dash },
+      { ascension: 1 },
+    );
+    YAOYAO_KIT.elementalBurst.onStart?.(context);
+    YAOYAO_KIT.onKitEvent?.(
+      { characterId: MEMBER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: YAOYAO_CHARACTER_ID },
+      context,
+      context.activeCombatant,
+    );
+
+    stepFrames(context, 36);
+    expect(findRadishes(context)).toHaveLength(0);
   });
 
   test("constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds after a radish heals her", () => {
