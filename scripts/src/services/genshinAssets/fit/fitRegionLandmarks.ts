@@ -17,7 +17,11 @@ import { LandmarkKind } from "genshin-world";
 // Game's transport place and turn for the scene point it stands at, which a jump lands at. Every other field is the
 // Region's own. A landmark the world names that the file lacks, or a prefab placed nowhere, is an error. Returns the
 // File's path
-export const fitRegionLandmarks = async (component: DerivedAssetComponent, regionFile: string): Promise<string> => {
+export const fitRegionLandmarks = async (
+  component: DerivedAssetComponent,
+  regionFile: string,
+  { isDryRun }: { isDryRun: boolean },
+): Promise<string> => {
   const { getWorldHeight, origin, placements, regionJson, regionLandmarks } = await readRegionLandmarkSources(
     component,
     regionFile,
@@ -45,5 +49,5 @@ export const fitRegionLandmarks = async (component: DerivedAssetComponent, regio
     const arrival = toLandmarkArrival(transportPoint, origin, getWorldHeight);
     return { ...landmark, arrival, heightOffset, position, rotation };
   });
-  return writeWorldData(regionFile, { ...regionData, landmarks });
+  return writeWorldData(regionFile, { ...regionData, landmarks }, { isDryRun });
 };
