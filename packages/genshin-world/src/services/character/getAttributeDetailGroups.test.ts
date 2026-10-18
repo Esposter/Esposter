@@ -25,8 +25,8 @@ describe("getAttributeDetailGroups", () => {
       GameTextKey.AttributeGroupAdvanced,
       GameTextKey.AttributeGroupElemental,
     ]);
-    expect(groups[1].rows).toContainEqual({ label: GameTextKey.AttributeIncomingHealingBonus, value: "50.0%" });
-    expect(groups[2].rows).toContainEqual({ label: GameTextKey.AttributePyroResistance, value: "10.0%" });
+    expect(groups[1]?.rows).toContainEqual({ label: GameTextKey.AttributeIncomingHealingBonus, value: "50.0%" });
+    expect(groups[2]?.rows).toContainEqual({ label: GameTextKey.AttributePyroResistance, value: "10.0%" });
   });
 
   // Details pressed again: no group is listed, so the summary is all the panel shows
