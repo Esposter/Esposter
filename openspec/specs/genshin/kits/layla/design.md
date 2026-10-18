@@ -4,7 +4,7 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 
 ## Decisions
 
-- **Layla's plunges take Bennett's timings and poise.** gcsim has no plunge file for her, so `laylaKit.ts` lands the collision, low and high plunge at Bennett's frames, 36 for the low hit and 38 for the high, with 100 and 150 poise and her own multipliers. Her animation would move them if it showed otherwise.
+- **Layla's plunges take Bennett's timings and poise.** gcsim has no plunge file for her, so her record lands the collision, low and high plunge at Bennett's frames, 36 for the low hit and 38 for the high, with 100 and 150 poise and her own multipliers. Her animation would move them if it showed otherwise.
 
 ## Key files
 

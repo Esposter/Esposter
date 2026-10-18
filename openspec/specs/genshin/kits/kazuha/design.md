@@ -4,6 +4,14 @@ Kazuha's kit is its record and one behaviour module, `createKazuhaKitBehaviour`,
 
 The Autumn Whirlwind absorbs an element as gcsim's does: a check from 81 frames, the frame before the slash, then every 18 frames for at most 17 checks, reaching 9 metres round where he cast it. It takes the first of Pyro, Hydro, Electro and Cryo any enemy in reach holds, in gcsim's priority, and from then each tick still to come lands an elemental tick in that element, 1U, just ahead of its Anemo tick.
 
+```mermaid
+flowchart TD
+  START["Autumn Whirlwind starts"] --> CHECK["Absorb check at 81 frames, then every 18 frames, at most 17 checks"]
+  CHECK --> REACH["Enemies within 9 metres of where he cast it"]
+  REACH --> ELEMENT["The first of Pyro, Hydro, Electro and Cryo any of them holds, in gcsim's priority"]
+  ELEMENT --> TICK["Each later Anemo tick is preceded by an elemental tick in that element, 1U"]
+```
+
 ## Decisions
 
 - **Chihayaburu's hold is reached at half a second, and its skill, burst and collision deal 0 poise.** The table and the wiki give no seconds for a press's hold, so Venti's half second stands, as the other holds do; gcsim gives those three no poise, so each reads 0.
