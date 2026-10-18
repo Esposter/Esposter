@@ -19,7 +19,7 @@
 
 ## 5. Rolls
 
-- [ ] 5.1 Roll Explosive Spark and Breakthrough Barb as each hit strikes, from the world's random source. Verify: tests named after the scenarios 'Klee's Explosive Spark is applied at a 50% chance on a hit' and 'Yelan's Breakthrough Barb is rolled on each Lingering Lifeline hit', seen failing first.
+- [x] 5.1 Roll Explosive Spark and Breakthrough Barb as each hit strikes, from the world's random source. Verify: tests named after the scenarios 'Klee's Explosive Spark is applied at a 50% chance on a hit' and 'Yelan's Breakthrough Barb is rolled on each Lingering Lifeline hit', seen failing first.
 
 ## 6. Size ceiling
 
