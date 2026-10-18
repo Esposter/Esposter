@@ -30,7 +30,7 @@ const stepFieldFrames = (field: KitField, context: KitContext, frames: number): 
   for (let frame = 0; frame < frames; frame++) stepKitField(field, FIXED_STEP_SECONDS, context);
 };
 
-describe("stepKitField", () => {
+describe(stepKitField, () => {
   const COMBATANT: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),
@@ -58,15 +58,7 @@ describe("stepKitField", () => {
       tickIndex: 0,
       tickIntervalSeconds: 2,
     };
-    const context = createKitTestContext({
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: TRAVELER_KIT,
-      level: 90,
-    });
+    const context = createKitTestContext(COMBATANT);
     for (let frame = 0; frame < 119; frame++) stepKitField(field, FIXED_STEP_SECONDS, context);
     expect(ticks).toStrictEqual([]);
 
@@ -109,8 +101,8 @@ describe("stepKitField", () => {
   test("a field's step hook is given the seconds the step covers, so a rate on the field counts them", () => {
     expect.hasAssertions();
 
-    const onStep = vi.fn();
-    const field: KitField = { ...createField(60, 60, vi.fn()), onStep };
+    const onStep = vi.fn<NonNullable<KitField["onStep"]>>();
+    const field: KitField = { ...createField(60, 60, vi.fn<KitField["onTick"]>()), onStep };
     const context = createKitTestContext(COMBATANT);
     stepKitField(field, 0.5, context);
 
